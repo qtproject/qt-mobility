@@ -53,35 +53,39 @@ void PendingCallWatcher::addSendCommand(const QDBusPendingReply<QByteArray> &rep
     m_pendingCommands.insert(watcher, id);
 }
 
-void PendingCallWatcher::addReadNdefMessages(const QDBusPendingReply<QList<QByteArray> > &reply)
+void PendingCallWatcher::addReadNdefMessages(const QDBusPendingReply<QList<QByteArray> > &reply,
+                                             const QNearFieldTarget::RequestId &id)
 {
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
             this, SLOT(readNdefMessagesFinished(QDBusPendingCallWatcher*)));
 
-    m_pendingNdefReads.append(watcher);
+    m_pendingNdefReads.insert(watcher, id);
 }
 
-void PendingCallWatcher::addWriteNdefMessages(const QDBusPendingReply<> &reply)
+void PendingCallWatcher::addWriteNdefMessages(const QDBusPendingReply<> &reply,
+                                              const QNearFieldTarget::RequestId &id)
 {
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
             this, SLOT(writeNdefMessages(QDBusPendingCallWatcher*)));
 
-    m_pendingNdefWrites.append(watcher);
+    m_pendingNdefWrites.insert(watcher, id);
 }
 
 void PendingCallWatcher::sendCommandFinished(QDBusPendingCallWatcher *watcher)
 {
     QNearFieldTarget::RequestId id = m_pendingCommands.take(watcher);
 
-    if (!id.isValid())
+    if (!id.isValid()) {
+        watcher->deleteLater();
         return;
+    }
 
     QDBusPendingReply<QByteArray> reply = *watcher;
     if (reply.isError()) {
         QMetaObject::invokeMethod(parent(), "error",
-                                  Q_ARG(QNearFieldTarget::Error, QNearFieldTarget::NoError),
+                                  Q_ARG(QNearFieldTarget::Error, QNearFieldTarget::UnknownError),
                                   Q_ARG(QNearFieldTarget::RequestId, id));
     } else {
         const QByteArray data = reply.argumentAt<0>();
@@ -95,11 +99,18 @@ void PendingCallWatcher::sendCommandFinished(QDBusPendingCallWatcher *watcher)
 
 void PendingCallWatcher::readNdefMessagesFinished(QDBusPendingCallWatcher *watcher)
 {
+    QNearFieldTarget::RequestId id = m_pendingNdefReads.take(watcher);
+
+    if (!id.isValid()) {
+        watcher->deleteLater();
+        return;
+    }
+
     QDBusPendingReply<QList<QByteArray> > reply = *watcher;
     if (reply.isError()) {
         QMetaObject::invokeMethod(parent(), "error",
                                   Q_ARG(QNearFieldTarget::Error, QNearFieldTarget::NdefReadError),
-                                  Q_ARG(QNearFieldTarget::RequestId, QNearFieldTarget::RequestId()));
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
     } else {
         const QList<QByteArray> data = reply.argumentAt<0>();
         foreach (const QByteArray &m, data) {
@@ -112,24 +123,34 @@ void PendingCallWatcher::readNdefMessagesFinished(QDBusPendingCallWatcher *watch
 
             QMetaObject::invokeMethod(parent(), "ndefMessageRead", Q_ARG(QNdefMessage, message));
         }
+
+        QMetaObject::invokeMethod(parent(), "requestCompleted",
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
     }
 
-    m_pendingNdefReads.removeOne(watcher);
     watcher->deleteLater();
 }
 
 void PendingCallWatcher::writeNdefMessages(QDBusPendingCallWatcher *watcher)
 {
+    QNearFieldTarget::RequestId id = m_pendingNdefWrites.take(watcher);
+
+    if (!id.isValid()) {
+        watcher->deleteLater();
+        return;
+    }
+
     QDBusPendingReply<> reply = *watcher;
     if (reply.isError()) {
         QMetaObject::invokeMethod(parent(), "error",
                                   Q_ARG(QNearFieldTarget::Error, QNearFieldTarget::NdefWriteError),
-                                  Q_ARG(QNearFieldTarget::RequestId, QNearFieldTarget::RequestId()));
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
     } else {
         QMetaObject::invokeMethod(parent(), "ndefMessagesWritten");
+        QMetaObject::invokeMethod(parent(), "requestCompleted",
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
     }
 
-    m_pendingNdefWrites.removeOne(watcher);
     watcher->deleteLater();
 }
 

@@ -68,6 +68,7 @@ private Q_SLOTS:
     void waitForCanceledNoTimeout();
     void waitForErrorImmediate();
     void waitForErrorNoTimeout();
+    void progressChangedSignal();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
@@ -77,6 +78,7 @@ public:
     using QGalleryAbstractResponse::error;
     using QGalleryAbstractResponse::finish;
     using QGalleryAbstractResponse::resume;
+    using QGalleryAbstractResponse::progressChanged;
 
 public Q_SLOTS:
     void doFinish() { finish(); }
@@ -483,7 +485,6 @@ void tst_QGalleryAbstractResponse::waitForCanceledNoTimeout()
 void tst_QGalleryAbstractResponse::waitForErrorImmediate()
 {
     QtGalleryTestResponse response;
-
     QMetaObject::invokeMethod(&response, "doError", Qt::QueuedConnection, Q_ARG(int, 1));
     QCOMPARE(response.isActive(), true);
     QCOMPARE(response.waitForFinished(0), true);
@@ -493,11 +494,32 @@ void tst_QGalleryAbstractResponse::waitForErrorImmediate()
 void tst_QGalleryAbstractResponse::waitForErrorNoTimeout()
 {
     QtGalleryTestResponse response;
-
     QMetaObject::invokeMethod(&response, "doError", Qt::QueuedConnection, Q_ARG(int, 1));
     QCOMPARE(response.isActive(), true);
     QCOMPARE(response.waitForFinished(-1), true);
     QCOMPARE(response.isActive(), false);
+}
+
+void tst_QGalleryAbstractResponse::progressChangedSignal()
+{
+    QtGalleryTestResponse response;
+
+    QSignalSpy progressChangedSpy(&response, SIGNAL(progressChanged(int,int)));
+    QVERIFY(progressChangedSpy.count() == 0);
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+
+    response.progressChanged(10, 100);
+    QVERIFY(progressChangedSpy.count() == 1);
+
+    response.cancel();
+    QVERIFY(progressChangedSpy.count() == 1);
+
+    response.progressChanged(20, 200);
+    QVERIFY(progressChangedSpy.count() == 2);
+
+    response.progressChanged(20, 200);
+    QVERIFY(progressChangedSpy.count() == 3);
 }
 
 #include "tst_qgalleryabstractresponse.moc"

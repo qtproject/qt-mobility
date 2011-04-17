@@ -210,6 +210,8 @@ QTM_BEGIN_NAMESPACE
     Currently on the Maemo 5 (Fremantle), Symbian, and Windows Mobile platforms the service
     action object enters the FinishedState when the message is queued for sending
     rather than actually sent.
+  
+    On the MeeGo.com platform this function is not yet supported for SMS type messages.
 
     Returns true if the operation can be initiated; otherwise returns false.
 
@@ -310,7 +312,21 @@ QTM_BEGIN_NAMESPACE
 
     The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
 
+    On Windows mobile and desktop platforms this function is not supported. On Symbian prior to SR1.11 this function is not supported. On Symbian SR1.11 this function is only partially supported.
+    
     Returns true if the operation can be initiated; otherwise returns false.
+*/
+
+/*!
+    \fn QMessageService::synchronize(const QMessageAccountId &id)
+  
+    Initiate synchronization with external server identified by \a id
+
+    On Windows mobile and desktop platforms, and Maemo 5 this function performs no operation.
+
+    Returns true if the operation can be initiated; otherwise returns false.
+    
+    \sa QMessageManager::addMessage(), QMessageManager::updateMessage(), QMessageManager::removeMessage(), QMessageManager::removeMessages()
 */
 
 /*!

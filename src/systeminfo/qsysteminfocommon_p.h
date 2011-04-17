@@ -49,6 +49,7 @@
 #include "qsysteminfo_simulator_p.h"
 #else
 
+#ifndef TESTR
 #ifdef Q_OS_LINUX
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include "qsysteminfo_maemo_p.h"
@@ -65,6 +66,9 @@
 #endif
 #ifdef Q_OS_SYMBIAN
 #include "qsysteminfo_s60_p.h"
+#endif
+#else
+#include "qsysteminfo_simulator_p.h"
 #endif
 
 #endif // QT_SIMULATOR

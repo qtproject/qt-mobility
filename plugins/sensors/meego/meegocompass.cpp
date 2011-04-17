@@ -67,14 +67,11 @@ void meegocompass::slotDataAvailable(const Compass& data)
 
 
 bool meegocompass::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Compass&)),
-                           this, SLOT(slotDataAvailable(const Compass&))))){
-        return false;
-    }
-    return true;
+    return QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Compass&)),
+                            this, SLOT(slotDataAvailable(const Compass&)));
 }
 
-const QString meegocompass::sensorName(){
+QString meegocompass::sensorName() const{
     return "compasssensor";
 }
 

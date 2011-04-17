@@ -74,8 +74,10 @@ public:
     bool isActive() const;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
-    // private slot
+// private slots
     void _q_newDeviceFound(const QBluetoothDeviceInfo &device);
+    void _q_setError(QBluetoothDeviceDiscoveryAgent::Error errorCode, 
+            QString errorDescription);
 #endif
 
 #ifndef QT_NO_DBUS
@@ -85,8 +87,8 @@ public:
 
 private:
 #ifdef QTM_SYMBIAN_BLUETOOTH
+    void allocate();
     uint inquiryTypeToIAC() const;
-    void setError(int errorCode, QString errorDescription);
 #endif
 
     QList<QBluetoothDeviceInfo> discoveredDevices;

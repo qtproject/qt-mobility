@@ -43,8 +43,6 @@ import QtMultimediaKit 1.1
 
 Rectangle {
     id : cameraUI
-    width : 800
-    height : 480
     color: "black"
     state: "PhotoCapture"
 
@@ -90,11 +88,11 @@ Rectangle {
 
     Camera {
         id: camera
-        x : 0
-        y : 0
-        width : 640
-        height : 480
-        focus : visible //to receive focus and capture key events
+        x: 0
+        y: 0
+        width: parent.width - stillControls.buttonsPanelWidth
+        height: parent.height
+        focus: visible //to receive focus and capture key events
         //captureResolution : "640x480"
 
         flashMode: stillControls.flashMode

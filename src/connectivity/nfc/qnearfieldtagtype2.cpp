@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qnearfieldtagtype2.h"
+#include "qnearfieldtarget_p.h"
 
 #include <QtCore/QVariant>
 #include <QtCore/QCoreApplication>
@@ -123,21 +124,19 @@ bool QNearFieldTagType2::hasNdefMessage()
 /*!
     \reimp
 */
-void QNearFieldTagType2::readNdefMessages()
+QNearFieldTarget::RequestId QNearFieldTagType2::readNdefMessages()
 {
-    qDebug() << Q_FUNC_INFO << "is unimplemeted";
-    emit error(QNearFieldTarget::UnsupportedError, RequestId());
+    return RequestId();
 }
 
 /*!
     \reimp
 */
-void QNearFieldTagType2::writeNdefMessages(const QList<QNdefMessage> &messages)
+QNearFieldTarget::RequestId QNearFieldTagType2::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     Q_UNUSED(messages);
 
-    qDebug() << Q_FUNC_INFO << "is unimplemeted";
-    emit error(QNearFieldTarget::UnsupportedError, RequestId());
+    return RequestId();
 }
 
 /*!

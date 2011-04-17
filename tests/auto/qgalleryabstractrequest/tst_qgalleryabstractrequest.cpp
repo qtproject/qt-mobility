@@ -192,6 +192,11 @@ void tst_QGalleryAbstractRequest::type()
 
     QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::ItemRequest).type(),
              QGalleryAbstractRequest::ItemRequest);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::QueryRequest).type(),
+             QGalleryAbstractRequest::QueryRequest);
+    //Added Enum
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::TypeRequest).type(),
+             QGalleryAbstractRequest::TypeRequest);
 }
 
 void tst_QGalleryAbstractRequest::initTestCase()
@@ -240,7 +245,7 @@ void tst_QGalleryAbstractRequest::executeUnsupported()
     QSignalSpy canceledSpy(&request, SIGNAL(canceled()));
     QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
     QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
-
+    QSignalSpy errorchangedspy(&request,SIGNAL(errorChanged()));//Added Signal
     request.execute();
     QCOMPARE(request.state(), QGalleryAbstractRequest::Error);
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NotSupported));
@@ -251,6 +256,7 @@ void tst_QGalleryAbstractRequest::executeUnsupported()
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
     QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(errorchangedspy.count(),1);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 }
 
@@ -308,6 +314,21 @@ void tst_QGalleryAbstractRequest::executeSync()
     QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 
+    //Added enum gallery error
+    gallery.setError(100, QLatin1String("gallery Corrupted"));
+    request.execute();
+    QVERIFY(request.response() == 0);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::GalleryError));
+    QCOMPARE(request.error(), 100);
+    QCOMPARE(request.errorString(), QLatin1String("gallery Corrupted"));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(canceledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 3);
+    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
+
     // Successful execution, to idle.
     gallery.setError(QGalleryAbstractRequest::NoError, QString());
     gallery.setState(QGalleryAbstractRequest::Idle);
@@ -317,8 +338,8 @@ void tst_QGalleryAbstractRequest::executeSync()
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(canceledSpy.count(), 0);
-    QCOMPARE(errorSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(errorSpy.count(), 3);
+    QCOMPARE(stateSpy.count(), 5);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 
     // Execute unsupported.
@@ -329,8 +350,8 @@ void tst_QGalleryAbstractRequest::executeSync()
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NotSupported));
     QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(canceledSpy.count(), 0);
-    QCOMPARE(errorSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 5);
+    QCOMPARE(errorSpy.count(), 4);
+    QCOMPARE(stateSpy.count(), 6);
     QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 }

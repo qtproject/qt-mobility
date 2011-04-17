@@ -81,17 +81,10 @@ class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
-    QStringList availableLanguages() const;
 
-private:
-#if !defined(QT_NO_DBUS)
-    bool hasHalDeviceFeature(const QString &param);
-    bool hasHalUsbFeature(qint32 usbClass);
-    QHalInterface halIface;
-#endif
+    QStringList availableLanguages() const;
 };
 
 class QNetworkManagerInterface;
@@ -139,10 +132,6 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
 public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-
-    float contrast(int screen);
-
-    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate

@@ -49,7 +49,6 @@ class QContactObserverPrivate
     public:
         QContactLocalId m_localId;
         QWeakPointer<QContactManager> m_manager;
-        QContactManagerData* m_managerPrivate;
 };
 QTM_END_NAMESPACE
 
@@ -76,8 +75,7 @@ QContactObserver::QContactObserver(QContactManager* manager,
 {
     d->m_localId = localId;
     d->m_manager = manager;
-    d->m_managerPrivate = QContactManagerData::get(manager);
-    d->m_managerPrivate->registerObserver(this);
+    QContactManagerData::registerObserver(manager, this);
 }
 
 /*!
@@ -85,8 +83,8 @@ QContactObserver::QContactObserver(QContactManager* manager,
  */
 QContactObserver::~QContactObserver()
 {
-    if (d->m_manager.data()) {
-        d->m_managerPrivate->unregisterObserver(this);
+    if (!d->m_manager.isNull()) {
+        QContactManagerData::unregisterObserver(d->m_manager.data(), this);
     }
     delete d;
 }

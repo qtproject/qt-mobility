@@ -41,11 +41,11 @@
 
 #include "meegoproximitysensor.h"
 
-char const * const meegoproximitysensor::id("meego.proximity");
+char const * const meegoproximitysensor::id("meego.proximitysensor");
 bool meegoproximitysensor::m_initDone = false;
 
 meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
-    : meegosensorbase(sensor)
+    : meegosensorbase(sensor), m_exClose(false)
 {
     initSensor<ProximitySensorChannelInterface>(m_initDone);
     setReading<QProximityReading>(&m_reading);
@@ -63,9 +63,12 @@ void meegoproximitysensor::start(){
 
 void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
 {
+    bool close = data.x()? true: false;
+    if (close == m_exClose) return;
     m_reading.setClose(data.x()? true: false);
     m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
+    m_exClose = close;
 }
 
 bool meegoproximitysensor::doConnect(){
@@ -74,6 +77,6 @@ bool meegoproximitysensor::doConnect(){
 }
 
 
-const QString meegoproximitysensor::sensorName(){
+QString meegoproximitysensor::sensorName() const{
     return "proximitysensor";
 }

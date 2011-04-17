@@ -68,8 +68,8 @@ public:
     Type type() const { return NfcTagType1; }
 
     bool hasNdefMessage();
-    void readNdefMessages();
-    void writeNdefMessages(const QList<QNdefMessage> &messages);
+    RequestId readNdefMessages();
+    RequestId writeNdefMessages(const QList<QNdefMessage> &messages);
 
     quint8 version();
     virtual int memorySize();

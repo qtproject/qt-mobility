@@ -80,6 +80,7 @@ BluetoothLinkManagerDeviceDiscoverer::BluetoothLinkManagerDeviceDiscoverer(RSock
     : QObject(parent)
     , CActive(CActive::EPriorityStandard)
     , m_socketServer(socketServer)
+    , m_pendingCancel(false), m_pendingStart(false), m_discoveryType (0)
 {
     TInt result;
 
@@ -108,13 +109,17 @@ BluetoothLinkManagerDeviceDiscoverer::~BluetoothLinkManagerDeviceDiscoverer()
 /*!
     Starts up device discovery. When devices are discovered signal deviceDiscovered is emitted.
     After signal deviceDiscoveryComplete() is emitted new discovery request can be made.
-    Returns false if discovery is ongoing and new discovery is started.
 */
-bool BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryType)
+void BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryType)
 {
-    bool returnValue = false;
+    m_discoveryType = discoveryType;
+    
+    if(m_pendingCancel == true) {
+        m_pendingStart = true;
+        m_pendingCancel = false;  
+        return;
+    }
     if (!IsActive()) {
-        returnValue = true;
         m_addr.SetIAC( discoveryType );
 #ifdef EIR_SUPPORTED
         m_addr.SetAction(KHostResInquiry | KHostResName | KHostResIgnoreCache | KHostResEir);
@@ -124,24 +129,67 @@ bool BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryTy
         m_hostResolver.GetByAddress(m_addr, m_entry, iStatus);
         SetActive();
     }
-    return returnValue;
 }
+
+void BluetoothLinkManagerDeviceDiscoverer::stopDiscovery()
+{
+    m_pendingStart = false; 
+    if (IsActive() && !m_pendingCancel) {
+        m_pendingCancel = true;
+        m_hostResolver.Cancel();
+    }
+}
+
 /*!
   Informs that our request has been prosessed and the data is available to be used.
 */
 void BluetoothLinkManagerDeviceDiscoverer::RunL()
 {
-    if (iStatus.Int() == KErrHostResNoMoreResults) {
-        emit deviceDiscoveryComplete(iStatus.Int());
-    } else if (iStatus.Int() != KErrNone) {
+    qDebug() << __PRETTY_FUNCTION__ << iStatus.Int();
+    switch (iStatus.Int()) {
+    case KErrNone:  // found device
+        if (m_pendingCancel && !m_pendingStart) {
+            m_pendingCancel = false;
+            emit canceled();
+        } else {
+            m_pendingCancel = false;
+            m_pendingStart = false;
+            // get next (possible) discovered device
+            m_hostResolver.Next(m_entry, iStatus);
+            SetActive();
+            emit deviceDiscovered(currentDeviceDataToQBluetoothDeviceInfo());
+        }
+        break;
+    case KErrHostResNoMoreResults:  // done with search
+        if (m_pendingCancel && !m_pendingStart){  // search was canceled prior to finishing
+            m_pendingCancel = false;
+            m_pendingStart = false;
+            emit canceled();
+        }
+        else if (m_pendingStart){  // search was restarted just prior to finishing
+            m_pendingStart = false;
+            m_pendingCancel = false;
+            startDiscovery(m_discoveryType);
+        } else {  // search completed normally
+            m_pendingStart = false;
+            m_pendingCancel = false;
+            emit deviceDiscoveryComplete();
+        }
+        break;
+    case KErrCancel:  // user canceled search
+        if (m_pendingStart){  // user activated search after cancel
+            m_pendingStart = false;
+            m_pendingCancel = false;
+            startDiscovery(m_discoveryType);
+        } else {  // standard user cancel case
+            m_pendingCancel = false;
+            emit canceled();
+        }
+        break;
+    default:
+        m_pendingStart = false;
+        m_pendingCancel = false;
         setError(iStatus.Int());
-    } else {
-        // get next (possible) discovered device
-        m_hostResolver.Next(m_entry, iStatus);
-        // set this AO active ie running
-        SetActive();
-        // finally inform that we have found a new device
-        emit deviceDiscovered(currentDeviceDataToQBluetoothDeviceInfo());
     }
 }
 /*!
@@ -156,6 +204,15 @@ TInt BluetoothLinkManagerDeviceDiscoverer::RunError(TInt aError)
 {
     setError(aError);
     return KErrNone;
+}
+
+bool BluetoothLinkManagerDeviceDiscoverer::isReallyActive() const
+{
+    if(m_pendingStart)
+        return true;
+    if(m_pendingCancel)
+        return false;
+    return IsActive();
 }
 
 /*!
@@ -271,30 +328,41 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 
 void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
 {
-    QString errorDescription;
+    qDebug() << __PRETTY_FUNCTION__ << "errorCode=" << errorCode;
+    QString errorString;
     switch (errorCode) {
         case KLinkManagerErrBase:
-            errorDescription.append("Link manager base error value or Insufficient baseband resources error value");
+            errorString.append("Link manager base error value or Insufficient baseband resources error value");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrProxyWriteNotAvailable:
-            errorDescription.append("Proxy write not available error value");
+            errorString.append("Proxy write not available error value");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrReflexiveBluetoothLink:
-            errorDescription.append("Reflexive BT link error value");
+            errorString.append("Reflexive BT link error value");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrPendingPhysicalLink:
-            errorDescription.append("Physical link connection already pending when trying to connect the physical link");
+            errorString.append("Physical link connection already pending when trying to connect the physical link");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrNotReady:
-            errorDescription.append("KErrNotReady");
+            errorString.append("KErrNotReady");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
+        case KErrCancel:
+            errorString.append("KErrCancel");
+            qDebug() << "emitting canceled";
+            emit canceled();
+            break;
+        case KErrNone:
+            // do nothing
+            break;
         default:
-            errorDescription.append("Symbian errorCode =") + errorCode;
+            errorString.append("Symbian errorCode =") + errorCode;
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
     }
-    if (errorCode == KErrCancel)
-        emit canceled();
-    else if (errorCode != KErrNone)
-        emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError);
 }
 #include "moc_bluetoothlinkmanagerdevicediscoverer.cpp"
 

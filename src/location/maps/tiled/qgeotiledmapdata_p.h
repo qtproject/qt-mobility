@@ -83,6 +83,8 @@ public:
     void updateMapImage();
     void clearRequests();
 
+    QPointF windowOffset() const;
+
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
     void paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 

@@ -646,9 +646,15 @@ bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
 /*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id, collection id or stored details are not the same */
 bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 {
+    // work around, as this function is "const" that we can't sort m_details
+    QList<QOrganizerItemDetail> myDetails = d->m_details;
+    QList<QOrganizerItemDetail> otherDetails = other.d->m_details;
+    qSort(myDetails.begin(), myDetails.end(), compareOrganizerItemDetail);
+    qSort(otherDetails.begin(), otherDetails.end(), compareOrganizerItemDetail);
+
     return other.d->m_id == d->m_id &&
         other.d->m_collectionId == d->m_collectionId &&
-        other.d->m_details == d->m_details;
+        otherDetails == myDetails;
 }
 
 /*!

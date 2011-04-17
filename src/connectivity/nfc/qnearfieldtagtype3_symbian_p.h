@@ -71,8 +71,8 @@ public:
     }
 
     bool hasNdefMessage();
-    void readNdefMessages();
-    void writeNdefMessages(const QList<QNdefMessage> &messages);
+    RequestId readNdefMessages();
+    RequestId writeNdefMessages(const QList<QNdefMessage> &messages);
 
 #if 0
     quint16 systemCode();

@@ -53,6 +53,8 @@
 #include <QtCore/qsize.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/qdir.h>
+#include <QtGui/qdesktopservices.h>
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (GST_VERSION_MICRO > 20)
 #define USE_PLAYBIN2
@@ -87,6 +89,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_bus(0),
      m_videoOutput(0),
      m_renderer(0),
+     m_haveQueueElement(false),
 #if defined(HAVE_GST_APPSRC)
      m_appSrc(0),
 #endif
@@ -154,6 +157,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         g_object_set(G_OBJECT(m_playbin), "video-sink", m_videoOutputBin, NULL);
 
         g_signal_connect(G_OBJECT(m_playbin), "notify::source", G_CALLBACK(playbinNotifySource), this);
+        g_signal_connect(G_OBJECT(m_playbin), "element-added",  G_CALLBACK(handleElementAdded), this);
 
         // Initial volume
         double volume = 1.0;
@@ -200,6 +204,7 @@ void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIO
     m_request = request;
     m_duration = -1;
     m_lastPosition = 0;
+    m_haveQueueElement = false;
 
     if (m_appSrc)
         m_appSrc->deleteLater();
@@ -228,6 +233,7 @@ void QGstreamerPlayerSession::loadFromUri(const QNetworkRequest &request)
     m_request = request;
     m_duration = -1;
     m_lastPosition = 0;
+    m_haveQueueElement = false;
 
     if (m_playbin) {
         m_tags.clear();
@@ -277,6 +283,41 @@ void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
         }
         emit playbackRateChanged(m_playbackRate);
     }
+}
+
+QMediaTimeRange QGstreamerPlayerSession::availablePlaybackRanges() const
+{
+    QMediaTimeRange ranges;
+#if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 31)
+    //GST_FORMAT_TIME would be more appropriate, but unfortunately it's not supported.
+    //with GST_FORMAT_PERCENT media is treated as encoded with constant bitrate.
+    GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
+
+    if (gst_element_query(m_playbin, query)) {
+        for (guint index = 0; index < gst_query_get_n_buffering_ranges(query); index++) {
+            gint64 rangeStart = 0;
+            gint64 rangeStop = 0;
+
+            //This query should return values in GST_FORMAT_PERCENT_MAX range,
+            //but queue2 returns values in 0..100 range instead
+            if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop))
+                ranges.addInterval(rangeStart * duration() / 100,
+                                   rangeStop * duration() / 100);
+        }
+    }
+
+    gst_query_unref(query);
+#endif
+
+    //without queue2 element in pipeline all the media is considered available
+    if (ranges.isEmpty() && duration() > 0 && !m_haveQueueElement)
+        ranges.addInterval(0, duration());
+
+#ifdef DEBUG_PLAYBIN
+    qDebug() << ranges;
+#endif
+
+    return ranges;
 }
 
 int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType streamType) const
@@ -1419,4 +1460,38 @@ void QGstreamerPlayerSession::updateMuted()
 #endif
         emit mutedStateChanged(muted);
     }
+}
+
+
+void QGstreamerPlayerSession::handleElementAdded(GstBin *bin, GstElement *element, QGstreamerPlayerSession *session)
+{
+    Q_UNUSED(bin);
+    //we have to configure queue2 element to enable media downloading
+    //and reporting available ranges,
+    //but it's added dynamically to playbin2
+
+    gchar *elementName = gst_element_get_name(element);
+
+    if (g_str_has_prefix(elementName, "queue2")) {
+        session->m_haveQueueElement = true;
+
+        if (session->property("mediaDownloadEnabled").toBool()) {
+            QDir cacheDir(QDesktopServices::storageLocation(QDesktopServices::CacheLocation));
+            QString cacheLocation = cacheDir.absoluteFilePath("gstmedia__XXXXXX");
+#ifdef DEBUG_PLAYBIN
+            qDebug() << "set queue2 temp-location" << cacheLocation;
+#endif
+            g_object_set(G_OBJECT(element), "temp-template", cacheLocation.toUtf8().constData(), NULL);
+        } else {
+            g_object_set(G_OBJECT(element), "temp-template", NULL, NULL);
+        }
+    } else if (g_str_has_prefix(elementName, "uridecodebin") ||
+               g_str_has_prefix(elementName, "decodebin2")) {
+        //listen for queue2 element added to uridecodebin/decodebin2 as well.
+        //Don't touch other bins since they may have unrelated queues
+        g_signal_connect(element, "element-added",
+                         G_CALLBACK(handleElementAdded), session);
+    }
+
+    g_free(elementName);
 }

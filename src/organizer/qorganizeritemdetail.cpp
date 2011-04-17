@@ -331,6 +331,11 @@ bool QOrganizerItemDetail::operator==(const QOrganizerItemDetail& other) const
     return true;
 }
 
+bool compareOrganizerItemDetail(const QOrganizerItemDetail &one, const QOrganizerItemDetail &other)
+{
+    return (one.definitionName() < other.definitionName());
+}
+
 uint qHash(const QOrganizerItemStringHolder& key)
 {
     if (!key.m_str)
