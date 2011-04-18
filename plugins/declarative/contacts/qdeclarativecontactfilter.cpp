@@ -387,5 +387,5 @@ void QDeclarativeContactCompoundFilter::filters_clear(QDeclarativeListProperty<Q
     QDeclarativeContactCompoundFilter* filter = static_cast<QDeclarativeContactCompoundFilter*>(prop->object);
     qDeleteAll(filter->m_filters);
     filter->m_filters.clear();
-    emit filterChanged();
+    emit filter->filterChanged();
 }
