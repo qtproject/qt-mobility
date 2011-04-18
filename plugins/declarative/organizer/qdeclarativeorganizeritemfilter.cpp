@@ -399,5 +399,5 @@ void QDeclarativeOrganizerItemCompoundFilter::filters_clear(QDeclarativeListProp
     QDeclarativeOrganizerItemCompoundFilter* filter = static_cast<QDeclarativeOrganizerItemCompoundFilter*>(prop->object);
     qDeleteAll(filter->m_filters);
     filter->m_filters.clear();
-    emit filterChanged();
+    emit filter->filterChanged();
 }
