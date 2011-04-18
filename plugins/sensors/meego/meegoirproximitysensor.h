@@ -39,47 +39,37 @@
 **
 ****************************************************************************/
 
-#include "meegogyroscope.h"
+#ifndef MEEGOIRPROXIMITYSENSOR_H
+#define MEEGOIRPROXIMITYSENSOR_H
 
-char const * const meegogyroscope::id("meego.gyroscope");
-const float meegogyroscope::MILLI = 0.001;
-bool meegogyroscope::m_initDone = false;
+#include "meegosensorbase.h"
+#include <qirproximitysensor.h>
+#include <proximitysensor_i.h>
 
-meegogyroscope::meegogyroscope(QSensor *sensor)
-    : meegosensorbase(sensor)
+
+QTM_USE_NAMESPACE
+
+class meegoirproximitysensor : public meegosensorbase
 {
-    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
-    setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
-    setRanges(MILLI);
-    setReading<QGyroscopeReading>(&m_reading);
-    addDataRate(10, 10);
-    addDataRate(50, 50);
-}
+    Q_OBJECT
 
-void meegogyroscope::slotDataAvailable(const XYZ& data)
-{
-    m_reading.setX((qreal)(data.x()*MILLI));
-    m_reading.setY((qreal)(data.y()*MILLI));
-    m_reading.setZ((qreal)(data.z()*MILLI));
-    m_reading.setTimestamp(data.XYZData().timestamp_);
-    newReadingAvailable();
-}
+public:
+    static char const * const id;
 
-void meegogyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
-{
-    for (int i=0, l=frame.size(); i<l; i++){
-        slotDataAvailable(frame.at(i));
-    }
-}
+    meegoirproximitysensor(QSensor *sensor);
+protected:
+    virtual bool doConnect();
+    virtual QString sensorName() const;
 
-bool meegogyroscope::doConnect(){
-    if (m_bufferSize==1)
-        return QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
-    return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& )));
-}
+private:
+    QIRProximityReading m_reading;
+    static bool m_initDone;
+    int rangeMax;
 
-QString meegogyroscope::sensorName() const{
-    return "gyroscopesensor";
-}
+private slots:
+#ifdef Q_WS_MAEMO_6
+    void slotDataAvailable(const Proximity& proximity);
+#endif
+};
 
-qreal meegogyroscope::correctionFactor() const{return MILLI;}
+#endif

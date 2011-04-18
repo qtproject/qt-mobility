@@ -39,47 +39,44 @@
 **
 ****************************************************************************/
 
-#include "meegogyroscope.h"
+#ifndef QIRPROXIMITYSENSOR_H
+#define QIRPROXIMITYSENSOR_H
 
-char const * const meegogyroscope::id("meego.gyroscope");
-const float meegogyroscope::MILLI = 0.001;
-bool meegogyroscope::m_initDone = false;
+#include <qsensor.h>
 
-meegogyroscope::meegogyroscope(QSensor *sensor)
-    : meegosensorbase(sensor)
+QTM_BEGIN_NAMESPACE
+
+class QIRProximityReadingPrivate;
+
+class Q_SENSORS_EXPORT QIRProximityReading : public QSensorReading
 {
-    initSensor<GyroscopeSensorChannelInterface>(m_initDone);
-    setDescription(QLatin1String("angular velocities around x, y, and z axis in degrees per second"));
-    setRanges(MILLI);
-    setReading<QGyroscopeReading>(&m_reading);
-    addDataRate(10, 10);
-    addDataRate(50, 50);
-}
+    Q_OBJECT
+    Q_PROPERTY(qreal reflectance READ reflectance)
+    DECLARE_READING(QIRProximityReading)
+public:
+    qreal reflectance() const;
+    void setReflectance(qreal reflectance);
+};
 
-void meegogyroscope::slotDataAvailable(const XYZ& data)
+class Q_SENSORS_EXPORT QIRProximityFilter : public QSensorFilter
 {
-    m_reading.setX((qreal)(data.x()*MILLI));
-    m_reading.setY((qreal)(data.y()*MILLI));
-    m_reading.setZ((qreal)(data.z()*MILLI));
-    m_reading.setTimestamp(data.XYZData().timestamp_);
-    newReadingAvailable();
-}
+public:
+    virtual bool filter(QIRProximityReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading) { return filter(static_cast<QIRProximityReading*>(reading)); }
+};
 
-void meegogyroscope::slotFrameAvailable(const QVector<XYZ>&  frame)
+class Q_SENSORS_EXPORT QIRProximitySensor : public QSensor
 {
-    for (int i=0, l=frame.size(); i<l; i++){
-        slotDataAvailable(frame.at(i));
-    }
-}
+    Q_OBJECT
+public:
+    explicit QIRProximitySensor(QObject *parent = 0) : QSensor(QIRProximitySensor::type, parent) {}
+    virtual ~QIRProximitySensor() {}
+    QIRProximityReading *reading() const { return static_cast<QIRProximityReading*>(QSensor::reading()); }
+    static char const * const type;
+};
 
-bool meegogyroscope::doConnect(){
-    if (m_bufferSize==1)
-        return QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
-    return QObject::connect(m_sensorInterface, SIGNAL(frameAvailable(const QVector<XYZ>& )),this, SLOT(slotFrameAvailable(const QVector<XYZ>& )));
-}
+QTM_END_NAMESPACE
 
-QString meegogyroscope::sensorName() const{
-    return "gyroscopesensor";
-}
+#endif
 
-qreal meegogyroscope::correctionFactor() const{return MILLI;}

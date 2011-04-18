@@ -59,13 +59,14 @@ public:
     meegoproximitysensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
     virtual void start();
 
 
 private:
     QProximityReading m_reading;
     static bool m_initDone;
+    bool m_exClose;
    
 private slots:
     void slotDataAvailable(const Unsigned& data);
