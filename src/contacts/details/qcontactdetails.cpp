@@ -530,7 +530,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::DefinitionName, "Address");
 
 /*!
    \variable QContactAddress::FieldStreet
-using slashes in python strings
+
    The field key constant for the value containing the street segment.
    The street segment contains the street number and street name of the address.
    \sa street(), setStreet()

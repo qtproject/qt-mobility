@@ -127,7 +127,7 @@ QMediaPlaylist::QMediaPlaylist(QObject *parent)
 
 QMediaPlaylist::~QMediaPlaylist()
 {
-    Q_D(QMediaPlaylist);QMediaResource
+    Q_D(QMediaPlaylist);
 
     if (d->mediaObject)
         d->mediaObject->unbind(this);
@@ -142,7 +142,7 @@ QMediaPlaylist::~QMediaPlaylist()
 QMediaObject *QMediaPlaylist::mediaObject() const
 {
     return d_func()->mediaObject;
-}QMediaResource
+}
 
 /*!
   \internal
@@ -186,7 +186,7 @@ bool QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
             disconnect(d->control, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)),
                     this, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
             disconnect(d->control, SIGNAL(currentIndexChanged(int)),
-                    this, SIGNAL(currentQMediaResourceIndexChanged(int)));
+                    this, SIGNAL(currentIndexChanged(int)));
             disconnect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SIGNAL(currentMediaChanged(QMediaContent)));
 
@@ -214,7 +214,7 @@ bool QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
         connect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
                 this, SIGNAL(currentMediaChanged(QMediaContent)));
 
-        if (oldSize)QMediaResource
+        if (oldSize)
             emit mediaRemoved(0, oldSize-1);
 
         if (playlist->mediaCount()) {
@@ -341,7 +341,7 @@ bool QMediaPlaylist::addMedia(const QMediaContent &content)
 }
 
 /*!
-  Append multiple media content \a itemsQMediaResource to the playlist.
+  Append multiple media content \a items to the playlist.
 
   Returns true if the operation is successful, otherwise return false.
   */
@@ -501,7 +501,7 @@ void QMediaPlaylist::load(QIODevice * device, const char *format)
             QMediaPlaylistReader *reader = plugin->createReader(device,QByteArray(format));
             if (reader && d->readItems(reader)) {
                 delete reader;
-                emit loaded();QMediaResource
+                emit loaded();
                 return;
             }
             delete reader;
@@ -519,7 +519,7 @@ void QMediaPlaylist::load(QIODevice * device, const char *format)
   Save playlist to \a location. If \a format is specified, it is used,
   otherwise format is guessed from location name.
 
-  Returns true if playlist was saved sucQMediaResourcecessfully, otherwise returns false.
+  Returns true if playlist was saved successfully, otherwise returns false.
   */
 bool QMediaPlaylist::save(const QUrl &location, const char *format)
 {
@@ -559,7 +559,7 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
 
     foreach (QString const& key, playlistIOLoader()->keys()) {
         QMediaPlaylistIOInterface* plugin = qobject_cast<QMediaPlaylistIOInterface*>(playlistIOLoader()->instance(key));
-        if (plugin && plugin->canWrite(dQMediaResourceevice,format)) {
+        if (plugin && plugin->canWrite(device,format)) {
             QMediaPlaylistWriter *writer = plugin->createWriter(device,QByteArray(format));
             if (writer && d->writeItems(writer)) {
                 delete writer;
@@ -649,7 +649,7 @@ void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 /*!
     \fn void QMediaPlaylist::currentIndexChanged(int position)
 
-    Signal emitted when playlist positionQMediaResource changed to \a position.
+    Signal emitted when playlist position changed to \a position.
 */
 
 /*!
