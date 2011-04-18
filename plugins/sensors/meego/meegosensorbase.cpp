@@ -153,10 +153,7 @@ bool meegosensorbase::doConnectAfterCheck(){
     
     if (m_bufferingSensors.contains(sensor()->identifier()))
         m_sensorInterface->setBufferSize(size);
-    else{
-        m_bufferSize = 1;
-        size = 1;
-    }
+    else size = 1;
 
     // if multiple->single or single->multiple or if uninitialized
     if ((m_bufferSize>1 && size==1) || (m_bufferSize==1 && size>1) || m_bufferSize==-1){
