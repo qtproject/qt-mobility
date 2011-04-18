@@ -41,6 +41,7 @@
 
 #include "qversitcontacthandler.h"
 #include "qversitproperty.h"
+#include "qcontactname.h"
 
 #include <QObject>
 #include <QtTest/QtTest>
@@ -94,6 +95,9 @@ void tst_QVersitContactPlugins::testImporterPlugins() {
 void tst_QVersitContactPlugins::testExporterPlugins() {
     QVersitContactExporter exporter("Test");
     QContact contact;
+    QContactName name;
+    name.setFirstName("first name");
+    contact.saveDetail(&name);
     QVERIFY(exporter.exportContacts(QList<QContact>() << contact));
     QCOMPARE(exporter.documents().size(), 1);
     QList<QVersitProperty> properties(exporter.documents().first().properties());

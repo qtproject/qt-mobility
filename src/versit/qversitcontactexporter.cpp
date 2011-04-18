@@ -280,6 +280,12 @@ bool QVersitContactExporter::exportContacts(
     d->mErrors.clear();
     bool ok = true;
     foreach (const QContact& contact, contacts) {
+        if (contact.isEmpty()) {
+            d->mErrors[contactIndex] = EmptyContactError;
+            ok = false;
+            continue;
+        }
+
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
         versitDocument.setComponentType(QLatin1String("VCARD"));
