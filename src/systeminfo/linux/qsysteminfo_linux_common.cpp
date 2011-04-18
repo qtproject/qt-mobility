@@ -2807,11 +2807,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
     return QSystemDeviceInfo::WallPower;
 }
 
-QSystemDeviceInfo::ThermalState QSystemDeviceInfoLinuxCommonPrivate::currentThermalState()
-{
-    return QSystemDeviceInfo::UnknownThermal;
-}
-
 #if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoLinuxCommonPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
 {
@@ -2934,21 +2929,6 @@ bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
     return btPowered = powered;
 }
 
-QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardTypes()
-{
-    QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
-    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags;
-
-    if ((methods & QSystemDeviceInfo::Keyboard))
-        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
-
-    if (isWirelessKeyboardConnected())
-        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
-
-    // how to check softkeys on desktop?
-    return keyboardFlags;
-}
-
 bool QSystemDeviceInfoLinuxCommonPrivate::isWirelessKeyboardConnected()
 {
 #if !defined(QT_NO_DBUS)
@@ -2985,14 +2965,19 @@ bool QSystemDeviceInfoLinuxCommonPrivate::isWirelessKeyboardConnected()
     return hasWirelessKeyboardConnected;
 }
 
-bool QSystemDeviceInfoLinuxCommonPrivate::isKeyboardFlippedOpen()
+QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoLinuxCommonPrivate::keyboardTypes()
 {
-    return false;
-}
+    QSystemDeviceInfo::InputMethodFlags methods = inputMethodType();
+    QSystemDeviceInfo::KeyboardTypeFlags keyboardFlags;
 
-bool QSystemDeviceInfoLinuxCommonPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
-{
-    return false;
+    if ((methods & QSystemDeviceInfo::Keyboard))
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::FullQwertyKeyboard);
+
+    if (isWirelessKeyboardConnected())
+        keyboardFlags = (keyboardFlags | QSystemDeviceInfo::WirelessKeyboard);
+
+    // how to check softkeys on desktop?
+    return keyboardFlags;
 }
 
 QByteArray QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()

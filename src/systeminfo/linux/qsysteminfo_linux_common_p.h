@@ -303,12 +303,9 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
     int batteryLevel() const;
     QSystemDeviceInfo::PowerState currentPowerState();
-    QSystemDeviceInfo::ThermalState currentThermalState();
     bool currentBluetoothPowerState();
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
     bool isWirelessKeyboardConnected(); //1.2
-    bool isKeyboardFlippedOpen(); //1.2
-    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     QByteArray uniqueDeviceID(); //1.2
 
 Q_SIGNALS:

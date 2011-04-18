@@ -259,9 +259,6 @@ Q_SIGNALS:
     void keyboardFlipped(bool open);
 
 #if !defined(QT_NO_DBUS)
-//protected:
-//    void setupBluetooth();
-
 private Q_SLOTS:
     void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);

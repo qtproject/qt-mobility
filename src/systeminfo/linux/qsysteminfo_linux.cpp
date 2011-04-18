@@ -513,6 +513,21 @@ QString QSystemDeviceInfoPrivate::imei()
     return QString();
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
+{
+    return false;
+}
+
 QString QSystemDeviceInfoPrivate::imsi()
 {
 #if !defined(QT_NO_DBUS)

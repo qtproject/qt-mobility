@@ -149,13 +149,14 @@ public:
     QString model();
     QString productName();
 
+    QSystemDeviceInfo::ThermalState currentThermalState();
+
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
     int messageRingtoneVolume(); //1.2
     int voiceRingtoneVolume(); //1.2
     bool vibrationActive(); //1.2
     QSystemDeviceInfo::SimStatus simStatus();
-//    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
-//    bool isWirelessKeyboardConnected(); //1.2
-//    bool isKeyboardFlippedOpen(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 };
 
