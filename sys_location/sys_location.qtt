@@ -70,7 +70,7 @@ testcase = {
     | *Step* | *Verification* |
     | Run the testQtLocation application (this is part of BlueWeel project, sources are in git@scm.dev.nokia.troll.no:qtmobility/qtmobility-tests.git | |
     | Select the Custom Service | Verify that no "Unable to register location service" and "Not valid interface." messages appear |
-    | Press the Update Map button | Verify that map was loaded and correct current position is displayed |
+    | Press the Update Map button | Verify that map was loaded and correct current position is displayed |'
         ));
     },
 
@@ -86,17 +86,17 @@ testcase = {
     | Fill in "100" in to Start Longitude field | |
     | Select Distance/Bearing from *Pre-defined* dropdown list | |
     | Fill "1000000, 90" in to the given field | |
-    | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude | |
+    | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
     | Fill in "60" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
     | Select Distance/Bearing from *Pre-defined* dropdown list | |
     | Fill "1000000, 180" in to the given field | |
-    | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude | |
+    | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
     | Fill in "60" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
     | Select Distance/Bearing from *Pre-defined* dropdown list | |
     | Fill "1000000, 20" in to the given field | |
-    | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude | |
+    | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |'
         ));
     },
 
@@ -137,8 +137,141 @@ testcase = {
         select("Cancel");
     },
 
-    // Maps and Navigation
+    sorted_search_based_on_category: function()
+    {
+        prompt(twiki('---+++ Landmarks for the specified category are displayed
+    | *Step* | *Verification* |
+    | Create Accomodation category | |
+    | Create Businesses category | |
+    | Run the landmarkbrowser application | |
+    | Create A1 landmark  in Accomodation category | |
+    | Create A2 landmark  in Accomodation category | |
+    | Create BB landmark in Businesses category | |
+    | Press the Set Filter button | |
+    | Select the Category checkbox | |
+    | Select Accomodation category | |
+    | Press Ok button | Verify that only A1 and A2 landmark is in the list and they are present in alphabetical order |
+    | Press the Set Filter button | |
+    | Select Education category | |
+    | Press Ok button | Verify that no landmarks are in the list |'
+       ));
+    },
 
+    sort_landmarks_in_alphabetical_and_nearest: function()
+    {
+        prompt(twiki('---+++ Nearest landmarks are displayed
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Create landmark A(12;0) | |
+    | Create landmark B(10;0) | |
+    | Create landmark C(8;0) | |
+    | Create landmark D(8;0) | |
+    | Press Set Filter button | |
+    | Select Proximity checkbox | |
+    | Fill in 0 in to Lat field | |
+    | Fill in 0 in to Long field |
+    | Fill in 10000000 in to Radius field| |
+    | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
+    | Press Set Filter button | |
+    | Change radius value to 1000000 | |
+    | Press Ok button | Verify that only C and D landmarks are in the list |
+    | Press Set Filter button | |
+    | Deselect Proximity checkbox | |
+    | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |'
+       ));
+    },
+	
+    landmarks_within_range_of_a_position: function()
+    {
+        prompt(twiki('---+++ Landmarks within range are displayed
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Create landmark A(12;0) | |
+    | Create landmark B(10;0) | |
+    | Create landmark C(8;0) | |
+    | Create landmark D(8;0) | |
+    | Press Set Filter button | |
+    | Select Box checkbox | |
+    | Fill in 9 in to Top Left Lat field | |
+    | Fill in 0 in to Top Left Long field | |
+    | Fill in 0 i to Bottom Right Lat filed | |
+    | Fill in 1 in to Top Left Long field | |
+    | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |'
+       ));
+    },
+    
+    create_edit_and_delete_a_landmark: function()
+    {
+	//Landmark manager provides notifications whenever landmarks are added, updated or deleted
+        prompt(twiki('---+++ Landmarks are added, edited and deleted
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Press Add Landmark button | |
+    | Fill in AAA in to Name field | |
+    | Fill in 30 into Latitude field | |
+    | Fill in 30 into Longitude field | |
+    | Press Ok button | Verify that message "Landmark(s) have been added" appears on the screen |
+    | Press Ok button | Verify that AAA landmark is in the landmarks list |
+    | Select AAA landmark | |
+    | Press Edit Landmark button | |
+    | Change Latitude value to 40 | |
+    | Change Longitude value to 40 | |
+    | Change Name value to BBB | |
+    | Press Ok button | Verify that message "Landmark(s) have been edited" appears on the screen |
+    | Press Ok button | Verify that BBB landmark has new latitude and longitude |
+    | Select BBB landmark | |
+    | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
+    | Press Ok button | Verify that only BBB landmark has been deleted |
+    | Create 2 new landmarks A1 and A2 | |
+    | Select both A1 and A2 landmarks | 
+    | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
+    | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |'
+        ));
+    },
+	
+    enumerate_categories: function()
+    {
+        prompt(twiki('---+++ Categories are displayed
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Select Category tab | |
+    | Create several categories | |
+    | Swith to the Landmark tab and back to the Category tab | Verify that the created categories are present in the list |'
+        ));
+    },
+	
+    add_and_delete_a_category: function()
+    {
+    //Landmark manager provides notifications whenever categories are added, updated or deleted
+        prompt(twiki('---+++ Categories are added, edited and deleted
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Select Category tab | |	
+    | Press Add Category button | |
+    | Fill in AAA in to Name field | |
+    | Press Ok button | Verify that message "Category(ies) have been added" |
+    | Press Ok button | Verify that AAA is added in list of categories in alphabetical order |
+    | Press Add Category button | |
+    | Fill in AAA in to Name field | |
+    | Press Ok button | Verify that message "Add Category Failed: category already Exists" appears on the screen |
+    | Press Ok button | |
+    | Press Add Category button | |
+    | Press Ok button | Verify that message "Category name must not be empty" appears on the screen |
+    | Press Ok button | |
+    | Select AAA category | |
+    | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
+    | Press Ok button | Verify that list of categories does not contain AAA category only| 
+    | Add A1 and A2 categories | |
+    | Select A1 and A2 categories | |
+    | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
+    | Press Ok button | Verify that list of categories does not contain A1 and A2 categories only |
+    | Select some of predefined categories | |
+    | Press Delete Category button | Verify tha message "Cannot delete a global category" appears on the screen |
+    | Press Ok button | Verify that no categories have been deleted |'
+        ));
+    },
+
+    // Maps and Navigation
     select_service_provider: function()
     {
         startApplication("geoservicedemo");
@@ -150,7 +283,7 @@ testcase = {
 
     request_route_from_one_GPS_location_to_another_data: {
         route:["-27.575", "153.088", "-27.465", "153.023", "16050", "15989"]
-    },
+    }, 
 
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
     {
@@ -180,6 +313,47 @@ testcase = {
         compare(getText("distance"), distance2);
     },
 
+    displaying_a_map: function()
+    {
+        prompt(twiki('---+++ Different views are displayed
+    Note that GPS and internet connection is required for this test case.
+    Note that Nokia map engine supports only Street, Satellite and Terrain map types
+    | *Step* | *Verification* |
+    | Run the MapView application (sources are /tests/location-testing-tools/mapviewer) | Map for current location is displayed on the screen |
+    | Press Option button | |
+    | Press Street button (if button is enabled) | Map is drawn in Street view |
+    | Press Option button | |
+    | Press Satellite button (if button is enabled) | Map is drawn in Satellite view |
+    | Press Option button | |
+    | Press Terrain button (if button is enabled) | Map is drawn in Satellite view |'
+        ));
+    },
+	
+    zooming_support:function()
+    {
+        prompt(twiki('---+++ Map is zoomed in and out
+    Note that internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the MapView application | Map is displayed on the screen |
+    | Scroll mouse wheel down | Map is zoomed out correctly |
+    | Scroll mouse wheel up | Map is zoomed in correctly|
+    | Double click on the map | Map is zoomed in correctly, step of zooming is consistent|'
+        ));
+    },
+	
+    capturing_coordinates:function()
+    {
+        prompt(twiki('---+++ Coordinates are captured
+    Note that internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the MapView application | Map is displayed on the screen |
+    | Zoom in tha map to see Brisbane | |
+    | Right mouse click on the square which represents Brisbane | |
+    | Select Coordinates menu item | |
+    | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |'
+        ));
+    },
+	
     pixmap_object_zooming: function()
     {
         //test case for QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs
@@ -197,7 +371,7 @@ testcase = {
     | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
     | Switch to Pan/Zoom mode | |
     | Increase zoom level | Verify that the blue square is not scaled |
-    | Decrease zoom level | Verify that the blue square is not scaled |
+    | Decrease zoom level | Verify that the blue square is not scaled |'
         ));
     },
 
@@ -216,7 +390,7 @@ testcase = {
     | *Step* | *Verification* |
     | Run the testQtLocation application | |
     | Select the MapNavigation.qml | |
-    | Tap on Mode button | Verify that map is loaded for current position |
+    | Tap on Mode button | Verify that map is loaded for current position |'
         ));
     },
 	
@@ -230,7 +404,7 @@ testcase = {
     | Select the MapNavigation.qml | |
     | Tap on the Mode button | Verify that map is loaded |
     | Tap on Plus button | Verify that map is zoomed in |
-    | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |
+    | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |'
         ));
     }
 
@@ -239,23 +413,6 @@ testcase = {
 
 
 /*
-----Landmarks use cases
-
-    landmarks_within_range_of_a_position: function() {    },
-
-    create_edit_and_delete_a_landmark: function() {    },
-
-    sorted_search_based_on_category: function() {    },
-
-    sort_landmarks_in_alphabetical_and_nearest: function() {    },
-
-    notification_on_landmark_changes: function() {    },
-
-    enumerate_categories: function() {    },
-
-    add_edit_and_delete_a_category: function() {    },
-
-    notification_on_category_changes: function() {    },
 
 ----Maps And Navigation use cases
 
@@ -265,11 +422,7 @@ testcase = {
 
     find_matching_landmarks_for_given_search_criteria_with_geocoding: function() {    },
 
-    displaying_a_map: function() {    },
-
     provide_map_for_given_coordinate: function() {    },
-
-    zooming_support: function() {    },
 
     online_and_offline: function() {    }
 
