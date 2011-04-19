@@ -297,8 +297,8 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
         if (videoOutput) {
             if (S60VideoWidgetControl *control = qobject_cast<S60VideoWidgetControl *>(videoOutput))
                 m_videoOutputDisplay = control->display();
-            if (S60VideoWindowControl *control = qobject_cast<S60VideoWindowControl *>(videoOutput))
-                m_videoOutputDisplay = control->display();
+            if (!m_videoOutputDisplay)
+                return;
             m_videoOutputDisplay->setNativeSize(m_nativeSize);
             connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
             connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
