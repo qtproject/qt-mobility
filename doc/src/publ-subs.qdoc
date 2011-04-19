@@ -296,7 +296,8 @@ For example, the following \c .context file describes a simple example service:
 </provider>
 \endcode
 
-(note the \c service attribute must match the organization domain and application name set above)
+Note: 1) The \c service attribute must match the organization domain and application name set above.
+2) The \c bus attribute must be "session", i.e. you can only use the session bus.
 
 Example qmake snippet to deploy the \c .context file
 \code
