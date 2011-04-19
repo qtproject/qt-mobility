@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     QBluetoothTransferManager uses OBEX to send get and put commands to remote devices.
 */

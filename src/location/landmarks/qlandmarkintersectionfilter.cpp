@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-filter
+    \since 1.1
 
     Conceptually it performs an AND operation and thus may be used to
     select landmarks which match all of it's constituent filters.

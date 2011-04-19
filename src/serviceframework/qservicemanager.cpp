@@ -87,7 +87,7 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             return libPath;
         }
 #else
-        QLibrary lib(libPath);  
+        QLibrary lib(libPath);
         if (lib.load()) {
             lib.unload();
             return lib.fileName();
@@ -205,6 +205,7 @@ private slots:
     \inmodule QtServiceFramework
     \brief The QServiceManager class enables the loading of service plugins
     and the (de)registration of services.
+    \since 1.0
 
     A service is a stand-alone component that can be used by multiple clients.
     Each service implementation must derive from QObject. Clients request a
@@ -399,7 +400,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     }
 
     const QString location = descriptor.attribute(QServiceInterfaceDescriptor::Location).toString();
-    const bool isInterProcess = (descriptor.attribute(QServiceInterfaceDescriptor::ServiceType).toInt() 
+    const bool isInterProcess = (descriptor.attribute(QServiceInterfaceDescriptor::ServiceType).toInt()
                                 == QService::InterProcess);
     if (isInterProcess) {
         //ipc service
@@ -492,7 +493,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
     are enforced during service loading.
-    
+
     \sa setInterfaceDefault(), interfaceDefault()
 */
 
@@ -579,7 +580,7 @@ bool QServiceManager::addService(QIODevice *device)
     ServiceMetaDataResults results = parser.parseResults();
 
     bool result = d->dbManager->registerService(results, scope);
-    
+
     if (results.type == QService::InterProcess)
         return result;
 
@@ -658,7 +659,7 @@ bool QServiceManager::removeService(const QString& serviceName)
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope)) {
         d->setError();
         return false;
-    }    
+    }
     return true;
 }
 

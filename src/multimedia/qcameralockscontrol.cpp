@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
     This service is provided by a QMediaService object via
     QMediaService::control().  It is used by QCamera.

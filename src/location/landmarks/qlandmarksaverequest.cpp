@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-request
+    \since 1.1
 
     For a QLandmarkSaveRequest, the resultsAvailable() signal will be emitted
     when either an individual items error out (individaul errors may be retrieved

@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     a route on a map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -182,7 +183,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 /*!
 \fn void QGeoMapRouteObject::routeChanged(const QGeoRoute &route)
 
-    This signal is emitted when the route drawn by this route object 
+    This signal is emitted when the route drawn by this route object
     has changed.
 
     The new value is \a route.
@@ -191,7 +192,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 /*!
 \fn void QGeoMapRouteObject::penChanged(const QPen &pen)
 
-    This signal is emitted when the pen used to draw this route object has 
+    This signal is emitted when the pen used to draw this route object has
     changed.
 
     The new value is \a pen.
@@ -200,7 +201,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 /*!
 \fn void QGeoMapRouteObject::detailLevelChanged(quint32 detailLevel)
 
-    This signal is emitted when the level of detail used to draw this 
+    This signal is emitted when the level of detail used to draw this
     route object has changed.
 
     The new value is \a detailLevel.

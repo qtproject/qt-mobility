@@ -219,6 +219,7 @@ public:
 
     \ingroup gallery
     \ingroup gallery-filters
+    \since 1.1
 
     \inmodule QtGallery
 
@@ -510,6 +511,7 @@ QGalleryIntersectionFilter operator &&(
 
     \ingroup gallery
     \ingroup gallery-filters
+    \since 1.1
 
     \inmodule QtGallery
 
@@ -795,6 +797,7 @@ QGalleryUnionFilter operator ||(
     \ingroup gallery-filters
 
     \inmodule QtGallery
+    \since 1.1
 
     \brief The QGalleryMetaDataFilter class provides a filter which accepts
     items with meta-data properties matching a specific value.

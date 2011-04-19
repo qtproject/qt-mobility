@@ -122,6 +122,7 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 
     \ingroup gallery
     \ingroup gallery-requests
+    \since 1.1
 
     \inmodule QtGallery
 

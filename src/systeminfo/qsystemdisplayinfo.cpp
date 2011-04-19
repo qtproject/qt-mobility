@@ -77,6 +77,7 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
     \class QSystemDisplayInfo
     \ingroup systeminfo
     \inmodule QtSystemInfo
+    \since 1.1
     \brief The QSystemDisplayInfo class provides access to display information from the system.
 */
 

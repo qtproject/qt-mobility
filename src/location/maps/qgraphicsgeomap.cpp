@@ -66,6 +66,7 @@ QTM_BEGIN_NAMESPACE
     interactions between the user and the map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping
 
@@ -783,7 +784,7 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
 /*!
 \fn void QGraphicsGeoMap::connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
 
-    This signal is emitted when the connectivity mode used to fetch the 
+    This signal is emitted when the connectivity mode used to fetch the
     map data changes.
 
     The new value is \a connectivityMode.

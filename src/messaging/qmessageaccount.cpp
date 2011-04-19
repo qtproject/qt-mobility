@@ -44,36 +44,37 @@
     \class QMessageAccount
 
     \brief The QMessageAccount class represents a messaging account in the messaging store.
-    
-    \inmodule QtMessaging
-    
-    \ingroup messaging
 
-    A QMessageAccount is a logical entity that groups messages according to the 
-    method by which they are sent and received.  An account may either transmit messages 
+    \inmodule QtMessaging
+
+    \ingroup messaging
+    \since 1.0
+
+    A QMessageAccount is a logical entity that groups messages according to the
+    method by which they are sent and received.  An account may either transmit messages
     receive messages or both.
-    
-    The QMessageAccount class is used for accessing properties of the account related 
-    to dealing with the account's folders and messages, rather than for modifying 
+
+    The QMessageAccount class is used for accessing properties of the account related
+    to dealing with the account's folders and messages, rather than for modifying
     the account itself.
-    
+
     \sa QMessageManager::account()
 */
 
 /*!
     \fn QMessageAccount::QMessageAccount()
-    
+
     Creates an empty and invalid account object.
 */
 
 /*!
     \fn QMessageAccount::QMessageAccount(const QMessageAccountId &id)
 
-    
-    Convenience constructor that creates a QMessageAccount by loading the data from the messaging 
-    store as specified by the QMessageAccountId \a id. If the account does not exist in the 
+
+    Convenience constructor that creates a QMessageAccount by loading the data from the messaging
+    store as specified by the QMessageAccountId \a id. If the account does not exist in the
     store, then this constructor will create an empty and invalid QMessageAccount.
-    
+
     \sa QMessageManager::account()
 */
 
@@ -83,37 +84,37 @@
     Constructs a copy of \a other.
 */
 
-/*! 
+/*!
     \internal
     \fn QMessageAccount::operator=(const QMessageAccount& other)
 */
 
 /*!
     \fn QMessageAccount::~QMessageAccount()
-    
+
     Destroys the account object.
 */
 
 /*!
     \fn QMessageAccount::id() const
-    
+
     Returns the identifier for this account.
 */
 
 /*!
     \fn QMessageAccount::name() const
-    
+
     Returns the name of the account for display purposes.
 */
 
 /*!
     \fn QMessageAccount::messageTypes() const
-    
+
     Returns the types of messages this account handles.
 */
 
 /*!
     \fn QMessageAccount::defaultAccount(QMessage::Type type)
-    
+
     Returns the default account for messages of type \a type.
 */

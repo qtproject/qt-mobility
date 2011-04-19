@@ -78,13 +78,14 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
 
 /*!
   \class QContactDetail
- 
+
   \brief The QContactDetail class represents a single, complete detail about a contact.
   \inmodule QtContacts
   \ingroup contacts-main
- 
+  \since 1.0
+
   All of the information for a contact is stored in one or more QContactDetail objects.
- 
+
   A detail is a group of logically related bits of data - for example, a street address is a single
   detail that has multiple fields (number, region, country etc).  Every QContactDetail has the name of an
   associated QContactDetailDefinition that describes the fields, their data type, and any
@@ -120,7 +121,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
   standardized access to values.  For example, \l QContactPhoneNumber provides
   a convenient API for manipulating a QContactDetail as a phone number, according
   to the schema.
- 
+
   In general, QContactDetail and the built in subclasses (like \l QContactPhoneNumber) provide
   constants for the names of fields (like \l QContactPhoneNumber::FieldNumber), and for predefined
   common values like \l QContactDetail::ContextHome.  Typically the constants for field names start
@@ -132,36 +133,36 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
   See the predefined detail subclasses (like \l QContactPhoneNumber,
   \l QContactAddress) for more information.
- 
+
   QContactDetail objects act like type checked values.  In general, you can assign them
   to and fro and have reasonable behaviour, like the following example.
- 
+
   \code
- 
+
   QContactPhoneNumber number;
   number.setNumber("555-1212");
   // number.value(QContactPhoneNumber::FieldNumber) == "555-1212";
   // number.definitionName() == QContactPhoneNumber::DefinitionName
- 
+
   QContactDetail detail = number;
   // detail.value(QContactPhoneNumber::FieldNumber) == "555-1212";
   // detail.definitionName() == QContactPhoneNumber::DefinitionName
- 
+
   QContactPhoneNumber otherNumber = detail;
   // otherNumber.number() == "555-1212";
   // otherNumber.definitionName() == QContactPhoneNumber::DefinitionName
- 
+
   QContactAddress address = detail;
   // address is now a default constructed QContactAddress
   // address.value(QContactPhoneNumber::FieldNumber) is empty
   // address.definitionName() == QContactAddress::DefinitionName
- 
+
   QContactAddress otherAddress = number;
   // otherAddress is now a default constructed QContactAddress
   // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty
   // otherAddress.definitionName() == QContactAddress::DefinitionName
   \endcode
- 
+
   \sa QContact, QContactDetailDefinition, QContactDetailFilter, QContactDetailRangeFilter, Q_DECLARE_CUSTOM_CONTACT_DETAIL
  */
 

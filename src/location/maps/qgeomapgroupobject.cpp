@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
     manager a group of other map objects.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 

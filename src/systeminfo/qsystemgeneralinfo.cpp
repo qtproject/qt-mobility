@@ -56,6 +56,7 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \class QSystemInfo
     \ingroup systeminfo
     \inmodule QtSystemInfo
+    \since 1.0
     \brief The QSystemInfo class provides access to various general information from the system.
     \bold NOTE: In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
 

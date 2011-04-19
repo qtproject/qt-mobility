@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QLlcpSocket
     \brief The QLlcpSocket class provides an NFC LLCP socket.
+    \since 1.2
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity

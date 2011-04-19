@@ -51,9 +51,10 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactDetailFieldDefinition
   \brief The QContactDetailFieldDefinition class provides a field in a QContactDetail.
- 
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   Encapsulates information about a particular datum which may be part of a
   QContactDetail, including the type and allowable values.
  */

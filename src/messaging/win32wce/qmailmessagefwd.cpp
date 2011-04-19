@@ -42,14 +42,15 @@
 /*!
     \class QMailMessageHeaderFieldFwd
     \brief The QMailMessageHeaderFieldFwd class declares enumerations used by QMailMessageHeaderField
-   
-    QMailMessageHeaderFieldFwd allows QMailMessageHeaderField::FieldType 
+    \since 1.1
+
+    QMailMessageHeaderFieldFwd allows QMailMessageHeaderField::FieldType
     to be used without including all of \c qmailmessage.h.
 */
 
 /*!
     \enum QMailMessageHeaderFieldFwd::FieldType
-    
+
     This enum type is used to describe the formatting of field content.
 
     \value StructuredField      The field content should be parsed assuming it is structured according to the specification for RFC 2045 'Content-Type' fields.
@@ -59,14 +60,14 @@
 /*!
     \class QMailMessageContentDispositionFwd
     \brief The QMailMessageContentDispositionFwd class declares enumerations used by QMailMessageContentDisposition
-   
-    QMailMessageContentDispositionFwd allows QMailMessageContentDisposition::DispositionType 
+
+    QMailMessageContentDispositionFwd allows QMailMessageContentDisposition::DispositionType
     to be used without including all of \c qmailmessage.h.
 */
 
 /*!
     \enum QMailMessageContentDispositionFwd::DispositionType
-    
+
     This enum type is used to describe the disposition of a message part.
 
     \value Attachment   The part data should be presented as an attachment.
@@ -77,16 +78,16 @@
 /*!
     \class QMailMessageBodyFwd
     \brief The QMailMessageBodyFwd class declares enumerations used by QMailMessageBody
-   
+
     QMailMessageBodyFwd allows QMailMessageBody::TransferEncoding and QMailMessageBody::EncodingStatus
     to be used without including all of \c qmailmessage.h.
 */
 
 /*!
     \enum QMailMessageBodyFwd::TransferEncoding
-    
+
     This enum type is used to describe a type of binary to text encoding.
-    Encoding types used here are documented in 
+    Encoding types used here are documented in
     \l {http://www.ietf.org/rfc/rfc2045.txt}{RFC 2045} "Format of Internet Message Bodies"
 
     \value NoEncoding          The encoding is not specified.
@@ -101,7 +102,7 @@
 
 /*!
     \enum QMailMessageBodyFwd::EncodingStatus
-    
+
     This enum type is used to describe the encoding status of body data.
 
     \value AlreadyEncoded       The body data is already encoded to the necessary encoding.
@@ -110,17 +111,17 @@
 
 /*!
     \enum QMailMessageBodyFwd::EncodingFormat
-    
+
     This enum type is used to describe the format in which body data should be presented.
 
-    \value Encoded      The body data should be presented in encoded form. 
-    \value Decoded      The body data should be presented in unencoded form. 
+    \value Encoded      The body data should be presented in encoded form.
+    \value Decoded      The body data should be presented in unencoded form.
 */
 
 /*!
     \class QMailMessagePartContainerFwd
     \brief The QMailMessagePartContainerFwd class declares enumerations used by QMailMessagePartContainer
-   
+
     QMailMessagePartContainerFwd allows QMailMessagePartContainerFwd::MultipartType
     to be used without including all of \c qmailmessage.h.
 */
@@ -143,9 +144,9 @@
 */
 
 /*!
-    \class QMailMessagePartFwd 
+    \class QMailMessagePartFwd
     \brief The QMailMessagePartFwd class declares enumerations used by QMailMessagePart
-   
+
     QMailMessagePartFwd allows QMailMessagePartFwd::ReferenceType
     to be used without including all of \c qmailmessage.h.
 */
@@ -163,7 +164,7 @@
 /*!
     \class QMailMessageMetaDataFwd
     \brief The QMailMessageMetaDataFwd class declares enumerations used by QMailMessageMetaData
-   
+
     QMailMessageMetaDataFwd allows QMailMessageMetaData::MessageType, QMailMessageMetaData::ContentType and QMailMessageMetaData::ResponseType
     to be used without including all of \c qmailmessage.h.
 */
@@ -222,7 +223,7 @@
 /*!
     \class QMailMessageFwd
     \brief The QMailMessageFwd class declares enumerations used by QMailMessage
-   
+
     QMailMessageFwd allows QMailMessage::AttachmentsAction and QMailMessage::EncodingFormat
     to be used without including all of \c qmailmessage.h.
 */
@@ -230,14 +231,14 @@
 /*!
     \enum QMailMessageFwd::AttachmentsAction
 
-    This enum type is used to describe the action that should be performed on 
+    This enum type is used to describe the action that should be performed on
     each message attachment.
 
-    \value LinkToAttachments        Add a part to the message containing a link to the 
-                                    supplied attachment. If the document is removed, the 
+    \value LinkToAttachments        Add a part to the message containing a link to the
+                                    supplied attachment. If the document is removed, the
                                     message will no longer have access to the data.
     \value CopyAttachments          Add a part to the message containing a copy of the
-                                    data in the supplied attachment. If the document is 
+                                    data in the supplied attachment. If the document is
                                     removed, the message will still contain the data.
     \value CopyAndDeleteAttachments Add a part to the message containing a copy of the
                                     data in the supplied attachment, then delete the
@@ -246,7 +247,7 @@
 
 /*!
     \enum QMailMessageFwd::EncodingFormat
-    
+
     This enum type is used to describe the format in which a message should be serialized.
 
     \value HeaderOnlyFormat     Only the header portion of the message is serialized, to RFC 2822 form.
@@ -257,7 +258,7 @@
 
 /*!
     \enum QMailMessageFwd::ChunkType
-    
+
     This enum type is used to denote the content of a single chunk in a partitioned output sequence.
 
     \value Text         The chunk contains verbatim output text.

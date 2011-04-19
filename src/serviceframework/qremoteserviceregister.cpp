@@ -56,6 +56,8 @@ QTM_BEGIN_NAMESPACE
     details matching a valid QServiceInterfaceDescriptor. 
     
     A registration entry can then be published for discovery by remote clients.
+
+    \since 1.1
 */
 
 /*!

@@ -49,8 +49,9 @@ QTM_USE_NAMESPACE
     \class QLandmarkCategoryId
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-main
+    \since 1.1
 
     \brief The QLandmarkCategoryId class provides a unique identifier for
     a category.
