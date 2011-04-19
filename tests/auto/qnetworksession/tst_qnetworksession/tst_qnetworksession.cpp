@@ -129,7 +129,7 @@ void tst_QNetworkSession::initTestCase()
     qRegisterMetaType<QNetworkConfiguration>("QNetworkConfiguration");
     qRegisterMetaType<QNetworkConfiguration::Type>("QNetworkConfiguration::Type");
 	
-    // If you wish to skip tests, set value as false. This is often very convinient because tests are so lengthy.
+    // If you wish to skip tests, set value as false. This is often very convenient because tests are so lengthy.
     // Better way still would be to make this readable from a file.
     testsToRun["robustnessBombing"] = true;
     testsToRun["sessionClosing"] = true;
@@ -1402,7 +1402,7 @@ void tst_QNetworkSession::outOfProcessSession()
     }
 }
 
-// A convinience / helper function for testcases. Return the first matching configuration.
+// A convenience / helper function for testcases. Return the first matching configuration.
 // Ignores configurations in other than 'discovered' -state. Returns invalid (QNetworkConfiguration())
 // if none found.
 QNetworkConfiguration suitableConfiguration(QString bearerType, QNetworkConfiguration::Type configType) {
@@ -1425,7 +1425,7 @@ QNetworkConfiguration suitableConfiguration(QString bearerType, QNetworkConfigur
             // qDebug() << "Dumping config because type (IAP/SNAP) mismatches: " << config.name();
             discoveredConfigs.removeOne(config);
         } else if ((config.type() == QNetworkConfiguration::InternetAccessPoint) &&
-                    bearerType == "cellular") { // 'cellular' bearertype is for convinience
+                    bearerType == "cellular") { // 'cellular' bearertype is for convenience
             if (config.bearerName() != "2G" &&
                 config.bearerName() != "CDMA2000" &&
                 config.bearerName() != "WCDMA" &&
@@ -1447,7 +1447,7 @@ QNetworkConfiguration suitableConfiguration(QString bearerType, QNetworkConfigur
     }
 }
 
-// A convinience-function: updates configurations and waits that they are updated.
+// A convenience-function: updates configurations and waits that they are updated.
 void updateConfigurations() 
 {
     QNetworkConfigurationManager mgr;
@@ -1456,7 +1456,7 @@ void updateConfigurations()
     QTRY_NOOP(updateSpy.count() == 1);
 }
 
-// A convinience-function: updates and prints all available confiurations and their states
+// A convenience-function: updates and prints all available confiurations and their states
 void printConfigurations()
 {
     QNetworkConfigurationManager manager;
@@ -1469,7 +1469,7 @@ void printConfigurations()
     }
 }
 
-// A convinience function for test-cases: opens the given configuration and return
+// A convenience function for test-cases: opens the given configuration and return
 // true if it was done gracefully.
 bool openSession(QNetworkSession *session) {
     bool result = true;

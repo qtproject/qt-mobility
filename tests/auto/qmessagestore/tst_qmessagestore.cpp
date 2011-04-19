@@ -287,7 +287,7 @@ void tst_QMessageStore::testFolder_data()
     // => Use Drafts folder for testing
     QTest::newRow("Drafts") << "Drafts" << "Drafts" << "" << "Drafts";
 #else
-	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
+	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., because they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Symbian does not currently support paths
