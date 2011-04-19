@@ -953,7 +953,7 @@ void tst_QContactManager::add()
     }
 
     // now a contact with many details of a particular definition
-    // if the detail is not unique it should then support minumum of two of the same kind
+    // if the detail is not unique it should then support minimum of two of the same kind
     const int nrOfdetails = 2;
     QContact veryContactable = createContact(nameDef, "Very", "Contactable", "");
     for (int i = 0; i < nrOfdetails; i++) {
@@ -3277,9 +3277,9 @@ void tst_QContactManager::relationships()
         availableRelationshipTypes << QContactRelationship::IsSameAs;
 
     
-    // Check arbitary relationship support
+    // Check arbitrary relationship support
     if (cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
-        // add some arbitary type for testing
+        // add some arbitrary type for testing
         if (availableRelationshipTypes.count())
             availableRelationshipTypes.insert(0, "test-arbitrary-relationship-type");
         else {

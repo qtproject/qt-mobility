@@ -7,3 +7,5 @@ testfile
 
 testdir/testfile
 /testdir/testfile
+file://path/name#suffix
+testfile2#suffix
