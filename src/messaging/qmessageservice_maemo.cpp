@@ -649,6 +649,21 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     return retVal;
 }
 
+bool QMessageService::synchronize(const QMessageAccountId& id)
+{
+    Q_UNUSED(id);
+
+    if(d_ptr->_active) {
+        qWarning() << "Service is currently busy";
+        return false;
+    }
+
+    d_ptr->_error = QMessageManager::NotYetImplemented;
+    d_ptr->setFinished(false);
+
+    return false;
+}
+
 QMessageService::State QMessageService::state() const
 {
     return d_ptr->_state;

@@ -2,6 +2,7 @@
 <qresource>
     <file>landmarkmap.qml</file>
     <file>nmealog.txt</file>
+    <file>mylm.lmx</file>
     <file>landmarkmapcommon/ScrollBar.qml</file>
     <file>landmarkmapcommon/Slider.qml</file>
     <file>landmarkmapmobile/Button.qml</file>

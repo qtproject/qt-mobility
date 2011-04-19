@@ -52,6 +52,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
   \brief The QVersitContactHandler class is a union of the
   QVersitContactImporterPropertyHandlerV2 and QVersitContactExporterDetailHandlerV2 interfaces.
   \ingroup versit-extension
+  \inmodule QtVersit
  */
 
 /*!
@@ -63,6 +64,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
   \class QVersitContactHandlerFactory
   \brief The QVersitContactHandlerFactory class provides the interface for Versit plugins.
   \ingroup versit-extension
+  \inmodule QtVersit
 
   This class provides a simple interface for the creation of QVersitContactHandler instances.
   Implement this interface to write a Versit plugin.  For more details, see \l{Versit Plugins}.

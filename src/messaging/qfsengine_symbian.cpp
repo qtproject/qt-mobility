@@ -615,13 +615,14 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
     QList<QMessageAddress> toList(message.to());
     if (toList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
+        TPtrC16 displayname(KNullDesC);
         for (int i = 0; i < toList.size(); ++i) {
             REmailAddressArray toAddress;
-            qreceiver = toList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            QString qaddress;
+            QString qname;
+            convertQMessageAddressToFreestyle(toList.at(i).addressee(), qaddress, qname, receiver, displayname);
             pTemplateAddress->SetAddressL(receiver);
-            pTemplateAddress->SetDisplayNameL(receiver);
+            pTemplateAddress->SetDisplayNameL(displayname);
             pTemplateAddress->SetRole(MEmailAddress::ETo);
             toAddress.Append(pTemplateAddress);
             fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
@@ -632,12 +633,13 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
     QList<QMessageAddress> ccList(message.cc());
     if (ccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
+        TPtrC16 displayname(KNullDesC);
         for (int i = 0; i < ccList.size(); ++i) {
             REmailAddressArray ccAddress;
-            qreceiver = ccList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            pTemplateAddress->SetDisplayNameL(receiver);
+            QString qaddress;
+            QString qname;
+            convertQMessageAddressToFreestyle(ccList.at(i).addressee(), qaddress, qname, receiver, displayname);
+            pTemplateAddress->SetDisplayNameL(displayname);
             pTemplateAddress->SetRole(MEmailAddress::ECc);
             pTemplateAddress->SetAddressL(receiver);
             ccAddress.Append(pTemplateAddress);
@@ -649,12 +651,13 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
     QList<QMessageAddress> bccList(message.bcc());
     if (bccList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
+        TPtrC16 displayname(KNullDesC);
         for (int i = 0; i < bccList.size(); ++i) {
             REmailAddressArray bccAddress;
-            qreceiver = bccList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            pTemplateAddress->SetDisplayNameL(receiver);
+            QString qaddress;
+            QString qname;
+            convertQMessageAddressToFreestyle(bccList.at(i).addressee(), qaddress, qname, receiver, displayname);
+            pTemplateAddress->SetDisplayNameL(displayname);
             pTemplateAddress->SetRole(MEmailAddress::EBcc);
             pTemplateAddress->SetAddressL(receiver);
             bccAddress.Append(pTemplateAddress);
@@ -733,6 +736,50 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
     fsMessage->SaveChangesL();
     CleanupStack::Pop(fsMessage);
     return fsMessage;
+}
+
+void CFSEngine::convertQMessageAddressToFreestyle(const QString& emailAddress, QString& qaddress, QString& qname, 
+                                                    TPtrC16& address, TPtrC16& displayname)
+{
+    QString qsuffix;
+
+    bool startDelimeterFound = false;
+    bool endDelimeterFound = false;
+
+    QMessageAddress::parseEmailAddress(emailAddress, &qname,
+            &qaddress, &qsuffix, &startDelimeterFound, &endDelimeterFound);
+
+    address.Set(reinterpret_cast<const TUint16*>(qaddress.utf16()));
+
+    if (startDelimeterFound)
+        displayname.Set(reinterpret_cast<const TUint16*>(qname.utf16()));
+    else
+        displayname.Set(KNullDesC);
+}
+
+void CFSEngine::convertFreestyleAddressToQString(MEmailAddress* emailAddress, QString& combinedAddress)
+{
+    TPtrC address = emailAddress->Address();
+    TPtrC displayName = emailAddress->DisplayName();
+
+    QString qAddress = QString::fromUtf16(address.Ptr(), address.Length());
+    QString qDisplayName = QString::fromUtf16(displayName.Ptr(), displayName.Length());
+
+    QChar startDelimiter = '<';
+    QChar endDelimiter = '>';
+    QChar separator = ' ';
+
+    combinedAddress = "";
+
+    if (qAddress.compare(qDisplayName)) {
+        combinedAddress += qDisplayName;
+        combinedAddress += separator;
+        combinedAddress += startDelimiter;
+        combinedAddress += qAddress;
+        combinedAddress += endDelimiter;
+    } else {
+        combinedAddress += qDisplayName;
+    }
 }
 
 bool CFSEngine::addMessage(QMessage* message)
@@ -898,9 +945,17 @@ void CFSEngine::updateMessageL(QMessage* message)
         if (!messageBody.isEmpty()) {
             MEmailMessageContent* content = fsMessage->ContentL();
             MEmailTextContent* textContent = content->AsTextContentOrNull();
-            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
-            // TODO:
+            if (textContent) {
+                QByteArray type = message->contentType();
+                QByteArray subType = message->contentSubType();
+                if (type == "text" && subType == "plain")
+                    textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
+                else if (type == "text" && subType == "html")
+                    textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
+            } else {
+                fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
             }
+        }
     } else {
         // Message contains body and attachments
         QMessageContentContainerIdList contentIds = message->contentIds();
@@ -912,13 +967,15 @@ void CFSEngine::updateMessageL(QMessage* message)
                 if (!container.textContent().isEmpty()) {
                     MEmailMessageContent* content = fsMessage->ContentL();
                     MEmailTextContent* textContent = content->AsTextContentOrNull();
-                    QByteArray type = container.contentType();
-                    QByteArray subType = container.contentSubType();
-                    if (type == "text" && subType == "plain") {
-                        textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-                    }
-                    else if (type == "text" && subType == "html") {
-                        textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    if (textContent) {
+                        QByteArray type = container.contentType();
+                        QByteArray subType = container.contentSubType();
+                        if (type == "text" && subType == "plain")
+                            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                        else if (type == "text" && subType == "html")
+                            textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    } else {
+                        fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
                     }
                 }
             } else {
@@ -1663,8 +1720,10 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
             m_messageQueries[i].canceled = true;
         }
     }
-    CFSContentFetchOperation* op = m_fetchOperations.value(&privateService);
+
+    CFSContentFetchOperation* op = m_fetchOperations.take(&privateService);
     if (op) {
+        op->cancelFetch();
         delete op;
     }
     
@@ -2422,9 +2481,12 @@ void CFSEngine::CreateQMessageL(QMessage* aQMessage, const MEmailMessage& aFSMes
     MEmailAddress* pSenderAddress = aFSMessage.SenderAddressL();
     if (pSenderAddress) {
         TPtrC from = pSenderAddress->Address();
+        TPtrC displayname = pSenderAddress->DisplayName();
         if (from.Length() > 0) {
-            aQMessage->setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
-            QMessagePrivate::setSenderName(*aQMessage, QString::fromUtf16(from.Ptr(), from.Length()));
+            QString qAddress;
+            convertFreestyleAddressToQString(pSenderAddress, qAddress);
+            aQMessage->setFrom(QMessageAddress(QMessageAddress::Email, qAddress));
+            QMessagePrivate::setSenderName(*aQMessage, QString::fromUtf16(displayname.Ptr(), displayname.Length()));
         }
     }
     
@@ -2435,8 +2497,9 @@ void CFSEngine::CreateQMessageL(QMessage* aQMessage, const MEmailMessage& aFSMes
     aFSMessage.GetRecipientsL(MEmailAddress::ETo, toRecipients);
     QList<QMessageAddress> toList;
     for(TInt i = 0; i < toRecipients.Count(); i++) {
-        TPtrC to = toRecipients[i]->Address();
-        toList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(to.Ptr(), to.Length())));
+        QString qAddress;
+        convertFreestyleAddressToQString(toRecipients[i], qAddress);
+        toList.append(QMessageAddress(QMessageAddress::Email, qAddress));
     }
     aQMessage->setTo(toList);
     CleanupStack::PopAndDestroy(&toRecipients);
@@ -2448,8 +2511,9 @@ void CFSEngine::CreateQMessageL(QMessage* aQMessage, const MEmailMessage& aFSMes
     aFSMessage.GetRecipientsL(MEmailAddress::ECc, ccRecipients);
     QList<QMessageAddress> ccList;
     for(TInt i = 0; i < ccRecipients.Count(); i++) {
-        TPtrC cc = ccRecipients[i]->Address();
-        ccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(cc.Ptr(), cc.Length())));
+        QString qAddress;
+        convertFreestyleAddressToQString(ccRecipients[i], qAddress);
+        ccList.append(QMessageAddress(QMessageAddress::Email, qAddress));
     }
     aQMessage->setCc(ccList);
     CleanupStack::PopAndDestroy(&ccRecipients);
@@ -2461,8 +2525,9 @@ void CFSEngine::CreateQMessageL(QMessage* aQMessage, const MEmailMessage& aFSMes
     aFSMessage.GetRecipientsL(MEmailAddress::EBcc, bccRecipients);
     QList<QMessageAddress> bccList;
     for(TInt i = 0; i < bccRecipients.Count(); i++) {
-        TPtrC bcc = bccRecipients[i]->Address();
-        bccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(bcc.Ptr(), bcc.Length())));
+        QString qAddress;
+        convertFreestyleAddressToQString(bccRecipients[i], qAddress);
+        bccList.append(QMessageAddress(QMessageAddress::Email, qAddress));
     }
     aQMessage->setBcc(bccList);
     CleanupStack::PopAndDestroy(&bccRecipients);
@@ -2528,38 +2593,39 @@ void CFSEngine::addMessagePartsToQMessage(QMessage& message, MEmailMessage& mEma
         size = pContent->TotalSize();
         pContent->Release();
     }
-
-    // Attachments
-    REmailAttachmentArray attachments;
-    TInt count = mEmailMessage.GetAttachmentsL(attachments);
-    for (int i=0; i < attachments.Count(); i++) {
-        QByteArray fileName;
-        TPtrC fName(KNullDesC);
-        TRAPD(err, fName.Set(attachments[i]->FileNameL()));
-        if (err == KErrNone) {
-            fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+    else {
+        // Attachments
+        REmailAttachmentArray attachments;
+        TInt count = mEmailMessage.GetAttachmentsL(attachments);
+        for (int i=0; i < attachments.Count(); i++) {
+            QByteArray fileName;
+            TPtrC fName(KNullDesC);
+            TRAPD(err, fName.Set(attachments[i]->FileNameL()));
+            if (err == KErrNone) {
+                fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+            }
+            QByteArray mimeHeader = QString::fromUtf16(attachments[i]->ContentType().Ptr(),
+                                                       attachments[i]->ContentType().Length()).toAscii();
+            MessagingHelper::extractMIMEHeaderParts(mimeHeader, mimeType, mimeSubType, charset);
+            int attachmentSize = attachments[i]->TotalSize();
+            size += attachmentSize;
+            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(msgId.iId,
+                                                                                        1,
+                                                                                        fileName, mimeType,
+                                                                                        mimeSubType, attachmentSize,
+                                                                                        attachments[i]->Id());
+            QMessageContentContainerPrivate *attachmentContainer = QMessageContentContainerPrivate::implementation(attachment);
+            attachmentContainer->_freestyleAttachment = true;
+            if (attachments[i]->TotalSize() == attachments[i]->AvailableSize()) {
+                attachmentContainer->_available = true;
+            } else {
+                attachmentContainer->_available = false;
+            }
+            addAttachmentToQMessage(message, attachment);
+            attachments[i]->Release();
         }
-        QByteArray mimeHeader = QString::fromUtf16(attachments[i]->ContentType().Ptr(),
-                                                   attachments[i]->ContentType().Length()).toAscii();
-        MessagingHelper::extractMIMEHeaderParts(mimeHeader, mimeType, mimeSubType, charset);
-        int attachmentSize = attachments[i]->TotalSize();
-        size += attachmentSize;
-        QMessageContentContainer attachment = QMessageContentContainerPrivate::from(msgId.iId,
-                                                                                    1,
-                                                                                    fileName, mimeType,
-                                                                                    mimeSubType, attachmentSize,
-                                                                                    attachments[i]->Id());
-        QMessageContentContainerPrivate *attachmentContainer = QMessageContentContainerPrivate::implementation(attachment);
-        attachmentContainer->_freestyleAttachment = true;
-        if (attachments[i]->TotalSize() == attachments[i]->AvailableSize()) {
-            attachmentContainer->_available = true;
-        } else {
-            attachmentContainer->_available = false;
-        }
-        addAttachmentToQMessage(message, attachment);
-        attachments[i]->Release();
+        attachments.Reset();
     }
-    attachments.Reset();
 
     QMessagePrivate* pPrivateMessage = QMessagePrivate::implementation(message);
     pPrivateMessage->_size = size;
@@ -3062,6 +3128,11 @@ CFSContentFetchOperation::~CFSContentFetchOperation()
     if (m_message) {
         m_message->Release();
     }
+}
+
+void CFSContentFetchOperation::cancelFetch()
+{
+    m_content->CancelFetch();
 }
 
 bool CFSContentFetchOperation::fetch()

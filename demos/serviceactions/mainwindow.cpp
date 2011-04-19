@@ -65,6 +65,8 @@
 #include <QStackedWidget>
 #include <QMutex>
 #include <QKeyEvent>
+#include <QDesktopServices>
+#include <QInputDialog>
 
 static const QSize WindowGeometry(400,300);
 static const QString WindowTitle("Service-actions Example");
@@ -387,6 +389,8 @@ void RecentMessagesWidget::stateChanged(QMessageService::State newState)
         } else {
             m_state = LoadFailed;
         }
+    } else if (newState == QMessageService::CanceledState) {
+        m_state = LoadFinished;
     }
 
     updateState();
@@ -441,7 +445,6 @@ void RecentMessagesWidget::setupUi()
     m_statusLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     m_statusLabel->setFrameStyle(QFrame::Box);
     m_layout->addWidget(m_statusLabel);
-
 }
 
 void RecentMessagesWidget::updateState()
@@ -771,6 +774,24 @@ class MessageViewWidget : public QWidget
 
     static const unsigned int LoadTimeLimit = 20; //seconds
 
+    static QString changeBetweenBodyAndAttachmentsLinkURL()
+    {
+        static const QString changeViewUrl("MessageViewWidget://changeview");
+        return changeViewUrl;
+    };
+
+    static QString downloadAttachmentLinkURL()
+    {
+        static const QString downloadAttachmentUrl("MessageViewWidget://downloadattachment");
+        return downloadAttachmentUrl;
+    };
+
+    static QString openAttachmentLinkURL()
+    {
+        static const QString downloadAttachmentUrl("MessageViewWidget://openattachment");
+        return downloadAttachmentUrl;
+    };
+
     static QString downloadLinkURL()
     {
         static const QString url("MessageViewWidget://download");
@@ -783,9 +804,20 @@ public:
 
     QMessageId viewing() const;
 
+signals:
+    void bodyShown();
+    void attachmentsShown();
+    void downloadStarted();
+    void downloadFinished();
+    void downloadFailed();
+
 public slots:
     void view(const QMessageId& messageId);
+    void showBodyOrAttachments();
     bool retrieveBody();
+    bool retrieveAttachment(QMessageContentContainerId attachmentId);
+    bool cancelRetrieve();
+    bool openAttachment(QMessageContentContainerId attachmentId);
 
 protected:
     void showEvent(QShowEvent* e);
@@ -800,11 +832,14 @@ private slots:
 
 
 private:
-    enum State { Unloaded , Loaded, Loading, LoadFailed };
+    enum State { Unloaded , Loaded, Loading, LoadFailed, LoadCanceled };
     void setupUi();
     void updateState();
     void loadMessage();
     void resetService();
+
+public:
+    bool m_showAttachmentsActivated;
 
 private:
     QStackedLayout* m_layoutStack;
@@ -827,7 +862,8 @@ m_layoutStack(0),
 m_statusLabel(0),
 m_service(new QMessageService(this)),
 m_messageBrowser(0),
-m_state(Unloaded)
+m_state(Unloaded),
+m_showAttachmentsActivated(false)
 {
     setupUi();
     resetService();
@@ -852,6 +888,17 @@ void MessageViewWidget::view(const QMessageId& messageId)
     updateState();
 }
 
+void MessageViewWidget::showBodyOrAttachments()
+{
+    m_showAttachmentsActivated = !m_showAttachmentsActivated;
+    if (m_showAttachmentsActivated) {
+        emit attachmentsShown();
+    } else {
+        emit bodyShown();
+    }
+    loadMessage();
+}
+
 //! [retrieve-message-body]
 bool MessageViewWidget::retrieveBody()
 {
@@ -868,6 +915,54 @@ bool MessageViewWidget::retrieveBody()
 }
 
 //! [retrieve-message-body]
+
+//! [retrieve-message-attachment]
+bool MessageViewWidget::retrieveAttachment(QMessageContentContainerId attachmentId)
+{
+    if (m_state != Loading && !m_loadTimer.isActive())
+    {
+        m_loadTimer.setSingleShot(true);
+        m_loadTimer.start(LoadTimeLimit * 1000);
+        m_state = Unloaded;
+
+        return m_service->retrieve(m_messageId, attachmentId);
+    }
+
+    return false;
+}
+
+//! [retrieve-message-attachment]
+
+//! [cancel-retrieve]
+bool MessageViewWidget::cancelRetrieve()
+{
+    m_service->cancel();
+    m_state = LoadCanceled;
+    updateState();
+}
+
+//! [cancel-retrieve]
+
+//! [open-message-attachment]
+bool MessageViewWidget::openAttachment(QMessageContentContainerId attachmentId)
+{
+    QMessage message(m_messageId);
+    QMessageContentContainer attachment(message.find(attachmentId));
+    QString tempFolder = QDesktopServices::storageLocation(QDesktopServices::TempLocation);
+    QString filePath = tempFolder+"/"+attachment.suggestedFileName();
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly))
+        return false;
+    QByteArray content = attachment.content();
+    file.write(content);
+    file.close();
+
+    QDesktopServices::openUrl(QUrl(QString("file:///")+filePath));
+
+    return true;
+}
+
+//! [open-message-attachment]
 
 void MessageViewWidget::showEvent(QShowEvent* e)
 {
@@ -910,10 +1005,16 @@ void MessageViewWidget::loadTimeout()
 
 void MessageViewWidget::linkClicked(const QUrl& url)
 {
-    bool downloadLinkClicked = url.toString() == downloadLinkURL();
-
-    if(downloadLinkClicked)
+    QString urlString = url.toString();
+    if (urlString == changeBetweenBodyAndAttachmentsLinkURL()) {
+        showBodyOrAttachments();
+    } else if (urlString == downloadLinkURL()) {
         retrieveBody();
+    } else if (urlString.startsWith(downloadAttachmentLinkURL())) {
+        retrieveAttachment(QMessageContentContainerId(urlString.remove(0,downloadAttachmentLinkURL().length()+1)));
+    } else if (urlString.startsWith(openAttachmentLinkURL())) {
+        openAttachment(QMessageContentContainerId(urlString.remove(0,openAttachmentLinkURL().length()+1)));
+    }
 }
 
 void MessageViewWidget::messageUpdated(const QMessageId& id, const QMessageManager::NotificationFilterIdSet& filterSet)
@@ -926,6 +1027,8 @@ void MessageViewWidget::messageUpdated(const QMessageId& id, const QMessageManag
 
 void MessageViewWidget::messageRemoved(const QMessageId& id, const QMessageManager::NotificationFilterIdSet& filterSet)
 {
+    Q_UNUSED(filterSet)
+
     if(id == m_messageId)
     {
         m_state = Unloaded;
@@ -965,11 +1068,13 @@ void MessageViewWidget::updateState()
         } break;
         case Loading:
         {
+            emit downloadStarted();
             m_statusLabel->setText("Downloading...");
             m_layoutStack->setCurrentWidget(m_statusLabel);
         } break;
         case Loaded:
         {
+            emit downloadFinished();
             if(m_loadTimer.isActive())
             {
                 m_loadTimer.stop();
@@ -982,9 +1087,16 @@ void MessageViewWidget::updateState()
         } break;
         case LoadFailed:
         {
+            emit downloadFailed();
             m_statusLabel->setText("Download failed!");
             m_layoutStack->setCurrentWidget(m_statusLabel);
         } break;
+        case LoadCanceled:
+        {
+            emit downloadFinished();
+            loadMessage();
+            m_layoutStack->setCurrentWidget(m_messageBrowser);
+        }
     }
 }
 
@@ -1002,8 +1114,9 @@ void MessageViewWidget::loadMessage()
         <tr><td><b>From: </b></td><td>%1</td></tr>\
         <tr><td><b>Subject: </b></td><td>%2</td></tr>\
         <tr><td><b>Date: </b></td><td>%3</td></tr>\
+        %4\
     </table>\
-    <hr>%4\
+    <hr>%5\
     <\body>\
     </html>\
     ");
@@ -1012,27 +1125,62 @@ void MessageViewWidget::loadMessage()
     {
         QMessage message(m_messageId);
 
-        QMessageContentContainer bodyPart = message.find(message.bodyId());
+        QString changeViewTypeLink;
+        if (m_showAttachmentsActivated) {
+            QString attachments;
+            QString changeViewTypeLink = QString("<tr><td></td><td><b><a href=\"%1\">Body</a></b></td></tr>")\
+                                         .arg(changeBetweenBodyAndAttachmentsLinkURL());
+            QMessageContentContainerIdList attachmentIds(message.attachmentIds());
+            for (int i = 0; i < attachmentIds.count(); ++i) {
+                QMessageContentContainer attachment(message.find(attachmentIds[i]));
+                QString attachmentName = attachment.suggestedFileName();
+                if (attachment.isContentAvailable()) {
+                    attachments += QString("<b>%1 </b><a href=\"%2\">Open</a><br>")\
+                                   .arg(attachmentName)\
+                                   .arg(openAttachmentLinkURL()+"/"+attachmentIds[i].toString());
+                } else {
+                    attachments += QString("<b>%1 </b><a href=\"%2\">Download</a><br>")\
+                                   .arg(attachmentName)\
+                                   .arg(downloadAttachmentLinkURL()+"/"+attachmentIds[i].toString());
+                }
+            }
+            m_messageBrowser->setHtml(htmlTemplate\
+                                     .arg(message.from().addressee())\
+                                     .arg(message.subject())\
+                                     .arg(message.receivedDate().toString())\
+                                     .arg(changeViewTypeLink)\
+                                     .arg(attachments));
+        } else {
+            QString changeViewTypeLink;
+            QMessageContentContainerIdList attachmentIds(message.attachmentIds());
+            if (attachmentIds.count() > 0) {
+                changeViewTypeLink = QString("<tr><td></td><td><b><a href=\"%1\">Attachments (%2)</a></b></td></tr>")\
+                                     .arg(changeBetweenBodyAndAttachmentsLinkURL())\
+                                     .arg(attachmentIds.count());
+            }
+            QMessageContentContainer bodyPart = message.find(message.bodyId());
 
-        QString bodyText;
+            QString bodyText;
 
-        //for partial message display a download link instead
+            //for partial message display a download link instead
 
-        bool bodyAvailable = bodyPart.isContentAvailable();
+            bool bodyAvailable = bodyPart.isContentAvailable();
 
-        if(bodyAvailable)
-        {
-            if(bodyPart.contentType() == "text")
-                bodyText = bodyPart.textContent();
-            else bodyText = "<Non-text content>";
+            if (bodyAvailable)
+            {
+                if (bodyPart.contentType() == "text")
+                    bodyText = bodyPart.textContent();
+                else bodyText = "<Non-text content>";
+            }
+            else
+                bodyText = QString("<p align=\"center\"><a href=\"%1\">Download</a></p>").arg(downloadLinkURL());
+            m_messageBrowser->setHtml(htmlTemplate\
+                                     .arg(message.from().addressee())\
+                                     .arg(message.subject())\
+                                     .arg(message.receivedDate().toString())\
+                                     .arg(changeViewTypeLink)\
+                                     .arg(bodyText));
         }
-        else
-            bodyText = QString("<p align=\"center\"><a href=\"%1\">Download</a></p>").arg(downloadLinkURL());
-        m_messageBrowser->setHtml(htmlTemplate\
-                                 .arg(message.from().addressee())\
-                                 .arg(message.subject())\
-                                 .arg(message.receivedDate().toString())\
-                                 .arg(bodyText));
     }
 }
 //! [partial-message-check]
@@ -1054,6 +1202,14 @@ public:
 
 private slots:
     void messageSelected(const QMessageId& messageId);
+    void showBodyOrAttachments();
+    void retrieveAttachment();
+    void openAttachment();
+    void bodyShown();
+    void attachmentsShown();
+    void downloadStarted();
+    void downloadFinished();
+    void downloadFailed();
 
 private:
     void setupUi();
@@ -1063,6 +1219,12 @@ private:
     RecentMessagesWidget* m_recentMessagesWidget;
     MessageViewWidget* m_messageViewWidget;
     QAction* m_retrieveAction;
+    QAction* m_showBodyOrAttachmentsAction;
+    QAction* m_retrieveAttachmentAction;
+    QAction* m_openAttachmentAction;
+    QAction* m_cancelRetrieveAction;
+    QMap<QString, QString> m_availableAttachments;
+    QMap<QString, QString> m_notAvailableAttachments;
 };
 
 RetrieveWidget::RetrieveWidget(QWidget* parent)
@@ -1070,17 +1232,131 @@ RetrieveWidget::RetrieveWidget(QWidget* parent)
 QWidget(parent),
 m_recentMessagesWidget(0),
 m_messageViewWidget(0),
-m_retrieveAction(0)
+m_retrieveAction(0),
+m_showBodyOrAttachmentsAction(0),
+m_retrieveAttachmentAction(0),
+m_openAttachmentAction(0)
 {
     setupUi();
+    connect(m_messageViewWidget, SIGNAL(bodyShown()), this, SLOT(bodyShown()));
+    connect(m_messageViewWidget, SIGNAL(attachmentsShown()), this, SLOT(attachmentsShown()));
+    connect(m_messageViewWidget, SIGNAL(downloadStarted()), this, SLOT(downloadStarted()));
+    connect(m_messageViewWidget, SIGNAL(downloadFinished()), this, SLOT(downloadFinished()));
+    connect(m_messageViewWidget, SIGNAL(downloadFailed()), this, SLOT(downloadFailed()));
 }
 
 void RetrieveWidget::messageSelected(const QMessageId& messageId)
 {
     QMessage message(messageId);
+
+    m_availableAttachments.clear();
+    m_notAvailableAttachments.clear();
+    QMessageContentContainerIdList attachmentIds(message.attachmentIds());
+    if (attachmentIds.count() > 0) {
+        m_showBodyOrAttachmentsAction->setEnabled(true);
+        bool retrieveAttachment = false;
+        bool openAttachment = false;
+        for (int i = 0; i < attachmentIds.count(); ++i) {
+            QMessageContentContainer attachment(message.find(attachmentIds[i]));
+            QString attachmentName = attachment.suggestedFileName();
+            if (attachment.isContentAvailable()) {
+                openAttachment = true;
+                m_availableAttachments.insert(attachmentName, attachmentIds[i].toString());
+            } else {
+                retrieveAttachment = true;
+                m_notAvailableAttachments.insert(attachmentName, attachmentIds[i].toString());
+            }
+        }
+        if (openAttachment) {
+            m_openAttachmentAction->setEnabled(true);
+        } else {
+            m_openAttachmentAction->setEnabled(false);
+        }
+        if (retrieveAttachment) {
+            m_retrieveAttachmentAction->setEnabled(true);
+        } else {
+            m_retrieveAttachmentAction->setEnabled(false);
+        }
+    } else {
+        m_showBodyOrAttachmentsAction->setEnabled(false);
+        m_retrieveAttachmentAction->setEnabled(false);
+        m_openAttachmentAction->setEnabled(false);
+    }
+
+    if (m_messageViewWidget->m_showAttachmentsActivated) {
+        m_messageViewWidget->showBodyOrAttachments();
+    }
+
     bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
 
     m_retrieveAction->setEnabled(partialMessage && messageId.isValid());
+}
+
+void RetrieveWidget::showBodyOrAttachments()
+{
+    m_messageViewWidget->showBodyOrAttachments();
+}
+
+void RetrieveWidget::bodyShown()
+{
+    m_showBodyOrAttachmentsAction->setText("Show Attachments");
+}
+
+void RetrieveWidget::attachmentsShown()
+{
+    m_showBodyOrAttachmentsAction->setText("Show Body");
+}
+
+void RetrieveWidget::downloadStarted()
+{
+    m_showBodyOrAttachmentsAction->setEnabled(false);
+    m_retrieveAttachmentAction->setEnabled(false);
+    m_openAttachmentAction->setEnabled(false);
+    m_cancelRetrieveAction->setEnabled(true);
+}
+
+void RetrieveWidget::downloadFinished()
+{
+    messageSelected(m_recentMessagesWidget->currentMessage());
+}
+
+void RetrieveWidget::downloadFailed()
+{
+    messageSelected(m_recentMessagesWidget->currentMessage());
+}
+
+void RetrieveWidget::retrieveAttachment()
+{
+    if (m_notAvailableAttachments.count() > 1) {
+        QInputDialog inputDialog;
+        inputDialog.setOptions(QInputDialog::UseListViewForComboBoxItems);
+        inputDialog.setComboBoxItems(m_notAvailableAttachments.keys());
+        inputDialog.setComboBoxEditable(false);
+        inputDialog.setLabelText("Select attachment");
+        inputDialog.exec();
+        if (inputDialog.result() == QDialog::Accepted) {
+            m_messageViewWidget->retrieveAttachment(m_notAvailableAttachments.value(inputDialog.textValue()));
+        }
+    } else {
+        m_messageViewWidget->retrieveAttachment(m_notAvailableAttachments.values().first());
+    }
+}
+
+void RetrieveWidget::openAttachment()
+{
+    if (m_availableAttachments.count() > 1) {
+        QInputDialog inputDialog;
+        inputDialog.setOptions(QInputDialog::UseListViewForComboBoxItems);
+        inputDialog.setComboBoxItems(m_availableAttachments.keys());
+        inputDialog.setComboBoxEditable(false);
+        inputDialog.setLabelText("Select attachment");
+        inputDialog.exec();
+        if (inputDialog.result() == QDialog::Accepted) {
+            m_messageViewWidget->openAttachment(m_availableAttachments.value(inputDialog.textValue()));
+        }
+    } else {
+        m_messageViewWidget->openAttachment(m_availableAttachments.values().first());
+    }
 }
 
 void RetrieveWidget::setupUi()
@@ -1094,9 +1370,30 @@ void RetrieveWidget::setupUi()
     m_messageViewWidget = new MessageViewWidget(this);
     l->addWidget(m_messageViewWidget);
 
+    m_showBodyOrAttachmentsAction = new QAction("Show Attachments",this);
+    connect(m_showBodyOrAttachmentsAction,SIGNAL(triggered(bool)),this,SLOT(showBodyOrAttachments()));
+    addAction(m_showBodyOrAttachmentsAction);
+    m_showBodyOrAttachmentsAction->setEnabled(false);
+
     m_retrieveAction = new QAction("Retrieve",this);
     connect(m_retrieveAction,SIGNAL(triggered(bool)),m_messageViewWidget,SLOT(retrieveBody()));
     addAction(m_retrieveAction);
+    m_retrieveAction->setEnabled(false);
+
+    m_retrieveAttachmentAction = new QAction("Retrieve attachment",this);
+    connect(m_retrieveAttachmentAction, SIGNAL(triggered(bool)), this, SLOT(retrieveAttachment()));
+    addAction(m_retrieveAttachmentAction);
+    m_retrieveAttachmentAction->setEnabled(false);
+
+    m_openAttachmentAction = new QAction("Open attachment",this);
+    connect(m_openAttachmentAction, SIGNAL(triggered(bool)), this, SLOT(openAttachment()));
+    addAction(m_openAttachmentAction);
+    m_openAttachmentAction->setEnabled(false);
+
+    m_cancelRetrieveAction = new QAction("Cancel retrieve",this);
+    connect(m_cancelRetrieveAction, SIGNAL(triggered(bool)), m_messageViewWidget, SLOT(cancelRetrieve()));
+    addAction(m_cancelRetrieveAction);
+    m_cancelRetrieveAction->setEnabled(false);
 
     connect(m_recentMessagesWidget,SIGNAL(selected(const QMessageId&)),m_messageViewWidget,SLOT(view(const QMessageId&)));
     connect(m_recentMessagesWidget,SIGNAL(selected(const QMessageId&)),this,SLOT(messageSelected(const QMessageId&)));

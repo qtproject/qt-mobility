@@ -285,19 +285,6 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
 void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
     d->createEngine(managerName, parameters);
-    connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
-    connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SIGNAL(contactsChanged(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
-
-    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)),
-            this, SLOT(_q_contactsUpdated(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
-            this, SLOT(_q_contactsDeleted(QList<QContactLocalId>)));
-
 
     QContactManagerData::m_aliveEngines.insert(this);
 }
@@ -1072,6 +1059,42 @@ QMap<QString, QString> QContactManager::managerParameters() const
 QString QContactManager::managerUri() const
 {
     return d->m_engine->managerUri();
+}
+
+
+/*!
+    \internal
+
+    When someone connects to this manager, connect the corresponding signal from the engine, if we
+    haven't before. If we have, just increment a count.
+
+    This allows lazy evaluation on the engine side (e.g. setting up dbus watchers) and prevents
+    unnecessary work.
+*/
+void QContactManager::connectNotify(const char *signal)
+{
+    /* For most signals we just connect from the engine to ourselves, since we just proxy, but we should connect only once */
+    QByteArray ba(signal);
+    if (!d->m_connectedSignals.contains(ba)) {
+        connect(d->m_engine, signal, this, signal);
+    }
+    d->m_connectedSignals[ba]++;
+}
+
+/*!
+    \internal
+
+    When someone disconnects, disconnect from the engine too if there are no more users of that signal.
+*/
+void QContactManager::disconnectNotify(const char *signal)
+{
+    QByteArray ba(signal);
+    if (d->m_connectedSignals[ba] <= 1) {
+        disconnect(d->m_engine, signal, this, signal);
+        d->m_connectedSignals.remove(ba);
+    } else {
+        d->m_connectedSignals[ba]--;
+    }
 }
 
 

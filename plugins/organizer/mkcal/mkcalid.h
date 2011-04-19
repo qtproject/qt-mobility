@@ -97,7 +97,8 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug& dbg) const
     {
-        return dbg << m_id << m_rid.dateTime() << managerUri();
+        dbg << m_id << m_rid.dateTime() << managerUri();
+        return dbg;
     }
 #endif
     uint hash() const

@@ -72,6 +72,17 @@ Item {
             when: mouseRegion.pressed == true
             PropertyChanges { target: buttonImage; opacity: 0.25 }
             PropertyChanges { target: buttonText; opacity: 0.25 }
+        },
+        State {
+            name: "Disabled"
+            PropertyChanges{ target: buttonImage; opacity: 0 }
+            PropertyChanges{ target: buttonText; opacity: 0 }
         }
+
     ]
+
+    function disable() {
+        container.state = "Disabled";
+        mouseRegion.enabled = false;
+    }
 }
