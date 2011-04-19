@@ -180,7 +180,7 @@ testcase = {
     | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |'
        ));
     },
-	
+
     landmarks_within_range_of_a_position: function()
     {
         prompt(twiki('---+++ Landmarks within range are displayed
@@ -202,7 +202,7 @@ testcase = {
     
     create_edit_and_delete_a_landmark: function()
     {
-	//Landmark manager provides notifications whenever landmarks are added, updated or deleted
+    //Landmark manager provides notifications whenever landmarks are added, updated or deleted
         prompt(twiki('---+++ Landmarks are added, edited and deleted
     | *Step* | *Verification* |
     | Run the landmarkbrowser application | |
@@ -228,7 +228,7 @@ testcase = {
     | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |'
         ));
     },
-	
+
     enumerate_categories: function()
     {
         prompt(twiki('---+++ Categories are displayed
@@ -239,7 +239,7 @@ testcase = {
     | Swith to the Landmark tab and back to the Category tab | Verify that the created categories are present in the list |'
         ));
     },
-	
+
     add_and_delete_a_category: function()
     {
     //Landmark manager provides notifications whenever categories are added, updated or deleted
@@ -283,7 +283,7 @@ testcase = {
 
     request_route_from_one_GPS_location_to_another_data: {
         route:["-27.575", "153.088", "-27.465", "153.023", "16050", "15989"]
-    }, 
+    },
 
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
     {
@@ -328,7 +328,7 @@ testcase = {
     | Press Terrain button (if button is enabled) | Map is drawn in Satellite view |'
         ));
     },
-	
+
     zooming_support:function()
     {
         prompt(twiki('---+++ Map is zoomed in and out
@@ -340,7 +340,7 @@ testcase = {
     | Double click on the map | Map is zoomed in correctly, step of zooming is consistent|'
         ));
     },
-	
+
     capturing_coordinates:function()
     {
         prompt(twiki('---+++ Coordinates are captured
@@ -353,7 +353,7 @@ testcase = {
     | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |'
         ));
     },
-	
+
     pixmap_object_zooming: function()
     {
         //test case for QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs
@@ -379,9 +379,9 @@ testcase = {
     {
         skip( "Nothing tested", SkipAll );
     },
-	
+
     //TESTED_COMPONENT=plugins/declarative/location
-	
+
     qml_display_map: function()
     {
         //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
@@ -393,7 +393,7 @@ testcase = {
     | Tap on Mode button | Verify that map is loaded for current position |'
         ));
     },
-	
+
     qml_zoom_map: function()
     {
         //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
@@ -408,7 +408,7 @@ testcase = {
         ));
     }
 
-	
+
 }  // end of testcase
 
 
