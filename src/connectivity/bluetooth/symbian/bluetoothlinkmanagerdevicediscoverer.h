@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -77,7 +77,7 @@ class BluetoothLinkManagerDeviceDiscoverer : public QObject, public CActive
     
 public:
 
-    BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
+    explicit BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
     ~BluetoothLinkManagerDeviceDiscoverer();
 
     void startDiscovery(const uint discoveryType);
