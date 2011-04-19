@@ -2,6 +2,7 @@ qt-mobility (1.2.0-beta0+4402) unstable; urgency=low
 
   * Added missing qml poster to install files
   * Synced from master/src/harmattaninstalls
+  * Fixes: NB#229951
   * Fixes: NB#171536
   * Fixes: NB#246193
 
