@@ -80,7 +80,7 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
         QVariant var;
         var.setValue(category.categoryId());
         categoryItem->setData(Qt::UserRole, var);
-        categoryItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+        categoryItem->setFlags(categoryItem->flags() & ~ Qt::ItemIsUserCheckable);
         if (landmark.categoryIds().contains(category.categoryId()))
             categoryItem->setCheckState(Qt::Checked);
         else
@@ -157,6 +157,9 @@ void LandmarkAddDialog::reject()
 
 void LandmarkAddDialog::categoryPressed(QListWidgetItem *item)
 {
+    //the purpose of this function is to ensure that when the item is pressed
+    //anywhere the checkbox will toggle (previously only clicking the box
+    //itself would cause a toggle)
     if (item->checkState() == Qt::Checked)
         item->setCheckState(Qt::Unchecked);
     else
