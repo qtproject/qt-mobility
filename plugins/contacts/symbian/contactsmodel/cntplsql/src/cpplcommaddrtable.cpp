@@ -1065,7 +1065,8 @@ CPplCommAddrTable::TMatch CPplCommAddrTable::CreatePaddedPhoneDigitsL(const TDes
 		// digits total.
 		TInt pad = KMaxPhoneMatchLength - KLowerSevenDigits - phoneNumber.iNumUpperDigits;
 		phoneNumber.iUpperDigits = TMatch::PadOutPhoneMatchNumber(phoneNumber.iUpperDigits,pad);
-		}
+        phoneNumber.iNumUpperDigits = aNumUpperDigits;
+        }
 
 	return phoneNumber;
 	}
