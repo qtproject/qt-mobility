@@ -24,88 +24,77 @@ New features
 *                          Library                                         *
 ****************************************************************************
 
-QtBearer
-------
- -
-
 QtContacts
 ------
- - 
-
-QtGallery
-------
- - 
+ - [QTMOBILITY-1384] QtVersit has UDEB symbols in Symbian WINSCW def file
+ - [QTMOBILITY-1361] QtContacts have UDEB symbols in Symbian WINSCW def file
+ - [QTMOBILITY-881]  QContactManager::fromUri() will block for 6 minutes when building the QContactManager if no SIM card inserted
 
 QtLocation
 ------
- - 
-
-QtMessaging
-------
- -
+ - [MOBILITY-2681]   limitations of landmark name filter for certain platforms needs to be documented more clearly
+ - [MOBILITY-2663]   some failng landmark autotests on S60 5th ed
+ - [MOBILITY-2618]   landmark documention should mention lack of support for AND filter with multiple attributes for symbian.
+ - [MOBILITY-2650]   cannot export landmarks using landmarkbrowser on harmattan
+ - [MOBILITY-2602]   qlandmarkmanager unit tests do not check return result of QLandmarkAbstractRequest::start() function
+ - [MOBILITY-2331]   AND operation with attribute filter fails
+ - [MOBILITY-2117]   Autotests of tst_QGeoTiledMappingManagerEngine
+ - [QTMOBILITY-1399] linking problem for qlandmarkmanagerplugin autotest using VS2008
+ - [QTMOBILITY-1364] operation type not copied when a landmarks attribute filter is copied
+ - [QTMOBILITY-995]  Application exits while getting position updates
 
 QtMultimediaKit
 ------
- - 
+ - [MOBILITY-2692]   tst_qmediarecorder crashes in S^3 devices except C7-00.1
+ - [MOBILITY-2654]   WINSCW and ARM warnings in Qt Mobility Symbian backend code
+ - [MOBILITY-2597]   No radio found[mobility regression testing]
+ - [MOBILITY-2596]   record failed [mobility regression]
+ - [MOBILITY-2594]   Player application - missing media player service
+ - [MOBILITY-2467]   [QML] Pause turns off automatically when playing two videos
+ - [MOBILITY-2466]   [QML] Two videos not played at the same time
+ - [MOBILITY-2422]   Recording for aac(format) is not being supported
+ - [MOBILITY-2332]   Missing stateChanged signal
+ - [MOBILITY-2321]   Receive call when playing audio file
+ - [MOBILITY-2241]   No sound when streaming tracks after voice call or clock alarm
+ - [MOBILITY-2123]   QMediaPlayer duration does not work with mp3 files
+ - [QTMOBILITY-1519] Rendering issue after switching between QGraphicsVideoItems
+ - [QTMOBILITY-1415] Camera doc error
+ - [QTMOBILITY-1405] QtMobility 1.1 branch does not compile on top of Qt 4.6.3
+ - [QTMOBILITY-1380] Documentation for QML Camera element missing
+ - [QTMOBILITY-1377] QMediaPlayer::duration() returns always -1
+ - [QTMOBILITY-1369] QCameraExposure is not emitting exposureCompensationChanged() signal
+ - [QTMOBILITY-1368] If client provides too small a data buffer for QAudioInput, the value for processedUSecs() will become more and more inacurate.
+ - [QTMOBILITY-1367] QPulseAudioInput may crash after calling close()
+ - [QTMOBILITY-1344] QPulseAudioEngine::~QPulseAudioEngine() does not lock mainloop
+ - [QTMOBILITY-1343] QPulseAudioOutput::write() does not handle a case what the available buffer is too small for data
+ - [QTMOBILITY-1342] Symbian Camera: ISO setting cannot be set
+ - [QTMOBILITY-1340] Pulse audio plugin for QAudioInput keeps running when buffer overflows
+ - [QTMOBILITY-1328] Documentation error for QPlayList
+ - [QTMOBILITY-1327] Stacking order of QGraphicsVideoItem is inverted on Symbian
+ - [QTMOBILITY-1322] Symbian Camera: Zooming fails in some cases
+ - [QTMOBILITY-1321] Multiple QML videos do not correctly respect Z-order on Symbian
+ - [QTMOBILITY-1315] Symbian Camera: Viewfinder fails to start when using QVideoRendererControl
+ - [QTMOBILITY-1314] Impossible to dismiss 'Color Options' dialog in player demo on Symbian
+ - [QTMOBILITY-1305] Video appears transparent when options menu is shown on Symbian
+ - [QTMOBILITY-1299] Video/Viewfinder not always shown fully in GVI on Symbian after rotation
+ - [QTMOBILITY-1293] buffer overflow in QPulseAudioInput::read()
+ - [QTMOBILITY-1287] Symbian Camera: QML Camera view display area does not update properly when content aspect ratio changes
+ - [QTMOBILITY-1280] Video can appear in wrong position using graphicsvideoitem on S60 5.0
+ - [QTMOBILITY-1090] [Symbian] Never got BufferedMedia status if NOT call QMediaPlayer::play()
 
 QtOrganizer
 ------
- - 
-
-QtPublishSubscribe
-------
- -
+ - [QTMOBILITY-1362] QtOrganizer has debug exports in QtOrganizeru.def for WINSCW
 
 QtSensors
 ------
- -
-
-QtServiceFramework
-------
- -
+ - [MOBILITY-2712]  GPS Test tool (rnd app) is crashed when launching it
+ - [QTMOBILITY-759] Symbian accelerometer readings massively delayed to client application
 
 QtSystemInfo
 ------
- -
-
-QtVersit
-------
- - 
-
-QtFeedback
-------
- - 
-
-Qt Mobility Plugins
-------
- -
-
-
-****************************************************************************
-*                      Platform Specific Changes                           *
-****************************************************************************
-
-Qt Mobility for Embedded Linux
-------
- -
-
-Qt Mobility for Unix (X11 and Mac OS X)
-------
- - 
-
-Qt Mobility for Linux/X11
-------
- -
-
-Qt Mobility for Windows
-------
- -
-
-Qt Mobility for Mac OS X
-------
- -
-
-Qt Mobility for Windows CE
-------
- -
-
+ - [MOBILITY-2648]  Wlanserver leaking memory
+ - [MOBILITY-2646]  QtMobility WLAN timer ON when WLAN is OFF
+ - [MOBILITY-2607]  the IMEI information can't be shown when first click 'device'.
+ - [QTMOBILITY-677] Battery level changes are never notified when levels go below 14%.
+ - [QTMOBILITY-1345] QSystemDeviceInfo::imei() method is crashing with KERN-EXEC 0 panic when QSystemDeviceInfo object is instaniated and called on a secondary thread
