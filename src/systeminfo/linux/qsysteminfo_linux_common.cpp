@@ -3010,7 +3010,8 @@ QByteArray QSystemDeviceInfoLinuxCommonPrivate::uniqueDeviceID()
 }
 
 QSystemBatteryInfoLinuxCommonPrivate::QSystemBatteryInfoLinuxCommonPrivate(QObject *parent)
-: QObject(parent), batteryIsPresent(0)
+    : QObject(parent)
+    , batteryIsPresent(false)
 {
 #if !defined(QT_NO_DBUS)
     halIsAvailable = halAvailable();
