@@ -3141,7 +3141,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
             powerDevice = new QUPowerDeviceInterface(objpath.path(),this);
             if (powerDevice->getType() == 2) {
                 battery = new QUPowerDeviceInterface(objpath.path(),this);
-                pMap = battery->getProperties();
+                //pMap = battery->getProperties();
                 connect(battery,SIGNAL(propertyChanged(QString,QVariant)),
                         this,SLOT(uPowerPropertyChanged(QString,QVariant)));
             }

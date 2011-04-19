@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QSYSTEMINFO_LINUX_COMMON_P_H
 #define QSYSTEMINFO_LINUX_COMMON_P_H
-
 
 //
 //  W A R N I N G
@@ -53,14 +53,6 @@
 // We mean it.
 //
 
-
-#include <QObject>
-#include <QSize>
-#include <QHash>
-#include <QTimer>
-#include <QVariantMap>
-#include <QDesktopWidget>
-
 #include "qsysteminfo.h"
 #include "qsystemdeviceinfo.h"
 #include "qsystemdisplayinfo.h"
@@ -69,28 +61,20 @@
 #include "qsystemstorageinfo.h"
 #include "qsystembatteryinfo.h"
 
-#include <qmobilityglobal.h>
-
 #if !defined(QT_NO_DBUS)
 #include "qhalservice_linux_p.h"
+#if !defined(Q_WS_MAEMO5) && !defined(Q_WS_MAEMO6)
 #include "qdevicekitservice_linux_p.h"
-
 #if !defined(QT_NO_CONNMAN)
 #include "qconnmanservice_linux_p.h"
 #include "qofonoservice_linux_p.h"
-#endif
-#endif
+#endif // QT_NO_CONNMAN
+#endif // Q_WS_MAEMO
+#endif // QT_NO_DBUS
 
 QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-class QStringList;
-class QTimer;
-QT_END_NAMESPACE
-
 QTM_BEGIN_NAMESPACE
 
-class QSystemNetworkInfo;
 class QSystemInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
@@ -128,11 +112,6 @@ protected:
     bool hasHalUsbFeature(qint32 usbClass);
 #endif // QT_NO_DBUS
 };
-
-class QNetworkManagerInterface;
-class QNetworkManagerInterfaceDeviceWired;
-class QNetworkManagerInterfaceDeviceWireless;
-class QNetworkManagerInterfaceAccessPoint;
 
 class QSystemNetworkInfoLinuxCommonPrivate : public QObject
 {
@@ -354,18 +333,16 @@ private:
 class QSystemBatteryInfoLinuxCommonPrivate : public QObject
 {
     Q_OBJECT
+
 public:
     explicit QSystemBatteryInfoLinuxCommonPrivate(QObject *parent = 0);
     ~QSystemBatteryInfoLinuxCommonPrivate();
 
-
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
-
     int nominalCapacity() const;
     int remainingCapacityPercent() const;
     int remainingCapacity() const;
-
     int voltage() const;
     int remainingChargingTime() const;
     int currentFlow() const;
@@ -373,23 +350,15 @@ public:
     int maxBars() const;
     QSystemBatteryInfo::BatteryStatus batteryStatus() const;
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
-    bool batteryIsPresent;
-    QSystemBatteryInfo::ChargerType curChargeType;
 
 Q_SIGNALS:
     void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
-
-
     void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
     void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
-
     void nominalCapacityChanged(int);
     void remainingCapacityPercentChanged(int);
     void remainingCapacityChanged(int);
-    void batteryCurrentFlowChanged(int);
-
     void currentFlowChanged(int);
-    void cumulativeCurrentFlowChanged(int);
     void remainingCapacityBarsChanged(int);
     void remainingChargingTimeChanged(int);
 
@@ -398,10 +367,7 @@ protected:
     void disconnectNotify(const char *signal);
 
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
-    QUDisksInterface *udisksIface;
-
     QSystemBatteryInfo::ChargerType currentChargerType();
 
 private Q_SLOTS:
@@ -413,12 +379,14 @@ private Q_SLOTS:
     void uPowerPropertyChanged(const QString &, const QVariant &);
 #endif
 #endif
-private:
 
+protected:
+    QSystemBatteryInfo::ChargerType curChargeType;
+
+private:
+    bool batteryIsPresent;
     QSystemBatteryInfo::BatteryStatus currentBatStatus;
     QSystemBatteryInfo::ChargingState curChargeState;
-    QVariantMap pMap;
-
     int currentBatLevelPercent;
     int currentVoltage;
     int dischargeRate;
@@ -427,16 +395,9 @@ private:
     int remainingEnergy;
     int  batteryLevel() const ;
     QUPowerDeviceInterface *battery;
-
-
-
 };
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
-#endif /*QSYSTEMINFO_LINUX_COMMON_P_H*/
-
-// End of file
-
+#endif // QSYSTEMINFO_LINUX_COMMON_P_H

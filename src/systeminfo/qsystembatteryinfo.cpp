@@ -361,7 +361,6 @@ void QSystemBatteryInfo::connectNotify(const char *signal)
 */
 void QSystemBatteryInfo::disconnectNotify(const char *signal)
 {
-
     if (QLatin1String(signal) == SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus))) {
         disconnect(d, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)),
                    this, SIGNAL(batteryStatusChanged(QSystemBatteryInfo::BatteryStatus)));
