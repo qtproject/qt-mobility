@@ -389,7 +389,7 @@ void tst_QMediaServiceProvider::testHasSupport()
     QCOMPARE(QMediaPlayer::hasSupport("audio/wav", QStringList(), QMediaPlayer::StreamPlayback),
              QtMultimediaKit::MaybeSupported);
 
-    //ensure the correct media player plugin is choosen for mime type
+    //ensure the correct media player plugin is chosen for mime type
     QMediaPlayer simplePlayer(0, QMediaPlayer::LowLatency);
     QCOMPARE(simplePlayer.service()->objectName(), QLatin1String("MockServicePlugin2"));
 

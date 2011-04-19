@@ -124,7 +124,7 @@ bool TestCase::loadXmlInformation()
         }
     }
     
-    // check if we have all informations
+    // check if we have all information
     QTextStream out(&errorMsg);
     if(testName.size() <= 0)
         out << "No test name defined. Error in Test.xml file!" << endl;
