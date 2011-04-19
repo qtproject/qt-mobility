@@ -485,7 +485,7 @@ void tst_QMediaPlaylist::loadM3uFile()
 
     playlist.load(QUrl::fromLocalFile(QLatin1String(TESTDATA_DIR "testdata/test.m3u")));
     QCOMPARE(playlist.error(), QMediaPlaylist::NoError);
-    QCOMPARE(playlist.mediaCount(), 5);
+    QCOMPARE(playlist.mediaCount(), 7);
 
     QCOMPARE(playlist.media(0).canonicalUrl(), QUrl(QLatin1String("http://test.host/path")));
     QCOMPARE(playlist.media(1).canonicalUrl(), QUrl(QLatin1String("http://test.host/path")));
@@ -494,6 +494,9 @@ void tst_QMediaPlaylist::loadM3uFile()
     QCOMPARE(playlist.media(3).canonicalUrl(),
              QUrl(QLatin1String("file://" TESTDATA_DIR "testdata/testdir/testfile")));
     QCOMPARE(playlist.media(4).canonicalUrl(), QUrl(QLatin1String("file:///testdir/testfile")));
+    QCOMPARE(playlist.media(5).canonicalUrl(), QUrl(QLatin1String("file://path/name#suffix")));
+    //ensure #2 suffix is not stripped from path
+    QCOMPARE(playlist.media(6).canonicalUrl(), QUrl::fromLocalFile(TESTDATA_DIR "testdata/testfile2#suffix"));
 }
 
 void tst_QMediaPlaylist::playbackMode_data()
