@@ -506,13 +506,13 @@ void SocketRequestorPrivate::sendRequestAccess(const QString &adaptor, const QSt
 
     dbus_message_iter_init_append(message, &args);
     const QByteArray p = path.toUtf8();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &p.constData())) {
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, p.constData())) {
         dbus_message_unref(message);
         return;
     }
 
     const QByteArray k = kind.toUtf8();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &k.constData())) {
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, k.constData())) {
         dbus_message_unref(message);
         return;
     }
@@ -544,13 +544,13 @@ void SocketRequestorPrivate::sendCancelAccessRequest(const QString &adaptor, con
 
     dbus_message_iter_init_append(message, &args);
     const QByteArray p = path.toUtf8();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &p.constData())) {
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, p.constData())) {
         dbus_message_unref(message);
         return;
     }
 
     const QByteArray k = kind.toUtf8();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &k.constData())) {
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, k.constData())) {
         dbus_message_unref(message);
         return;
     }
