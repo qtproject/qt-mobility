@@ -90,6 +90,8 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
     categoryList->setMinimumHeight(categories.count()
                                    * (categoryList->sizeHintForRow(0) + categoryList->spacing())
                                    + categoryList->frameWidth() *2);
+    QObject::connect(categoryList, SIGNAL(itemPressed(QListWidgetItem *)),
+            this, SLOT(categoryPressed(QListWidgetItem *)));
 }
 
 LandmarkAddDialog::~LandmarkAddDialog()
@@ -151,4 +153,12 @@ void LandmarkAddDialog::reject()
 {
     lm.clear();
     QDialog::reject();
+}
+
+void LandmarkAddDialog::categoryPressed(QListWidgetItem *item)
+{
+    if (item->checkState() == Qt::Checked)
+        item->setCheckState(Qt::Unchecked);
+    else
+        item->setCheckState(Qt::Checked);
 }
