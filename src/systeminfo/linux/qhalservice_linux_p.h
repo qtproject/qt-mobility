@@ -55,45 +55,18 @@
 
 #include <qmobilityglobal.h>
 
+#include <QtCore/qvariant.h>
 #include <QtDBus/QtDBus>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusError>
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusMessage>
-#include <QtDBus/QDBusReply>
-#include <QtDBus/QDBusPendingCallWatcher>
-
-#include <QVariantList>
 
 #define HAL_DBUS_SERVICE "org.freedesktop.Hal"
-
-#define HAL_DBUS_PATH "/org/freedesktop/Hal"
-#define HAL_DBUS_INTERFACE "org.freedesktop.Hal"
 
 #define HAL_DBUS_MANAGER_PATH "/org/freedesktop/Hal/Manager"
 #define HAL_DBUS_MANAGER_INTERFACE "org.freedesktop.Hal.Manager"
 
-#define HAL_DEVICE_PATH "/org/freedesktop/Hal/Device"
 #define HAL_DEVICE_INTERFACE "org.freedesktop.Hal.Device"
-
-#define HAL_DEVICES_PATH "/org/freedesktop/Hal/devices"
 
 #define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
 #define HAL_DEVICE_KILLSWITCH_INTERFACE "org.freedesktop.Hal.Device.KillSwitch"
-
-QTM_BEGIN_NAMESPACE
-
-typedef struct halProp {
-    QString propertyName;
-    bool added;
-    bool removed;
-} HalProperty;
-
-typedef QList<HalProperty> QHalPropertyList;
-
-QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QHalPropertyList))
 
 QTM_BEGIN_NAMESPACE
 
@@ -103,34 +76,22 @@ class QHalInterface : public QObject
     Q_OBJECT
 
 public:
-
     QHalInterface(QObject *parent = 0);
     ~QHalInterface();
 
     bool isValid();
-    QDBusInterface *connectionInterface() const;
     QStringList findDeviceByCapability(const QString &cap);
     QStringList getAllDevices();
-    bool deviceExists(const QString &path);
-Q_SIGNALS:
-    void deviceAdded(const QString &driveVolume);
-    void deviceRemoved(const QString &driveVolume);
-
     
-private Q_SLOTS:
 private:
-        QHalInterfacePrivate *d;
-protected:
-        void connectNotify(const char *signal);
-        void disconnectNotify(const char *signal);
-
+    QHalInterfacePrivate *d;
 };
 
 class QHalDeviceInterfacePrivate;
 class QHalDeviceInterface : public QObject
 {
     Q_OBJECT
-    
+
 public:
     QHalDeviceInterface(const QString &devicePathName, QObject *parent = 0);
     ~QHalDeviceInterface();
@@ -138,19 +99,15 @@ public:
     bool isValid();
     bool getPropertyBool(const QString &prop);
     QString getPropertyString(const QString &prop);
-    QStringList getPropertyStringList(const QString &prop);
     qint32 getPropertyInt(const QString &prop);
 
-    bool queryCapability(const QString &cap);
     bool setConnections();
-    bool propertyExists(const QString &);
 
 Q_SIGNALS:
-    void propertyModified( int,  QVariantList);
+    void propertyModified(int,  QVariantList);
 
 private:
-        QHalDeviceInterfacePrivate *d;
-
+    QHalDeviceInterfacePrivate *d;
 };
 
 class QHalDeviceLaptopPanelInterfacePrivate;
@@ -161,34 +118,13 @@ class QHalDeviceLaptopPanelInterface : public QObject
 public:
     QHalDeviceLaptopPanelInterface(const QString &devicePathName, QObject *parent = 0);
     ~QHalDeviceLaptopPanelInterface();
-    bool isValid();
-public:
+
     quint32 getBrightness();
-    void setBrightness(quint32);
 
 private:
-        QHalDeviceLaptopPanelInterfacePrivate *d;
-protected:
-      //   virtual void connectNotify(const char *signal);
-      //   virtual void disconnectNotify(const char *signal);
-};
-
-class QHalDeviceKillSwitchInterfacePrivate;
-class QHalDeviceKillSwitchInterface : public QObject
-{
-    Q_OBJECT
-
-public:
-    QHalDeviceKillSwitchInterface(const QString &devicePathName, QObject *parent = 0);
-    ~QHalDeviceKillSwitchInterface();
-    bool isValid();
-public:
-    quint32 getPower(); //returns 1 if on
-
-private:
-        QHalDeviceKillSwitchInterfacePrivate *d;
+    QHalDeviceLaptopPanelInterfacePrivate *d;
 };
 
 QTM_END_NAMESPACE
 
-#endif //
+#endif // QHALSERVICE_H
