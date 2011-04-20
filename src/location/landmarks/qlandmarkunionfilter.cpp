@@ -50,8 +50,9 @@ QTM_BEGIN_NAMESPACE
             of its constituent filters.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-filter
+    \since 1.1
 
     Conceptually it performs an OR operation and may thus be used
     to select landmarks which match any one of it's constituent filters.

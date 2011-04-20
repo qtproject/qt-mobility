@@ -49,24 +49,25 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageAddress class provides an interface for a message address.
 
-    
+
     \inmodule QtMessaging
-    
+
     \ingroup messaging
-   
+    \since 1.0
+
     A message address consists of an addressee string and a type.
-*/    
+*/
 
 /*!
     \enum QMessageAddress::Type
 
     This enum type is used to describe the type of a message address.
-    
+
     \value System             A system address.
     \value Phone              A telephony address.
     \value Email              An Email, Internet Message Format address.
     \value InstantMessage     An Instant Messaging address.
-    
+
     \sa type(), setType()
 */
 
@@ -176,14 +177,14 @@ void QMessageAddress::setType(Type type)
     * \a name is set to the name part of the email address.
     * \a address is set to the address part of the email address.
     * \a suffix is set to the suffix part of the email address.
-    
-    If the starting delimeter between the name and address part of the email address is found 
+
+    If the starting delimeter between the name and address part of the email address is found
     then * \a startDelimeterFound is set to true; otherwise * \a startDelimeterFound is set to false;
 
     If the starting delimeter is not found, then the parsing is ambiguous and both * \a name and
     * \a address will be set to the input \a emailAddress.
 
-    If the ending delimeter of the address part of the email address is found 
+    If the ending delimeter of the address part of the email address is found
     then * \a endDelimeterFound is set to true; otherwise * \a endDelimeterFound is set to false;
 
 */

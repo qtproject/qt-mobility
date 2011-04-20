@@ -62,6 +62,7 @@ QContactAction::~QContactAction()
   \ingroup contacts-actions
 
   \inmodule QtContacts
+  \since 1.2
   
   An action is anything that can be performed on a contact, or a detail of a contact.  An example
   of an action might be "Send Email" or "Dial" or "Plot Navigation Route".  One action may be

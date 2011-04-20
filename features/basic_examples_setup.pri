@@ -51,6 +51,7 @@ maemo6 {
     DEFINES+= QTM_EXAMPLES_PREFER_LANDSCAPE
 }
 maemo5 {
+    error(Maemo5/Freemantle not supported by QtMobility 1.2+ \(Not building any examples and demos\).)
     DEFINES+= Q_WS_MAEMO_5
     DEFINES+= QTM_EXAMPLES_SMALL_SCREEN
     DEFINES+= QTM_EXAMPLES_PREFER_LANDSCAPE

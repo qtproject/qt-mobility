@@ -54,11 +54,12 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContact
- 
+
   \brief The QContact class represents an addressbook contact.
 
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-main
 
   Individual contacts, groups, and other types of contacts are represented with
@@ -82,7 +83,7 @@ QTM_BEGIN_NAMESPACE
   a group contact would have a \c "HasMember" relationship with the QContacts that
   are its members.  Spouses, managers and assistants can also be represented this
   way.
- 
+
   A QContact instance represents the in-memory version of an addressbook contact,
   and has no tie to a specific QContactManager.  It is possible for the contents
   of a QContact to change independently of the contents that are stored persistently
@@ -100,7 +101,7 @@ QTM_BEGIN_NAMESPACE
   you will need to ask a specific QContactManager for the new display label for the
   contact, since system settings (like the order of first or last names) can vary
   between managers.
- 
+
   \sa QContactManager, QContactDetail
  */
 

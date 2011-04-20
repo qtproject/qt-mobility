@@ -104,6 +104,7 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     \inmodule QtLocation
 
     \ingroup landmarks-main
+    \since 1.1
 
     Landmarks of similar type may be grouped together into categories,
     e.g. restaurants, accommodation etc,  a QLandmarkCategory object

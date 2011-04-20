@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRouteSegment class represents a segment of a route.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -230,7 +231,7 @@ void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 /*!
     Returns the manevuer for this route segment.
 
-    Will return an invalid QGeoManeuver if no information has been attached 
+    Will return an invalid QGeoManeuver if no information has been attached
     to the endpoint of this route segment.
 */
 QGeoManeuver QGeoRouteSegment::maneuver() const

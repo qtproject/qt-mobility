@@ -62,6 +62,7 @@ QTM_BEGIN_NAMESPACE
     supported for import requests and will always return false.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-request
 */

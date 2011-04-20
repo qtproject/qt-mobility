@@ -64,6 +64,7 @@ public:
     \class QMemoryVideoBuffer
     \brief The QMemoryVideoBuffer class provides a system memory allocated video data buffer.
     \internal
+    \since QtMobility 1.0
 
     QMemoryVideoBuffer is the default video buffer for allocating system memory.  It may be used to
     allocate memory for a QVideoFrame without implementing your own QAbstractVideoBuffer.

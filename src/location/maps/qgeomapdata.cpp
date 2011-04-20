@@ -73,6 +73,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-impl
 
@@ -121,7 +122,7 @@ QGeoMapData::~QGeoMapData()
 }
 
 /*!
-    This function is run after the QGeoMapData instance has been 
+    This function is run after the QGeoMapData instance has been
     constructed.
 
     Any subclasses which override this function should make sure that
@@ -710,7 +711,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 /*!
 \fn void QGeoMapData::windowSizeChanged(const QSizeF &windowSize)
 
-    This signal is emitted when the size of the window which contains 
+    This signal is emitted when the size of the window which contains
     the map has changed.
 
     The new value is \a windowSize.
@@ -759,7 +760,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 /*!
 \fn void QGeoMapData::connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
 
-    This signal is emitted when the connectivity mode used to fetch the 
+    This signal is emitted when the connectivity mode used to fetch the
     map data has changed.
 
     The new value is \a connectivityMode.
@@ -768,7 +769,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 /*!
 \fn void QGeoMapData::updateMapDisplay(const QRectF &target)
 
-    This signal is emitted when the region \a target of the window which 
+    This signal is emitted when the region \a target of the window which
     contains the map needs to be updated.
 
 

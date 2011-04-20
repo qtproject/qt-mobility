@@ -67,6 +67,7 @@ QTM_BEGIN_NAMESPACE
 
   \inmodule QtOrganizer
   \ingroup organizer-backends
+   \since 1.1
 
   Instances of this class are usually provided by a
   \l QOrganizerManagerEngineFactory, which is loaded from a plugin.
@@ -2593,7 +2594,7 @@ const QOrganizerCollectionEngineId* QOrganizerManagerEngine::engineCollectionId(
   \o it can't reliably access any properties of the request pointer any more.  The pointer will
      be invalid once this function returns.
   \endlist
-  
+
   This means that if there is a worker thread, the engine needs to let that thread know that the
   request object is not valid and block until that thread acknowledges it.  One way to do this is to
   have a QSet<QOrganizerAbstractRequest*> (or QMap<QOrganizerAbstractRequest,
@@ -2614,13 +2615,13 @@ void QOrganizerManagerEngine::requestDestroyed(QOrganizerAbstractRequest* req)
 
   Generally, the engine queues the request and processes it at some later time (probably in another
   thread).
-  
+
   Once a request is started, the engine should call the updateRequestState and/or the specific
   updateXXXXXRequest functions to mark it in the active state.
-  
+
   If the engine is particularly fast, or the operation involves only in memory data, the request can
   be processed and completed without queueing it.
-  
+
   Note that when the client is threaded, and the request might live on a different thread, the
   engine needs to be careful with locking.  In particular, the request might be deleted while the
   engine is still working on it.  In this case, the requestDestroyed function will be called while

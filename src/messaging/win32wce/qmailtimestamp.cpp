@@ -153,7 +153,7 @@ QMailTimeStampPrivate::QMailTimeStampPrivate(const QString& timeText)
             year = value;
             if ( year < 100 ) {
                 year += ( year <= 49 ? 2000 : 1900 );
-            } 
+            }
             else if ( year < 1000 ) {
                 year += 1900;
             }
@@ -172,10 +172,10 @@ QMailTimeStampPrivate::QMailTimeStampPrivate(const QString& timeText)
         QTime timeComponent;
 
         QTime parsedTime;
-        if ( timeStr.length() == 8 ) { 
+        if ( timeStr.length() == 8 ) {
             parsedTime = QTime::fromString( timeStr, "hh:mm:ss" );
         }
-        else if ( timeStr.length() == 5 ) { 
+        else if ( timeStr.length() == 5 ) {
             // Is this legal?  Either way, it seems desirable for robustness...
             parsedTime = QTime::fromString( timeStr, "hh:mm" );
         }
@@ -228,7 +228,7 @@ QMailTimeStampPrivate::QMailTimeStampPrivate(const QDateTime& dateTime)
 }
 
 QMailTimeStampPrivate::QMailTimeStampPrivate(const QMailTimeStampPrivate& other)
-    : QSharedData(other) 
+    : QSharedData(other)
 {
     this->operator=(other);
 }
@@ -339,10 +339,11 @@ bool QMailTimeStampPrivate::operator>= (const QMailTimeStampPrivate& other) cons
 
     \brief The QMailTimeStamp class manages message time stamps.
     \ingroup messaginglibrary
+    \since 1.1
 
     QMailTimeStamp provides functions for creating and manipulating the time stamps of messages.
-    QMailTimeStamp can be created from time stamp strings, or from QDateTime objects.  The 
-    time stamp information can be extracted in UTC time, local time, or as a formatted 
+    QMailTimeStamp can be created from time stamp strings, or from QDateTime objects.  The
+    time stamp information can be extracted in UTC time, local time, or as a formatted
     string.
 
     QMailTimeStamp maintains the timezone information of a time stamp, so it can be used to
@@ -353,7 +354,7 @@ bool QMailTimeStampPrivate::operator>= (const QMailTimeStampPrivate& other) cons
 
 /*!
     \enum QMailTimeStamp::OutputFormat
-    
+
     This enum type is used to select a format for timestamp output.
 
     \value Rfc2822  The format used in SMTP message format; example: "Wed, 17 May 2006 20:45:00 +0100".

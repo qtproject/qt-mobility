@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     QBluetoothLocalDevice provides functions for getting and setting the state of local Bluetooth
     devices.
@@ -131,7 +132,7 @@ QBluetoothLocalDevice::~QBluetoothLocalDevice()
     otherwise return false.
 */
 bool QBluetoothLocalDevice::isValid() const
-{    
+{
     return d_ptr;
 }
 
@@ -226,7 +227,7 @@ bool QBluetoothLocalDevice::isValid() const
 
 /*!
   \fn QBluetoothLocalDevice::error(QBluetoothLocalDevice::Error error)
-  Signal emited for pairing if there's an exceptional \a error
+  Signal emitted for pairing if there's an exceptional \a error
 */
 
 

@@ -98,6 +98,7 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
     \inmodule QtLocation
 
     \ingroup landmarks-filter
+    \since 1.1
 
     You can provide various keys which describe the attribute(s) to search.
     Precisely which keys may be used depends on the manager

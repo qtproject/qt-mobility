@@ -172,6 +172,7 @@ void QCameraFocusZone::setStatus(QCameraFocusZone::FocusZoneStatus status)
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
 */
 

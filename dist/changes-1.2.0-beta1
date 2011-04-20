@@ -19,9 +19,27 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
-Contacts
+ - Qt Connectivity module
+    - Bluetooth and Near-Field-Communication (NFC)
+
+ - MeeGo.com
+    - Added support for this platform
+
+ - Contacts
     - Maximum result limit hinting
       http://bugreports.qt.nokia.com/browse/QTMOBILITY-652
+
+ - QtMultimediaKit
+    - Support for choosing the network configuration to use for streaming added
+
+
+Library independent changes
+------
+
+ - pkconfig generation fixed
+ - various build system changes required by the newly added Meego platform
+   support
+
 
 ****************************************************************************
 *                   Important Behavior Changes                             *
@@ -31,3 +49,221 @@ QtVersit
 ------
  - The FN vCard property will now only be generated if a QContactName is
    provided with a CustomLabel field.
+
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtConnectivity
+-----
+ - The QNearFieldTarget is now asynchronous.
+ - LLCP socket support on Maemo 6
+ - Improved API documentation and example applications.
+ - Added connectivity QML plugin
+ - Added connectivity QML example applications
+ - Bluetooth Symbian backend
+ - Added bluetooth and nfc bttennis example
+ - Added bluetooth file transfer using Obex Push
+
+
+QtLocation
+-----
+ - QGeoCoordinate::atDistanceAndAzimuth
+ - A positioning backend for MeeGo
+ - Support for positioning plugins
+ - Support for map objects based on arbitrary QGraphicsItems
+ - Support for map bearing and tilting added to the API.
+   - The included map plugin doesn't support them yet.
+
+
+QtFeedback
+------
+ - Use newer CHWRMHaptics API on Symbian^3 for more functionality
+ - Several fixes relating to error handling
+
+ QtMessaging
+ -----
+ - API additions
+    - QMessageAccountFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFilter::byTo(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFilter::byCc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFilter::byBcc(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFolderFilter::byName(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageFolderFilter::byPath(const QString &pattern, QMessageDataComparator::LikeComparator cmp)
+    - QMessageManager::removeAccount(const QMessageAccountId &id)
+    - QMessageService::moveMessage(const QMessageId &messageId, const QMessageFolderId &toFolderId)
+    - QMessageManager::accountRemoved(const QMessageAccountId &id);
+ - Many bug fixes (most importan below)
+    - Fix QTMOBILITY-771 queryMessages method produces segmentation fault, environment N900
+    - Fix MOBILITY-2017 queryFolders does not list folders in 'My Folders, environment N8
+    - Fix MOBILITY-2234 Message query crashes when fixed Symbian API is used,  environment Symbian^3 (TB 9.2)
+    - Fix QTMOBILITY-789 Native SMS sending on Symbian gets blocked when listening for SMS messages, environment Nokia XM 5800
+    - Fix MOBILITY-2289 Updating to, cc & bcc fields does not work correctly, environment S60, Symbian^3
+    - Fix MOBILITY-2292 Getting Binary attachment fails sometimes, environment Symbian^3
+    - Fix MOBILITY-2234 Message query crashes when fixed Symbian API is used, environment Symbian^3 (TB 9.2)
+    - Fix MOBILITY-2136 libqtm-messaging depends on libosso, environment Maemo 6
+    - Fix MOBILITY-2322 Crash on call to QMessageService::send(), environment Maemo 6
+    - Fix MOBILITY-2371 QMessageManager::updateMessage() crashes, environment Symbian^3
+    - Fix MOBILITY-2203 Searching Email folders not possible after sending email, environment Maemo 6
+    - Fix MOBILITY-2687 coverity defects, environment Symbian^3
+
+QtMultimediaKit
+------
+ - Many, many fixes for Symbian audio, video and camera, including support
+   for QtMultimediaKit QML elements
+ - On Symbian, handle missing capabilities gracefully
+ - On Linux with gstreamer, allow QIODevice based streaming
+ - Documentation for QML Camera element was added
+
+QtVersit
+-----
+ - vCard birthday/anniversary properties that are just a date (no time)
+   will be stored as dates, not datetimes
+
+QtContacts
+-----
+ - Several documentation clarifications
+ - Several new QContactFilter convenience functions {address, presence, favorite etc}
+ - New "time out" error code
+
+QtOrganizer
+-----
+ - Meeting request and attachment support (added in TP) has been removed
+ - New "time out" error code.
+
+ - Fixes for maemo5 asynchronous engine
+
+QtServiceFrameWork
+-----
+ - QtMobility has now its own QMetaObjectBuilder
+ - Autotest improvement
+ - Optimisation of Memory usage
+ - Stability improvement of IPC datatransfer
+
+QtSensors
+------
+ - Add QLightSensor (LUX) [MOBILITY-1268]
+ - Add QGyroscope (rotational acceleration) [MOBILITY-1266]
+ - Allow sensor backends to be dynamically registered and unregistered.
+   Backend plug-ins and applications can be notified when the available
+   sensors have changed [MOBILITY-864]
+ - Generic backends no longer override system backends. This primarily
+   affects Symbian, which now uses native Orientation and Rotation backends
+   by default.
+ - Tap sensors that can only detect the axis, not the direction, now have
+   a value they can return [MOBILITY-1878]
+ - setDataRate and setOutputRange can once again be called before the
+   backend is connected [MOBILITY-2087]
+ - Filters were not properly deregisering themselves [MOBILITY-2401]
+ - Don't unconditionally print out plugin loading errors [QTMOBILITY-1034]
+ - Find out what filters are attached to a sensor [QTMOBILITY-574]
+ - Platform-specific notes are available for Symbian, N900 and MeeGo and
+   explain issues particular to each platform [MOBILITY-2481]
+ - Allow setting up the axes on the N900 to match the standard adopted by
+   Symbian and MeeGo [QTMOBILITY-1044]
+ - Qt-style static plugins are now supported
+ - Reading timestamps are not guaranteed to be monotonic (problems have been
+   identified on Symbian, MeeGo and N900)
+ - Blocking the event loop on Symbian no longer results in delayed sensor
+   readings. Readings that cannot be processed quickly enough are now
+   dropped by the system [QTMOBILITY-759]
+ - Improve N900 reading timestamps. Still not guaranteed to be monotonic
+   due to a kernel bug [MOBILITY-2091]
+ - Update the simulator to support QLightSensor [MOBILITY-2686]
+ - As much as possible, ensure sensors supply the current value when they
+   are started. Especially important for sensors that change infrequently
+   (eg. Orientation) [QTMOBILITY-1385]
+ - Don't crash when using QCompass on Symbian [QTMOBILITY-1482]
+ - Allow slower polling of N900 sensors [QTMOBILITY-1505]
+ - N900 proximity sensor cannot run faster than 10Hz [QTMOBILITY-1505]
+
+Plugins
+-----
+ - Declarative plugins containing d suffix in debug build now.
+
+
+QtSysteminfo
+-----
+    - add fm transmitter to QSystemInfo featureSupported
+    - QTMOBILITY-845 QSystemNetworkInfo: MCC and MNC interchanged
+    - Battery level changes fix on symbian.
+    - batteryStatusChanged only works once on symbian.
+    - QTMOBILITY-850 QSystemInfo::version returns wrong info on linux
+    - remove voltageChanged signal from QSystemBatteryInfo
+    - QTMOBILITY-877 setScreenSaverDelayed in qml not working
+    - remove startCurrentMeasurement method from QSystemAlignedTimer
+    - LockType are now flags
+    - QTMOBILITY-969 QSystemDisplayInfo::getOrientation() always returns
+      QSystemDisplayInfo::Unknown in maemo6
+    - QTMOBILITY-970 QSystemDisplayInfo::backlightStatus() always returns
+      QSystemDisplayInfo::BacklightStateUnknown in maemo6
+    - QTMOBILITY-973 QSystemDeviceInfo::isKeyboardFlippedOpen() always
+      returns false in maemo6
+    - QSystemAlignedTimer
+    - QTMOBILITY-977 new connman service name
+    - QTMOBILITY-978 QSystemDeviceInfo::keypadLightOn() always returns false
+      in maemo6
+    - QTMOBILITY-979 QSystemDeviceInfo::lockStatus() always returns
+      QSystemDeviceInfo::UnknownLock in maemo6
+    - QTMOBILITY-985 QSystemDeviceInfo::getActiveProfileDetails() does not
+      retrieve active profile settings in maemo6
+    - QTMOBILITY-922 devicelocked notification
+    - QTMOBILITY-1148 QSystemDeviceInfo should report on thermal state and
+      changes.
+    - profileDetails available to QML
+    - uniqueDeviceId to QML
+    - added orientationChanged signal
+    - gsm support for linux desktop in QSYstemNetworkInfo
+    - add cellDataTechnology to QSystemNetworkInfo
+    - lot of fixes and performance improvements for maemo6
+    - updated systeinfo example app.
+
+QtDocGallery
+-----
+ - Better documents for platform specific properties.
+ - Fixing several bugs.
+
+QtPublishSubscribe
+----
+ - Fix several issues in documents.
+ - Simplify QValueSpaceManager implementation.
+
+****************************************************************************
+*                          Documentation                                   *
+****************************************************************************
+
+   - Partial fix for QML/C++ properties/enums in declarative camera example.
+   - QAudio namespace link problem from Mobility.
+   - Fix missing qml code sample for Sound effect.
+   - Added disclaimer for China position shifting in Maps.
+   - Set inmodule for various classes.
+   - Updates to location qml plugin docs. Example images.
+   - Updates to Multimedia QML plugin doc.
+   - Replaced symbian.org links with valid ones.
+   - Removed intro text left over from beta. (1.1)
+   - Fixed reference to setCheckable in Haptic Square example.
+   - Updated changes to Feedback doc and hapticsquare example.
+   - Qdoc errors in QOrganizer
+   - Qdoc errors in Contacts
+   - Change Mobility name throughout docs.
+   - Heading fix for 1.2 Mobility.
+   - Heading for Quickstart reference.
+   - RVCT make option
+   - Removed preliminary status where not required in Multimedia.
+   - Fixed typos.
+   - Change QML Support heading to Elements
+   - Removed use of qmlmodule keyword prior to supporting qdoc3 version.
+   - Changes for new qdoc3.
+   - Wording changes to Location and Landmarks.
+   - Changes to snippets in SysInfo
+   - Remove Tech Preview from Camera class docs.
+   - Fix broken example links.
+   - Minor changes to display of QtMobility name and fix online docs build.
+   - Image for declarative flickr example.
+   - Remove non-working search bar from side panel.
+   - Changed wording of reference to Phonon.
+   - Change heading for BETA. Update Platform Compatibility table.
+   - Added minimal example docs and images to Connectivity.
+   - Changes to Connectivity docs.
+

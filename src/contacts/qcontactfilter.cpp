@@ -58,9 +58,10 @@
   through a QContactManager.
 
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-main
- 
+
   This class is used as a parameter to various functions offered by QContactManager, to allow
   selection of contacts which have certain details or properties.
  */

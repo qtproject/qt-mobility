@@ -44,22 +44,23 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageFolderId
-    
-    \inmodule QtMessaging
-    
-    \ingroup messaging
 
-    \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message 
+    \inmodule QtMessaging
+
+    \ingroup messaging
+    \since 1.0
+
+    \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message
     folder, within the scope of the messaging store.
 
     A QMessageFolderId can be constructed from a string, or converted to a string with toString().
 
-    A QMessageFolderId instance can be tested for validity with isValid(), and compared to other 
+    A QMessageFolderId instance can be tested for validity with isValid(), and compared to other
     instances for equality.
-    
-    If the message a QMessageFolderId identifies is removed from the messaging store then the 
+
+    If the message a QMessageFolderId identifies is removed from the messaging store then the
     identifier will not be reused.
-    
+
     \sa QMessageFolder
 */
 
@@ -79,13 +80,13 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageFolderId::QMessageFolderId(const QString& id)
 
     Constructs an identifier from \a id.
-    
+
     \sa toString()
 */
 
 /*!
     \fn QMessageFolderId::~QMessageFolderId()
-    
+
     Destroys the identifier.
 */
 
@@ -115,10 +116,10 @@ bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
     \fn bool QMessageFolderId::toString() const
 
     Returns the string representation of this identifier.
-    
+
     A null string should be returned if and only if the identifier is invalid.
 
-    String representations of identifiers should not be used to test for equality, instead 
+    String representations of identifiers should not be used to test for equality, instead
     the equality operator should be used.
 */
 

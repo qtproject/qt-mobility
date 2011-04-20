@@ -55,6 +55,7 @@ QT_BEGIN_NAMESPACE
 
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     You can control the systems analog radio device using this interface, for example:
 

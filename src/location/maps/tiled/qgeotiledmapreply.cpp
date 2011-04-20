@@ -57,6 +57,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.2
+
     Instances of QGeoTiledMapReply manage the state and results of these
     operations.
 

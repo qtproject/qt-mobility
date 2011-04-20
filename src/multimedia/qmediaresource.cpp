@@ -49,10 +49,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaResource
-    
+
     \brief The QMediaResource class provides a description of a media resource.
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     A media resource is composed of a \l {url()}{URL} containing the
     location of the resource and a set of properties that describe the
