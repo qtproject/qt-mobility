@@ -74,8 +74,9 @@ static bool validateActionFilter(const QContactFilter& filter);
   \brief The QContactManagerEngine class provides the interface for
   implementations of the contact manager backend functionality.
   \inmodule QtContacts
-  
+
   \ingroup contacts-backends
+  \since 1.0
 
   Instances of this class are usually provided by a
   \l QContactManagerEngineFactory, which is loaded from a plugin.
@@ -1687,7 +1688,7 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
                         detail.removeValue(key);
                     else
                         detail.setValue(key, innerValues);
-                } 
+                }
                 if (field.dataType() == QVariant::StringList) {
                     QStringList innerValues = variant.toStringList();
                     QMutableListIterator<QString> it(innerValues);
@@ -2654,7 +2655,7 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
   \brief The QContactManagerEngineV2 class provides the interface for
   implementations of the contact manager backend functionality.
   \inmodule QtContacts
-  
+
   \ingroup contacts-backends
 
   Instances of this class are usually provided by a
@@ -2861,7 +2862,7 @@ bool QContactManagerEngineV2::saveContacts(QList<QContact> *contacts, const QStr
 /*!
   Returns the list of contacts with the ids given by \a localIds.  There is a one-to-one
   correspondence between the returned contacts and the supplied \a localIds.
-  
+
   If there is an invalid id in \a localIds, then an empty QContact will take its place in the
   returned list and an entry will be inserted into \a errorMap.
 

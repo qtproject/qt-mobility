@@ -50,8 +50,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaPlayerControl
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaPlayerControl class provides access to the media playing
     functionality of a QMediaService.
 

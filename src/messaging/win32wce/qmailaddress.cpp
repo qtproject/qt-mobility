@@ -802,6 +802,7 @@ void QMailAddressPrivate::deserialize(Stream &stream)
 
     \brief The QMailAddress class provides an interface for manipulating message address strings.
     \ingroup messaginglibrary
+    \since 1.1
 
     QMailAddress provides functions for splitting the address strings of messages into name and
     address components, and for combining the individual components into correctly formatted

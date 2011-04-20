@@ -50,6 +50,7 @@
     \internal
 
     \brief The QSlotInvoker class provides an interface for invoking slots with explicit arguments
+    \since 1.1
 
     IPC mechanisms need to intercept protocol messages and convert them into
     slot invocations, but it is generally impractical to create explicit code

@@ -59,6 +59,7 @@ int QTOPIAMAIL_EXPORT QuotedPrintableMaxLineLength = 74;
 
   \brief The QMailCodec class provides mechanisms for encoding and decoding between 7-bit ASCII strings
   and arbitrary octet sequences.
+  \since 1.1
 
   \ingroup messaginglibrary
 

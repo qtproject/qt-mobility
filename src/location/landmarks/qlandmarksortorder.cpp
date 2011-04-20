@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
            no sorting.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-sort
 

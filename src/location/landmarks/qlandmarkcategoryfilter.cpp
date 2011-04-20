@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     belong to a certain category.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-filter
 */

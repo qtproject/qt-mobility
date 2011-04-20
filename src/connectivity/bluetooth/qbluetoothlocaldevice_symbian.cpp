@@ -78,7 +78,6 @@ QString QBluetoothLocalDevicePrivate::name()
     TRAPD(err, settings = CBTEngSettings::NewL());
     if (err != KErrNone)
         return QString();
-    QString name = QString();
     HBufC *localName = NULL;
     TRAPD(error, localName = HBufC::NewL(256));
     if (error != KErrNone) {
@@ -87,9 +86,10 @@ QString QBluetoothLocalDevicePrivate::name()
     }
     TPtr localPtr = localName->Des();
     TInt errorCode = settings->GetLocalName(localPtr);
-    if (errorCode == KErrNone) {
+    QString name;
+    if (errorCode == KErrNone)
         name = s60DescToQString(localPtr);
-    }
+
     delete localName;
     delete settings;
     return name;

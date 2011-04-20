@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
   asynchronous requests to be made of a manager if it supports them.
 
   \inmodule QtOrganizer
+  \since 1.1
 
   \ingroup organizer-main
 

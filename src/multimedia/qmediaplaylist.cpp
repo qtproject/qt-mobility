@@ -66,8 +66,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     \class QMediaPlaylist
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaPlaylist class provides a list of media content to play.
 
     QMediaPlaylist is intended to be used with other media objects,
@@ -105,7 +106,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 
 /*!
-  Create a new playlist object for with the given \a parent.  
+  Create a new playlist object for with the given \a parent.
 */
 
 QMediaPlaylist::QMediaPlaylist(QObject *parent)

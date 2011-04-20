@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
 /*! \internal
     \class BluetoothLinkManagerDeviceDiscoverer
     \brief The BluetoothLinkManagerDeviceDiscoverer class searches other bluetooth devices.
+    \since 1.2
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
@@ -223,17 +224,31 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 #ifdef EIR_SUPPORTED
     TBluetoothNameRecordWrapper eir(m_entry());
     TInt bufferlength = 0;
+    TInt err = KErrNone;
     QString deviceName;
     bufferlength = eir.GetDeviceNameLength();
 
     if (bufferlength > 0) {
         TBool nameComplete;
-        HBufC *deviceNameBuffer = HBufC::NewLC(bufferlength);
-        TPtr ptr = deviceNameBuffer->Des();
-        TInt error = eir.GetDeviceName(ptr,nameComplete);
-        if (error == KErrNone && nameComplete)
-            deviceName = QString::fromUtf16(ptr.Ptr(), ptr.Length()).toUpper();
-        CleanupStack::PopAndDestroy(deviceNameBuffer);
+        HBufC *deviceNameBuffer = 0;
+        TRAP(err,deviceNameBuffer = HBufC::NewLC(bufferlength));
+        if(err)
+            deviceName = QString();
+        else
+            {
+            TPtr ptr = deviceNameBuffer->Des();
+            err = eir.GetDeviceName(ptr,nameComplete);
+            if (err == KErrNone /*&& nameComplete*/)
+                {
+                if(!nameComplete)
+                    qWarning() << "device name incomplete";
+                // isn't it better to get an incomplete name than getting nothing?
+                deviceName = QString::fromUtf16(ptr.Ptr(), ptr.Length()).toUpper();
+                }
+            else
+                deviceName = QString();
+            CleanupStack::PopAndDestroy(deviceNameBuffer);
+            }
     }
 
     QList<QBluetoothUuid> serviceUidList;
@@ -277,11 +292,19 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     bufferlength = eir.GetVendorSpecificDataLength();
 
     if (bufferlength > 0) {
-        HBufC8 *msd = HBufC8::NewLC(bufferlength);
-        TPtr8 temp = msd->Des();
-        if (eir.GetVendorSpecificData(temp))
-            manufacturerData = s60Desc8ToQByteArray(temp);
-        CleanupStack::PopAndDestroy(msd);
+        HBufC8 *msd = 0;
+        TRAP(err,HBufC8::NewLC(bufferlength));
+        if(err)
+            manufacturerData = QByteArray();
+        else
+            {
+            TPtr8 temp = msd->Des();
+            if (eir.GetVendorSpecificData(temp))
+                manufacturerData = s60Desc8ToQByteArray(temp);
+            else
+                manufacturerData = QByteArray();
+            CleanupStack::PopAndDestroy(msd);
+            }
     }
 
     // Get transmission power level
@@ -358,7 +381,7 @@ void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
             // do nothing
             break;
         default:
-            errorString.append("Symbian errorCode =") + errorCode;
+            errorString = QString("Symbian errorCode = %1").arg(errorCode);
             emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
     }

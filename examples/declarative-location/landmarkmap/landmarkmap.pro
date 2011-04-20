@@ -14,6 +14,7 @@ win32 {
 
 symbian {
     TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData
+    TARGET.CAPABILITY += LocalServices ReadDeviceData WriteDeviceData
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
 

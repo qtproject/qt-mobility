@@ -65,8 +65,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaRecorder
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaRecorder class is used for the recording of media content.
 
     The QMediaRecorder class is a high level media recording class.  It's not
@@ -320,7 +321,7 @@ bool QMediaRecorder::setMediaObject(QMediaObject *object)
 
                 connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
-                
+
                 return true;
             }
         }

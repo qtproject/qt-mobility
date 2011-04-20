@@ -42,7 +42,7 @@
 /*!
     \class QMailMessageHeaderFieldFwd
     \brief The QMailMessageHeaderFieldFwd class declares enumerations used by QMailMessageHeaderField
-
+    \since 1.1
 
     QMailMessageHeaderFieldFwd allows QMailMessageHeaderField::FieldType
     to be used without including all of \c qmailmessage.h.

@@ -43,17 +43,18 @@
 /*!
     \class QMessageFolder
 
-    \brief The QMessageFolder class provides an interface for folders containing messages in the 
+    \brief The QMessageFolder class provides an interface for folders containing messages in the
     messaging store.
-    
-    
+
+
     \inmodule QtMessaging
-    
+
     \ingroup messaging
- 
-    QMessageFolder represents a folder of messages, either fully or partially stored in the 
-    messaging store. A QMessageFolder object has an optional parent of the same type, allowing 
-    folders to be arranged in tree structures. Messages may be associated with folders, allowing 
+    \since 1.0
+
+    QMessageFolder represents a folder of messages, either fully or partially stored in the
+    messaging store. A QMessageFolder object has an optional parent of the same type, allowing
+    folders to be arranged in tree structures. Messages may be associated with folders, allowing
     for simple classification and access by their parentFolderId property.
 
     \sa QMessage, QMessageStore::folder()
@@ -61,17 +62,17 @@
 
 /*!
     \fn QMessageFolder::QMessageFolder()
-    
-    Constructor that creates an empty and invalid QMessageFolder. An empty folder is one which 
-    has no path, no parent folder and no parent account. An invalid folder does not exist in 
+
+    Constructor that creates an empty and invalid QMessageFolder. An empty folder is one which
+    has no path, no parent folder and no parent account. An invalid folder does not exist in
     the database and has an invalid id.
 */
 
 /*!
     \fn QMessageFolder::QMessageFolder(const QMessageFolderId &id)
-    
-    Constructor that creates a QMessageFolder by loading the data from the messaging store as 
-    specified by the QMessageFolderId \a id. If the folder does not exist in the messaging  
+
+    Constructor that creates a QMessageFolder by loading the data from the messaging store as
+    specified by the QMessageFolderId \a id. If the folder does not exist in the messaging
     store, then this constructor will create an empty and invalid QMessageFolder.
 */
 
@@ -88,40 +89,40 @@
 
 /*!
     \fn QMessageFolder::~QMessageFolder()
-    
+
     Destroys the QMessageFolder object.
 */
 
 /*!
     \fn QMessageFolder::id() const
-    
-    Returns the identifier of the QMessageFolder object. A QMessageFolder with an invalid 
+
+    Returns the identifier of the QMessageFolder object. A QMessageFolder with an invalid
     identifier does not yet exist in the messaging store.
 */
 
 /*!
     \fn QMessageFolder::parentAccountId() const
-    
-    Returns the identifier of the parent account of the folder. If the folder is not linked to 
+
+    Returns the identifier of the parent account of the folder. If the folder is not linked to
     an account an invalid identifier is returned.
 */
 
 /*!
     \fn QMessageFolder::parentFolderId() const
-    
-    Returns the identifier of the parent folder. This folder is a root folder if the parent 
+
+    Returns the identifier of the parent folder. This folder is a root folder if the parent
     identifier is invalid.
 */
 
 /*!
     \fn QMessageFolder::name() const
-    
+
     Returns the display name of the folder suitable for viewing in a user interface.  This is
     typically the same as, or a simplification of the path() for the folder.
 */
 
 /*!
     \fn QMessageFolder::path() const
-    
+
     Returns the path of the folder.
 */

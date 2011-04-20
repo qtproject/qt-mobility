@@ -58,13 +58,14 @@ public:
     \class QServiceContext
     \inmodule QtServiceFramework
     \ingroup servicefw
-    \brief The QServiceContext class provides context information to 
+    \brief The QServiceContext class provides context information to
     services.
+    \since 1.0
 
     A service context is created by clients and passed on to the service.
-    It enables the opportunity to pass additional context information 
+    It enables the opportunity to pass additional context information
     and errors between services, clients and the service framework.
-    
+
     Clients must implement this abstract class to receive context information.
 
     \sa QServiceManager
@@ -76,9 +77,9 @@ public:
 
     This enum describes the type of context information.
 
-    \value  DisplayContext              The service provides user visible display 
+    \value  DisplayContext              The service provides user visible display
                                         text such as an error message.
-    \value  ScriptContext               The service provides a script which may 
+    \value  ScriptContext               The service provides a script which may
                                         be executed by the client.
     \value  UserDefined                 The first context type that can be used for service
                                         specific context information.
@@ -88,7 +89,7 @@ public:
     \fn void QServiceContext::notify(ContextType type, const QVariant& data) = 0
 
     Services may call this function to notify the service client about service related
-    context information of the given \a type. The contextual information is stored in \a data.  
+    context information of the given \a type. The contextual information is stored in \a data.
 */
 
 
@@ -110,7 +111,7 @@ QServiceContext::QServiceContext(QObject* parent)
 /*!
     Destroys the service context object.
 */
-QServiceContext::~QServiceContext() 
+QServiceContext::~QServiceContext()
 {
     //ServiceContextUserData deleted by QObject
 }

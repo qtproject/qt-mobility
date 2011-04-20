@@ -51,7 +51,8 @@
     changes for a specified set of coordinates.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in
@@ -172,7 +173,7 @@ qreal QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 
-    Note: Symbian applications will need to have the Location capability 
+    Note: Symbian applications will need to have the Location capability
     otherwise this will return 0.
 */
 QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)

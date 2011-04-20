@@ -49,18 +49,19 @@ QTM_BEGIN_NAMESPACE
     \ingroup servicefw
     \brief The QAbstractSecuritySession class provides a generic mechanism to enable
     permission checks for services.
-    
+    \since 1.0
+
     QAbstractSecuritySession describes the abstract interface that security/permission
     engines must implement in order to provide capability related functionality.
 
     A QAbstractSecuritySession encapsulates the service client's capabilities. QServiceManager
-    can match those capabilites with the capabilites required by a particular service. 
-    Service capabilites are declared via the services XML description. 
+    can match those capabilites with the capabilites required by a particular service.
+    Service capabilites are declared via the services XML description.
 
     The use of a security session is not mandated by the service manager. If the client
     is passing a security session object QServiceManager ensures that the permissions
-    are checked before the requested service is loaded and forwards the session to the 
-    service in case the service intends to implement additional checks. If no security 
+    are checked before the requested service is loaded and forwards the session to the
+    service in case the service intends to implement additional checks. If no security
     session is passed to QServiceManager capability checks are not performed. Note that
     the security session is no substitute for platform security such as control over
     a processes ability to load arbitrary plug-ins.
@@ -93,11 +94,11 @@ QAbstractSecuritySession::~QAbstractSecuritySession()
 {
 }
 
-/*! 
+/*!
     \fn bool QAbstractSecuritySession::isAllowed(const QStringList& capabilities) = 0;
 
     Returns true if the security session has sufficient rights to access the required
-    service \a capabilities. 
+    service \a capabilities.
 */
 
 #include "moc_qabstractsecuritysession.cpp"

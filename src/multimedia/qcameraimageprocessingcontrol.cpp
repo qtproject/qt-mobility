@@ -48,6 +48,7 @@ QT_BEGIN_NAMESPACE
     \class QCameraImageProcessingControl
     \inmodule QtMultimediaKit
     \ingroup multimedia-serv
+    \since 1.1
 
 
     \brief The QCameraImageProcessingControl class provides an abstract class

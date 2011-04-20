@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
 
     \inmodule QtNetwork
     \ingroup bearer
+    \since 1.0
 
     QNetworkConfiguration encapsulates a single access point or service network.
     In most cases a single access point configuration can be mapped to one network
@@ -352,7 +353,7 @@ QList<QNetworkConfiguration> QNetworkConfiguration::children() const
     bearer types:
 
     \table
-        \header 
+        \header
             \o Value
             \o Description
         \row
@@ -367,7 +368,7 @@ QList<QNetworkConfiguration> QNetworkConfiguration::children() const
         \row
             \o 2G
             \o The session uses CSD, GPRS, HSCSD, EDGE or cdmaOne.
-        \row 
+        \row
             \o CDMA2000
             \o The session uses CDMA.
         \row

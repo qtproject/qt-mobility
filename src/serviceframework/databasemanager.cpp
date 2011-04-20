@@ -239,6 +239,8 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
     data from both combined into a single dataset.
     When referring to a user scope database it means the
     user database only.
+
+    \since 1.0
 */
 
 /*

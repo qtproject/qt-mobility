@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     within a given distance of a coordinate.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -287,7 +288,7 @@ qreal QGeoMapCircleObject::radius() const
 /*!
 \fn void QGeoMapCircleObject::centerChanged(const QGeoCoordinate &center)
 
-    This signal is emitted when the center of the circle object has 
+    This signal is emitted when the center of the circle object has
     changed.
 
     The new value is \a center.
@@ -296,7 +297,7 @@ qreal QGeoMapCircleObject::radius() const
 /*!
 \fn void QGeoMapCircleObject::radiusChanged(qreal radius)
 
-    This signal is emitted when the radius of the circle object has 
+    This signal is emitted when the radius of the circle object has
     changed.
 
     The new value is \a radius.
@@ -305,7 +306,7 @@ qreal QGeoMapCircleObject::radius() const
 /*!
 \fn void QGeoMapCircleObject::penChanged(const QPen &pen)
 
-    This signal is emitted when the pen used to draw the edge of 
+    This signal is emitted when the pen used to draw the edge of
     the circle object has changed.
 
     The new value is \a pen.
@@ -314,7 +315,7 @@ qreal QGeoMapCircleObject::radius() const
 /*!
 \fn void QGeoMapCircleObject::brushChanged(const QBrush &brush)
 
-    This signal is emitted when the brush used to fill the inside of 
+    This signal is emitted when the brush used to fill the inside of
     the circle object has changed.
 
     The new value is \a brush.

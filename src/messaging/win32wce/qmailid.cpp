@@ -127,6 +127,7 @@ QTextStream& operator<< (QTextStream& s, const MailId &id)
 /*!
     \class QMailAccountId
     \ingroup messaginglibrary
+    \since 1.1
 
     \brief The QMailAccountId class is used to identify accounts stored by QMailStore.
 

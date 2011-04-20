@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
     \class QFeedbackInterface
     \ingroup feedback
     \inmodule QtFeedback
+    \since 1.1
 
     \brief The QFeedbackInterface class is the base class for plugins providing feedback.
 
@@ -76,14 +77,14 @@ QTM_BEGIN_NAMESPACE
     This enum describes the priority that the plugin should have in case more than one of the same type (Haptics or Theme) is found.
     If more than one plugin has the same priority, the first one that has been loaded will be used.  However, multiple
     file effect plugins can be loaded at the same time.
-    
+
     \value PluginLowPriority The plugin will have a low priority. This is usually the case for
     platform specific-APIs.
 
-    \value PluginNormalPriority The plugin will have a normal priority. 
+    \value PluginNormalPriority The plugin will have a normal priority.
     This is usually the case for advanced technologies.
 
-    \value PluginHighPriority The plugin will have higher priority. Use this priority if you 
+    \value PluginHighPriority The plugin will have higher priority. Use this priority if you
     want your own plugin to be used.
 */
 
@@ -162,7 +163,7 @@ public:
             //start loading
             tryBackendLoad(effect);
         } else {
-            //unload        
+            //unload
             if (QFeedbackFileInterface *subBackend = getBackend(effect))
                 subBackend->setLoaded(effect, load);
             QFeedbackFileEffectPrivate::get(effect)->loadFinished(false); // make sure it's marked unloaded [XXX this isn't allowed to fail!]
@@ -220,7 +221,7 @@ public:
     }
 
 private:
-    QList<QFeedbackFileInterface*> subBackends; 
+    QList<QFeedbackFileInterface*> subBackends;
 
     QFeedbackFileInterface *getBackend(const QFeedbackFileEffect *effect)
     {

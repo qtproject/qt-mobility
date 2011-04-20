@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     In additional to a copy of the QBluetoothTransferRequest object used to create the request,
     QBluetoothTransferReply contains the contents of the reply itself.

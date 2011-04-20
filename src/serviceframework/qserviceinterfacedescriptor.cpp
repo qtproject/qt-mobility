@@ -54,32 +54,33 @@ QTM_BEGIN_NAMESPACE
     \ingroup servicefw
     \inmodule QtServiceFramework
     \brief The QServiceInterfaceDescriptor class identifies a service implementation.
+    \since 1.0
 
-    A service can implement multiple interfaces and each interface can have multiple implementations. 
+    A service can implement multiple interfaces and each interface can have multiple implementations.
     The QServiceInterfaceDescriptor class enscapsulates this information, as illustrated
     by the diagram below.
 
     \image qserviceinterfacedescriptor.png Service-Interface-Implementation
 
     The major version tag indicates the interface version and the minor version tag identifies the implementation
-    version. Subsequent versions of the same interface must be binary compatible to previous versions 
-    of the same interface. 
+    version. Subsequent versions of the same interface must be binary compatible to previous versions
+    of the same interface.
 
     In the above example service A and B implement the interface \i com.nokia.qt.x.
-    In fact Service A provides two different implementations for the very same interface. 
-    This is indicated by the changed minor version number. Although Service B is 
+    In fact Service A provides two different implementations for the very same interface.
+    This is indicated by the changed minor version number. Although Service B is
     using the same interface it's implementation actually utilizes the second version of
-    the interface \i com.nokia.qt.x. Binary compatibility guarantees that clients 
+    the interface \i com.nokia.qt.x. Binary compatibility guarantees that clients
     who know version 1 can utilize version 2. If an existing interface has to be changed
     in a non-compatible way a new interface (name) is required.
 
     \section1 Namespaces
 
-    A QServiceInterfaceDescriptor (the quadruble of service name, 
-    interface name, interface version and implementation version) uniquely 
-    identifies a service implementation on a device. Interface names follow 
+    A QServiceInterfaceDescriptor (the quadruble of service name,
+    interface name, interface version and implementation version) uniquely
+    identifies a service implementation on a device. Interface names follow
     the java namespace convention.
-    
+
     The namespace \i com.nokia.qt.* is reserved for future Qt development.
 
     \sa QServiceFilter, QServiceManager
@@ -93,19 +94,19 @@ QTM_BEGIN_NAMESPACE
 
     \value      Capabilities            The capabilities attribute is a QStringList and
                                         describes the capabilities that a service client
-                                        would require to use the service if capability 
+                                        would require to use the service if capability
                                         checks are enforced.
     \value      Location                This attribute points to either the location
                                         where the plug-in providing this service is stored or
                                         where the name of the service IPC path is found.
                                         If the service is plug-in based the location is the
-                                        name and/or path of the plugin. If the service is 
+                                        name and/or path of the plugin. If the service is
                                         IPC based the location is the name of the socket address.
     \value      ServiceDescription      This attribute provides a general description for
                                         the service.
-    \value      InterfaceDescription    This attribute provides a description for the interface 
+    \value      InterfaceDescription    This attribute provides a description for the interface
                                         implementation.
-    \value      ServiceType             This attribute specifies the QService::Type that the 
+    \value      ServiceType             This attribute specifies the QService::Type that the
                                         service is being provided.
 */
 
@@ -137,14 +138,14 @@ QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(const QServiceInterface
 
 /*!
     \fn  QServiceInterfaceDescriptor& QServiceInterfaceDescriptor::operator=(const QServiceInterfaceDescriptor& other)
-    
-    Copies the content of the QServiceInterfaceDescriptor object contained 
+
+    Copies the content of the QServiceInterfaceDescriptor object contained
     in \a other into this one.
 */
 QServiceInterfaceDescriptor& QServiceInterfaceDescriptor::operator=(const QServiceInterfaceDescriptor& other)
 {
     if ( !other.isValid() ) {
-        if (d) 
+        if (d)
             delete d;
         d = 0;
         return *this;
@@ -159,8 +160,8 @@ QServiceInterfaceDescriptor& QServiceInterfaceDescriptor::operator=(const QServi
 
 /*!
     \fn bool QServiceInterfaceDescriptor::operator==(const QServiceInterfaceDescriptor& other) const
-    
-    Compares a QServiceInterfaceDescriptor to \a other. Returns true if they 
+
+    Compares a QServiceInterfaceDescriptor to \a other. Returns true if they
     are equal and false otherwise.
 */
 bool QServiceInterfaceDescriptor::operator==(const QServiceInterfaceDescriptor& other) const
@@ -185,7 +186,7 @@ bool QServiceInterfaceDescriptor::operator==(const QServiceInterfaceDescriptor& 
 
 /*!
     \fn bool QServiceInterfaceDescriptor::isValid() const
-    
+
     Returns true if this descriptor is valid; otherwise returns false.
 */
 bool QServiceInterfaceDescriptor::isValid() const
@@ -195,7 +196,7 @@ bool QServiceInterfaceDescriptor::isValid() const
 
 /*!
     \fn  bool QServiceInterfaceDescriptor::scope() const
-    
+
     Returns true if this implementation is provided for all users on the system.
 
     \sa QService::Scope
@@ -207,7 +208,7 @@ QService::Scope QServiceInterfaceDescriptor::scope() const
 
 /*!
     \fn  QString QServiceInterfaceDescriptor::serviceName() const
-    
+
     Returns the name of service that provides this implementation.
 */
 QString QServiceInterfaceDescriptor::serviceName() const
@@ -217,7 +218,7 @@ QString QServiceInterfaceDescriptor::serviceName() const
 
 /*!
     \fn  QString QServiceInterfaceDescriptor::interfaceName() const
-    
+
     Returns the name of the interface that is implemented.
 */
 QString QServiceInterfaceDescriptor::interfaceName() const
@@ -227,10 +228,10 @@ QString QServiceInterfaceDescriptor::interfaceName() const
 
 /*!
     \fn  int QServiceInterfaceDescriptor::majorVersion() const
-    
-    Returns the version of the interface. 
-    
-    Subsequent versions of an interface are binary compatible 
+
+    Returns the version of the interface.
+
+    Subsequent versions of an interface are binary compatible
     to previous versions of the same interface. If an interface
     is broken it must use a new interface name.
 */
@@ -241,8 +242,8 @@ int QServiceInterfaceDescriptor::majorVersion() const
 
 /*!
     \fn  int QServiceInterfaceDescriptor::minorVersion() const
-    
-    Returns the version of the implementation. 
+
+    Returns the version of the implementation.
 */
 int QServiceInterfaceDescriptor::minorVersion() const
 {
@@ -251,8 +252,8 @@ int QServiceInterfaceDescriptor::minorVersion() const
 
 /*!
     \fn  QVariant QServiceInterfaceDescriptor::attribute(QServiceInterfaceDescriptor::Attribute which) const
-    
-    Returns the value for the attribute \a which; otherwise returns 
+
+    Returns the value for the attribute \a which; otherwise returns
     an invalid QVariant.
 */
 QVariant QServiceInterfaceDescriptor::attribute(QServiceInterfaceDescriptor::Attribute which) const
@@ -264,8 +265,8 @@ QVariant QServiceInterfaceDescriptor::attribute(QServiceInterfaceDescriptor::Att
 
 /*!
     \fn  QString QServiceInterfaceDescriptor::customAttribute(const QString& which) const
-    
-    Returns the value for the custom attribute \a which; otherwise 
+
+    Returns the value for the custom attribute \a which; otherwise
     returns a null string.
 */
 QString QServiceInterfaceDescriptor::customAttribute(const QString& which) const
@@ -318,7 +319,7 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor::Attribute 
     k = (QServiceInterfaceDescriptor::Attribute)key;
     return in;
 }
-/*! 
+/*!
     \fn QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
     \relates QServiceInterfaceDescriptor
 
@@ -335,7 +336,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
     out << magicNumber << majorVersion << minorVersion;
     out << valid;
     if (valid) {
-       out << dc.d->serviceName; 
+       out << dc.d->serviceName;
        out << dc.d->interfaceName;
        out << dc.d->major;
        out << dc.d->minor;
@@ -362,7 +363,7 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
         qWarning() << "Datastream doesn't provide searialized QServiceInterfaceDescriptor";
         return in;
     }
-    
+
     const quint16 currentMajorVersion = 1;
     quint16 majorVersion = 0;
     quint16 minorVersion = 0;
