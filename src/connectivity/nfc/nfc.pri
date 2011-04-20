@@ -13,7 +13,8 @@ PUBLIC_HEADERS += \
     nfc/qllcpsocket.h \
     nfc/qnearfieldtagtype3.h \
     nfc/qnearfieldtagtype4.h \
-    nfc/qllcpserver.h
+    nfc/qllcpserver.h \
+    nfc/qdeclarativendefrecord.h
 
 PRIVATE_HEADERS += \
     nfc/qndefrecord_p.h \
@@ -36,15 +37,8 @@ SOURCES += \
     nfc/qllcpsocket.cpp \
     nfc/qnearfieldtagtype4.cpp \
     nfc/qtlv.cpp \
-    nfc/qllcpserver.cpp
-
-contains(QT_CONFIG,declarative) {
-    PUBLIC_HEADERS += \
-        nfc/qdeclarativendefrecord.h
-
-    SOURCES += \
-        nfc/qdeclarativendefrecord.cpp
-}
+    nfc/qllcpserver.cpp \
+    nfc/qdeclarativendefrecord.cpp
 
 maemo6|meego {
     NFC_BACKEND_AVAILABLE = yes

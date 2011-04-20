@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -73,7 +73,7 @@ class BluetoothSymbianPairingAdapter : public QObject, public MBTEngConnObserver
     Q_OBJECT
 public:
 
-    BluetoothSymbianPairingAdapter(const QBluetoothAddress &address, QObject *parent = 0);
+    explicit BluetoothSymbianPairingAdapter(const QBluetoothAddress &address, QObject *parent = 0);
     ~BluetoothSymbianPairingAdapter();
 
     void startPairing(QBluetoothLocalDevice::Pairing pairing);

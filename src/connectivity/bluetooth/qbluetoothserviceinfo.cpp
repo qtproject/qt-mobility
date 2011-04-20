@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
     \class QBluetoothServiceInfo::Sequence
     \brief The Sequence class provides a data type for Bluetooth Data
            Element Sequence attributes.
+    \since 1.2
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity

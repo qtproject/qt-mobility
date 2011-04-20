@@ -60,7 +60,7 @@ public:
 protected:
     virtual bool doConnect();
     virtual void start();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
 
 private:
     QTapReading m_reading;

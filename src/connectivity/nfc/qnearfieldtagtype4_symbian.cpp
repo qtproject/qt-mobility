@@ -261,14 +261,14 @@ bool QNearFieldTagType4Symbian::hasNdefMessage()
     return ( (nLen > 0) && (nLen < maxNdefLen -2) );
 }
 
-void QNearFieldTagType4Symbian::readNdefMessages()
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::readNdefMessages()
 {
-    _ndefMessages();
+    return _ndefMessages();
 }
 
-void QNearFieldTagType4Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
+QNearFieldTarget::RequestId QNearFieldTagType4Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
-    _setNdefMessages(messages);
+    return _setNdefMessages(messages);
 }
 
 QNearFieldTarget::RequestId QNearFieldTagType4Symbian::sendCommand(const QByteArray &command)

@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
     the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-request
 */

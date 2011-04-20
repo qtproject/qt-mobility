@@ -44,7 +44,7 @@
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
-        Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 #ifdef QT_SIMULATOR
 QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivate(); }
@@ -56,6 +56,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
         \ingroup systeminfo
         \inmodule QtSystemInfo
         \brief The QSystemDeviceInfo class provides access to device information from the system.
+        \since 1.2
         */
 
 /*!
@@ -66,6 +67,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
         \brief The ProfileDetails class provides access to
          details of the currently active phone profile.
 
+        \since 1.2
   */
         /*!
           \fn void QSystemDeviceInfo::batteryLevelChanged(int level)

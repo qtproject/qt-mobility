@@ -60,6 +60,7 @@ Q_GLOBAL_STATIC(QContactActionManager, contactActionManagerInstance)
   \class QContactActionManager
   This class uses a plugin to delegate discovery of actions (to avoid a dependency on SFW for QtContacts)
   It is an implementation detail of QContactAction.
+  \since 1.2
  */
 
 QContactActionManager* QContactActionManager::instance()

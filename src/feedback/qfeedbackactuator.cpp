@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
     \class QFeedbackActuator
     \brief The QFeedbackActuator class describes actuators for tactile feedback.
     \inmodule QtFeedback
+    \since 1.1
 
     An actuator knows how to play a \l{QFeedbackEffect}{tactile
     effect}. The class gives access to a specified actuator.

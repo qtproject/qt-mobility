@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     which define a request for routing information.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -124,8 +125,8 @@ QTM_BEGIN_NAMESPACE
     not be part of the route.
 
     \value NoFeature
-        Used by QGeoRoutingManager::supportedFeatureTypes() to indicate that 
-        no features will be taken into account when planning the route.    
+        Used by QGeoRoutingManager::supportedFeatureTypes() to indicate that
+        no features will be taken into account when planning the route.
     \value TollFeature
         Consdier tollways when planning the route.
     \value HighwayFeature

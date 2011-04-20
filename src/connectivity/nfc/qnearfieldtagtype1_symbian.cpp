@@ -342,18 +342,18 @@ bool QNearFieldTagType1Symbian::hasNdefMessage()
     return _hasNdefMessage();
 }
 
-void QNearFieldTagType1Symbian::readNdefMessages()
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::readNdefMessages()
 {
     BEGIN
-    _ndefMessages();
     END
+    return _ndefMessages();
 }
 
-void QNearFieldTagType1Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
+QNearFieldTarget::RequestId QNearFieldTagType1Symbian::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     BEGIN
-    _setNdefMessages(messages);
     END
+    return _setNdefMessages(messages);
 }
 
 /*

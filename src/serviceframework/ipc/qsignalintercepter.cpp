@@ -50,6 +50,7 @@
     \internal
 
     \brief The QSignalIntercepter class provides an interface for intercepting signals as meta-calls
+    \since 1.1
 
     IPC mechanisms need to intercept signals and convert them into protocol
     messages, but it is generally impractical to create a slot for every

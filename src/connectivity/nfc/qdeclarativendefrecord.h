@@ -62,7 +62,7 @@ class Q_CONNECTIVITY_EXPORT QDeclarativeNdefRecord : public QObject
 
 public:
     explicit QDeclarativeNdefRecord(QObject *parent = 0);
-    QDeclarativeNdefRecord(const QNdefRecord &record, QObject *parent = 0);
+    explicit QDeclarativeNdefRecord(const QNdefRecord &record, QObject *parent = 0);
 
     QString recordType() const;
     void setRecordType(const QString &t);

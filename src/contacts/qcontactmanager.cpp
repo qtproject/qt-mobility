@@ -56,9 +56,10 @@ QTM_BEGIN_NAMESPACE
   \class QContactManager
   \brief The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-main
- 
+
   This class provides an abstraction of a datastore or aggregation of datastores which contains contact information.
   It provides methods to retrieve and manipulate contact information, contact relationship information, and
   supported schema definitions.  It also provides metadata and error information reporting.
@@ -209,7 +210,7 @@ bool QContactManager::parseUri(const QString& uri, QString* pManagerId, QMap<QSt
    \a implementationVersion.  This function is generally useful only if you intend to construct a
    manager with the \l fromUri() function, or wish to set the manager URI field in a QContactId
    manually (for synchronization or other purposes).  Most clients will not need to use this function. */
-QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion) 
+QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion)
 {
     QString ret(QLatin1String("qtcontacts:%1:%2"));
     // we have to escape each param
@@ -285,19 +286,6 @@ QContactManager::QContactManager(const QString& managerName, const QMap<QString,
 void QContactManager::createEngine(const QString& managerName, const QMap<QString, QString>& parameters)
 {
     d->createEngine(managerName, parameters);
-    connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
-    connect(d->m_engine, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SIGNAL(contactsChanged(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)), this, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
-
-    connect(d->m_engine, SIGNAL(contactsChanged(QList<QContactLocalId>)),
-            this, SLOT(_q_contactsUpdated(QList<QContactLocalId>)));
-    connect(d->m_engine, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
-            this, SLOT(_q_contactsDeleted(QList<QContactLocalId>)));
-
 
     QContactManagerData::m_aliveEngines.insert(this);
 }
@@ -311,15 +299,15 @@ void QContactManager::createEngine(const QString& managerName, const QMap<QStrin
   If an empty \a managerName is specified, the default implementation for the platform will be instantiated.
   If the specified implementation version is not available, the manager with the name \a managerName with the default implementation version is instantiated.
  */
-QContactManager::QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent) 
-    : QObject(parent), 
-    d(new QContactManagerData) 
-{ 
-    QMap<QString, QString> params = parameters; 
+QContactManager::QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent)
+    : QObject(parent),
+    d(new QContactManagerData)
+{
+    QMap<QString, QString> params = parameters;
     params[QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))] = QString::number(implementationVersion);
-    createEngine(managerName, params); 
-} 
- 
+    createEngine(managerName, params);
+}
+
 /*! Frees the memory used by the QContactManager */
 QContactManager::~QContactManager()
 {
@@ -529,7 +517,7 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 
   Returns the list of contacts with the ids given by \a localIds.  There is a one-to-one
   correspondence between the returned contacts and the supplied \a localIds.
-  
+
   If there is an invalid id in \a localIds, then an empty QContact will take its place in the
   returned list.  The deprecated \a errorMap parameter can be supplied to store per-input errors in.
   In all cases, calling \l errorMap() will return the per-input errors for the latest batch function.
@@ -1060,7 +1048,7 @@ QString QContactManager::managerName() const
 QMap<QString, QString> QContactManager::managerParameters() const
 {
     QMap<QString, QString> params = d->m_engine->managerParameters();
-    
+
     params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME));
     params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
     return params;
@@ -1072,6 +1060,42 @@ QMap<QString, QString> QContactManager::managerParameters() const
 QString QContactManager::managerUri() const
 {
     return d->m_engine->managerUri();
+}
+
+
+/*!
+    \internal
+
+    When someone connects to this manager, connect the corresponding signal from the engine, if we
+    haven't before. If we have, just increment a count.
+
+    This allows lazy evaluation on the engine side (e.g. setting up dbus watchers) and prevents
+    unnecessary work.
+*/
+void QContactManager::connectNotify(const char *signal)
+{
+    /* For most signals we just connect from the engine to ourselves, since we just proxy, but we should connect only once */
+    QByteArray ba(signal);
+    if (!d->m_connectedSignals.contains(ba)) {
+        connect(d->m_engine, signal, this, signal);
+    }
+    d->m_connectedSignals[ba]++;
+}
+
+/*!
+    \internal
+
+    When someone disconnects, disconnect from the engine too if there are no more users of that signal.
+*/
+void QContactManager::disconnectNotify(const char *signal)
+{
+    QByteArray ba(signal);
+    if (d->m_connectedSignals[ba] <= 1) {
+        disconnect(d->m_engine, signal, this, signal);
+        d->m_connectedSignals.remove(ba);
+    } else {
+        d->m_connectedSignals[ba]--;
+    }
 }
 
 

@@ -176,6 +176,7 @@ void QMediaImageViewerServicePrivate::clear()
 
 /*!
     \class QMediaImageViewerService
+    \since 1.0
     \internal
 */
 

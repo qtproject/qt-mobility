@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     point at which two QGeoRouteSegments meet.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -114,8 +115,8 @@ The instruction indicates that the direction of travel should bear to the left.
 /*!
     Constructs a invalid maneuver object.
 
-    The maneuver will remain invalid until one of 
-    setPosition(), setInstructionText(), setDirection(), 
+    The maneuver will remain invalid until one of
+    setPosition(), setInstructionText(), setDirection(),
     setTimeToNextInstruction(), setDistanceToNextInstruction() or
     setWaypoint() is called.
 */
@@ -162,7 +163,7 @@ bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 /*!
     Returns whether this maneuver is valid or not.
 
-    Invalid maneuvers are used when there is no information 
+    Invalid maneuvers are used when there is no information
     that needs to be attached to the endpoint of a QGeoRouteSegment instance.
 */
 bool QGeoManeuver::isValid() const

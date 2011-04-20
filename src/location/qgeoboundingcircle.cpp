@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoBoundingCircle class defines a circular geographic area.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps
 

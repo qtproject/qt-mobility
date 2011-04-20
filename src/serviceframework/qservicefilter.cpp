@@ -66,16 +66,17 @@ public:
 
 /*!
     \class QServiceFilter
-    
+
     \ingroup servicefw
     \inmodule QtServiceFramework
-    \brief The QServiceFilter class defines criteria for defining a sub-set of 
+    \brief The QServiceFilter class defines criteria for defining a sub-set of
     all available services.
+    \since 1.0
 
     A QServiceFilter can be used to constrain the number of services when searching
     for services. Only those services that match all filter criteria are returned
     by \l QServiceManager::findInterfaces().
-    
+
 
     \sa QServiceInterfaceDescriptor, QServiceManager
 */
@@ -86,7 +87,7 @@ public:
     This enum describes how interface version matching is performed.
 
     \value ExactVersionMatch    The filter matches any interface implementation that implements
-                                the exact version provided. 
+                                the exact version provided.
     \value MinimumVersionMatch  The filter matches any interface implementation that implements
                                 either the given major/minor version or any subsequent version.
 */
@@ -94,8 +95,8 @@ public:
 /*!
     \enum QServiceFilter::CapabilityMatchRule
 
-    This enum describes the capability/permission matching rules. Some platforms restrict what services clients 
-    can access using "capabilities" or permissions. Services with more capabilities require 
+    This enum describes the capability/permission matching rules. Some platforms restrict what services clients
+    can access using "capabilities" or permissions. Services with more capabilities require
     more privileged clients. Platforms without capabilities may ignore this type of matching
     rule as the default behavior is to ignore any capability restrictions.
 
@@ -121,17 +122,17 @@ public:
         \row        \o MatchMinimum     \o \{A\}                      \o S2, S3, S4, S5
         \row        \o MatchMinimum     \o \{A,B,C\}                  \o S4
     \endtable
-    
-    \value MatchMinimum     The filter matches any service that requires at least the given 
+
+    \value MatchMinimum     The filter matches any service that requires at least the given
                             filter capabilities. This may mean that the returned services
                             may require more capabilities than the specified ones.
-                            Such a search is equivalent to a wildcard match if the passed filter's capability list is empty. In mathematical set notation 
+                            Such a search is equivalent to a wildcard match if the passed filter's capability list is empty. In mathematical set notation
                             this rule is equivalent to Cap\sub{(Filter)} \\ Cap\sub{(Service)} = {}. This is the default matching rule.
     \value MatchLoadable    The filter matches any service that could be loaded by the client.
                             Using this matching rule guarantees that the returned services do not
                             require more capabilites than specified by this rule. It includes services
                             with no capability requirements. If this rule
-                            is provided alongside an empty capability search list the returned 
+                            is provided alongside an empty capability search list the returned
                             services do not require any capabilities and thus can be accessed
                             by any client. The equivalent set notation is Cap\sub{(Service)} \\ Cap\sub{(Filter)} = {}.
 */
@@ -159,7 +160,7 @@ QServiceFilter::QServiceFilter(const QServiceFilter& other)
 
 /*!
     \fn  QServiceFilter::QServiceFilter(const QString& interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
-    
+
     Creates a new filter object that matches all service
     implementations implementing \a interfaceName that match the specified
     \a version using the given \a rule.
@@ -184,8 +185,8 @@ QServiceFilter::~QServiceFilter()
 
 /*!
     \fn  QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
-    
-    Copies the content of the QServiceFilter object contained in 
+
+    Copies the content of the QServiceFilter object contained in
     \a other into this one.
 */
 QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
@@ -204,7 +205,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
 
 /*!
     \fn  void QServiceFilter::setServiceName(const QString& serviceName)
-    
+
     The filter only matches implementations which are provided by the service
     specified by \a serviceName.
 
@@ -217,7 +218,7 @@ void QServiceFilter::setServiceName(const QString& serviceName)
 
 /*!
     \fn  void QServiceFilter::setInterface(const QString &interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
-    
+
     Sets the filter to match any interface implementation that implements
     \a interfaceName with version \a version. The version is matched
     according to the given \a rule. If \a version is not set, the filter matches any version of the
@@ -232,7 +233,7 @@ void QServiceFilter::setServiceName(const QString& serviceName)
 void QServiceFilter::setInterface(const QString &interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
 {
     //unset interface name
-    if (interfaceName.isEmpty() && version.isEmpty()) 
+    if (interfaceName.isEmpty() && version.isEmpty())
     {
         d->interface = interfaceName;
         d->majorVersion = d->minorVersion = -1;
@@ -261,8 +262,8 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
     bool success = false;
     int temp_major = -1;
     int temp_minor = -1;
-    if (pos == 0 && list.count() == 3 
-            && rx.matchedLength() == version.length() ) 
+    if (pos == 0 && list.count() == 3
+            && rx.matchedLength() == version.length() )
     {
         temp_major = list[1].toInt(&success);
         if ( success ) {
@@ -282,7 +283,7 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
 
 /*!
     \fn  QString QServiceFilter::serviceName() const
-    
+
     Returns the service name for this filter.
 
     \sa setServiceName()
@@ -294,7 +295,7 @@ QString QServiceFilter::serviceName() const
 
 /*!
     \fn  QString QServiceFilter::interfaceName() const
-    
+
     Returns the interface name for this filter.
 
     \sa setInterface()
@@ -306,7 +307,7 @@ QString QServiceFilter::interfaceName() const
 
 /*!
     \fn  int QServiceFilter::majorVersion() const
-    
+
     Returns the major interface version for this filter.
 
     \sa setInterface()
@@ -318,7 +319,7 @@ int QServiceFilter::majorVersion() const
 
 /*!
     \fn  int QServiceFilter::minorVersion() const
-    
+
     Returns the minor interface version for this filter.
 
     \sa setInterface()
@@ -330,9 +331,9 @@ int QServiceFilter::minorVersion() const
 
 /*!
     \fn  void QServiceFilter::setCustomAttribute(const QString& key, const QString& value)
-    
+
     The filter only matches implementations which have the custom attribute
-    \a key with the given \a value. Such constraints are specified via the 
+    \a key with the given \a value. Such constraints are specified via the
     \i{<customproperty>} tag within the service xml.
 
     \sa customAttribute(), clearCustomAttribute()
@@ -344,7 +345,7 @@ void QServiceFilter::setCustomAttribute(const QString& key, const QString& value
 
 /*!
     \fn  QString QServiceFilter::customAttribute(const QString& key) const
-    
+
     Returns the value for the custom attribute \a key; otherwise
     returns a null string.
 
@@ -357,7 +358,7 @@ QString QServiceFilter::customAttribute(const QString& key) const
 
 /*!
     \fn  void QServiceFilter::clearCustomAttribute(const QString &key)
-    
+
     Clears the custom attribute \a key from the filter's set of constraints.
     If \a key is empty all custom attributes are cleared.
 
@@ -373,7 +374,7 @@ void QServiceFilter::clearCustomAttribute(const QString &key)
 
 /*!
     \fn  QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
-    
+
     Returns the version match rule for this filter.
 
     \sa setInterface()
@@ -385,7 +386,7 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 
 /*!
     \fn  QList<QString> QServiceFilter::customAttributes() const
-    
+
     Returns the list of custom keys which have been added to the filter.
 */
 QStringList QServiceFilter::customAttributes() const
@@ -395,11 +396,11 @@ QStringList QServiceFilter::customAttributes() const
 
 /*!
     \fn  void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList& capabilities )
-    
+
     Sets the list of \a capabilities which are used to constrain
     searches for services. The capabilities are matched according
     to the given \a rule.
-    
+
     \sa capabilities(), QAbstractSecuritySession
 */
 void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList& capabilities )
@@ -410,7 +411,7 @@ void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, c
 
 /*!
     \fn  QStringList QServiceFilter::capabilities() const
-    
+
     Returns the list of capabilities which are used to limit services searches.
 
     The filter matches any services that requires the given or less
@@ -435,7 +436,7 @@ QServiceFilter::CapabilityMatchRule QServiceFilter::capabilityMatchRule() const
 }
 
 #ifndef QT_NO_DATASTREAM
-/*! 
+/*!
     \fn QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
     \relates QServiceFilter
 

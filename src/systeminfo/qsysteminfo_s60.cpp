@@ -697,6 +697,11 @@ void QSystemNetworkInfoPrivate::changedNetworkStatus()
     emit networkStatusChanged(mode, networkStatus(mode));
 }
 
+void QSystemNetworkInfoPrivate::changedCellDataTechnology()
+ {
+  emit cellDataTechnologyChanged(cellDataTechnology());
+ }
+
 void QSystemNetworkInfoPrivate::changedCellId(int cellIdTel)
 {
     emit cellIdChanged(cellIdTel);
@@ -777,6 +782,23 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
+#ifdef ETELPACKETSERVICE_SUPPORTED
+  TUint celldatatechnology = DeviceInfo::instance()->networkInfo()->CellDataTechnology();
+  switch (celldatatechnology )
+   {
+    case KHsdpaBearer:
+      return QSystemNetworkInfo::HspaDataTechnology;
+
+    case KEGprsBearer:
+      return QSystemNetworkInfo::EdgeDataTechnology;
+
+    case KGprsBearer:
+      return QSystemNetworkInfo::GprsDataTechnology;
+
+    case KUmtsBearer:
+      return QSystemNetworkInfo::UmtsDataTechnology;
+   }
+#endif
     return QSystemNetworkInfo::UnknownDataTechnology;
 }
 

@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-sort
+    \since 1.1
 
     Note that some manager's may not support case sensitive sorting.
 */

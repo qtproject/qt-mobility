@@ -178,6 +178,7 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     Attaching a QGraphicsVideoItem to a QMediaObject allows it to display
     the video or image output of that media object.  A QGraphicsVideoItem

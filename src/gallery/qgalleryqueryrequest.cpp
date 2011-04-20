@@ -83,6 +83,7 @@ public:
     \ingroup gallery-requests
 
     \inmodule QtGallery
+    \since 1.1
 
     \brief The QGalleryQueryRequest class provides a request for a set of
     items from a gallery.

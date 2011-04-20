@@ -48,8 +48,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaRecorderControl
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaRecorderControl class provides access to the recording
     functionality of a QMediaService.
 

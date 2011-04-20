@@ -2593,38 +2593,39 @@ void CFSEngine::addMessagePartsToQMessage(QMessage& message, MEmailMessage& mEma
         size = pContent->TotalSize();
         pContent->Release();
     }
-
-    // Attachments
-    REmailAttachmentArray attachments;
-    TInt count = mEmailMessage.GetAttachmentsL(attachments);
-    for (int i=0; i < attachments.Count(); i++) {
-        QByteArray fileName;
-        TPtrC fName(KNullDesC);
-        TRAPD(err, fName.Set(attachments[i]->FileNameL()));
-        if (err == KErrNone) {
-            fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+    else {
+        // Attachments
+        REmailAttachmentArray attachments;
+        TInt count = mEmailMessage.GetAttachmentsL(attachments);
+        for (int i=0; i < attachments.Count(); i++) {
+            QByteArray fileName;
+            TPtrC fName(KNullDesC);
+            TRAPD(err, fName.Set(attachments[i]->FileNameL()));
+            if (err == KErrNone) {
+                fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+            }
+            QByteArray mimeHeader = QString::fromUtf16(attachments[i]->ContentType().Ptr(),
+                                                       attachments[i]->ContentType().Length()).toAscii();
+            MessagingHelper::extractMIMEHeaderParts(mimeHeader, mimeType, mimeSubType, charset);
+            int attachmentSize = attachments[i]->TotalSize();
+            size += attachmentSize;
+            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(msgId.iId,
+                                                                                        1,
+                                                                                        fileName, mimeType,
+                                                                                        mimeSubType, attachmentSize,
+                                                                                        attachments[i]->Id());
+            QMessageContentContainerPrivate *attachmentContainer = QMessageContentContainerPrivate::implementation(attachment);
+            attachmentContainer->_freestyleAttachment = true;
+            if (attachments[i]->TotalSize() == attachments[i]->AvailableSize()) {
+                attachmentContainer->_available = true;
+            } else {
+                attachmentContainer->_available = false;
+            }
+            addAttachmentToQMessage(message, attachment);
+            attachments[i]->Release();
         }
-        QByteArray mimeHeader = QString::fromUtf16(attachments[i]->ContentType().Ptr(),
-                                                   attachments[i]->ContentType().Length()).toAscii();
-        MessagingHelper::extractMIMEHeaderParts(mimeHeader, mimeType, mimeSubType, charset);
-        int attachmentSize = attachments[i]->TotalSize();
-        size += attachmentSize;
-        QMessageContentContainer attachment = QMessageContentContainerPrivate::from(msgId.iId,
-                                                                                    1,
-                                                                                    fileName, mimeType,
-                                                                                    mimeSubType, attachmentSize,
-                                                                                    attachments[i]->Id());
-        QMessageContentContainerPrivate *attachmentContainer = QMessageContentContainerPrivate::implementation(attachment);
-        attachmentContainer->_freestyleAttachment = true;
-        if (attachments[i]->TotalSize() == attachments[i]->AvailableSize()) {
-            attachmentContainer->_available = true;
-        } else {
-            attachmentContainer->_available = false;
-        }
-        addAttachmentToQMessage(message, attachment);
-        attachments[i]->Release();
+        attachments.Reset();
     }
-    attachments.Reset();
 
     QMessagePrivate* pPrivateMessage = QMessagePrivate::implementation(message);
     pPrivateMessage->_size = size;

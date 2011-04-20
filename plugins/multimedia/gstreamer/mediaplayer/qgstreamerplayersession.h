@@ -94,6 +94,8 @@ public:
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
 
+    QMediaTimeRange availablePlaybackRanges() const;
+
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QtMultimediaKit::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
@@ -155,6 +157,7 @@ private:
     static void handleVolumeChange(GObject *o, GParamSpec *p, gpointer d);
     static void handleMutedChange(GObject *o, GParamSpec *p, gpointer d);
     static void insertColorSpaceElement(GstElement *element, gpointer data);
+    static void handleElementAdded(GstBin *bin, GstElement *element, QGstreamerPlayerSession *session);
 
     QNetworkRequest m_request;
     QMediaPlayer::State m_state;
@@ -174,6 +177,8 @@ private:
     GstBus* m_bus;
     QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
+
+    bool m_haveQueueElement;
 
 #if defined(HAVE_GST_APPSRC)
     QGstAppSrc *m_appSrc;

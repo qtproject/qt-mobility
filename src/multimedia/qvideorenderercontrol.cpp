@@ -47,13 +47,14 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoRendererControl
-    
+
 
     \brief The QVideoRendererControl class provides a control for rendering
     to a video surface.
 
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     Using the surface() property of QVideoRendererControl a
     QAbstractVideoSurface may be set as the video render target of a

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -86,6 +86,7 @@ public: // From MNearFieldTargetOperation
 
     void EmitNdefMessageRead(const QNdefMessage &message);
     void EmitNdefMessagesWritten();
+    void EmitRequestCompleted(const QNearFieldTarget::RequestId &id);
     void EmitError(int error, const QNearFieldTarget::RequestId &id);
 
 public:
@@ -149,12 +150,31 @@ void QNearFieldTagImpl<TAGTYPE>::EmitNdefMessagesWritten()
 }
 
 template<typename TAGTYPE>
-void QNearFieldTagImpl<TAGTYPE>::EmitError(int error, const QNearFieldTarget::RequestId &id)
+void QNearFieldTagImpl<TAGTYPE>::EmitRequestCompleted(const QNearFieldTarget::RequestId &id)
 {
     BEGIN
     TAGTYPE * tag = static_cast<TAGTYPE *>(this);
     int err;
-    QT_TRYCATCH_ERROR(err, emit tag->error(SymbianError2QtError(error), id));
+    QT_TRYCATCH_ERROR(err, emit tag->requestCompleted(id));
+    Q_UNUSED(err);
+    END
+}
+
+template<typename TAGTYPE>
+void QNearFieldTagImpl<TAGTYPE>::EmitError(int error, const QNearFieldTarget::RequestId &id)
+{
+    BEGIN
+    TAGTYPE * tag = static_cast<TAGTYPE *>(this);
+
+    int err = KErrNone;
+    try {
+        QMetaObject::invokeMethod(tag, "error", Qt::QueuedConnection,
+                                  Q_ARG(QNearFieldTarget::Error, SymbianError2QtError(error)),
+                                  Q_ARG(QNearFieldTarget::RequestId, id));
+    } catch (const std::exception &ex) {
+        err = qt_symbian_exception2Error(ex);
+    }
+
     Q_UNUSED(err);
     END
 }

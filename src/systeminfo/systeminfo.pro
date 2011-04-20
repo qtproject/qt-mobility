@@ -28,7 +28,7 @@ SOURCES += \
 
 PRIVATE_HEADERS += qsysteminfocommon_p.h
 
-DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
+DEFINES += QT_MAKEDLL QT_BUILD_SYSINFO_LIB
 
 simulator {
     SOURCES += qsystemalignedtimer_stub.cpp
@@ -75,8 +75,23 @@ unix:!simulator {
     QT += gui
     PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
 
-    maemo5|maemo6|linux-*: {
-        contains(bluez_enabled, yes): DEFINES += BLUEZ_SUPPORTED
+        contains(build_unit_tests, yes):contains(test_use_sim, yes) {
+
+            ## for using simulator backend to test frontend signals
+            ## configure with -test-sim -tests
+
+            SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
+            HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+            DEFINES += TESTR QT_SIMULATOR
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsystemalignedtimer_stub_p.h
+
+        } else {
+
+
+        linux-*: {
+        contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
+
 
         SOURCES += linux/qsysteminfo_linux_common.cpp
         HEADERS += linux/qsysteminfo_linux_common_p.h
@@ -104,6 +119,7 @@ unix:!simulator {
     }
 
     !maemo5:!maemo6:linux-*: {
+
         SOURCES += linux/qsysteminfo_linux.cpp
         HEADERS += linux/qsysteminfo_linux_p.h
         contains(QT_CONFIG, dbus): {
@@ -151,14 +167,20 @@ unix:!simulator {
             DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
             !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
         }
-    }
+     }
 
     maemo5|maemo6: {
+
         #Qt GConf wrapper added here until a proper place is found for it.
         CONFIG += link_pkgconfig
         SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
         HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
         DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
+
+          contains(bme_enabled, yes): {
+              LIBS += -lbmeipc
+              DEFINES += Q_USE_BME
+          }
 
         contains(QT_CONFIG,dbus): {
             QT += dbus
@@ -174,7 +196,9 @@ unix:!simulator {
     }
 
     mac: {
-        SOURCES += qsysteminfo_mac.mm qsystemalignedtimer_stub.cpp
+        OBJECTIVE_SOURCES += qsysteminfo_mac.mm
+        SOURCES += qsystemalignedtimer_stub.cpp
+
         HEADERS += qsysteminfo_mac_p.h qsystemalignedtimer_stub_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
             -framework IOKit -framework ApplicationServices -framework Foundation \
@@ -192,14 +216,15 @@ unix:!simulator {
 
             !isEmpty(SDK6) {
                 LIBS += -framework CoreWLAN  -framework CoreLocation
-                DEFINES += MAC_SDK_10_6
             }
         } else {
+            DEFINES += MAC_SDK_10_5
             CONFIG += no_keywords
         }
 
         TEMPLATE = lib
     }
+  }
 
     symbian: {
         contains(S60_VERSION, 3.1) {
@@ -223,7 +248,7 @@ unix:!simulator {
             LIBS += -lhwrmfmtxclient
         }
 
-        contains(DiskNotifyClient_tenabled, yes) {
+        contains(DiskNotifyClient_enabled, yes) {
             message("DiskNotiferClient available")
             DEFINES += DISKNOTIFY_SUPPORTED
             LIBS += -ldisknotifyhandler
@@ -305,6 +330,12 @@ unix:!simulator {
             message("ETELMM enabled")
         }
 
+        contains(etelpacketservice_symbian_enabled, yes) {
+            message("etel packet service enabled")
+            LIBS += -letelpckt
+            DEFINES += ETELPACKETSERVICE_SUPPORTED
+        }
+
         contains(thermalstatus_symbian_enabled, yes) {
             DEFINES += THERMALSTATUS_SUPPORTED
             SOURCES += thermalstatus_s60.cpp
@@ -327,8 +358,16 @@ unix:!simulator {
 simulator {
     SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
     HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+    SOURCES += qsystemalignedtimer_stub.cpp
+    HEADERS += qsystemalignedtimer_stub_p.h
+
+#   contains(build_unit_tests, yes) {
+ #           DEFINES += TESTR QT_SIMULATOR
+  # } else {
     INCLUDEPATH += ../mobilitysimulator
     qtAddLibrary(QtMobilitySimulator)
+ # }
+
 }
 
 HEADERS += $$PUBLIC_HEADERS

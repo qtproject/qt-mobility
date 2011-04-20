@@ -81,6 +81,7 @@ usr/lib/qtmobility/examples/show_light
 usr/lib/qtmobility/examples/show_magneticflux
 usr/lib/qtmobility/examples/show_orientation
 usr/lib/qtmobility/examples/show_proximity
+usr/lib/qtmobility/examples/show_reflectance
 usr/lib/qtmobility/examples/show_rotation
 usr/lib/qtmobility/examples/show_tap
 usr/lib/qtmobility/examples/simplelog.txt

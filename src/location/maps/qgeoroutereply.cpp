@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     of QGeoRoutingManager.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 

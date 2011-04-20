@@ -50,6 +50,7 @@ IMPLEMENT_READING(QAmbientLightReading)
     \class QAmbientLightReading
     \ingroup sensors_reading
     \inmodule QtSensors
+    \since 1.0
 
     \brief The QAmbientLightReading class represents one reading from the
            ambient light sensor.

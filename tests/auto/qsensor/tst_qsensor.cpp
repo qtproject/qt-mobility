@@ -46,6 +46,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QFile>
+#include <QSignalSpy>
 
 #include "qsensor.h"
 #include "test_sensor.h"
@@ -471,12 +472,6 @@ private slots:
         TestSensor sensor;
         sensor.connectToBackend();
 
-        sensor.setProperty("doThis", "busy");
-        sensor.start();
-        QVERIFY(sensor.isBusy());
-        QVERIFY(!sensor.isActive());
-        sensor.stop();
-
         sensor.setProperty("doThis", "stop");
         sensor.start();
         QVERIFY(!sensor.isActive());
@@ -883,6 +878,31 @@ private slots:
         QCOMPARE(sensor.reading()->timestamp(), qtimestamp(2));
         QCOMPARE(sensor.reading()->test(), 2);
         sensor.stop();
+    }
+
+    void testBusyChanged()
+    {
+        // Start an exclusive sensor
+        TestSensor sensor1;
+        sensor1.setProperty("exclusive", true);
+        sensor1.start();
+        QVERIFY(sensor1.isActive());
+
+        // Try to start another one, sensor reports busy
+        TestSensor sensor2;
+        sensor2.setProperty("exclusive", true);
+        sensor2.start();
+        QVERIFY(sensor2.isBusy());
+        QVERIFY(!sensor2.isActive());
+
+        // Stopping the first instance causes the busyChanged signal to be emitted from the second instance
+        QSignalSpy spy(&sensor2, SIGNAL(busyChanged()));
+        sensor1.stop();
+        QCOMPARE(spy.count(), 1);
+
+        // Now we can start the second instance
+        sensor2.start();
+        QVERIFY(sensor2.isActive());
     }
 
     // This test must be LAST or it will interfere with the other tests
