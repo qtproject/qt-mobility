@@ -1549,9 +1549,11 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
         if (extensions.contains("ARB_fragment_program"))
             m_shaderTypes |= FragmentProgramShader;
 #endif
-
         if (QGLShaderProgram::hasOpenGLShaderPrograms(m_glContext)
-                && extensions.contains("ARB_shader_objects"))
+#ifndef QT_OPENGL_ES_2
+                && extensions.contains("ARB_shader_objects")
+#endif
+            )
             m_shaderTypes |= GlslShader;
     }
 
