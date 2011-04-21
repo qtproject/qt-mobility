@@ -80,7 +80,7 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
         QVariant var;
         var.setValue(category.categoryId());
         categoryItem->setData(Qt::UserRole, var);
-        categoryItem->setFlags(categoryItem->flags() & ~ Qt::ItemIsUserCheckable);
+        categoryItem->setFlags(Qt::ItemIsEnabled);
         if (landmark.categoryIds().contains(category.categoryId()))
             categoryItem->setCheckState(Qt::Checked);
         else
