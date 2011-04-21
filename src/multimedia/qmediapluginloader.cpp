@@ -230,7 +230,19 @@ void QMediaPluginLoader::load()
             }
         }
     } else {
+        QSet<QString> loadedPlugins;
+
         foreach (const QString &plugin, availablePlugins()) {
+            QString fileName = QFileInfo(plugin).fileName();
+            //don't try to load plugin with the same name if it's already loaded
+            if (loadedPlugins.contains(fileName)) {
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Skip loading plugin" << plugin;
+#endif
+                continue;
+            }
+
             QPluginLoader   loader(plugin);
 
             QObject *o = loader.instance();
@@ -239,6 +251,12 @@ void QMediaPluginLoader::load()
                 if (p != 0) {
                     foreach (const QString &key, p->keys())
                         m_instances[key].append(o);
+
+                    loadedPlugins.insert(fileName);
+#if !defined QT_NO_DEBUG
+                    if (showDebug)
+                        qDebug() << "Loaded plugin" << plugin << "services:" << p->keys();
+#endif
                 }
 
                 continue;
