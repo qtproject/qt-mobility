@@ -257,11 +257,11 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
         connect(m_videoPlayerSession, SIGNAL(accessPointChanged(int)),
                 m_networkAccessControl, SLOT(accessPointChanged(int)));
 
-        m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
-        m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
-        m_videoPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
-
     }
+
+    m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
+    m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    m_videoPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
 
     DP0("S60MediaPlayerService::VideoPlayerSession ---");
 
@@ -314,10 +314,12 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
         connect(m_audioPlayerSession, SIGNAL(mediaChanged()),
                 m_streamControl, SLOT(handleStreamsChanged()));
 
-        m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
-        m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
-        m_audioPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
     }
+
+    m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
+    m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    m_audioPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
+
     DP0("S60MediaPlayerService::AudioPlayerSession ---");
 
     return m_audioPlayerSession;

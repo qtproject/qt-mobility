@@ -781,6 +781,9 @@ QVariant QMediaRecorder::metaData(QtMultimediaKit::MetaData key) const
 
 /*!
     Sets a \a value for a meta-data \a key.
+
+    \note To ensure that meta data is set corretly, it should be set before starting the recording.
+    Once the recording is stopped, any meta data set will be attached to the next recording.
 */
 void QMediaRecorder::setMetaData(QtMultimediaKit::MetaData key, const QVariant &value)
 {

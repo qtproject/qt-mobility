@@ -480,11 +480,8 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 			}
 		}
 
-	// Rename the image file to contain the guid
-	if (aType == EInsert)
-	    {
-        TRAP_IGNORE(TCntImageRescaleUtility::UpdateImageNameL( aItem ));
-		}
+	// Rename the image file to contain the guid, if it does not contain the guid
+	TRAP_IGNORE(TCntImageRescaleUtility::UpdateImageNameL( aItem ));
 	
 	// bind other values to statement
 	if(aType == EInsert) 

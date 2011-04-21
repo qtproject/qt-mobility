@@ -39,15 +39,25 @@
 **
 ****************************************************************************/
 
+#import <Foundation/Foundation.h>
+#import <QTKit/QTKit.h>
+
 #include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
 
+#include "qt7backend.h"
 #include "qt7serviceplugin.h"
 #include "qt7playerservice.h"
 
 #include <qmediaserviceprovider.h>
 
 QT_BEGIN_NAMESPACE
+
+
+QT7ServicePlugin::QT7ServicePlugin()
+{
+    buildSupportedTypes();
+}
 
 QStringList QT7ServicePlugin::keys() const
 {
@@ -84,6 +94,34 @@ QMediaServiceProviderHint::Features QT7ServicePlugin::supportedFeatures(
         return QMediaServiceProviderHint::VideoSurface;
     else
         return QMediaServiceProviderHint::Features();
+}
+
+QtMultimediaKit::SupportEstimate QT7ServicePlugin::hasSupport(const QString &mimeType, const QStringList& codecs) const
+{
+    Q_UNUSED(codecs);
+
+    if (m_supportedMimeTypes.contains(mimeType))
+        return QtMultimediaKit::ProbablySupported;
+
+    return QtMultimediaKit::MaybeSupported;
+}
+
+QStringList QT7ServicePlugin::supportedMimeTypes() const
+{
+    return m_supportedMimeTypes;
+}
+
+void QT7ServicePlugin::buildSupportedTypes()
+{
+    AutoReleasePool pool;
+    NSArray *utis = [QTMovie movieTypesWithOptions:QTIncludeCommonTypes];
+    for (NSString *uti in utis) {
+        NSString* mimeType = (NSString*)UTTypeCopyPreferredTagWithClass((CFStringRef)uti, kUTTagClassMIMEType);
+        if (mimeType != 0) {
+            m_supportedMimeTypes.append(QString::fromUtf8([mimeType UTF8String]));
+            [mimeType release];
+        }
+    }
 }
 
 Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
