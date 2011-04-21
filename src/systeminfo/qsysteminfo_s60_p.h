@@ -557,13 +557,13 @@ private:
         ,m_thermalStatus(NULL)
 #endif
     {
-     //TRACES (qDebug() << "DeviceInfo():Constructor");
+        TRACES(qDebug() << "DeviceInfo():Constructor");
         m_telephony = CTelephony::NewL();
     };
 
     ~DeviceInfo()
     {
-     //TRACES (qDebug() << "DeviceInfo():Destructor");
+        TRACES(qDebug() << "DeviceInfo():Destructor");
         delete m_cellSignalStrengthInfo;
         delete m_cellNetworkRegistrationInfo;
         delete m_cellNetworkInfo;
