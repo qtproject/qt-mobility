@@ -116,7 +116,7 @@ void QOrganizerManagerData::createEngine(const QString& managerName, const QMap<
 
         /* See if we got a fast hit */
         QList<QOrganizerManagerEngineFactory*> factories = m_engines.values(builtManagerName);
-        m_error = QOrganizerManager::NoError;
+        m_lastError = QOrganizerManager::NoError;
 
         while(!found) {
             foreach (QOrganizerManagerEngineFactory* f, factories) {
@@ -124,7 +124,7 @@ void QOrganizerManagerData::createEngine(const QString& managerName, const QMap<
                 if (implementationVersion == -1 ||//no given implementation version required
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
-                    QOrganizerManagerEngine* engine = f->engine(parameters, &m_error);
+                    QOrganizerManagerEngine* engine = f->engine(parameters, &m_lastError);
                     // if it's a V2, use it
                     m_engine = qobject_cast<QOrganizerManagerEngineV2*>(engine);
                     if (!m_engine && engine) {
@@ -149,13 +149,13 @@ void QOrganizerManagerData::createEngine(const QString& managerName, const QMap<
         // XXX remove this
         // the engine factory could lie to us, so check the real implementation version
         if (m_engine && (implementationVersion != -1 && m_engine->managerVersion() != implementationVersion)) {
-            m_error = QOrganizerManager::VersionMismatchError;
+            m_lastError = QOrganizerManager::VersionMismatchError;
             m_engine = 0;
         }
 
         if (!m_engine) {
-            if (m_error == QOrganizerManager::NoError)
-                m_error = QOrganizerManager::DoesNotExistError;
+            if (m_lastError == QOrganizerManager::NoError)
+                m_lastError = QOrganizerManager::DoesNotExistError;
             m_engine = new QOrganizerItemInvalidEngine();
         }
     }

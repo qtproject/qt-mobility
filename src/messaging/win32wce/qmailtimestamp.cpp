@@ -341,6 +341,7 @@ bool QMailTimeStampPrivate::operator>= (const QMailTimeStampPrivate& other) cons
     \ingroup messaginglibrary
     \since 1.1
 
+
     QMailTimeStamp provides functions for creating and manipulating the time stamps of messages.
     QMailTimeStamp can be created from time stamp strings, or from QDateTime objects.  The
     time stamp information can be extracted in UTC time, local time, or as a formatted

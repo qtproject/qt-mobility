@@ -111,6 +111,28 @@ signals:
 
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemFilter)
 
+class QDeclarativeOrganizerItemCompoundFilter : public QDeclarativeOrganizerItemFilter
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters READ filters)
+    Q_CLASSINFO("DefaultProperty", "filters")
+
+public:
+    explicit QDeclarativeOrganizerItemCompoundFilter(QObject* parent = 0) : QDeclarativeOrganizerItemFilter(parent){}
+    virtual ~QDeclarativeOrganizerItemCompoundFilter() {}
+    // 'READ' accessor for the filters, basically this is also a 'WRITE' accessor
+    // as per QDeclarativeListProperty's design.
+    QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters();
+
+    static void filters_append(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop, QDeclarativeOrganizerItemFilter* filter);
+    static int filters_count(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop);
+    static QDeclarativeOrganizerItemFilter* filters_at(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop, int index);
+    static void filters_clear(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>* prop);
+
+protected:
+    QList<QDeclarativeOrganizerItemFilter*> m_filters;
+};
+QML_DECLARE_TYPE(QDeclarativeOrganizerItemCompoundFilter)
 
 //changelog filter
 class QDeclarativeOrganizerItemChangeLogFilter : public QDeclarativeOrganizerItemFilter
@@ -521,17 +543,13 @@ QML_DECLARE_TYPE(QDeclarativeOrganizerItemIdFilter)
 
 
 //intersection filter
-class QDeclarativeOrganizerItemIntersectionFilter : public QDeclarativeOrganizerItemFilter
+class QDeclarativeOrganizerItemIntersectionFilter : public QDeclarativeOrganizerItemCompoundFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters READ filters NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "filters")
-
 public:
     QDeclarativeOrganizerItemIntersectionFilter(QObject *parent = 0)
-        :QDeclarativeOrganizerItemFilter(parent)
+        :QDeclarativeOrganizerItemCompoundFilter(parent)
     {
-        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QOrganizerItemFilter filter() const
@@ -544,33 +562,18 @@ public:
         f.setFilters(filters);
         return f;
     }
-
-    QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters()
-    {
-        return QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>(this, m_filters);
-    }
-
-signals:
-    void valueChanged();
-
-private:
-    QList<QDeclarativeOrganizerItemFilter*> m_filters;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemIntersectionFilter)
 
 
 //union filter
-class QDeclarativeOrganizerItemUnionFilter : public QDeclarativeOrganizerItemFilter
+class QDeclarativeOrganizerItemUnionFilter : public QDeclarativeOrganizerItemCompoundFilter
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters READ filters NOTIFY valueChanged)
-    Q_CLASSINFO("DefaultProperty", "filters")
-
 public:
     QDeclarativeOrganizerItemUnionFilter(QObject *parent = 0)
-        :QDeclarativeOrganizerItemFilter(parent)
+        :QDeclarativeOrganizerItemCompoundFilter(parent)
     {
-        connect(this, SIGNAL(valueChanged()), SIGNAL(filterChanged()));
     }
 
     QOrganizerItemFilter filter() const
@@ -583,17 +586,6 @@ public:
         f.setFilters(filters);
         return f;
     }
-
-    QDeclarativeListProperty<QDeclarativeOrganizerItemFilter> filters()
-    {
-        return QDeclarativeListProperty<QDeclarativeOrganizerItemFilter>(this, m_filters);
-    }
-
-signals:
-    void valueChanged();
-
-private:
-    QList<QDeclarativeOrganizerItemFilter*> m_filters;
 };
 QML_DECLARE_TYPE(QDeclarativeOrganizerItemUnionFilter)
 
