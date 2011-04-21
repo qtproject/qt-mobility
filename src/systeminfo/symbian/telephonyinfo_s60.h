@@ -46,6 +46,7 @@
 #include <etel3rdparty.h>
 #include <QString>
 #include <QList>
+#include "trace.h"
 
 class CActiveSchedulerWait;
 
