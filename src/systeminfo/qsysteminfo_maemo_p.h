@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QSYSTEMINFO_MAEMO_P_H
 #define QSYSTEMINFO_MAEMO_P_H
 
@@ -52,45 +53,29 @@
 // We mean it.
 //
 
-
-#include <QObject>
-#include <QSize>
-#include <QHash>
-
 #include "linux/qsysteminfo_linux_common_p.h"
-#include "qsysteminfo.h"
-#include <qmobilityglobal.h>
-#if !defined(QT_NO_DBUS)
-#include "linux/qhalservice_linux_p.h"
 
+#if !defined(QT_NO_DBUS)
 struct ProfileDataValue {
     QString key;
     QString val;
     QString type;
-    };
+};
 
 Q_DECLARE_METATYPE(ProfileDataValue)
 Q_DECLARE_METATYPE(QList<ProfileDataValue>)
-
-#endif
+#endif // QT_NO_DBUS
 
 #ifdef Q_USE_BME
 extern "C" {
 #include "bme/bmeipc.h"
 }
 #include <mqueue.h>
-#endif
+#endif // Q_USE_BME
 
 QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-class QStringList;
-class QTimer;
-QT_END_NAMESPACE
-
 QTM_BEGIN_NAMESPACE
 
-class QSystemNetworkInfo;
 class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -106,11 +91,6 @@ public:
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 };
-
-class QNetworkManagerInterface;
-class QNetworkManagerInterfaceDeviceWired;
-class QNetworkManagerInterfaceDeviceWireless;
-class QNetworkManagerInterfaceAccessPoint;
 
 class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
 {
@@ -232,7 +212,6 @@ class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
@@ -245,28 +224,21 @@ public:
     QSystemDeviceInfo::ThermalState currentThermalState();
     QString model();
     QString productName();
-    bool isKeyboardFlippedOpen();//1.2
-    bool keypadLightOn(QSystemDeviceInfo::KeypadType type);//1.2
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
 
-    int messageRingtoneVolume();//1.2
-    int voiceRingtoneVolume();//1.2
-    bool vibrationActive();//1.2
+    int messageRingtoneVolume(); //1.2
+    int voiceRingtoneVolume(); //1.2
+    bool vibrationActive(); //1.2
 
-    QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
     QByteArray uniqueDeviceID(); //1.2
-
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);
 
-protected:
-
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-    void setupBluetooth();
-
 private Q_SLOTS:
     void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
@@ -274,8 +246,8 @@ private Q_SLOTS:
     void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
     void deviceStateChanged(int device, int state);
     void touchAndKeyboardStateChanged(const QString& state);
-
     void socketActivated(int);
+
 private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -310,12 +282,13 @@ private:
 
     QSystemDeviceInfo::PowerState previousPowerState;
     QSystemDeviceInfo::LockTypeFlags  currentLockType;
-#endif
-     QSocketNotifier *notifier;
-     int gpioFD;
-     int currentBatteryLevel;
-};
+#endif // QT_NO_DBUS
 
+private:
+    QSocketNotifier *notifier;
+    int gpioFD;
+    int currentBatteryLevel;
+};
 
 class QSystemScreenSaverPrivate : public QObject
 {
@@ -349,6 +322,7 @@ class EmCurrentMeasurement;
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
     Q_OBJECT
+
 public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
@@ -358,10 +332,11 @@ public:
 private Q_SLOTS:
 #if !defined(QT_NO_DBUS)
     void halChangedMaemo(int,QVariantList);
-#endif
+#endif // QT_NO_DBUS
+
 #ifdef Q_USE_BME
     void onMeasurement(int socket);
-#endif
+#endif // Q_USE_BME
 
 private:
     void connectNotify(const char *signal);
@@ -381,15 +356,10 @@ private:
     QScopedPointer<EmIpc> emIpc;
     QScopedPointer<EmEvents> emEvents;
     QScopedPointer<EmCurrentMeasurement> emCurrentMeasurements;
-#endif
+#endif // Q_USE_BME
 };
 
-
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
-#endif /*QSYSTEMINFO_MAEMO_P_H*/
-
-// End of file
-
+#endif // QSYSTEMINFO_MAEMO_P_H

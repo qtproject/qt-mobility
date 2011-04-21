@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #include "qsystemalignedtimer.h"
 #include "qsystemalignedtimer_meego_p.h"
 #include <QDebug>
@@ -49,15 +48,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
-    QObject(parent),
-    m_lastError(QSystemAlignedTimer::NoError),
-    m_minimumInterval(0),
-    m_maximumInterval(0),
-    m_running(false),
-    m_singleShot(false),
-    m_iphbdHandler(0),
-    m_notifier(0)
+QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
+    : QObject(parent)
+    , m_lastError(QSystemAlignedTimer::NoError)
+    , m_minimumInterval(0)
+    , m_maximumInterval(0)
+    , m_running(false)
+    , m_singleShot(false)
+    , m_iphbdHandler(0)
+    , m_notifier(0)
 {
     m_iphbdHandler = iphb_open(0);
 
@@ -66,7 +65,6 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
         qDebug() << "iphb_open error" << m_iphbdHandler<< errno <<strerror(errno);
         return;
     }
-
 
     int sockfd = iphb_get_fd(m_iphbdHandler);
     if (!(sockfd > -1)) {
@@ -87,13 +85,11 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
 
 QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate()
 {
-    if (m_iphbdHandler) {
-        (void)iphb_close(m_iphbdHandler), m_iphbdHandler = 0;
-    }
+    if (m_iphbdHandler)
+        (void)iphb_close(m_iphbdHandler);
 
-    if (m_notifier) {
-        delete m_notifier, m_notifier = 0;
-    }
+    if (m_notifier)
+        delete m_notifier;
 }
 
 void QSystemAlignedTimerPrivate::wokeUp()
@@ -167,8 +163,6 @@ QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimerPrivate::lastError() c
     return m_lastError;
 }
 
-// public slots
-
 void QSystemAlignedTimerPrivate::start(int minimumTime, int maximumTime)
 {
     m_minimumInterval = minimumTime;
@@ -179,9 +173,8 @@ void QSystemAlignedTimerPrivate::start(int minimumTime, int maximumTime)
 
 void QSystemAlignedTimerPrivate::start()
 {
-    if (m_running) {
+    if (m_running)
         return;
-    }
 
     if (!(m_iphbdHandler && m_notifier)) {
         m_lastError = QSystemAlignedTimer::InternalError;
@@ -205,9 +198,8 @@ void QSystemAlignedTimerPrivate::start()
 
 void QSystemAlignedTimerPrivate::stop()
 {
-    if (!m_running) {
+    if (!m_running)
         return;
-    }
 
     if (!(m_iphbdHandler && m_notifier)) {
         m_lastError = QSystemAlignedTimer::InternalError;
@@ -222,23 +214,20 @@ void QSystemAlignedTimerPrivate::stop()
     m_lastError = QSystemAlignedTimer::NoError;
 }
 
-// private slots
-
 void QSystemAlignedTimerPrivate::heartbeatReceived(int sock) {
     Q_UNUSED(sock);
 
     stop();
     emit timeout();
 
-    if (!m_singleShot) {
+    if (!m_singleShot)
         start();
-    }
 }
 
 void QSystemAlignedTimerPrivate::singleShot()
 {
-   QMetaObject::invokeMethod(m_singleShotReceiver, m_singleShotMember.constData());
-   this->deleteLater();
+    QMetaObject::invokeMethod(m_singleShotReceiver, m_singleShotMember.constData());
+    this->deleteLater();
 }
 
 bool QSystemAlignedTimerPrivate::isActive () const

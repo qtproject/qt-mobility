@@ -39,13 +39,10 @@
 **
 ****************************************************************************/
 
-
 #ifndef QSYSTEMALIGNEDTIMER_H
 #define QSYSTEMALIGNEDTIMER_H
 
 #include <QObject>
-#include <QTime>
-#include <QTimer>
 #include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
@@ -59,20 +56,19 @@ class Q_SYSINFO_EXPORT QSystemAlignedTimer : public QObject
 
     Q_PROPERTY(int minimumInterval READ minimumInterval WRITE setMinimumInterval)
     Q_PROPERTY(int maximumInterval READ maximumInterval WRITE setMaximumInterval)
-
     Q_PROPERTY(bool singleShot READ isSingleShot WRITE setSingleShot)
     Q_PROPERTY(bool active READ isActive)
-public:
 
+public:
     explicit QSystemAlignedTimer(QObject *parent = 0);
     ~QSystemAlignedTimer();
 
     enum AlignedTimerError {
-      NoError=0,
-      AlignedTimerNotSupported,
-      InvalidArgument,
-      TimerFailed,
-      InternalError
+        NoError = 0,
+        AlignedTimerNotSupported,
+        InvalidArgument,
+        TimerFailed,
+        InternalError
     };
 
     Q_INVOKABLE void wokeUp();
@@ -93,7 +89,6 @@ public:
 
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);
-
     void start();
     void stop();
 
@@ -109,7 +104,6 @@ private:
 // before mobility 1.2
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMALIGNEDTIMER_H
