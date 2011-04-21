@@ -120,12 +120,12 @@ QStringList QMediaPluginLoader::keys() const
 
 QObject* QMediaPluginLoader::instance(QString const &key)
 {
-    return m_instances.value(key);
+    return m_instances.value(key).first();
 }
 
 QList<QObject*> QMediaPluginLoader::instances(QString const &key)
 {
-    return m_instances.values(key);
+    return m_instances.value(key);
 }
 
 //to be used for testing purposes only
@@ -225,7 +225,7 @@ void QMediaPluginLoader::load()
                 QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (QString const &key, p->keys())
-                        m_instances.insertMulti(key, o);
+                        m_instances[key].append(o);
                 }
             }
         }
@@ -238,7 +238,7 @@ void QMediaPluginLoader::load()
                 QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (const QString &key, p->keys())
-                        m_instances.insertMulti(key, o);
+                        m_instances[key].append(o);
                 }
 
                 continue;
