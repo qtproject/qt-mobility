@@ -61,6 +61,7 @@
     \class QMailMessageContentDispositionFwd
     \brief The QMailMessageContentDispositionFwd class declares enumerations used by QMailMessageContentDisposition
 
+
     QMailMessageContentDispositionFwd allows QMailMessageContentDisposition::DispositionType
     to be used without including all of \c qmailmessage.h.
 */
@@ -78,6 +79,7 @@
 /*!
     \class QMailMessageBodyFwd
     \brief The QMailMessageBodyFwd class declares enumerations used by QMailMessageBody
+
 
     QMailMessageBodyFwd allows QMailMessageBody::TransferEncoding and QMailMessageBody::EncodingStatus
     to be used without including all of \c qmailmessage.h.
@@ -122,6 +124,7 @@
     \class QMailMessagePartContainerFwd
     \brief The QMailMessagePartContainerFwd class declares enumerations used by QMailMessagePartContainer
 
+
     QMailMessagePartContainerFwd allows QMailMessagePartContainerFwd::MultipartType
     to be used without including all of \c qmailmessage.h.
 */
@@ -147,6 +150,7 @@
     \class QMailMessagePartFwd
     \brief The QMailMessagePartFwd class declares enumerations used by QMailMessagePart
 
+
     QMailMessagePartFwd allows QMailMessagePartFwd::ReferenceType
     to be used without including all of \c qmailmessage.h.
 */
@@ -164,6 +168,7 @@
 /*!
     \class QMailMessageMetaDataFwd
     \brief The QMailMessageMetaDataFwd class declares enumerations used by QMailMessageMetaData
+
 
     QMailMessageMetaDataFwd allows QMailMessageMetaData::MessageType, QMailMessageMetaData::ContentType and QMailMessageMetaData::ResponseType
     to be used without including all of \c qmailmessage.h.
@@ -223,6 +228,7 @@
 /*!
     \class QMailMessageFwd
     \brief The QMailMessageFwd class declares enumerations used by QMailMessage
+
 
     QMailMessageFwd allows QMailMessage::AttachmentsAction and QMailMessage::EncodingFormat
     to be used without including all of \c qmailmessage.h.

@@ -100,8 +100,30 @@ signals:
     void filterChanged();
 };
 
+class QDeclarativeContactCompoundFilter : public QDeclarativeContactFilter
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContactFilter> filters READ filters)
+    Q_CLASSINFO("DefaultProperty", "filters")
+
+public:
+    explicit QDeclarativeContactCompoundFilter(QObject* parent = 0) : QDeclarativeContactFilter(parent){}
+    virtual ~QDeclarativeContactCompoundFilter() {}
+    // 'READ' accessor for the filters, basically this is also a 'WRITE' accessor
+    // as per QDeclarativeListProperty's design.
+    QDeclarativeListProperty<QDeclarativeContactFilter> filters();
+
+    static void filters_append(QDeclarativeListProperty<QDeclarativeContactFilter>* prop, QDeclarativeContactFilter* filter);
+    static int filters_count(QDeclarativeListProperty<QDeclarativeContactFilter>* prop);
+    static QDeclarativeContactFilter* filters_at(QDeclarativeListProperty<QDeclarativeContactFilter>* prop, int index);
+    static void filters_clear(QDeclarativeListProperty<QDeclarativeContactFilter>* prop);
+
+protected:
+    QList<QDeclarativeContactFilter*> m_filters;
+};
 
 QML_DECLARE_TYPE(QDeclarativeContactFilter)
+QML_DECLARE_TYPE(QDeclarativeContactCompoundFilter)
 
 
 #endif

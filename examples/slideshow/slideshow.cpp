@@ -69,9 +69,6 @@ SlideShow::SlideShow(QWidget *parent)
     connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
     connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
 
-    connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
-    connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
-
     QVideoWidget *videoWidget = new QVideoWidget;
     imageViewer->setVideoOutput(videoWidget);
 

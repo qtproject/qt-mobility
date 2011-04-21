@@ -65,6 +65,11 @@ TestCase {
         field:DisplayLabel.Label
     }
 
+    UnionFilter {
+      id:unionFilter
+      DetailFilter {id:detailFilter1; detail:Detail.DisplayLabel; field:DisplayLabel.Label}
+      DetailFilter {id:detailFilter2; detail:Detail.DisplayLabel; field:DisplayLabel.Label}
+    }
     Event {
         id:newEvent1
         displayLabel: "NewEvent1"
@@ -164,6 +169,19 @@ TestCase {
         model.update();
         wait(100);
         verify(model.itemCount === 2); //both events matched now
+
+        //union filter
+        detailFilter1.value = "Edited";
+        detailFilter1.matchFlags = Filter.MatchStartsWith;
+        detailFilter2.matchFlags = Filter.MatchStartsWith;
+        detailFilter2.value = "New";
+        model.autoUpdate = true;
+        model.filter = unionFilter;
+        wait(100);
+        verify(model.itemCount === 2); //both matched
+        detailFilter1.value = "New";
+        wait(100);
+        verify(model.itemCount === 1); //only matches 1
 
     }
 

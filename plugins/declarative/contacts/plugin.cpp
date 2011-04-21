@@ -110,6 +110,8 @@ public:
         qmlRegisterType<QDeclarativeContactRelationshipFilter>(uri, 1, 1, "RelationshipFilter");
         qmlRegisterType<QDeclarativeContactIntersectionFilter>(uri, 1, 1, "IntersectionFilter");
         qmlRegisterType<QDeclarativeContactUnionFilter>(uri, 1, 1, "UnionFilter");
+        qmlRegisterType<QDeclarativeContactCompoundFilter>();
+
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
