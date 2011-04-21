@@ -117,7 +117,7 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
 {
     Q_OBJECT
 
@@ -171,10 +171,15 @@ protected:  //from MTelephonyInfoObserver
     virtual void changedNetworkMode();
     virtual void changedCellDataTechnology();
 
-public slots:
+    //from MWLanInfoObserver
     void wlanNetworkNameChanged();
     void wlanNetworkSignalStrengthChanged();
     void wlanNetworkStatusChanged();
+
+//public slots:
+    //void wlanNetworkNameChanged();
+    //void wlanNetworkSignalStrengthChanged();
+    //void wlanNetworkStatusChanged();
 };
 
 //////// QSystemDisplayInfo
@@ -552,11 +557,13 @@ private:
         ,m_thermalStatus(NULL)
 #endif
     {
+     TRACES (qDebug() << "DeviceInfo():Constructor");
         m_telephony = CTelephony::NewL();
     };
 
     ~DeviceInfo()
     {
+     TRACES (qDebug() << "DeviceInfo():Destructor");
         delete m_cellSignalStrengthInfo;
         delete m_cellNetworkRegistrationInfo;
         delete m_cellNetworkInfo;

@@ -420,30 +420,36 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     : QObject(parent)
 {
+ TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate<---");
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
 #ifdef ETELMM_SUPPORTED
     DeviceInfo::instance()->networkInfo()->addObserver(this);
 #endif
-    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
+    DeviceInfo::instance()->wlanInfo()->addObserver(this);
+    /*connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
         this, SLOT(wlanNetworkNameChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
         this, SLOT(wlanNetworkSignalStrengthChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
-        this, SLOT(wlanNetworkStatusChanged()));
+        this, SLOT(wlanNetworkStatusChanged()));*/
     DeviceInfo::instance()->subscriberInfo();
+ TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate--->");
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
+  TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate<--");
+
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
 #ifdef ETELMM_SUPPORTED
     DeviceInfo::instance()->networkInfo()->removeObserver(this);
 #endif
-    DeviceInfo::instance()->wlanInfo()->FreeResources();
+    DeviceInfo::instance()->wlanInfo()->removeObserver(this);
+    TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate-->");
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
