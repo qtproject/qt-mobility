@@ -81,31 +81,31 @@ The CViewManager class constructs and manages one or more CContactLocalView or
 CContactNamedLocalView instances and supplies them to CViewSubSession.
 */
 class CViewManager : public CBase
-	{
+    {
 public:
-	static CViewManager* NewL(MLplPersistenceLayerFactory& aFactory,CCntDbManager& aDbManager);
-	CContactLocalView& OpenViewL(const RContactViewSortOrder& aSortOrder,MContactViewObserver& aObserver,TContactViewPreferences aContactTypeToInclude, const TUid aSortPluginImplUid, const TDesC8& aSortPluginName);
-	CContactNamedLocalView& OpenNamedViewL(const TDesC& aName,const RContactViewSortOrder& aSortOrder,MContactViewObserver& aObserver,TContactViewPreferences aContactTypeToInclude, const TUid aSortPluginImplUid, const TDesC8& aSortPluginName);
-	void CloseView(const CContactLocalView& aView,MContactViewObserver& aObserver);
-	void CloseNamedView(const CContactNamedLocalView& aView,MContactViewObserver& aObserver);
-	~CViewManager();
-	void GetDefinitionsOfExistingViewsL(RPointerArray<CContactDefaultViewDefinition>& aViewDefs);
+    static CViewManager* NewL(MLplPersistenceLayerFactory& aFactory,CCntDbManager& aDbManager);
+    CContactLocalView& OpenViewL(const RContactViewSortOrder& aSortOrder,MContactViewObserver& aObserver,TContactViewPreferences aContactTypeToInclude, const TUid aSortPluginImplUid, const TDesC8& aSortPluginName);
+    CContactNamedLocalView& OpenNamedViewL(const TDesC& aName,const RContactViewSortOrder& aSortOrder,MContactViewObserver& aObserver,TContactViewPreferences aContactTypeToInclude, const TUid aSortPluginImplUid, const TDesC8& aSortPluginName);
+    void CloseView(const CContactLocalView& aView,MContactViewObserver& aObserver);
+    void CloseNamedView(const CContactNamedLocalView& aView,MContactViewObserver& aObserver);
+    ~CViewManager();
+    void GetDefinitionsOfExistingViewsL(RPointerArray<CContactDefaultViewDefinition>& aViewDefs);
+    MLplPersistenceLayerFactory& FactoryL();
+private:
+    CViewManager(MLplPersistenceLayerFactory& aFactory,CCntDbManager& aManager);
+    void ConstructL();
 
 private:
-	CViewManager(MLplPersistenceLayerFactory& aFactory,CCntDbManager& aManager);
-	void ConstructL();
-
-private:
-	MLplPersistenceLayerFactory& iFactory;
-	CCntDbManager&			iManager;
-	struct TViewHandle
-		{
-		CContactLocalView*	iLocalView;
-		TUid				iSortPluginImplUid;
-		};
-	RArray<TViewHandle>		iLocalViews;
-	RPointerArray<CContactNamedLocalView> iNamedLocalViews;
-	};
+    MLplPersistenceLayerFactory& iFactory;
+    CCntDbManager&          iManager;
+    struct TViewHandle
+        {
+        CContactLocalView*  iLocalView;
+        TUid                iSortPluginImplUid;
+        };
+    RArray<TViewHandle>     iLocalViews;
+    RPointerArray<CContactNamedLocalView> iNamedLocalViews;
+    };
 
 
 /**
