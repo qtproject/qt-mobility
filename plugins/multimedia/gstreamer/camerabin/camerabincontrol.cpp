@@ -123,6 +123,7 @@ void CameraBinControl::setCaptureMode(QCamera::CaptureMode mode)
                             CamerabinResourcePolicy::ImageCaptureResources :
                             CamerabinResourcePolicy::VideoCaptureResources);
         }
+        emit captureModeChanged(mode);
     }
 }
 

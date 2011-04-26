@@ -91,22 +91,12 @@ public:
     QGStreamerGLTextureBuffer(MeegoGstVideoTexture *textureSink, int frameNumber) :
         QAbstractVideoBuffer(EGLImageTextureHandle),
         m_textureSink(MEEGO_GST_VIDEO_TEXTURE(textureSink)),
-        m_frameNumber(frameNumber),
-        m_sync(0)
+        m_frameNumber(frameNumber)
     {
-#if defined(GL_TEXTURE_SINK_DEBUG) && GL_TEXTURE_SINK_DEBUG > 1
-        qDebug() << "acquire frame" << m_frameNumber;
-#endif
-        if (!meego_gst_video_texture_acquire_frame(m_textureSink,frameNumber))
-            qWarning() << Q_FUNC_INFO << "acquire-frame failed" << m_frameNumber;
     }
 
     ~QGStreamerGLTextureBuffer()
     {
-#if defined(GL_TEXTURE_SINK_DEBUG) && GL_TEXTURE_SINK_DEBUG > 1
-        qDebug() << "release frame" << m_frameNumber;
-#endif
-        meego_gst_video_texture_release_frame(m_textureSink, m_frameNumber, m_sync);
     }
 
 
@@ -116,6 +106,15 @@ public:
         Q_UNUSED(mode);
         Q_UNUSED(numBytes);
         Q_UNUSED(bytesPerLine);
+
+        //acquire_frame should really be called at buffer construction time
+        //but it conflicts with id-less implementation of gst texture sink.
+#if defined(GL_TEXTURE_SINK_DEBUG) && GL_TEXTURE_SINK_DEBUG > 1
+        qDebug() << "acquire frame" << m_frameNumber;
+#endif
+        if (!meego_gst_video_texture_acquire_frame(m_textureSink,m_frameNumber))
+            qWarning() << Q_FUNC_INFO << "acquire-frame failed" << m_frameNumber;
+
 
 #if defined(GL_TEXTURE_SINK_DEBUG) && GL_TEXTURE_SINK_DEBUG > 1
         qDebug() << "map frame" << m_frameNumber;
@@ -136,13 +135,16 @@ public:
         qDebug() << "unmap frame" << m_frameNumber;
 #endif
 
-        if (!bind_status) {
+        if (!bind_status)
             qWarning() << Q_FUNC_INFO << "unbind-frame failed";
-        } else {
-            if (m_sync)
-                eglDestroySyncKHR(eglGetDisplay((EGLNativeDisplayType)QX11Info::display()), m_sync);
-            m_sync = eglCreateSyncKHR(eglGetDisplay((EGLNativeDisplayType)QX11Info::display()), EGL_SYNC_FENCE_KHR, NULL);
-        }
+
+        //release_frame should really be called in destructor
+        //but this conflicts with id-less implementation of gst texture sink.
+#if defined(GL_TEXTURE_SINK_DEBUG) && GL_TEXTURE_SINK_DEBUG > 1
+        qDebug() << "release frame" << m_frameNumber;
+#endif
+        EGLSyncKHR sync = eglCreateSyncKHR(eglGetDisplay((EGLNativeDisplayType)QX11Info::display()), EGL_SYNC_FENCE_KHR, NULL);
+        meego_gst_video_texture_release_frame(m_textureSink, m_frameNumber, sync);
     }
 
     QVariant handle() const
@@ -153,7 +155,6 @@ public:
 private:
     MeegoGstVideoTexture *m_textureSink;
     int m_frameNumber;
-    EGLSyncKHR m_sync;
 };
 
 

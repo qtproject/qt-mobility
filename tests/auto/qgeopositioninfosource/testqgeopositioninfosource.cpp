@@ -349,7 +349,7 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
     int minUpdateInterval = source ? source->minimumUpdateInterval() : -1;
     if (source)
         delete source;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QTest::newRow("0") << 0 << minUpdateInterval;
 #else
     QTest::newRow("0") << 0 << 0;
