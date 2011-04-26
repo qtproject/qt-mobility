@@ -90,8 +90,6 @@ private:
     bool m_singleShot;
     iphb_t m_iphbdHandler;
     QSocketNotifier *m_notifier;
-    QObject *m_singleShotReceiver;
-    QByteArray m_singleShotMember;
 
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);
@@ -100,7 +98,6 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void heartbeatReceived(int sock);
-    void singleShot();
 };
 
 QTM_END_NAMESPACE

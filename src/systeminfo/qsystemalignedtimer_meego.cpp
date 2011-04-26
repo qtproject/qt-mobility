@@ -139,22 +139,13 @@ bool QSystemAlignedTimerPrivate::isSingleShot() const
 
 void QSystemAlignedTimerPrivate::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
-    QSystemAlignedTimerPrivate *alignedTimer = new QSystemAlignedTimerPrivate();
+    if (receiver && member) {
+        QSystemAlignedTimerPrivate *alignedTimer = new QSystemAlignedTimerPrivate(receiver);
 
-    if (QObject::connect(alignedTimer, SIGNAL(timeout()), alignedTimer, SLOT(singleShot()))) {
-        alignedTimer->m_singleShotReceiver = receiver;
+        alignedTimer->m_singleShot = true;
 
-        //from QTimer
-        const char* bracketPosition = strchr(member, '(');
-        if (!bracketPosition || !(member[0] >= '0' && member[0] <= '3')) {
-            qWarning("QTimer::singleShot: Invalid slot specification");
-            return;
-        }
-        QByteArray methodName(member+1, bracketPosition - 1 - member); // extract method name
-        alignedTimer->m_singleShotMember = methodName;
+        connect(alignedTimer, SIGNAL(timeout()), receiver, member);
         alignedTimer->start(minimumTime, maximumTime);
-    } else {
-        delete alignedTimer;
     }
 }
 
@@ -224,13 +215,7 @@ void QSystemAlignedTimerPrivate::heartbeatReceived(int sock) {
         start();
 }
 
-void QSystemAlignedTimerPrivate::singleShot()
-{
-    QMetaObject::invokeMethod(m_singleShotReceiver, m_singleShotMember.constData());
-    this->deleteLater();
-}
-
-bool QSystemAlignedTimerPrivate::isActive () const
+bool QSystemAlignedTimerPrivate::isActive() const
 {
     return m_running;
 }
