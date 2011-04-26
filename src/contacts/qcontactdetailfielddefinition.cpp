@@ -77,6 +77,7 @@ QContactDetailFieldDefinition::~QContactDetailFieldDefinition()
 
 /*!
  * Constructs a copy of the \a other field
+ * \since 1.0
  */
 QContactDetailFieldDefinition::QContactDetailFieldDefinition(const QContactDetailFieldDefinition& other)
         : d(other.d)
@@ -85,6 +86,7 @@ QContactDetailFieldDefinition::QContactDetailFieldDefinition(const QContactDetai
 
 /*!
  * Assigns the field to be equal to the \a other field
+ * \since 1.0
  */
 QContactDetailFieldDefinition& QContactDetailFieldDefinition::operator=(const QContactDetailFieldDefinition& other)
 {
@@ -94,6 +96,7 @@ QContactDetailFieldDefinition& QContactDetailFieldDefinition::operator=(const QC
 
 /*!
  * Returns the data type of the field
+ * \since 1.0
  */
 QVariant::Type QContactDetailFieldDefinition::dataType() const
 {
@@ -102,6 +105,7 @@ QVariant::Type QContactDetailFieldDefinition::dataType() const
 
 /*!
  * Sets the data type of the field to \a type
+ * \since 1.0
  */
 void QContactDetailFieldDefinition::setDataType(QVariant::Type type)
 {
@@ -110,6 +114,7 @@ void QContactDetailFieldDefinition::setDataType(QVariant::Type type)
 
 /*!
  * Returns the list of allowable values which this field may store
+ * \since 1.0
  */
 QVariantList QContactDetailFieldDefinition::allowableValues() const
 {
@@ -118,6 +123,7 @@ QVariantList QContactDetailFieldDefinition::allowableValues() const
 
 /*!
  * Sets the list of allowable values which this field may store to \a values
+ * \since 1.0
  */
 void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values)
 {
@@ -127,6 +133,7 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
 
 /*!
  * Returns true if the allowable values and data type of the \a other field are equal to those of this field
+ * \since 1.0
  */
 bool QContactDetailFieldDefinition::operator==(const QContactDetailFieldDefinition& other) const
 {
@@ -139,6 +146,7 @@ bool QContactDetailFieldDefinition::operator==(const QContactDetailFieldDefiniti
 
 /*!
  * Returns true if the allowable values or data type of the \a other field differ from those of this field
+ * \since 1.0
  */
 bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefinition& other) const
 {
@@ -148,6 +156,7 @@ bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefiniti
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a definition to the stream \a out.
+ * \since 1.0
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition)
 {
@@ -157,6 +166,7 @@ QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& d
 
 /*!
  * Reads a detail field definition from stream \a in into \a definition.
+ * \since 1.0
  */
 QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition)
 {
