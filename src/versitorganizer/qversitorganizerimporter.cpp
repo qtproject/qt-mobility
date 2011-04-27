@@ -107,7 +107,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \enum QVersitOrganizerImporter::Error
-  This enum specifies an error that occurred during the most recent call to importDocuments()
+  This enum specifies an error that occurred during the most recent call to importDocument()
   \value NoError The most recent operation was successful
   \value InvalidDocumentError One of the documents is not an iCalendar file
   \value EmptyDocumentError One of the documents is empty
@@ -185,7 +185,7 @@ bool QVersitOrganizerImporter::importDocument(const QVersitDocument& document)
 }
 
 /*!
- * Returns the organizer items imported in the most recent call to importDocuments().
+ * Returns the organizer items imported in the most recent call to importDocument().
  *
  * \sa importDocument()
  */
@@ -195,9 +195,10 @@ QList<QOrganizerItem> QVersitOrganizerImporter::items() const
 }
 
 /*!
- * Returns the map of errors encountered in the most recent call to importDocuments().  The key is
- * the index into the input list of documents and the value is the error that occurred on that
- * document.
+ * Returns the map of errors encountered in the most recent call to importDocument().
+ *
+ * The key is the zero based index of the sub document within the container document, or -1 for an error
+ * with the container document itself.  The value is the error that occurred on that document.
  *
  * \sa importDocument()
  */
