@@ -84,6 +84,7 @@ QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
   \code
       setRelationships(QList<QContactRelationship>() << relationship);
   \endcode
+  \since 1.0
  */
 void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationship& relationship)
 {
@@ -93,7 +94,9 @@ void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationsh
     d->m_relationships.append(relationship);
 }
 
-/*! Sets the list of relationships which will be removed to \a relationships */
+/*! Sets the list of relationships which will be removed to \a relationships
+    \since 1.0
+*/
 void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
 {
     Q_D(QContactRelationshipRemoveRequest);
@@ -101,7 +104,9 @@ void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRel
     d->m_relationships = relationships;
 }
 
-/*! Returns the list of relationships which will be removed */
+/*! Returns the list of relationships which will be removed
+    \since 1.0
+*/
 QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
@@ -109,7 +114,9 @@ QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() c
     return d->m_relationships;
 }
 
-/*! Returns the map of input contact list indices to errors which occurred */
+/*! Returns the map of input contact list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactRelationshipRemoveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipRemoveRequest);

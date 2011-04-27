@@ -339,6 +339,7 @@ QGalleryQueryModel::QGalleryQueryModel(QObject *parent)
     Constructs a new model which queries items from a \a gallery.
 
     The \a parent is passed to QAbstractItemModel.
+    \since 1.1
 */
 
 QGalleryQueryModel::QGalleryQueryModel(QAbstractGallery *gallery, QObject *parent)
@@ -359,6 +360,7 @@ QGalleryQueryModel::~QGalleryQueryModel()
     \property QGalleryQueryModel::gallery
 
     \brief The Gallery a model executes its queries against.
+    \since 1.1
 */
 
 QAbstractGallery *QGalleryQueryModel::gallery() const
@@ -375,10 +377,12 @@ void QGalleryQueryModel::setGallery(QAbstractGallery *gallery)
     \fn QGalleryQueryModel::galleryChanged()
 
     Signals that the value of \l gallery has changed.
+    \since 1.1
 */
 
 /*!
     Returns the meta-data properties which a \a column maps to roles.
+    \since 1.1
 */
 
 QHash<int, QString> QGalleryQueryModel::roleProperties(int column) const
@@ -390,6 +394,7 @@ QHash<int, QString> QGalleryQueryModel::roleProperties(int column) const
     Sets the meta-data \a properties which a \a column maps to roles.
 
     New properties will not be populated until the query is executed.
+    \since 1.1
 */
 
 void QGalleryQueryModel::setRoleProperties(int column, const QHash<int, QString> &properties)
@@ -410,6 +415,7 @@ void QGalleryQueryModel::setRoleProperties(int column, const QHash<int, QString>
     Adds a column which maps the given \a properties to a query model.
 
     The column will not be populated until the query is executed.
+    \since 1.1
 */
 
 void QGalleryQueryModel::addColumn(const QHash<int, QString> &properties)
@@ -435,6 +441,7 @@ void QGalleryQueryModel::addColumn(const QHash<int, QString> &properties)
     model.
 
     The column will not be populated until the query is executed.
+    \since 1.1
 */
 
 void QGalleryQueryModel::addColumn(const QString &property, int role)
@@ -451,6 +458,7 @@ void QGalleryQueryModel::addColumn(const QString &property, int role)
     \a index.
 
     The column will not be populated until the query is executed.
+    \since 1.1
 */
 
 void QGalleryQueryModel::insertColumn(int index, const QHash<int, QString> &properties)
@@ -476,6 +484,7 @@ void QGalleryQueryModel::insertColumn(int index, const QHash<int, QString> &prop
     query model at \a index.
 
     The column will not be populated until the query is executed.
+    \since 1.1
 */
 
 void QGalleryQueryModel::insertColumn(int index, const QString &property, int role)
@@ -489,6 +498,7 @@ void QGalleryQueryModel::insertColumn(int index, const QString &property, int ro
 
 /*!
     Removes the column at \a index from a query model.
+    \since 1.1
 */
 
 void QGalleryQueryModel::removeColumn(int index)
@@ -524,6 +534,7 @@ void QGalleryQueryModel::removeColumn(int index)
     Prefixing a property name with the '+' character indicates it should be sorted
     in ascending order, and a '-' character prefix indicates a descending order.
     If there is no prefix ascending order is assumed.
+    \since 1.1
 */
 
 QStringList QGalleryQueryModel::sortPropertyNames() const
@@ -540,6 +551,7 @@ void QGalleryQueryModel::setSortPropertyNames(const QStringList &names)
     \fn QGalleryQueryModel::sortPropertyNamesChanged()
 
     Signals that the value of \l sortPropertyNames has changed.
+    \since 1.1
 */
 
 /*!
@@ -547,6 +559,7 @@ void QGalleryQueryModel::setSortPropertyNames(const QStringList &names)
 
     \brief Whether a query should continue to update its result set after the
     initial query succeeded.
+    \since 1.1
 */
 
 bool QGalleryQueryModel::autoUpdate() const
@@ -563,12 +576,14 @@ void QGalleryQueryModel::setAutoUpdate(bool enabled)
     \fn QGalleryQueryModel::autoUpdateChanged()
 
     Signals that the value of \l autoUpdate has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryModel::offset
 
     \brief The offset of the first item a query should return.
+    \since 1.1
 */
 
 int QGalleryQueryModel::offset() const
@@ -585,12 +600,14 @@ void QGalleryQueryModel::setOffset(int offset)
     \fn QGalleryQueryModel::offsetChanged()
 
     Signals that the value of \l offset has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryModel::limit
 
     \brief The maximum number of items a query should return.
+    \since 1.1
 */
 
 int QGalleryQueryModel::limit() const
@@ -607,12 +624,14 @@ void QGalleryQueryModel::setLimit(int limit)
     \fn QGalleryQueryModel::limitChanged()
 
     Signals that the value of \l limit has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryModel::rootType
 
     \brief The root item type the results of a query should be restricted to.
+    \since 1.1
 */
 
 QString QGalleryQueryModel::rootType() const
@@ -629,6 +648,7 @@ void QGalleryQueryModel::setRootType(const QString &itemType)
     \fn QGalleryQueryModel::rootTypeChanged()
 
     Signals that the value of \l rootType has changed.
+    \since 1.1
 */
 
 /*!
@@ -637,6 +657,7 @@ void QGalleryQueryModel::setRootType(const QString &itemType)
     \brief The ID of the item a query should return the descendents of.
 
     \sa scope()
+    \since 1.1
 */
 
 QVariant QGalleryQueryModel::rootItem() const
@@ -653,6 +674,7 @@ void QGalleryQueryModel::setRootItem(const QVariant &itemId)
     \fn QGalleryQueryModel::rootItemChanged()
 
     Signals that the value of \l rootItem has changed.
+    \since 1.1
 */
 
 /*!
@@ -662,6 +684,7 @@ void QGalleryQueryModel::setRootItem(const QVariant &itemId)
     just the direct decendents.
 
     \sa rootItem()
+    \since 1.1
 */
 
 QGalleryQueryRequest::Scope QGalleryQueryModel::scope() const
@@ -678,12 +701,14 @@ void QGalleryQueryModel::setScope(QGalleryQueryRequest::Scope scope)
     \fn QGalleryQueryModel::scopeChanged()
 
     Signals that the value of \l scope has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryModel::filter
 
     \brief A filter restricting the results of a query.
+    \since 1.1
 */
 
 QGalleryFilter QGalleryQueryModel::filter() const
@@ -700,10 +725,12 @@ void QGalleryQueryModel::setFilter(const QGalleryFilter &filter)
     \fn QGalleryQueryModel::filterChanged()
 
     Signals that the value of \l filter has changed.
+    \since 1.1
 */
 
 /*!
     Executes a query.
+    \since 1.1
 */
 
 void QGalleryQueryModel::execute()
@@ -728,6 +755,7 @@ void QGalleryQueryModel::execute()
 
 /*!
     Cancels a query.
+    \since 1.1
 */
 
 void QGalleryQueryModel::cancel()
@@ -737,6 +765,7 @@ void QGalleryQueryModel::cancel()
 
 /*!
     Clears the results of a query.
+    \since 1.1
 */
 
 void QGalleryQueryModel::clear()
@@ -748,6 +777,7 @@ void QGalleryQueryModel::clear()
     \property QGalleryQueryModel::error
 
     \brief The error encountered by an unsuccessful query.
+    \since 1.1
 */
 
 int QGalleryQueryModel::error() const
@@ -761,6 +791,7 @@ int QGalleryQueryModel::error() const
     \brief A string describing the cause of an \l error in more detail.
 
     This may be an empty string if more information is not known.
+    \since 1.1
 */
 
 QString QGalleryQueryModel::errorString() const
@@ -772,24 +803,28 @@ QString QGalleryQueryModel::errorString() const
     \fn QGalleryQueryModel::errorChanged()
 
     Signals that the \l error and \l errorString properties have changed.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryQueryModel::canceled()
 
     Signals that the query was canceled.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryQueryModel::finished()
 
     Signals that the query has finished.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryModel::state
 
     \brief The state of a query.
+    \since 1.1
 */
 
 QGalleryAbstractRequest::State QGalleryQueryModel::state() const
@@ -801,11 +836,13 @@ QGalleryAbstractRequest::State QGalleryQueryModel::state() const
     \fn QGalleryQueryModel::stateChanged(QGalleryAbstractRequest::State state)
 
     Signals that the \a state of the query has changed.
+    \since 1.1
 */
 
 
 /*!
     \reimp
+    \since 1.1
 */
 
 QModelIndex QGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
@@ -821,6 +858,7 @@ QModelIndex QGalleryQueryModel::index(int row, int column, const QModelIndex &pa
 
 /*!
     \reimp
+    \since 1.1
 */
 
 QModelIndex QGalleryQueryModel::parent(const QModelIndex &index) const
@@ -832,6 +870,7 @@ QModelIndex QGalleryQueryModel::parent(const QModelIndex &index) const
 
 /*!
     \reimp
+    \since 1.1
 */
 
 int QGalleryQueryModel::rowCount(const QModelIndex &parent) const
@@ -841,6 +880,7 @@ int QGalleryQueryModel::rowCount(const QModelIndex &parent) const
 
 /*!
     \reimp
+    \since 1.1
 */
 
 int QGalleryQueryModel::columnCount(const QModelIndex &parent) const
@@ -850,6 +890,7 @@ int QGalleryQueryModel::columnCount(const QModelIndex &parent) const
 
 /*!
     \reimp
+    \since 1.1
 */
 
 QVariant QGalleryQueryModel::data(const QModelIndex &index, int role) const
@@ -871,6 +912,7 @@ QVariant QGalleryQueryModel::data(const QModelIndex &index, int role) const
 
 /*!
     \reimp
+    \since 1.1
 */
 
 bool QGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -892,6 +934,7 @@ bool QGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value
 
 /*!
     Returns the ID of the item at \a index.
+    \since 1.1
 */
 
 QVariant QGalleryQueryModel::itemId(const QModelIndex &index) const
@@ -907,6 +950,7 @@ QVariant QGalleryQueryModel::itemId(const QModelIndex &index) const
 
 /*!
     Returns the URL of the item at \a index.
+    \since 1.1
 */
 
 QUrl QGalleryQueryModel::itemUrl(const QModelIndex &index) const
@@ -922,6 +966,7 @@ QUrl QGalleryQueryModel::itemUrl(const QModelIndex &index) const
 
 /*!
     Returns the type of the item at \a index.
+    \since 1.1
 */
 
 QString QGalleryQueryModel::itemType(const QModelIndex &index) const
@@ -937,6 +982,7 @@ QString QGalleryQueryModel::itemType(const QModelIndex &index) const
 
 /*!
     \reimp
+    \since 1.1
 */
 
 QVariant QGalleryQueryModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -951,6 +997,7 @@ QVariant QGalleryQueryModel::headerData(int section, Qt::Orientation orientation
 
 /*!
     \reimp
+    \since 1.1
 */
 
 bool QGalleryQueryModel::setHeaderData(
@@ -972,6 +1019,7 @@ bool QGalleryQueryModel::setHeaderData(
 
 /*!
     \reimp
+    \since 1.1
 */
 
 Qt::ItemFlags QGalleryQueryModel::flags(const QModelIndex &index) const
