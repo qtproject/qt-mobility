@@ -95,6 +95,7 @@ public:
     bool isVideoAvailable() const;
 
     bool isSeekable() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     qreal playbackRate() const;
 

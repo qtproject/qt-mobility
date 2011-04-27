@@ -114,7 +114,7 @@ base                    = file:../html
 qhp.projects            = QtMobility
 
 qhp.QtMobility.file               = qtmobility.qhp
-qhp.QtMobility.namespace          = com.nokia.qtmobility.120
+qhp.QtMobility.namespace          = com.nokia.qtmobility.114
 qhp.QtMobility.virtualFolder      = mobility
 qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.QtMobility.indexRoot          =

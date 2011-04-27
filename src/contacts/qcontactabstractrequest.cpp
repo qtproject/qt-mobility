@@ -60,6 +60,7 @@ QTM_BEGIN_NAMESPACE
   asynchronous requests to be made of a manager if it supports them.
 
   \inmodule QtContacts
+  \since 1.0
 
   \ingroup contacts-main
 

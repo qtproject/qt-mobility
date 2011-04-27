@@ -93,7 +93,7 @@ public:
     void AttachCallbackHandler(QtMobility::QLlcpSocketPrivate* aCallback);
 private:
     // Constructor
-    CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter = NULL,QtMobility::QLlcpSocketPrivate* aCallback = NULL);
+    explicit CLlcpSocketType2(MLlcpConnOrientedTransporter* aTransporter = NULL,QtMobility::QLlcpSocketPrivate* aCallback = NULL);
     // Second phase constructor
     void ConstructL();
     void ConnectToServiceL( const TDesC8& aServiceName);

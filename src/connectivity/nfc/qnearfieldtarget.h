@@ -87,6 +87,7 @@ public:
 
     enum Error {
         NoError,
+        UnknownError,
         UnsupportedError,
         TargetOutOfRangeError,
         NoResponseError,
@@ -111,6 +112,7 @@ public:
 
         bool operator<(const RequestId &other) const;
         bool operator==(const RequestId &other) const;
+        bool operator!=(const RequestId &other) const;
         RequestId &operator=(const RequestId &other);
 
         QSharedDataPointer<RequestIdPrivate> d;
@@ -129,8 +131,8 @@ public:
 
     // NdefAccess
     virtual bool hasNdefMessage();
-    virtual void readNdefMessages();
-    virtual void writeNdefMessages(const QList<QNdefMessage> &messages);
+    virtual RequestId readNdefMessages();
+    virtual RequestId writeNdefMessages(const QList<QNdefMessage> &messages);
 
     // TagTypeSpecificAccess
     virtual RequestId sendCommand(const QByteArray &command);

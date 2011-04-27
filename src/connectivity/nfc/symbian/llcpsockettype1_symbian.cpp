@@ -238,7 +238,6 @@ void CLlcpSocketType1::FrameReceived(MLlcpConnLessTransporter* aConnection)
     {
     BEGIN
     iRemotePort = aConnection->SsapL();
-    qDebug() << "FrameReceived " << iRemotePort;
 //    StartTransportAndReceive(aConnection);
     // Only accepting one incoming remote connection
     TInt error = KErrNone;
@@ -349,7 +348,6 @@ TInt CLlcpSocketType1::CreateConnection(TUint8 portNum)
     if (error == KErrNone)
         {
           iRemotePort = portNum;
-          qDebug() << "CreateConnection " << iRemotePort;
           error = StartTransportAndReceive(llcpConnection);
         }
     END

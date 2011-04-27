@@ -122,9 +122,9 @@ public:
         Camcorder = 13,
         VideoMonitor = 14,
         VideoDisplayAndLoudspeaker = 15,
-        VideoConferencing = 17,
-        // reserved = 18,
-        GamingDevice = 19,
+        VideoConferencing = 16,
+        // reserved = 17,
+        GamingDevice = 18,
     };
 
     enum MinorPeripheralClass {
@@ -174,8 +174,8 @@ public:
         HealthWeightScale = 0x3,
         HealthGlucoseMeter = 0x4,
         HealthPulseOximeter = 0x5,
-        HealthDataDisplay = 0x6,
-        HealthStepCounter = 0x7
+        HealthDataDisplay = 0x7,
+        HealthStepCounter = 0x8
     };
 
     enum ServiceClass {

@@ -52,6 +52,7 @@ QTM_USE_NAMESPACE
   behaviour for loading and saving files to disk when exporting and importing.
   \ingroup versit-extension
   \inmodule QtVersit
+  \since 1.0
 
   \sa QVersitContactImporter
   \sa QVersitContactExporter
@@ -66,7 +67,7 @@ QTM_USE_NAMESPACE
 /*!
   \fn virtual bool QVersitResourceHandler::saveResource(const QByteArray& contents, const QVersitProperty& property, QString* location) = 0;
   Saves the binary data \a contents to a file on a persistent storage medium.
- 
+
   \a property holds the QVersitProperty which is the context in which the binary is coming from.
   The QVersitResourceHandler can use this, for example, to determine file extension it should choose.
   *\a location is filled with the contents of the file.
@@ -83,14 +84,14 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitDefaultResourceHandler
- 
+
   \brief The QVersitDefaultResourceHandler class provides a default implementation of a Versit
   resource handler.
   \ingroup versit-extension
- 
+
   An example resource handler implementation:
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Resource handler
- 
+
   \sa QVersitContactImporter, QVersitContactExporter, QVersitResourceHandler
  */
 

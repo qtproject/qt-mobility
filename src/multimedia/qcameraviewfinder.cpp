@@ -58,6 +58,7 @@ QT_USE_NAMESPACE
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
     \snippet doc/src/snippets/multimedia-snippets/camera.cpp Camera
 

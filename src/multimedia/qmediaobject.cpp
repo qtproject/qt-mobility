@@ -67,11 +67,12 @@ void QMediaObjectPrivate::_q_notify()
 
 /*!
     \class QMediaObject
-    
+
     \brief The QMediaObject class provides a common base for multimedia objects.
 
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     QMediaObject derived classes provide access to the functionality of a
     QMediaService.  Each media object hosts a QMediaService and uses the

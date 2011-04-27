@@ -54,6 +54,7 @@ QTM_USE_NAMESPACE
   \class QVersitContactExporterDetailHandler
   \brief The QVersitContactExporterDetailHandler class is the legacy interface for clients wishing
   to implement custom export behaviour for certain contact details.
+    \since 1.1
 
   This interface is replaced by QVersitContactExporterDetailHandlerV2.  For general information on
   extending Qt Versit, see the document on \l{Versit Plugins}.
@@ -114,7 +115,7 @@ QTM_USE_NAMESPACE
   \fn void QVersitContactExporterDetailHandlerV2::detailProcessed(const QContact& contact, const QContactDetail& detail, const QVersitDocument& document, QSet<QString>* processedFields, QList<QVersitProperty>* toBeRemoved, QList<QVersitProperty>* toBeAdded)
 
   Process \a detail and provide a list of updated \l{QVersitProperty}{QVersitProperties} by
-  modifying the \a toBeRemoved and \a toBeAdded lists.  
+  modifying the \a toBeRemoved and \a toBeAdded lists.
 
   This function is called on every QContactDetail encountered during an export, after the detail has
   been processed by the QVersitContactExporter.  An implementation of this function can be made to
@@ -124,7 +125,7 @@ QTM_USE_NAMESPACE
   fields in the \a detail that were considered by the QVersitContactExporter or another handler in
   processing the detail.  \a document holds the state of the document before the detail was
   processed by the exporter.
-  
+
   \a toBeRemoved and \a toBeAdded are initially filled with a list of properties that the exporter
   will remove from and add to the document.  These lists can be modified (by removing, modifying or
   adding properties) by the handler to control the changes that will actually be made to the
@@ -280,6 +281,12 @@ bool QVersitContactExporter::exportContacts(
     d->mErrors.clear();
     bool ok = true;
     foreach (const QContact& contact, contacts) {
+        if (contact.isEmpty()) {
+            d->mErrors[contactIndex] = EmptyContactError;
+            ok = false;
+            continue;
+        }
+
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
         versitDocument.setComponentType(QLatin1String("VCARD"));

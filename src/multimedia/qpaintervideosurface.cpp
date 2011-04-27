@@ -1283,6 +1283,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
 /*!
     \class QPainterVideoSurface
+    \since 1.0
     \internal
 */
 
@@ -1390,7 +1391,7 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
     if (!m_ready) {
         if (!isActive())
             setError(StoppedError);
-    } else if (frame.isValid() 
+    } else if (frame.isValid()
             && (frame.pixelFormat() != m_pixelFormat || frame.size() != m_frameSize)) {
         setError(IncorrectFormatError);
 

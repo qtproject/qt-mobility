@@ -87,7 +87,7 @@
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
- : QSystemInfoLinuxCommonPrivate(parent)
+    : QSystemInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -100,19 +100,19 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
     QStringList langList;
 
-    if(transDir.exists()) {
-        QStringList localeList = transDir.entryList( QStringList() << QLatin1String("qt_*.qm") ,QDir::Files
-                                                     | QDir::NoDotAndDotDot, QDir::Name);
+    if (transDir.exists()) {
+        QStringList localeList = transDir.entryList(QStringList() << QLatin1String("qt_*.qm"),
+                                                    QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
         foreach (const QString &localeName, localeList) {
-            const QString lang = localeName.mid(3,2);
-            if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains(QLatin1String("help"))) {
+            const QString lang = localeName.mid(3, 2);
+            if (!langList.contains(lang) && !lang.isEmpty() && !lang.contains(QLatin1String("help")))
                 langList <<lang;
-            }
         }
-        if(langList.count() > 0) {
+
+        if (langList.count() > 0)
             return langList;
-        }
     }
+
     return QStringList() << currentLanguage();
 }
 
@@ -461,7 +461,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
-        : QSystemDisplayInfoLinuxCommonPrivate(parent)
+    : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -469,22 +469,8 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
-float QSystemDisplayInfoPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
-
-    return 0.0;
-}
-
-
-QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(int screen)
-{
-    Q_UNUSED(screen)
-    return QSystemDisplayInfo::BacklightStateUnknown;
-}
-
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
-        : QSystemDeviceInfoLinuxCommonPrivate(parent)
+    : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -501,73 +487,83 @@ QString QSystemDeviceInfoPrivate::imei()
 {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
-
-     QNetworkManagerInterface iface;
-     foreach (const QDBusObjectPath &path, iface.getDevices()) {
-         QNetworkManagerInterfaceDevice devIface(path.path(), this);
-         if (devIface.deviceType() == DEVICE_TYPE_GSM) {
-             QModemManagerModemGsmCard card(devIface.udi());
-             return card.imei();
-         }
-     }
-
-#endif
+    QNetworkManagerInterface iface;
+    foreach (const QDBusObjectPath &path, iface.getDevices()) {
+        QNetworkManagerInterfaceDevice devIface(path.path(), this);
+        if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+            QModemManagerModemGsmCard card(devIface.udi());
+            return card.imei();
+        }
+    }
+#endif // QT_NO_NETWORKMANAGER
 #if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoModemInterface modemIface(modem,this);
+    if (ofonoAvailable()) {
+        QOfonoManagerInterface ofonoManager;
+        QString modem = ofonoManager.currentModem().path();
+        if (!modem.isEmpty()) {
+            QOfonoModemInterface modemIface(modem,this);
+            QString imei = modemIface.getSerial();
+            if (!imei.isEmpty())
+                return imei;
+        }
+    }
+#endif // QT_NO_CONNMAN
+#endif // QT_NO_DBUS
 
-             QString imei = modemIface.getSerial();
-             if(!imei.isEmpty()) {
-                 return imei;
-             }
-         }
-     }
-#endif
-#endif
-     return QLatin1String("");
- }
+    return QString();
+}
+
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
+{
+    return false;
+}
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
 #if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
-     QNetworkManagerInterface iface;
-     foreach (const QDBusObjectPath &path, iface.getDevices()) {
-         QNetworkManagerInterfaceDevice devIface(path.path(), this);
-         if (devIface.deviceType() == DEVICE_TYPE_GSM) {
-             QModemManagerModemGsmCard card(devIface.udi());
-             return card.imsi();
-         }
-     }
-#endif
+    QNetworkManagerInterface iface;
+    foreach (const QDBusObjectPath &path, iface.getDevices()) {
+        QNetworkManagerInterfaceDevice devIface(path.path(), this);
+        if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+            QModemManagerModemGsmCard card(devIface.udi());
+            return card.imsi();
+        }
+    }
+#endif // QT_NO_NETWORKMANAGER
 #if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoSimInterface simInterface(modem,this);
-             if(simInterface.isPresent()) {
-                 QString id = simInterface.getImsi();
-                 if(!id.isEmpty()) {
-                     return id;
-                 }
-             }
-         }
-     }
-#endif
-#endif
-         return QLatin1String("");
+    if (ofonoAvailable()) {
+        QOfonoManagerInterface ofonoManager;
+        QString modem = ofonoManager.currentModem().path();
+        if (!modem.isEmpty()) {
+            QOfonoSimInterface simInterface(modem,this);
+            if (simInterface.isPresent()) {
+                QString id = simInterface.getImsi();
+                if (!id.isEmpty())
+                    return id;
+            }
+        }
+    }
+#endif // QT_NO_CONNMAN
+#endif // QT_NO_DBUS
+    return QString();
 }
-
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
     QSystemScreenSaverPrivate priv;
 
-    if(priv.isScreenLockEnabled()
+    if (priv.isScreenLockEnabled()
         && priv.isScreenSaverActive()) {
         return true;
     }
@@ -577,20 +573,20 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    if(halAvailable()) {
 #if !defined(QT_NO_DBUS)
+    if (halAvailable()) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString model;
         if (iface.isValid()) {
             model = iface.getPropertyString("system.kernel.machine");
-            if(!model.isEmpty())
+            if (!model.isEmpty())
                 model += " ";
             model += iface.getPropertyString("system.chassis.type");
-            if(!model.isEmpty())
+            if (!model.isEmpty())
                 return model;
         }
-#endif
     }
+#endif // QT_NO_DBUS
     QFile file("/proc/cpuinfo");
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Could not open /proc/cpuinfo";
@@ -599,35 +595,34 @@ QString QSystemDeviceInfoPrivate::model()
         QString line = cpuinfo.readLine();
         while (!line.isNull()) {
             line = cpuinfo.readLine();
-            if(line.contains("model name")) {
+            if (line.contains("model name"))
                 return line.split(": ").at(1).trimmed();
-            }
         }
     }
+
     return QString();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-    if(halAvailable()) {
 #if !defined(QT_NO_DBUS)
+    if (halAvailable()) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString productName;
         if (iface.isValid()) {
             productName = iface.getPropertyString("info.product");
-            if(productName.isEmpty()) {
+            if (productName.isEmpty()) {
                 productName = iface.getPropertyString("system.product");
-                if(!productName.isEmpty())
+                if (!productName.isEmpty())
                     return productName;
             } else {
                 return productName;
             }
         }
-#endif
     }
+#endif // QT_NO_DBUS
     const QDir dir("/etc");
-    if(dir.exists()) {
-        QStringList langList;
+    if (dir.exists()) {
         QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
                                                      QDir::Files | QDir::NoDotAndDotDot,
                                                      QDir::Name);
@@ -638,17 +633,16 @@ QString QSystemDeviceInfoPrivate::productName()
                 QTextStream prodinfo(&file);
                 QString line = prodinfo.readLine();
                 while (!line.isNull()) {
-                    if(filepath.contains("lsb.release")) {
-                        if(line.contains("DISTRIB_DESCRIPTION")) {
+                    if (filepath.contains("lsb.release")) {
+                        if (line.contains("DISTRIB_DESCRIPTION"))
                             return line.split("=").at(1).trimmed();
-                        }
                     } else {
                         return line;
                     }
                     line = prodinfo.readLine();
                 }
             }
-        } //end foreach
+        }
     }
 
     QFile file("/etc/issue");
@@ -659,16 +653,16 @@ QString QSystemDeviceInfoPrivate::productName()
         QString line = prodinfo.readLine();
         while (!line.isNull()) {
             line = prodinfo.readLine();
-            if(!line.isEmpty()) {
+            if (!line.isEmpty()) {
                 QStringList lineList = line.split(" ");
-                for(int i = 0; i < lineList.count(); i++) {
-                    if(lineList.at(i).toFloat()) {
+                for (int i = 0; i < lineList.count(); i++) {
+                    if (lineList.at(i).toFloat())
                         return lineList.at(i-1) + " "+ lineList.at(i);
-                    }
                 }
             }
         }
     }
+
     return QString();
 }
 
@@ -680,45 +674,43 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
     foreach (const QDBusObjectPath &path, iface.getDevices()) {
         QNetworkManagerInterfaceDevice devIface(path.path(), this);
         if (devIface.deviceType() == DEVICE_TYPE_GSM
-                || devIface.deviceType() == DEVICE_TYPE_CDMA) {
+            || devIface.deviceType() == DEVICE_TYPE_CDMA) {
             QModemManager manager(this);
-            if (manager.enumerateDevices().count() > 1) {
+            if (manager.enumerateDevices().count() > 1)
                 return QSystemDeviceInfo::DualSimAvailable;
-            }
 
             QModemManagerModem modem(devIface.udi());
-            if(!modem.unlockRequired().isEmpty()) {
+            if (!modem.unlockRequired().isEmpty())
                 return QSystemDeviceInfo::SimLocked;
-            }
+
             return QSystemDeviceInfo::SingleSimAvailable;
         }
     }
-
-#endif
+#endif // QT_NO_NETWORKMANAGER
 #if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoSimInterface simInterface(modem,this);
-             QString simpin = simInterface.pinRequired();
-             if(simpin == "pin"
-            || simpin == "phone"
-            || simpin == "firstphone"
-            || simpin == "pin2"
-            || simpin == "puk"
-            || simpin == "firstphonepuk"
-            || simpin == "puk2"
-            ) {
-                 return QSystemDeviceInfo::SimLocked;
-             }
-             if(simInterface.isPresent()) {
-                 return QSystemDeviceInfo::SingleSimAvailable;
-             }
-         }
-     }
-#endif
-#endif
+    if (ofonoAvailable()) {
+        QOfonoManagerInterface ofonoManager;
+        QString modem = ofonoManager.currentModem().path();
+        if(!modem.isEmpty()) {
+            QOfonoSimInterface simInterface(modem, this);
+            QString simpin = simInterface.pinRequired();
+            if (simpin == "pin"
+                || simpin == "phone"
+                || simpin == "firstphone"
+                || simpin == "pin2"
+                || simpin == "puk"
+                || simpin == "firstphonepuk"
+                || simpin == "puk2") {
+                return QSystemDeviceInfo::SimLocked;
+            }
+
+            if (simInterface.isPresent())
+                return QSystemDeviceInfo::SingleSimAvailable;
+        }
+    }
+#endif // QT_NO_CONNMAN
+#endif // QT_NO_DBUS
+
      return QSystemDeviceInfo::SimNotAvailable;
 }
 

@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup gallery
     \ingroup gallery-galleries
+    \since 1.1
 
     \inmodule QtGallery
 

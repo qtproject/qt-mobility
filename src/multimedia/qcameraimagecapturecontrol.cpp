@@ -52,6 +52,7 @@ QT_BEGIN_NAMESPACE
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
 
 

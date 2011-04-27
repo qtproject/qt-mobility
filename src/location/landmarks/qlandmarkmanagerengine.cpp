@@ -147,6 +147,7 @@ QStringList commonLandmarkKeys = QStringList() << "name"
     of the landmark manager backend functionality.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-backend
 

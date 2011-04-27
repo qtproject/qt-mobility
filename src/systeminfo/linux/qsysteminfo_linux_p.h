@@ -81,17 +81,10 @@ class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
-    QStringList availableLanguages() const;
 
-private:
-#if !defined(QT_NO_DBUS)
-    bool hasHalDeviceFeature(const QString &param);
-    bool hasHalUsbFeature(qint32 usbClass);
-    QHalInterface halIface;
-#endif
+    QStringList availableLanguages() const;
 };
 
 class QNetworkManagerInterface;
@@ -139,10 +132,6 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
 public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-
-    float contrast(int screen);
-
-    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
@@ -150,7 +139,6 @@ class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
@@ -158,30 +146,19 @@ public:
     QString imsi();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
-    void setConnection();
     QString model();
     QString productName();
 
-    int messageRingtoneVolume();//1.2
-    int voiceRingtoneVolume();//1.2
-    bool vibrationActive();//1.2
+    QSystemDeviceInfo::ThermalState currentThermalState();
+
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    int messageRingtoneVolume(); //1.2
+    int voiceRingtoneVolume(); //1.2
+    bool vibrationActive(); //1.2
     QSystemDeviceInfo::SimStatus simStatus();
-//    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
-//    bool isWirelessKeyboardConnected(); //1.2
-//    bool isKeyboardFlippedOpen();//1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
-
-
-private:
-#if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-    void setupBluetooth();
-
-private Q_SLOTS:
-#endif
 };
-
 
 class QSystemScreenSaverPrivate : public QObject
 {

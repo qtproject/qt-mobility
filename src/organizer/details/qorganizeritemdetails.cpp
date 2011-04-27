@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
    \brief The QOrganizerItemDescription class contains some arbitrary information which is relevant to the organizer item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -95,6 +96,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
    \brief The QOrganizerItemDisplayLabel class contains the backend-synthesized display label of the organizer item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
 */
 
 /*!
@@ -151,6 +153,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
           or occurrence of an event.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
 */
 
 /*!
@@ -238,6 +241,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
    \brief The QOrganizerItemGuid class contains the globally unique identifier of the organizer item, which can be used for synchronization purposes.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -276,6 +280,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
    \brief The QOrganizerItemParent class contains information about the event or todo that generated this item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -332,6 +337,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldOriginalDate, "OriginalDate"
    the date and time for which a journal entry has been created.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -367,6 +373,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTime::FieldEntryDateTime, "EntryDateTi
    \brief The QOrganizerItemLocation class contains information about a location which is related to the organizer item in some manner.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 
@@ -454,6 +461,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLabel, "Label");
    \brief The QOrganizerItemComment class contains some arbitrary information which is relevant to the organizer item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -503,6 +511,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    \brief The QOrganizerItemPriority class contains the priority of the organizer item, which may be used to resolve scheduling conflicts.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -719,6 +728,7 @@ void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
    \brief The QOrganizerItemReminder class contains information about when and how the user wants to reminded of the item
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
 
    Note that the Organizer API does not enforce that the user is reminded of the item;
    rather, it simply allows clients to store and manipulate data which might be used
@@ -863,6 +873,7 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
    \brief The QOrganizerItemAudibleReminder class contains information about an audible reminder of an item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
 
    An audible reminder is a reminder which alerts the user about the item, with sound.
    Note that the Organizer API does not enforce that the sound data is played,
@@ -903,6 +914,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
    \brief The QOrganizerItemEmailReminder class contains information about an email reminder of an item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
 
    An email reminder is a reminder which alerts the user (or other users) about the item,
    by sending an email.
@@ -986,6 +998,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
    \brief The QOrganizerItemVisualReminder class contains information about a visual reminder of an item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
 
    A visual reminder is a reminder which alerts the user about the item, with a message, image or video.
    Note that the Organizer API does not enforce that the visual data is displayed,
@@ -1043,6 +1056,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
    \brief The QOrganizerItemTag class contains some arbitrary tag which is relevant to the organizer item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -1088,9 +1102,11 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::FieldTag, "Tag");
 /* ==================== QOrganizerItemTimestamp ======================= */
 /*!
    \class QOrganizerItemTimestamp
-   \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  XXX TODO: what about last accessed?
+   \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  
+   XXX TODO: what about last accessed?
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -1147,6 +1163,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldCreationTimestamp, "Creat
    \brief The QOrganizerTodoProgress class contains information about the progress of a todo item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -1222,6 +1239,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldFinishedDateTime, "Finishe
    \brief The QOrganizerTodoTime class contains information about the time range of a todo item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -1298,6 +1316,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
    \brief The QOrganizerItemType class describes the type of the organizer item.  This detail may be automatically synthesized by the backend depending on other details in the organizer item.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!

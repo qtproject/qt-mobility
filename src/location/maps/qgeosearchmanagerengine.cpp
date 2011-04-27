@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
     to provide support for searching operations related to geographic data.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-impl
 

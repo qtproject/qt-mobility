@@ -44,7 +44,6 @@
 
 #include "qsystemalignedtimer.h"
 
-#include <QObject>
 #include <QSocketNotifier>
 
 extern "C" {
@@ -79,6 +78,7 @@ public:
 
     bool isActive() const;
     QSystemAlignedTimer::AlignedTimerError m_lastError;
+
 Q_SIGNALS:
     void timeout();
     void error(QSystemAlignedTimer::AlignedTimerError error);
@@ -90,8 +90,6 @@ private:
     bool m_singleShot;
     iphb_t m_iphbdHandler;
     QSocketNotifier *m_notifier;
-    QObject *m_singleShotReceiver;
-    QByteArray m_singleShotMember;
 
 public Q_SLOTS:
     void start(int minimumTime, int maximumTime);
@@ -100,11 +98,9 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void heartbeatReceived(int sock);
-    void singleShot();
 };
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMALIGNEDTIMER_MEEGO_P_H

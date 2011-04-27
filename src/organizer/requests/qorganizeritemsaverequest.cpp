@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
   the overall operation error (which may be retrieved by calling error()) is updated.
 
   \ingroup organizer-requests
+  \since 1.1
  */
 
 /*! Constructs a new organizer item save request whose parent is the specified \a parent */

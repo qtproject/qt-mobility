@@ -73,7 +73,8 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     The static function QGeoPositionInfoSource::createDefaultSource() creates a default
@@ -362,7 +363,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
     Returns 0 if the system has no default position source and no valid plugins
     could be found.
 
-    Note: Symbian applications will need to have the Location capability 
+    Note: Symbian applications will need to have the Location capability
     otherwise this will return 0.
 */
 

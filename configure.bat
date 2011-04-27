@@ -630,6 +630,7 @@ call :compileTest FmTxClientCheck FmTxClient
 call :compileTest DiskNotifyClientCheck DiskNotifyClient
 call :compileTest ThermalStatus_Symbian thermalstatus_symbian
 call :compileTest Flextimer_Symbian symbianflextimer
+call :compileTest ETelPacketservice_symbian etelpacketservice_symbian
 goto noTests
 
 :windowsTests

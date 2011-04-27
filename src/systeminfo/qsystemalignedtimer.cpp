@@ -39,41 +39,47 @@
 **
 ****************************************************************************/
 
-
 #include "qsystemalignedtimer.h"
 #include "qsysteminfocommon_p.h"
 
 QTM_BEGIN_NAMESPACE
 
+Q_GLOBAL_STATIC(QSystemAlignedTimerPrivate, alignedTimerPrivate)
+
+#ifdef QT_SIMULATOR
+QSystemAlignedTimerPrivate *getSystemAlignedTimerPrivate() { return alignedTimerPrivate(); }
+#endif // QT_SIMULATOR
+
 /*!
-  \class QSystemAlignedTimer
-  \ingroup systeminfo
-  \inmodule QtSystemInfo
-  \brief The QSystemAlignedTimer class provides a service for applications to synchronize their activity.
+    \class QSystemAlignedTimer
+    \ingroup systeminfo
+    \inmodule QtSystemInfo
+    \brief The QSystemAlignedTimer class provides a service for applications to synchronize their activity.
+    \since 1.2
 
-  QSystemAlignedTimer is a fuzzy timer that allows applications that must do periodic activity like
-  after being in sleep mode a certain period, to synchronize their activities in the same window of time.
+    QSystemAlignedTimer is a fuzzy timer that allows applications that must do periodic activity like
+    after being in sleep mode a certain period, to synchronize their activities in the same window of time.
 
-  For example send network "alive" messages at the same time (i.e. turn the wireless radio on at the same time).
+    For example send network "alive" messages at the same time (i.e. turn the wireless radio on at the same time).
 
-  The service is not only for network-aware applications, it is for use by any applications
-  that need to periodic wake-ups.
+    The service is not only for network-aware applications, it is for use by any applications
+    that need to periodic wake-ups.
 
-  The recommended use case is when app uses single-shot timer only: set mintime 0 for the first call
-  'to jump to the train' and mintime > 0 after 1st wakeup.
-
+    The recommended use case is when app uses single-shot timer only: set mintime 0 for the first call
+    'to jump to the train' and mintime > 0 after 1st wakeup.
 */
 
 /*!
-  \fn void QSystemAlignedTimer::timeout()
+    \fn void QSystemAlignedTimer::timeout()
 
-  This signal is emitted when the timer times out.
- */
+    This signal is emitted when the timer times out.
+*/
+
 /*!
-  \fn void QSystemAlignedTimer::error(QSystemAlignedTimer::AlignedTimerError error)
+    \fn void QSystemAlignedTimer::error(QSystemAlignedTimer::AlignedTimerError error)
 
-  This signal is emitted when an \a error happens.
- */
+        This signal is emitted when an \a error happens.
+*/
 
 /*!
     \enum QSystemAlignedTimer::AlignedTimerError
@@ -84,11 +90,11 @@ QTM_BEGIN_NAMESPACE
     \value InvalidArgument                Interval arguments are invalid.
     \value TimerFailed                    General timer failure.
     \value InternalError                  Internal error.
+*/
 
-  */
 /*!
-   Constructs a QSystemAlignedTimer object with the given \a parent.
-  */
+    Constructs a QSystemAlignedTimer object with the given \a parent.
+*/
 QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
     : QObject(parent)
 {
@@ -99,22 +105,21 @@ QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
 
 /*!
     Destructs the QSystemAlignedTimer
-  */
+*/
 QSystemAlignedTimer::~QSystemAlignedTimer()
 {
 }
 
 /*!
-  Starts the timer with the minimal interval of \a minimumTime, and maximum interval \a maximumTime in seconds.
+    Starts the timer with the minimal interval of \a minimumTime, and maximum interval \a maximumTime in seconds.
 
-  This is not a guaranteed interval, and the timeout signal may be fired at any time,
-  depending on other clients attached to this timer.
+    This is not a guaranteed interval, and the timeout signal may be fired at any time,
+    depending on other clients attached to this timer.
 
-  In the case of minimalInterval of 0, it means 'wake me up when someone else is woken up'.
+    In the case of minimalInterval of 0, it means 'wake me up when someone else is woken up'.
 
-  If you need a window of time in which your timer should fire, use QSystemAlignedTimer::setWindow
-
-  */
+    If you need a window of time in which your timer should fire, use QSystemAlignedTimer::setWindow
+*/
 void QSystemAlignedTimer::start(int minimumTime, int maximumTime)
 {
     if (minimumTime > maximumTime || maximumTime <= 0) {
@@ -141,124 +146,118 @@ void QSystemAlignedTimer::start()
 }
 
 /*!
-     This should be called when the application wakes up via other means than QSystemAlignedTimer timeout.
+    This should be called when the application wakes up via other means than QSystemAlignedTimer timeout.
 
     Other applications that are in their wakeup window *may* be woken up. Single-shot timer is canceled,
     and reoccuring timer interval will restart.
 
     Symbian does not support this wokeUp call for reoccuring timers and will simply ignore it.
-  */
+*/
 void QSystemAlignedTimer::wokeUp()
 {
     d->wokeUp();
 }
 
 /*!
-  Stops this timer request.
-  */
+    Stops this timer request.
+*/
 void QSystemAlignedTimer::stop()
 {
     d->stop();
 }
 
-
 /*!
-  Set the timeout minimum interval to \a seconds in seconds that must be waited before timeout
-  signal is emitted.
+    Set the timeout minimum interval to \a seconds in seconds that must be waited before timeout
+    signal is emitted.
 
-   Time in seconds that MUST be waited before timeout.
-   Value 0 means 'wake me up when someboy else is woken'.
+    Time in seconds that MUST be waited before timeout.
+    Value 0 means 'wake me up when someboy else is woken'.
 
-   mintime value 0 should be used with special care, as it may cause too frequent wakeups.
-   It is recommended that the first wait (if possible) uses minimum value of 0 to
-   "jump to the train" and minimum value > 0 after 1st wakeup
-
- */
+    mintime value 0 should be used with special care, as it may cause too frequent wakeups.
+    It is recommended that the first wait (if possible) uses minimum value of 0 to
+    "jump to the train" and minimum value > 0 after 1st wakeup
+*/
 void QSystemAlignedTimer::setMinimumInterval(int seconds)
 {
     d->setMinimumInterval(seconds);
 }
 
 /*!
-  \property QSystemAlignedTimer::minimumInterval
-  \brief The timers's minimumInterval.
+    \property QSystemAlignedTimer::minimumInterval
+    \brief The timers's minimumInterval.
 
-  Returns this current timer minimum interval.
-  */
+    Returns this current timer minimum interval.
+*/
 int QSystemAlignedTimer::minimumInterval() const
 {
     return d->minimumInterval();
 }
 
 /*!
-  Set the timeout maximum interval to \a seconds the wait must end.
+    Set the timeout maximum interval to \a seconds the wait must end.
 
-   Time in seconds when the wait MUST end. It is wise to have maxtime-mintime
-   quite big so all users of this service get synced.
-   For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
+    Time in seconds when the wait MUST end. It is wise to have maxtime-mintime
+    quite big so all users of this service get synced.
+    For example if you preferred wait is 120 seconds, use minval 110 and maxval 130.
 
-   max interval must be greater than min interval.
-
- */
+    max interval must be greater than min interval.
+*/
 void QSystemAlignedTimer::setMaximumInterval(int seconds)
 {
     d->setMaximumInterval(seconds);
 }
 
 /*!
-  \property QSystemAlignedTimer::maximumInterval
-  \brief The timer's maximumInterval.
+    \property QSystemAlignedTimer::maximumInterval
+    \brief The timer's maximumInterval.
 
-  Returns this current timer maximum interval.
-  */
+    Returns this current timer maximum interval.
+*/
 int QSystemAlignedTimer::maximumInterval() const
 {
     return d->maximumInterval();
 }
 
 /*!
-  Sets this timer to be a single shot \a singleShot is true, otherwise false.
-  */
+    Sets this timer to be a single shot \a singleShot is true, otherwise false.
+*/
 void QSystemAlignedTimer::setSingleShot(bool singleShot)
 {
     d->setSingleShot(singleShot);
 }
 
 /*!
+    This static function starts a timer to call a slot after a \a minimumTime
+    interval has elapsed, and ensures that it will be called before the
+    \a maximumTime has elapsed.
 
-  This static function starts a timer to call a slot after a \a minimumTime
-  interval has elapsed, and ensures that it will be called before the
-  \a maximumTime has elapsed.
+    These values are specified in seconds.
 
-  These values are specified in seconds.
-
-  The receiver is the \a receiver object and the \a member is the slot.
-  */
+    The receiver is the \a receiver object and the \a member is the slot.
+*/
 void QSystemAlignedTimer::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
-    if (minimumTime > maximumTime || maximumTime <= 0) {
+    if (minimumTime > maximumTime || maximumTime <= 0)
         return;
-    }
     QSystemAlignedTimerPrivate::singleShot(minimumTime, maximumTime, receiver, member);
 }
 
 /*!
-  \property QSystemAlignedTimer::singleShot
-  Whether the timer is single shot.
+    \property QSystemAlignedTimer::singleShot
+    Whether the timer is single shot.
 */
 
 /*!
-  Returns true if this timer is a single shot, otherwise false.
-  */
+    Returns true if this timer is a single shot, otherwise false.
+*/
 bool QSystemAlignedTimer::isSingleShot() const
 {
     return d->isSingleShot();
 }
 
 /*!
-  Returns the last AlignedTimerError.
-
-  */
+    Returns the last AlignedTimerError.
+*/
 QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 {
     return d->lastError();
@@ -266,11 +265,11 @@ QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimer::lastError() const
 
 /*!
     \property QSystemAlignedTimer::active
-  Returns true if the timer is running; otherwise false.
+    Returns true if the timer is running; otherwise false.
 */
 
 /*!
-  Returns true if the timer is running; otherwise false.
+    Returns true if the timer is running; otherwise false.
 */
 bool QSystemAlignedTimer::isActive () const
 {

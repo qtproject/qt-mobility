@@ -54,6 +54,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.2
+
     Subclasses of QGeoTiledMappingManagerEngine need to provide an implementation
     of getTileImage().
 

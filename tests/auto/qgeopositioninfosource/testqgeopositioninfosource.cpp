@@ -349,8 +349,11 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
     int minUpdateInterval = source ? source->minimumUpdateInterval() : -1;
     if (source)
         delete source;
-
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QTest::newRow("0") << 0 << minUpdateInterval;
+#else
     QTest::newRow("0") << 0 << 0;
+#endif
     
     if (minUpdateInterval > -1) {
         QTest::newRow("INT_MIN") << INT_MIN << minUpdateInterval;
@@ -378,6 +381,9 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     QFETCH(bool, lastKnownPositionArgument);
     QFETCH(bool, positionValid);
 
+#if defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
     QGeoPositionInfoSource::PositioningMethods method
             = static_cast<QGeoPositionInfoSource::PositioningMethods>(positioningMethod);
 
@@ -477,7 +483,9 @@ void TestQGeoPositionInfoSource::minimumUpdateInterval()
 void TestQGeoPositionInfoSource::startUpdates_testIntervals()
 {
     CHECK_SOURCE_VALID;
-
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
     m_source->setUpdateInterval(7000);
@@ -509,6 +517,9 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
     // this test are as high as they are.
 
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -565,6 +576,9 @@ void TestQGeoPositionInfoSource::startUpdates_testIntervalChangesWhileRunning()
 void TestQGeoPositionInfoSource::startUpdates_testDefaultInterval()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -582,6 +596,9 @@ void TestQGeoPositionInfoSource::startUpdates_testDefaultInterval()
 void TestQGeoPositionInfoSource::startUpdates_testZeroInterval()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -599,6 +616,9 @@ void TestQGeoPositionInfoSource::startUpdates_testZeroInterval()
 void TestQGeoPositionInfoSource::startUpdates_moreThanOnce()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -620,6 +640,9 @@ void TestQGeoPositionInfoSource::startUpdates_moreThanOnce()
 void TestQGeoPositionInfoSource::stopUpdates()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -652,6 +675,9 @@ void TestQGeoPositionInfoSource::stopUpdates_withoutStart()
 void TestQGeoPositionInfoSource::requestUpdate()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
     QFETCH(int, timeout);
     QSignalSpy spy(m_source, SIGNAL(updateTimeout()));
     m_source->requestUpdate(timeout);
@@ -668,6 +694,9 @@ void TestQGeoPositionInfoSource::requestUpdate_data()
 void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -682,6 +711,9 @@ void TestQGeoPositionInfoSource::requestUpdate_validTimeout()
 void TestQGeoPositionInfoSource::requestUpdate_defaultTimeout()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -712,6 +744,9 @@ void TestQGeoPositionInfoSource::requestUpdate_timeoutLessThanMinimumInterval()
 void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -732,6 +767,9 @@ void TestQGeoPositionInfoSource::requestUpdate_repeatedCalls()
 void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -748,6 +786,9 @@ void TestQGeoPositionInfoSource::requestUpdate_overlappingCalls()
 void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -778,6 +819,9 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_ZeroInterval()
 void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -807,6 +851,9 @@ void TestQGeoPositionInfoSource::requestUpdateAfterStartUpdates_SmallInterval()
 void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
@@ -833,7 +880,9 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_ZeroInterval()
 void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
 {
     CHECK_SOURCE_VALID;
-
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
     QSignalSpy spyUpdate(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy spyTimeout(m_source, SIGNAL(updateTimeout()));
 
@@ -857,6 +906,9 @@ void TestQGeoPositionInfoSource::requestUpdateBeforeStartUpdates_SmallInterval()
 void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     bool i = connect(m_source, SIGNAL(updateTimeout()), this, SLOT(test_slot1()));
     QVERIFY(i == true);
@@ -872,6 +924,9 @@ void TestQGeoPositionInfoSource::removeSlotForRequestTimeout()
 void TestQGeoPositionInfoSource::removeSlotForPositionUpdated()
 {
     CHECK_SOURCE_VALID;
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+    QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
+#endif
 
     bool i = connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo &)), this, SLOT(test_slot1()));
     QVERIFY(i == true);

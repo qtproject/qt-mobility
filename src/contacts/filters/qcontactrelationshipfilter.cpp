@@ -49,12 +49,13 @@ QTM_BEGIN_NAMESPACE
   \class QContactRelationshipFilter
   \brief The QContactRelationshipFilter class provides a filter based
   around relationship criteria.
-  
-  
+
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-filters
- 
+
   It may be used to select contacts which are involved in relationships
   which are of a certain type, or which involve certain contacts.
 

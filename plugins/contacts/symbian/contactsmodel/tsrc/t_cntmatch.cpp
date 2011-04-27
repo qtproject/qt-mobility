@@ -254,14 +254,14 @@ LOCAL_C void Test3L()
 
 	//it definetly should match on itself....
 	TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 7),2); //Both numbers match by 7 digits..
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 8),2); //But they must differ for more digits
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 9),2); // AB - all these should match both...
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"),10),2);
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"),11),2);
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"),12),2);
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"),13),2);
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"),14),2);
-	TESTVALUE(CheckPhoneMatchL(_L("123 4567"),15),2);
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 8),1); //But they must differ for more digits
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 9),1); // AB - all these should match both...
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"),10),1);
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"),11),1);
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"),12),1);
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"),13),1);
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"),14),1);
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"),15),1);
 	TESTVALUE(CheckPhoneMatchL(_L("123 4567"), KBestMatchingPhoneNumbers),2);
 	}
 

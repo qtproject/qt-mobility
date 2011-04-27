@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoMapOverlay class is used to draw overlays on the map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping
 

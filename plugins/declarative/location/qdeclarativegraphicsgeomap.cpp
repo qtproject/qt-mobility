@@ -870,9 +870,10 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
         qmlInfo(this) << tr("Map plugin is not set, map object cannot be added.");
     if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
         return;
-    objectMap_.insert(object->mapObject(), object);
     mapObjects_.append(object);
+    objectMap_.insert(object->mapObject(), object);
     mapData_->addMapObject(object->mapObject());
+    object->setMap(this);
 }
 
 /*!

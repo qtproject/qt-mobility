@@ -38,21 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon_p.h"
+
 #include "qsysteminfo_maemo_p.h"
-#include <QStringList>
-#include <QSize>
-#include <QFile>
-#include <QTextStream>
-#include <QLocale>
-#include <QLibraryInfo>
-//#include <QtGui>
-#include <QDesktopWidget>
-#include <QDebug>
-#include <QTimer>
-#include <QDir>
-#include <QTimer>
-#include <QMapIterator>
+
+#include <QtGui/qdesktopwidget.h>
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -61,36 +50,35 @@
 #if !defined(Q_WS_MAEMO_6)
 #if !defined(SW_KEYPAD_SLIDE)
 #define SW_KEYPAD_SLIDE 0x0a
-#endif
-#endif
+#endif // SW_KEYPAD_SLIDE
+#endif // Q_WS_MAEMO_6
 
 #define BITS_PER_LONG (sizeof(long) * 8)
 #define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
 #define OFF(x)  ((x)%BITS_PER_LONG)
-#define BIT(x)  (1UL<<OFF(x))
 #define LONG(x) ((x)/BITS_PER_LONG)
-#define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
+#define TEST_BIT(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
 
 #if !defined(QT_NO_DBUS)
-#include "linux/gconfitem_p.h" // Temporarily here.
-#endif
+#include "linux/gconfitem_p.h"
+#endif // QT_NO_DBUS
 
-#ifdef Q_WS_X11
-#include <QX11Info>
-#include <X11/Xlib.h>
+#ifdef Q_USE_BME
+extern "C" {
+#include <errno.h>
+#include <time.h>
+#include "bme/bmeipc.h"
+#include "bme/bmemsg.h"
+#include "bme/em_isi.h"
+}
+#endif // Q_USE_BME
 
-#endif
-
-#include <QDBusInterface>
 static QString sysinfodValueForKey(const QString& key)
 {
-    QString value = "";
+    QString value;
 #if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus());
-
+    QDBusInterface connectionInterface("com.nokia.SystemInfo", "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo", QDBusConnection::systemBus());
     QDBusReply<QByteArray> reply = connectionInterface.call("GetConfigValue", key);
     if (reply.isValid()) {
         /*
@@ -102,32 +90,32 @@ static QString sysinfodValueForKey(const QString& key)
          */
         value = reply.value();
     }
-#endif
+#endif // QT_NO_DBUS
     return value;
 }
 
 #if !defined(QT_NO_DBUS)
 QDBusArgument &operator<<(QDBusArgument &argument, const ProfileDataValue &value)
 {
-  argument.beginStructure();
-  argument << value.key << value.val << value.type;
-  argument.endStructure();
-  return argument;
+    argument.beginStructure();
+    argument << value.key << value.val << value.type;
+    argument.endStructure();
+    return argument;
 }
 
 const QDBusArgument &operator>>(const QDBusArgument &argument, ProfileDataValue &value)
 {
-  argument.beginStructure();
-  argument >> value.key >> value.val >> value.type;
-  argument.endStructure();
-  return argument;
+    argument.beginStructure();
+    argument >> value.key >> value.val >> value.type;
+    argument.endStructure();
+    return argument;
 }
-#endif
+#endif // QT_NO_DBUS
 
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
- : QSystemInfoLinuxCommonPrivate(parent)
+    : QSystemInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -141,17 +129,17 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 
 #if defined(Q_WS_MAEMO_6)
     QDir langDir("/etc/meego-supported-languages");
-    languages = langDir.entryList(QStringList() <<"??",QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
-#else
+    languages = langDir.entryList(QStringList() << "??", QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+#else // Q_WS_MAEMO_6
     GConfItem languagesItem("/meegotouch/inputmethods/languages");
     const QStringList locales = languagesItem.value().toStringList();
 
-    foreach(const QString &locale, locales) {
-        languages << locale.mid(0,2);
-    }
+    foreach (const QString &locale, locales)
+        languages << locale.mid(0, 2);
+
     languages << currentLanguage();
     languages.removeDuplicates();
-#endif
+#endif // Q_WS_MAEMO_6
 
     return languages;
 }
@@ -159,109 +147,105 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 QString QSystemInfoPrivate::currentLanguage() const
 {
 #if defined(Q_WS_MAEMO_6)
-    GConfItem langItem("/meegotouch/i18n/language");
-    QString lang = langItem.value().toString();
-    if(lang.count() > 2) lang = lang.left(2);
-    if (lang.isEmpty()) {
-        lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
+    QString lang;
+    if (currentLang.isEmpty()) {
+        GConfItem langItem("/meegotouch/i18n/language");
+        lang = langItem.value().toString();
+        if (lang.count() > 2)
+            lang = lang.left(2);
+        if (lang.isEmpty())
+            lang = QString::fromLocal8Bit(qgetenv("LANG")).left(2);
+    } else {
+        lang = currentLang;
     }
-    return lang;
-#else
-    return QSystemInfoLinuxCommonPrivate::currentLanguage();
-#endif
-}
 
+    return lang;
+#else // Q_WS_MAEMO_6
+    return QSystemInfoLinuxCommonPrivate::currentLanguage();
+#endif // Q_WS_MAEMO_6
+}
 
 QString QSystemInfoPrivate::currentCountryCode() const
 {
 #if defined(Q_WS_MAEMO_6)
     GConfItem langItem("/meegotouch/i18n/region");
-     QString langCC = langItem.value().toString().section("_",1,1);
-     if (langCC.isEmpty()) {
-         langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_",1,1);
-         langCC = langCC.remove(".UTF-8",Qt::CaseSensitive);
-         return langCC;
-     }
-#endif
+    QString langCC = langItem.value().toString().section("_", 1, 1);
+    if (langCC.isEmpty()) {
+        langCC = QString::fromLocal8Bit(qgetenv("LANG")).section("_", 1, 1);
+        langCC = langCC.remove(".UTF-8", Qt::CaseSensitive);
+    }
+    return langCC;
+#else // Q_WS_MAEMO_6
     return QSystemInfoLinuxCommonPrivate::currentCountryCode();
+#endif // Q_WS_MAEMO_6
 }
 
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type, const QString &parameter)
 {
-    QString errorStr = "Not Available";
-
     switch(type) {
-    case QSystemInfo::Os :
-    {
-        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");//("/device/content-ver");
+    case QSystemInfo::Os: {
+        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver"); //("/device/content-ver");
         if (!sysinfodValue.isEmpty()) {
-           sysinfodValue =  sysinfodValue.section("_",2,4);
+            sysinfodValue =  sysinfodValue.section("_", 2, 4);
             return sysinfodValue;
         }
     }
-        break;
-    case QSystemInfo::Firmware :
-    {
+
+    case QSystemInfo::Firmware: {
         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
-        if (!sysinfodValue.isEmpty()) {
+        if (!sysinfodValue.isEmpty())
             return sysinfodValue;
-        }
     }
 
     default:
         return QSystemInfoLinuxCommonPrivate::version(type, parameter);
-        break;
     };
-    return errorStr;
 }
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
     bool featureSupported = false;
+
     switch (feature) {
-    case QSystemInfo::SimFeature :
-        {
-            QSystemDeviceInfoPrivate d;
-            featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
-        }
+    case QSystemInfo::SimFeature: {
+        QSystemDeviceInfoPrivate d;
+        featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
         break;
-    case QSystemInfo::LocationFeature :
-        {
+    }
+
+    case QSystemInfo::LocationFeature: {
 #if defined(Q_WS_MAEMO_6)
-            GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
-            GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
+        GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
+        GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
 
-            bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
-            bool networkPositioningAvailable   = networkPositioning.value(false).toBool();
+        bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
+        bool networkPositioningAvailable = networkPositioning.value(false).toBool();
 
-            featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
-#else /* Maemo 5 */
-            GConfItem locationValues("/system/nokia/location");
-            const QStringList locationKeys = locationValues.listEntries();
-            if(locationKeys.count()) {
-                featureSupported = true;
-            }
-#endif /* Maemo 5 */
-        }
+        featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
+#else // Q_WS_MAEMO_6
+        GConfItem locationValues("/system/nokia/location");
+        const QStringList locationKeys = locationValues.listEntries();
+        if (locationKeys.count())
+            featureSupported = true;
+#endif // Q_WS_MAEMO_6
         break;
-    case QSystemInfo::HapticsFeature:
-        {
-           // if(halIsAvailable) {
-                QHalInterface iface;
-                const QStringList touchSupport =
-                        iface.findDeviceByCapability("input.touchpad");
-                if(touchSupport.count()) {
-                    featureSupported = true;
-                } else {
-                    featureSupported = false;
-                }
-            }
-      //  }
+    }
+
+    case QSystemInfo::HapticsFeature: {
+        QHalInterface iface;
+        const QStringList touchSupport(iface.findDeviceByCapability("input.touchpad"));
+        if (touchSupport.count())
+            featureSupported = true;
+        else
+            featureSupported = false;
         break;
+    }
+
     default:
         featureSupported = QSystemInfoLinuxCommonPrivate::hasFeatureSupported(feature);
         break;
     };
+
     return featureSupported;
 }
 
@@ -1120,7 +1104,7 @@ QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechno
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
-        : QSystemDisplayInfoLinuxCommonPrivate(parent)
+    : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -1131,47 +1115,40 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
     QDesktopWidget wid;
-    if(wid.screenCount() - 1 < screen) {
+    if (wid.screenCount() - 1 < screen)
         return -1;
-    }
+
     GConfItem currentBrightness("/system/osso/dsm/display/display_brightness");
     GConfItem maxBrightness("/system/osso/dsm/display/max_display_brightness_levels");
-    if(maxBrightness.value().toInt()) {
-        float retVal = 100 * (currentBrightness.value().toFloat() /
-                              maxBrightness.value().toFloat());
+    if (maxBrightness.value().toInt()) {
+        float retVal = 100 * (currentBrightness.value().toFloat() / maxBrightness.value().toFloat());
         return retVal;
     }
 
     return -1;
 }
 
-float QSystemDisplayInfoPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
-
-    return 0.0;
-}
-
 QSystemDisplayInfo::BacklightState QSystemDisplayInfoPrivate::backlightStatus(int screen)
 {
     Q_UNUSED(screen)
+
     QSystemDisplayInfo::BacklightState backlightState = QSystemDisplayInfo::BacklightStateUnknown;
 
 #if !defined(QT_NO_DBUS)
     QDBusReply<QString> reply = QDBusConnection::systemBus().call(
-                                    QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
-                                                                   "com.nokia.mce.request", "get_display_status"));
+                QDBusMessage::createMethodCall("com.nokia.mce", "/com/nokia/mce/request",
+                                               "com.nokia.mce.request", "get_display_status"));
     if (reply.isValid()) {
         QString displayStatus = reply.value();
-        if (displayStatus == "off") {
+        if (displayStatus == "off")
             backlightState = QSystemDisplayInfo::BacklightStateOff;
-        } else if (displayStatus == "dimmed") {
+        else if (displayStatus == "dimmed")
             backlightState = QSystemDisplayInfo::BacklightStateDimmed;
-        } else if (displayStatus == "on") {
+        else if (displayStatus == "on")
             backlightState = QSystemDisplayInfo::BacklightStateOn;
-        }
     }
-#endif
+#endif // QT_NO_DBUS
+
     return backlightState;
 }
 
@@ -1474,37 +1451,6 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 }
 
 #if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoPrivate::setupBluetooth()
- {
-     QDBusInterface *connectionInterface;
-     connectionInterface = new QDBusInterface("org.bluez",
-                                              "/",
-                                              "org.bluez.Manager",
-                                              QDBusConnection::systemBus(), this);
-     if (connectionInterface->isValid()) {
-
-         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
-         if (reply.isValid()) {
-             QDBusInterface *adapterInterface;
-             adapterInterface = new QDBusInterface("org.bluez",
-                                                   reply.value().path(),
-                                                   "org.bluez.Adapter",
-                                                   QDBusConnection::systemBus(), this);
-             if (adapterInterface->isValid()) {
-                 if (!QDBusConnection::systemBus().connect("org.bluez",
-                                           reply.value().path(),
-                                            "org.bluez.Adapter",
-                                            "PropertyChanged",
-                                            this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
-                     qDebug() << "bluez could not connect signal";
-                 }
-             }
-         }
-     }
- }
-#endif
-
-#if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &name, QDBusVariant value)
 {
     if (name == "Powered")
@@ -1654,7 +1600,7 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
     int eventFd = ::open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
 
     if ((eventFd != -1) && (ioctl(eventFd, EVIOCGSW(KEY_MAX), bits) != -1)) {
-            keyboardFlippedOpen = (0 == test_bit(SW_KEYPAD_SLIDE, bits));
+            keyboardFlippedOpen = (0 == TEST_BIT(SW_KEYPAD_SLIDE, bits));
     }
     if (eventFd != -1) {
         ::close(eventFd);
@@ -1846,7 +1792,6 @@ QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
     hash.addData(bytes);
     hash.addData(wlanmac.toLocal8Bit());
     hash.addData(btmac.toLocal8Bit());
-    qDebug() << Q_FUNC_INFO << hash.result().toHex();
 
     return hash.result().toHex();
 #endif
@@ -1952,8 +1897,276 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
     }
 }
 
+
+#ifdef Q_USE_BME
+////////////
+// from QmSystem remove if/when QmSystem can be a dependency.
+
+template <typename T>
+class EmHandle
+{
+public:
+    EmHandle() { }
+
+    virtual ~EmHandle() { close(); }
+
+    bool open()
+    {
+        T *self = static_cast<T*>(this);
+        if (!self->is_opened()) {
+            self->open_();
+        }
+
+        if (!self->is_opened()) {
+            qCritical() << "EM: error opening: " << strerror(errno);
+        }
+        return self->is_opened();
+    }
+
+    void close()
+    {
+        T *self = static_cast<T*>(this);
+        if (self->is_opened()) {
+            self->close_();
+        }
+    }
+
+};
+
+#define BMEIPC_MAX_TRIES 2
+
+class EmIpc : public EmHandle<EmIpc>
+{
+    friend class EmHandle<EmIpc>;
+public:
+
+    EmIpc() : EmHandle<EmIpc>(), sd_(-1), restart_count_(0) {}
+
+    bool query(const void *msg1, int len1, void *msg2 = NULL, int len2 = -1)
+    {
+        if (!is_opened()) {
+            qCritical() << "EM: not open";
+            return false;
+        }
+
+        int tries = 0;
+        while (true) {
+            tries++;
+            if (::bmeipc_query(sd_, msg1, len1, msg2, len2) >= 0)
+                return true;
+            if (errno == EIO)
+                restart_count_++;
+            if (tries >= BMEIPC_MAX_TRIES)  {
+                qCritical() << "EM: Query failed: " << strerror(errno);
+                return false;
+            }
+            qWarning() << "EM:" << strerror(errno) << "(trying to reopen)";
+            close();
+            if (!open())
+                return false;
+        }
+    }
+
+    bool is_opened() { return sd_ >= 0; }
+    int restart_count() { return restart_count_; }
+
+private:
+
+    inline void open_()
+    {
+        sd_ = ::bmeipc_open();
+    }
+
+    inline void close_()
+    {
+        ::bmeipc_close(sd_);
+        sd_ = -1;
+    }
+
+
+    int sd_;
+    int restart_count_;
+};
+
+
+class EmEvents : public EmHandle<EmEvents>
+{
+    friend class EmHandle<EmEvents>;
+
+public:
+    EmEvents(int mask = -1)
+        : EmHandle<EmEvents>(),
+          sd_(-1),
+          mask_(mask)
+    { }
+
+    int read()
+    {
+        if (!is_opened()) {
+            return BMEVENT_ERROR;
+        }
+
+        int res = ::bmeipc_eread(sd_);
+        if (res == BMEVENT_ERROR) {
+            qDebug() << "bmeipc_eread returned error" << strerror(errno);
+        }
+        return res;
+    }
+
+    inline bool is_opened() { return sd_ >= 0; }
+
+    QSocketNotifier const* notifier() const { return notifier_.data(); }
+
+private:
+
+    inline void open_()
+    {
+        sd_ = ::bmeipc_eopen(mask_);
+        if (is_opened())
+            notifier_.reset(new QSocketNotifier(sd_, QSocketNotifier::Read));
+    }
+
+    inline void close_()
+    {
+        notifier_.reset(0);
+        ::bmeipc_eclose(sd_);
+        sd_ = -1;
+    }
+
+    int sd_;
+    int mask_;
+    QScopedPointer<QSocketNotifier> notifier_;
+};
+
+
+class EmCurrentMeasurement : public EmHandle<EmCurrentMeasurement>
+{
+    friend class EmHandle<EmCurrentMeasurement>;
+
+public:
+
+    EmCurrentMeasurement(unsigned int period)
+        : EmHandle<EmCurrentMeasurement>(),
+          period_(period),
+          mq_(-1),
+          em_ipc_(new EmIpc())
+    { }
+
+    inline bool is_opened() { return mq_ >= 0; }
+
+    bool measure(int &current)
+    {
+        current = 0;
+
+        if (!is_opened())
+            return false;
+
+        int n;
+        bmeipc_meas_t msg;
+        n = mq_receive(mq_, (char *)&msg, sizeof(msg), 0);
+
+        if (0 > n) {
+            qDebug() << "failed to receive message: "
+                     << strerror(errno);
+        } else if (n != sizeof(msg)) {
+            qDebug() << "bad message size: need "
+                     << sizeof (msg) << ", got " << n;
+        } else if (MEASUREMENTS_ERROR == msg.state) {
+            qDebug() << " error message received";
+        } else if (MEASUREMENTS_OFF == msg.state) {
+            qDebug() << "measurements are off";
+        } else {
+            current = msg.bat_current;
+            return true;
+        }
+        return false;
+    }
+
+    QSocketNotifier const* notifier() const { return notifier_.data(); }
+
+private:
+
+    inline bool request_measurements_(unsigned int period)
+    {
+        struct emsg_measurement_req req;
+        struct emsg_measurement_req_elem req_elem;
+
+        if (!em_ipc_->open()) {
+            qCritical() << "failed to contact bme server: "
+                        << strerror(errno);
+            return false;
+        }
+
+        /* Send message header */
+        req.type = EM_MEASUREMENT_REQ;
+        req.subtype = 0;
+        req.measurement_action = EM_MEASUREMENT_ACTION_START;
+        req.channel_count = 1;
+
+        if (!em_ipc_->query(&req, sizeof(req))) {
+            qCritical() << "failed to request measurments: "
+                        << strerror(errno);
+            return false;
+        }
+
+        req_elem.type = EM_MEASUREMENT_TYPE_CURRENT;
+        req_elem.period = period;
+
+        if (!em_ipc_->query(&req_elem, sizeof(req_elem))) {
+            qCritical() << "failed to request data: " << strerror(errno);
+            return false;
+        }
+
+        return true;
+
+    }
+
+    void open_()
+    {
+        if (!request_measurements_(period_))
+            return;
+
+        mq_ = mq_open(BMEIPC_MQNAME, O_RDONLY);
+        if (!is_opened())
+            return;
+
+        notifier_.reset(new QSocketNotifier(mq_, QSocketNotifier::Read));
+    }
+
+    void close_()
+    {
+        struct emsg_measurement_req req;
+
+        req.type = EM_MEASUREMENT_REQ;
+        req.subtype = 0;
+        req.measurement_action = EM_MEASUREMENT_ACTION_STOP;
+        req.channel_count = 0;
+
+        if (!em_ipc_->query(&req, sizeof(req))) {
+            qCritical() << "failed to stop measurements"
+                        << strerror(errno);
+        }
+
+        em_ipc_->close();
+
+        notifier_.reset(0);
+        ::mq_close(mq_);
+        mq_ = -1;
+    }
+
+    int period_;
+    mqd_t mq_;
+    QScopedPointer<EmIpc> em_ipc_;
+    QScopedPointer<QSocketNotifier> notifier_;
+};
+#endif
+
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent)
     : QSystemBatteryInfoLinuxCommonPrivate(parent)
+#ifdef Q_USE_BME
+      ,emIpc(new EmIpc()),
+      emEvents(new EmEvents())
+#endif
 {
 #if !defined(QT_NO_DBUS)
     QHalInterface iface;
@@ -1977,7 +2190,6 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxComm
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
-
 }
 
 #if !defined(QT_NO_DBUS)
@@ -2013,6 +2225,100 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
     }
 }
 #endif
+
+void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
+{
+#ifdef Q_USE_BME
+    if (QLatin1String(signal) ==
+            QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
+        startMeasurements();
+    }
+#endif
+}
+
+void QSystemBatteryInfoPrivate::disconnectNotify(const char *signal)
+{
+#ifdef Q_USE_BME
+    if (QLatin1String(signal) ==
+            QLatin1String(QMetaObject::normalizedSignature(SIGNAL(currentFlowChanged(int))))) {
+        stopMeasurements();
+    }
+#endif
+}
+
+#ifdef Q_USE_BME
+void QSystemBatteryInfoPrivate::startMeasurements()
+{
+    emCurrentMeasurements.reset(new EmCurrentMeasurement(2));//every 1 second
+    if (emCurrentMeasurements->open()) {
+        connect(emCurrentMeasurements->notifier(),SIGNAL(activated(int)),this,SLOT(onMeasurement(int)));
+    }
+}
+
+
+void QSystemBatteryInfoPrivate::stopMeasurements()
+{
+    disconnect(emCurrentMeasurements->notifier(),SIGNAL(activated(int)),this,SLOT(onMeasurement(int)));
+    emCurrentMeasurements->close();
+    if (emCurrentMeasurements->is_opened()) {
+        qDebug() << "disconnect failed";
+    } else {
+        emCurrentMeasurements.reset(0);
+    }
+}
+
+void QSystemBatteryInfoPrivate::onMeasurement(int)
+{
+    bool rc;
+    int current;
+
+    if (emCurrentMeasurements.isNull()) {
+        qWarning() << "onMeasurement: null";
+        return;
+    }
+
+    rc = emCurrentMeasurements->measure(current);
+    Q_EMIT currentFlowChanged(current);
+}
+#endif
+
+int QSystemBatteryInfoPrivate::currentFlow() const
+{
+#ifdef Q_USE_BME
+    QDateTime now(QDateTime::currentDateTime());
+
+    if (!isDataActual || now >= cacheExpire) {
+        if (!emIpc->open()) {
+            return 0;
+        }
+
+        int prevCc = bmeStat[COULOMB_COUNTER];
+
+        bmeipc_msg_t request;
+        request.type = BME_SYSMSG_GETSTAT;
+        request.subtype = 0;
+        if (!emIpc->query(&request, sizeof(request), &bmeStat, sizeof(bmeStat))) {
+            return 0;
+        }
+
+        isDataActual = true;
+        cacheExpire = now.addSecs(5);
+
+        if (prevColoumbCounterRestartCount != emIpc->restart_count()) {
+            coloumbCounterOffset += (prevCc - bmeStat[COULOMB_COUNTER]);
+            qDebug() << "CC reset, prev_cc:" << prevCc
+                     << "new_cc" << bmeStat[COULOMB_COUNTER]
+                     << "new offset:" << coloumbCounterOffset;
+            prevColoumbCounterRestartCount = emIpc->restart_count();
+        }
+    }
+
+    return bmeStat[BATTERY_CURRENT];
+#endif
+    return 0;
+}
+
+
 
 #include "moc_qsysteminfo_maemo_p.cpp"
 

@@ -100,6 +100,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.2
+
     This class assumes that at a zoom level of z the world is represented as a
     2^z by 2^z grid of tiles, and that the Mercator projection is used to map
     back and forth between coordinate and positions on the map.
@@ -116,7 +118,7 @@ QTM_BEGIN_NAMESPACE
     worldReferenceViewportRect().
 
     NOTE: QGeoTiledMapData blocks property change signals from QGeoMapData by calling
-    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in 
+    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in
     QGeoTiledMapData subclasses will cause the signals being emitted at wrong time.
 */
 
@@ -156,14 +158,7 @@ QGeoTiledMapData::~QGeoTiledMapData()
 
 QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
 {
-    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
-    if (offsetX < 0.0)
-        offsetX = 0.0;
-    offsetX /= zoomFactor;
-    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
-    if (offsetY < 0.0)
-        offsetY = 0.0;
-    offsetY /= zoomFactor;
+    QPointF offset = windowOffset();
 
     QPoint pos(coordinateToWorldReferencePosition(lon, lat));
 
@@ -173,7 +168,7 @@ QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double l
 
     const int y = pos.y() - worldReferenceViewportRect.top();
 
-    QPointF posF(offsetX + qreal(x) / zoomFactor, offsetY + qreal(y) / zoomFactor);
+    QPointF posF(offset.x() + qreal(x) / zoomFactor, offset.y() + qreal(y) / zoomFactor);
 
     return posF;
 }
@@ -210,16 +205,9 @@ QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &scree
 // breaking B.C.
 QPoint QGeoTiledMapDataPrivate::screenPositionToWorldReferencePosition(const QPointF &screenPosition) const
 {
-    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
-    if (offsetX < 0.0)
-        offsetX = 0.0;
-    offsetX /= zoomFactor;
-    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
-    if (offsetY < 0.0)
-        offsetY = 0.0;
-    offsetY /= zoomFactor;
+    QPointF offset = windowOffset();
 
-    QPointF pos(screenPosition.x() - offsetX, screenPosition.y() - offsetY);
+    QPointF pos(screenPosition.x() - offset.x(), screenPosition.y() - offset.y());
 
     const int worldX = int(worldReferenceViewportRect.left() + pos.x() * zoomFactor + 0.5) % worldReferenceSize.width();
     const int worldY = int(worldReferenceViewportRect.top() + pos.y() * zoomFactor + 0.5) % worldReferenceSize.height();
@@ -449,14 +437,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
 
     QGeoTileIterator it(d);
 
-    qreal offsetX = ((d->windowSize.width() * d->zoomFactor) - d->worldReferenceViewportRect.width()) / 2.0;
-    if (offsetX < 0.0)
-        offsetX = 0.0;
-    offsetX /= d->zoomFactor;
-    qreal offsetY = ((d->windowSize.height() * d->zoomFactor) - d->worldReferenceViewportRect.height()) / 2.0;
-    if (offsetY < 0.0)
-        offsetY = 0.0;
-    offsetY /= d->zoomFactor;
+    QPointF offset = d->windowOffset();
 
     while (it.hasNext()) {
         QGeoTiledMapRequest req = it.next();
@@ -473,8 +454,8 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
             QRect s = overlaps.at(i).first;
             QRect t = overlaps.at(i).second;
 
-            QRectF source = QRectF(offsetX + int(t.left()) / d->zoomFactor,
-                                   offsetY + int(t.top()) / d->zoomFactor,
+            QRectF source = QRectF(offset.x() + int(t.left()) / d->zoomFactor,
+                                   offset.y() + int(t.top()) / d->zoomFactor,
                                    int(t.width()) / d->zoomFactor,
                                    int(t.height()) / d->zoomFactor);
 
@@ -601,9 +582,9 @@ void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserv
         QGeoBoundingBox viewport = QGeoBoundingBox(worldReferencePositionToCoordinate(rect.topLeft()),
                                    worldReferencePositionToCoordinate(rect.bottomRight()));
 
-        qWarning() << i << zoomFactor
-                   << viewport.topLeft()
-                   << viewport.bottomRight();
+//        qWarning() << i << zoomFactor
+//                   << viewport.topLeft()
+//                   << viewport.bottomRight();
 
         if (!viewport.contains(bounds)) {
             setZoomLevel(qMax(minZoomLevel, i - 1));
@@ -794,20 +775,13 @@ void QGeoTiledMapData::replyFinished(QGeoTiledMapReply *reply)
 
     QRect tileRect = reply->request().tileRect();
 
-    qreal offsetX = ((d->windowSize.width() * d->zoomFactor) - d->worldReferenceViewportRect.width()) / 2.0;
-    if (offsetX < 0.0)
-        offsetX = 0.0;
-    offsetX /= d->zoomFactor;
-    qreal offsetY = ((d->windowSize.height() * d->zoomFactor) - d->worldReferenceViewportRect.height()) / 2.0;
-    if (offsetY < 0.0)
-        offsetY = 0.0;
-    offsetY /= d->zoomFactor;
+    QPointF offset = d->windowOffset();
 
     QList<QPair<QRect, QRect> > overlaps = d->intersectedScreen(tileRect);
     for (int i = 0; i < overlaps.size(); ++i) {
         QRect t = overlaps.at(i).second;
-        QRectF target = QRectF(offsetX + int(t.left()) / d->zoomFactor,
-                               offsetY + int(t.top()) / d->zoomFactor,
+        QRectF target = QRectF(offset.x() + int(t.left()) / d->zoomFactor,
+                               offset.y() + int(t.top()) / d->zoomFactor,
                                int(t.width()) / d->zoomFactor,
                                int(t.height()) / d->zoomFactor);
 
@@ -1038,6 +1012,21 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
         delete oe;
 }
 
+QPointF QGeoTiledMapDataPrivate::windowOffset() const
+{
+    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
+    if (offsetX < 0.0)
+        offsetX = 0.0;
+    offsetX /= zoomFactor;
+
+    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
+    if (offsetY < 0.0)
+        offsetY = 0.0;
+    offsetY /= zoomFactor;
+
+    return QPointF(offsetX, offsetY);
+}
+
 void QGeoTiledMapDataPrivate::updateMapImage()
 {
     Q_Q(QGeoTiledMapData);
@@ -1080,14 +1069,7 @@ void QGeoTiledMapDataPrivate::clearRequests()
 
 void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/)
 {
-    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
-    if (offsetX < 0.0)
-        offsetX = 0.0;
-    offsetX /= zoomFactor;
-    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
-    if (offsetY < 0.0)
-        offsetY = 0.0;
-    offsetY /= zoomFactor;
+    QPointF offset = windowOffset();
 
     QGeoTileIterator it(this);
 
@@ -1104,8 +1086,8 @@ void QGeoTiledMapDataPrivate::paintMap(QPainter *painter, const QStyleOptionGrap
                                    int(s.top()) / zoomFactor,
                                    int(s.width()) / zoomFactor,
                                    int(s.height()) / zoomFactor);
-            QRectF target = QRectF(offsetX + int(t.left()) / zoomFactor,
-                                   offsetY + int(t.top()) / zoomFactor,
+            QRectF target = QRectF(offset.x() + int(t.left()) / zoomFactor,
+                                   offset.y() + int(t.top()) / zoomFactor,
                                    int(t.width()) / zoomFactor,
                                    int(t.height()) / zoomFactor);
 
@@ -1130,16 +1112,9 @@ void QGeoTiledMapDataPrivate::paintObjects(QPainter *painter, const QStyleOption
 
     QRectF target = option ? option->rect : QRectF(QPointF(0,0), windowSize);
 
-    qreal offsetX = ((windowSize.width() * zoomFactor) - worldReferenceViewportRect.width()) / 2.0;
-    if (offsetX < 0.0)
-        offsetX = 0.0;
-    offsetX /= zoomFactor;
-    qreal offsetY = ((windowSize.height() * zoomFactor) - worldReferenceViewportRect.height()) / 2.0;
-    if (offsetY < 0.0)
-        offsetY = 0.0;
-    offsetY /= zoomFactor;
+    QPointF offset = windowOffset();
 
-    target.adjust(offsetX, offsetY, -1.0 * offsetX, -1.0 * offsetY);
+    target.adjust(offset.x(), offset.y(), -1.0 * offset.x(), -1.0 * offset.y());
 
     painter->setClipRect(target);
 

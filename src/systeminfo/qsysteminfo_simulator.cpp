@@ -69,6 +69,41 @@
 QTM_BEGIN_NAMESPACE
 #endif
 
+#ifdef TESTR
+SystemInfoConnection::SystemInfoConnection(QObject *parent)
+    : QObject(parent)
+{
+}
+
+QSystemInfoPrivate *SystemInfoConnection::systeminfoPrivate()
+{
+    return getSystemInfoPrivate();
+}
+
+QSystemNetworkInfoPrivate *SystemInfoConnection::networkInfoPrivate()
+{
+    return getSystemNetworkInfoPrivate();
+}
+
+QSystemDeviceInfoPrivate *SystemInfoConnection::deviceInfoPrivate()
+{
+    return getSystemDeviceInfoPrivate();
+}
+
+QSystemStorageInfoPrivate *SystemInfoConnection::storageInfoPrivate()
+{
+    return getSystemStorageInfoPrivate();
+}
+
+QSystemBatteryInfoPrivate *SystemInfoConnection::batteryInfoPrivate()
+{
+    return getSystemBatteryInfoPrivate();
+}
+
+#include "qsysteminfo_simulator.moc"
+#endif
+
+
 #ifdef QT_BUILD_SYSINFO_LIB
 #include <mobilityconnection_p.h>
 #include <private/qsimulatordata_p.h>
@@ -241,6 +276,9 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     data.features.fill(false, featureMeta.keyCount());
     QMetaEnum versionMeta = QSystemInfo::staticMetaObject.enumerator(QSystemInfo::staticMetaObject.indexOfEnumerator("Version"));
     data.versions.fill("unknown", versionMeta.keyCount() + 1);
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemInfoPrivate::setInitialData()
@@ -336,6 +374,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     QMetaEnum modeMeta = QSystemNetworkInfo::staticMetaObject.enumerator(QSystemNetworkInfo::staticMetaObject.indexOfEnumerator("NetworkMode"));
     data.networkInfo.fill(init, modeMeta.keyCount());
 
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -482,6 +523,9 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDisplayInfoPrivate::setInitialData()
@@ -533,6 +577,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDeviceInfoPrivate::setInitialData()
@@ -772,6 +819,9 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemStorageInfoPrivate::setInitialData()
@@ -1004,6 +1054,9 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
@@ -1112,6 +1165,14 @@ void QSystemBatteryInfoPrivate::setMaxBars(int v)
         data.maxBars = v;
     }
 }
+
+//QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+//{
+//    if (data.energyMeasurementUnit != v) {
+//        data.energyMeasurementUnit = v;
+//    }
+
+//}
 
 int QtMobility::QSystemDisplayInfoPrivate::getDPIHeight(int screen) const
 {

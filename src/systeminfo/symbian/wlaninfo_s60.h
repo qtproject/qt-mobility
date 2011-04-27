@@ -49,22 +49,33 @@
 #include <wlanmgmtinterface.h>
 #include <wlanmgmtcommon.h>
 
-class CWlanInfo : public QObject, public MWlanMgmtNotifications
+class MWlanInfoObserver
 {
-    Q_OBJECT
 public:
-    CWlanInfo(QObject *parent = 0);
+    virtual void wlanNetworkNameChanged() = 0;
+    virtual void wlanNetworkSignalStrengthChanged() = 0;
+    virtual void wlanNetworkStatusChanged() = 0;
+};
+
+class CWlanInfo : public CActive, public MWlanMgmtNotifications
+{
+public:
+    CWlanInfo();
     ~CWlanInfo();
 
     QString wlanNetworkName() const;
     int wlanNetworkSignalStrength() const;
     bool wlanNetworkConnectionStatus() const;
-    void FreeResources();
+    void addObserver(MWlanInfoObserver *observer);
+    void removeObserver(MWlanInfoObserver *observer);
 
 private:
     void stopPolling();
 
 protected: // MWlanMgmtNotifications
+    void RunL();
+    void DoCancel();
+    void StartMonitoring();
     void ConnectionStateChanged(TWlanConnectionMode aNewState);
     void BssidChanged(TWlanBssid& aNewBSSID) {};
     void BssLost() {};
@@ -73,21 +84,17 @@ protected: // MWlanMgmtNotifications
     void OldNetworksLost() {};
     void TransmitPowerChanged(TUint) {};
     void RssChanged(TWlanRssClass , TUint strength) {};
-
-private slots:
+    static TInt TimeOut(TAny*);
+    void FreeResources();
     void checkWlanInfo();
-
-signals:
-    void wlanNetworkNameChanged();
-    void wlanNetworkSignalStrengthChanged();
-    void wlanNetworkStatusChanged();
 
 private:
     CWlanMgmtClient *m_wlanMgmtClient;
     bool m_wlanStatus;
     QString m_wlanSsid;
     int m_wlanSignalStrength;
-    QTimer *m_timer;
+    CPeriodic *m_timer;
+    QList<MWlanInfoObserver *> m_observers;
 };
 
 #endif //WLANINFO_S60_H

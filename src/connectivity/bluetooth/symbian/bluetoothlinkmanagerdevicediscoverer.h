@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -74,12 +74,15 @@ class QBluetoothDeviceInfo;
 class BluetoothLinkManagerDeviceDiscoverer : public QObject, public CActive
 {
     Q_OBJECT
+    
 public:
 
-    BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
+    explicit BluetoothLinkManagerDeviceDiscoverer(RSocketServ& aSocketServ, QObject *parent = 0);
     ~BluetoothLinkManagerDeviceDiscoverer();
 
-    bool startDiscovery(const uint discoveryType);
+    void startDiscovery(const uint discoveryType);
+    void stopDiscovery();
+    bool isReallyActive() const;
 
 protected: // From CActive
     void RunL();
@@ -87,6 +90,7 @@ protected: // From CActive
     TInt RunError(TInt aError);
 
 private:
+
     void setError(int error);
 
 private: // private helper functions
@@ -94,9 +98,9 @@ private: // private helper functions
     QBluetoothDeviceInfo currentDeviceDataToQBluetoothDeviceInfo() const;
 
 Q_SIGNALS: // SIGNALS
-    void deviceDiscoveryComplete(int aError);
+    void deviceDiscoveryComplete();
     void deviceDiscovered(const QBluetoothDeviceInfo &device);
-    void linkManagerError(QBluetoothDeviceDiscoveryAgent::Error error);
+    void linkManagerError(QBluetoothDeviceDiscoveryAgent::Error error, QString errorString);
     void canceled();
 
 private:
@@ -109,6 +113,9 @@ private:
     TNameEntry m_entry;
 
     TBool m_LIAC;
+    bool m_pendingCancel;
+    bool m_pendingStart;
+    uint m_discoveryType;
 };
 
 QTM_END_NAMESPACE
