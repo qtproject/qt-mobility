@@ -624,7 +624,7 @@ testcase = {
       1. Select an message and click on Show
       1. Answer Yes to open it in native client
       1. Verify the message is properly shown
-      1. return to search results
+http://www.google.com/      1. return to search results
       1. Select an message and click on Show
       1. Answer No to open it within the test application
       1. Verify the message is properly shown
@@ -633,6 +633,172 @@ testcase = {
           }
       },
 
+    bluewheelMessaging_Account_Settings : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Account settings can be set
+
+      1. Start Messaging test application
+      1. Select Create Message item
+      1. Select Email Message button
+      1. Click on Manage Accounts button
+      1. Click on Select account combo box and choose an Email account
+      1. Verify all Email account properties are properly displayed
+      1. Click on Select account button
+      1. Go back to the Email creating dialog, fill in all fields with valid values
+      1. Store/Compose/Send the message
+      1. Verify the message has been properly stored/composed/sent with desired account
+          '));
+          }
+      },
+
+    bluewheelMessaging_Encoding_Format_Settings : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Encoding and format settings can be set
+
+      1. Start Messaging test application
+      1. Select Create Message item
+      1. Select Email Message button
+      1. Click on Settings button
+      1. Click on Charsets button
+      1. Click on Add button to add some charsets
+      1. Click on Done button
+      1. Change the Text/Html settings
+      1. Click on Done to return to the Email creating dialog
+      1. Store/compose/send the message
+      1. Verify the message has been properly stored/composed/sent using desired charsets and format
+          '));
+          }
+      },
+
+
+     bluewheelMessaging_Specify_Addresses : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Can specify addresses for: To, CC, BCC
+
+      1. Start Messaging test application
+      1. Select Create Message item
+      1. Select SMS Message button
+      1. Fill in the To address
+      1. Send the message and verify the message is sent to desired receiver
+      1. Go back and Select MMS Message button
+      1. Fill in the To address and other fields
+      1. Send the message and verify the message is sent to desired receiver
+      1. Go back and Select Email Message button
+      1. Fill in the To/CC/BCC with three email addresses each, separated by ;
+      1. Fill in subject and content, add some attachments
+      1. Send the message
+      1. Verify that all the addresses receives the message correctly
+      1. Verify that all the receivers can see the addresses in To and CC correctly, but not BCC
+          '));
+          }
+      },
+
+      
+    bluewheelMessaging_Read_SMS : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Able to read SMS
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in SMS account, and network available
+      1. Select Search Message item
+      1. Use By type as search type, SMS account, tick SMS box
+      1. click on Make query
+      1. In the result page, select a message, click on Show button
+      1. Select No button
+      1. Verify the message is properly displayed
+      1. Click on Close
+      1. Click on Show button again, select Yes this time
+      1. Verify the message is properly displayed using the native client
+          '));
+          }
+      },
+      
+    bluewheelMessaging_Read_MMS : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Able to read MMS
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in MMS account, and network available
+      1. Select Search Message item
+      1. Use By type as search type, MMS account, tick MMS box
+      1. click on Make query
+      1. In the result page, select a message, click on Show button
+      1. Select No button
+      1. Verify the message is properly displayed
+      1. Click on Close
+      1. Click on Show button again, select Yes this time
+      1. Verify the message is properly displayed using the native client
+          '));
+          }
+      },
+
+      
+    bluewheelMessaging_Read_Email : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Able to read Email
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in Email account, and network available
+      1. Select Search Message item
+      1. Use By type as search type, Email account, tick Email box
+      1. click on Make query
+      1. In the result page, select a message, click on Show button
+      1. Select No button
+      1. Verify the message is properly displayed
+      1. Click on Close
+      1. Click on Show button again, select Yes this time
+      1. Verify the message is properly displayed using the native client
+          '));
+          }
+      },
+
+
+     bluewheelMessaging_Delete_Message : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Able to delete messages
+      1. Start Messaging test application
+      1. Start Messaging test application
+      1. Make sure there are some messages in Email account, and network available
+      1. Select Search Message item
+      1. Use By type as search type, Email account, tick Email box
+      1. click on Make query
+      1. In the result page, select a message, click on Show button
+      1. Select No button
+      1. Verify the message is properly displayed
+      1. Click on Delete button
+      1. Verify the message is deleted from selected account
+      1. Repeat this test for SMS and MMS
+          '));
+          }
+      },
+
+ 
+    bluewheelMessaging_Receive_Message : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Able to receive SMS, MMS and Email
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in Email account, and network available
+      1. Select Search Message item
+      1. Use By type as search type, Email account, tick Email box
+      1. click on Make query
+      1. Send a new message to the selected account from other device
+      1. In the result page, select a message, click on Send/Receive button
+      1. Wait for a while, verify the new message is retrived to the list
+      1. Repeat this test for SMS and MMS
+          '));
+          }
+      },
+
+ 
 */
     New tests proposed
       bluewheelMessaging_Search_Messages_By_Type
@@ -666,7 +832,6 @@ testcase = {
       bluewheelMessaging_Show_Message_Reply
       bluewheelMessaging_Show_Message_Forward
       bluewheelMessaging_Show_Message_Edit
-      bluewheelMessaging_Show_Message_Delete
 
       bluewheelMessaging_Search_Messages_Search_Cross_Email_Account_Types
 */
