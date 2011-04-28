@@ -120,7 +120,7 @@ QStringList QMediaPluginLoader::keys() const
 
 QObject* QMediaPluginLoader::instance(QString const &key)
 {
-    return m_instances.value(key).first();
+    return m_instances.value(key).value(0);
 }
 
 QList<QObject*> QMediaPluginLoader::instances(QString const &key)
