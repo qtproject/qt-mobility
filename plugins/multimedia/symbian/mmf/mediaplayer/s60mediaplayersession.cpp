@@ -284,6 +284,7 @@ void S60MediaPlayerSession::pause()
     setState(QMediaPlayer::PausedState);
     stopProgressTimer();
     TRAP_IGNORE(doPauseL());
+    m_play_requested = false;
 
     DP0("S60MediaPlayerSession::pause ---");
 }

@@ -56,7 +56,8 @@
 #include <QMetadataReaderControl>
 
 QT_USE_NAMESPACE
-
+class mediaStatusList;
+/*
 class mediaStatusList : public QObject, public QList<QMediaPlayer::MediaStatus>
 {
     Q_OBJECT
@@ -72,7 +73,7 @@ public:
         connect(obj, aSignal, this, SLOT(mediaStatus(QMediaPlayer::MediaStatus)));
     }
 };
-
+*/
 class tst_QMediaPlayer_xa: public QObject
 {
     Q_OBJECT
@@ -149,12 +150,19 @@ private:
         m_player->setMedia(*mediaContent);
     }
 
-   void setStreamingContent()
-   {
-       mediaContent = streamingContent;
+    void setStreamingContent()
+    {
+        mediaContent = streamingContent;
 
-       m_player->setMedia(*mediaContent);
-   }
+        m_player->setMedia(*mediaContent);
+    }
+
+    void setstreamingRtspContent()
+    {
+        mediaContent = streamingRtspContent;
+
+        m_player->setMedia(*mediaContent);
+    }
 
     QMediaContent* audioOnlyContent;
     QMediaContent* videoOnlyContent;
@@ -162,6 +170,7 @@ private:
     QMediaContent* audioVideoAltContent;
     QMediaContent* mediaContent;
     QMediaContent* streamingContent;
+    QMediaContent* streamingRtspContent;
 
     qint64 duration;
     QMediaPlayer *m_player;
