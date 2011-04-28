@@ -45,7 +45,7 @@ const TInt KPacketNofityDynamicCapsChange = 40021;
 
 
 CNetworkBase::CNetworkBase() : CActive(EPriorityNormal),
-iConstructed(EFalse), iObserver(NULL),iDynCaps(0)
+iConstructed(EFalse), iObserver(NULL),iDynCaps(0),iPacketdataserviceCaps(true)
     {
     TInt err = 0;
     TRACES(qDebug() << "CNetworkBase::CNetworkBase<---");
@@ -74,6 +74,7 @@ iConstructed(EFalse), iObserver(NULL),iDynCaps(0)
 #ifdef ETELPACKETSERVICE_SUPPORTED
     TRAP_IGNORE(
         err = iPacketService.Open(iMobilePhone);
+        if ( err ) iPacketdataserviceCaps = false;
         TRACES(qDebug() << "Err val for iPacketService.Open =" << err);
         User::LeaveIfError(err);
         err = iPacketService.GetStatus(iPacketServiceStatus);
@@ -293,6 +294,7 @@ void CPacketDataStatus::StartMonitoring()
  {
 #ifdef ETELPACKETSERVICE_SUPPORTED
  TRACES (qDebug() << "CPacketDataStatus::StartMonitoring<---");
+ if ( NetworkCtrlCapsenabled() == false) return;
  if (!IsActive())
   {
     iPacketService.NotifyDynamicCapsChange(iStatus,iDynCaps);
@@ -302,12 +304,17 @@ void CPacketDataStatus::StartMonitoring()
 #endif
  }
 
+ bool CPacketDataStatus::NetworkCtrlCapsenabled()
+  {
+   return (iPacketdataserviceCaps == true );
+  }
+
 CNetworkInfo::CNetworkInfo():iCellDataTechnology(KDefaultBearer)
     {
      //Add observers
     iNetStat.Add(this);
     iNetMode.Add(this);
-    iPacketDataStatus.Add(this);
+    if ( iPacketDataStatus.NetworkCtrlCapsenabled() == true ) iPacketDataStatus.Add(this);
     }
 
 RMobilePhone::TMobilePhoneNetworkMode CNetworkInfo::GetMode() const
@@ -363,6 +370,7 @@ void CNetworkInfo::ChangedCellDataTechnology()
   {
 #ifdef ETELPACKETSERVICE_SUPPORTED
    TRACES (qDebug() << "CNetworkInfo::CellDataTechnology<---");
+   if ( iPacketDataStatus.NetworkCtrlCapsenabled() == false ) return KDefaultBearer;
    TUint dynamicCaps = 0;
    if (iPacketDataStatus.IsDynamicCapsSupported())
     {
