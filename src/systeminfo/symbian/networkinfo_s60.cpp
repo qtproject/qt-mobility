@@ -73,13 +73,13 @@ iConstructed(EFalse), iObserver(NULL),iDynCaps(0),iPacketdataserviceCaps(true)
 
 #ifdef ETELPACKETSERVICE_SUPPORTED
     TRAP_IGNORE(
-        err = iPacketService.Open(iMobilePhone);
-        if ( err ) iPacketdataserviceCaps = false;
-        TRACES(qDebug() << "Err val for iPacketService.Open =" << err);
-        User::LeaveIfError(err);
-        err = iPacketService.GetStatus(iPacketServiceStatus);
-        TRACES(qDebug() << "Err val for iPacketService.GetStatus =" << err);
-        User::LeaveIfError(err);
+        TInt packetserviceerr = iPacketService.Open(iMobilePhone);
+        if ( packetserviceerr != KErrNone ) iPacketdataserviceCaps = false;
+        TRACES(qDebug() << "Err val for iPacketService.Open =" << packetserviceerr);
+        if ( iPacketdataserviceCaps ) {
+         err = iPacketService.GetStatus(iPacketServiceStatus);
+         TRACES(qDebug() << "Err val for iPacketService.GetStatus =" << err);
+        }
     )
 #endif
     if (!err)
