@@ -46,10 +46,12 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
+#ifndef Q_OS_SYMBIAN
+Q_GLOBAL_STATIC(QSystemInfoPrivate, infoPrivateSingleton)
+#endif
 
 #ifdef QT_SIMULATOR
-QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
+QSystemInfoPrivate *getSystemInfoPrivate() { return infoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!
@@ -58,6 +60,12 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \inmodule QtSystemInfo
     \since 1.0
     \brief The QSystemInfo class provides access to various general information from the system.
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
 */
 
 /*!
@@ -104,8 +112,12 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
 */
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent)
-    , d(sysinfoPrivate())
 {
+#ifdef Q_OS_SYMBIAN
+    d = new QSystemInfoPrivate();
+#else
+    d = infoPrivateSingleton();
+#endif
     qRegisterMetaType<QSystemInfo::Version>("QSystemInfo::Version");
     qRegisterMetaType<QSystemInfo::Feature>("QSystemInfo::Feature");
 }
@@ -115,6 +127,9 @@ QSystemInfo::QSystemInfo(QObject *parent)
 */
 QSystemInfo::~QSystemInfo()
 {
+#ifdef Q_OS_SYMBIAN
+    delete d;
+#endif
 }
 
 /*!
@@ -153,7 +168,7 @@ void QSystemInfo::disconnectNotify(const char *signal)
  */
 QString QSystemInfo::currentLanguage()
 {
-    return sysinfoPrivate()->currentLanguage();
+    return d->currentLanguage();
 }
 /*!
     \property QSystemInfo::availableLanguages
@@ -165,7 +180,7 @@ QString QSystemInfo::currentLanguage()
 */
 QStringList QSystemInfo::availableLanguages()
 {
-    return sysinfoPrivate()->availableLanguages();
+    return d->availableLanguages();
 }
 
 /*!
@@ -183,7 +198,7 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
     case QSystemInfo::QtCore:
         return QString(qVersion());
     default:
-        return sysinfoPrivate()->version(type, parameter);
+        return d->version(type, parameter);
     }
 }
 
@@ -196,7 +211,7 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
 */
 QString QSystemInfo::currentCountryCode()
 {
-    return sysinfoPrivate()->currentCountryCode();
+    return d->currentCountryCode();
 }
 
 /*!
@@ -205,7 +220,7 @@ QString QSystemInfo::currentCountryCode()
 */
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 {
-    return sysinfoPrivate()->hasFeatureSupported(feature);
+    return d->hasFeatureSupported(feature);
 }
 
 #include "moc_qsystemgeneralinfo.cpp"

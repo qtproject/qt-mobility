@@ -45,7 +45,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivate)
+#ifndef Q_OS_SYMBIAN
+Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivateSingleton)
+#endif
 
 #ifdef QT_SIMULATOR
 QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
@@ -57,6 +59,13 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPri
     \inmodule QtSystemInfo
     \brief The QSystemBatteryInfo class provides access to battery and power information from the system.
     \since 1.2
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
+
 */
 
 /*!
@@ -171,8 +180,12 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPri
 */
 QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent)
     : QObject(parent)
-    , d(batteryInfoPrivate())
 {
+#ifdef Q_OS_SYMBIAN
+    d = new QSystemBatteryInfoPrivate();
+#else
+    d = batteryInfoPrivateSingleton();
+#endif
     qRegisterMetaType<QSystemBatteryInfo::BatteryStatus>("QSystemBatteryInfo::BatteryStatus");
     qRegisterMetaType<QSystemBatteryInfo::ChargingState>("QSystemBatteryInfo::ChargingState");
     qRegisterMetaType<QSystemBatteryInfo::ChargerType>("QSystemBatteryInfo::ChargerType");
@@ -184,6 +197,9 @@ QSystemBatteryInfo::QSystemBatteryInfo(QObject *parent)
 */
 QSystemBatteryInfo::~QSystemBatteryInfo()
 {
+#ifdef Q_OS_SYMBIAN
+    delete d;
+#endif
 }
 
 /*!
@@ -194,7 +210,7 @@ QSystemBatteryInfo::~QSystemBatteryInfo()
 */
 QSystemBatteryInfo::ChargerType QSystemBatteryInfo::chargerType() const
 {
-    return batteryInfoPrivate()->chargerType();
+    return d->chargerType();
 }
 
 /*!
@@ -205,7 +221,7 @@ QSystemBatteryInfo::ChargerType QSystemBatteryInfo::chargerType() const
 */
 QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const
 {
-    return batteryInfoPrivate()->chargingState();
+    return d->chargingState();
 }
 
 /*!
@@ -217,7 +233,7 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const
 */
 int QSystemBatteryInfo::nominalCapacity() const
 {
-    return batteryInfoPrivate()->nominalCapacity();
+    return d->nominalCapacity();
 }
 
 /*!
@@ -229,7 +245,7 @@ int QSystemBatteryInfo::nominalCapacity() const
 */
 int QSystemBatteryInfo::remainingCapacityPercent() const
 {
-    return batteryInfoPrivate()->remainingCapacityPercent();
+    return d->remainingCapacityPercent();
 }
 
 /*!
@@ -243,7 +259,7 @@ int QSystemBatteryInfo::remainingCapacityPercent() const
 */
 int QSystemBatteryInfo::remainingCapacity() const
 {
-    return batteryInfoPrivate()->remainingCapacity();
+    return d->remainingCapacity();
 }
 
 /*!
@@ -255,7 +271,7 @@ int QSystemBatteryInfo::remainingCapacity() const
 */
 int QSystemBatteryInfo::voltage() const
 {
-    return batteryInfoPrivate()->voltage();
+    return d->voltage();
 }
 
 /*!
@@ -267,7 +283,7 @@ int QSystemBatteryInfo::voltage() const
 */
 int QSystemBatteryInfo::remainingChargingTime() const
 {
-    return batteryInfoPrivate()->remainingChargingTime();
+    return d->remainingChargingTime();
 }
 
 /*!
@@ -280,7 +296,7 @@ int QSystemBatteryInfo::remainingChargingTime() const
 */
 int QSystemBatteryInfo::currentFlow() const
 {
-    return batteryInfoPrivate()->currentFlow();
+    return d->currentFlow();
 }
 
 /*!
@@ -291,7 +307,7 @@ int QSystemBatteryInfo::currentFlow() const
 */
 int QSystemBatteryInfo::remainingCapacityBars() const
 {
-    return batteryInfoPrivate()->remainingCapacityBars();
+    return d->remainingCapacityBars();
 }
 
 /*!
@@ -303,7 +319,7 @@ int QSystemBatteryInfo::remainingCapacityBars() const
 */
 int QSystemBatteryInfo::maxBars() const
 {
-    return batteryInfoPrivate()->maxBars();
+    return d->maxBars();
 }
 
 /*!
@@ -393,7 +409,7 @@ void QSystemBatteryInfo::disconnectNotify(const char *signal)
 */
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 {
-   return batteryInfoPrivate()->batteryStatus();
+   return d->batteryStatus();
 }
 
 /*!
@@ -406,7 +422,7 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 */
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfo::energyMeasurementUnit() const
 {
-    return batteryInfoPrivate()->energyMeasurementUnit();
+    return d->energyMeasurementUnit();
 }
 
 #include "moc_qsystembatteryinfo.cpp"
