@@ -213,8 +213,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
 /*!
    \fn QContactFamily::setChildren(const QStringList& childrenNames)
    Sets the names of the children of the contact which is stored in this detail to \a childrenNames.
- */
    \since 1.0
+ */
 
 /* ==================== QContactFavorite ======================= */
 /*!
