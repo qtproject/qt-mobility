@@ -59,8 +59,8 @@ public:
     meegoaccelerometer(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
-    virtual const qreal correctionFactor();
+    virtual QString sensorName() const;
+    virtual qreal correctionFactor() const;
 
 
 private:

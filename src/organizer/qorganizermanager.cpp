@@ -344,7 +344,7 @@ QOrganizerManager::~QOrganizerManager()
 /*! Return the error code of the most recent operation */
 QOrganizerManager::Error QOrganizerManager::error() const
 {
-    return d->m_error;
+    return d->m_lastError;
 }
 
 /*!
@@ -358,7 +358,7 @@ QOrganizerManager::Error QOrganizerManager::error() const
  */
 QMap<int, QOrganizerManager::Error> QOrganizerManager::errorMap() const
 {
-    return d->m_errorMap;
+    return d->m_lastErrorMap;
 }
 
 /*!
@@ -375,9 +375,8 @@ QMap<int, QOrganizerManager::Error> QOrganizerManager::errorMap() const
   */
 QList<QOrganizerItem> QOrganizerManager::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->itemOccurrences(parentItem, periodStart, periodEnd, maxCount, fetchHint, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->itemOccurrences(parentItem, periodStart, periodEnd, maxCount, fetchHint, &h.error);
 }
 
 /*!
@@ -386,8 +385,8 @@ QList<QOrganizerItem> QOrganizerManager::itemOccurrences(const QOrganizerItem& p
  */
 QList<QOrganizerItemId> QOrganizerManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->itemIds(QDateTime(), QDateTime(), filter, sortOrders, &h.error);
 }
 
 /*!
@@ -400,9 +399,8 @@ QList<QOrganizerItemId> QOrganizerManager::itemIds(const QOrganizerItemFilter& f
  */
 QList<QOrganizerItemId> QOrganizerManager::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->itemIds(startDate, endDate, filter, sortOrders, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->itemIds(startDate, endDate, filter, sortOrders, &h.error);
 }
 
 /*!
@@ -423,9 +421,8 @@ QList<QOrganizerItemId> QOrganizerManager::itemIds(const QDateTime& startDate, c
  */
 QList<QOrganizerItem> QOrganizerManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->items(QDateTime(), QDateTime(), filter, sortOrders, fetchHint, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->items(QDateTime(), QDateTime(), filter, sortOrders, fetchHint, &h.error);
 }
 
 /*!
@@ -452,9 +449,8 @@ QList<QOrganizerItem> QOrganizerManager::items(const QOrganizerItemFilter& filte
  */
 QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->items(startDate, endDate, filter, sortOrders, fetchHint, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->items(startDate, endDate, filter, sortOrders, fetchHint, &h.error);
 }
 
 /*!
@@ -482,9 +478,8 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
  */
 QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->items(startDate, endDate, maxCount, filter, fetchHint, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->items(startDate, endDate, maxCount, filter, fetchHint, &h.error);
 }
 
 /*!
@@ -509,9 +504,8 @@ QList<QOrganizerItem> QOrganizerManager::items(const QDateTime& startDate, const
  */
 QList<QOrganizerItem> QOrganizerManager::itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->itemsForExport(startDate, endDate, filter, sortOrders, fetchHint, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->itemsForExport(startDate, endDate, filter, sortOrders, fetchHint, &h.error);
 }
 
 /*!
@@ -530,9 +524,8 @@ QList<QOrganizerItem> QOrganizerManager::itemsForExport(const QDateTime& startDa
  */
 QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& itemId, const QOrganizerItemFetchHint& fetchHint) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->item(itemId, fetchHint, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->item(itemId, fetchHint, &h.error);
 }
 
 /*!
@@ -571,12 +564,11 @@ QOrganizerItem QOrganizerManager::item(const QOrganizerItemId& itemId, const QOr
  */
 bool QOrganizerManager::saveItem(QOrganizerItem* item)
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (item) {
-        d->m_error = QOrganizerManager::NoError;
-        return d->m_engine->saveItem(item, &d->m_error);
+        return d->m_engine->saveItem(item, &h.error);
     } else {
-        d->m_error = QOrganizerManager::BadArgumentError;
+        h.error = QOrganizerManager::BadArgumentError;
         return false;
     }
 }
@@ -588,9 +580,8 @@ bool QOrganizerManager::saveItem(QOrganizerItem* item)
  */
 bool QOrganizerManager::removeItem(const QOrganizerItemId& itemId)
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->removeItem(itemId, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->removeItem(itemId, &h.error);
 }
 
 /*!
@@ -614,14 +605,13 @@ bool QOrganizerManager::removeItem(const QOrganizerItemId& itemId)
  */
 bool QOrganizerManager::saveItems(QList<QOrganizerItem>* items)
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (!items) {
-        d->m_error = QOrganizerManager::BadArgumentError;
+        h.error = QOrganizerManager::BadArgumentError;
         return false;
     }
 
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->saveItems(items, &d->m_errorMap, &d->m_error);
+    return d->m_engine->saveItems(items, &h.errorMap, &h.error);
 }
 
 /*!
@@ -649,14 +639,13 @@ bool QOrganizerManager::saveItems(QList<QOrganizerItem>* items)
  */
 bool QOrganizerManager::saveItems(QList<QOrganizerItem>* items, const QStringList& definitionMask)
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (!items) {
-        d->m_error = QOrganizerManager::BadArgumentError;
+        h.error = QOrganizerManager::BadArgumentError;
         return false;
     }
 
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->saveItems(items, definitionMask, &d->m_errorMap, &d->m_error);
+    return d->m_engine->saveItems(items, definitionMask, &h.errorMap, &h.error);
 }
 
 /*!
@@ -681,14 +670,13 @@ bool QOrganizerManager::saveItems(QList<QOrganizerItem>* items, const QStringLis
  */
 bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritemIds)
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (organizeritemIds.isEmpty()) {
-        d->m_error = QOrganizerManager::BadArgumentError;
+        h.error = QOrganizerManager::BadArgumentError;
         return false;
     }
 
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->removeItems(organizeritemIds, &d->m_errorMap, &d->m_error);
+    return d->m_engine->removeItems(organizeritemIds, &h.errorMap, &h.error);
 }
 
 /*!
@@ -696,9 +684,8 @@ bool QOrganizerManager::removeItems(const QList<QOrganizerItemId>& organizeritem
  */
 QOrganizerCollection QOrganizerManager::defaultCollection() const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->defaultCollection(&d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->defaultCollection(&h.error);
 }
 
 /*!
@@ -706,9 +693,8 @@ QOrganizerCollection QOrganizerManager::defaultCollection() const
  */
 QOrganizerCollection QOrganizerManager::collection(const QOrganizerCollectionId& collectionId) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->collection(collectionId, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->collection(collectionId, &h.error);
 }
 
 /*!
@@ -716,9 +702,8 @@ QOrganizerCollection QOrganizerManager::collection(const QOrganizerCollectionId&
  */
 QList<QOrganizerCollection> QOrganizerManager::collections() const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->collections(&d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->collections(&h.error);
 }
 
 /*!
@@ -746,12 +731,11 @@ QList<QOrganizerCollection> QOrganizerManager::collections() const
  */
 bool QOrganizerManager::saveCollection(QOrganizerCollection* collection)
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (collection) {
-        d->m_error = QOrganizerManager::NoError;
-        return d->m_engine->saveCollection(collection, &d->m_error);
+        return d->m_engine->saveCollection(collection, &h.error);
     } else {
-        d->m_error = QOrganizerManager::BadArgumentError;
+        h.error = QOrganizerManager::BadArgumentError;
         return false;
     }
 }
@@ -766,9 +750,8 @@ bool QOrganizerManager::saveCollection(QOrganizerCollection* collection)
  */
 bool QOrganizerManager::removeCollection(const QOrganizerCollectionId& collectionId)
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->removeCollection(collectionId, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->removeCollection(collectionId, &h.error);
 }
 
 /*!
@@ -777,9 +760,8 @@ bool QOrganizerManager::removeCollection(const QOrganizerCollectionId& collectio
  */
 QOrganizerItem QOrganizerManager::compatibleItem(const QOrganizerItem& original) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->compatibleItem(original, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->compatibleItem(original, &h.error);
 }
 
 /*!
@@ -788,9 +770,8 @@ QOrganizerItem QOrganizerManager::compatibleItem(const QOrganizerItem& original)
  */
 QOrganizerCollection QOrganizerManager::compatibleCollection(const QOrganizerCollection& original) const
 {
-    d->m_error = QOrganizerManager::NoError;
-    d->m_errorMap.clear();
-    return d->m_engine->compatibleCollection(original, &d->m_error);
+    QOrganizerManagerSyncOpErrorHolder h(this);
+    return d->m_engine->compatibleCollection(original, &h.error);
 }
 
 /*!
@@ -799,53 +780,49 @@ QOrganizerCollection QOrganizerManager::compatibleCollection(const QOrganizerCol
  */
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerManager::detailDefinitions(const QString& organizeritemType) const
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (!supportedItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerManager::InvalidItemTypeError;
+        h.error = QOrganizerManager::InvalidItemTypeError;
         return QMap<QString, QOrganizerItemDetailDefinition>();
     }
 
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->detailDefinitions(organizeritemType, &d->m_error);
+    return d->m_engine->detailDefinitions(organizeritemType, &h.error);
 }
 
 /*! Returns the definition identified by the given \a definitionName that is valid for the organizer items whose type is the given \a organizeritemType in this store, or a default-constructed QOrganizerItemDetailDefinition if no such definition exists */
 QOrganizerItemDetailDefinition QOrganizerManager::detailDefinition(const QString& definitionName, const QString& organizeritemType) const
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (!supportedItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerManager::InvalidItemTypeError;
+        h.error = QOrganizerManager::InvalidItemTypeError;
         return QOrganizerItemDetailDefinition();
     }
 
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->detailDefinition(definitionName, organizeritemType, &d->m_error);
+    return d->m_engine->detailDefinition(definitionName, organizeritemType, &h.error);
 }
 
 /*! Persists the given definition \a def in the database, which is valid for organizer items whose type is the given \a organizeritemType.  Returns true if the definition was saved successfully, otherwise returns false */
 bool QOrganizerManager::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType)
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (!supportedItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerManager::InvalidItemTypeError;
+        h.error = QOrganizerManager::InvalidItemTypeError;
         return false;
     }
 
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->saveDetailDefinition(def, organizeritemType, &d->m_error);
+    return d->m_engine->saveDetailDefinition(def, organizeritemType, &h.error);
 }
 
 /*! Removes the detail definition identified by \a definitionName from the database, which is valid for organizer items whose type is the given \a organizeritemType.  Returns true if the definition was removed successfully, otherwise returns false */
 bool QOrganizerManager::removeDetailDefinition(const QString& definitionName, const QString& organizeritemType)
 {
-    d->m_errorMap.clear();
+    QOrganizerManagerSyncOpErrorHolder h(this);
     if (!supportedItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerManager::InvalidItemTypeError;
+        h.error = QOrganizerManager::InvalidItemTypeError;
         return false;
     }
 
-    d->m_error = QOrganizerManager::NoError;
-    return d->m_engine->removeDetailDefinition(definitionName, organizeritemType, &d->m_error);
+    return d->m_engine->removeDetailDefinition(definitionName, organizeritemType, &h.error);
 }
 
 /*!

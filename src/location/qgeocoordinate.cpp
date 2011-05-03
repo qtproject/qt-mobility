@@ -82,7 +82,8 @@ QGeoCoordinatePrivate::QGeoCoordinatePrivate() {
     \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.
@@ -418,16 +419,16 @@ void QGeoCoordinatePrivate::atDistanceAndAzimuth(const QGeoCoordinate &coord,
 }
 
 /*!
-    Returns the coordinate that is reached by traveling \a distance metres 
+    Returns the coordinate that is reached by traveling \a distance metres
     from the current coordinate at \a azimuth (or bearing) along a great-circle.
     There is an assumption that the Earth is spherical for the purpose of this
     calculation.
-    
+
     The altitude will have \a distanceUp added to it.
 
     Returns an invalid coordinate if this coordinate is invalid.
 */
-QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp) const 
+QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp) const
 {
     if (!isValid())
         return QGeoCoordinate();

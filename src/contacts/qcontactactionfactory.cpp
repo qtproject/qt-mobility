@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
   to retrieve instances of action implementations
   \inmodule QtContacts
   \ingroup contacts-actions
+  \since 1.2
  */
 
 /*!

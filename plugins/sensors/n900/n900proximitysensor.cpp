@@ -51,7 +51,9 @@ n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QProximityReading>(&m_reading);
-    addDataRate(100, 100); // 100Hz
+    // The proximity hardware runs at 10Hz.
+    // Report 1-10 so the app can choose the speed it wants to poll
+    addDataRate(1, 10);
 }
 
 void n900proximitysensor::start()

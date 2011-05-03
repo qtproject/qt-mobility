@@ -79,11 +79,14 @@ private slots:
     void checkCreateEntryWithEmptyServiceName();
     void checkOperators();
     void checkPublish();
+    void tst_instanceClosed();
 
 private:
     QRemoteServiceRegister* serviceRegister;
     QRemoteServiceRegister::Entry uniqueEntry;
     QRemoteServiceRegister::Entry uniqueEntry2;
+
+    QObject *connectToService(const QString &serviceName);
 };
 
 bool mySecurityFilterFunction(const void *p)
@@ -95,6 +98,11 @@ bool mySecurityFilterFunction(const void *p)
         return true;
 
     return false;
+}
+
+bool alwaysPass(const void *p)
+{
+    return true;
 }
 
 void tst_QRemoteServiceRegister::initTestCase()
@@ -225,6 +233,52 @@ void tst_QRemoteServiceRegister::checkPublish()
     type2 = uniqueEntry2.instantiationType();
     QVERIFY(type2 == QRemoteServiceRegister::GlobalInstance);
 }
+
+Q_DECLARE_METATYPE(QRemoteServiceRegister::Entry);
+
+void tst_QRemoteServiceRegister::tst_instanceClosed()
+{
+    qRegisterMetaType<QRemoteServiceRegister::Entry>("QRemoteServiceRegister::Entry");
+
+    serviceRegister->setSecurityFilter(alwaysPass);
+    QSignalSpy spy(serviceRegister,SIGNAL(instanceClosed(QRemoteServiceRegister::Entry)));
+    QSignalSpy spyAll(serviceRegister,SIGNAL(allInstancesClosed()));
+
+    QObject *o = connectToService("RSRExampleService");
+    QVERIFY(o);
+
+    delete o;
+
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spyAll.count(), 1);
+
+}
+
+QObject *tst_QRemoteServiceRegister::connectToService(const QString &serviceName)
+{
+    QServiceManager manager;
+
+    QList<QServiceInterfaceDescriptor> list = manager.findInterfaces(serviceName);
+    if (list.isEmpty()) {
+        qWarning() << "Couldn't find service" << serviceName;
+        return 0;
+    }
+
+    // Get the interface descriptor
+    QServiceInterfaceDescriptor desc = list.at(0);
+    if (!desc.isValid()) {
+        qWarning() << "Warning: Invalid service interface descriptor for" << serviceName;
+        return 0;
+    }
+
+    QObject* service = manager.loadInterface(desc);
+    if (!service) {
+        qWarning() << "Couldn't load service interface for" << serviceName;
+        return 0;
+    }
+    return service;
+}
+
 
 QTEST_MAIN(tst_QRemoteServiceRegister);
 #include "tst_qremoteserviceregister.moc"

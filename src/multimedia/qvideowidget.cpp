@@ -591,6 +591,9 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
     produced by a media object.
     \ingroup multimedia
     \inmodule QtMultimediaKit
+    \since 1.0
+
+    \inmodule QtMultimediaKit
 
     Attaching a QVideoWidget to a QMediaObject allows it to display the
     video or image output of that media object.  A QVideoWidget is attached

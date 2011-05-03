@@ -197,6 +197,10 @@ Q_SIGNALS:
     void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
     void selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId); // need both? or just new?
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private:
     friend class QContactManagerData;
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);

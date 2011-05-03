@@ -21,3 +21,4 @@ SOURCES += dsserviceplugin.cpp
 !contains(wmsdk_enabled, yes): DEFINES += QT_NO_WMSDK
 
 include (player/player.pri)
+include (camera/camera.pri)

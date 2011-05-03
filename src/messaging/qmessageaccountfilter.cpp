@@ -52,41 +52,45 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageAccountFilter class defines the parameters used for querying a subset of
     all available accounts from the messaging store.
-    
+
     \inmodule QtMessaging
-    
+
     \ingroup messaging
+    \since 1.0
 
     A QMessageAccountFilter is composed of an account property, an optional comparison operator
-    and a comparison value. The QMessageAccountFilter class is used in conjunction with the 
-    QMessageManager::queryAccounts() and QMessageManager::countAccounts() functions to filter results 
+    and a comparison value. The QMessageAccountFilter class is used in conjunction with the
+    QMessageManager::queryAccounts() and QMessageManager::countAccounts() functions to filter results
     which meet the criteria defined by the filter.
 
     QMessageAccountFilters can be combined using the overloaded operators (&), (|) and (~) as logical
     operators to create more refined queries.
 
+    Evaluation of filters is delayed until they are used in a QMessageManager function 
+    such as queryAccounts, except where explicitly documented otherwise.
+    
     \sa QMessageManager, QMessageAccount
 */
 
 /*!
     \fn QMessageAccountFilter::QMessageAccountFilter()
-  
+
     Creates a QMessageAccountFilter without specifying matching parameters.
 
-    A default-constructed filter (one for which isEmpty() returns true) matches all accounts. 
+    A default-constructed filter (one for which isEmpty() returns true) matches all accounts.
 
     \sa isEmpty()
 */
 
 /*!
     \fn QMessageAccountFilter::QMessageAccountFilter(const QMessageAccountFilter &other)
-  
+
     Constructs a copy of \a other.
 */
 
 /*!
     \fn QMessageAccountFilter::~QMessageAccountFilter()
-    
+
     Destroys the filter.
 */
 
@@ -97,7 +101,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageAccountFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
-  
+
     Set the match flags for the search filter to \a matchFlags.
 
     \sa matchFlags()
@@ -105,9 +109,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageDataComparator::MatchFlags QMessageAccountFilter::matchFlags() const
-  
+
     Return the match flags for the search filter.
-    
+
     Default is no match flags set.
 
     \sa setMatchFlags()
@@ -115,8 +119,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageAccountFilter::isEmpty() const
-  
-    Returns true if the filter remains empty after default construction; otherwise returns false. 
+
+    Returns true if the filter remains empty after default construction; otherwise returns false.
 
     An empty filter matches all accounts.
 
@@ -131,17 +135,17 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageAccountFilter::isSupported() const
-  
+
     Returns true if the filter is supported on the current platform; otherwise returns false.
 */
 
 /*!
     \fn QMessageAccountFilter::operator~() const
-  
+
     Returns a filter that is the logical NOT of the value of this filter (ignoring any
     matchFlags() set on the filter).
 
-    If this filter is empty, the result will be a non-matching filter; if this filter is 
+    If this filter is empty, the result will be a non-matching filter; if this filter is
     non-matching, the result will be an empty filter.
 
     \sa isEmpty()
@@ -149,36 +153,36 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageAccountFilter::operator&(const QMessageAccountFilter& other) const
-  
+
     Returns a filter that is the logical AND of this filter and the value of filter \a other.
 */
 
 /*!
     \fn QMessageAccountFilter::operator|(const QMessageAccountFilter& other) const
-  
+
     Returns a filter that is the logical OR of this filter and the value of filter \a other.
 */
 
 /*!
     \fn QMessageAccountFilter::operator&=(const QMessageAccountFilter& other)
-  
+
     Performs a logical AND with this filter and the filter \a other and assigns the result
     to this filter.
 */
 
 /*!
     \fn QMessageAccountFilter::operator|=(const QMessageAccountFilter& other)
-  
+
     Performs a logical OR with this filter and the filter \a other and assigns the result
     to this filter.
 */
 
-/*! 
+/*!
     \internal
     \fn QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
 */
 
-/*! 
+/*!
     \internal
 */
 bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
@@ -188,7 +192,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
 /*!
     \fn QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)
-  
+
     Returns a filter matching accounts whose identifier matches \a id, according to \a cmp.
 
     \sa QMessageAccount::id()
@@ -196,7 +200,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
 /*!
     \fn QMessageAccountFilter::byId(const QMessageAccountIdList &ids, QMessageDataComparator::InclusionComparator cmp)
-  
+
     Returns a filter matching accounts whose identifier is a member of \a ids, according to \a cmp.
 
     \sa QMessageAccount::id()
@@ -204,7 +208,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
 /*!
     \fn QMessageAccountFilter::byId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
-  
+
     Returns a filter matching accounts whose identifier is a member of the set yielded by \a filter, according to \a cmp.
 
     \sa QMessageAccount::id()
@@ -215,20 +219,24 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     Returns a filter matching accounts who name matches \a pattern, according to \a cmp.
 
+    This filter is evaluated when it is constructed.
+    
     \sa QMessageAccount::name()
 */
 
 /*!
     \fn QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)
-  
+
     Returns a filter matching accounts whose name matches \a value, according to \a cmp.
+
+    Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
     \sa QMessageAccount::name()
 */
 
 /*!
     \fn QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::InclusionComparator cmp)
-  
+
     Returns a filter matching accounts whose name matches the substring \a value, according to \a cmp.
 
     \sa QMessageAccount::name()

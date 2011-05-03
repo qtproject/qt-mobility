@@ -512,7 +512,7 @@ void TestQGeoSatelliteInfoSource::startUpdates()
 {
 
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
     QSignalSpy spyView(m_source,
@@ -537,7 +537,7 @@ void TestQGeoSatelliteInfoSource::startUpdates()
 void TestQGeoSatelliteInfoSource::startUpdates_moreThanOnce()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
     QSignalSpy spyView(m_source,
@@ -562,7 +562,7 @@ void TestQGeoSatelliteInfoSource::stopUpdates()
 {
 
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -597,7 +597,7 @@ void TestQGeoSatelliteInfoSource::stopUpdates_withoutStart()
 void TestQGeoSatelliteInfoSource::requestUpdate()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -620,7 +620,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_data()
 void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -641,7 +641,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
 void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -663,7 +663,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
 void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -690,7 +690,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
 void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -716,7 +716,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
 void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -746,7 +746,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
 void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -784,7 +784,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
 void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -816,7 +816,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
 void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -834,7 +834,7 @@ void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 
@@ -855,7 +855,7 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 {
     CHECK_SOURCE_VALID;
-#if defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
     QSKIP("Real GPS not suitable for autotesting, skipping the test.", SkipAll);
 #endif
 

@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \since 1.2
 
     QNdefRecord and derived classes are used to parse the contents of
     \l {QNdefMessage}{NDEF messages} and create new NDEF messages.

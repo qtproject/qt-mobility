@@ -75,7 +75,8 @@ public:
     bool waitForDBusSignal(int msecs);
 
 signals:
-    void accessFailed(const QDBusObjectPath &targetPath, const QString &error);
+    void accessFailed(const QDBusObjectPath &targetPath, const QString &kind,
+                      const QString &error);
     void accessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
     void accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);

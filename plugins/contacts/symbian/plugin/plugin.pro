@@ -3,8 +3,8 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_symbian)
 PLUGIN_TYPE=contacts
 
-include(../../../../common.pri)
 include(symbian_defines.pri)
+include(deploy.pri)
 symbian: { 
     load(data_caging_paths)
 
@@ -144,8 +144,4 @@ symbian: {
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
-    
-    # Public header
-    headers.sources = inc/cntbackendsdefs.h
-    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$basename(header)"
 }

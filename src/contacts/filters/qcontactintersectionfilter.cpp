@@ -49,11 +49,12 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactIntersectionFilter
   \brief The QContactIntersectionFilter class provides a filter which intersects the results of other filters.
-  
+
   \inmodule QtContacts
-  
+   \since 1.0
+
    \ingroup contacts-filters
- 
+
   It may be used to select contacts which match all of the filters in the intersection
  */
 

@@ -232,11 +232,24 @@
     The \l SoundEffect element provides a way to play short sound effects, like in video games. Multiple sound effect instances can be played simultaneously.
     You should use the \l Audio element for music playback.
 
-    \code
+    \qml
     import Qt 4.7
     import QtMultimediaKit 1.1
     ...
-    
+
+        SoundEffect {
+            id: effect
+            source: "test.wav"
+        }
+        MouseArea {
+            id: playArea
+            anchors.fill: parent
+            onPressed:  { effect.play() }
+        }
+
+    \endqml
+
+
     In the above sample the sound effect will be played when the MouseArea is clicked.
 
     For a complete description of this element, see \l SoundEffect

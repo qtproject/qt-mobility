@@ -28,7 +28,7 @@
 /*!
 \example quickstart
 
-\title Quickstart Example
+\title Quickstart guide
 
 The following steps outline how to make a simple
 "hello world" like application that uses Qt Mobility.
@@ -200,12 +200,12 @@ on which parts of an API is utilized by an application.
     \o No token requirements known at this stage.
 \row
     \o \l {Document Gallery}
-    \o No capabilities at this stage.
-    \o No token requirements known at this stage.
+    \o ReadDeviceData WriteDeviceData
+    \o TrackerReadAccess TrackerWriteAccess
 \row
     \o \l {Organizer}
     \o ReadUserData WriteUserData
-    \o No token requirements known at this stage.
+    \o TrackerReadAccess TrackerWriteAccess GRP::calendar GRP::metadata-users
 \row
     \o \l {Feedback}{Tactile Feedback}
     \o No capabilities at this stage.

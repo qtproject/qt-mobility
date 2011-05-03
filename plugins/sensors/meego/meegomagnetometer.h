@@ -60,8 +60,8 @@ public:
 protected:
     virtual bool doConnect();
     virtual void start();
-    virtual const QString sensorName();
-    virtual const qreal correctionFactor();
+    virtual QString sensorName() const;
+    virtual qreal correctionFactor() const;
 
 
 private:

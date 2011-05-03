@@ -158,6 +158,7 @@ void QMessageContentContainerPrivate::setContent(const QByteArray &content, cons
     setContentType(type, subType, charset);
 
     _content = content;
+    _size = content.size();
     _available = true;
 }
 
@@ -235,12 +236,10 @@ bool QMessageContentContainerPrivate::createAttachment(const QString& attachment
     
     //set the mime-type
     QByteArray mimeType;
-    QString type;
-    TBuf8<255> fileBuffer;
     RApaLsSession session;    
     QString fileString = fi.fileName();
     TPtrC16 filePtr(reinterpret_cast<const TUint16*>(fileString.utf16()));
-    TBuf8<20> fileType;
+    TBuf8<KMaxDataTypeLength> fileType;
     TPtrC8 ptr8((TUint8 *)(_content.constData()), _content.length());
     if(session.Connect() == KErrNone){                        
         TDataRecognitionResult fileDataType;                     
@@ -250,7 +249,6 @@ bool QMessageContentContainerPrivate::createAttachment(const QString& attachment
         session.Close();                
     }
 
-    QString extension(fi.suffix());
     int index = mimeType.indexOf("/");
     if (index != -1) {
         _type = mimeType.left(index).trimmed();
@@ -388,7 +386,19 @@ int QMessageContentContainer::size() const
         CFSEngine::instance()->retrieveMessageContentHeaders(*d_ptr->_message);
     }
 #endif
-    return d_ptr->_size;
+    int size = 0;
+    if (d_ptr->_size != 0) {
+        size = d_ptr->_size;
+    } else {
+        QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+        if (container->_size != 0) {
+            size += container->_size;
+        }
+        foreach (const QMessageContentContainer &attachment, container->_attachments) {
+            size += attachment.size();
+        }
+    }
+    return size;
 }
 
 QString QMessageContentContainer::textContent() const

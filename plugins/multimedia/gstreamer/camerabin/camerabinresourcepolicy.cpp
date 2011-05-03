@@ -47,6 +47,7 @@
 
 //#define DEBUG_RESOURCE_POLICY
 #include <QtCore/qdebug.h>
+#include <QtCore/qset.h>
 
 #ifdef HAVE_RESOURCE_POLICY
 #include <policy/resource.h>
@@ -56,57 +57,39 @@
 
 CamerabinResourcePolicy::CamerabinResourcePolicy(QObject *parent) :
     QObject(parent),
-    m_resourceSet(NoResources)
+    m_resourceSet(NoResources),
+    m_releasingResources(false)
 {
 #ifdef HAVE_RESOURCE_POLICY
-    ResourcePolicy::ResourceSet *resourceSet;
-
     //loaded resource set is also kept requested for image and video capture sets
-    resourceSet = new ResourcePolicy::ResourceSet("camera", this);
+    m_resource = new ResourcePolicy::ResourceSet("camera");
+    m_resource->setAlwaysReply();
+    m_resource->initAndConnect();
 
-    resourceSet->addResource(ResourcePolicy::VideoRecorderType);
-    ResourcePolicy::LensCoverResource *lensCoverResource = new ResourcePolicy::LensCoverResource;
-    lensCoverResource->setOptional(true);
-    resourceSet->addResourceObject(lensCoverResource);
-    resourceSet->update();
-
-    m_resources.append(resourceSet);
-    m_resourceStatuses.append(Initial);
-
-    //still image resources:
-    resourceSet = new ResourcePolicy::ResourceSet("camera", this);
-    resourceSet->addResource(ResourcePolicy::VideoPlaybackType);
-    resourceSet->addResource(ResourcePolicy::LedsType);
-    resourceSet->update();
-
-    m_resources.append(resourceSet);
-    m_resourceStatuses.append(Initial);
-
-    //video capture resources:
-    resourceSet = new ResourcePolicy::ResourceSet("camera", this);
-
-    resourceSet->addResource(ResourcePolicy::VideoPlaybackType);
-    resourceSet->addResource(ResourcePolicy::AudioPlaybackType);
-    resourceSet->addResource(ResourcePolicy::AudioRecorderType);
-    resourceSet->addResource(ResourcePolicy::LedsType);
-    resourceSet->update();
-
-    m_resources.append(resourceSet);
-    m_resourceStatuses.append(Initial);
-
-    foreach (ResourcePolicy::ResourceSet *resource, m_resources) {
-        connect(resource, SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>)),
-                this, SLOT(handleResourcesGranted()));
-        connect(resource, SIGNAL(resourcesDenied()),
-                this, SLOT(handleResourcesDenied()));
-        connect(resource, SIGNAL(lostResources()),
-                this, SLOT(handleResourcesLost()));
-    }
+    connect(m_resource, SIGNAL(resourcesGranted(const QList<ResourcePolicy::ResourceType>)),
+            SIGNAL(resourcesGranted()));
+    connect(m_resource, SIGNAL(resourcesDenied()), SIGNAL(resourcesDenied()));
+    connect(m_resource, SIGNAL(lostResources()), SIGNAL(resourcesLost()));
+    connect(m_resource, SIGNAL(resourcesReleased()), SLOT(handleResourcesReleased()));
 #endif
 }
 
 CamerabinResourcePolicy::~CamerabinResourcePolicy()
 {
+#ifdef HAVE_RESOURCE_POLICY
+    //ensure the resources are released
+    if (m_resourceSet != NoResources)
+        setResourceSet(NoResources);
+
+    //don't delete the resource set until resources are released
+    if (m_releasingResources) {
+        m_resource->connect(m_resource, SIGNAL(resourcesReleased()),
+                            SLOT(deleteLater()));
+    } else {
+        delete m_resource;
+        m_resource = 0;
+    }
+#endif
 }
 
 CamerabinResourcePolicy::ResourceSet CamerabinResourcePolicy::resourceSet() const
@@ -116,8 +99,7 @@ CamerabinResourcePolicy::ResourceSet CamerabinResourcePolicy::resourceSet() cons
 
 void CamerabinResourcePolicy::setResourceSet(CamerabinResourcePolicy::ResourceSet set)
 {
-    if (m_resourceSet == set)
-        return;
+    CamerabinResourcePolicy::ResourceSet oldSet = m_resourceSet;
     m_resourceSet = set;
 
 #ifdef DEBUG_RESOURCE_POLICY
@@ -125,34 +107,61 @@ void CamerabinResourcePolicy::setResourceSet(CamerabinResourcePolicy::ResourceSe
 #endif
 
 #ifdef HAVE_RESOURCE_POLICY
-    m_requestedSets.clear();
+    QSet<ResourcePolicy::ResourceType> requestedTypes;
+
     switch (set) {
     case NoResources:
         break;
     case LoadedResources:
-        m_requestedSets << LoadedResourcesSet;
+        requestedTypes << ResourcePolicy::LensCoverType //to detect lens cover is opened/closed
+                       << ResourcePolicy::VideoRecorderType //to open camera device
+                       << ResourcePolicy::SnapButtonType; //to detect capture button events
         break;
     case ImageCaptureResources:
-        m_requestedSets << LoadedResourcesSet << ImageResourcesSet;
+        requestedTypes << ResourcePolicy::LensCoverType
+                       << ResourcePolicy::VideoPlaybackType
+                       << ResourcePolicy::VideoRecorderType
+                       << ResourcePolicy::AudioPlaybackType
+                       << ResourcePolicy::ScaleButtonType
+                       << ResourcePolicy::LedsType
+                       << ResourcePolicy::SnapButtonType;
         break;
     case VideoCaptureResources:
-        m_requestedSets << LoadedResourcesSet << VideoResouresSet;
+        requestedTypes << ResourcePolicy::LensCoverType
+                       << ResourcePolicy::VideoPlaybackType
+                       << ResourcePolicy::VideoRecorderType
+                       << ResourcePolicy::AudioPlaybackType
+                       << ResourcePolicy::AudioRecorderType
+                       << ResourcePolicy::ScaleButtonType
+                       << ResourcePolicy::LedsType
+                       << ResourcePolicy::SnapButtonType;
         break;
     }
 
-    //release the resource we don't need any more
-    for (int i=0; i<m_resources.count(); i++) {
-        if (!m_requestedSets.contains(i) && m_resourceStatuses[i] != Initial) {
-            m_resourceStatuses[i] = Initial;
-            m_resources[i]->release();
+    QSet<ResourcePolicy::ResourceType> currentTypes;
+    foreach (ResourcePolicy::Resource *resource, m_resource->resources())
+        currentTypes << resource->type();
+
+    foreach (ResourcePolicy::ResourceType resourceType, currentTypes - requestedTypes)
+        m_resource->deleteResource(resourceType);
+
+    foreach (ResourcePolicy::ResourceType resourceType, requestedTypes - currentTypes) {
+        if (resourceType == ResourcePolicy::LensCoverType) {
+            ResourcePolicy::LensCoverResource *lensCoverResource = new ResourcePolicy::LensCoverResource;
+            lensCoverResource->setOptional(true);
+            m_resource->addResourceObject(lensCoverResource);
+        } else {
+            m_resource->addResource(resourceType);
         }
     }
 
-    //and acquire ones we need
-    foreach (int i, m_requestedSets) {
-        if (m_resourceStatuses[i] == Initial) {
-            m_resourceStatuses[i] = RequestedResource;
-            m_resources[i]->acquire();
+    m_resource->update();
+    if (set != NoResources) {
+        m_resource->acquire();
+    } else {
+        if (oldSet != NoResources) {
+            m_releasingResources = true;
+            m_resource->release();
         }
     }
 #endif
@@ -160,73 +169,20 @@ void CamerabinResourcePolicy::setResourceSet(CamerabinResourcePolicy::ResourceSe
 
 bool CamerabinResourcePolicy::isResourcesGranted() const
 {
-    foreach (int i, m_requestedSets) {
-        if (m_resourceStatuses[i] != GrantedResource)
+#ifdef HAVE_RESOURCE_POLICY
+    foreach (ResourcePolicy::Resource *resource, m_resource->resources())
+        if (!resource->isOptional() && !resource->isGranted())
             return false;
-    }
-
+#endif
     return true;
 }
 
-
-
-void CamerabinResourcePolicy::handleResourcesGranted()
+void CamerabinResourcePolicy::handleResourcesReleased()
 {
 #ifdef HAVE_RESOURCE_POLICY
-    for (int i=0; i<m_resources.count(); i++) {
-        if (sender() == m_resources[i]) {
-            m_resourceStatuses[i] = GrantedResource;
-
 #ifdef DEBUG_RESOURCE_POLICY
-            qDebug() << Q_FUNC_INFO << "Resource granted" << i;
+    qDebug() << Q_FUNC_INFO;
 #endif
-            if (m_requestedSets.contains(i)) {
-                if (isResourcesGranted())
-                    emit resourcesGranted();
-            }
-            break;
-        }
-    }
-#endif
-}
-
-void CamerabinResourcePolicy::handleResourcesDenied()
-{
-#ifdef HAVE_RESOURCE_POLICY
-    for (int i=0; i<m_resources.count(); i++) {
-        if (sender() == m_resources[i]) {
-            bool wasGranted = isResourcesGranted();
-            m_resourceStatuses[i] = RequestedResource;
-
-#ifdef DEBUG_RESOURCE_POLICY
-            qDebug() << Q_FUNC_INFO << "Resource denied" << i << "was granted:" << wasGranted;
-#endif
-            if (wasGranted && m_requestedSets.contains(i))
-                emit resourcesDenied();
-
-            break;
-        }
-    }
-#endif
-}
-
-void CamerabinResourcePolicy::handleResourcesLost()
-{
-#ifdef HAVE_RESOURCE_POLICY
-    for (int i=0; i<m_resources.count(); i++) {
-        if (sender() == m_resources[i]) {
-            bool wasGranted = isResourcesGranted();
-            m_resourceStatuses[i] = RequestedResource;
-
-#ifdef DEBUG_RESOURCE_POLICY
-            qDebug() << Q_FUNC_INFO << "Resource lost" << i << "was granted:" << wasGranted;
-#endif
-
-            if (wasGranted && m_requestedSets.contains(i))
-                emit resourcesLost();
-
-            break;
-        }
-    }
+    m_releasingResources = false;
 #endif
 }

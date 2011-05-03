@@ -49,8 +49,9 @@ QT_BEGIN_NAMESPACE
     \class QMetaDataReaderControl
     \inmodule QtMultimediaKit
     \ingroup multimedia-serv
+    \since 1.0
 
-    
+
     \brief The QMetaDataReaderControl class provides read access to the
     meta-data of a QMediaService's media.
 

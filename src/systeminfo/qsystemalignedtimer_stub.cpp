@@ -39,14 +39,13 @@
 **
 ****************************************************************************/
 
-
 #include "qsystemalignedtimer.h"
 #include "qsystemalignedtimer_stub_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
-    QObject(parent)
+QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
+    : QObject(parent)
 {
 }
 

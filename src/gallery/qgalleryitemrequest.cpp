@@ -108,6 +108,7 @@ public:
     \ingroup gallery-requests
 
     \inmodule QtGallery
+    \since 1.1
 
     \brief The QGalleryItemRequest class provides a request for the properties
     of a single item from a gallery.

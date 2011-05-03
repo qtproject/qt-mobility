@@ -289,7 +289,7 @@ void tst_QMessageStore::testFolder_data()
     // => Use Drafts folder for testing
     QTest::newRow("Drafts") << "Drafts" << "Drafts" << "" << "Drafts";
 #else
-	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
+	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., because they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Symbian does not currently support paths
@@ -560,9 +560,14 @@ void tst_QMessageStore::testRemoveAccount()
     QTest::qWait(200); // Updating EmailClientApi mailbox cache is asynchronous operation so wait is needed.
     
     QVERIFY(!manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+#if (defined(Q_WS_MAEMO_5) || defined(Q_OS_WIN) || (defined(Q_OS_SYMBIAN) && !defined(FREESTYLEMAILMAPI12USED))) 
+    // Not supported on Fremantle (Maemo5), Windows or Symbian <SR1.11
+    QVERIFY(!manager->removeAccount(id));
+#else
     QVERIFY(manager->removeAccount(id)); // This is synchronous function
 
     QVERIFY(manager->queryAccounts(QMessageAccountFilter::byName("Mr. Temp")).empty());
+#endif
 }
 
 void tst_QMessageStore::testMessage()

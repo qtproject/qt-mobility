@@ -64,6 +64,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
     \internal
+    \since 1.0
 
     To create a new layer in the Value Space subclass this class and reimplement all of the virtual
     functions.  The new layer is installed by either calling QValueSpace::installLayer() or by

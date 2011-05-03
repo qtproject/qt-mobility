@@ -49,8 +49,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaPlaylistControl
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaPlaylistControl class provides access to the playlist
     functionality of a QMediaService.
 

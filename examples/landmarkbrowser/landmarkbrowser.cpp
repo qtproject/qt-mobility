@@ -61,7 +61,7 @@ QTM_USE_NAMESPACE
 LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     :currentLandmarkOffset(0),
      currentCategoryOffset(0),
-     limit(20), filterDialog(0), 
+     limit(20), filterDialog(0),
      landmarkFetch(0), landmarkImport(0), landmarkExport(0), landmarkRemove(0),
      landmarkSave(0), categoryFetch(0), categoryRemove(0),progress(0),
      manager(0)
@@ -622,12 +622,22 @@ void LandmarkBrowser::on_prevCategoryButton_clicked()
 void LandmarkBrowser::updateTable(const QList<QLandmark> &lms)
 {
     QLandmark lm;
+    QTableWidgetItem *item;
     for ( int i =0; i < lms.count(); ++i) {
         lm = lms.at(i);
         table->insertRow(table->rowCount());
-        table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',2)));
-        table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',2)));
-        table->setItem(table->rowCount()-1,2,new QTableWidgetItem(lm.name()));
+
+        item = new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',2));
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        table->setItem(table->rowCount()-1,0,item);
+
+        item = new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',2));
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        table->setItem(table->rowCount()-1,1, item);
+
+        item = new QTableWidgetItem(lm.name());
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        table->setItem(table->rowCount()-1,2, item);
 
         if (i %20)
             qApp->processEvents();
@@ -637,15 +647,23 @@ void LandmarkBrowser::updateTable(const QList<QLandmark> &lms)
 void LandmarkBrowser::updateCategoryTable(const QList<QLandmarkCategory> &cats)
 {
     QLandmarkCategory cat;
+    QTableWidgetItem *item;
     for ( int i =0; i < cats.count(); ++i) {
         cat = cats.at(i);
         categoryTable->insertRow(categoryTable->rowCount());
         if(manager->isReadOnly(cat.categoryId())) {
-            categoryTable->setItem(categoryTable->rowCount()-1,0,new QTableWidgetItem(cat.name() + "(global)"));
+            item = new QTableWidgetItem(cat.name() + "(global)");
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            categoryTable->setItem(categoryTable->rowCount()-1,0, item);
         } else {
-            categoryTable->setItem(categoryTable->rowCount()-1,0,new QTableWidgetItem(cat.name()));
+            item = new QTableWidgetItem(cat.name());
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            categoryTable->setItem(categoryTable->rowCount()-1,0,item);
         }
-        categoryTable->setItem(categoryTable->rowCount()-1,1,new QTableWidgetItem(cat.categoryId().localId()));
+
+        item = new QTableWidgetItem(cat.categoryId().localId());
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        categoryTable->setItem(categoryTable->rowCount()-1,1, item);
 
         if (i %20)
             qApp->processEvents();

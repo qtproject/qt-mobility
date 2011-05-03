@@ -171,81 +171,82 @@ queries to the database as well as the functions for legacy finding and sorting
 APIs.
 */
 class NONSHARED CPlCollection : public CBase , public MLplCollection
-	{
+    {
 public:
-	static CPlCollection* NewL(CPplContactsFile& aContactsFile);
-	~CPlCollection();
+    static CPlCollection* NewL(CPplContactsFile& aContactsFile);
+    ~CPlCollection();
 
-	CContactIdArray* CollectionL(TLplViewType aViewType,TTime aTime = 0, const TDesC& aGuid = KNullDesC);
+    CContactIdArray* CollectionL(TLplViewType aViewType,TTime aTime = 0, const TDesC& aGuid = KNullDesC);
 
-	TInt ContactCountL();
-	TBool ContactMatchesHintFieldL(TInt aBitWiseFilter, TContactItemId aContactId);	
-	CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
+    TInt ContactCountL();
+    TBool ContactMatchesHintFieldL(TInt aBitWiseFilter, TContactItemId aContactId);
+    CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
+    CContactIdArray* FindVoipContactsL();
+    CContactIdArray* FindL(const TDesC& aText, const CContactItemFieldDef* aFieldDef, TUint aSessionId);
+    void FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef);
+    void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef);
+    CContactIdArray* FindAsyncL(TBool& aMoreToGo, TUint aSessionId);
+    void Reset();
 
-	CContactIdArray* FindL(const TDesC& aText, const CContactItemFieldDef* aFieldDef, TUint aSessionId);	
-	void FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef);
-	void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef);
-	CContactIdArray* FindAsyncL(TBool& aMoreToGo, TUint aSessionId);
-	void Reset();
-
-	TBool UsesIdentityFieldsOnly(TInt aFindFlags);
-	void ConstructBitwiseFlagsFromTextDef(TInt& aFindFlags,TInt& aIdentityColumnsCount,const CContactTextDef* aTextDef);
-	TBool SeekContactL(TContactItemId aReqId,TContactItemId& aId,TUid& aContactType, TBool& aDeleted);	
-	
+    TBool UsesIdentityFieldsOnly(TInt aFindFlags);
+    void ConstructBitwiseFlagsFromTextDef(TInt& aFindFlags,TInt& aIdentityColumnsCount,const CContactTextDef* aTextDef);
+    TBool SeekContactL(TContactItemId aReqId,TContactItemId& aId,TUid& aContactType, TBool& aDeleted);    
+    
 private:
     CPlCollection(CPplContactsFile& aContactsFile);
-	void ConstructL();
-	CContactIdArray* GuidL(const TDesC& aGuid);
-	CContactIdArray* ChangedSinceL(TTime aTime);
-	CContactIdArray* UnfiledL();
-	CContactIdArray* DeletedL();
-	TBool PerformFindIterationL(CContactIdArray *aIdsFound, const TDesC& aText, RSqlStatement aStatement, TInt aFieldsToSearch, TUint aSessionId);
-	TBool PerformIdFindIterationL(CContactIdArray *aIdsFound, RSqlStatement aStatement);
-	TBool FindL(CContactIdArray *aIdsFound, const TDesC& aText,const CContactItemFieldDef *aFieldDef, RSqlStatement aStatement, TUint aSessionId);
-	CContactIdArray* FilterDatabaseL(CCntFilter& aFilter);
+    void ConstructL();
+    CContactIdArray* GuidL(const TDesC& aGuid);
+    CContactIdArray* ChangedSinceL(TTime aTime);
+    CContactIdArray* UnfiledL();
+    CContactIdArray* DeletedL();
+    TBool PerformFindIterationL(CContactIdArray *aIdsFound, const TDesC& aText, RSqlStatement aStatement, TInt aFieldsToSearch, TUint aSessionId);
+    TBool PerformIdFindIterationL(CContactIdArray *aIdsFound, RSqlStatement aStatement);
+    TBool FindL(CContactIdArray *aIdsFound, const TDesC& aText,const CContactItemFieldDef *aFieldDef, RSqlStatement aStatement, TUint aSessionId);
+    TBool FindL(CContactIdArray *aIdsFound, const CContactItemFieldDef *aFieldDef, RSqlStatement aStatement);
+    CContactIdArray* FilterDatabaseL(CCntFilter& aFilter);
 
-	TInt MaximumSizeOfIdentitySearchSyntax();
-	TInt ApproximateSizeOfSearchString();
-	void doAppendFieldsToSearchString(HBufC* aOrderFields) const;
-	TBool GetContactIdsForTextDefFindL(CContactIdArray* aIdArray, TUint aSessionId);
-	TBool PerformTextDefFindIterationL(CContactIdArray* aIdArray); 
-	TBool HintFieldMatchesFilter(TInt aHintField, TInt aFilter);
-	
+    TInt MaximumSizeOfIdentitySearchSyntax();
+    TInt ApproximateSizeOfSearchString();
+    void doAppendFieldsToSearchString(HBufC* aOrderFields) const;
+    TBool GetContactIdsForTextDefFindL(CContactIdArray* aIdArray, TUint aSessionId);
+    TBool PerformTextDefFindIterationL(CContactIdArray* aIdArray); 
+    TBool HintFieldMatchesFilter(TInt aHintField, TInt aFilter);
+    
 private:
-	enum TAsyncFindState
-		{
-		EFindInBlobFinished				=0x00000001,
-		EFindInIdentityFinished			=0x00000002,
-		EFindInEmailFinished			=0x00000004,
-		EFindInTextDefFinished			=0x00000008,
-		EFindInSIPFinished				=0x00000010
-		};
+    enum TAsyncFindState
+        {
+        EFindInBlobFinished             =0x00000001,
+        EFindInIdentityFinished         =0x00000002,
+        EFindInEmailFinished            =0x00000004,
+        EFindInTextDefFinished          =0x00000008,
+        EFindInSIPFinished              =0x00000010
+        };
 
 private:
-	CPplContactsFile&		iContactsFile; // doesn't own
-	CContactItemFieldDef*	iFieldDef;
-	CContactTextDef*		iTextDef;
-	HBufC					*iText;
-	HBufC					*iOriginalText;
-	CDesCArray* 			iFindWords;
-	CDesCArray*				iFindWords2;
-	TInt					iFindFlags;
-	TInt					iNoIdentitySearchColumns;
-	TInt 					iFindState;
-	// The column number of the parent ID in iEmailFindView.
-	
-	CCntSqlStatement*		iSelectStatement;	
-	
-	//RSqlstatements for async find
-	RSqlStatement			selectBlobStatement;
-	RSqlStatement			selectIdentityStatement;
-	RSqlStatement			selectEmailStatement;
-	RSqlStatement			selectSIPStatement;
-	RSqlStatement			selectIdFromIdentityStatement;
-	
-	//The flag for RSqlstatements
+    CPplContactsFile&       iContactsFile; // doesn't own
+    CContactItemFieldDef*   iFieldDef;
+    CContactTextDef*        iTextDef;
+    HBufC                   *iText;
+    HBufC                   *iOriginalText;
+    CDesCArray*             iFindWords;
+    CDesCArray*             iFindWords2;
+    TInt                    iFindFlags;
+    TInt                    iNoIdentitySearchColumns;
+    TInt                    iFindState;
+    // The column number of the parent ID in iEmailFindView.
+    
+    CCntSqlStatement*        iSelectStatement;
+    
+    //RSqlstatements for async find
+    RSqlStatement            selectBlobStatement;
+    RSqlStatement            selectIdentityStatement;
+    RSqlStatement            selectEmailStatement;
+    RSqlStatement            selectSIPStatement;
+    RSqlStatement            selectIdFromIdentityStatement;
+    
+    //The flag for RSqlstatements
     TBool iRSqlstatementsWorking;
-	};
+    };
 
 // Forward class reference.
 class CCntPplViewManager;

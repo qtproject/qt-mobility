@@ -41,6 +41,7 @@
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QFile>
 
 #include <QDebug>
 #include "qfeedback.h"
@@ -79,16 +80,21 @@ void QFeedbackMMK::setLoaded(QFeedbackFileEffect *effect, bool load)
                 return;
             } else {
                 // New sound effect!
-                fi.soundEffect = new QSoundEffect(this);
-                mEffects.insert(effect, fi);
-                mEffectMap.insert(fi.soundEffect, effect);
+                QUrl url = effect->source();
+                if (QFile::exists(url.toLocalFile())) {
+                    fi.soundEffect = new QSoundEffect(this);
+                    mEffects.insert(effect, fi);
+                    mEffectMap.insert(fi.soundEffect, effect);
 
-                connect(fi.soundEffect, SIGNAL(statusChanged()), this, SLOT(soundEffectStatusChanged()));
-                connect(fi.soundEffect, SIGNAL(playingChanged()), this, SLOT(soundEffectPlayingChanged()));
-                fi.soundEffect->setSource(effect->source());
+                    connect(fi.soundEffect, SIGNAL(statusChanged()), this, SLOT(soundEffectStatusChanged()));
+                    connect(fi.soundEffect, SIGNAL(playingChanged()), this, SLOT(soundEffectPlayingChanged()));
+                    fi.soundEffect->setSource(url);
 
-                // conceptually we're now loading, so we have to do this manually??
-                QMetaObject::invokeMethod(effect, "stateChanged");
+                    // conceptually we're now loading, so we have to do this manually??
+                    QMetaObject::invokeMethod(effect, "stateChanged");
+                } else {
+                    reportLoadFinished(effect, false);
+                }
             }
         }
     } else {

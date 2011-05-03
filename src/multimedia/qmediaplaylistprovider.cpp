@@ -48,9 +48,10 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistProvider
-    
+
     \brief The QMediaPlaylistProvider class provides an abstract list of media.
     \inmodule QtMultimediaKit
+    \since 1.0
 
     \sa QMediaPlaylist
 */

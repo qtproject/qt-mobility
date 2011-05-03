@@ -347,8 +347,7 @@ void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
     FileContent &fc = fileData[fileName];
     if (load) {
         bool success = true;
-        fc.refCount++;
-        if (fc.refCount == 1) {
+        if (fc.refCount == 0) {
             //we need to load the file
             QFile file(fileName);
             success = false;
@@ -358,6 +357,7 @@ void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
                 if (VIBE_FAILED(ImmVibeGetIVTEffectCount(fc.constData()))) {
                     fileData.remove(fileName); 
                 } else {
+                    fc.refCount++;
                     success = true;
                 }
             }
@@ -365,7 +365,8 @@ void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
         reportLoadFinished(effect, success);
     } else {
         //unload
-        fc.refCount--;
+        if (fc.refCount > 0)
+            fc.refCount--;
         if (fc.refCount == 0)
             fileData.remove(fileName);
     }

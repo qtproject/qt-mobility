@@ -60,8 +60,9 @@ QT_BEGIN_NAMESPACE
     \class QCameraImageCapture
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.1
 
-    
+
     \brief The QCameraImageCapture class is used for the recording of media content.
 
     The QCameraImageCapture class is a high level images recording class.

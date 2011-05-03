@@ -44,6 +44,8 @@
 
 const char *testsensorimpl::id("test sensor impl");
 
+static testsensorimpl *exclusiveHandle = 0;
+
 testsensorimpl::testsensorimpl(QSensor *sensor)
     : QSensorBackend(sensor)
 {
@@ -69,12 +71,28 @@ testsensorimpl::testsensorimpl(QSensor *sensor)
     reading();
 }
 
+testsensorimpl::~testsensorimpl()
+{
+    Q_ASSERT(exclusiveHandle != this);
+}
+
 void testsensorimpl::start()
 {
+    QVariant _exclusive = sensor()->property("exclusive");
+    bool exclusive = _exclusive.isValid()?_exclusive.toBool():false;
+    if (exclusive) {
+        if (!exclusiveHandle) {
+            exclusiveHandle = this;
+        } else {
+            // Hook up the busyChanged signal
+            connect(exclusiveHandle, SIGNAL(emitBusyChanged()), sensor(), SIGNAL(busyChanged()));
+            sensorBusy(); // report the busy condition
+            return;
+        }
+    }
+
     QString doThis = sensor()->property("doThis").toString();
-    if (doThis == "busy")
-        sensorBusy();
-    else if (doThis == "stop")
+    if (doThis == "stop")
         sensorStopped();
     else if (doThis == "error")
         sensorError(1);
@@ -91,5 +109,11 @@ void testsensorimpl::start()
 
 void testsensorimpl::stop()
 {
+    QVariant _exclusive = sensor()->property("exclusive");
+    bool exclusive = _exclusive.isValid()?_exclusive.toBool():false;
+    if (exclusive && exclusiveHandle == this) {
+        exclusiveHandle = 0;
+        emit emitBusyChanged(); // notify any waiting instances that they can try to grab the sensor now
+    }
 }
 

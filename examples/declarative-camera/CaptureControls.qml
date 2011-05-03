@@ -49,105 +49,124 @@ FocusScope {
     property alias flashMode : flashModesButton.value
     property alias exposureCompensation : exposureCompensationButton.value
 
+    property int buttonsPanelWidth: buttonPaneShadow.width
+
     signal previewSelected
     id : captureControls
 
-    Column {
-        spacing : 8
-        anchors.right : parent.right
-        anchors.rightMargin: 8
-        anchors.top : parent.top
-        anchors.topMargin: 8
+    Rectangle {
+        id: buttonPaneShadow
+        width: buttonPanningPane.width + 16
+        height: parent.height
+        anchors.top: parent.top
+        anchors.right: parent.right
+        color: Qt.rgba(0.08, 0.08, 0.08, 1)
 
-        FocusButton {
-            camera: captureControls.camera
-            visible: false
-        }
+        Flickable {
+            id: buttonPanningPane
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: parent.bottom
+                margins: 8
+            }
+            width: buttonsColumn.width
 
-        CameraButton {
-            text: "Capture"
-            onClicked: camera.captureImage()
-        }
+            contentWidth: buttonsColumn.width
+            contentHeight: buttonsColumn.height
 
-        CameraPropertyButton {
-            id : flashModesButton
-            value: Camera.FlashOff
-            model: ListModel {
-                ListElement {
-                    icon: "images/camera_flash_auto.png"
-                    value: Camera.FlashAuto
-                    text: "Auto"
+            Column {
+                id: buttonsColumn
+                spacing: 8
+
+                FocusButton {
+                    camera: captureControls.camera
                 }
-                ListElement {
-                    icon: "images/camera_flash_off.png"
+
+                CameraButton {
+                    text: "Capture"
+                    onClicked: camera.captureImage()
+                }
+
+                CameraPropertyButton {
+                    id : flashModesButton
                     value: Camera.FlashOff
-                    text: "Off"
+                    model: ListModel {
+                        ListElement {
+                            icon: "images/camera_flash_auto.png"
+                            value: Camera.FlashAuto
+                            text: "Auto"
+                        }
+                        ListElement {
+                            icon: "images/camera_flash_off.png"
+                            value: Camera.FlashOff
+                            text: "Off"
+                        }
+                        ListElement {
+                            icon: "images/camera_flash_fill.png"
+                            value: Camera.FlashOn
+                            text: "On"
+                        }
+                        ListElement {
+                            icon: "images/camera_flash_redeye.png"
+                            value: Camera.FlashRedEyeReduction
+                            text: "Red Eye Reduction"
+                        }
+                    }
                 }
-                ListElement {
-                    icon: "images/camera_flash_fill.png"
-                    value: Camera.FlashOn
-                    text: "On"
-                }
-                ListElement {
-                    icon: "images/camera_flash_redeye.png"
-                    value: Camera.FlashRedEyeReduction
-                    text: "Red Eye Reduction"
-                }
-            }
-        }
 
-        CameraPropertyButton {
-            id : wbModesButton
-            value: Camera.WhiteBalanceAuto
-            model: ListModel {
-                ListElement {
-                    icon: "images/camera_auto_mode.png"
+                CameraPropertyButton {
+                    id : wbModesButton
                     value: Camera.WhiteBalanceAuto
-                    text: "Auto"
+                    model: ListModel {
+                        ListElement {
+                            icon: "images/camera_auto_mode.png"
+                            value: Camera.WhiteBalanceAuto
+                            text: "Auto"
+                        }
+                        ListElement {
+                            icon: "images/camera_white_balance_sunny.png"
+                            value: Camera.WhiteBalanceSunlight
+                            text: "Sunlight"
+                        }
+                        ListElement {
+                            icon: "images/camera_white_balance_cloudy.png"
+                            value: Camera.WhiteBalanceCloudy
+                            text: "Cloudy"
+                        }
+                        ListElement {
+                            icon: "images/camera_white_balance_incandescent.png"
+                            value: Camera.WhiteBalanceIncandescent
+                            text: "Incandescent"
+                        }
+                        ListElement {
+                            icon: "images/camera_white_balance_flourescent.png"
+                            value: Camera.WhiteBalanceFluorescent
+                            text: "Fluorescent"
+                        }
+                    }
                 }
-                ListElement {
-                    icon: "images/camera_white_balance_sunny.png"
-                    value: Camera.WhiteBalanceSunlight
-                    text: "Sunlight"
+
+                ExposureCompensationButton {
+                    id : exposureCompensationButton
                 }
-                ListElement {
-                    icon: "images/camera_white_balance_cloudy.png"
-                    value: Camera.WhiteBalanceCloudy
-                    text: "Cloudy"
+
+                CameraButton {
+                    text: "View"
+                    onClicked: captureControls.previewSelected()
+                    visible: captureControls.previewAvailable
                 }
-                ListElement {
-                    icon: "images/camera_white_balance_incandescent.png"
-                    value: Camera.WhiteBalanceIncandescent
-                    text: "Incandescent"
+
+                CameraButton {
+                    id: quitButton
+                    text: "Quit"
+                    onClicked: Qt.quit()
                 }
-                ListElement {
-                    icon: "images/camera_white_balance_flourescent.png"
-                    value: Camera.WhiteBalanceFluorescent
-                    text: "Fluorescent"
-                }
+
             }
         }
-
-        ExposureCompensationButton {
-            id : exposureCompensationButton
-        }
-
-        CameraButton {
-            text: "View"
-            onClicked: captureControls.previewSelected()
-            visible: captureControls.previewAvailable
-        }
     }
 
-    CameraButton {
-        id: quitButton
-        anchors.right : parent.right
-        anchors.rightMargin: 8
-        anchors.bottom : parent.bottom
-        anchors.bottomMargin: 8
-        text: "Quit"
-        onClicked: Qt.quit()
-    }
 
     Item {
         id: exposureDetails

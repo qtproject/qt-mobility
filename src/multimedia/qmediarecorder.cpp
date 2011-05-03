@@ -65,8 +65,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaRecorder
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaRecorder class is used for the recording of media content.
 
     The QMediaRecorder class is a high level media recording class.  It's not
@@ -320,7 +321,7 @@ bool QMediaRecorder::setMediaObject(QMediaObject *object)
 
                 connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
-                
+
                 return true;
             }
         }
@@ -780,6 +781,9 @@ QVariant QMediaRecorder::metaData(QtMultimediaKit::MetaData key) const
 
 /*!
     Sets a \a value for a meta-data \a key.
+
+    \note To ensure that meta data is set corretly, it should be set before starting the recording.
+    Once the recording is stopped, any meta data set will be attached to the next recording.
 */
 void QMediaRecorder::setMetaData(QtMultimediaKit::MetaData key, const QVariant &value)
 {

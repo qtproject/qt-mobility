@@ -125,8 +125,8 @@ public:
     functions defaultInputDevice(), defaultOutputDevice(), and
     availableDevices() let you get a list of all available
     devices. Devices are fetch according to the value of mode
-    this is specified by the QAudio::Mode enum.
-    The QAudioDeviceInfo returned are only valid for the QAudio::Mode.
+    this is specified by the \l {QAudio}::Mode enum.
+    The QAudioDeviceInfo returned are only valid for the \l {QAudio}::Mode.
 
     For instance:
 
@@ -213,7 +213,7 @@ bool QAudioDeviceInfo::isFormatSupported(const QAudioFormat &settings) const
 
     These settings are provided by the platform/audio plugin being used.
 
-    They also are dependent on the QAudio::Mode being used.
+    They also are dependent on the \l {QAudio}::Mode being used.
 
     A typical audio system would provide something like:
     \list
@@ -232,7 +232,7 @@ QAudioFormat QAudioDeviceInfo::preferredFormat() const
 
     These settings are provided by the platform/audio plugin being used.
 
-    They also are dependent on the QAudio::Mode being used.
+    They also are dependent on the \l {QAudio}::Mode being used.
 */
 
 QAudioFormat QAudioDeviceInfo::nearestFormat(const QAudioFormat &settings) const
