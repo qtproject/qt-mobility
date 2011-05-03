@@ -72,7 +72,7 @@ void tst_QGeoRouteSegment::constructor()
 {
 // Not passing
 //  QVERIFY(!qgeoroutesegment->isValid());
-    QCOMPARE(qgeoroutesegment->distance(),0.0);
+    QCOMPARE(qgeoroutesegment->distance(), qreal(0.0));
     QCOMPARE(qgeoroutesegment->maneuver(),*qgeomaneuver);
     QCOMPARE(qgeoroutesegment->travelTime(),0);
 }
@@ -83,7 +83,7 @@ void tst_QGeoRouteSegment::copy_constructor()
 
     QCOMPARE(*qgeoroutesegment,*qgeoroutesegmentcopy);
 
-    QCOMPARE(qgeoroutesegmentcopy->distance(),0.0);
+    QCOMPARE(qgeoroutesegmentcopy->distance(), qreal(0.0));
     QCOMPARE(qgeoroutesegmentcopy->maneuver(),*qgeomaneuver);
     QCOMPARE(qgeoroutesegmentcopy->travelTime(),0);
 
@@ -126,7 +126,7 @@ void tst_QGeoRouteSegment::travelTime_data()
 
 void tst_QGeoRouteSegment::distance()
 {
-    QFETCH(double, distance);
+    QFETCH(qreal, distance);
 
     qgeoroutesegment->setDistance(distance);
 
@@ -135,11 +135,11 @@ void tst_QGeoRouteSegment::distance()
 
 void tst_QGeoRouteSegment::distance_data()
 {
-    QTest::addColumn<double>("distance");
+    QTest::addColumn<qreal>("distance");
 
-    QTest::newRow("distance1") << 0.0 ;
-    QTest::newRow("distance2") << -50.3435 ;
-    QTest::newRow("distance3") << 324556.543534 ;
+    QTest::newRow("distance1") << qreal(0.0) ;
+    QTest::newRow("distance2") << qreal(-50.3435) ;
+    QTest::newRow("distance3") << qreal(324556.543534) ;
 }
 
 
