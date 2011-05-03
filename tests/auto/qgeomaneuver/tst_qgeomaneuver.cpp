@@ -74,7 +74,7 @@ void tst_QGeoManeuver::constructor()
 
     QVERIFY(!qgeomaneuver->isValid());
     QCOMPARE(qgeomaneuver->direction(),QGeoManeuver::NoDirection);
-    QCOMPARE(qgeomaneuver->distanceToNextInstruction(),0.0);
+    QCOMPARE(qgeomaneuver->distanceToNextInstruction(), qreal(0.0));
     QCOMPARE(qgeomaneuver->instructionText(),empty);
     QCOMPARE(qgeomaneuver->timeToNextInstruction(),0);
 }
@@ -131,15 +131,14 @@ void tst_QGeoManeuver::direction_data()
 
 void tst_QGeoManeuver::distanceToNextInstruction()
 {
-    double distance = 0.0;
+    qreal distance = 0.0;
     qgeomaneuver->setDistanceToNextInstruction(distance);
 
-    QCOMPARE (qgeomaneuver->distanceToNextInstruction(),distance);
+    QCOMPARE (qgeomaneuver->distanceToNextInstruction(), distance);
 
     distance = -3423.4324;
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE (qgeomaneuver->distanceToNextInstruction(),distance);
+    QVERIFY (qgeomaneuver->distanceToNextInstruction() != distance);
 
     qgeomaneuver->setDistanceToNextInstruction(distance);
     QCOMPARE (qgeomaneuver->distanceToNextInstruction(),distance);
@@ -154,8 +153,7 @@ void tst_QGeoManeuver::instructionText()
     QCOMPARE (qgeomaneuver->instructionText(),text);
 
     text="After 40m, turn left";
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE (qgeomaneuver->instructionText(),text);
+    QVERIFY (qgeomaneuver->instructionText() != text);
 
 }
 
@@ -198,8 +196,7 @@ void tst_QGeoManeuver::timeToNextInstruction()
 
     time = 35;
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE (qgeomaneuver->timeToNextInstruction(),time);
+    QVERIFY (qgeomaneuver->timeToNextInstruction() != time);
 
     qgeomaneuver->setTimeToNextInstruction(time);
     QCOMPARE (qgeomaneuver->timeToNextInstruction(),time);
@@ -217,8 +214,7 @@ void tst_QGeoManeuver::waypoint()
     QCOMPARE(qgeomaneuver->waypoint(),*qgeocoordinate);
 
     qgeocoordinate->setLatitude(30.3);
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeomaneuver->waypoint(),*qgeocoordinate);
+    QVERIFY(qgeomaneuver->waypoint() != *qgeocoordinate);
 
 
     delete qgeocoordinate;
