@@ -134,6 +134,7 @@ QFeedbackActuator::QFeedbackActuator(QObject *parent, int id) : QObject(parent),
 
 /*!
     Returns the id of the actuator.
+    \since 1.1
 */
 int QFeedbackActuator::id() const
 {
@@ -147,6 +148,7 @@ int QFeedbackActuator::id() const
 
 /*!
     Returns true if the actuator is valid.
+    \since 1.1
 */
 bool QFeedbackActuator::isValid() const
 {
@@ -160,6 +162,7 @@ bool QFeedbackActuator::isValid() const
 
 /*!
     Returns the name of the actuator.
+    \since 1.1
 */
 QString QFeedbackActuator::name() const
 {
@@ -173,6 +176,7 @@ QString QFeedbackActuator::name() const
 
 /*!
     Returns the state of the actuator.
+    \since 1.1
 */
 QFeedbackActuator::State QFeedbackActuator::state() const
 {
@@ -181,6 +185,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 
 /*!
     Returns if the actuator supports the supplied \a capability.
+    \since 1.1
 */
 bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 {
@@ -194,6 +199,7 @@ bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 
 /*!
     Returns true if you can use this actuator to start effects.
+    \since 1.1
 */
 bool QFeedbackActuator::isEnabled() const
 {
@@ -201,10 +207,11 @@ bool QFeedbackActuator::isEnabled() const
 }
 
 /*!
-    Allows you to enable or disable a actuator.  If \a enabled is true, the actuator will be enabled,
+    Allows you to enable or disable an actuator.  If \a enabled is true, the actuator will be enabled,
     and otherwise it will be disabled.
 
     \note Some systems may not allow you to change whether an actuator is enabled.
+    \since 1.1
 */
 void QFeedbackActuator::setEnabled(bool enabled)
 {
@@ -220,6 +227,7 @@ void QFeedbackActuator::setEnabled(bool enabled)
     This signal is emitted when the actuator is requested to enable or disable itself.
 
     \sa isEnabled()
+    \since 1.1
 */
 
 /*!
@@ -236,6 +244,7 @@ QList<QFeedbackActuator*> QFeedbackActuator::actuators()
     \fn QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 
     Returns true if this actuator is equal to \a other.
+    \since 1.1
 */
 bool QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 {

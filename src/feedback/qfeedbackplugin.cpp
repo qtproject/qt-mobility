@@ -69,6 +69,7 @@ QTM_BEGIN_NAMESPACE
 
     Allows a plugin to report the specified \a error whenever necessary.  Errors most likely can happen
     trying to play or pause an effect, which should be supplied as the parameter \a effect.
+    \since 1.1
 */
 
 /*!
@@ -311,6 +312,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 
     This interface will be used to try to play custom effects with specific duration, intensity, envelope and period.
     An effect is always played on a specified actuator.
+    \since 1.1
 */
 
 
@@ -341,6 +343,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
     \fn QFeedbackHapticsInterface::actuators()
 
     Return the available actuators provided by this plugin. The ownership of the actuator objects stays with the plugin.
+    \since 1.1
 */
 
 /*!
@@ -348,6 +351,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 
     Returns the priority for the plugin.
     \sa QFeedbackInterface::PluginPriority
+    \since 1.1
 */
 
 
@@ -357,6 +361,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 
     Sets a \a value for \a property on the \a actuator.
 
+    \since 1.1
     \sa ActuatorProperty
 */
 
@@ -365,6 +370,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 
     Returns the value for the \a property for an \a actuator.
 
+    \since 1.1
     \sa ActuatorProperty
 */
 
@@ -372,6 +378,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
     \fn QFeedbackHapticsInterface::isActuatorCapabilitySupported(const QFeedbackActuator &actuator, QFeedbackActuator::Capability capability)
 
     Returns true if the \a actuator supports the \a capability.
+    \since 1.1
 */
 
 
@@ -379,6 +386,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
     \fn QFeedbackHapticsInterface::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty property)
 
     Tells the backend that the \a property has been updated for the supplied \a effect.
+    \since 1.1
 */
 
 /*!
@@ -386,12 +394,14 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 
     Sets the state to \a state for the effect \a effect. If that fails the backend should report an error by
     calling reportError and \a effect will in turn emit an error signal.
+    \since 1.1
 */
 
 /*!
     \fn QFeedbackHapticsInterface::effectState(const QFeedbackHapticsEffect *effect)
 
     Get the current state for the effect \a effect.
+    \since 1.1
 */
 
 /*!
@@ -400,6 +410,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 
     Returns the instance of the object managing haptics custom effects.
     If no backend has been loaded, this will return a null pointer.
+    \since 1.1
 */
 QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
 {
@@ -412,6 +423,7 @@ QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
     Creates an instance of QFeedbackActuator with the identifier \a id and parent \a parent.  This allows
     backends to create instances of actuators. It is then up to the each backend to manage
     the identifiers according to its needs.
+    \since 1.1
 */
 QFeedbackActuator* QFeedbackHapticsInterface::createFeedbackActuator(QObject* parent, int id)
 {
@@ -426,6 +438,7 @@ QFeedbackActuator* QFeedbackHapticsInterface::createFeedbackActuator(QObject* pa
 
     They can be of any nature (tactile, audio...).
     This simple interface will be used to play those themed effects by a simple call to the play method.
+    \since 1.1
 */
 
 
@@ -433,12 +446,14 @@ QFeedbackActuator* QFeedbackHapticsInterface::createFeedbackActuator(QObject* pa
     \fn QFeedbackThemeInterface::pluginPriority()
 
     Returns the priority for the plugin.
+    \since 1.1
 */
 
 /*!
     \fn QFeedbackThemeInterface::play(QFeedbackEffect::ThemeEffect effect)
 
     Plays the theme effect \a effect. Returns false in case of an error.
+    \since 1.1
 */
 
 /*!
@@ -447,6 +462,7 @@ QFeedbackActuator* QFeedbackHapticsInterface::createFeedbackActuator(QObject* pa
 
     Returns the instance of the object managing theme effects.
     If no backend has been loaded, this will return a null pointer.
+    \since 1.1
 */
 QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 {
@@ -463,6 +479,7 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
     different technologies, all the backend plugins exposing this interface will be loaded at the same time.
     When loading a file all the backend will be tried in order until one can load the file. It is thus very important
     that the backends return a load status as soon as possible to not take a too long time to load a file.
+    \since 1.1
 */
 
 /*!
@@ -471,18 +488,21 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
     Sets the state of the effect \a effect to be loaded if \a value is true, otherwise unloaded.
     Loading a file is asynchronous. Once the backend knows if it has loaded or can't load the file, it must
     call the reportLoadFinished function.
+    \since 1.1
 */
 
 /*!
     \fn QFeedbackFileInterface::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 
     Sets the state of \a effect to \a state.
+    \since 1.1
 */
 
 /*!
     \fn QFeedbackFileInterface::effectState(const QFeedbackFileEffect *effect)
 
     Returns the current state of the effect \a effect.
+    \since 1.1
 */
 
 /*!
@@ -490,12 +510,14 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 
     Return the duration of \a effect, in milliseconds.
     It should return \l QFeedbackEffect::Infinite in case the duration is infinite, or 0 if undefined or unknown.
+    \since 1.1
 */
 
 /*!
     \fn QFeedbackFileInterface::supportedMimeTypes()
 
     Returns a list of the MIME types supported by this plugin.
+    \since 1.1
 */
 
 /*!
@@ -504,6 +526,7 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 
     Returns the instance of the object managing theme effects.
     Even if no backend has been loaded, this will never return a null pointer.
+    \since 1.1
 */
 QFeedbackFileInterface *QFeedbackFileInterface::instance()
 {
@@ -517,6 +540,7 @@ QFeedbackFileInterface *QFeedbackFileInterface::instance()
     As loading a file is asynchronous and multiple plugins are attempted after each other, the
     backend has to call this function in order for the process to perform smoothly.
     The success of the operation is indicated by the \a success parameter.
+    \since 1.1
 */
 void QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect *effect, bool success)
 {

@@ -64,6 +64,7 @@ Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactLocalIdFilter);
 /*!
  * \fn QContactLocalIdFilter::QContactLocalIdFilter(const QContactFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new contact local id filter
+ * \since 1.0
  */
 
 /*!
@@ -77,6 +78,7 @@ QContactLocalIdFilter::QContactLocalIdFilter()
 /*!
  * Sets the list which contains the ids of possible matching contacts to \a ids
  * \sa ids()
+ * \since 1.0
  */
 void QContactLocalIdFilter::setIds(const QList<QContactLocalId>& ids)
 {
@@ -120,6 +122,7 @@ void QContactLocalIdFilter::clear()
 /*!
  * Returns the list of ids of contacts which match this filter
  * \sa setIds()
+ * \since 1.0
  */
 QList<QContactLocalId> QContactLocalIdFilter::ids() const
 {

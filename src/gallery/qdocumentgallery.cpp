@@ -977,12 +977,14 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, count)
     \fn QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 
     \reimp
+    \since 1.1
 */
 
 /*!
     \fn QDocumentGallery::itemTypePropertyNames(const QString &itemType) const;
 
     Returns a list of names of properties that are valid for an \a itemType.
+    \since 1.1
 */
 
 /*!
@@ -990,12 +992,14 @@ Q_DEFINE_GALLERY_PROPERTY(QDocumentGallery, count)
 
     Returns the attributes of a property of \a itemType identified by
     \a propertyName
+    \since 1.1
 */
 
 /*!
     \fn QDocumentGallery::createResponse(QGalleryAbstractRequest *request)
 
     \reimp
+    \since 1.1
 */
 
 
