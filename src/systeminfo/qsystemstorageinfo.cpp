@@ -109,14 +109,6 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
 {
     qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
     qRegisterMetaType<QSystemStorageInfo::StorageState>("QSystemStorageInfo::StorageState");
-
-    // should be moved to connectNotify() and disconnectNotify()
-    connect(d, SIGNAL(logicalDriveChanged(bool,QString)),
-            this, SIGNAL(logicalDriveChanged(bool,QString)),
-            Qt::UniqueConnection);
-
-    connect(d,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
-           this,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),Qt::UniqueConnection);
 }
 
 /*!
@@ -175,6 +167,21 @@ QString QSystemStorageInfo::uriForDrive(const QString &driveVolume)
 QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &driveVolume)
 {
     return storageInfoPrivate()->getStorageState(driveVolume);
+}
+
+/*! internal
+  */
+void QSystemStorageInfo::connectNotify(const char *signal)
+{
+     if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+         connect(storageInfoPrivate(), SIGNAL(logicalDriveChanged(bool,QString)),
+                 this, SIGNAL(logicalDriveChanged(bool,QString)), Qt::UniqueConnection);
+     }
+     if (QLatin1String(signal) == SIGNAL(logicalDriveChanged(bool,QString))) {
+         connect(storageInfoPrivate(), SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+                 this, SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),Qt::UniqueConnection);
+     }
 }
 
 #include "moc_qsystemstorageinfo.cpp"
