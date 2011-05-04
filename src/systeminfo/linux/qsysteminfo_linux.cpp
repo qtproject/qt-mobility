@@ -496,21 +496,9 @@ QString QSystemDeviceInfoPrivate::imei()
         }
     }
 #endif // QT_NO_NETWORKMANAGER
-#if !defined(QT_NO_CONNMAN)
-    if (ofonoAvailable()) {
-        QOfonoManagerInterface ofonoManager;
-        QString modem = ofonoManager.currentModem().path();
-        if (!modem.isEmpty()) {
-            QOfonoModemInterface modemIface(modem,this);
-            QString imei = modemIface.getSerial();
-            if (!imei.isEmpty())
-                return imei;
-        }
-    }
-#endif // QT_NO_CONNMAN
 #endif // QT_NO_DBUS
 
-    return QString();
+    return QSystemDeviceInfoLinuxCommonPrivate::imei();
 }
 
 QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
@@ -541,22 +529,9 @@ QString QSystemDeviceInfoPrivate::imsi()
         }
     }
 #endif // QT_NO_NETWORKMANAGER
-#if !defined(QT_NO_CONNMAN)
-    if (ofonoAvailable()) {
-        QOfonoManagerInterface ofonoManager;
-        QString modem = ofonoManager.currentModem().path();
-        if (!modem.isEmpty()) {
-            QOfonoSimInterface simInterface(modem,this);
-            if (simInterface.isPresent()) {
-                QString id = simInterface.getImsi();
-                if (!id.isEmpty())
-                    return id;
-            }
-        }
-    }
-#endif // QT_NO_CONNMAN
 #endif // QT_NO_DBUS
-    return QString();
+
+    return QSystemDeviceInfoLinuxCommonPrivate::imsi();
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
@@ -687,31 +662,9 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
         }
     }
 #endif // QT_NO_NETWORKMANAGER
-#if !defined(QT_NO_CONNMAN)
-    if (ofonoAvailable()) {
-        QOfonoManagerInterface ofonoManager;
-        QString modem = ofonoManager.currentModem().path();
-        if(!modem.isEmpty()) {
-            QOfonoSimInterface simInterface(modem, this);
-            QString simpin = simInterface.pinRequired();
-            if (simpin == "pin"
-                || simpin == "phone"
-                || simpin == "firstphone"
-                || simpin == "pin2"
-                || simpin == "puk"
-                || simpin == "firstphonepuk"
-                || simpin == "puk2") {
-                return QSystemDeviceInfo::SimLocked;
-            }
-
-            if (simInterface.isPresent())
-                return QSystemDeviceInfo::SingleSimAvailable;
-        }
-    }
-#endif // QT_NO_CONNMAN
 #endif // QT_NO_DBUS
 
-     return QSystemDeviceInfo::SimNotAvailable;
+     return QSystemDeviceInfoLinuxCommonPrivate::simStatus();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

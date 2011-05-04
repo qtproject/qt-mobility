@@ -176,9 +176,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 /*!
     Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling. -1 is returned
     if not available or on error.
-
-    In the case of QSystemNetworkInfo::EthernetMode, it will either be 100 for carrier active, or 0 for when
-    there is no carrier or cable connected.
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {

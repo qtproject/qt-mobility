@@ -633,7 +633,6 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     fi
 
     if [ "$LINUX_TARGET" = meego ]; then
-        compileTest connman connman
         compileTest "Location GeoClue master provider" geoclue-master
         compileTest "Location Gypsy provider" gypsy
     else

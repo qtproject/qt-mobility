@@ -278,6 +278,9 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
+    QString imei();
+    QString imsi();
+    QSystemDeviceInfo::SimStatus simStatus();
     QString manufacturer();
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
     int batteryLevel() const;
