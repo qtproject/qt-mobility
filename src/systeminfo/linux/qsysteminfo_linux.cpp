@@ -279,8 +279,11 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quin
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfoLinuxCommonPrivate::currentMode();
+    if (mode != QSystemNetworkInfo::UnknownMode)
+        return mode;
+
 #if !defined(QT_NO_NETWORKMANAGER)
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
     QMapIterator<QString, QString> i(activePaths);
     QString devicepath;
     while (i.hasNext()) {
@@ -294,14 +297,17 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         }
         devicepath = i.value();
     }
-    return mode;
-#else // QT_NO_NETWORKMANAGER
-    return QSystemNetworkInfoLinuxCommonPrivate::currentMode();
 #endif // QT_NO_NETWORKMANAGER
+
+    return QSystemNetworkInfo::UnknownMode;
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    QSystemNetworkInfo::NetworkStatus status = QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+    if (status != QSystemNetworkInfo::UndefinedStatus)
+        return status;
+
 #if !defined(QT_NO_NETWORKMANAGER)
     switch (mode) {
     case QSystemNetworkInfo::GsmMode:
@@ -375,11 +381,15 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     }
 #endif // QT_NO_NETWORKMANAGER
 
-    return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+    return QSystemNetworkInfo::UndefinedStatus;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+    int signalStrength = QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+    if (signalStrength != -1)
+        return signalStrength;
+
 #if !defined(QT_NO_NETWORKMANAGER)
     switch (mode) {
     case QSystemNetworkInfo::GsmMode:
@@ -413,11 +423,15 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     }
 #endif // QT_NO_NETWORKMANAGER
 
-    return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+    return -1;
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    QString name = QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
+    if (!name.isEmpty())
+        return name;
+
 #if !defined(QT_NO_NETWORKMANAGER)
     switch (mode) {
     case QSystemNetworkInfo::GsmMode:
@@ -457,7 +471,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     }
 #endif // QT_NO_NETWORKMANAGER
 
-    return QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
+    return QString();
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)

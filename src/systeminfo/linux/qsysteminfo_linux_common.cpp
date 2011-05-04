@@ -643,23 +643,6 @@ QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-#if !defined(QT_NO_CONNMAN)
-    if (connmanIsAvailable) {
-        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(mode).name());
-        if (!path.path().isEmpty()) {
-            QConnmanServiceInterface serviceIface(path.path(), this);
-            if (mode == QSystemNetworkInfo::GsmMode
-                || mode == QSystemNetworkInfo::CdmaMode
-                || mode == QSystemNetworkInfo::WcdmaMode) {
-                return getOfonoStatus(mode);
-            }
-//            if (serviceIface.isRoaming())
-//                return QSystemNetworkInfo::Roaming;
-            if (serviceIface.isValid())
-                return stateToStatus(serviceIface.getState());
-        }
-    }
-#endif // QT_NO_CONNMAN
     switch(mode) {
     case QSystemNetworkInfo::WlanMode: {
         const QString sysfsNetPath("/sys/class/net/");
@@ -705,6 +688,24 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         break;
     };
 
+#if !defined(QT_NO_CONNMAN)
+    if (connmanIsAvailable) {
+        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(mode).name());
+        if (!path.path().isEmpty()) {
+            QConnmanServiceInterface serviceIface(path.path(), this);
+            if (mode == QSystemNetworkInfo::GsmMode
+                || mode == QSystemNetworkInfo::CdmaMode
+                || mode == QSystemNetworkInfo::WcdmaMode) {
+                return getOfonoStatus(mode);
+            }
+//            if (serviceIface.isRoaming())
+//                return QSystemNetworkInfo::Roaming;
+            if (serviceIface.isValid())
+                return stateToStatus(serviceIface.getState());
+        }
+    }
+#endif // QT_NO_CONNMAN
+
     return QSystemNetworkInfo::UndefinedStatus;
 }
 
@@ -738,6 +739,73 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getOfono
 
 QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode: {
+        const QString sysfsNetPath("/sys/class/net/");
+        const QStringList dirs = QDir(sysfsNetPath).entryList(QStringList() << "wlan*");
+        foreach (const QString &dir, dirs) {
+            int sock = socket(PF_INET, SOCK_DGRAM, 0);
+            if (sock > 0) {
+                char buffer[IW_ESSID_MAX_SIZE + 1];
+                iwreq iwInfo;
+
+                iwInfo.u.essid.pointer = (caddr_t)&buffer;
+                iwInfo.u.essid.length = IW_ESSID_MAX_SIZE + 1;
+                iwInfo.u.essid.flags = 0;
+
+                strncpy(iwInfo.ifr_name, dir.toLocal8Bit().data(), IFNAMSIZ);
+
+                if (ioctl(sock, SIOCGIWESSID, &iwInfo) == 0) {
+                    close(sock);
+                    return (const char *)iwInfo.u.essid.pointer;
+                }
+
+                close(sock);
+            }
+        }
+        break;
+    }
+
+    case QSystemNetworkInfo::EthernetMode: {
+        QFile resFile("/etc/resolv.conf");
+        if (resFile.exists()) {
+            if (resFile.exists() && resFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QString line;
+                QTextStream in(&resFile);
+                do {
+                    line = in.readLine();
+                    if (line.contains("domain")) {
+                        QString domain(line.section(" ", 1, 1));
+                        if (!domain.isEmpty())
+                            return domain;
+                    }
+                } while (!line.isNull());
+                resFile.close();
+            }
+        }
+        return QString("Wired");
+    }
+
+    case QSystemNetworkInfo::BluetoothMode: {
+        const QString sysfsBluetoothPath("/sys/class/bluetooth/");
+        const QStringList dirs = QDir(sysfsBluetoothPath).entryList(QStringList() << "*");
+        foreach (const QString &dir, dirs) {
+            QFile carrier(sysfsBluetoothPath + dir + "/name");
+            if (carrier.open(QIODevice::ReadOnly))
+                return carrier.readAll().simplified();
+        }
+        break;
+    }
+
+//    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::CdmaMode:
+//    case QSystemNetworkInfo::WcdmaMode:
+//    case QSystemNetworkInfo::WimaxMode:
+//    case QSystemNetworkInfo::LteMode:
+    default:
+        break;
+    };
+
 #if !defined(QT_NO_CONNMAN)
     QString tech = modeToTechnology(mode);
     if (tech.contains("cellular")) {
@@ -772,71 +840,45 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
         }
     }
 #endif // QT_NO_CONNMAN
-    QString name;
+
+    return QString();
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
+{
     switch(mode) {
     case QSystemNetworkInfo::WlanMode: {
-        if (networkStatus(mode) != QSystemNetworkInfo::Connected)
-            return QString();
-
-        QString wlanInterface;
-        const QString baseSysDir("/sys/class/net/");
-        const QDir wDir(baseSysDir);
-        const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+        const QString sysfsNetPath("/sys/class/net/");
+        const QStringList dirs = QDir(sysfsNetPath).entryList(QStringList() << "wlan*");
         foreach (const QString &dir, dirs) {
-            const QString devFile = baseSysDir + dir;
-            const QFileInfo fi(devFile + "/phy80211");
-            if (fi.exists())
-                wlanInterface = dir;
+            QFile carrier(sysfsNetPath + dir + "/address");
+            if (carrier.open(QIODevice::ReadOnly))
+                return carrier.readAll().simplified();
         }
-        int sock = socket(PF_INET, SOCK_DGRAM, 0);
-        if (sock > 0) {
-            const char *someRandomBuffer[IW_ESSID_MAX_SIZE + 1];
-            struct iwreq wifiExchange;
-            memset(&wifiExchange, 0, sizeof(wifiExchange));
-            memset(someRandomBuffer, 0, sizeof(someRandomBuffer));
-
-            wifiExchange.u.essid.pointer = (caddr_t) someRandomBuffer;
-            wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE;
-            wifiExchange.u.essid.flags = 0;
-
-            const char *interfaceName = wlanInterface.toLatin1();
-            strncpy(wifiExchange.ifr_name, interfaceName, IFNAMSIZ);
-            wifiExchange.u.essid.length = IW_ESSID_MAX_SIZE + 1;
-
-            if (ioctl(sock, SIOCGIWESSID, &wifiExchange) == 0) {
-                const char *ssid = (const char *)wifiExchange.u.essid.pointer;
-                name = ssid;
-            }
-        } else {
-            qDebug() << "no socket";
-        }
-        close(sock);
         break;
     }
 
     case QSystemNetworkInfo::EthernetMode: {
-        QFile resFile("/etc/resolv.conf");
-        if (resFile.exists()) {
-            if (resFile.exists() && resFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QString line;
-                QTextStream in(&resFile);
-                do {
-                    line = in.readLine();
-                    if (line.contains("domain"))
-                        name = line.section(" ", 1, 1); //guessing here
-                } while (!line.isNull());
-                resFile.close();
-            }
+        const QString sysfsNetPath("/sys/class/net/");
+        const QStringList dirs = QDir(sysfsNetPath).entryList(QStringList() << "eth*" << "usb*");
+        foreach (const QString &dir, dirs) {
+            QFile carrier(sysfsNetPath + dir + "/address");
+            if (carrier.open(QIODevice::ReadOnly))
+                return carrier.readAll().simplified();
         }
-        if (name.isEmpty())
-            name = "Wired";
         break;
     }
 
-    case QSystemNetworkInfo::BluetoothMode:
-#if !defined(QT_NO_DBUS)
-        name = getBluetoothInfo("name");
-#endif // QT_NO_DBUS
+    case QSystemNetworkInfo::BluetoothMode: {
+        const QString sysfsBluetoothPath("/sys/class/bluetooth/");
+        const QStringList dirs = QDir(sysfsBluetoothPath).entryList(QStringList() << "*");
+        foreach (const QString &dir, dirs) {
+            QFile carrier(sysfsBluetoothPath + dir + "/address");
+            if (carrier.open(QIODevice::ReadOnly))
+                return carrier.readAll().simplified();
+        }
+        break;
+    }
 
 //    case QSystemNetworkInfo::GsmMode:
 //    case QSystemNetworkInfo::CdmaMode:
@@ -847,11 +889,6 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
         break;
     };
 
-    return name;
-}
-
-QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
-{
 #if !defined(QT_NO_CONNMAN)
     if (connmanIsAvailable) {
         foreach (const QString &servicePath, connmanManager->getServices()) {
@@ -870,73 +907,6 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
         }
     }
 #endif // QT_NO_CONNMAN
-    switch(mode) {
-    case QSystemNetworkInfo::WlanMode: {
-        QString result;
-        const QString baseSysDir("/sys/class/net/");
-        const QDir wDir(baseSysDir);
-        const QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
-        foreach (const QString &dir, dirs) {
-            const QString devFile = baseSysDir + dir;
-            const QFileInfo fi(devFile + "/phy80211");
-            if (fi.exists()) {
-                bool powered(false);
-                QFile linkmode(devFile + "/link_mode"); //check for dev power
-                if (linkmode.exists() && linkmode.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                    QTextStream in(&linkmode);
-                    in >> result;
-                    if (result.contains("1"))
-                        powered = true;
-                    linkmode.close();
-                }
-
-                QFile rx(devFile + "/address");
-                if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                    QTextStream in(&rx);
-                    in >> result;
-                    rx.close();
-                    if (powered)
-                        return result;
-                }
-            }
-        }
-        break;
-    }
-
-    case QSystemNetworkInfo::EthernetMode: {
-        QString result;
-        const QString baseSysDir("/sys/class/net/");
-        const QDir eDir(baseSysDir);
-        const QStringList dirs = eDir.entryList(QStringList() << "eth*" << "usb*", QDir::Dirs | QDir::NoDotAndDotDot);
-        foreach (const QString dir, dirs) {
-            const QString devFile = baseSysDir + dir;
-            const QFileInfo fi(devFile + "/address");
-            if (fi.exists()) {
-                QFile rx(fi.absoluteFilePath());
-                if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                    QTextStream in(&rx);
-                    in >> result;
-                    rx.close();
-                    return result;
-                }
-            }
-        }
-        break;
-    }
-
-    case QSystemNetworkInfo::BluetoothMode:
-#if !defined(QT_NO_DBUS)
-        return getBluetoothInfo("address");
-#endif // QT_NO_DBUS
-
-//    case QSystemNetworkInfo::GsmMode:
-//    case QSystemNetworkInfo::CdmaMode:
-//    case QSystemNetworkInfo::WcdmaMode:
-//    case QSystemNetworkInfo::WimaxMode:
-//    case QSystemNetworkInfo::LteMode:
-    default:
-        break;
-    };
 
     return QString();
 }
@@ -975,6 +945,48 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
 
 int QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode: {
+        QString iface = interfaceForMode(QSystemNetworkInfo::WlanMode).name();
+        QFile file("/proc/net/wireless");
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            return -1;
+
+        QTextStream in(&file);
+        QString line = in.readLine();
+        while (!line.isNull()) {
+            if (line.left(6).contains(iface)) {
+                QString token = line.section(" ", 4, 5).simplified();
+                token.chop(1);
+                bool ok;
+                int signalStrength = (int)rint((log(token.toInt(&ok)) / log(92)) * 100.0);
+                if (ok)
+                    return signalStrength;
+                else
+                    return -1;
+            }
+            line = in.readLine();
+        }
+
+        break;
+    }
+
+    case QSystemNetworkInfo::EthernetMode:
+        if (networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected)
+            return 100;
+        else
+            return -1;
+
+//    case QSystemNetworkInfo::BluetoothMode:
+//    case QSystemNetworkInfo::GsmMode:
+//    case QSystemNetworkInfo::CdmaMode:
+//    case QSystemNetworkInfo::WcdmaMode:
+//    case QSystemNetworkInfo::WimaxMode:
+//    case QSystemNetworkInfo::LteMode:
+    default:
+        break;
+    };
+
 #if !defined(QT_NO_CONNMAN)
     if (connmanIsAvailable) {
         QString tech = modeToTechnology(mode);
@@ -1002,66 +1014,12 @@ int QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkIn
         }
     }
 #endif // QT_NO_CONNMAN
-    switch(mode) {
-    case QSystemNetworkInfo::WlanMode: {
-        QString iface = interfaceForMode(QSystemNetworkInfo::WlanMode).name();
-        QFile file("/proc/net/wireless");
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            return 0;
-
-        QTextStream in(&file);
-        QString line = in.readLine();
-        while (!line.isNull()) {
-            if (line.left(6).contains(iface)) {
-                QString token = line.section(" ", 4, 5).simplified();
-                token.chop(1);
-                bool ok;
-                int signalStrength = (int)rint((log(token.toInt(&ok)) / log(92)) * 100.0);
-                if (ok)
-                    return signalStrength;
-                else
-                    return 0;
-            }
-            line = in.readLine();
-        }
-
-        break;
-    }
-
-    case QSystemNetworkInfo::EthernetMode:
-        if (networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected)
-            return 100;
-        else
-            return -1;
-
-    case QSystemNetworkInfo::BluetoothMode:
-#if !defined(QT_NO_DBUS)
-        return getBluetoothRssi();
-#endif
-
-//    case QSystemNetworkInfo::GsmMode:
-//    case QSystemNetworkInfo::CdmaMode:
-//    case QSystemNetworkInfo::WcdmaMode:
-//    case QSystemNetworkInfo::WimaxMode:
-//    case QSystemNetworkInfo::LteMode:
-    default:
-        break;
-    };
 
     return -1;
 }
 
 QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-#if !defined(QT_NO_CONNMAN)
-    if (connmanIsAvailable) {
-        foreach (const QString &servicePath, connmanManager->getServices()) {
-            QConnmanServiceInterface *serviceIface = new QConnmanServiceInterface(servicePath,this);
-            if(serviceIface->getType() == modeToTechnology(mode))
-                return QNetworkInterface::interfaceFromName(serviceIface->getInterface());
-        }
-   }
-#endif // QT_NO_CONNMAN
     switch(mode) {
     case QSystemNetworkInfo::WlanMode: {
         const QStringList dirs = QDir("/sys/class/net/").entryList(QStringList() << "wlan*");
@@ -1093,55 +1051,18 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
         break;
     };
 
+#if !defined(QT_NO_CONNMAN)
+    if (connmanIsAvailable) {
+        foreach (const QString &servicePath, connmanManager->getServices()) {
+            QConnmanServiceInterface *serviceIface = new QConnmanServiceInterface(servicePath, this);
+            if (serviceIface->getType() == modeToTechnology(mode))
+                return QNetworkInterface::interfaceFromName(serviceIface->getInterface());
+        }
+   }
+#endif // QT_NO_CONNMAN
+
     return QNetworkInterface();
 }
-
-#if !defined(QT_NO_DBUS)
-bool QSystemNetworkInfoLinuxCommonPrivate::isDefaultInterface(const QString &deviceName)
-{
-    QFile routeFilex("/proc/net/route");
-    if (routeFilex.exists() && routeFilex.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream rin(&routeFilex);
-        QString line = rin.readLine();
-        while (!line.isNull()) {
-            const QString lineSection = line.section("\t", 2, 2, QString::SectionSkipEmpty);
-            if (lineSection != "00000000" && lineSection != "Gateway") {
-                if (line.section("\t", 0, 0, QString::SectionSkipEmpty) == deviceName) {
-                    routeFilex.close();
-                    return true;
-                }
-            }
-            line = rin.readLine();
-        }
-    }
-    routeFilex.close();
-    return false;
-}
-
-int QSystemNetworkInfoLinuxCommonPrivate::getBluetoothRssi()
-{
-    return 0;
-}
-
-QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &file)
-{
-    const QString sysPath("/sys/class/bluetooth/");
-    const QDir sysDir(sysPath);
-    const QStringList sysList = sysDir.entryList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-    foreach (const QString &dir, sysList) {
-        QFile btFile(sysPath + dir + "/" + file);
-        if (btFile.exists()) {
-            if (btFile.open(QIODevice::ReadOnly)) {
-                QTextStream btFileStream(&btFile);
-                QString line = btFileStream.readAll();
-                return line.simplified();
-            }
-        }
-    }
-
-    return QString();
-}
-#endif // QT_NO_DBUS
 
 #if !defined(QT_NO_CONNMAN)
 void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
@@ -1375,6 +1296,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::currentMod
             return typeToMode(mode);
     }
 #endif
+
     if (networkStatus(QSystemNetworkInfo::EthernetMode) == QSystemNetworkInfo::Connected)
         return QSystemNetworkInfo::EthernetMode;
     else if (networkStatus(QSystemNetworkInfo::WlanMode) == QSystemNetworkInfo::Connected)
@@ -1406,6 +1328,7 @@ int QSystemNetworkInfoLinuxCommonPrivate::cellId()
         }
     }
 #endif
+
     return -1;
 }
 
@@ -1420,6 +1343,7 @@ int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
         }
     }
 #endif
+
     return -1;
 }
 
@@ -1440,6 +1364,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()
         }
     }
 #endif
+
     return QString();
 }
 
@@ -1459,6 +1384,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
         }
     }
 #endif
+
     return QString();
 }
 
@@ -1479,6 +1405,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileCountryCode()
         }
     }
 #endif
+
     return QString();
 }
 
@@ -1504,6 +1431,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode()
         }
     }
 #endif
+
     return QString();
 }
 
@@ -1519,6 +1447,7 @@ QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoLinuxCommonPrivate::cel
         }
     }
 #endif
+
     return QSystemNetworkInfo::UnknownDataTechnology;
 }
 
