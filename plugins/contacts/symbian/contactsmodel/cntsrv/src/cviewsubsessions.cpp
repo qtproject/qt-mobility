@@ -695,33 +695,43 @@ void CViewSubSessionBase::GetContactsMatchingFilterL(const RMessage2& aMessage)
     CleanupClosePushL(array);
     TContactIdWithMapping idMap;
 
-    CContactIdArray* idVoipArray = NULL;
+    const TInt viewCount(iView->CountL());
     if (filter & CContactDatabase::ECustomFilter3)
         {
         // CContactDatabase::ECustomFilter3 was used to filter the contacts 
-        // which support voip call. 
+        // which can be used in speed dial fetch dialog. 
         MLplCollection& collection = iViewManager.FactoryL().GetCollectorL();
         collection.Reset();
-        idVoipArray = collection.FindVoipContactsL();
-        CleanupStack::PushL(idVoipArray);
+        CContactIdArray* speedDialIDArray = collection.FindSpeedDialContactsL();
+        CleanupStack::PushL(speedDialIDArray);
+       // Filter view contacts.
+        for (TInt i=0;i<viewCount;++i)
+	        {
+	        const CViewContact& contact = iView->ContactAtL(i);
+	        if(KErrNotFound !=speedDialIDArray->Find(contact.Id())) // Check if the contacts support speed dial.
+	            {
+	            idMap.iId=contact.Id();
+	            idMap.iMapping=i;
+	            User::LeaveIfError(array.Append(idMap));
+	            }
+	        }
+        CleanupStack::PopAndDestroy(speedDialIDArray);
         }
-    // Filter view contacts.
-    const TInt viewCount(iView->CountL());
-    for (TInt i=0;i<viewCount;++i)
+        else
         {
-        const CViewContact& contact = iView->ContactAtL(i);
-        if(contact.ContactMatchesFilter(filter) ||
-                (idVoipArray && (KErrNotFound !=idVoipArray->Find(contact.Id())))) // Check if the contacts support voip call.
+        // Filter view contacts.
+        for (TInt i=0;i<viewCount;++i)
             {
-            idMap.iId=contact.Id();
-            idMap.iMapping=i;
-            User::LeaveIfError(array.Append(idMap));
+            const CViewContact& contact = iView->ContactAtL(i);
+            if(contact.ContactMatchesFilter(filter))
+                {
+                idMap.iId=contact.Id();
+                idMap.iMapping=i;
+                User::LeaveIfError(array.Append(idMap));
+                }
             }
         }
-    if(idVoipArray)
-        {
-        CleanupStack::PopAndDestroy(idVoipArray);
-        }
+
     // Externalize array to client.
     const TInt count(array.Count());
     const TInt maxBufSize = (1+(array.Count()*2))*sizeof(TInt);
