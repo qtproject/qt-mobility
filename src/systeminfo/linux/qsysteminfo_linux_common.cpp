@@ -767,21 +767,10 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
     }
 
     case QSystemNetworkInfo::EthernetMode: {
-        QFile resFile("/etc/resolv.conf");
-        if (resFile.exists()) {
-            if (resFile.exists() && resFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QString line;
-                QTextStream in(&resFile);
-                do {
-                    line = in.readLine();
-                    if (line.contains("domain")) {
-                        QString domain(line.section(" ", 1, 1));
-                        if (!domain.isEmpty())
-                            return domain;
-                    }
-                } while (!line.isNull());
-                resFile.close();
-            }
+        char domainName[64];
+        if (getdomainname(domainName, 64) == 0) {
+            if (strcmp(domainName, "(none)") != 0)
+                return domainName;
         }
         return QString("Wired");
     }
