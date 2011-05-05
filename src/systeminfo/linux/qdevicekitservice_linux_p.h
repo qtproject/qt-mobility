@@ -107,6 +107,11 @@ public:
     QString deviceFilePresentation();
     QStringList deviceMountPaths();
 
+    bool deviceIsDrive();
+    QString driveMedia();
+    bool driveCanDetach();
+    bool driveIsMediaEjectable();
+
 private:
     QVariant getProperty(const QString &property);
     QString path;

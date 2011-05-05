@@ -171,6 +171,27 @@ QVariant QUDisksDeviceInterface::getProperty(const QString &property)
     return var;
 }
 
+bool QUDisksDeviceInterface::deviceIsDrive()
+{
+    return this->getProperty("DeviceIsDrive").toBool();
+}
+
+QString QUDisksDeviceInterface::driveMedia()
+{
+    return this->getProperty("DriveMedia").toString();
+}
+
+bool QUDisksDeviceInterface::driveCanDetach()
+{
+    return this->getProperty("DriveCanDetach").toBool();
+}
+
+bool QUDisksDeviceInterface::driveIsMediaEjectable()
+{
+     return this->getProperty("DriveIsMediaEjectable").toBool();
+}
+
+
 QUPowerInterface::QUPowerInterface(QObject *parent)
     : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE)
     , QLatin1String(UPOWER_PATH)
