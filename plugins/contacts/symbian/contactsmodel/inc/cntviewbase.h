@@ -723,7 +723,9 @@ server side view object.
 public:
 	void OpenL(const CContactDatabase& aDb,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes,const TUid& aSortPluginImplUid,const TDesC8& aSortPluginName);
 	void OpenL(const CContactDatabase& aDb,const TDesC& aName,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes,const TUid& aSortPluginImplUid,const TDesC8& aSortPluginName);
+	void ReOpenL(const CContactDatabase& aDb);
 	void Close();
+	RContactRemoteView();
 public: // From CContactViewBase
 	TContactItemId AtL(TInt aIndex) const;
 	CViewContact*  ContactAtL(TInt aIndex);
@@ -748,6 +750,13 @@ private:
 private:
 	CViewContact* iContact;
 	RContactViewSortOrder iSortOrder ;
+	// Pointer to RCntModel. Not owned.
+	RCntModel* iRCntModel;
+	// View parameters. Owned.
+	HBufC8* iViewParams;
+	// View name. Owned.
+	HBufC* iViewName;
+	friend class CContactRemoteViewBase;
 	};
 
 
