@@ -347,13 +347,6 @@ void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
     image is visible.
 */
 
-/*!
-    \qmlproperty bool MapImage::selected
-
-    This property holds a boolean corresponding to whether or not the
-    image is selected.
-*/
-
 #include "moc_qdeclarativegeomappixmapobject_p.cpp"
 
 QTM_END_NAMESPACE
