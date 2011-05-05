@@ -53,8 +53,8 @@
 // We mean it.
 //
 
-#include <QObject>
 #include "qmobilityglobal.h"
+#include <QtCore/qobject.h>
 #include <libudev.h>
 
 QTM_BEGIN_NAMESPACE
@@ -72,30 +72,16 @@ static const char *UDEV_PROPERTY_INTERFACE  = "INTERFACE";
 static const char *UDEV_PROPERTY_NAME       = "NAME";
 static const char *UDEV_PROPERTY_V4L_CAP    = "ID_V4L_CAPABILITIES";
 
-struct QUdevFeatureMatrix {
-    bool bluetooth;
-    bool camera;
-    bool gps;
-    bool haptics;
-    bool infrared;
-    bool leds;
-    bool memcard;
-    bool radio;
-    bool usb;
-    bool vibration;
-    bool videoOut;
-    bool wlan;
-};
-
-class QUdevService : public QObject {
+class QUdevService : public QObject
+{
     Q_OBJECT
 
 public:
     QUdevService();
     virtual ~QUdevService();
+
     bool isSubsystemAvailable(const char *subsystem);
     bool isPropertyAvailable(const char *property, const char *value);
-    QUdevFeatureMatrix availableFeatures();
 
 private:
     struct udev *context;
