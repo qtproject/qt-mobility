@@ -237,13 +237,6 @@ void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
     circle is visible.
 */
 
-/*!
-    \qmlproperty bool MapCircle::selected
-
-    This property holds a boolean corresponding to whether or not the
-    circle is selected.
-*/
-
 #include "moc_qdeclarativegeomapcircleobject_p.cpp"
 
 QTM_END_NAMESPACE

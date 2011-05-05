@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass LandmarkCategoryModel QDeclarativeLandmarkCategoryModel
     \brief The LandmarkCategoryModel element provides access to categories.
     \inherits LandmarkAbstractModel
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
