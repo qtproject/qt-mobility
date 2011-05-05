@@ -50,6 +50,7 @@ QT_BEGIN_NAMESPACE
     \brief The QMediaTimeInterval class represents a time interval with integer precision.
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     An interval is specified by an inclusive start() and end() time.  These
     must be set in the constructor, as this is an immutable class.  The
@@ -240,7 +241,7 @@ QMediaTimeRangePrivate::QMediaTimeRangePrivate(const QMediaTimeInterval &interva
 }
 
 void QMediaTimeRangePrivate::addInterval(const QMediaTimeInterval &interval)
-{    
+{
     // Handle normalized intervals only
     if(!interval.isNormal())
         return;

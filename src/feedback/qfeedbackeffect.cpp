@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QFeedbackEffect class is the abstract base class for feedback effects.
     \ingroup feedback
     \inmodule QtFeedback
+    \since 1.1
 
     It represents an effect to provide feedback to a person (i.e., an effect that
     affect human senses). The technology available today usually only

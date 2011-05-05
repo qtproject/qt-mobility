@@ -48,28 +48,29 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtServiceFramework
     \brief The QServicePluginInterface class defines the interface
     that every plug-in based service must implement.
+    \since 1.0
 */
 
 /*!
     \internal
 */
-QServicePluginInterface::QServicePluginInterface() 
+QServicePluginInterface::QServicePluginInterface()
 {
 }
 
 /*!
     \internal
 */
-QServicePluginInterface::~QServicePluginInterface() 
+QServicePluginInterface::~QServicePluginInterface()
 {
 }
-    
+
 /*!
     \fn QObject* QServicePluginInterface::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context,
                                     QAbstractSecuritySession* securitySession)
 
     Creates a new instance of the service specified by \a descriptor. The service
-    may use the given \a context and \a securitySession. \a context and \a securitySession object are owned 
+    may use the given \a context and \a securitySession. \a context and \a securitySession object are owned
     by the client of the service.
 
     This function returns a null pointer if the plug-in doesn't
@@ -82,17 +83,17 @@ QServicePluginInterface::~QServicePluginInterface()
     This function is called by QServiceManager as part of the service registration process. It can be
     used to initialize the environment or the creation of external settings files which may be required
     during the execution of the service.
-    
+
     The default implementation for this function does nothing.
 
     \sa QServiceManager::addService()
 */
-void QServicePluginInterface::installService() 
+void QServicePluginInterface::installService()
 {
 }
 
 /*!
-    \fn bool QServicePluginInterface::uninstallService() 
+    \fn bool QServicePluginInterface::uninstallService()
 
     This function is called bu QServiceManager as part of the deregistration process for services. This
     gives the service the possibility to perform cleanup operations such as the removal of setting files
@@ -103,7 +104,7 @@ void QServicePluginInterface::installService()
     \sa QServiceManager::removeService()
 */
 
-void QServicePluginInterface::uninstallService() 
+void QServicePluginInterface::uninstallService()
 {
 }
 

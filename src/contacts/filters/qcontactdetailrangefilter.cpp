@@ -50,11 +50,12 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailRangeFilter
   \brief The QContactDetailRangeFilter class provides a filter based around
   a detail value range criterion.
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-filters
- 
+
   It may be used to select contacts which contain a detail of a particular definition with a particular value that lies in
   a range (either open or closed).
  */

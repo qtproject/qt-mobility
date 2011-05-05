@@ -63,6 +63,10 @@ public slots:
     virtual void accept();
     virtual void reject();
 
+
+private slots:
+    void categoryPressed(QListWidgetItem *item);
+
 private:
     QLandmark lm;
 };

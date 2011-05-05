@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
 
-class QSystemInfoPrivate : public QObject
+class Q_SYSINFO_EXPORT QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -105,7 +105,7 @@ private:
 };
 QSystemInfoPrivate *getSystemInfoPrivate();
 
-class  QSystemNetworkInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemNetworkInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -158,7 +158,7 @@ private:
 };
 QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate();
 
-class  QSystemDisplayInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemDisplayInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -190,7 +190,7 @@ private:
 };
 QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate();
 
-class  QSystemDeviceInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -284,7 +284,7 @@ private:
 };
 QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate();
 
-class  QSystemStorageInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -322,7 +322,7 @@ private:
 };
 QSystemStorageInfoPrivate *getSystemStorageInfoPrivate();
 
-class  QSystemScreenSaverPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemScreenSaverPrivate : public QObject
 {
     Q_OBJECT
 
@@ -341,7 +341,7 @@ private:
 };
 
 
-class  QSystemBatteryInfoPrivate : public QObject
+class  Q_SYSINFO_EXPORT QSystemBatteryInfoPrivate : public QObject
 {
     Q_OBJECT
 
@@ -403,6 +403,21 @@ private:
     QSystemBatteryInfoData data;
 };
 QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate();
+
+#ifdef TESTR
+class Q_SYSINFO_EXPORT SystemInfoConnection : public QObject
+{
+    Q_OBJECT
+public:
+    SystemInfoConnection(QObject *parent = 0);
+    QSystemInfoPrivate *systeminfoPrivate();
+    QSystemNetworkInfoPrivate *networkInfoPrivate();
+    QSystemDeviceInfoPrivate *deviceInfoPrivate();
+    QSystemStorageInfoPrivate *storageInfoPrivate();
+    QSystemBatteryInfoPrivate *batteryInfoPrivate();
+    QSystemDeviceInfoPrivate *alignedTImerPrivate();
+};
+#endif
 
 
 QTM_END_NAMESPACE

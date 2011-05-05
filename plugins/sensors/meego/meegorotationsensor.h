@@ -59,7 +59,7 @@ public:
     meegorotationsensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
 
 private:
     QRotationReading m_reading;

@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
   \class QContactFetchHint
 
   \inmodule QtContacts
+   \since 1.0
 
   \brief The QContactFetchHint class provides hints to the manager about which contact
   information needs to be retrieved in an asynchronous fetch request or a synchronous

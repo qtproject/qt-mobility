@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     To query the services provided by all contactable Bluetooth devices create an instance of
     QBluetoothServiceDiscoveryAgent, connect to either the serviceDiscovered() or finished()

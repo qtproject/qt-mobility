@@ -46,6 +46,7 @@
     \ingroup sensors_backend
     \inmodule QtSensors
     \brief The QSensorPluginInterface class is the pure virtual interface to sensor plugins.
+    \since 1.0
 
     The QSensorPluginInterface class is implemented in sensor plugins to register sensor
     backends with QSensorManager.

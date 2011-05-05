@@ -70,6 +70,7 @@
     <h3>Location</h3>
     <ul>
     <li>Symbian: QGeoPositionInfoSource and QGeoSatelliteInfoSource can only be instantiated and used in application's main thread. </li>
+    <li>Symbian: QGeoAreaMonitor::createDefaultMonitor() creates generic polling monitor instead of native Symbian monitor. </li>
     </ul>
     <h3>Organizer</h3>
     <ul>
@@ -84,7 +85,7 @@
     </ul>
     <h3>Maps and Navigation</h3>
     <ul>
-    <li>At the time of the QtMobility 1.1.0 release the QML support for the Maps and Navigation API is incomplete and will be improved in the next patch release. Therefore the QML API will be subject to potentially incompatible changes. </li>
+    <li>At the time of the QtMobility 1.2.0 QML support focus for the Maps and Navigation API is in Mapping functionality. Notably routing, searching and geocoding are not yet supported. </li>
     </ul>
     <h3>Feedback</h3>
     <ul>

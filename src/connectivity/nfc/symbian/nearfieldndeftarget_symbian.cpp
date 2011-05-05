@@ -238,6 +238,7 @@ void CNearFieldNdefTarget::HandleError( TInt aError )
         //TODO: consider it carefully
         //iMessages = 0;
         }
+    iCurrentOperation = ENull;
     END
     }
 

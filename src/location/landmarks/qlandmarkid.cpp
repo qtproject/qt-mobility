@@ -49,8 +49,9 @@ QTM_USE_NAMESPACE
     \class QLandmarkId
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-main
+    \since 1.1
 
     \brief The QLandmarkId class provides a unique identifier for
     a landmark.

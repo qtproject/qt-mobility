@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,11 +43,18 @@
 #define DEBUG_H_
 #include <QDebug>
 
-#define SYMBIAN_NFC_DEBUG
+//#define SYMBIAN_NFC_DEBUG
 
-#define BEGIN qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" Begin";
-#define END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" End";
-#define BEGIN_END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" BEGIN_End";
-#define LOG(a) qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<a;
+#ifdef SYMBIAN_NFC_DEBUG
+# define BEGIN qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" Begin";
+# define END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" End";
+# define BEGIN_END qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<" BEGIN_End";
+# define LOG(a) qDebug()<<__PRETTY_FUNCTION__<<" Line: "<<__LINE__ <<a;
+#else
+# define BEGIN
+# define END
+# define BEGIN_END
+# define LOG(a)
+#endif
 
 #endif /* DEBUG_H_ */

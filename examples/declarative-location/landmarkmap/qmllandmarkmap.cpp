@@ -41,10 +41,12 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
+#include <QDir>
 
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+    QDir::setCurrent(QApplication::applicationDirPath());
     const QString mainQmlApp = QLatin1String("qrc:///landmarkmap.qml");
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));

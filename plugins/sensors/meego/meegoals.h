@@ -59,7 +59,7 @@ public:
     meegoals(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
     virtual void start();
 
 

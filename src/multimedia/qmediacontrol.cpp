@@ -53,8 +53,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaControl
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaControl class provides a base interface for media service controls.
 
     Media controls provide an interface to individual features provided by a

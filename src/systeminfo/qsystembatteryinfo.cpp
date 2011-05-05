@@ -57,6 +57,7 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPri
        \ingroup systeminfo
        \inmodule QtSystemInfo
        \brief The QSystemBatteryInfo class provides access to battery and power information from the system.
+       \since 1.2
 */
 /*!
     \enum QSystemBatteryInfo::BatteryStatus

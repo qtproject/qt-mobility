@@ -326,7 +326,8 @@ QMessageManager::Error TelepathyEngine::error() const
     return m_error;
 }
 
-#define TELEPATHY_ENGINE_STORE_MESSAGE
+// SMS is stored by the Harmattan. No need to duplicate it.
+//#define TELEPATHY_ENGINE_STORE_MESSAGE
 
 SendRequest::SendRequest(const QMessage &message, QMessageService *service)
     : _service(service)

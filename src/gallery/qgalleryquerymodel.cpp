@@ -281,6 +281,7 @@ void QGalleryQueryModelPrivate::_q_metaDataChanged(int index, int count, const Q
     \ingroup gallery
 
     \inmodule QtGallery
+    \since 1.1
 
     \brief The QGalleryQueryModel class provides a model for the results of a
     gallery query.

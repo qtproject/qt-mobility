@@ -74,6 +74,13 @@ Q_DECLARE_METATYPE(QList<ProfileDataValue>)
 
 #endif
 
+#ifdef Q_USE_BME
+extern "C" {
+#include "bme/bmeipc.h"
+}
+#include <mqueue.h>
+#endif
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -89,12 +96,12 @@ class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
+
     QStringList availableLanguages() const;
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
-    QString currentLanguage() const;
+    virtual QString currentLanguage() const;
     QString currentCountryCode() const;
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
@@ -213,16 +220,11 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-    float contrast(int screen);
+
     int displayBrightness(int screen);
     QSystemDisplayInfo::BacklightState backlightStatus(int screen);
-Q_SIGNALS:
-    void orientationChanged(QSystemDisplayInfo::DisplayOrientation newOrientation);
-
-
 };
 
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
@@ -338,6 +340,12 @@ private:
 #endif
 };
 
+#ifdef Q_USE_BME
+class EmIpc;
+class EmEvents;
+class EmCurrentMeasurement;
+#endif
+
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -345,9 +353,34 @@ public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
 
+    int currentFlow() const;
+
 private Q_SLOTS:
 #if !defined(QT_NO_DBUS)
     void halChangedMaemo(int,QVariantList);
+#endif
+#ifdef Q_USE_BME
+    void onMeasurement(int socket);
+#endif
+
+private:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+#ifdef Q_USE_BME
+    mutable bmestat_t bmeStat;
+    mutable bool isDataActual;
+    mutable QDateTime cacheExpire;
+
+    mutable int coloumbCounterOffset;
+    mutable int prevColoumbCounterRestartCount;
+
+    void startMeasurements();
+    void stopMeasurements();
+
+    QScopedPointer<EmIpc> emIpc;
+    QScopedPointer<EmEvents> emEvents;
+    QScopedPointer<EmCurrentMeasurement> emCurrentMeasurements;
 #endif
 };
 

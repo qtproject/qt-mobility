@@ -363,9 +363,9 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
     return result;
 }
 
-bool QMessageStore::removeAccount(const QMessageAccountId &id)
+bool QMessageStore::removeAccount(const QMessageAccountId &)
 {
-    // TODO: implement
+    // Not implemented
     return false;
 }
 

@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \class QNearFieldTagType3
     \brief The QNearFieldTagType3 class provides an interface for communicating with an NFC Tag
            Type 3 tag.
+    \since 1.2
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity

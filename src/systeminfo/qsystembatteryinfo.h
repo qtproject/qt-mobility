@@ -109,12 +109,11 @@ public:
     enum EnergyUnit {
         UnitUnknown = -1,
         UnitmAh,
-        UnitmWh,
+        UnitmWh
     };
 
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
-
 
     int nominalCapacity() const;
     int remainingCapacityPercent() const;

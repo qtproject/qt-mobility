@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     a segmented line on a map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -143,7 +144,7 @@ QPen QGeoMapPolylineObject::pen() const
 /*!
 \fn void QGeoMapPolylineObject::pathChanged(const QList<QGeoCoordinate> &path)
 
-    This signal is emitted when the ordered list of coordinates that define 
+    This signal is emitted when the ordered list of coordinates that define
     the polyline to be drawn by this polyline object has changed.
 
     The new value is \a path.
@@ -152,7 +153,7 @@ QPen QGeoMapPolylineObject::pen() const
 /*!
 \fn void QGeoMapPolylineObject::penChanged(const QPen &pen)
 
-    This signal is emitted when the pen used to draw the edge of this 
+    This signal is emitted when the pen used to draw the edge of this
     polyline object has changed.
 
     The new value is \a pen.

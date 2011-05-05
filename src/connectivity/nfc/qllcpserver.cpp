@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \since 1.2
 
     This class makes it possible to accept incoming LLCP socket connections.
 

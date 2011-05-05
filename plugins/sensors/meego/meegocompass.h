@@ -59,7 +59,7 @@ public:
     meegocompass(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
 
 private:
     QCompassReading m_reading;

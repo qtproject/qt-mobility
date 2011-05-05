@@ -63,6 +63,7 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-request
 

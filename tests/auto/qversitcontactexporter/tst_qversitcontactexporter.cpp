@@ -250,17 +250,11 @@ void tst_QVersitContactExporter::testEmptyContact()
     QList<QContact> contacts;
     contacts << contact1;
 
-    QVERIFY(mExporter->exportContacts(contacts)); // do not fail on empty contact1
+    QVERIFY(!mExporter->exportContacts(contacts)); // Fail on empty contact1
     QMap<int, QVersitContactExporter::Error> errorMap = mExporter->errorMap();
-    QVERIFY(errorMap.isEmpty());
+    QCOMPARE(errorMap.size(), 1);
     QList<QVersitDocument> documents = mExporter->documents();
-    QCOMPARE(documents.size(), 1); // only contact2 was exported
-    QVersitDocument document1 = documents.first();
-    QCOMPARE(document1.properties().size(), 1);
-    QVersitProperty property = findPropertyByName(document1, "N");
-    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
-    QCOMPARE(property.value<QStringList>(),
-            QStringList() << QString() << QString() << QString() << QString() << QString());
+    QCOMPARE(documents.size(), 0); // empty contact not exported
 }
 
 void tst_QVersitContactExporter::testContactDetailHandler()
@@ -332,17 +326,9 @@ void tst_QVersitContactExporter::testEncodeName()
     QContact contact;
     QContactName name;
 
-    // Test 1: An empty contact - a blank N should be generated
-    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
-    QCOMPARE(mExporter->documents().size(), 1);
-    QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(document.properties().size(), 1);
-    QVersitProperty nameProperty = findPropertyByName(document, QLatin1String("N"));
-    QCOMPARE(nameProperty.name(), QLatin1String("N"));
-    CHECK_VALUE(nameProperty, QVersitProperty::CompoundType,
-                QStringList() << QString() << QString()
-                << QString() << QString() << QString());
-
+    // Test 1: An empty contact - can't be exported
+    QVERIFY(!mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
+    QCOMPARE(mExporter->documents().size(), 0);
 
     // Test 2: Special characters are NOT backslash escaped by the exporter, only by the writer.
     name.setFirstName(QLatin1String("Fi;rst")); // check that semicolon is left intact
@@ -353,13 +339,13 @@ void tst_QVersitContactExporter::testEncodeName()
     name.setCustomLabel(QLatin1String("Label"));
     contact.saveDetail(&name);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
-    document = mExporter->documents().first();
+    QVersitDocument document = mExporter->documents().first();
     // Check that FN comes from the custom label and N is populated with the right fields from N
     QCOMPARE(document.properties().count(), 2);
     QVersitProperty displayProperty = findPropertyByName(document, QLatin1String("FN"));
     QCOMPARE(displayProperty.name(), QLatin1String("FN"));
     QCOMPARE(displayProperty.value(), QLatin1String("Label"));
-    nameProperty = findPropertyByName(document, QLatin1String("N"));
+    QVersitProperty nameProperty = findPropertyByName(document, QLatin1String("N"));
     QCOMPARE(nameProperty.parameters().count(), 0);
     QCOMPARE(nameProperty.name(), QLatin1String("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType,

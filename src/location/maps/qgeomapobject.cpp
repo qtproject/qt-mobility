@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
     \class QGeoMapObject
     \brief The QGeoMapObject class is a graphical item to be displayed on a map.
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -458,7 +459,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 /*!
 \fn void QGeoMapObject::zValueChanged(int zValue)
 
-    This signal is emitted when the z value of the map object 
+    This signal is emitted when the z value of the map object
     has changed.
 
     The new value is \a zValue.
@@ -467,7 +468,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 /*!
 \fn void QGeoMapObject::visibleChanged(bool visible)
 
-    This signal is emitted when the visible state of the map object 
+    This signal is emitted when the visible state of the map object
     has changed.
 
     The new value is \a visible.
