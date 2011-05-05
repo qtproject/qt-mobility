@@ -127,14 +127,12 @@ unix:!simulator {
                 SOURCES += \
                     linux/qhalservice_linux.cpp \
                     linux/qsysteminfodbushelper.cpp \
-                    linux/qdevicekitservice_linux.cpp \
                     linux/qconnmanservice_linux.cpp \
                     linux/qofonoservice_linux.cpp
 
                 HEADERS += \
                     linux/qhalservice_linux_p.h \
                     linux/qsysteminfodbushelper_p.h \
-                    linux/qdevicekitservice_linux_p.h \
                     linux/qsysteminfo_dbus_p.h \
                     linux/qconnmanservice_linux_p.h \
                     linux/qofonoservice_linux_p.h
@@ -147,13 +145,14 @@ unix:!simulator {
                 }
 
                 contains(CONFIG,meego): {
-                    #for now... udisks
+                    SOURCES += linux/qdevicekitservice_linux.cpp
+                    HEADERS += linux/qdevicekitservice_linux_p.h
                 } else {
-                    DEFINES += QT_NO_UDISKS
+                    DEFINES += QT_NO_UDISKS QT_NO_UPOWER
                     !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
                 }
             } else {
-                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER
                 !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
             }
         }
@@ -163,7 +162,7 @@ unix:!simulator {
             CONFIG += link_pkgconfig
             SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
-            DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
+            DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER
 
             contains(bme_enabled, yes): {
                 LIBS += -lbmeipc

@@ -372,9 +372,9 @@ private Q_SLOTS:
     virtual void halChanged(int,QVariantList);
     void getBatteryStats();
     void timeout();
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(QT_NO_UPOWER)
     void uPowerPropertyChanged(const QString &, const QVariant &);
-#endif
+#endif // QT_NO_UPOWER
 #endif
 
 protected:
@@ -390,8 +390,11 @@ private:
     int capacity;
     int timeToFull;
     int remainingEnergy;
-    int  batteryLevel() const ;
+    int  batteryLevel() const;
+
+#if !defined(QT_NO_UPOWER)
     QUPowerDeviceInterface *battery;
+#endif // QT_NO_UPOWER
 };
 
 QTM_END_NAMESPACE
