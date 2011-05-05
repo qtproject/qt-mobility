@@ -1,3 +1,9 @@
+qt-mobility (v1.2.0-beta1+488) unstable; urgency=low
+
+  * Fixes: NB#
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 5 May 2011 11:35:48 +1000
+
 qt-mobility (1.2.0-beta0+4402) unstable; urgency=low
 
   * Added missing qml poster to install files
