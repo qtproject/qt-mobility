@@ -41,9 +41,14 @@
 
 #include "qdevicekitservice_linux_p.h"
 
-#ifndef QT_NO_DBUS
-
 QTM_BEGIN_NAMESPACE
+
+#if !defined(QT_NO_UDISKS)
+
+#define	UDISKS_SERVICE        "org.freedesktop.UDisks"
+#define	UDISKS_PATH           "/org/freedesktop/UDisks"
+#define	UDISKS_DEVICE_SERVICE "org.freedesktop.UDisks.Device"
+#define	UDISKS_DEVICE_PATH    "/org/freedesktop/UDisks/Device"
 
 QUDisksInterface::QUDisksInterface(QObject *parent)
     : QDBusAbstractInterface(QLatin1String(UDISKS_SERVICE)
@@ -191,6 +196,14 @@ bool QUDisksDeviceInterface::driveIsMediaEjectable()
      return this->getProperty("DriveIsMediaEjectable").toBool();
 }
 
+#endif // QT_NO_UDISKS
+
+#if !defined(QT_NO_UPOWER)
+
+#define	UPOWER_SERVICE        "org.freedesktop.UPower"
+#define	UPOWER_PATH           "/org/freedesktop/UPower"
+#define	UPOWER_DEVICE_SERVICE "org.freedesktop.UPower.Device"
+#define	UPOWER_DEVICE_PATH    "/org/freedesktop/UPower/Device"
 
 QUPowerInterface::QUPowerInterface(QObject *parent)
     : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE)
@@ -387,8 +400,10 @@ void QUPowerDeviceInterface::propChanged()
     }
 }
 
+#endif // QT_NO_UPOWER
+
+#if !defined(QT_NO_UPOWER) || !defined(QT_NO_UDISKS)
 #include "moc_qdevicekitservice_linux_p.cpp"
+#endif
 
 QTM_END_NAMESPACE
-
-#endif // QT_NO_DBUS

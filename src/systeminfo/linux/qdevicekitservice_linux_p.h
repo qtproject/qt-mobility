@@ -56,18 +56,9 @@
 #include "qmobilityglobal.h"
 #include <QtDBus/QtDBus>
 
-#ifndef QT_NO_DBUS
-
-#define	UDISKS_SERVICE        "org.freedesktop.UDisks"
-#define	UDISKS_PATH           "/org/freedesktop/UDisks"
-#define	UDISKS_DEVICE_SERVICE "org.freedesktop.UDisks.Device"
-#define	UDISKS_DEVICE_PATH    "/org/freedesktop/UDisks/Device"
-#define	UPOWER_SERVICE        "org.freedesktop.UPower"
-#define	UPOWER_PATH           "/org/freedesktop/UPower"
-#define	UPOWER_DEVICE_SERVICE "org.freedesktop.UPower.Device"
-#define	UPOWER_DEVICE_PATH    "/org/freedesktop/UPower/Device"
-
 QTM_BEGIN_NAMESPACE
+
+#if !defined(QT_NO_UDISKS)
 
 class QUDisksInterface : public QDBusAbstractInterface
 {
@@ -116,6 +107,10 @@ private:
     QVariant getProperty(const QString &property);
     QString path;
 };
+
+#endif // QT_NO_UDISKS
+
+#if !defined(QT_NO_UPOWER)
 
 class QUPowerInterface : public QDBusAbstractInterface
 {
@@ -178,8 +173,8 @@ private Q_SLOTS:
     void propChanged();
 };
 
-QTM_END_NAMESPACE
+#endif // QT_NO_UPOWER
 
-#endif // QT_NO_DBUS
+QTM_END_NAMESPACE
 
 #endif // QDEVICEKITSERVICE_H

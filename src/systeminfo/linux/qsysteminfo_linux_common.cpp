@@ -343,7 +343,6 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
 #if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && defined(UDEV_SUPPORTED)
         bool ok = udevService.isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD);
         if (!ok) {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
             // try harder
             //this only works when a drive is in
@@ -362,7 +361,6 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
                 }
             }
 #endif // QT_NO_UDISKS
-#endif // QT_NO_DBUS
         }
         return ok;
 #endif
@@ -1764,13 +1762,11 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
     , storageTimer(0)
 {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
     udisksIsAvailable = udisksAvailable();
     if (udisksIsAvailable)
         udisksIface = new QUDisksInterface(this);
 #endif // QT_NO_UDISKS
-#endif // QT_NO_DBUS
 }
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
@@ -1854,7 +1850,6 @@ void QSystemStorageInfoPrivate::deviceChanged()
     }
 }
 
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
 void QSystemStorageInfoPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
 {
@@ -1872,7 +1867,6 @@ void QSystemStorageInfoPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
     updateMountedEntries();
 }
 #endif // QT_NO_UDISKS
-#endif // QT_NO_DBUS
 
 qlonglong QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
@@ -2004,7 +1998,6 @@ void QSystemStorageInfoPrivate::updateMountedEntries()
 {
     mountedEntries.clear();
 
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_UDISKS)
     if (udisksAvailable()) {
         foreach (const QDBusObjectPath &device, udisksIface->enumerateDevices()) {
@@ -2017,7 +2010,6 @@ void QSystemStorageInfoPrivate::updateMountedEntries()
         }
     }
 #endif // QT_NO_UDISKS
-#endif // QT_NO_DBUS
 
     FILE *mntfp = setmntent(_PATH_MOUNTED, "r");
     mntent *me = getmntent(mntfp);
@@ -2280,7 +2272,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::initBatteryStatus()
 void QSystemDeviceInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
 #if !defined(QT_NO_DBUS)
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
+#if !defined(QT_NO_UPOWER)
     if ((QLatin1String(signal) == SIGNAL(batteryLevelChanged(int)))
         || (QLatin1String(signal) == SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)))
         || (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)))) {
@@ -2296,7 +2288,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::connectNotify(const char *signal)
             }
         }
     } else
-#endif // QT_NO_UDISKS
+#endif // QT_NO_UPOWER
     if ((QLatin1String(signal) == SIGNAL(batteryLevelChanged(int)))
         || (QLatin1String(signal) == SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)))
         || (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)))) {
@@ -2560,7 +2552,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
+#if !defined(QT_NO_UPOWER)
     if (uPowerAvailable()) {
         QUPowerInterface power;
         foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {
@@ -2569,7 +2561,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
                 return powerDevice.percentLeft();
         }
     }
-#endif // QT_NO_UDISKS
+#endif // QT_NO_UPOWER
 #endif // QT_NO_DBUS
     QFile infofile("/proc/acpi/battery/BAT0/info");
     if (!infofile.open(QIODevice::ReadOnly)) {
@@ -2646,7 +2638,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
+#if !defined(QT_NO_UPOWER)
     if (uPowerAvailable()) {
         QSystemDeviceInfo::PowerState pState = QSystemDeviceInfo::UnknownPower;
 
@@ -2681,7 +2673,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
         }
         return pState;
     }
-#endif // QT_NO_UDISKS
+#endif // QT_NO_UPOWER
 #endif // QT_NO_DBUS
     QFile statefile("/proc/acpi/battery/BAT0/state");
     if (statefile.open(QIODevice::ReadOnly)) {
@@ -3026,7 +3018,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::disconnectNotify(const char */*signal
 
 void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
 {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
+#if !defined(QT_NO_UPOWER)
     if (uPowerAvailable()) {
         QUPowerInterface *power;
         power = new QUPowerInterface(this);
@@ -3047,7 +3039,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::setConnection()
            // }
         }
     }
-#endif
+#endif // QT_NO_UPOWER
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
         QHalInterface iface;
@@ -3229,7 +3221,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
     QSystemBatteryInfo::ChargingState cState = QSystemBatteryInfo::ChargingError;
     QSystemBatteryInfo::ChargerType cType = QSystemBatteryInfo::UnknownCharger;
 
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
+#if !defined(QT_NO_UPOWER)
     if (uPowerAvailable()) {
 
         QUPowerInterface power(this);
@@ -3280,7 +3272,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::getBatteryStats()
 
         } //end enumerateDevices
     }
-#endif
+#endif // QT_NO_UPOWER
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable) {
 
@@ -3441,11 +3433,11 @@ void QSystemBatteryInfoLinuxCommonPrivate::timeout()
 
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoLinuxCommonPrivate::energyMeasurementUnit() const
 {
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
+#if !defined(QT_NO_UPOWER)
     if(uPowerAvailable() && batteryIsPresent) {
         return QSystemBatteryInfo::UnitmWh;
     }
-#endif
+#endif // QT_NO_UPOWER
 #if !defined(QT_NO_DBUS)
     if (halIsAvailable && batteryIsPresent) {
         QHalInterface iface;
@@ -3492,7 +3484,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(QT_NO_UDISKS)
+#if !defined(QT_NO_UPOWER)
     if (uPowerAvailable()) {
         QUPowerInterface power;
         foreach (const QDBusObjectPath &objpath, power.enumerateDevices()) {
@@ -3502,7 +3494,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
             }
         }
     }
-#endif
+#endif // QT_NO_UPOWER
 #endif
     QFile infofile("/proc/acpi/battery/BAT0/info");
     if (!infofile.open(QIODevice::ReadOnly)) {
@@ -3550,7 +3542,7 @@ int QSystemBatteryInfoLinuxCommonPrivate::batteryLevel() const
     return 0;
 }
 
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(QT_NO_UPOWER)
 void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString & prop, const QVariant &v)
 {
  //   qDebug() << __FUNCTION__ << prop << v;
@@ -3620,7 +3612,7 @@ void QSystemBatteryInfoLinuxCommonPrivate::uPowerPropertyChanged(const QString &
     }
 
 }
-#endif
+#endif // QT_NO_UPOWER
 
 #include "moc_qsysteminfo_linux_common_p.cpp"
 
