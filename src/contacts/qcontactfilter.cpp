@@ -124,7 +124,9 @@ QContactFilter::QContactFilter(const QContactFilter& other)
 {
 }
 
-/*! Assigns this filter to be \a other */
+/*! Assigns this filter to be \a other
+   \since 1.0
+*/
 QContactFilter& QContactFilter::operator=(const QContactFilter& other)
 {
     if (this != &other) {
@@ -146,7 +148,9 @@ QContactFilter::FilterType QContactFilter::type() const
     return d_ptr->type();
 }
 
-/*! Returns true if the filter has the same type and criteria as \a other */
+/*! Returns true if the filter has the same type and criteria as \a other
+  \since 1.0
+*/
 bool QContactFilter::operator==(const QContactFilter& other) const
 {
     /* A default filter is only equal to other default filters */

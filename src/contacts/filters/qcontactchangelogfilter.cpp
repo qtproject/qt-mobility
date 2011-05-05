@@ -73,6 +73,7 @@ Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactChangeLogFilter);
 /*!
  * \fn QContactChangeLogFilter::QContactChangeLogFilter(const QContactFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new changelog filter
+ * \since 1.0
  */
 
 /*!
@@ -86,6 +87,7 @@ QContactChangeLogFilter::QContactChangeLogFilter(QContactChangeLogFilter::EventT
 /*!
  * Sets the type of change that this filter will match against to \a type
  * \sa eventType()
+ * \since 1.0
  */
 void QContactChangeLogFilter::setEventType(QContactChangeLogFilter::EventType type)
 {
@@ -96,6 +98,7 @@ void QContactChangeLogFilter::setEventType(QContactChangeLogFilter::EventType ty
 /*!
  * Sets the date and time lower-bound criterion of the filter to \a since
  * \sa since()
+ * \since 1.0
  */
 void QContactChangeLogFilter::setSince(const QDateTime& since)
 {
@@ -106,6 +109,7 @@ void QContactChangeLogFilter::setSince(const QDateTime& since)
 /*!
  * Returns the date and time lower-bound criterion of the filter
  * \sa setSince()
+ * \since 1.0
  */
 QDateTime QContactChangeLogFilter::since() const
 {
@@ -116,6 +120,7 @@ QDateTime QContactChangeLogFilter::since() const
 /*!
  * Returns the type of change that this filter will match against
  * \sa setEventType()
+ * \since 1.0
  */
 QContactChangeLogFilter::EventType QContactChangeLogFilter::eventType() const
 {

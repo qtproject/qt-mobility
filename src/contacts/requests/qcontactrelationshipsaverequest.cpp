@@ -82,6 +82,7 @@ QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
   \code
       setRelationships(QList<QContactRelationship>() << contactRelationships);
   \endcode
+  \since 1.0
  */
 void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship& contactRelationship)
 {
@@ -91,7 +92,9 @@ void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship
     d->m_relationships.append(contactRelationship);
 }
 
-/*! Sets the relationships to save to be \a contactRelationships */
+/*! Sets the relationships to save to be \a contactRelationships
+    \since 1.0
+*/
 void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelationship>& contactRelationships)
 {
     Q_D(QContactRelationshipSaveRequest);
@@ -100,7 +103,9 @@ void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelat
 }
 
 /*! Returns the list of relationships that will be saved if called prior to calling \c start(),
-    otherwise returns the list of relationships as they were saved in the contacts store */
+    otherwise returns the list of relationships as they were saved in the contacts store
+    \since 1.0
+*/
 QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() const
 {
     Q_D(const QContactRelationshipSaveRequest);
@@ -108,7 +113,9 @@ QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() con
     return d->m_relationships;
 }
 
-/*! Returns the map of input relationship list indices to errors which occurred */
+/*! Returns the map of input relationship list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactRelationshipSaveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipSaveRequest);
