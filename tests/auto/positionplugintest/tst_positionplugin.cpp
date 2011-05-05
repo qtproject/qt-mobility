@@ -95,8 +95,8 @@ void tst_PositionPlugin::getUpdates()
     QCOMPARE(spy[0].size(), 1);
 
     QGeoPositionInfo info = qvariant_cast<QGeoPositionInfo>(spy[0][0]);
-    QCOMPARE(info.coordinate().latitude(), qreal(0.1));
-    QCOMPARE(info.coordinate().longitude(), qreal(0.1));
+    QCOMPARE(info.coordinate().latitude(), 0.1);
+    QCOMPARE(info.coordinate().longitude(), 0.1);
 }
 
 

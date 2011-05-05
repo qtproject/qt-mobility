@@ -115,12 +115,14 @@ QAbstractGallery::~QAbstractGallery()
     Identifies if a gallery supports a request \a type.
 
     Returns true if the request is supported, and false otherwise.
+    \since 1.1
 */
 
 /*!
     \fn QAbstractGallery::createResponse(QGalleryAbstractRequest *request)
 
     Creates a response to a gallery \a request.
+    \since 1.1
 */
 
 #include "moc_qabstractgallery.cpp"

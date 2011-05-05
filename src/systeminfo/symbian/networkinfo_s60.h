@@ -98,6 +98,7 @@ protected:
     RPacketService iPacketService;
 #endif
     RPacketService::TStatus iPacketServiceStatus;
+    bool iPacketdataserviceCaps;
     };
 
 class CNetworkMode : private CNetworkBase
@@ -180,6 +181,7 @@ class CPacketDataStatus : private CNetworkBase
     TUint DynamicCaps();
     void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
     void Remove() {RemoveObserver();};
+    bool NetworkCtrlCapsenabled();
  private : //From CNetworkBase
     virtual void DoCancel();
     virtual void RunL() ;
