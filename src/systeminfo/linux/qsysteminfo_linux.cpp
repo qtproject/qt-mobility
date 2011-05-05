@@ -499,7 +499,6 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface iface;
     foreach (const QDBusObjectPath &path, iface.getDevices()) {
@@ -510,7 +509,6 @@ QString QSystemDeviceInfoPrivate::imei()
         }
     }
 #endif // QT_NO_NETWORKMANAGER
-#endif // QT_NO_DBUS
 
     return QSystemDeviceInfoLinuxCommonPrivate::imei();
 }
@@ -532,7 +530,6 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface iface;
     foreach (const QDBusObjectPath &path, iface.getDevices()) {
@@ -543,7 +540,6 @@ QString QSystemDeviceInfoPrivate::imsi()
         }
     }
 #endif // QT_NO_NETWORKMANAGER
-#endif // QT_NO_DBUS
 
     return QSystemDeviceInfoLinuxCommonPrivate::imsi();
 }
@@ -562,7 +558,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 QString QSystemDeviceInfoPrivate::model()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     if (halAvailable()) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString model;
@@ -575,7 +571,7 @@ QString QSystemDeviceInfoPrivate::model()
                 return model;
         }
     }
-#endif // QT_NO_DBUS
+#endif // QT_NO_HAL
     QFile file("/proc/cpuinfo");
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Could not open /proc/cpuinfo";
@@ -594,7 +590,7 @@ QString QSystemDeviceInfoPrivate::model()
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     if (halAvailable()) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString productName;
@@ -609,7 +605,7 @@ QString QSystemDeviceInfoPrivate::productName()
             }
         }
     }
-#endif // QT_NO_DBUS
+#endif // QT_NO_HAL
     const QDir dir("/etc");
     if (dir.exists()) {
         QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
@@ -657,7 +653,6 @@ QString QSystemDeviceInfoPrivate::productName()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface iface;
     foreach (const QDBusObjectPath &path, iface.getDevices()) {
@@ -676,7 +671,6 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
         }
     }
 #endif // QT_NO_NETWORKMANAGER
-#endif // QT_NO_DBUS
 
      return QSystemDeviceInfoLinuxCommonPrivate::simStatus();
 }

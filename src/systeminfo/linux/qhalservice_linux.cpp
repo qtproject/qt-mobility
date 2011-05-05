@@ -39,9 +39,21 @@
 **
 ****************************************************************************/
 
+#if !defined(QT_NO_HAL)
+
 #include "qhalservice_linux_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+#define HAL_DBUS_SERVICE "org.freedesktop.Hal"
+
+#define HAL_DBUS_MANAGER_PATH "/org/freedesktop/Hal/Manager"
+#define HAL_DBUS_MANAGER_INTERFACE "org.freedesktop.Hal.Manager"
+
+#define HAL_DEVICE_INTERFACE "org.freedesktop.Hal.Device"
+
+#define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
+#define HAL_DEVICE_KILLSWITCH_INTERFACE "org.freedesktop.Hal.Device.KillSwitch"
 
 class QHalInterfacePrivate
 {
@@ -197,3 +209,5 @@ quint32 QHalDeviceLaptopPanelInterface::getBrightness()
 #include "moc_qhalservice_linux_p.cpp"
 
 QTM_END_NAMESPACE
+
+#endif // QT_NO_HAL
