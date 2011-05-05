@@ -484,7 +484,7 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
         m_state = QMediaPlayer::StoppedState;
         if (m_currentResource.isNull())
             m_mediaStatus = QMediaPlayer::NoMedia;
-        else
+        else if (oldStatus != QMediaPlayer::InvalidMedia)
             m_mediaStatus = QMediaPlayer::LoadingMedia;
         break;
 
