@@ -83,14 +83,15 @@ unix:!simulator {
         DEFINES += TESTR QT_SIMULATOR
     } else {
         linux-*: {
-            contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
+            !contains(bluez_enabled, yes): DEFINES += QT_NO_BLUEZ
 
             SOURCES += linux/qsysteminfo_linux_common.cpp
             HEADERS += linux/qsysteminfo_linux_common_p.h
 
             contains(blkid_enabled, yes): {
-                DEFINES += BLKID_SUPPORTED
                 LIBS += -lblkid
+            } else {
+                DEFINES += QT_NO_BLKID
             }
 
             !embedded:!contains(QT_CONFIG,qpa): {
@@ -116,10 +117,11 @@ unix:!simulator {
 
             # udev should not be enabled on maemo5 and maemo6
             contains(udev_enabled, yes): {
-                DEFINES += UDEV_SUPPORTED
                 LIBS += -ludev
                 SOURCES += linux/qudevservice_linux.cpp
                 HEADERS += linux/qudevservice_linux_p.h
+            } else {
+                DEFINES += QT_NO_UDEV
             }
 
             contains(QT_CONFIG, dbus): {
@@ -162,7 +164,7 @@ unix:!simulator {
             CONFIG += link_pkgconfig
             SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
-            DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER
+            DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER QT_NO_UDEV
 
             contains(bme_enabled, yes): {
                 LIBS += -lbmeipc
