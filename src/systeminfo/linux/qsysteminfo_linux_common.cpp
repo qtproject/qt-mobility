@@ -38,21 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qsysteminfo_linux_common_p.h"
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
-#include "qdevicekitservice_linux_p.h"
-#endif
+
 #include <QTimer>
 #include <QFile>
 #include <QDir>
 #include <QCryptographicHash>
 #include <QVariantMap>
 #include <QProcess>
-
-#if !defined(QT_NO_HAL)
-#include "qhalservice_linux_p.h"
-#endif // QT_NO_HAL
-
 #include <QApplication>
 #include <QDesktopWidget>
 

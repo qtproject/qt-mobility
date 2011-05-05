@@ -38,51 +38,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon_p.h"
+
 #include "linux/qsysteminfo_linux_p.h"
 
-#include <unistd.h> // for getppid
+#include "qsysteminfo_dbus_p.h"
 
-#include <QStringList>
-#include <QSize>
-#include <QFile>
-#include <QTextStream>
-#include <QLocale>
-#include <QLibraryInfo>
-#include <QDebug>
-#include <QTimer>
-#include <QDir>
-#include <QTimer>
-#include <QMapIterator>
-#include <QSettings>
-
-#ifndef QT_NO_NETWORKMANAGER
-#include "linux/qnetworkmanagerservice_linux_p.h"
-#include <QtDBus/QtDBus>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusError>
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusMessage>
-#include <QtDBus/QDBusReply>
-#include <QtDBus/QDBusPendingCallWatcher>
-#include <QtDBus/QDBusObjectPath>
-#include <QtDBus/QDBusPendingCall>
-#endif
-#include <QDesktopWidget>
-
-//#ifdef Q_WS_X11
-//#include <QX11Info>
-//#include <X11/Xlib.h>
-#if !defined(Q_WS_MAEMO_6)/* && defined(QT_NO_MEEGO)*/
-#ifdef Q_WS_X11
+#if !defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_X11)
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
-#endif
-//#endif
-
-#endif
-#include "qsysteminfo_dbus_p.h"
+#endif // Q_WS_X11
+#endif // Q_WS_MAEMO_6
 
 QTM_BEGIN_NAMESPACE
 
@@ -548,10 +515,8 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
     QSystemScreenSaverPrivate priv;
 
-    if (priv.isScreenLockEnabled()
-        && priv.isScreenSaverActive()) {
+    if (priv.isScreenLockEnabled() && priv.isScreenSaverActive())
         return true;
-    }
 
     return false;
 }
@@ -697,10 +662,10 @@ bool QSystemDeviceInfoPrivate::vibrationActive()
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
     : QObject(parent)
-    , currentPid(0)
+    , gnomeIsRunning(0)
     , kdeIsRunning(0)
     , meegoIsRunning(0)
-    , gnomeIsRunning(0)
+    , currentPid(0)
 {
     whichWMRunning();
 }
@@ -708,7 +673,7 @@ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
     setScreenSaverInhibited(false);
-#if defined(QT_NO_DBUS) && defined(Q_WS_X11) && !defined(Q_WS_MEEGO)
+#if defined(Q_WS_X11)
     changeTimeout(-1);
 #endif
 }

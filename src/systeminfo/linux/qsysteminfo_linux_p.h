@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QSYSTEMINFO_LINUX_P_H
 #define QSYSTEMINFO_LINUX_P_H
-
 
 //
 //  W A R N I N G
@@ -53,29 +53,15 @@
 // We mean it.
 //
 
-
-#include <QObject>
-#include <QSize>
-#include <QHash>
-
+#include "qmobilityglobal.h"
 #include "qsysteminfo_linux_common_p.h"
-#include "qsysteminfo.h"
-#include <qmobilityglobal.h>
 
-#ifndef QT_NO_NETWORKMANAGER
-#include "linux/qnetworkmanagerservice_linux_p.h"
-#endif
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-class QStringList;
-class QTimer;
-QT_END_NAMESPACE
+#if !defined(QT_NO_NETWORKMANAGER)
+#include "qnetworkmanagerservice_linux_p.h"
+#endif // QT_NO_NETWORKMANAGER
 
 QTM_BEGIN_NAMESPACE
 
-class QSystemNetworkInfo;
 class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -87,11 +73,6 @@ public:
     QStringList availableLanguages() const;
 };
 
-class QNetworkManagerInterface;
-class QNetworkManagerInterfaceDeviceWired;
-class QNetworkManagerInterfaceDeviceWireless;
-class QNetworkManagerInterfaceAccessPoint;
-
 class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -100,11 +81,10 @@ public:
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QSystemNetworkInfo::NetworkMode currentMode();
-
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
 
 #if !defined(QT_NO_NETWORKMANAGER)
 private Q_SLOTS:
@@ -142,22 +122,21 @@ public:
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
+    bool isDeviceLocked();
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    bool vibrationActive(); //1.2
+    int messageRingtoneVolume(); //1.2
+    int voiceRingtoneVolume(); //1.2
     QString imei();
     QString imsi();
-    bool isDeviceLocked();
-    QSystemDeviceInfo::Profile currentProfile();
     QString model();
     QString productName();
 
-    QSystemDeviceInfo::ThermalState currentThermalState();
-
-    bool isKeyboardFlippedOpen(); //1.2
-    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    int messageRingtoneVolume(); //1.2
-    int voiceRingtoneVolume(); //1.2
-    bool vibrationActive(); //1.2
-    QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
+    QSystemDeviceInfo::Profile currentProfile();
+    QSystemDeviceInfo::SimStatus simStatus();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 };
 
 class QSystemScreenSaverPrivate : public QObject
@@ -175,19 +154,19 @@ public:
     void setScreenSaverInhibited(bool on);
 
 private:
-    QString screenPath;
-    QString settingsPath;
-    bool screenSaverSecure;
-
-    uint currentPid;
+    bool gnomeIsRunning;
     bool kdeIsRunning;
     bool meegoIsRunning;
-    bool gnomeIsRunning;
-    void whichWMRunning();
     bool screenSaverIsInhibited;
-#ifdef Q_WS_X11
+    bool screenSaverSecure;
+    uint currentPid;
+    QString screenPath;
+    QString settingsPath;
+
+    void whichWMRunning();
+#if defined(Q_WS_X11)
      int changeTimeout(int timeout);
-#endif
+#endif // Q_WS_X11
 };
 
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
@@ -200,9 +179,4 @@ public:
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif /*QSYSTEMSINFO_LINUX_P_H*/
-
-// End of file
-
+#endif // QSYSTEMSINFO_LINUX_P_H
