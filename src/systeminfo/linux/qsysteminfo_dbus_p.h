@@ -44,6 +44,7 @@
 
 #if !defined(QT_NO_DBUS)
 
+#if !defined(QT_NO_HAL)
 static bool halAvailable()
 {
     if (QDBusConnection::systemBus().isConnected()) {
@@ -54,6 +55,7 @@ static bool halAvailable()
     }
     return false;
 }
+#endif // QT_NO_HAL
 
 #if !defined(QT_NO_UDISKS)
 static bool udisksAvailable()

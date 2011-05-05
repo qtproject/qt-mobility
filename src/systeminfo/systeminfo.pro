@@ -88,6 +88,14 @@ unix:!simulator {
             SOURCES += linux/qsysteminfo_linux_common.cpp
             HEADERS += linux/qsysteminfo_linux_common_p.h
 
+            contains(QT_CONFIG, dbus): {
+                QT += dbus
+                SOURCES += linux/qhalservice_linux.cpp
+                HEADERS += linux/qhalservice_linux_p.h
+            } else {
+                DEFINES += QT_NO_HAL
+            }
+
             contains(blkid_enabled, yes): {
                 LIBS += -lblkid
             } else {
@@ -127,13 +135,11 @@ unix:!simulator {
             contains(QT_CONFIG, dbus): {
                 QT += dbus
                 SOURCES += \
-                    linux/qhalservice_linux.cpp \
                     linux/qsysteminfodbushelper.cpp \
                     linux/qconnmanservice_linux.cpp \
                     linux/qofonoservice_linux.cpp
 
                 HEADERS += \
-                    linux/qhalservice_linux_p.h \
                     linux/qsysteminfodbushelper_p.h \
                     linux/qsysteminfo_dbus_p.h \
                     linux/qconnmanservice_linux_p.h \
@@ -169,12 +175,6 @@ unix:!simulator {
             contains(bme_enabled, yes): {
                 LIBS += -lbmeipc
                 DEFINES += Q_USE_BME
-            }
-
-            contains(QT_CONFIG,dbus): {
-                QT += dbus
-                SOURCES += linux/qhalservice_linux.cpp
-                HEADERS += linux/qhalservice_linux_p.h
             }
 
             PKGCONFIG += glib-2.0 gconf-2.0
