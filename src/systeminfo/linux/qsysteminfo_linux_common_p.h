@@ -161,11 +161,6 @@ private Q_SLOTS:
 private:
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
-#if !defined(QT_NO_DBUS)
-    int getBluetoothRssi();
-    QString getBluetoothInfo(const QString &file);
-    bool isDefaultInterface(const QString &device);
-
 #if !defined(QT_NO_CONNMAN)
     QConnmanManagerInterface *connmanManager;
     QOfonoManagerInterface *ofonoManager;
@@ -182,7 +177,6 @@ private:
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
 #endif // QT_NO_CONNMAN
-#endif // QT_NO_DBUS
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject
@@ -278,6 +272,9 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
+    QString imei();
+    QString imsi();
+    QSystemDeviceInfo::SimStatus simStatus();
     QString manufacturer();
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
     int batteryLevel() const;

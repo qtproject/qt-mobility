@@ -118,13 +118,17 @@ unix:!simulator {
                 SOURCES += \
                     linux/qhalservice_linux.cpp \
                     linux/qsysteminfodbushelper.cpp \
-                    linux/qdevicekitservice_linux.cpp
+                    linux/qdevicekitservice_linux.cpp \
+                    linux/qconnmanservice_linux.cpp \
+                    linux/qofonoservice_linux.cpp
 
                 HEADERS += \
                     linux/qhalservice_linux_p.h \
                     linux/qsysteminfodbushelper_p.h \
                     linux/qdevicekitservice_linux_p.h \
-                    linux/qsysteminfo_dbus_p.h
+                    linux/qsysteminfo_dbus_p.h \
+                    linux/qconnmanservice_linux_p.h \
+                    linux/qofonoservice_linux_p.h
 
                 # udev should not be enabled on maemo5 and maemo6
                 contains(udev_enabled, yes): {
@@ -146,13 +150,6 @@ unix:!simulator {
                 } else {
                     DEFINES += QT_NO_UDISKS
                     !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
-                }
-
-                contains(connman_enabled, yes): {
-                    SOURCES+= linux/qconnmanservice_linux.cpp linux/qofonoservice_linux.cpp
-                    HEADERS+= linux/qconnmanservice_linux_p.h linux/qofonoservice_linux_p.h
-                } else {
-                    DEFINES += QT_NO_CONNMAN
                 }
             } else {
                 DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN

@@ -228,4 +228,5 @@ EXPORTS
 	_ZTVN10QtMobility19QSystemAlignedTimerE @ 227 NONAME ; #<VT>#
 	_ZN10QtMobility17QSystemDeviceInfo19currentThermalStateEv @ 228 NONAME
 	_ZN10QtMobility17QSystemDeviceInfo19thermalStateChangedENS0_12ThermalStateE @ 229 NONAME
+	_ZN10QtMobility18QSystemStorageInfo13connectNotifyEPKc @ 230 NONAME
 

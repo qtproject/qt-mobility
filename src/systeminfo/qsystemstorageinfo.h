@@ -95,6 +95,7 @@ Q_SIGNALS:
 
 private:
        QSystemStorageInfoPrivate *d;
+       void connectNotify(const char *signal);
 };
 
 QTM_END_NAMESPACE

@@ -41,6 +41,7 @@
 
 #ifndef QDEVICEKITSERVICE_H
 #define QDEVICEKITSERVICE_H
+
 //
 //  W A R N I N G
 //  -------------
@@ -51,35 +52,24 @@
 //
 // We mean it.
 //
+
+#include "qmobilityglobal.h"
 #include <QtDBus/QtDBus>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusError>
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusMessage>
-#include <QtDBus/QDBusReply>
-#include <QVariantMap>
 
+#ifndef QT_NO_DBUS
 
-#define	UDISKS_SERVICE     "org.freedesktop.UDisks"
-#define	UDISKS_PATH        "/org/freedesktop/UDisks"
+#define	UDISKS_SERVICE        "org.freedesktop.UDisks"
+#define	UDISKS_PATH           "/org/freedesktop/UDisks"
+#define	UDISKS_DEVICE_SERVICE "org.freedesktop.UDisks.Device"
+#define	UDISKS_DEVICE_PATH    "/org/freedesktop/UDisks/Device"
+#define	UPOWER_SERVICE        "org.freedesktop.UPower"
+#define	UPOWER_PATH           "/org/freedesktop/UPower"
+#define	UPOWER_DEVICE_SERVICE "org.freedesktop.UPower.Device"
+#define	UPOWER_DEVICE_PATH    "/org/freedesktop/UPower/Device"
 
-#define	UDISKS_DEVICE_SERVICE     "org.freedesktop.UDisks.Device"
-#define	UDISKS_DEVICE_PATH        "/org/freedesktop/UDisks/Device"
+QTM_BEGIN_NAMESPACE
 
-#define	UPOWER_SERVICE     "org.freedesktop.UPower"
-#define	UPOWER_PATH        "/org/freedesktop/UPower"
-
-#define	UPOWER_DEVICE_SERVICE     "org.freedesktop.UPower.Device"
-#define	UPOWER_DEVICE_PATH        "/org/freedesktop/UPower/Device"
-
-QT_BEGIN_NAMESPACE
-
-QT_END_NAMESPACE
-
-
-QT_BEGIN_NAMESPACE
-
-class QUDisksInterface : public  QDBusAbstractInterface
+class QUDisksInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
@@ -87,86 +77,67 @@ public:
     QUDisksInterface(QObject *parent = 0);
     ~QUDisksInterface();
 
-//    QDBusObjectPath path() const;
-
-    QDBusObjectPath findDeviceByDeviceFile(const QString &);
     QList<QDBusObjectPath> enumerateDevices();
-    QStringList enumerateDeviceFiles();
-    QVariantMap getProperties();
 
 Q_SIGNALS:
-    void deviceAdded(const QDBusObjectPath &);
-    void deviceChanged(const QDBusObjectPath &);
-    void deviceRemoved(const QDBusObjectPath &);
+    void deviceChanged(const QDBusObjectPath &path);
+
 protected:
-    QVariant getProperty(const QString &);
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
- };
+};
 
-class QUDisksDeviceInterface : public  QDBusAbstractInterface
+class QUDisksDeviceInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
-    QUDisksDeviceInterface(const QString &dbusPathName,QObject *parent = 0);
+    QUDisksDeviceInterface(const QString &dbusPathName, QObject *parent = 0);
     ~QUDisksDeviceInterface();
 
-    QString deviceFile();
-    QString deviceFilePresentation();
-    QString driveMedia();
-    QStringList deviceMountPaths();
-    QVariantMap getProperties();
-
-    bool deviceIsDrive();
-    bool deviceIsMediaChangeDetacted();
     bool deviceIsMounted();
-    bool deviceIsPartition();
     bool deviceIsRemovable();
     bool deviceIsSystemInternal();
     bool deviceIsLinuxLvm2LV();
     bool deviceIsLinuxMd();
     bool deviceIsLinuxLvm2PV();
-
     bool driveIsRotational();
-    QString driveMediaCompatibility();
-
-    qulonglong partitionSize();
 
     QString uuid();
+    QString deviceFilePresentation();
+    QStringList deviceMountPaths();
 
-    bool driveIsMediaEjectable();
+    bool deviceIsDrive();
+    QString driveMedia();
     bool driveCanDetach();
+    bool driveIsMediaEjectable();
 
-Q_SIGNALS:
-    void changed(const QString &);
-protected:
+private:
+    QVariant getProperty(const QString &property);
     QString path;
-    QVariant getProperty(const QString &);
 };
 
-
-class QUPowerInterface : public  QDBusAbstractInterface
+class QUPowerInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
+
 public:
-    QUPowerInterface(/*const QString &dbusPathName,*/QObject *parent = 0);
+    QUPowerInterface(QObject *parent = 0);
     ~QUPowerInterface();
 
-    QList<QDBusObjectPath> enumerateDevices();
-    QVariantMap getProperties();
     bool onBattery();
+
+    QList<QDBusObjectPath> enumerateDevices();
 
 Q_SIGNALS:
     void changed();
-    void propertiesChanged(QString,QVariant);
+
 protected:
-    QString path;
-    QVariant getProperty(const QString &);
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
 private:
-    QDBusInterface *propertiesInterface;
+    QVariant getProperty(const QString &property);
 };
 
 class QUPowerDeviceInterface : public  QDBusAbstractInterface
@@ -175,46 +146,40 @@ class QUPowerDeviceInterface : public  QDBusAbstractInterface
 public:
     QUPowerDeviceInterface(const QString &dbusPathName,QObject *parent = 0);
     ~QUPowerDeviceInterface();
-    QVariantMap getProperties();
-    void refresh();
 
-    quint16 getType();
+
     bool isPowerSupply();
-    bool hasHistory();
-    bool hasStatistics();
     bool isOnline();
     double currentEnergy();
-    double energyWhenEmpty();
     double energyWhenFull();
-    double energyFullDesign();
     double energyDischargeRate();
-    double voltage();
-    qint64 timeToEmpty();
-    qint64 timeToFull();
     double percentLeft();
-    bool isPresent();
+    double voltage();
     quint16 getState();
-    bool isRechargeable();
-    double capacity();
-    quint16 technology();
-    bool recallNotice();
-    QString recallVendor();
-    QString recallUrl();
+    quint16 getType();
+    qint64 timeToFull();
 
 Q_SIGNALS:
     void changed();
     void propertyChanged(QString,QVariant);
 
 protected:
-    QString path;
-    QVariant getProperty(const QString &);
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
+
 private:
+    QVariant getProperty(const QString &);
+    QVariantMap getProperties();
     QDBusInterface *propertiesInterface;
+    QString path;
     QVariantMap pMap;
+
 private Q_SLOTS:
     void propChanged();
 };
 
-#endif
+QTM_END_NAMESPACE
+
+#endif // QT_NO_DBUS
+
+#endif // QDEVICEKITSERVICE_H
