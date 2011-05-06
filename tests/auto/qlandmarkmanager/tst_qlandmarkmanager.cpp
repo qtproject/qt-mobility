@@ -2445,7 +2445,7 @@ void tst_QLandmarkManager::saveCategory() {
         QVERIFY(spyAdd.count() > 0);
         QList<QLandmarkCategoryId> addedCatIds;
         for (int i=0; i < spyAdd.count(); ++i) {
-            addedCatIds.append(spyAdd.at(i).at(0).value<QList<QLandmarkCategoryId> >()); 
+            addedCatIds.append(spyAdd.at(i).at(0).value<QList<QLandmarkCategoryId> >());
         }
 
         QVERIFY(addedCatIds.contains(firstCategoryId));
@@ -2490,7 +2490,7 @@ void tst_QLandmarkManager::saveCategory() {
        QCOMPARE(spyAdd.count(), 0);
 
        QVERIFY(spyChange.count() > 0);
-       QList<QLandmarkCategoryId> changedCatIds; 
+       QList<QLandmarkCategoryId> changedCatIds;
        for (int i=0; i < spyChange.count(); ++i)
            changedCatIds.append(spyChange.at(i).at(0).value<QList<QLandmarkCategoryId > >());
 
@@ -2499,7 +2499,7 @@ void tst_QLandmarkManager::saveCategory() {
        QVERIFY(changedCatIds.contains(thirdCategoryId));
        QCOMPARE(changedCatIds.count(), 3);
        spyChange.clear();
-       
+
        QCOMPARE(spyRemove.count(), 0);
    }
 
@@ -3467,12 +3467,12 @@ void tst_QLandmarkManager::removeCategory() {
     spyCatAdd.clear();
 
     QCOMPARE(spyCatChange.count(), 0);
-    
+
     QVERIFY(spyCatRemove.count() > 0);
     QList<QLandmarkCategoryId> removedCatIds;
     for (int i=0; i < spyCatRemove.count(); ++i)
         removedCatIds.append(spyCatRemove.at(i).at(0).value<QList<QLandmarkCategoryId> >());
-    
+
     QVERIFY(removedCatIds.contains(catC.categoryId()));
     QVERIFY(removedCatIds.contains(catB.categoryId()));
     QVERIFY(removedCatIds.contains(catA.categoryId()));
