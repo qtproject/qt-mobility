@@ -88,10 +88,14 @@ bool parseNumericPath(const QString &path, PathMapper::Target &target, quint32 &
             }
         }
     } else if (pathParts[0] == "fm") {
+        if (pathParts.size() != 2) {
+            return false;
+        }
+        qDebug() << "featuremanager";
         target = PathMapper::TargetFeatureManager;
         if (pathParts.size() == 2) {
-            category = pathParts[1].toUInt(&ok, 0);
-            key = 0;
+            category = 0;
+            key = pathParts[1].toUInt(&ok, 0);
         }
     }
     return ok;
