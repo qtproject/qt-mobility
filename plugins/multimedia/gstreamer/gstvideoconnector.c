@@ -186,6 +186,10 @@ gst_video_connector_buffer_alloc (GstPad * pad, guint64 offset, guint size,
     GstFlowReturn res = GST_FLOW_OK;
     element = GST_VIDEO_CONNECTOR (GST_PAD_PARENT (pad));
 
+    if (!buf)
+        return GST_FLOW_ERROR;
+    *buf = NULL;
+
     GST_OBJECT_LOCK (element);
     gst_object_ref(element->srcpad);
     GST_OBJECT_UNLOCK (element);
