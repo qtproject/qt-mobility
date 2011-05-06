@@ -508,84 +508,39 @@ bool QSystemInfoLinuxCommonPrivate::hasHalUsbFeature(qint32 usbClass)
 
 QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type, const QString &parameter)
 {
+    Q_UNUSED(parameter)
+
     switch(type) {
     case QSystemInfo::Firmware: {
-#if !defined(QT_NO_HAL)
-        QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
-        QString str;
-        if (iface.isValid()) {
-            str = iface.getPropertyString(QLatin1String("system.kernel.version"));
-            if (!str.isEmpty())
-                return str;
-            if (parameter == "versionDate") {
-                str = iface.getPropertyString(QLatin1String("system.firmware.release_date"));
-                if (!str.isEmpty())
-                    return str;
-            } else {
-                str = iface.getPropertyString(QLatin1String("system.firmware.version"));
-                if (str.isEmpty()) {
-                    if (!str.isEmpty())
-                        return str;
-                }
-            }
-        }
+        QFile firmware("/proc/sys/kernel/osrelease");
+        if (firmware.open(QIODevice::ReadOnly))
+            return firmware.readAll().simplified();
         break;
-#endif // QT_NO_HAL
     }
 
     case QSystemInfo::Os: {
-        if (QFile::exists("/usr/bin/lsb_release")) {
-            QProcess syscall;
-            QString program = "/usr/bin/lsb_release";
-            QStringList arguments;
-            arguments << "-r";
-            syscall.start(program, arguments);
-            syscall.waitForFinished();
-            QString desc = syscall.readAllStandardOutput();
-            desc = desc.section(":",1,1);
-            return desc.simplified();
-        }
-
-        QFile versionFile2("/etc/issue");
-        if (!versionFile2.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug() << "File not opened";
-        } else {
-            QString line;
-            QString strvalue;
-            QTextStream in(&versionFile2);
-            do {
-                line = in.readLine();
-                line.remove("\\n");
-                line.remove("\\l");
-                strvalue = line.simplified();
-                break;
-            } while (!line.isNull());
-            versionFile2.close();
-            if(!strvalue.isEmpty())
-                return strvalue;
-        }
-
-        QFile versionFile3(QLatin1String("/proc/version"));
-        if (!versionFile3.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug() << "File not opened";
-        } else {
-            QString  strvalue;
-            strvalue = QLatin1String(versionFile3.readAll().trimmed());
-            versionFile3.close();
-            return strvalue;
+        QFile os("/etc/issue");
+        if (os.open(QIODevice::ReadOnly)) {
+            QByteArray content = os.readAll();
+            if (!content.isEmpty()) {
+                QList<QByteArray> list(content.split(' '));
+                bool ok = false;
+                foreach (const QByteArray &field, list) {
+                    field.toDouble(&ok);
+                    if (ok)
+                        return field;
+                }
+            }
         }
 
         break;
     }
-
-    case QSystemInfo::QtCore :
-        return QString(qVersion());
 
     default:
         break;
     };
 
-    return QString("Not Available");
+    return QString();
 }
 
 QString QSystemInfoLinuxCommonPrivate::currentCountryCode() const
