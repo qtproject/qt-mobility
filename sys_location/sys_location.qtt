@@ -194,7 +194,7 @@ testcase = {
     | Fill in 9 in to Top Left Lat field | |
     | Fill in 0 in to Top Left Long field | |
     | Fill in 0 i to Bottom Right Lat filed | |
-    | Fill in 1 in to Top Left Long field | |
+    | Fill in 1 in to Bottom Right Long field | |
     | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |'
        ));
     },
