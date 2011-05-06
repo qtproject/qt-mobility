@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qudevservice_linux_p.h"
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,9 +51,8 @@ QUdevService::QUdevService()
 
 QUdevService::~QUdevService()
 {
-    if (context) {
-        udev_unref(context), context = 0;
-    }
+    if (context)
+        udev_unref(context);
 }
 
 bool QUdevService::isSubsystemAvailable(const char *subsystem)
@@ -63,15 +61,15 @@ bool QUdevService::isSubsystemAvailable(const char *subsystem)
     struct udev_enumerate *enumerate = 0;
     if (context) {
         if ((enumerate = udev_enumerate_new(context))
-                && (0 == udev_enumerate_add_match_subsystem(enumerate, subsystem))
-                &&  (0 == udev_enumerate_scan_devices(enumerate))) {
+            && (0 == udev_enumerate_add_match_subsystem(enumerate, subsystem))
+            && (0 == udev_enumerate_scan_devices(enumerate))) {
             available = (0 != udev_enumerate_get_list_entry(enumerate));
         }
     }
 
-    if (enumerate) {
+    if (enumerate)
         udev_enumerate_unref(enumerate);
-    }
+
     return available;
 }
 
@@ -81,39 +79,16 @@ bool QUdevService::isPropertyAvailable(const char *property, const char *value)
     struct udev_enumerate *enumerate = 0;
     if (context) {
         if ((enumerate = udev_enumerate_new(context))
-                && (0 == udev_enumerate_add_match_property(enumerate, property, value))
-                &&  (0 == udev_enumerate_scan_devices(enumerate))) {
+            && (0 == udev_enumerate_add_match_property(enumerate, property, value))
+            && (0 == udev_enumerate_scan_devices(enumerate))) {
             available = (0 != udev_enumerate_get_list_entry(enumerate));
         }
     }
 
-    if (enumerate) {
+    if (enumerate)
         udev_enumerate_unref(enumerate);
-    }
-    return available;
-}
 
-QUdevFeatureMatrix QUdevService::availableFeatures()
-{
-    QUdevFeatureMatrix featureMatrix = {
-        /* bluetooth   */  isSubsystemAvailable(UDEV_SUBSYSTEM_BLUETOOTH),
-        /* camera      */  isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:capture:*"),
-        /* gps         */  isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*gps*"),
-        /* haptics     */  (isPropertyAvailable(UDEV_PROPERTY_NAME, "*touch*")
-        || isPropertyAvailable(UDEV_PROPERTY_NAME, "*Touch*")),
-        /* infrared    */  isPropertyAvailable(UDEV_PROPERTY_DRIVER, "*irda*"),
-        /* leds        */  isSubsystemAvailable(UDEV_SUBSYSTEM_LEDS),
-        /* memcard     */  isSubsystemAvailable(UDEV_SUBSYSTEM_MEMCARD),
-        /* radio       */  isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:radio:*"),
-        /* usb         */  (isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_MUSB)
-        || isPropertyAvailable(UDEV_PROPERTY_DRIVER, UDEV_DRIVER_USB)
-        || isPropertyAvailable(UDEV_PROPERTY_INTERFACE, "usb*")),
-        /* vibration   */  (isPropertyAvailable(UDEV_PROPERTY_NAME, "*vibra*")
-        || isPropertyAvailable(UDEV_PROPERTY_NAME, "*Vibra*")),
-        /* videoOut    */  isPropertyAvailable(UDEV_PROPERTY_V4L_CAP, "*:video_output:*"),
-        /* wlan        */  isSubsystemAvailable(UDEV_SUBSYSTEM_WLAN)
-    };
-    return featureMatrix;
+    return available;
 }
 
 #include "moc_qudevservice_linux_p.cpp"

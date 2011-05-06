@@ -240,7 +240,9 @@ Q_SIGNALS:
 
 #if !defined(QT_NO_DBUS)
 private Q_SLOTS:
+#if !defined(QT_NO_HAL)
     void halChanged(int,QVariantList);
+#endif // QT_NO_HAL
     void bluezPropertyChanged(const QString&, QDBusVariant);
     void deviceModeChanged(QString newMode);
     void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
@@ -330,9 +332,9 @@ public:
     int currentFlow() const;
 
 private Q_SLOTS:
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     void halChangedMaemo(int,QVariantList);
-#endif // QT_NO_DBUS
+#endif // QT_NO_HAL
 
 #ifdef Q_USE_BME
     void onMeasurement(int socket);

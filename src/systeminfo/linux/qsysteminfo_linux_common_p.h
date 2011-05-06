@@ -62,7 +62,9 @@
 #include "qsystembatteryinfo.h"
 
 #if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
 #include "qhalservice_linux_p.h"
+#endif // QT_NO_HAL
 #if !defined(Q_WS_MAEMO5) && !defined(Q_WS_MAEMO6)
 #include "qdevicekitservice_linux_p.h"
 #if !defined(QT_NO_CONNMAN)
@@ -107,10 +109,10 @@ protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     bool hasHalDeviceFeature(const QString &param);
     bool hasHalUsbFeature(qint32 usbClass);
-#endif // QT_NO_DBUS
+#endif // QT_NO_HAL
 };
 
 class QSystemNetworkInfoLinuxCommonPrivate : public QObject
@@ -161,11 +163,6 @@ private Q_SLOTS:
 private:
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
-#if !defined(QT_NO_DBUS)
-    int getBluetoothRssi();
-    QString getBluetoothInfo(const QString &file);
-    bool isDefaultInterface(const QString &device);
-
 #if !defined(QT_NO_CONNMAN)
     QConnmanManagerInterface *connmanManager;
     QOfonoManagerInterface *ofonoManager;
@@ -182,7 +179,6 @@ private:
     QSystemNetworkInfo::NetworkStatus getOfonoStatus(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::CellDataTechnology ofonoTechToCDT(const QString &tech);
 #endif // QT_NO_CONNMAN
-#endif // QT_NO_DBUS
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject
@@ -278,6 +274,9 @@ public:
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
 
+    QString imei();
+    QString imsi();
+    QSystemDeviceInfo::SimStatus simStatus();
     QString manufacturer();
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
     int batteryLevel() const;
@@ -303,7 +302,9 @@ protected:
     bool btPowered;
 
 #if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     QHalDeviceInterface *halIfaceDevice;
+#endif // QT_NO_HAL
     bool hasWirelessKeyboardConnected;
     bool connectedBtPower;
     bool connectedWirelessKeyboard;
@@ -314,7 +315,9 @@ protected:
     void disconnectNotify(const char *signal);
 
 private Q_SLOTS:
+#if !defined(QT_NO_HAL)
     virtual void halChanged(int,QVariantList);
+#endif // QT_NO_HAL
     void bluezPropertyChanged(const QString&, QDBusVariant);
     virtual void upowerChanged();
     virtual void upowerDeviceChanged();
@@ -367,17 +370,21 @@ protected:
     void disconnectNotify(const char *signal);
 
 #if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     QHalDeviceInterface *halIfaceDevice;
+#endif // QT_NO_HAL
     QSystemBatteryInfo::ChargerType currentChargerType();
 
 private Q_SLOTS:
     void setConnection();
+#if !defined(QT_NO_HAL)
     virtual void halChanged(int,QVariantList);
+#endif // QT_NO_HAL
     void getBatteryStats();
     void timeout();
-#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5)
+#if !defined(QT_NO_UPOWER)
     void uPowerPropertyChanged(const QString &, const QVariant &);
-#endif
+#endif // QT_NO_UPOWER
 #endif
 
 protected:
@@ -393,8 +400,11 @@ private:
     int capacity;
     int timeToFull;
     int remainingEnergy;
-    int  batteryLevel() const ;
+    int  batteryLevel() const;
+
+#if !defined(QT_NO_UPOWER)
     QUPowerDeviceInterface *battery;
+#endif // QT_NO_UPOWER
 };
 
 QTM_END_NAMESPACE
