@@ -1,6 +1,7 @@
 qt-mobility (1.2.0-beta1+488) unstable; urgency=low
 
-  * Updated changelog	
+  * Updated changelog
+  * Added missing connectivity test
   * Fixes: NB#244943
   * Fixes: NB#246713
   * Fixes: NB#246422
