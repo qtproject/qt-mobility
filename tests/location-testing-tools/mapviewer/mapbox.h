@@ -92,6 +92,15 @@ public:
     void addRoute(const QGeoCoordinate & start, const QGeoCoordinate & end);
     void addRoute(const QList<QGeoCoordinate> & waypoints);
 
+    void addPixmap(const QGeoCoordinate &coord, const QPoint &offset, const QPixmap &pixmap);
+    void addText(const QGeoCoordinate &coord,
+                 const QString &text = QString(),
+                 const QFont &font = QFont(),
+                 const QPoint &offset = QPoint(),
+                 Qt::Alignment alignment = Qt::AlignCenter);
+    void addFakeRoute(const QList<QGeoCoordinate> &waypoints, int segments = 2);
+    void addCustom(const QGeoCoordinate &coord, const QPoint &offset, QGraphicsItem *graphicsItem);
+
     enum DisplayMode {
         DisplayNone,
         DisplayMap,
@@ -155,6 +164,7 @@ private slots:
     void demo1();
     void demo2();
     void demo3();
+
     void drawRect();
     void drawPixmap();
     void drawPolyline();
@@ -166,6 +176,8 @@ private slots:
     void selectObjects();
     void calcRoute();
     void captureCoordinates();
+
+    void testDateline();
 };
 
 #endif // MAPBOX_H
