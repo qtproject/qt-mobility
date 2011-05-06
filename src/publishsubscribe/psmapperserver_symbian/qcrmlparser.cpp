@@ -99,26 +99,15 @@ QList<KeyData> QCrmlParser::parseQCrml(const QString &filePath)
 QList<KeyData> QCrmlParser::parseRepository()
 {
     QList<KeyData> rv;
-    QStringList mandatoryAttributes;
-    mandatoryAttributes << QLatin1String("uidValue");
     setError(NoError, QString());
-    if (!checkMandatoryAttributes(mandatoryAttributes))
-        return rv;
-
-    bool ok;
-    quint32 uidValue =
-        uidStringToUInt32(attributes().value(QLatin1String("uidValue")).toString(), &ok);
-    if (!ok) {
-        setError(ParseError, QObject::tr("repository element has invalid uidValue on line %1")
-                               .arg(QString::number(lineNumber())));
-        return rv;
-    }
 
     QString targetStr = attributes().value(QLatin1String("target")).toString();
     if (targetStr.isEmpty() || targetStr == QLatin1String("CRepository")) {
         m_target = KeyData::CRepository;
     } else if (targetStr == QLatin1String("RProperty")) {
         m_target = KeyData::RProperty;
+    } else if (targetStr == QLatin1String("FeatureManager")) {
+        m_target = KeyData::FeatureManager;
     } else {
         setError(ParseError, QObject::tr("repository element has unrecognised target attribute "
                                         "on line %1, attribute must be CRepository, RProperty or "
@@ -126,6 +115,22 @@ QList<KeyData> QCrmlParser::parseRepository()
         return rv;
     }
 
+    quint32 uidValue = 0;
+
+    if (m_target != KeyData::FeatureManager) {
+        QStringList mandatoryAttributes;
+        mandatoryAttributes << QLatin1String("uidValue");
+        if (!checkMandatoryAttributes(mandatoryAttributes))
+            return rv;
+        bool ok;
+        uidValue = uidStringToUInt32(attributes().value(QLatin1String("uidValue")).toString(), &ok);
+        if (!ok) {
+            setError(ParseError, QObject::tr("repository element has invalid uidValue on line %1")
+                                   .arg(QString::number(lineNumber())));
+            return rv;
+        }
+    }
+    
     while (!atEnd())
     {
         readNext();
