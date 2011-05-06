@@ -137,7 +137,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 
         /* See if we got a fast hit */
         QList<QContactManagerEngineFactory*> factories = m_engines.values(builtManagerName);
-        m_error = QContactManager::NoError;
+        m_lastError = QContactManager::NoError;
 
         while(!found) {
             foreach (QContactManagerEngineFactory* f, factories) {
@@ -145,7 +145,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                 if (implementationVersion == -1 ||//no given implementation version required
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
-                    QContactManagerEngine* engine = f->engine(parameters, &m_error);
+                    QContactManagerEngine* engine = f->engine(parameters, &m_lastError);
                     // if it's a V2, use it
                     m_engine = qobject_cast<QContactManagerEngineV2*>(engine);
                     if (!m_engine && engine) {
@@ -170,13 +170,13 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         // XXX remove this
         // the engine factory could lie to us, so check the real implementation version
         if (m_engine && (implementationVersion != -1 && m_engine->managerVersion() != implementationVersion)) {
-            m_error = QContactManager::VersionMismatchError;
+            m_lastError = QContactManager::VersionMismatchError;
             m_engine = 0;
         }
 
         if (!m_engine) {
-            if (m_error == QContactManager::NoError)
-                m_error = QContactManager::DoesNotExistError;
+            if (m_lastError == QContactManager::NoError)
+                m_lastError = QContactManager::DoesNotExistError;
             m_engine = new QContactInvalidEngine();
         }
     }

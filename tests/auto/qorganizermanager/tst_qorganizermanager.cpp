@@ -190,6 +190,7 @@ private slots:
     void changeSet();
     void fetchHint();
     void testFilterFunction();
+    void errorSemantics();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -4153,6 +4154,71 @@ void tst_QOrganizerManager::collections()
         }
     }
 }
+
+class errorSemanticsTester : public QObject {
+    Q_OBJECT;
+public:
+    bool initialErrorWasDoesNotExist;
+    bool slotErrorWasBadArgument;
+    QOrganizerManager* mManager;
+
+    errorSemanticsTester(QOrganizerManager* manager)
+        : initialErrorWasDoesNotExist(false),
+        slotErrorWasBadArgument(false),
+        mManager(manager)
+    {
+        connect(manager, SIGNAL(itemsAdded(QList<QOrganizerItemId>)), this, SLOT(handleAdded()));
+    }
+
+public slots:
+    void handleAdded()
+    {
+        // Make sure the initial error state is correct
+        initialErrorWasDoesNotExist = mManager->error() == QOrganizerManager::DoesNotExistError;
+        // Now force a different error
+        mManager->removeItems(QList<QOrganizerItemId>());
+        slotErrorWasBadArgument = mManager->error() == QOrganizerManager::BadArgumentError;
+        // and return
+    }
+};
+
+void tst_QOrganizerManager::errorSemantics()
+{
+    /*
+        Test to make sure that calling functions in response to signals doesn't upset the correct error results
+        This relies on the memory engine emitting signals before e.g. saveItems returns
+     */
+
+    QOrganizerManager m("memory");
+    errorSemanticsTester t(&m);
+
+    QVERIFY(m.error() == QOrganizerManager::NoError);
+
+    QString type;
+    if (m.detailDefinitions(QOrganizerItemType::TypeNote).count())
+        type = QLatin1String(QOrganizerItemType::TypeNote);
+    else if (m.detailDefinitions(QOrganizerItemType::TypeTodo).count())
+        type = QLatin1String(QOrganizerItemType::TypeTodo);
+    else
+        QSKIP("This manager does not support note or todo item", SkipSingle);
+
+    QOrganizerItem item;
+    item.setType(type);
+    item.setDisplayLabel("This is a note");
+    item.setDescription("This note is a particularly notey note");
+
+    // Try creating some specific error so we can test it later on
+    QVERIFY(!m.removeItem(QOrganizerItemId()));
+    QVERIFY(m.error() == QOrganizerManager::DoesNotExistError);
+
+    // Now save something
+    QVERIFY(m.saveItem(&item));
+
+    QVERIFY(t.initialErrorWasDoesNotExist);
+    QVERIFY(t.slotErrorWasBadArgument);
+    QVERIFY(m.error() == QOrganizerManager::NoError);
+}
+
 
 QTEST_MAIN(tst_QOrganizerManager)
 #include "tst_qorganizermanager.moc"

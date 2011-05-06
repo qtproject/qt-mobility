@@ -2340,7 +2340,19 @@ QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>
 }
 
 /*!
-  Notifies the manager engine that the given request \a req has been destroyed
+  Notifies the manager engine that the given request \a req is in the process of being destroyed.
+
+  The request pointer \a req is still valid during this function call, but before returning
+  from this call the engine should ensure that it no longer holds any references
+  to the \a req pointer (for example, in a queue in another thread) because directly
+  following this call the request will be deleted and this pointer will become invalid.
+  In a multithreaded engine, this may mean blocking the calling thread while other
+  threads clean up.
+
+  If a request is still in progress at this point, it is undefined what will
+  happen to the operation requested, but in general it should either be
+  fully completed or fully aborted.  In any case, the client has signalled that
+  they do not care about the outcome (by deleting the request).
  */
 void QContactManagerEngine::requestDestroyed(QContactAbstractRequest* req)
 {

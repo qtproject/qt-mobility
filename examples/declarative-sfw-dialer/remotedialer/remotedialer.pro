@@ -16,10 +16,6 @@ HEADERS += remotedialer.h
 SOURCES += remotedialer.cpp \
            main.cpp     
 
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-}
-
 wince*|symbian*: {
     addFiles.sources = remotedialerservice.xml
     addFiles.path = xmldata

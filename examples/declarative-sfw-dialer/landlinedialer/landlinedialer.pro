@@ -27,7 +27,6 @@ symbian {
     DEPLOYMENT += xmlautoimport
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
     load(armcc_warnings)
 }
 

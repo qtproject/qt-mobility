@@ -45,7 +45,7 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("landmarkmap.qml");
+    const QString mainQmlApp = QLatin1String("qrc:/landmarkmap.qml");
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);

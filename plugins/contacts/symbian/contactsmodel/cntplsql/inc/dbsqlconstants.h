@@ -275,6 +275,7 @@ enum TFastAccessField
 
 const TInt KFirstIndex = 0;
 
+static const TInt MAX_INT_LEN = 11; // Max int value length
 // For Database compatibility. Used in cntsqldbstructure
 _LIT(KInteger, "INTEGER");
 _LIT(KVarchar255,"VARCHAR(255)");

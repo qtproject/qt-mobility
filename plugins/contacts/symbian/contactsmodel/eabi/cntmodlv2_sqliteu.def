@@ -713,4 +713,11 @@ EXPORTS
 	_ZN23TCntImageRescaleUtility16UpdateImageNameLERK12CContactItem @ 712 NONAME
 	_ZN23TCntImageRescaleUtility21CreateImageDirectoryLEv @ 713 NONAME
 	_ZN23TCntImageRescaleUtility21DeleteImageDirectoryLEv @ 714 NONAME
+	_ZNK17CContactLocalView10ObserverV2Ev @ 715 NONAME ABSENT
+	_ZN21CContactImagesUtility18EnsureImageRemovedERK7TDesC16 @ 716 NONAME
+	_ZN21CContactImagesUtility18ScaleAndStoreImageEP28MContactImageUtilityObserverRK7TDesC16 @ 717 NONAME
+	_ZN21CContactImagesUtility4NewLEv @ 718 NONAME
+	_ZN21CContactImagesUtilityD0Ev @ 719 NONAME
+	_ZN21CContactImagesUtilityD1Ev @ 720 NONAME
+	_ZN21CContactImagesUtilityD2Ev @ 721 NONAME
 

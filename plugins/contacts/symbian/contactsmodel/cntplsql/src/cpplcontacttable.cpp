@@ -480,11 +480,8 @@ void CPplContactTable::WriteContactItemL(const CContactItem& aItem, TCntSqlState
 			}
 		}
 
-	// Rename the image file to contain the guid
-	if (aType == EInsert)
-	    {
-        TRAP_IGNORE(TCntImageRescaleUtility::UpdateImageNameL( aItem ));
-		}
+	// Rename the image file to contain the guid, if it does not contain the guid
+	TRAP_IGNORE(TCntImageRescaleUtility::UpdateImageNameL( aItem ));
 	
 	// bind other values to statement
 	if(aType == EInsert) 
@@ -822,7 +819,7 @@ void CPplContactTable::DeleteMultipleContactsL(const CContactIdArray* aIdArray)
         }
     
     // The contact assigned to own card is being deleted, so set cached own card id to "not found"
-    if (aIdArray->Find(iOwnCardId) > 0)
+    if (aIdArray->Find(iOwnCardId) != KErrNotFound)
         {
         iOwnCardId = KErrNotFound;
         }

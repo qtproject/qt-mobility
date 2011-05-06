@@ -15,7 +15,8 @@ QtMobility release information
 Published QtMobility releases are tested with following Qt releases
 QtMobility 1.0.2 Qt 4.6.3
 QtMobility 1.1.0 Qt 4.7.0
-QtMobility 1.1.1 Qt 4.7.1
+QtMobility 1.1.1 Qt 4.6.3 and Qt 4.7.2
+QtMobility 1.1.2 Qt 4.6.3 and Qt 4.7.2
 
 Installing Qt Mobility for Symbian (for S60 3.1, 3.2 & 5.0 and Symbian SDKs)
 ----------------------------------------------------------------------------
@@ -25,17 +26,17 @@ Installing Qt Mobility for Symbian (for S60 3.1, 3.2 & 5.0 and Symbian SDKs)
 The Symbian package is identical to the source package, with the following additions:
 
   INSTALL.symbian
-  qt-mobility-symbian-x.y.z-epoc32-3.1.zip
-  qt-mobility-symbian-x.y.z-epoc32-3.2.zip
-  qt-mobility-symbian-x.y.z-epoc32-5.0.zip
-  qt-mobility-symbian-x.y.z-epoc32-symbian.zip
-  qt-mobility-symbian-x.y.z-s60.sis
-  qt-mobility-symbian-x.y.z-symbian3.sis
+  qt-mobility-x.y.z-qt-y.u.v-epoc32-3.1.zip
+  qt-mobility-x.y.z-qt-y.u.v-epoc32-3.2.zip
+  qt-mobility-x.y.z-qt-y.u.v-epoc32-5.0.zip
+  qt-mobility-x.y.z-qt-y.u.v-epoc32-symbian.zip
+  qt-mobility-symbian-x.y.z-qt-y.u.v-s60-symbian-signed.sis
+  qt-mobility-symbian-x.y.z-qt-y.u.v-s3-nokia-signed.sis
 
-  Where x.y.z is the version of the QtMobility release.
+  Where x.y.z is the version of the QtMobility release and y.u.v the Qt release used to generate the sis file.
 
 - Installing the mobility libraries to your Symbian SDK happens by extracting the
-'qt-mobility-x.y.z-epoc32-<SYMBIAN_SDK>.zip' file to your Symbian SDK.
+  'qt-mobility-x.y.z-epoc32-<SYMBIAN_SDK>.zip' file to your Symbian SDK.
   - First copy the zip file to your Symbian SDK next to \epoc32 folder, f.ex to C:\Symbian\9.4\S60_5th_Edition_SDK_v1.0_2
   - extract the file
   - Note that you need to repeat this step for all the Symbian SDKs you want to develop with Mobility APIs.
@@ -47,6 +48,16 @@ The Symbian package is identical to the source package, with the following addit
 - Copy the <QTMOBILITYDIR>/features/mobility.prf.template file to QTDIR/mkspecs/features/mobility.prf
   - The relevant Qt directory can be obtained by running 'qmake -v' within the build environment.
 
+- Setup Qt Mobility configuration:
+  - run "configure -no-docs -no-tools -examples -demos" on the root of Mobility source tree
+    - result of running the configure depends on the installed SDK plugins present in the SDK which means it might not equal
+      the configuration used to compile Qt Mobility binaries in the delivered binary package
+    - The "-examples" and "-demos" configure switches execute qmake for example and demo applications
+  OR
+  - copy and rename correct config.pri.<platform> from features directory to the Qt Mobility root directory.
+    - The content of the specific config.pri is equal to the environment used to compile the Qt Mobility binaries in the package.
+      However you should note that your environment may differ from the environment used to generate files. This may result in compilation problems
+    - If you use the config.pri templates you must run qmake by yourself for the example and demo applications before compiling them
 
 The above steps create a working environment for new projects wanting to use the QtMobility libraries.
 

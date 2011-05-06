@@ -254,6 +254,13 @@ private:
      */
     TPositionModuleStatusEvent  mStatusEvent;
 
+    // mutex for making thread safe
+    QMutex          m_mutex;
+    // mutex for ReqUpdate Active Ojbect
+    QMutex          m_mutex_ReqUpAO;
+    // mutex for RegUpdate Active Ojbect
+    QMutex          m_mutex_RegUpAO;
+
     /*
      * maintain the startUpdates status
      */

@@ -3,6 +3,13 @@ TARGET = declarative-music-browser
 
 include(../examples.pri)
 
+win32 {
+    #required by Qt SDK to resolve Mobility libraries
+    CONFIG+=mobility
+    MOBILITY+=docgallery
+}
+
+
 QT += declarative
 
 HEADERS = \
