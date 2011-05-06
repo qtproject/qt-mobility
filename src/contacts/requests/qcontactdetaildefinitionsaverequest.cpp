@@ -83,6 +83,7 @@ QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
   \code
       setDefinitions(QList<QContactDetailDefinition>() << definition);
   \endcode
+  \since 1.0
  */
 void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefinition& definition)
 {
@@ -92,7 +93,9 @@ void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefi
     d->m_definitions.append(definition);
 }
 
-/*! Sets the definitions to save to be \a definitions */
+/*! Sets the definitions to save to be \a definitions
+    \since 1.0
+*/
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
@@ -101,7 +104,9 @@ void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDet
 }
 
 /*! Returns the list of definitions that will be saved if called prior to calling \c start(),
-    otherwise returns the list of detail definitions as they were saved in the contacts store */
+    otherwise returns the list of detail definitions as they were saved in the contacts store
+    \since 1.0
+*/
 QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
@@ -109,7 +114,9 @@ QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions
     return d->m_definitions;
 }
 
-/*! Sets the type of contact for which detail definitions should be saved to \a contactType */
+/*! Sets the type of contact for which detail definitions should be saved to \a contactType
+    \since 1.0
+*/
 void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactType)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
@@ -117,7 +124,9 @@ void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactT
     d->m_contactType = contactType;
 }
 
-/*! Returns the type of contact for which detail definitions will be saved */
+/*! Returns the type of contact for which detail definitions will be saved
+    \since 1.0
+*/
 QString QContactDetailDefinitionSaveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
@@ -125,7 +134,9 @@ QString QContactDetailDefinitionSaveRequest::contactType() const
     return d->m_contactType;
 }
 
-/*! Returns the map of input definition list indices to errors which occurred */
+/*! Returns the map of input definition list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactDetailDefinitionSaveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);

@@ -272,13 +272,6 @@ void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
     rectangle is visible.
 */
 
-/*!
-    \qmlproperty bool MapRectangle::selected
-
-    This property holds a boolean corresponding to whether or not the
-    rectangle is selected.
-*/
-
 #include "moc_qdeclarativegeomaprectangleobject_p.cpp"
 
 QTM_END_NAMESPACE

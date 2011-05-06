@@ -72,6 +72,7 @@ QGalleryResource::QGalleryResource()
 
 /*!
     Constructs a resource from a \a url.
+    \since 1.1
 */
 
 QGalleryResource::QGalleryResource(const QUrl &url)
@@ -81,6 +82,7 @@ QGalleryResource::QGalleryResource(const QUrl &url)
 
 /*!
     Constructs a resource from a \a url and a set of \a attributes.
+    \since 1.1
 */
 
 QGalleryResource::QGalleryResource(const QUrl &url, QMap<int, QVariant> attributes)
@@ -91,6 +93,7 @@ QGalleryResource::QGalleryResource(const QUrl &url, QMap<int, QVariant> attribut
 
 /*!
     Constructs a copy of a \a resource.
+    \since 1.1
 */
 
 QGalleryResource::QGalleryResource(const QGalleryResource &resource)
@@ -109,6 +112,7 @@ QGalleryResource::~QGalleryResource()
 
 /*!
     Assigns the value of \a resource to another resource.
+    \since 1.1
 */
 
 QGalleryResource &QGalleryResource::operator =(const QGalleryResource &resource)
@@ -123,6 +127,7 @@ QGalleryResource &QGalleryResource::operator =(const QGalleryResource &resource)
     Compares \a resource to another resource.
 
     Returns true if both resources are the same, and false otherwise.
+    \since 1.1
 */
 
 bool QGalleryResource::operator ==(const QGalleryResource &resource) const
@@ -134,6 +139,7 @@ bool QGalleryResource::operator ==(const QGalleryResource &resource) const
     Compares \a resource to another resource.
 
     Returns true if the resource are not the same, and false otherwise.
+    \since 1.1
 */
 
 bool QGalleryResource::operator !=(const QGalleryResource &resource) const
@@ -143,6 +149,7 @@ bool QGalleryResource::operator !=(const QGalleryResource &resource) const
 
 /*!
     Returns the URL of a resource.
+    \since 1.1
 */
 
 QUrl QGalleryResource::url() const
@@ -152,6 +159,7 @@ QUrl QGalleryResource::url() const
 
 /*!
     Returns the attributes of a resource.
+    \since 1.1
 */
 
 QMap<int, QVariant> QGalleryResource::attributes() const
@@ -161,6 +169,7 @@ QMap<int, QVariant> QGalleryResource::attributes() const
 
 /*!
     Returns the value of the resource attribute identified by \a key.
+    \since 1.1
 */
 
 QVariant QGalleryResource::attribute(int key) const

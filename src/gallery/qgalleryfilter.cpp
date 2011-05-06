@@ -239,6 +239,7 @@ public:
 
 /*!
     Constructs an empty intersection.
+    \since 1.1
 */
 
 QGalleryIntersectionFilter::QGalleryIntersectionFilter()
@@ -248,6 +249,7 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter()
 
 /*!
     Constructs an intersection filter from a meta-data \a filter.
+    \since 1.1
 */
 
 QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryMetaDataFilter &filter)
@@ -258,6 +260,7 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryMetaDataFil
 
 /*!
     Constructs an intersection filter from a union \a filter.
+    \since 1.1
 */
 
 QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryUnionFilter &filter)
@@ -268,6 +271,7 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryUnionFilter
 
 /*!
     Constructs a copy of an intersection \a filter.
+    \since 1.1
 */
 
 QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryIntersectionFilter &filter)
@@ -303,6 +307,7 @@ QGalleryIntersectionFilter::~QGalleryIntersectionFilter()
 
 /*!
     Assigns the value of \a filter to another intersection filter.
+    \since 1.1
 */
 
 QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator =(
@@ -319,6 +324,7 @@ QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator =(
     An invalid filter can be obtained by casting a non
     QGalleryFilter::Intersection type QGalleryFilter to
     QGalleryIntersectionFilter.
+    \since 1.1
 */
 
 bool QGalleryIntersectionFilter::isValid() const
@@ -328,6 +334,7 @@ bool QGalleryIntersectionFilter::isValid() const
 
 /*!
     Returns the number of filters in an intersection.
+    \since 1.1
 */
 
 int QGalleryIntersectionFilter::filterCount() const
@@ -338,6 +345,7 @@ int QGalleryIntersectionFilter::filterCount() const
 /*!
     Returns true if an intersection does not contain any filters, and returns
     false otherwise.
+    \since 1.1
 */
 
 bool QGalleryIntersectionFilter::isEmpty() const
@@ -347,6 +355,7 @@ bool QGalleryIntersectionFilter::isEmpty() const
 
 /*!
     Return the filters contained in an intersection.
+    \since 1.1
 */
 
 QList<QGalleryFilter> QGalleryIntersectionFilter::filters() const
@@ -356,6 +365,7 @@ QList<QGalleryFilter> QGalleryIntersectionFilter::filters() const
 
 /*!
     Appends a meta-data \a filter to an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::append(const QGalleryMetaDataFilter &filter)
@@ -365,6 +375,7 @@ void QGalleryIntersectionFilter::append(const QGalleryMetaDataFilter &filter)
 
 /*!
     Appens a union \a filter to an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::append(const QGalleryUnionFilter &filter)
@@ -374,6 +385,7 @@ void QGalleryIntersectionFilter::append(const QGalleryUnionFilter &filter)
 
 /*!
     Appends the contents of an intersection \a filter to an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter)
@@ -383,6 +395,7 @@ void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter
 
 /*!
     Prepends a meta-data \a filter to an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::prepend(const QGalleryMetaDataFilter &filter)
@@ -392,6 +405,7 @@ void QGalleryIntersectionFilter::prepend(const QGalleryMetaDataFilter &filter)
 
 /*!
     Prepends a union \a filter to an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::prepend(const QGalleryUnionFilter &filter)
@@ -401,6 +415,7 @@ void QGalleryIntersectionFilter::prepend(const QGalleryUnionFilter &filter)
 
 /*!
     Prepends the contents of an intersection \a filter to an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::prepend(const QGalleryIntersectionFilter &filter)
@@ -410,6 +425,7 @@ void QGalleryIntersectionFilter::prepend(const QGalleryIntersectionFilter &filte
 
 /*!
     Inserts a meta-data \a filter into an intersection at \a index.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataFilter &filter)
@@ -419,6 +435,7 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataFilter 
 
 /*!
     Inserts a union \a filter into an intersection at \a index.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryUnionFilter &filter)
@@ -429,6 +446,7 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryUnionFilter &fi
 /*!
     Inserts the contents of an intersection  \a filter into an intersection at
     \a index.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryIntersectionFilter &filter)
@@ -442,6 +460,7 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryIntersectionFil
 /*!
     Replaces the filter at \a index in an intersection with a meta-data
     \a filter.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataFilter &filter)
@@ -452,6 +471,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataFilter
 /*!
     Replaces the filter at \a index in an intersection with a union
     \a filter.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &filter)
@@ -461,6 +481,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &f
 
 /*!
     Removes the filter at \a index from an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::remove(int index)
@@ -470,6 +491,7 @@ void QGalleryIntersectionFilter::remove(int index)
 
 /*!
     Clears all the filters from an intersection.
+    \since 1.1
 */
 
 void QGalleryIntersectionFilter::clear()
@@ -479,6 +501,7 @@ void QGalleryIntersectionFilter::clear()
 
 /*!
     Appends a \a filter to an intersection.
+    \since 1.1
 */
 
 QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator <<(
@@ -496,6 +519,7 @@ QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator <<(
     \a filter2.
 
     \relates QGalleryIntersectionFilter
+    \since 1.1
 */
 
 QGalleryIntersectionFilter operator &&(
@@ -530,6 +554,7 @@ QGalleryIntersectionFilter operator &&(
 
 /*!
     Constructs an empty union.
+    \since 1.1
 */
 
 QGalleryUnionFilter::QGalleryUnionFilter()
@@ -539,6 +564,7 @@ QGalleryUnionFilter::QGalleryUnionFilter()
 
 /*!
     Constructs a union filter from a meta data \a filter.
+    \since 1.1
 */
 
 QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryMetaDataFilter &filter)
@@ -549,6 +575,7 @@ QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryMetaDataFilter &filter)
 
 /*!
     Constructs a union filter from an intersection \a filter.
+    \since 1.1
 */
 
 QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryIntersectionFilter &filter)
@@ -559,6 +586,7 @@ QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryIntersectionFilter &filte
 
 /*!
     Constructs a copy of a union \a filter.
+    \since 1.1
 */
 
 QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryUnionFilter &filter)
@@ -594,6 +622,7 @@ QGalleryUnionFilter::~QGalleryUnionFilter()
 
 /*!
     Assigns the value of \a filter to another union filter.
+    \since 1.1
 */
 
 QGalleryUnionFilter &QGalleryUnionFilter::operator =(const QGalleryUnionFilter &filter)
@@ -608,6 +637,7 @@ QGalleryUnionFilter &QGalleryUnionFilter::operator =(const QGalleryUnionFilter &
 
     An invalid filter can be obtained by casting a non QGalleryFilter::Union
     type QGalleryFilter to QGalleryUnionFilter.
+    \since 1.1
 */
 
 bool QGalleryUnionFilter::isValid() const
@@ -617,6 +647,7 @@ bool QGalleryUnionFilter::isValid() const
 
 /*!
     Returns the number of filters in a union.
+    \since 1.1
 */
 
 int QGalleryUnionFilter::filterCount() const
@@ -626,6 +657,7 @@ int QGalleryUnionFilter::filterCount() const
 
 /*!
     Returns true if a union contains no filters, and false otherwise.
+    \since 1.1
 */
 
 bool QGalleryUnionFilter::isEmpty() const
@@ -635,6 +667,7 @@ bool QGalleryUnionFilter::isEmpty() const
 
 /*!
     Returns the filters contained in a union.
+    \since 1.1
 */
 
 QList<QGalleryFilter> QGalleryUnionFilter::filters() const
@@ -644,6 +677,7 @@ QList<QGalleryFilter> QGalleryUnionFilter::filters() const
 
 /*!
     Appends a meta-data \a filter to a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::append(const QGalleryMetaDataFilter &filter)
@@ -653,6 +687,7 @@ void QGalleryUnionFilter::append(const QGalleryMetaDataFilter &filter)
 
 /*!
     Appends an intersection \a filter to a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::append(const QGalleryIntersectionFilter &filter)
@@ -662,6 +697,7 @@ void QGalleryUnionFilter::append(const QGalleryIntersectionFilter &filter)
 
 /*!
     Appends the contents of a union \a filter to a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::append(const QGalleryUnionFilter &filter)
@@ -671,6 +707,7 @@ void QGalleryUnionFilter::append(const QGalleryUnionFilter &filter)
 
 /*!
     Prepends a meta-data \a filter to a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::prepend(const QGalleryMetaDataFilter &filter)
@@ -680,6 +717,7 @@ void QGalleryUnionFilter::prepend(const QGalleryMetaDataFilter &filter)
 
 /*!
     Prepends an intersection \a filter to a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::prepend(const QGalleryIntersectionFilter &filter)
@@ -689,6 +727,7 @@ void QGalleryUnionFilter::prepend(const QGalleryIntersectionFilter &filter)
 
 /*!
     Prepends the contents of a union \a filter to a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::prepend(const QGalleryUnionFilter &filter)
@@ -698,6 +737,7 @@ void QGalleryUnionFilter::prepend(const QGalleryUnionFilter &filter)
 
 /*!
     Inserts a meta-data \a filter into a union at \a index.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataFilter &filter)
@@ -707,6 +747,7 @@ void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataFilter &filter
 
 /*!
     Inserts an intersection \a filter into a union at \a index.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::insert(int index, const QGalleryIntersectionFilter &filter)
@@ -716,6 +757,7 @@ void QGalleryUnionFilter::insert(int index, const QGalleryIntersectionFilter &fi
 
 /*!
     Inserts the contents of a union \a filter into a union at \a index.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::insert(int index, const QGalleryUnionFilter &filter)
@@ -728,6 +770,7 @@ void QGalleryUnionFilter::insert(int index, const QGalleryUnionFilter &filter)
 
 /*!
     Replaces the filter at \a index in a union with a meta-data \a filter.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataFilter &filter)
@@ -737,6 +780,7 @@ void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataFilter &filte
 
 /*!
     Replaces the filter at \a index in a union with an intersetion \a filter.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::replace(int index, const QGalleryIntersectionFilter &filter)
@@ -746,6 +790,7 @@ void QGalleryUnionFilter::replace(int index, const QGalleryIntersectionFilter &f
 
 /*!
     Removes the filter at \a index from a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::remove(int index)
@@ -755,6 +800,7 @@ void QGalleryUnionFilter::remove(int index)
 
 /*!
     Clears all the filters from a union.
+    \since 1.1
 */
 
 void QGalleryUnionFilter::clear()
@@ -764,6 +810,7 @@ void QGalleryUnionFilter::clear()
 
 /*!
     Appends a \a filter to a union.
+    \since 1.1
 */
 
 QGalleryUnionFilter &QGalleryUnionFilter::operator <<(const QGalleryUnionFilter &filter)
@@ -780,6 +827,7 @@ QGalleryUnionFilter &QGalleryUnionFilter::operator <<(const QGalleryUnionFilter 
     \a filter2.
 
     \relates QGalleryUnionFilter
+    \since 1.1
 */
 
 QGalleryUnionFilter operator ||(
@@ -827,6 +875,7 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 /*!
     Constructs a meta-data filter which tests if a meta-data \a property
     matches a \a value according to a \a comparison operator.
+    \since 1.1
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(
@@ -842,6 +891,7 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter(
 
 /*!
     Constructs a copy of a meta-data \a filter.
+    \since 1.1
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(const QGalleryMetaDataFilter &filter)
@@ -877,6 +927,7 @@ QGalleryMetaDataFilter::~QGalleryMetaDataFilter()
 
 /*!
     Assigns the value of \a filter to another meta-data filter.
+    \since 1.1
 */
 
 QGalleryMetaDataFilter &QGalleryMetaDataFilter::operator =(const QGalleryMetaDataFilter &filter)
@@ -891,6 +942,7 @@ QGalleryMetaDataFilter &QGalleryMetaDataFilter::operator =(const QGalleryMetaDat
 
     An invalid filter can be obtained by casting a non QGalleryFilter::MetaData
     type QGalleryFilter to QGalleryMetaDataFilter.
+    \since 1.1
 */
 
 bool QGalleryMetaDataFilter::isValid() const
@@ -901,6 +953,7 @@ bool QGalleryMetaDataFilter::isValid() const
 /*!
     Returns the name of the property the value of a meta-data filter is
     compared against.
+    \since 1.1
 */
 
 QString QGalleryMetaDataFilter::propertyName() const
@@ -911,6 +964,7 @@ QString QGalleryMetaDataFilter::propertyName() const
 /*!
     Sets the \a name of the property the value of meta-data filter is compared
     against.
+    \since 1.1
 */
 
 void QGalleryMetaDataFilter::setPropertyName(const QString &name)
@@ -921,6 +975,7 @@ void QGalleryMetaDataFilter::setPropertyName(const QString &name)
 /*!
     Returns the value a property is expected to match for a meta-data filter to
     pass.
+    \since 1.1
 */
 
 QVariant QGalleryMetaDataFilter::value() const
@@ -931,6 +986,7 @@ QVariant QGalleryMetaDataFilter::value() const
 /*!
     Sets the \a value a property is expected to match for a meta-data filter to
     pass.
+    \since 1.1
 */
 
 void QGalleryMetaDataFilter::setValue(const QVariant &value)
@@ -940,6 +996,7 @@ void QGalleryMetaDataFilter::setValue(const QVariant &value)
 
 /*!
     Returns the comparator used by a meta-data filter.
+    \since 1.1
 */
 
 QGalleryFilter::Comparator QGalleryMetaDataFilter::comparator() const
@@ -949,6 +1006,7 @@ QGalleryFilter::Comparator QGalleryMetaDataFilter::comparator() const
 
 /*!
     Sets the \a comparator used by a meta-data filter.
+    \since 1.1
 */
 
 void QGalleryMetaDataFilter::setComparator(QGalleryFilter::Comparator comparator)
@@ -958,6 +1016,7 @@ void QGalleryMetaDataFilter::setComparator(QGalleryFilter::Comparator comparator
 
 /*!
     Returns whether the result of a meta-data filter should be negated.
+    \since 1.1
 */
 
 bool QGalleryMetaDataFilter::isNegated() const
@@ -967,6 +1026,7 @@ bool QGalleryMetaDataFilter::isNegated() const
 
 /*!
     Sets whether the result of a meta-data filter should be \a negated.
+    \since 1.1
 */
 
 void QGalleryMetaDataFilter::setNegated(bool negated)
@@ -976,6 +1036,7 @@ void QGalleryMetaDataFilter::setNegated(bool negated)
 
 /*!
     Returns a meta-data filter which tests the negation of an existing filter.
+    \since 1.1
 */
 
 QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
@@ -990,6 +1051,7 @@ QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 
     \ingroup gallery
     \ingroup gallery-filters
+    \since 1.1
 
     \inmodule QtGallery
 
@@ -1054,6 +1116,7 @@ QGalleryFilter::QGalleryFilter()
 
 /*!
     Constructs a copy of a gallery \a filter.
+    \since 1.1
 */
 
 QGalleryFilter::QGalleryFilter(const QGalleryFilter &filter)
@@ -1063,6 +1126,7 @@ QGalleryFilter::QGalleryFilter(const QGalleryFilter &filter)
 
 /*!
     Constructs a copy of a gallery intersection \a filter.
+    \since 1.1
 */
 
 QGalleryFilter::QGalleryFilter(const QGalleryIntersectionFilter &filter)
@@ -1072,6 +1136,7 @@ QGalleryFilter::QGalleryFilter(const QGalleryIntersectionFilter &filter)
 
 /*!
     Constructs a copy of a gallery union \a filter.
+    \since 1.1
 */
 
 QGalleryFilter::QGalleryFilter(const QGalleryUnionFilter &filter)
@@ -1081,6 +1146,7 @@ QGalleryFilter::QGalleryFilter(const QGalleryUnionFilter &filter)
 
 /*!
     Constructs a copy of a gallery meta-data \a filter.
+    \since 1.1
 */
 
 QGalleryFilter::QGalleryFilter(const QGalleryMetaDataFilter &filter)
@@ -1098,6 +1164,7 @@ QGalleryFilter::~QGalleryFilter()
 
 /*!
     Assigns the value of \a filter to another filter.
+    \since 1.1
 */
 
 QGalleryFilter &QGalleryFilter::operator =(const QGalleryFilter &filter)
@@ -1109,6 +1176,7 @@ QGalleryFilter &QGalleryFilter::operator =(const QGalleryFilter &filter)
 
 /*!
     Returns the type of a filter.
+    \since 1.1
 */
 
 QGalleryFilter::Type QGalleryFilter::type() const
@@ -1118,6 +1186,7 @@ QGalleryFilter::Type QGalleryFilter::type() const
 
 /*!
     Returns true if the type() of the filter is not equal to Invalid.
+    \since 1.1
 */
 
 bool QGalleryFilter::isValid() const
@@ -1130,6 +1199,7 @@ bool QGalleryFilter::isValid() const
     Intersection or this will return an Invalid filter.
 
     Returns a QGalleryIntersectionFilter.
+    \since 1.1
 */
 
 QGalleryIntersectionFilter QGalleryFilter::toIntersectionFilter() const
@@ -1144,6 +1214,7 @@ QGalleryIntersectionFilter QGalleryFilter::toIntersectionFilter() const
     will return an Invalid filter.
 
     Returns a QGalleryUnionFilter.
+    \since 1.1
 */
 
 QGalleryUnionFilter QGalleryFilter::toUnionFilter() const
@@ -1158,6 +1229,7 @@ QGalleryUnionFilter QGalleryFilter::toUnionFilter() const
     or this will return an Invalid filter.
 
     Returns a QGalleryMetaDataFilter.
+    \since 1.1
 */
 
 QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
@@ -1180,6 +1252,7 @@ QDebug operator <<(QDebug debug, const QGalleryFilter &filter)
     Compares \a filter1 to filter2.
 
     Returns true if the filters are identical, and false otherwise.
+    \since 1.1
 */
 
 bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
@@ -1191,6 +1264,7 @@ bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
     Compares \a filter1 to filter2.
 
     Returns true if the filters are not identical, and false otherwise.
+    \since 1.1
 */
 
 bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)

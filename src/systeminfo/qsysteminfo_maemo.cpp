@@ -232,12 +232,14 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     }
 
     case QSystemInfo::HapticsFeature: {
+#if !defined(QT_NO_HAL)
         QHalInterface iface;
         const QStringList touchSupport(iface.findDeviceByCapability("input.touchpad"));
         if (touchSupport.count())
             featureSupported = true;
         else
             featureSupported = false;
+#endif // QT_NO_HAL
         break;
     }
 
@@ -760,6 +762,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
             qDebug() << "unable to connect to icdStatusChanged";
         }
 
+#if !defined(QT_NO_HAL)
         if (!QDBusConnection::systemBus().connect("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager", "org.freedesktop.Hal.Manager", QLatin1String("DeviceAdded"),
                                                   this, SLOT(updateAttachedDevices(QString)))) {
             qDebug() << "unable to connect to updateAttachedDevices (1)";
@@ -769,6 +772,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
                                                   this, SLOT(updateAttachedDevices(QString)))) {
             qDebug() << "unable to connect to updateAttachedDevices (2)";
         }
+#endif // QT_NO_HAL
 
         if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
                                                   this, SLOT(slotRegistrationChanged(QString)))) {
@@ -1274,7 +1278,7 @@ void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
     QSystemDeviceInfoLinuxCommonPrivate::disconnectNotify(signal);
 }
 
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
@@ -1401,7 +1405,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
         QHalInterface iface;
         const QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
@@ -1417,7 +1421,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
                 }
             }
         }
-#endif
+#endif // QT_NO_HAL
     return QSystemDeviceInfo::UnknownPower;
 }
 
@@ -2168,7 +2172,7 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxComm
       emEvents(new EmEvents())
 #endif
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     QHalInterface iface;
     QStringList list = iface.findDeviceByCapability("battery");
     if (!list.isEmpty()) {
@@ -2185,14 +2189,14 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxComm
             }
         }
     }
-#endif
+#endif // QT_NO_HAL
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
 }
 
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
 void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
 {
     QHalInterface iface;
@@ -2224,7 +2228,7 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
          }
     }
 }
-#endif
+#endif // QT_NO_HAL
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 {

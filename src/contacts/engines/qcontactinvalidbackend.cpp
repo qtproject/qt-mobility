@@ -62,7 +62,9 @@ QContactInvalidEngine::QContactInvalidEngine()
 {
 }
 
-/*! \reimp */
+/*! \reimp
+   \since 1.0
+*/
 QString QContactInvalidEngine::managerName() const
 {
     return QString(QLatin1String("invalid"));

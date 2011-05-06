@@ -56,6 +56,7 @@ CWlanInfo::CWlanInfo() : CActive(EPriorityStandard),
     , m_wlanStatus(false)
     , m_wlanSsid()
     , m_wlanSignalStrength(-1)
+    , m_timer(NULL)
 {
  TRACES(qDebug() << "CWlanInfo::CWlanInfo<--");
  CActiveScheduler::Add(this);
@@ -98,9 +99,10 @@ void CWlanInfo::StartMonitoring()
 void CWlanInfo::FreeResources()
  {
  TRACES(qDebug() << "CWlanInfo::FreeResources<--");
-    if (m_wlanMgmtClient)
+    if (m_wlanMgmtClient) {
         m_wlanMgmtClient->CancelNotifications();
-    delete m_wlanMgmtClient;
+        delete m_wlanMgmtClient;
+       }
  TRACES(qDebug() << "CWlanInfo::FreeResources-->");
  }
 
@@ -182,7 +184,8 @@ void CWlanInfo::ConnectionStateChanged(TWlanConnectionMode aNewState)
             }
 
             iStatus = KErrNone;
-            CWlanInfo::RunL();
+            TRequestStatus * status = &iStatus;
+            User::RequestComplete(status,0);
             checkWlanInfo();
         }
     }
@@ -192,9 +195,13 @@ void CWlanInfo::ConnectionStateChanged(TWlanConnectionMode aNewState)
 void CWlanInfo::stopPolling()
 {
  TRACES(qDebug() << "CWlanInfo::stopPolling<---");
+
+ if (m_timer) {
+    TRACES(qDebug() << "Timer cancelled");
     m_timer->Cancel();
     delete m_timer;
     m_timer = NULL;
+   }
     m_wlanStatus = false;
     m_wlanSsid = "";
     m_wlanSignalStrength = 0;
@@ -216,20 +223,24 @@ void CWlanInfo::RunL()
   {
    TRACES(qDebug() << "CWlanInfo::RunL<---");
    TRACES(qDebug() << "CWlanInfo::RunL: istatus:" << iStatus.Int());
-   m_timer = CPeriodic::NewL(CActive::EPriorityIdle);
-   m_timer->Start(5000000,5000000,TCallBack(TimeOut, this));
-   //StartMonitoring();
+   if ( iStatus.Int() != KErrNone ) return;
+   if ( !m_timer ) {
+     m_timer = CPeriodic::NewL(CActive::EPriorityIdle);
+     m_timer->Start(5000000,5000000,TCallBack(TimeOut, this));
+   }
+   StartMonitoring();
    TRACES(qDebug() << "CWlanInfo::RunL--->");
   }
 
 void CWlanInfo::DoCancel()
  {
   TRACES(qDebug() << "CWlanInfo::DoCancel<---");
-  TRACES(qDebug() << "CWlanInfo::FreeResources<--");
-    if (m_wlanMgmtClient)
-        m_wlanMgmtClient->CancelNotifications();
-    delete m_wlanMgmtClient;
-  TRACES(qDebug() << "CWlanInfo::FreeResources-->");
+  TRACES(qDebug() << "istatus:" << iStatus.Int());
+  if ( m_wlanStatus == true ) stopPolling();
+  //Since iStatus is owned complete request, otherwise a deadlock can result,thread hangs
+  TRequestStatus * status = &iStatus;
+  User::RequestComplete(status,KErrCancel);
+  FreeResources();
   TRACES(qDebug() << "CWlanInfo::DoCancel--->");
  }
 
