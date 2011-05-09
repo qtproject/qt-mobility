@@ -42,7 +42,6 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 
-#include <qsensorbackend.h>
 #include <qaccelerometer.h>
 #include <qambientlightsensor.h>
 #include <qcompass.h>
@@ -64,41 +63,55 @@ class QSensorsDeclarativeModule : public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char *uri)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.sensors"));
+        char const * const package = "QtMobility.sensors";
+        if (QLatin1String(uri) != QLatin1String(package)) return;
 
-        qmlRegisterType<QSensorReading>();
+        // Register the 1.1 interfaces
+        int major = 1;
+        int minor = 1;
+        qmlRegisterUncreatableType<QSensorReading       >(package, major, minor, "SensorReading",        QLatin1String("Cannot create SensorReading"));
+        qmlRegisterType           <QAccelerometer       >(package, major, minor, "Accelerometer");
+        qmlRegisterUncreatableType<QAccelerometerReading>(package, major, minor, "AccelerometerReading", QLatin1String("Cannot create AccelerometerReading"));
+        qmlRegisterType           <QAmbientLightSensor  >(package, major, minor, "AmbientLightSensor");
+        qmlRegisterUncreatableType<QAmbientLightReading >(package, major, minor, "AmbientLightReading",  QLatin1String("Cannot create AmbientLightReading"));
+        qmlRegisterType           <QCompass             >(package, major, minor, "Compass");
+        qmlRegisterUncreatableType<QCompassReading      >(package, major, minor, "CompassReading",       QLatin1String("Cannot create CompassReading"));
+        qmlRegisterType           <QMagnetometer        >(package, major, minor, "Magnetometer");
+        qmlRegisterUncreatableType<QMagnetometerReading >(package, major, minor, "MagnetometerReading",  QLatin1String("Cannot create MagnetometerReading"));
+        qmlRegisterType           <QOrientationSensor   >(package, major, minor, "OrientationSensor");
+        qmlRegisterUncreatableType<QOrientationReading  >(package, major, minor, "OrientationReading",   QLatin1String("Cannot create OrientationReading"));
+        qmlRegisterType           <QProximitySensor     >(package, major, minor, "ProximitySensor");
+        qmlRegisterUncreatableType<QProximityReading    >(package, major, minor, "ProximityReading",     QLatin1String("Cannot create ProximityReading"));
+        qmlRegisterType           <QRotationSensor      >(package, major, minor, "RotationSensor");
+        qmlRegisterUncreatableType<QRotationReading     >(package, major, minor, "RotationReading",      QLatin1String("Cannot create RotationReading"));
+        qmlRegisterType           <QTapSensor           >(package, major, minor, "TapSensor");
+        qmlRegisterUncreatableType<QTapReading          >(package, major, minor, "TapReading",           QLatin1String("Cannot create TapReading"));
 
-        for (int minor = 1; minor <= 2; minor++) {
-            qmlRegisterType<QAccelerometer>("QtMobility.sensors", 1, minor, "Accelerometer");
-            qmlRegisterType<QAccelerometerReading>("QtMobility.sensors", 1, minor, "AccelerometerReading");
-
-            qmlRegisterType<QAmbientLightSensor>("QtMobility.sensors", 1, minor, "AmbientLightSensor");
-            qmlRegisterType<QAmbientLightReading>("QtMobility.sensors", 1, minor, "AmbientLightReading");
-
-            qmlRegisterType<QCompass>("QtMobility.sensors", 1, minor, "Compass");
-            qmlRegisterType<QCompassReading>("QtMobility.sensors", 1, minor, "CompassReading");
-
-            qmlRegisterType<QMagnetometer>("QtMobility.sensors", 1, minor, "Magnetometer");
-            qmlRegisterType<QMagnetometerReading>("QtMobility.sensors", 1, minor, "MagnetometerReading");
-
-            qmlRegisterType<QOrientationSensor>("QtMobility.sensors", 1, minor, "OrientationSensor");
-            qmlRegisterType<QOrientationReading>("QtMobility.sensors", 1, minor, "OrientationReading");
-
-            qmlRegisterType<QProximitySensor>("QtMobility.sensors", 1, minor, "ProximitySensor");
-            qmlRegisterType<QProximityReading>("QtMobility.sensors", 1, minor, "ProximityReading");
-
-            qmlRegisterType<QRotationSensor>("QtMobility.sensors", 1, minor, "RotationSensor");
-            qmlRegisterType<QRotationReading>("QtMobility.sensors", 1, minor, "RotationReading");
-
-            qmlRegisterType<QTapSensor>("QtMobility.sensors", 1, minor, "TapSensor");
-            qmlRegisterType<QTapReading>("QtMobility.sensors", 1, minor, "TapReading");
-        }
-
-        qmlRegisterType<QLightSensor>("QtMobility.sensors", 1, 2, "LightSensor");
-        qmlRegisterType<QLightReading>("QtMobility.sensors", 1, 2, "LightReading");
-
-        qmlRegisterType<QGyroscope>("QtMobility.sensors", 1, 2, "Gyroscope");
-        qmlRegisterType<QGyroscopeReading>("QtMobility.sensors", 1, 2, "GyroscopeReading");
+        // Register the 1.2 interfaces
+        major = 1;
+        minor = 2;
+        qmlRegisterUncreatableType<QSensor              >(package, major, minor, "Sensor",               QLatin1String("Cannot create Sensor"));
+        qmlRegisterUncreatableType<QSensorReading       >(package, major, minor, "SensorReading",        QLatin1String("Cannot create SensorReading"));
+        qmlRegisterType           <QAccelerometer       >(package, major, minor, "Accelerometer");
+        qmlRegisterUncreatableType<QAccelerometerReading>(package, major, minor, "AccelerometerReading", QLatin1String("Cannot create AccelerometerReading"));
+        qmlRegisterType           <QAmbientLightSensor  >(package, major, minor, "AmbientLightSensor");
+        qmlRegisterUncreatableType<QAmbientLightReading >(package, major, minor, "AmbientLightReading",  QLatin1String("Cannot create AmbientLightReading"));
+        qmlRegisterType           <QCompass             >(package, major, minor, "Compass");
+        qmlRegisterUncreatableType<QCompassReading      >(package, major, minor, "CompassReading",       QLatin1String("Cannot create CompassReading"));
+        qmlRegisterType           <QMagnetometer        >(package, major, minor, "Magnetometer");
+        qmlRegisterUncreatableType<QMagnetometerReading >(package, major, minor, "MagnetometerReading",  QLatin1String("Cannot create MagnetometerReading"));
+        qmlRegisterType           <QOrientationSensor   >(package, major, minor, "OrientationSensor");
+        qmlRegisterUncreatableType<QOrientationReading  >(package, major, minor, "OrientationReading",   QLatin1String("Cannot create OrientationReading"));
+        qmlRegisterType           <QProximitySensor     >(package, major, minor, "ProximitySensor");
+        qmlRegisterUncreatableType<QProximityReading    >(package, major, minor, "ProximityReading",     QLatin1String("Cannot create ProximityReading"));
+        qmlRegisterType           <QRotationSensor      >(package, major, minor, "RotationSensor");
+        qmlRegisterUncreatableType<QRotationReading     >(package, major, minor, "RotationReading",      QLatin1String("Cannot create RotationReading"));
+        qmlRegisterType           <QTapSensor           >(package, major, minor, "TapSensor");
+        qmlRegisterUncreatableType<QTapReading          >(package, major, minor, "TapReading",           QLatin1String("Cannot create TapReading"));
+        qmlRegisterType           <QLightSensor         >(package, major, minor, "LightSensor");
+        qmlRegisterUncreatableType<QLightReading        >(package, major, minor, "LightReading",         QLatin1String("Cannot create LightReading"));
+        qmlRegisterType           <QGyroscope           >(package, major, minor, "Gyroscope");
+        qmlRegisterUncreatableType<QGyroscopeReading    >(package, major, minor, "GyroscopeReading",     QLatin1String("Cannot create GyroscopeReading"));
     }
 };
 
@@ -111,202 +124,603 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 // =====================================================================
 
 /*!
-    \qmlclass Accelerometer QAccelerometer
-    \brief The Accelerometer element wraps the QAccelerometer class.
+    \qmlclass Sensor QSensor
     \ingroup qml-sensors_type
+    \brief The Sensor element serves as a base type for sensors.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The Sensor element serves as a base type for sensors.
 
-    \sa QAccelerometer, QAccelerometerReading, {Sensors QML Limitations}
+    This element wraps the QSensor class. Please see the documentation for
+    QSensor for details.
+
+    This element cannot be directly created. Please use one of the sub-classes instead.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty int Sensor::dataRate
+    Sets the rate at which data is returned by the sensor.
+    Please see QSensor::dataRate for information about this property.
+*/
+
+/*!
+    \qmlproperty bool Sensor::active
+    Starts or stops the sensor.
+    Please see QSensor::active for information about this property.
+*/
+
+/*!
+    \qmlproperty SensorReading Sensor::reading
+    Holds the most recent sensor reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal Sensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
+*/
+
+/*!
+    \qmlclass SensorReading QSensorReading
+    \ingroup qml-sensors_reading
+    \brief The SensorReading element serves as a base type for sensor readings.
+
+    The SensorReading element serves as a base type for sensor readings.
+
+    This element wraps the QSensorReading class. Please see the documentation for
+    QSensorReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty quint64 SensorReading::timestamp
+    A timestamp for the reading.
+    Please see QSensorReading::timestamp for information about this property.
+*/
+
+/*!
+    \qmlclass Accelerometer QAccelerometer
+    \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The Accelerometer element reports on linear acceleration
+           along the X, Y and Z axes.
+
+    The Accelerometer element reports on linear acceleration
+    along the X, Y and Z axes.
+
+    This element wraps the QAccelerometer class. Please see the documentation for
+    QAccelerometer for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty AccelerometerReading Accelerometer::reading
+    Holds the most recent accelerometer reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal Accelerometer::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass AccelerometerReading QAccelerometerReading
-    \brief The AccelerometerReading element wraps the QAccelerometerReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The AccelerometerReading element holds the most recent Accelerometer reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The AccelerometerReading element holds the most recent Accelerometer reading.
 
-    \sa QAccelerometer, QAccelerometerReading, {Sensors QML Limitations}
+    This element wraps the QAccelerometerReading class. Please see the documentation for
+    QAccelerometerReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal AccelerometerReading::x
+    Please see QAccelerometerReading::x for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal AccelerometerReading::y
+    Please see QAccelerometerReading::y for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal AccelerometerReading::z
+    Please see QAccelerometerReading::z for information about this property.
 */
 
 /*!
     \qmlclass AmbientLightSensor QAmbientLightSensor
-    \brief The AmbientLightSensor element wraps the QAmbientLightSensor class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The AmbientLightSensor element repors on ambient lighting conditions.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The AmbientLightSensor element repors on ambient lighting conditions.
 
-    \sa QAmbientLightSensor, QAmbientLightReading, {Sensors QML Limitations}
+    This element wraps the QAmbientLightSensor class. Please see the documentaiton for
+    QAmbientLightSensor for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty AmbientLightReading AmbientLightSensor::reading
+    Holds the most recent ambient light reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal AmbientLightSensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass AmbientLightReading QAmbientLightReading
-    \brief The AmbientLightReading element wraps the QAmbientLightReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The AmbientLightReading element holds the most AmbientLightSensor reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The AmbientLightReading element holds the most AmbientLightSensor reading.
 
-    \sa QAmbientLightSensor, QAmbientLightReading, {Sensors QML Limitations}
+    This element wraps the QAmbientLightReading class. Please see the documentation for
+    QAmbientLightReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty QAmbientLightReading::LightLevel AmbientLightReading::lightLevel
+    Please see QAmbientLightReading::lightLevel for information about this property.
+
+    LightLevel constants are exposed through the AmbientLightReading class.
+    \code
+        AmbientLightSensor {
+            onReadingChanged: {
+                if (reading.lightLevel == AmbientLightReading.Dark)
+                    // do something
+            }
+        }
+    \endcode
 */
 
 /*!
     \qmlclass Compass QCompass
-    \brief The Compass element wraps the QCompass class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The Compass element reports on heading using magnetic north as a reference.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The Compass element reports on heading using magnetic north as a reference.
 
-    \sa QCompass, QCompassReading, {Sensors QML Limitations}
+    This element wraps the QCompass class. Please see the documentation for
+    QCompass for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty CompassReading Compass::reading
+    Holds the most recent compass reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal Compass::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass CompassReading QCompassReading
-    \brief The CompassReading element wraps the QCompassReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The CompassReading element holds the most recent Compass reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The CompassReading element holds the most recent Compass reading.
 
-    \sa QCompass, QCompassReading, {Sensors QML Limitations}
+    This element wraps the QCompassReading class. Please see the documentation for
+    QCompassReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal CompassReading::azimuth
+    Please see QCompassReading::azimuth for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal CompassReading::calibrationLevel
+    Please see QCompassReading::calibrationLevel for information about this property.
 */
 
 /*!
     \qmlclass Magnetometer QMagnetometer
-    \brief The Magnetometer element wraps the QMagnetometer class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The Magnetometer element reports on magnetic field strength
+           along the Z, Y and Z axes.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The Magnetometer element reports on magnetic field strength
+    along the Z, Y and Z axes.
 
-    \sa QMagnetometer, QMagnetometerReading, {Sensors QML Limitations}
+    This element wraps the QMagnetometer class. Please see the documentation for
+    QMagnetometer for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty MagnetometerReading Magnetometer::reading
+    Holds the most recent magnetometer reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal Magnetometer::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass MagnetometerReading QMagnetometerReading
-    \brief The MagnetometerReading element wraps the QMagnetometerReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The MagnetometerReading element holds the most recent Magnetometer reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The MagnetometerReading element holds the most recent Magnetometer reading.
 
-    \sa QMagnetometer, QMagnetometerReading, {Sensors QML Limitations}
+    This element wraps the QMagnetometerReading class. Please see the documentation for
+    QMagnetometerReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal MagnetometerReading::x
+    Please see QMagnetometerReading::x for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal MagnetometerReading::y
+    Please see QMagnetometerReading::y for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal MagnetometerReading::z
+    Please see QMagnetometerReading::z for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal MagnetometerReading::calibrationLevel
+    Please see QMagnetometerReading::calibrationLevel for information about this property.
 */
 
 /*!
     \qmlclass OrientationSensor QOrientationSensor
-    \brief The OrientationSensor element wraps the QOrientationSensor class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The OrientationSensor element reports device orientation.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The OrientationSensor element reports device orientation.
 
-    \sa QOrientationSensor, QOrientationReading, {Sensors QML Limitations}
+    This element wraps the QOrientationSensor class. Please see the documentation for
+    QOrientationSensor for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty OrientationReading OrientationSensor::reading
+    Holds the most recent orientation reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal OrientationSensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass OrientationReading QOrientationReading
-    \brief The OrientationReading element wraps the QOrientationReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The OrientationReading element holds the most recent OrientationSensor reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The OrientationReading element holds the most recent OrientationSensor reading.
 
-    \sa QOrientationSensor, QOrientationReading, {Sensors QML Limitations}
+    This element wraps the QOrientationReading class. Please see the documentation for
+    QOrientationReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty QOrientationReading::Orientation OrientationReading::orientation
+    Please see QOrientationReading::orientation for information about this property.
+
+    Orientation constants are exposed through the OrientationReading class.
+    \code
+        OrientationSensor {
+            onReadingChanged: {
+                if (reading.orientation == OrientationReading.TopUp)
+                    // do something
+            }
+        }
+    \endcode
 */
 
 /*!
     \qmlclass ProximitySensor QProximitySensor
-    \brief The ProximitySensor element wraps the QProximitySensor class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The ProximitySensor element reports on object proximity.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The ProximitySensor element reports on object proximity.
 
-    \sa QProximitySensor, QProximityReading, {Sensors QML Limitations}
+    This element wraps the QProximitySensor class. Please see the documentation for
+    QProximitySensor for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty ProximityReading ProximitySensor::reading
+    Holds the most recent proximity reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal ProximitySensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass ProximityReading QProximityReading
-    \brief The ProximityReading element wraps the QProximityReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The ProximityReading element holds the most recent ProximitySensor reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The ProximityReading element holds the most recent ProximitySensor reading.
 
-    \sa QProximitySensor, QProximityReading, {Sensors QML Limitations}
+    This element wraps the QProximityReading class. Please see the documentation for
+    QProximityReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty bool ProximityReading::close
+    Please see QProximityReading::close for information about this property.
 */
 
 /*!
     \qmlclass RotationSensor QRotationSensor
-    \brief The RotationSensor element wraps the QRotationSensor class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The RotationSensor element reports on device rotation
+           around the X, Y and Z axes.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The RotationSensor element reports on device rotation
+    around the X, Y and Z axes.
 
-    \sa QRotationSensor, QRotationReading, {Sensors QML Limitations}
+    This element wraps the QRotationSensor class. Please see the documentation for
+    QRotationSensor for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty RotationReading RotationSensor::reading
+    Holds the most recent rotation reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal RotationSensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass RotationReading QRotationReading
-    \brief The RotationReading element wraps the QRotationReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The RotationReading element holds the most recent RotationSensor reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The RotationReading element holds the most recent RotationSensor reading.
 
-    \sa QRotationSensor, QRotationReading, {Sensors QML Limitations}
+    This element wraps the QRotationReading class. Please see the documentation for
+    QRotationReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal RotationReading::x
+    Please see QRotationReading::x for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal RotationReading::y
+    Please see QRotationReading::y for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal RotationReading::z
+    Please see QRotationReading::z for information about this property.
 */
 
 /*!
     \qmlclass TapSensor QTapSensor
-    \brief The TapSensor element wraps the QTapSensor class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The TapSensor element reports tap and double tap events
+           along the X, Y and Z axes.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The TapSensor element reports tap and double tap events
+    along the X, Y and Z axes.
 
-    \sa QTapSensor, QTapReading, {Sensors QML Limitations}
+    This element wraps the QTapSensor class. Please see the documentation for
+    QTapSensor for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty TapReading TapSensor::reading
+    Holds the most recent tap sensor reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal TapSensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass TapReading QTapReading
-    \brief The TapReading element wraps the QTapReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The TapReading element holds the most recent TapSensor reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The TapReading element holds the most recent TapSensor reading.
 
-    \sa QTapSensor, QTapReading, {Sensors QML Limitations}
+    This element wraps the QTapReading class. Please see the documentation for
+    QTapReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty bool TapReading::doubleTap
+    Please see QTapReading::doubleTap for information about this property.
+*/
+
+/*!
+    \qmlproperty QTapReading::TapDirection TapReading::tapDirection
+    Please see QTapReading::tapDirection for information about this property.
+
+    TapDirection constants are exposed through the TapReading class.
+    \code
+        TapSensor {
+            onReadingChanged: {
+                if ((reading.tapDirection & TapReading.X_Both))
+                    // do something
+            }
+        }
+    \endcode
 */
 
 /*!
     \qmlclass LightSensor QLightSensor
-    \brief The LightSensor element wraps the QLightSensor class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The LightSensor element reports on light levels using LUX.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The LightSensor element reports on light levels using LUX.
 
-    \sa QLightSensor, QLightReading, {Sensors QML Limitations}
+    This element wraps the QLightSensor class. Please see the documentation for
+    QLightSensor for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty LightReading LightSensor::reading
+    Holds the most recent light sensor reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal LightSensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass LightReading QLightReading
-    \brief The LightReading element wraps the QLightReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The LightReading element holds the most recent LightSensor reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The LightReading element holds the most recent LightSensor reading.
 
-    \sa QLightSensor, QLightReading, {Sensors QML Limitations}
+    This element wraps the QLightReading class. Please see the documentation for
+    QLightReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal LightReading::lux
+    Please see QLightReading::lux for information about this property.
 */
 
 /*!
     \qmlclass Gyroscope QGyroscope
-    \brief The Gyroscope element wraps the QGyroscope class.
     \ingroup qml-sensors_type
+    \inherits Sensor
+    \brief The Gyroscope element reports on rotational acceleration
+           around the X, Y and Z axes.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    This element wraps the QGyroscope class. Please see the documentation for
+    QGyroscope for details.
 
-    \sa QGyroscope, QGyroscopeReading, {Sensors QML Limitations}
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty GyroscopeReading Gyroscope::reading
+    Holds the most recent gyroscope reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal Gyroscope::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
 */
 
 /*!
     \qmlclass GyroscopeReading QGyroscopeReading
-    \brief The GyroscopeReading element wraps the QGyroscopeReading class.
     \ingroup qml-sensors_reading
+    \inherits SensorReading
+    \brief The GyroscopeReading element holds the most recent Gyroscope reading.
 
-    This element is part of the \bold{QtMobility.sensors 1.1} module.
+    The GyroscopeReading element holds the most recent Gyroscope reading.
 
-    \sa QGyroscope, QGyroscopeReading, {Sensors QML Limitations}
+    This element wraps the QGyroscopeReading class. Please see the documentation for
+    QGyroscopeReading for details.
+
+    This element cannot be directly created.
 */
+
+/*!
+    \qmlproperty qreal GyroscopeReading::x
+    Please see QGyroscopeReading::x for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal GyroscopeReading::y
+    Please see QGyroscopeReading::y for information about this property.
+*/
+
+/*!
+    \qmlproperty qreal GyroscopeReading::z
+    Please see QGyroscopeReading::z for information about this property.
+*/
+
 
