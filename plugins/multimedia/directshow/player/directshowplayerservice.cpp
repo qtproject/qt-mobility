@@ -343,6 +343,7 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
         case VFW_E_NOT_FOUND:
             m_error = QMediaPlayer::ResourceError;
             m_errorString = QString();
+            break;
         default:
             m_error = QMediaPlayer::ResourceError;
             m_errorString = QString();
@@ -491,6 +492,7 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
                 case VFW_E_UNSUPPORTED_STREAM:
                     m_error = QMediaPlayer::FormatError;
                     m_errorString = QString();
+                    break;
                 default:
                     m_error = QMediaPlayer::ResourceError;
                     m_errorString = QString();
