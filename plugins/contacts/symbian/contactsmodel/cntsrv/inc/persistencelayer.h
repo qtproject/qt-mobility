@@ -290,7 +290,7 @@ public:
     virtual CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight) = 0;
     virtual CContactIdArray* FindL(const TDesC& aText, const CContactItemFieldDef* aFieldDef, TUint aSessionId) = 0;
     virtual CContactIdArray* FilterDatabaseL(CCntFilter& aFilter)=0;
-    virtual CContactIdArray* FindVoipContactsL() = 0;
+    virtual CContactIdArray* FindSpeedDialContactsL() = 0;
     virtual void Reset()=0;
     virtual void FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef)=0;
     virtual void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef) =0;
