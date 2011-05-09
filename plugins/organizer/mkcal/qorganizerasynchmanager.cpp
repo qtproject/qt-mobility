@@ -372,7 +372,6 @@ bool OrganizerAsynchManager::startRequest(QOrganizerAbstractRequest *req)
     QMutexLocker locker(&m_mutex);
 
     AsyncWorker *worker = 0;
-
     //first check if there is a lazy, idle worker around
     if (m_idleWorkers.size() > 0) {
         worker = m_idleWorkers.dequeue();
@@ -381,6 +380,9 @@ bool OrganizerAsynchManager::startRequest(QOrganizerAbstractRequest *req)
         if (m_activeWorkers.size() < m_maxWorkers) {
             worker = new AsyncWorker(this);
         }
+
+    //update the request state to active
+    QOrganizerManagerEngine::updateRequestState(req, QOrganizerAbstractRequest::ActiveState);
 
     //if we found a worker assign him the request
     if (worker) {
@@ -393,9 +395,6 @@ bool OrganizerAsynchManager::startRequest(QOrganizerAbstractRequest *req)
     }
 
     locker.unlock();
-
-    //update the request state to active
-    QOrganizerManagerEngine::updateRequestState(req, QOrganizerAbstractRequest::ActiveState);
 
     return true;
 }
