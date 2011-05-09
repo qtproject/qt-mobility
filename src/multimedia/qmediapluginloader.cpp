@@ -120,12 +120,12 @@ QStringList QMediaPluginLoader::keys() const
 
 QObject* QMediaPluginLoader::instance(QString const &key)
 {
-    return m_instances.value(key);
+    return m_instances.value(key).value(0);
 }
 
 QList<QObject*> QMediaPluginLoader::instances(QString const &key)
 {
-    return m_instances.values(key);
+    return m_instances.value(key);
 }
 
 //to be used for testing purposes only
@@ -225,12 +225,24 @@ void QMediaPluginLoader::load()
                 QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (QString const &key, p->keys())
-                        m_instances.insertMulti(key, o);
+                        m_instances[key].append(o);
                 }
             }
         }
     } else {
+        QSet<QString> loadedPlugins;
+
         foreach (const QString &plugin, availablePlugins()) {
+            QString fileName = QFileInfo(plugin).fileName();
+            //don't try to load plugin with the same name if it's already loaded
+            if (loadedPlugins.contains(fileName)) {
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Skip loading plugin" << plugin;
+#endif
+                continue;
+            }
+
             QPluginLoader   loader(plugin);
 
             QObject *o = loader.instance();
@@ -238,7 +250,13 @@ void QMediaPluginLoader::load()
                 QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
                 if (p != 0) {
                     foreach (const QString &key, p->keys())
-                        m_instances.insertMulti(key, o);
+                        m_instances[key].append(o);
+
+                    loadedPlugins.insert(fileName);
+#if !defined QT_NO_DEBUG
+                    if (showDebug)
+                        qDebug() << "Loaded plugin" << plugin << "services:" << p->keys();
+#endif
                 }
 
                 continue;

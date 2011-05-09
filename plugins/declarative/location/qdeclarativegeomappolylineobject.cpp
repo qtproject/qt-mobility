@@ -274,13 +274,6 @@ void QDeclarativeGeoMapPolylineObject::removeCoordinate(QDeclarativeCoordinate* 
     polyline is visible.
 */
 
-/*!
-    \qmlproperty bool MapPolyline::selected
-
-    This property holds a boolean corresponding to whether or not the
-    polyline is selected.
-*/
-
 #include "moc_qdeclarativegeomappolylineobject_p.cpp"
 
 QTM_END_NAMESPACE

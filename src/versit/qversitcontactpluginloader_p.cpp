@@ -67,6 +67,7 @@ QVersitContactPluginLoader* QVersitContactPluginLoader::mInstance = NULL;
 /*!
  * \class QVersitContactPluginLoader
  * This is a singleton class that loads Versit plugins for contacts processing
+  \inmodule QtVersit
  */
 
 QVersitContactPluginLoader::QVersitContactPluginLoader()

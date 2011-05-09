@@ -80,7 +80,16 @@
     bulk of the functionality is provided by a mapping plugin described
     by the plugin element associated with the Map.
 
-    \section2 Landmarks
+    Various map objects can be added to the map.  These map objects are
+    specified in terms of coordinates and meters.
+
+    Interaction with the map objects is done via the MapMouseArea item.
+
+    \section2 Map Elements
+
+    \annotatedlist qml-location-maps
+
+    \section1 Landmarks
 
     Most maps have landmarks. Useful markers identified in the landscape either as destinations
     or things that are noteworthy. In QtMobility the QML Location plugin supports
@@ -151,7 +160,9 @@
     are interested in, then the \l {LandmarkCategoryModel::categories}{categories}
     property is populated with the categories associated with that landmark.
 
+    \section2 Landmark Elements
 
+    \annotatedlist qml-location-landmarks
 */
 
 

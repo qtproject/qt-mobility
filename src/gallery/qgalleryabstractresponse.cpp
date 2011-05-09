@@ -142,9 +142,10 @@ QGalleryAbstractResponse::~QGalleryAbstractResponse()
 }
 
 /*!
-    Identifies if a response is an an active state.
+    Identifies if a response is in an active state.
 
     Returns true if a response is active, and false otherwise.
+    \since 1.1
 */
 
 bool QGalleryAbstractResponse::isActive() const
@@ -157,6 +158,7 @@ bool QGalleryAbstractResponse::isActive() const
     changes.
 
     Returns true if a response is in an idle state, and false otherwise.
+    \since 1.1
 */
 
 bool QGalleryAbstractResponse::isIdle() const
@@ -171,6 +173,7 @@ bool QGalleryAbstractResponse::isIdle() const
     In the case of no error this will return QGalleryAbstractRequest::NoError.
 
     \sa QGalleryAbstractRequest::Error, QDocumentGallery::Error
+    \since 1.1
 */
 
 int QGalleryAbstractResponse::error() const
@@ -180,6 +183,7 @@ int QGalleryAbstractResponse::error() const
 
 /*!
     Returns a string describing the cause of an \l error() in more detail.
+    \since 1.1
 */
 
 QString QGalleryAbstractResponse::errorString() const
@@ -192,6 +196,7 @@ QString QGalleryAbstractResponse::errorString() const
 
     Returns true if the response has finished on return, and returns false if
     the wait time expires or the request is inactive or idle.
+    \since 1.1
 */
 
 bool QGalleryAbstractResponse::waitForFinished(int msecs)
@@ -221,6 +226,7 @@ bool QGalleryAbstractResponse::waitForFinished(int msecs)
     The default implementation finishes the an active response with the
     \l QGalleryAbstractRequest::Canceled result.  If the reponse is idle the
     \l finished() signal will be re-emitted with idle
+    \since 1.1
 */
 
 void QGalleryAbstractResponse::cancel()
@@ -243,6 +249,7 @@ void QGalleryAbstractResponse::cancel()
 
     Signals that the \a current or \a maximum progress of a request has
     changed.
+    \since 1.1
 */
 
 /*!
@@ -250,6 +257,7 @@ void QGalleryAbstractResponse::cancel()
 
     If \a idle is true the items returned by a response will be monitored
     for changes and updated as appropriate.
+    \since 1.1
 */
 
 void QGalleryAbstractResponse::finish(bool idle)
@@ -274,6 +282,7 @@ void QGalleryAbstractResponse::finish(bool idle)
 
     An idle response can call this to indicate it has begun refreshing its
     contents.
+    \since 1.1
 */
 
 void QGalleryAbstractResponse::resume()
@@ -291,6 +300,7 @@ void QGalleryAbstractResponse::resume()
     Finalizes a response in response to an error condition.
 
     The \a error, and \a errorString are communicated to issuing request.
+    \since 1.1
 */
 
 void QGalleryAbstractResponse::error(int error, const QString &errorString)
@@ -315,18 +325,21 @@ void QGalleryAbstractResponse::error(int error, const QString &errorString)
     \fn QGalleryAbstractResponse::finished()
 
     Signals that a response has finished.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryAbstractResponse::resumed()
 
     Signals that an idle response has resumed communications.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryAbstractResponse::canceled()
 
     Signals that a response was canceled.
+    \since 1.1
 */
 
 #include "moc_qgalleryabstractresponse.cpp"

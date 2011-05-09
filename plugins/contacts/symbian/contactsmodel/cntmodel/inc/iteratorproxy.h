@@ -69,32 +69,32 @@ Internally the proxy makes the relevant IPC calls using the Contacts Model
 session handle from the Contacts database used to create the proxy object.
 */
 NONSHARABLE_CLASS(CCollectionProxy) : public CBase , public MLplCollection
-	{
+    {
 public:
-	CCollectionProxy(const CContactDatabase& aDb);
+    CCollectionProxy(const CContactDatabase& aDb);
 
-	CContactIdArray* CollectionL(TLplViewType aViewType,TTime aTime = 0,const TDesC& aGuid = KNullDesC);
+    CContactIdArray* CollectionL(TLplViewType aViewType,TTime aTime = 0,const TDesC& aGuid = KNullDesC);
 
-	TInt ContactCountL();
+    TInt ContactCountL();
 
-	void Reset();
+    void Reset();
 
-	void FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef);
-	void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef);
-	CContactIdArray* FindAsyncL(TBool& aMoreToGo, TUint aSessionId);
-	CContactIdArray* FindL(const TDesC& aText, const CContactItemFieldDef* aFieldDef, TUint aSessionId);
+    void FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef);
+    void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef);
+    CContactIdArray* FindAsyncL(TBool& aMoreToGo, TUint aSessionId);
+    CContactIdArray* FindL(const TDesC& aText, const CContactItemFieldDef* aFieldDef, TUint aSessionId);
+    CContactIdArray* FindVoipContactsL(){};
+    TBool ContactMatchesHintFieldL (TInt aBitWiseFilter, TContactItemId aContactId);
+    CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
 
-	TBool ContactMatchesHintFieldL (TInt aBitWiseFilter, TContactItemId aContactId);
-	CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
-
-	CContactIdArray* FilterDatabaseL(CCntFilter& aFilter);
-	
-	TBool UsesIdentityTableOnly(TInt aFindFlags);
-	void ConstructBitwiseFlagsFromTextDef(TInt& aFindFlags,TInt& aIdentityColumnsCount,const CContactTextDef* aTextDef);
+    CContactIdArray* FilterDatabaseL(CCntFilter& aFilter);
+    
+    TBool UsesIdentityTableOnly(TInt aFindFlags);
+    void ConstructBitwiseFlagsFromTextDef(TInt& aFindFlags,TInt& aIdentityColumnsCount,const CContactTextDef* aTextDef);
 
 private:
-	const CContactDatabase& iDb;
-	};
+    const CContactDatabase& iDb;
+    };
 
 
 /**

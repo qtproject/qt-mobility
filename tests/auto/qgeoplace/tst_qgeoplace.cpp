@@ -117,8 +117,7 @@ void tst_QGeoPlace::address()
     QCOMPARE(qgeoplace->address(),*qgeoaddress);
 
     qgeoaddress->setPostcode("10125");
-    QEXPECT_FAIL("","Test Correct", Continue);
-    QCOMPARE(qgeoplace->address(),*qgeoaddress);
+    QVERIFY(qgeoplace->address() != *qgeoaddress);
 }
 
 void tst_QGeoPlace::coordinate()
@@ -132,8 +131,7 @@ void tst_QGeoPlace::coordinate()
     QCOMPARE(qgeoplace->coordinate(),*qgeocoordinate);
 
     qgeocoordinate->setAltitude(0);
-    QEXPECT_FAIL("","Test Correct", Continue);
-    QCOMPARE(qgeoplace->coordinate(),*qgeocoordinate);
+    QVERIFY(qgeoplace->coordinate() != *qgeocoordinate);
 }
 
 void tst_QGeoPlace::viewport()
@@ -149,8 +147,7 @@ void tst_QGeoPlace::viewport()
 
     qgeoboundingboxcopy->setHeight(1);
 
-    QEXPECT_FAIL("","Test Correct", Continue);
-    QCOMPARE(qgeoplace->viewport(),*qgeoboundingboxcopy);
+    QVERIFY(qgeoplace->viewport() != *qgeoboundingboxcopy);
 
     delete qgeoboundingboxcopy;
 }

@@ -113,7 +113,7 @@ void PlayerResourcePolicy::acquire()
 #ifdef DEBUG_RESOURCE_POLICY
     qDebug() << Q_FUNC_INFO << "Acquire resource";
 #endif
-
+    m_status = RequestedResource;
     m_resourceSet->acquire();
 #else
     m_status = GrantedResource;
@@ -129,9 +129,9 @@ void PlayerResourcePolicy::release()
 #endif
 
     m_resourceSet->release();
-#else
-    m_status = Initial;
 #endif
+    m_status = Initial;
+
 }
 
 bool PlayerResourcePolicy::isGranted() const

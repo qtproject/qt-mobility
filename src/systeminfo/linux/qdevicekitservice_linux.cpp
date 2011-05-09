@@ -41,24 +41,21 @@
 
 #include "qdevicekitservice_linux_p.h"
 
-#include <QtDBus/QtDBus>
-#include <QVariantMap>
+QTM_BEGIN_NAMESPACE
 
-//#include <QtDBus/QDBusConnection>
-//#include <QtDBus/QDBusError>
-//#include <QtDBus/QDBusInterface>
-//#include <QtDBus/QDBusMessage>
-//#include <QtDBus/QDBusReply>
-//#include <QtDBus/QDBusPendingCallWatcher>
-//#include <QtDBus/QDBusObjectPath>
-//#include <QtDBus/QDBusPendingCall>
+#if !defined(QT_NO_UDISKS)
 
+#define	UDISKS_SERVICE        "org.freedesktop.UDisks"
+#define	UDISKS_PATH           "/org/freedesktop/UDisks"
+#define	UDISKS_DEVICE_SERVICE "org.freedesktop.UDisks.Device"
+#define	UDISKS_DEVICE_PATH    "/org/freedesktop/UDisks/Device"
 
-QUDisksInterface::QUDisksInterface( QObject *parent)
-      : QDBusAbstractInterface(QLatin1String(UDISKS_SERVICE),
-                                 QLatin1String(UDISKS_PATH),
-                                 UDISKS_SERVICE,
-                                 QDBusConnection::systemBus(), parent)
+QUDisksInterface::QUDisksInterface(QObject *parent)
+    : QDBusAbstractInterface(QLatin1String(UDISKS_SERVICE)
+    , QLatin1String(UDISKS_PATH)
+    , UDISKS_SERVICE
+    , QDBusConnection::systemBus()
+    , parent)
 {
 }
 
@@ -66,73 +63,22 @@ QUDisksInterface::~QUDisksInterface()
 {
 }
 
-//QDBusObjectPath QUDisksInterface::path() const
-//{
-
-//}
-
 QList<QDBusObjectPath> QUDisksInterface::enumerateDevices()
 {
-    QDBusReply<QList<QDBusObjectPath> > reply =  this->call(QLatin1String("EnumerateDevices"));
-
+    QDBusReply<QList<QDBusObjectPath> > reply = call(QLatin1String("EnumerateDevices"));
     return reply.value();
-}
-
-QStringList QUDisksInterface::enumerateDeviceFiles()
-{
-    QDBusReply<QStringList > reply =  this->call(QLatin1String("EnumerateDevices"));
-    return reply.value();
-}
-
-QDBusObjectPath QUDisksInterface::findDeviceByDeviceFile(const QString &/*path*/)
-{
-    QDBusReply<QDBusObjectPath > reply =  this->call(QLatin1String("FindDeviceByDeviceFile"));
-    return reply.value();
-
-}
-
-QVariantMap QUDisksInterface::getProperties()
-{
-    QDBusReply<QVariantMap > reply = this->call(QLatin1String("GetAll"));
-    return reply.value();
-}
-
-QVariant QUDisksInterface::getProperty(const QString &property)
-{
-    QVariant var;
-    QVariantMap map = getProperties();
-    if (map.contains(property)) {
-        var = map.value(property);
-    }
-    return var;
 }
 
 void QUDisksInterface::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == SIGNAL(deviceAdded(QString))) {
-        if(!connection().connect(QLatin1String(UDISKS_SERVICE),
-                               UDISKS_PATH,
-                               UDISKS_SERVICE,
-                               QLatin1String("DeviceAdded"),
-                               this,SIGNAL(deviceAdded(QDBusObjectPath)))) {
-            qDebug() << "Error"<<connection().lastError().message();
-        }
-    }
     if (QLatin1String(signal) == SIGNAL(deviceChanged(QDBusObjectPath))) {
-        if(!connection().connect(QLatin1String(UDISKS_SERVICE),
-                               UDISKS_PATH,
-                               UDISKS_SERVICE,
-                               "DeviceChanged",
-                               this,SIGNAL(deviceChanged(QDBusObjectPath)))) {
+        if (!connection().connect(QLatin1String(UDISKS_SERVICE),
+                                  UDISKS_PATH,
+                                  UDISKS_SERVICE,
+                                  "DeviceChanged",
+                                  this, SIGNAL(deviceChanged(QDBusObjectPath)))) {
             qDebug() << "This is messed up"<<connection().lastError().message();
         }
-    }
-    if (QLatin1String(signal) == SIGNAL(deviceRemoved(QDBusObjectPath))) {
-        connection().connect(QLatin1String(UDISKS_SERVICE),
-                               UDISKS_PATH,
-                               QLatin1String(UDISKS_SERVICE ),
-                               QLatin1String("DeviceRemoved"),
-                               this,SIGNAL(deviceRemoved(QDBusObjectPath)));
     }
 }
 
@@ -141,10 +87,11 @@ void QUDisksInterface::disconnectNotify(const char */*signal*/)
 }
 
 QUDisksDeviceInterface::QUDisksDeviceInterface(const QString &dbusPathName,QObject *parent)
-    : QDBusAbstractInterface(QLatin1String(UDISKS_SERVICE),
-                             dbusPathName,
-                             UDISKS_DEVICE_SERVICE,
-                             QDBusConnection::systemBus(), parent)
+    : QDBusAbstractInterface(QLatin1String(UDISKS_SERVICE)
+    , dbusPathName
+    , UDISKS_DEVICE_SERVICE
+    , QDBusConnection::systemBus()
+    , parent)
 {
     path = dbusPathName;
 }
@@ -155,82 +102,47 @@ QUDisksDeviceInterface::~QUDisksDeviceInterface()
 
 bool QUDisksDeviceInterface::deviceIsMounted()
 {
-    return this->getProperty("DeviceIsMounted").toBool();
+    return getProperty("DeviceIsMounted").toBool();
 }
 
 bool QUDisksDeviceInterface::deviceIsRemovable()
 {
-    return this->getProperty("DeviceIsRemovable").toBool();
-}
-
-bool QUDisksDeviceInterface::deviceIsMediaChangeDetacted()
-{
-    return this->getProperty("DeviceIsMediaChangeDetacted").toBool();
+    return getProperty("DeviceIsRemovable").toBool();
 }
 
 QStringList QUDisksDeviceInterface::deviceMountPaths()
 {
-    return this->getProperty("DeviceMountPaths").toStringList();
-}
-
-bool QUDisksDeviceInterface::deviceIsPartition()
-{
-    return this->getProperty("DeviceIsPartition").toBool();
-}
-
-qulonglong QUDisksDeviceInterface::partitionSize()
-{
-    return this->getProperty("PartitionSize").toULongLong();
+    return getProperty("DeviceMountPaths").toStringList();
 }
 
 bool QUDisksDeviceInterface::deviceIsSystemInternal()
 {
-    return this->getProperty("DeviceIsSystemInternal").toBool();
+    return getProperty("DeviceIsSystemInternal").toBool();
 }
 
 QString QUDisksDeviceInterface::deviceFilePresentation()
 {
-    return this->getProperty("DeviceFilePresentation").toString();
-}
-
-QString QUDisksDeviceInterface::deviceFile()
-{
-    return this->getProperty("DeviceFile").toString();
-}
-
-QString QUDisksDeviceInterface::driveMedia()
-{
-    return this->getProperty("DriveMedia").toString();
-}
-
-bool QUDisksDeviceInterface::deviceIsDrive()
-{
-    return this->getProperty("DeviceIsDrive").toBool();
+    return getProperty("DeviceFilePresentation").toString();
 }
 
 bool QUDisksDeviceInterface::deviceIsLinuxLvm2LV()
 {
-    return this->getProperty("DeviceIsLinuxLvm2LV").toBool();
+    return getProperty("DeviceIsLinuxLvm2LV").toBool();
 }
 
 bool QUDisksDeviceInterface::deviceIsLinuxMd()
 {
-    return this->getProperty("DeviceIsLinuxMd").toBool();
+    return getProperty("DeviceIsLinuxMd").toBool();
 }
 
 bool QUDisksDeviceInterface::deviceIsLinuxLvm2PV()
 {
-    return this->getProperty("DeviceIsLinuxLvm2PV").toBool();
+    return getProperty("DeviceIsLinuxLvm2PV").toBool();
 }
 
 bool QUDisksDeviceInterface::driveIsRotational()
 {
-    return this->getProperty("DriveIsRotational").toBool();
-}
-
-QString QUDisksDeviceInterface::driveMediaCompatibility()
-{
-    return this->getProperty("DriveMediaCompatibility").toString();
+    return getProperty("DriveIsRotational").toBool();
 }
 
 QString QUDisksDeviceInterface::uuid()
@@ -238,35 +150,18 @@ QString QUDisksDeviceInterface::uuid()
 //    if(deviceIsPartition()) {
 //        return this->getProperty("PartitionUuid").toString();
 //    }
-    if(deviceIsLinuxLvm2LV()) {
-        return this->getProperty("LinuxLvm2LVUuid").toString();
-    }
-    if(deviceIsLinuxMd()) {
-        return this->getProperty("LinuxMdUuid").toString();
-    }
-    if(deviceIsLinuxLvm2PV()) {
-        return this->getProperty("LinuxLvm2PVUuid").toString();
-    }
+    if (deviceIsLinuxLvm2LV())
+        return getProperty("LinuxLvm2LVUuid").toString();
 
-  return this->getProperty("IdUuid").toString();
+    if (deviceIsLinuxMd())
+        return getProperty("LinuxMdUuid").toString();
+
+    if (deviceIsLinuxLvm2PV())
+        return getProperty("LinuxLvm2PVUuid").toString();
+
+    return getProperty("IdUuid").toString();
 }
 
-bool QUDisksDeviceInterface::driveIsMediaEjectable()
-{
-     return this->getProperty("DriveIsMediaEjectable").toBool();
-}
-
-bool QUDisksDeviceInterface::driveCanDetach()
-{
-    return this->getProperty("DriveCanDetach").toBool();
-}
-
-
-QVariantMap QUDisksDeviceInterface::getProperties()
-{
-    QDBusReply<QVariantMap > reply = this->call(QLatin1String("GetAll"));
-    return reply.value();
-}
 
 QVariant QUDisksDeviceInterface::getProperty(const QString &property)
 {
@@ -281,88 +176,108 @@ QVariant QUDisksDeviceInterface::getProperty(const QString &property)
     return var;
 }
 
-
-QUPowerInterface::QUPowerInterface(/*const QString &dbusPathName,*/QObject *parent)
-      : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE),
-                                 QLatin1String(UPOWER_PATH),
-                                 UPOWER_SERVICE,
-                                 QDBusConnection::systemBus(), parent)
+bool QUDisksDeviceInterface::deviceIsDrive()
 {
-    propertiesInterface = new QDBusInterface(UPOWER_SERVICE, UPOWER_PATH,
-                                               "org.freedesktop.DBus.Properties",
-                                               QDBusConnection::systemBus());
+    return this->getProperty("DeviceIsDrive").toBool();
+}
+
+QString QUDisksDeviceInterface::driveMedia()
+{
+    return this->getProperty("DriveMedia").toString();
+}
+
+bool QUDisksDeviceInterface::driveCanDetach()
+{
+    return this->getProperty("DriveCanDetach").toBool();
+}
+
+bool QUDisksDeviceInterface::driveIsMediaEjectable()
+{
+     return this->getProperty("DriveIsMediaEjectable").toBool();
+}
+
+#endif // QT_NO_UDISKS
+
+#if !defined(QT_NO_UPOWER)
+
+#define	UPOWER_SERVICE        "org.freedesktop.UPower"
+#define	UPOWER_PATH           "/org/freedesktop/UPower"
+#define	UPOWER_DEVICE_SERVICE "org.freedesktop.UPower.Device"
+#define	UPOWER_DEVICE_PATH    "/org/freedesktop/UPower/Device"
+
+QUPowerInterface::QUPowerInterface(QObject *parent)
+    : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE)
+    , QLatin1String(UPOWER_PATH)
+    , UPOWER_SERVICE
+    , QDBusConnection::systemBus()
+    , parent)
+{
 }
 
 QUPowerInterface::~QUPowerInterface()
 {
 }
 
-
 QList<QDBusObjectPath> QUPowerInterface::enumerateDevices()
 {
-    QDBusReply<QList<QDBusObjectPath> > reply = this->call(QLatin1String("EnumerateDevices"));
-
-    return reply.value();
-}
-
-QVariantMap QUPowerInterface::getProperties()
-{
-    QDBusReply<QVariantMap> reply = propertiesInterface->call(QLatin1String("GetAll"),QLatin1String("org.freedesktop.UPower"));
+    QDBusReply<QList<QDBusObjectPath> > reply = call(QLatin1String("EnumerateDevices"));
     return reply.value();
 }
 
 QVariant QUPowerInterface::getProperty(const QString &property)
 {
     QVariant var;
-    if (propertiesInterface && propertiesInterface->isValid()) {
-        QDBusReply<QVariant> r = propertiesInterface->call("Get", UPOWER_PATH, property);
+    QDBusInterface *interface = new QDBusInterface(UPOWER_SERVICE, UPOWER_PATH,
+                                             "org.freedesktop.DBus.Properties",
+                                             QDBusConnection::systemBus());
+    if (interface && interface->isValid()) {
+        QDBusReply<QVariant> r = interface->call("Get", UPOWER_PATH, property);
         var = r.value();
     }
     return var;
 }
+
 void QUPowerInterface::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(changed())) {
-        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
-                               UPOWER_PATH,
-                               UPOWER_SERVICE,
-                               QLatin1String("Changed"),
-                               this,SIGNAL(changed()))) {
+        if (!connection().connect(QLatin1String(UPOWER_SERVICE),
+                                  UPOWER_PATH,
+                                  UPOWER_SERVICE,
+                                  QLatin1String("Changed"),
+                                  this, SIGNAL(changed()))) {
             qDebug() << "Error"<<connection().lastError().message();
         }
     }
-
 }
 void QUPowerInterface::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(changed(QString))) {
-        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
-                               UPOWER_PATH,
-                               UPOWER_SERVICE,
-                               QLatin1String("Changed"),
-                               this,SIGNAL(changed()))) {
+        if (!connection().disconnect(QLatin1String(UPOWER_SERVICE),
+                                     UPOWER_PATH,
+                                     UPOWER_SERVICE,
+                                     QLatin1String("Changed"),
+                                     this, SIGNAL(changed()))) {
             qDebug() << "Error"<<connection().lastError().message();
         }
     }
-
 }
 
 bool QUPowerInterface::onBattery()
 {
-        return this->getProperty("OnBattery").toBool();
+    return getProperty("OnBattery").toBool();
 }
 
-
-QUPowerDeviceInterface::QUPowerDeviceInterface(const QString &dbusPathName,QObject *parent)
-      : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE),
-                                 dbusPathName,
-                                 UPOWER_DEVICE_SERVICE,
-                                 QDBusConnection::systemBus(), parent)
+QUPowerDeviceInterface::QUPowerDeviceInterface(const QString &dbusPathName, QObject *parent)
+    : QDBusAbstractInterface(QLatin1String(UPOWER_SERVICE)
+    , dbusPathName
+    , UPOWER_DEVICE_SERVICE
+    , QDBusConnection::systemBus()
+    , parent)
 {
     path = dbusPathName;
     propertiesInterface = new QDBusInterface(UPOWER_SERVICE, path,
-                                               "org.freedesktop.DBus.Properties",
-                                               QDBusConnection::systemBus());
+                                             "org.freedesktop.DBus.Properties",
+                                             QDBusConnection::systemBus());
     pMap = getProperties();
 }
 
@@ -370,21 +285,17 @@ QUPowerDeviceInterface::~QUPowerDeviceInterface()
 {
 }
 
-
 QVariantMap QUPowerDeviceInterface::getProperties()
 {
-
-    QDBusReply<QVariantMap> reply = propertiesInterface->call(QLatin1String("GetAll"),QLatin1String("org.freedesktop.UPower.Device"));
-    if(!reply.isValid()) {
+    QDBusReply<QVariantMap> reply = propertiesInterface->call(QLatin1String("GetAll"), QLatin1String("org.freedesktop.UPower.Device"));
+    if (!reply.isValid())
         qDebug() << reply.error();
-    }
     return reply.value();
 }
 
 QVariant QUPowerDeviceInterface::getProperty(const QString &property)
 {
     QVariant var;
-
     if (propertiesInterface && propertiesInterface->isValid()) {
         QDBusReply<QVariant> r = propertiesInterface->call("Get", path, property);
         var = r.value();
@@ -392,141 +303,73 @@ QVariant QUPowerDeviceInterface::getProperty(const QString &property)
     return var;
 }
 
-void QUPowerDeviceInterface::refresh()
-{
-    this->call(QLatin1String("Refresh"));
-}
-
 quint16 QUPowerDeviceInterface::getType()
 {
-    return this->getProperty("Type").toUInt();
+    return getProperty("Type").toUInt();
 }
 
 bool QUPowerDeviceInterface::isPowerSupply()
 {
-    return this->getProperty("PowerSupply").toBool();
-}
-
-bool QUPowerDeviceInterface::hasHistory()
-{
-    return this->getProperty("HasHistory").toBool();
-}
-
-bool QUPowerDeviceInterface::hasStatistics()
-{
-    return this->getProperty("HasStatistics").toBool();
+    return getProperty("PowerSupply").toBool();
 }
 
 bool QUPowerDeviceInterface::isOnline()
 {
-    return this->getProperty("Online").toBool();
+    return getProperty("Online").toBool();
 }
 
 double QUPowerDeviceInterface::currentEnergy()
 {
-    return this->getProperty("Energy").toDouble();
-}
-
-double QUPowerDeviceInterface::energyWhenEmpty()
-{
-    return this->getProperty("EnergyEmpty").toDouble();
+    return getProperty("Energy").toDouble();
 }
 
 double QUPowerDeviceInterface::energyWhenFull()
 {
-    return this->getProperty("EnergyFull").toDouble();
-}
-
-double QUPowerDeviceInterface::energyFullDesign()
-{
-    return this->getProperty("EnergyFullDesign").toDouble();
+    return getProperty("EnergyFull").toDouble();
 }
 
 double QUPowerDeviceInterface::energyDischargeRate()
 {
-    return this->getProperty("EnergyRate").toDouble();
+    return getProperty("EnergyRate").toDouble();
 }
 
 double QUPowerDeviceInterface::voltage()
 {
-    return this->getProperty("Voltage").toDouble();
-}
-
-qint64 QUPowerDeviceInterface::timeToEmpty()
-{
-    return this->getProperty("TimeToEmpty").toUInt();
+    return getProperty("Voltage").toDouble();
 }
 
 qint64 QUPowerDeviceInterface::timeToFull()
 {
-    return this->getProperty("TimeToFull").toUInt();
+    return getProperty("TimeToFull").toUInt();
 }
 
 double QUPowerDeviceInterface::percentLeft()
 {
-    return this->getProperty("Percentage").toDouble();
-}
-
-bool QUPowerDeviceInterface::isPresent()
-{
-    return this->getProperty("IsPresent").toBool();
+    return getProperty("Percentage").toDouble();
 }
 
 quint16 QUPowerDeviceInterface::getState()
 {
-    return this->getProperty("State").toUInt();
+    return getProperty("State").toUInt();
 }
-
-bool QUPowerDeviceInterface::isRechargeable()
-{
-    return this->getProperty("IsRechargeable").toBool();
-}
-
-double QUPowerDeviceInterface::capacity()
-{
-    return this->getProperty("Capacity").toDouble();
-}
-
-quint16 QUPowerDeviceInterface::technology()
-{
-    return this->getProperty("Technology").toUInt();
-}
-
-bool QUPowerDeviceInterface::recallNotice()
-{
-    return this->getProperty("RecallNotice").toBool();
-}
-
-QString QUPowerDeviceInterface::recallVendor()
-{
-    return this->getProperty("RecallVendor").toString();
-}
-
-QString QUPowerDeviceInterface::recallUrl()
-{
-    return this->getProperty("RecallUrl").toString();
-}
-
 
 void QUPowerDeviceInterface::connectNotify(const char *signal)
 {
-
     if (QLatin1String(signal) == SIGNAL(changed())) {
         if (!connection().connect(QLatin1String(UPOWER_SERVICE),
-                               path,
-                               UPOWER_DEVICE_SERVICE,
-                               QLatin1String("Changed"),
-                               this,SIGNAL(changed()))) {
-            qDebug() << "Error"<<connection().lastError().message();
+                                  path,
+                                  UPOWER_DEVICE_SERVICE,
+                                  QLatin1String("Changed"),
+                                  this, SIGNAL(changed()))) {
+            qDebug() << "Error" << connection().lastError().message();
         }
-    }
-    if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QVariant))) {
+    } else if (QLatin1String(signal) == SIGNAL(propertyChanged(QString,QVariant))) {
         if (!connection().connect(QLatin1String(UPOWER_SERVICE),
-                               path,
-                               UPOWER_DEVICE_SERVICE,
-                               QLatin1String("Changed"),
-                               this,SIGNAL(propChanged()))) {
-            qDebug() << "Error"<<connection().lastError().message();
+                                  path,
+                                  UPOWER_DEVICE_SERVICE,
+                                  QLatin1String("Changed"),
+                                  this, SIGNAL(propChanged()))) {
+            qDebug() << "Error" << connection().lastError().message();
         }
     }
 }
@@ -534,12 +377,12 @@ void QUPowerDeviceInterface::connectNotify(const char *signal)
 void QUPowerDeviceInterface::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(changed())) {
-        if(!connection().connect(QLatin1String(UPOWER_SERVICE),
-                               path,
-                               UPOWER_DEVICE_SERVICE,
-                               QLatin1String("Changed"),
-                               this,SIGNAL(changed()))) {
-            qDebug() << "Error"<<connection().lastError().message();
+        if (!connection().disconnect(QLatin1String(UPOWER_SERVICE),
+                                     path,
+                                     UPOWER_DEVICE_SERVICE,
+                                     QLatin1String("Changed"),
+                                     this, SIGNAL(changed()))) {
+            qDebug() << "Error" << connection().lastError().message();
         }
     }
 }
@@ -547,13 +390,20 @@ void QUPowerDeviceInterface::disconnectNotify(const char *signal)
 void QUPowerDeviceInterface::propChanged()
 {
     QVariantMap map = getProperties();
-
-    QMapIterator<QString,QVariant> i(map);
-    while(i.hasNext()) {
+    QMapIterator<QString, QVariant> i(map);
+    while (i.hasNext()) {
         i.next();
-        if(pMap.value(i.key()) != i.value()) {
+        if (pMap.value(i.key()) != i.value()) {
             pMap[i.key()] = i.value();
-            Q_EMIT propertyChanged(i.key(),QVariant::fromValue(i.value()));
+            Q_EMIT propertyChanged(i.key(), QVariant::fromValue(i.value()));
         }
     }
 }
+
+#endif // QT_NO_UPOWER
+
+#if !defined(QT_NO_UPOWER) || !defined(QT_NO_UDISKS)
+#include "moc_qdevicekitservice_linux_p.cpp"
+#endif
+
+QTM_END_NAMESPACE

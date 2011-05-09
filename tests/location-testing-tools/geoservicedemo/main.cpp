@@ -41,10 +41,24 @@
 #include <QtGui/QApplication>
 #include "tabbedwindow.h"
 
+#include <QUrl>
+#include <QNetworkProxyFactory>
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     TabbedWindow w;
+
+    QString urlEnv = qgetenv("http_proxy");
+    if (!urlEnv.isEmpty()) {
+        QUrl url = QUrl(urlEnv, QUrl::TolerantMode);
+        QNetworkProxy proxy;
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(url.host());
+        proxy.setPort(url.port(8080));
+        QNetworkProxy::setApplicationProxy(proxy);
+    } else
+        QNetworkProxyFactory::setUseSystemConfiguration(true);
 
 #ifdef QT_KEYPAD_NAVIGATION
     QApplication::setNavigationMode(Qt::NavigationModeKeypadTabOrder);

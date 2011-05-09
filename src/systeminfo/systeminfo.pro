@@ -36,7 +36,7 @@ simulator {
 }
 
 win32:!simulator {
-    contains(CONFIG,release) {
+    contains(CONFIG, release) {
        CONFIG -= console
     }
 
@@ -56,7 +56,6 @@ win32:!simulator {
             -lDxva2 \
             -lPowrProf \
             -lSetupapi
-
     }
 
     win32-g++: {
@@ -75,156 +74,145 @@ unix:!simulator {
     QT += gui
     PRIVATE_HEADERS += linux/qsysteminfo_dbus_p.h
 
-        contains(build_unit_tests, yes):contains(test_use_sim, yes) {
+    contains(build_unit_tests, yes):contains(test_use_sim, yes) {
+        ## for using simulator backend to test frontend signals
+        ## configure with -test-sim -tests
 
-            ## for using simulator backend to test frontend signals
-            ## configure with -test-sim -tests
-
-            SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
-            HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
-            DEFINES += TESTR QT_SIMULATOR
-            SOURCES += qsystemalignedtimer_stub.cpp
-            HEADERS += qsystemalignedtimer_stub_p.h
-
-        } else {
-
-
+        SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp qsystemalignedtimer_stub.cpp
+        HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h qsystemalignedtimer_stub_p.h
+        DEFINES += TESTR QT_SIMULATOR
+    } else {
         linux-*: {
-        contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
+            !contains(bluez_enabled, yes): DEFINES += QT_NO_BLUEZ
 
+            SOURCES += linux/qsysteminfo_linux_common.cpp
+            HEADERS += linux/qsysteminfo_linux_common_p.h
 
-        SOURCES += linux/qsysteminfo_linux_common.cpp
-        HEADERS += linux/qsysteminfo_linux_common_p.h
+            contains(QT_CONFIG, dbus): {
+                QT += dbus
+                SOURCES += linux/qhalservice_linux.cpp
+                HEADERS += linux/qhalservice_linux_p.h
+            } else {
+                DEFINES += QT_NO_HAL
+            }
 
-        contains(blkid_enabled, yes): {
-            DEFINES += BLKID_SUPPORTED
-            LIBS += -lblkid
+            contains(blkid_enabled, yes): {
+                LIBS += -lblkid
+            } else {
+                DEFINES += QT_NO_BLKID
+            }
+
+            !embedded:!contains(QT_CONFIG,qpa): {
+                LIBS += -lX11 -lXrandr
+            }
+
+            # alignedtimer on Linux/MeeGo
+            contains(iphb_enabled, yes): {
+                SOURCES += qsystemalignedtimer_meego.cpp
+                HEADERS += qsystemalignedtimer_meego_p.h
+                PKGCONFIG += libiphb
+                DEFINES += ALIGNEDTIMER_MEEGO
+                LIBS += -liphb
+            } else {
+                SOURCES += qsystemalignedtimer_stub.cpp
+                HEADERS += qsystemalignedtimer_stub_p.h
+            }
         }
 
-        !embedded:!contains(QT_CONFIG,qpa): {
-            LIBS += -lX11 -lXrandr
-        }
-
-        # alignedtimer on Linux/MeeGo
-        contains(iphb_enabled, yes): {
-            SOURCES += qsystemalignedtimer_meego.cpp
-            HEADERS += qsystemalignedtimer_meego_p.h
-            PKGCONFIG += libiphb
-            DEFINES += ALIGNEDTIMER_MEEGO
-            LIBS += -liphb
-        } else {
-            SOURCES += qsystemalignedtimer_stub.cpp
-            HEADERS += qsystemalignedtimer_stub_p.h
-        }
-    }
-
-    !maemo5:!maemo6:linux-*: {
-
-        SOURCES += linux/qsysteminfo_linux.cpp
-        HEADERS += linux/qsysteminfo_linux_p.h
-        contains(QT_CONFIG, dbus): {
-            QT += dbus
-            SOURCES += \
-                linux/qhalservice_linux.cpp \
-                linux/qsysteminfodbushelper.cpp \
-                linux/qdevicekitservice_linux.cpp
-
-            HEADERS += \
-                linux/qhalservice_linux_p.h \
-                linux/qsysteminfodbushelper_p.h \
-                linux/qdevicekitservice_linux_p.h \
-                linux/qsysteminfo_dbus_p.h
+        !maemo5:!maemo6:linux-*: {
+            SOURCES += linux/qsysteminfo_linux.cpp
+            HEADERS += linux/qsysteminfo_linux_p.h
 
             # udev should not be enabled on maemo5 and maemo6
             contains(udev_enabled, yes): {
-                DEFINES += UDEV_SUPPORTED
                 LIBS += -ludev
                 SOURCES += linux/qudevservice_linux.cpp
                 HEADERS += linux/qudevservice_linux_p.h
+            } else {
+                DEFINES += QT_NO_UDEV
             }
 
-            contains(networkmanager_enabled, yes): {
-                SOURCES += linux/qnetworkmanagerservice_linux.cpp linux/qnmdbushelper.cpp
-                HEADERS += linux/qnetworkmanagerservice_linux_p.h linux/qnmdbushelper_p.h
-            } else {
-                DEFINES += QT_NO_NETWORKMANAGER
-            }
+            contains(QT_CONFIG, dbus): {
+                QT += dbus
+                SOURCES += \
+                    linux/qsysteminfodbushelper.cpp \
+                    linux/qconnmanservice_linux.cpp \
+                    linux/qofonoservice_linux.cpp
 
-            contains(CONFIG,meego): {
-                #for now... udisks
+                HEADERS += \
+                    linux/qsysteminfodbushelper_p.h \
+                    linux/qsysteminfo_dbus_p.h \
+                    linux/qconnmanservice_linux_p.h \
+                    linux/qofonoservice_linux_p.h
+
+                contains(networkmanager_enabled, yes): {
+                    SOURCES += linux/qnetworkmanagerservice_linux.cpp linux/qnmdbushelper.cpp
+                    HEADERS += linux/qnetworkmanagerservice_linux_p.h linux/qnmdbushelper_p.h
+                } else {
+                    DEFINES += QT_NO_NETWORKMANAGER
+                }
+
+                contains(CONFIG,meego): {
+                    SOURCES += linux/qdevicekitservice_linux.cpp
+                    HEADERS += linux/qdevicekitservice_linux_p.h
+                } else {
+                    DEFINES += QT_NO_UDISKS QT_NO_UPOWER
+                    !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
+                }
             } else {
-                DEFINES += QT_NO_UDISKS
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER
                 !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
             }
+        }
 
-            contains(connman_enabled, yes): {
-                SOURCES+= linux/qconnmanservice_linux.cpp linux/qofonoservice_linux.cpp
-                HEADERS+= linux/qconnmanservice_linux_p.h linux/qofonoservice_linux_p.h
-            } else {
-                DEFINES += QT_NO_CONNMAN
+        maemo5|maemo6: {
+            #Qt GConf wrapper added here until a proper place is found for it.
+            CONFIG += link_pkgconfig
+            SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
+            HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
+            DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER QT_NO_UDEV
+
+            contains(bme_enabled, yes): {
+                LIBS += -lbmeipc
+                DEFINES += Q_USE_BME
             }
-        } else {
-            DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
-            !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
-        }
-     }
 
-    maemo5|maemo6: {
-
-        #Qt GConf wrapper added here until a proper place is found for it.
-        CONFIG += link_pkgconfig
-        SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
-        HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
-        DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
-
-          contains(bme_enabled, yes): {
-              LIBS += -lbmeipc
-              DEFINES += Q_USE_BME
-          }
-
-        contains(QT_CONFIG,dbus): {
-            QT += dbus
-            SOURCES += linux/qhalservice_linux.cpp
-            HEADERS += linux/qhalservice_linux_p.h
+            PKGCONFIG += glib-2.0 gconf-2.0
+            CONFIG += create_pc create_prl
+            QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
+            pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+            pkgconfig.files = QtSystemInfo.pc
         }
 
-        PKGCONFIG += glib-2.0 gconf-2.0
-        CONFIG += create_pc create_prl
-        QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
-        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-        pkgconfig.files = QtSystemInfo.pc
-    }
+        mac: {
+            OBJECTIVE_SOURCES += qsysteminfo_mac.mm
+            SOURCES += qsystemalignedtimer_stub.cpp
+            HEADERS += qsysteminfo_mac_p.h qsystemalignedtimer_stub_p.h
+            LIBS += -framework SystemConfiguration -framework CoreFoundation \
+                -framework IOKit -framework ApplicationServices -framework Foundation \
+                -framework CoreServices -framework ScreenSaver -framework QTKit \
+                -framework DiskArbitration -framework IOBluetooth
 
-    mac: {
-        OBJECTIVE_SOURCES += qsysteminfo_mac.mm
-        SOURCES += qsystemalignedtimer_stub.cpp
-
-        HEADERS += qsysteminfo_mac_p.h qsystemalignedtimer_stub_p.h
-        LIBS += -framework SystemConfiguration -framework CoreFoundation \
-            -framework IOKit -framework ApplicationServices -framework Foundation \
-            -framework CoreServices -framework ScreenSaver -framework QTKit \
-            -framework DiskArbitration -framework IOBluetooth
-
-        contains(corewlan_enabled, yes) {
-            isEmpty(QMAKE_MAC_SDK) {
-                SDK6="yes"
-            } else {
-                contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+            contains(corewlan_enabled, yes) {
+                isEmpty(QMAKE_MAC_SDK) {
                     SDK6="yes"
+                } else {
+                    contains(QMAKE_MAC_SDK, "/Developer/SDKs/MacOSX10.6.sdk") {
+                        SDK6="yes"
+                    }
                 }
+
+                !isEmpty(SDK6) {
+                    LIBS += -framework CoreWLAN  -framework CoreLocation
+                }
+            } else {
+                DEFINES += MAC_SDK_10_5
+                CONFIG += no_keywords
             }
 
-            !isEmpty(SDK6) {
-                LIBS += -framework CoreWLAN  -framework CoreLocation
-            }
-        } else {
-            DEFINES += MAC_SDK_10_5
-            CONFIG += no_keywords
+            TEMPLATE = lib
         }
-
-        TEMPLATE = lib
     }
-  }
 
     symbian: {
         contains(S60_VERSION, 3.1) {
@@ -361,13 +349,12 @@ simulator {
     SOURCES += qsystemalignedtimer_stub.cpp
     HEADERS += qsystemalignedtimer_stub_p.h
 
-#   contains(build_unit_tests, yes) {
- #           DEFINES += TESTR QT_SIMULATOR
-  # } else {
+#    contains(build_unit_tests, yes) {
+#        DEFINES += TESTR QT_SIMULATOR
+#    } else {
     INCLUDEPATH += ../mobilitysimulator
     qtAddLibrary(QtMobilitySimulator)
- # }
-
+#    }
 }
 
 HEADERS += $$PUBLIC_HEADERS

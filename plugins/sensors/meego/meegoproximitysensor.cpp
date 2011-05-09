@@ -65,7 +65,7 @@ void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
 {
     bool close = data.x()? true: false;
     if (close == m_exClose) return;
-    m_reading.setClose(data.x()? true: false);
+    m_reading.setClose(close);
     m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
     m_exClose = close;

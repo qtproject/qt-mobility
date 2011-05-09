@@ -239,13 +239,6 @@ void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *even
     group is visible.
 */
 
-/*!
-    \qmlproperty bool MapGroup::selected
-
-    This property holds a boolean corresponding to whether or not the
-    group is selected.
-*/
-
 #include "moc_qdeclarativegeomapgroupobject_p.cpp"
 
 QTM_END_NAMESPACE
