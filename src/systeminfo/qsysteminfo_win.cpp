@@ -512,7 +512,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
-    QString errorStr = "Not Available";
     bool useDate = false;
     if(parameter == "versionDate") {
         useDate = true;
@@ -541,15 +540,12 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
 #endif
         }
         break;
-    case QSystemInfo::QtCore :
-       return  qVersion();
-       break;
    case QSystemInfo::Firmware :
        {
        }
        break;
     };
-  return errorStr;
+  return QString();
 }
 
 

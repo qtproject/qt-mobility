@@ -42,8 +42,6 @@
 #ifndef QSYSTEMINFO_DBUS_P_H
 #define QSYSTEMINFO_DBUS_P_H
 
-#if !defined(QT_NO_DBUS)
-
 #if !defined(QT_NO_HAL)
 static bool halAvailable()
 {
@@ -104,7 +102,5 @@ static bool ofonoAvailable()
     return false;
 }
 #endif // QT_NO_CONNMAN
-
-#endif // QT_NO_DBUS
 
 #endif // QSYSTEMINFO_DBUS_P_H

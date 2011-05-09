@@ -73,7 +73,6 @@ extern "C" {
 #include <mqueue.h>
 #endif // Q_USE_BME
 
-QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
@@ -84,12 +83,11 @@ public:
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
 
-    QStringList availableLanguages() const;
-    QString version(QSystemInfo::Version,  const QString &parameter = QString());
-    virtual QString currentLanguage() const;
-    QString currentCountryCode() const;
-
     bool hasFeatureSupported(QSystemInfo::Feature feature);
+    QString currentCountryCode() const;
+    virtual QString currentLanguage() const;
+    QString version(QSystemInfo::Version,  const QString &parameter = QString());
+    QStringList availableLanguages() const;
 };
 
 class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
@@ -101,23 +99,20 @@ public:
     virtual ~QSystemNetworkInfoPrivate();
 
     int cellId();
-    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
-
     int locationAreaCode();
-
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString currentMobileCountryCode();
     QString currentMobileNetworkCode();
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
-
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
     QSystemNetworkInfo::NetworkMode currentMode();
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
 
 #if defined(Q_WS_MAEMO_5)
     void setWlanSignalStrengthCheckEnabled(bool enabled);
 #endif // Q_WS_MAEMO_5
-    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
 
 #if defined(Q_WS_MAEMO_6)
 protected:
@@ -215,25 +210,23 @@ public:
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
+    bool isDeviceLocked();
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    bool vibrationActive(); //1.2
+    int messageRingtoneVolume(); //1.2
+    int voiceRingtoneVolume(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QString imei();
     QString imsi();
+    QString model();
+    QString productName();
     QSystemDeviceInfo::SimStatus simStatus();
-    bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
     QSystemDeviceInfo::ThermalState currentThermalState();
-    QString model();
-    QString productName();
-    bool isKeyboardFlippedOpen(); //1.2
-    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-
-    int messageRingtoneVolume(); //1.2
-    int voiceRingtoneVolume(); //1.2
-    bool vibrationActive(); //1.2
-
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
-    QByteArray uniqueDeviceID(); //1.2
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);
@@ -362,6 +355,5 @@ private:
 };
 
 QTM_END_NAMESPACE
-QT_END_HEADER
 
 #endif // QSYSTEMINFO_MAEMO_P_H

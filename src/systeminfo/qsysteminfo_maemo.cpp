@@ -183,14 +183,6 @@ QString QSystemInfoPrivate::currentCountryCode() const
 QString QSystemInfoPrivate::version(QSystemInfo::Version type, const QString &parameter)
 {
     switch(type) {
-    case QSystemInfo::Os: {
-        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver"); //("/device/content-ver");
-        if (!sysinfodValue.isEmpty()) {
-            sysinfodValue =  sysinfodValue.section("_", 2, 4);
-            return sysinfodValue;
-        }
-    }
-
     case QSystemInfo::Firmware: {
         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
         if (!sysinfodValue.isEmpty())
