@@ -74,8 +74,8 @@ QTM_BEGIN_NAMESPACE
     QMessageFilter senderFilter(QMessageFilter::bySender("joe@user.com"));
     QMessageIdList results = QMessageManager().queryMessages(subjectFilter & senderFilter);
     \endcode
-    
-    Evaluation of filters is delayed until they are used in a QMessageManager function 
+
+    Evaluation of filters is delayed until they are used in a QMessageManager function
     such as queryMessages, except where explicitly documented otherwise.
 
     \sa QMessageManager, QMessage
@@ -95,6 +95,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageFilter::QMessageFilter(const QMessageFilter &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
@@ -106,6 +107,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
     \fn QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
+    \since 1.0
 */
 
 /*!
@@ -113,6 +115,7 @@ QTM_BEGIN_NAMESPACE
 
     Set the match flags for the search filter to \a matchFlags.
 
+    \since 1.0
     \sa matchFlags()
 */
 
@@ -123,6 +126,7 @@ QTM_BEGIN_NAMESPACE
 
     Default is no match flags set.
 
+    \since 1.0
     \sa setMatchFlags()
 */
 
@@ -140,12 +144,14 @@ QTM_BEGIN_NAMESPACE
     empty filter.
 
     The result of combining two empty filters using either an AND or OR operation is an empty filter.
+    \since 1.0
 */
 
 /*!
     \fn QMessageFilter::isSupported() const
 
     Returns true if the filter is supported on the current platform; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -157,6 +163,7 @@ QTM_BEGIN_NAMESPACE
     If this filter is empty, the result will be a non-matching filter; if this filter is
     non-matching, the result will be an empty filter.
 
+    \since 1.0
     \sa isEmpty()
 */
 
@@ -164,12 +171,14 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageFilter::operator&(const QMessageFilter& other) const
 
     Returns a filter that is the logical AND of this filter and the value of filter \a other.
+    \since 1.0
 */
 
 /*!
     \fn QMessageFilter::operator|(const QMessageFilter& other) const
 
     Returns a filter that is the logical OR of this filter and the value of filter \a other.
+    \since 1.0
 */
 
 /*!
@@ -177,6 +186,7 @@ QTM_BEGIN_NAMESPACE
 
     Performs a logical AND with this filter and the filter \a other and assigns the result
     to this filter.
+    \since 1.0
 */
 
 /*!
@@ -184,15 +194,18 @@ QTM_BEGIN_NAMESPACE
 
     Performs a logical OR with this filter and the filter \a other and assigns the result
     to this filter.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageFilter::operator==(const QMessageFilter& other) const
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 bool QMessageFilter::operator!=(const QMessageFilter& other) const
 {
@@ -204,6 +217,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose identifier matches \a id, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::id()
 */
 
@@ -212,6 +226,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose identifier is a member of \a ids, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::id()
 */
 
@@ -220,6 +235,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose identifier is a member of the set yielded by \a filter, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::id()
 */
 
@@ -228,6 +244,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose type matches \a type, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::type()
 */
 
@@ -236,6 +253,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching accounts whose type is a bitwise match to \a type, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::type()
 */
 
@@ -245,6 +263,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose sender matches \a pattern, according to the \a cmp function.
     This filter is evaluated when it is constructed.
 
+    \since 1.2
     \sa QMessage::from()
 */
 
@@ -255,6 +274,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
+    \since 1.0
     \sa QMessage::from()
 */
 
@@ -263,6 +283,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose sender matches the substring \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::from()
 */
 
@@ -272,6 +293,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose recipients include the substring \a pattern,
     according to \a cmp. This filter is evaluated when it is constructed.
 
+    \since 1.2
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
 
@@ -281,6 +303,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose recipients include the substring \a value,
     according to \a cmp.
 
+    \since 1.0
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
 
@@ -289,6 +312,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose subject matches \a pattern, according to \a cmp.
 
+    \since 1.2
     \sa QMessage::subject()
 */
 
@@ -299,6 +323,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
+    \since 1.0
     \sa QMessage::subject()
 */
 
@@ -308,6 +333,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose subject matches the
     substring \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::subject()
 */
 
@@ -316,6 +342,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose timestamp matches \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::date()
 */
 
@@ -324,6 +351,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose timestamp has the relation to \a value that is specified by \a cmp.
 
+    \since 1.0
     \sa QMessage::date()
 */
 
@@ -332,6 +360,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose reception timestamp matches \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::receivedDate()
 */
 
@@ -340,6 +369,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose reception timestamp has the relation to \a value that is specified by \a cmp.
 
+    \since 1.0
     \sa QMessage::receivedDate()
 */
 
@@ -348,6 +378,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose status matches \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::status()
 */
 
@@ -356,6 +387,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose status is a bitwise match to \a mask, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::status()
 */
 
@@ -364,6 +396,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose priority matches \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::priority()
 */
 
@@ -372,6 +405,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose size matches \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::size()
 */
 
@@ -380,6 +414,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose size matches \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::size()
 */
 
@@ -388,6 +423,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose parent account's identifier matches \a id, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::parentAccountId()
 */
 
@@ -397,6 +433,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose parent account's identifier is a member of the set
     yielded by \a filter, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::parentAccountId()
 */
 
@@ -405,6 +442,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose standard folder location matches \a folder, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::parentAccountId()
 */
 
@@ -413,6 +451,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose parent folder's identifier matches \a id, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::parentFolderId()
 */
 
@@ -422,6 +461,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose parent folder's identifier is a member of the set
     yielded by \a filter, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::parentFolderId()
 */
 
@@ -430,6 +470,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
 
     Returns a filter matching messages whose ancestor folders' identifiers contain \a id, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::parentFolderId()
 */
 
@@ -439,6 +480,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose ancestor folders' identifiers contain a member of the
     set yielded by \a filter, according to \a cmp.
 
+    \since 1.0
     \sa QMessage::parentFolderId()
 */
 
@@ -448,6 +490,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose to recipients include the substring \a pattern,
     according to \a cmp. This filter is evaluated when it is constructed.
 
+    \since 1.2
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
 
@@ -457,6 +500,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose cc recipients include the substring \a pattern,
     according to \a cmp. This filter is evaluated when it is constructed.
 
+    \since 1.2
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
 
@@ -466,6 +510,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose bcc recipients include the substring \a pattern,
     according to \a cmp. This filter is evaluated when it is constructed.
 
+    \since 1.2
     \sa QMessage::to(), QMessage::cc(), QMessage::bcc()
 */
 

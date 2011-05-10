@@ -93,6 +93,7 @@ QGeoMapGroupObject::~QGeoMapGroupObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapGroupObject::type() const
 {
@@ -104,6 +105,7 @@ QGeoMapObject::Type QGeoMapGroupObject::type() const
 
     If this map object has children, the bounding box will be large
     enough to contain both this map object and all of its children.
+    \since 1.1
 */
 QGeoBoundingBox QGeoMapGroupObject::boundingBox() const
 {
@@ -127,6 +129,7 @@ QGeoBoundingBox QGeoMapGroupObject::boundingBox() const
     If this map object has children, this function will return whether
     \a coordinate is contained within the boundary of this map object or
     within the boundary of any of its children.
+    \since 1.1
 */
 bool QGeoMapGroupObject::contains(const QGeoCoordinate &coordinate) const
 {
@@ -150,6 +153,7 @@ bool mapObjectLessThan(const QGeoMapObject* op1, const QGeoMapObject* op2)
     in the order they were added.
 
     The map object will take ownership of \a childObject.
+    \since 1.1
 */
 void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
 {
@@ -176,6 +180,7 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
     Removes \a childObject from the list of children of this map object.
 
     The map object will release ownership of \a childObject.
+    \since 1.1
 */
 void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
 {
@@ -202,6 +207,7 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
 
 /*!
     Returns the children of this object.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoMapGroupObject::childObjects() const
 {
@@ -212,6 +218,7 @@ QList<QGeoMapObject*> QGeoMapGroupObject::childObjects() const
     Clears the children of this object.
 
     The child objects will be deleted.
+    \since 1.1
 */
 void QGeoMapGroupObject::clearChildObjects()
 {
@@ -226,6 +233,7 @@ void QGeoMapGroupObject::clearChildObjects()
 
 /*!
     Sets whether this group of objects is visible to \a visible.
+    \since 1.2
 */
 void QGeoMapGroupObject::setVisible(bool visible)
 {
@@ -237,6 +245,7 @@ void QGeoMapGroupObject::setVisible(bool visible)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 {
@@ -255,6 +264,7 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 
     This signal will be emitted when the map object \a childObject
     is added to the group.
+    \since 1.1
 */
 
 /*!
@@ -262,6 +272,7 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 
     This signal will be emitted when the map object \a childObject
     belonging to the group is updated.
+    \since 1.2
 */
 
 /*!
@@ -269,6 +280,7 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 
     This signal will be emitted when the map object \a childObject
     is removed from the group.
+    \since 1.1
 */
 
 /*******************************************************************************

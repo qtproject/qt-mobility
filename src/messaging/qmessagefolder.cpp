@@ -74,17 +74,20 @@
     Constructor that creates a QMessageFolder by loading the data from the messaging store as
     specified by the QMessageFolderId \a id. If the folder does not exist in the messaging
     store, then this constructor will create an empty and invalid QMessageFolder.
+    \since 1.0
 */
 
 /*!
     \fn QMessageFolder::QMessageFolder(const QMessageFolder &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageFolder::operator=(const QMessageFolder& other)
+    \since 1.0
 */
 
 /*!
@@ -98,6 +101,7 @@
 
     Returns the identifier of the QMessageFolder object. A QMessageFolder with an invalid
     identifier does not yet exist in the messaging store.
+    \since 1.0
 */
 
 /*!
@@ -105,6 +109,7 @@
 
     Returns the identifier of the parent account of the folder. If the folder is not linked to
     an account an invalid identifier is returned.
+    \since 1.0
 */
 
 /*!
@@ -112,6 +117,7 @@
 
     Returns the identifier of the parent folder. This folder is a root folder if the parent
     identifier is invalid.
+    \since 1.0
 */
 
 /*!
@@ -119,10 +125,12 @@
 
     Returns the display name of the folder suitable for viewing in a user interface.  This is
     typically the same as, or a simplification of the path() for the folder.
+    \since 1.0
 */
 
 /*!
     \fn QMessageFolder::path() const
 
     Returns the path of the folder.
+    \since 1.0
 */

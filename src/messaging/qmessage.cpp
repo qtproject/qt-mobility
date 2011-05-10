@@ -165,6 +165,7 @@ QList<QByteArray> charsets;
 
     Constructs a message from data stored in the messaging store with identifier \a id.
 
+    \since 1.0
     \sa QMessageManager::message()
 */
 
@@ -172,11 +173,13 @@ QList<QByteArray> charsets;
     \fn QMessage::QMessage(const QMessage &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessage::operator=(const QMessage& other)
+    \since 1.0
 */
 
 /*!
@@ -191,6 +194,7 @@ QList<QByteArray> charsets;
     Returns the identifier of the message.
 
     \sa QMessageFilter::byId()
+    \since 1.0
 */
 
 /*!
@@ -198,6 +202,7 @@ QList<QByteArray> charsets;
 
     Returns the Type of the message.
 
+    \since 1.0
     \sa setType(), QMessageFilter::byType()
 */
 
@@ -208,6 +213,7 @@ QList<QByteArray> charsets;
 
     The type of a message may be set for non-empty messages.
 
+    \since 1.0
     \sa type()
 */
 
@@ -216,6 +222,7 @@ QList<QByteArray> charsets;
 
     Returns the identifier of the parent account of the message if any; otherwise returns an
     invalid identifier.
+    \since 1.0
 */
 
 /*!
@@ -227,6 +234,7 @@ QList<QByteArray> charsets;
     the message store. Attempting to change the parent account of a message already
     in the message store will result in an error when attempting to update the message
     with QMessageStore::update().
+    \since 1.0
 */
 
 /*!
@@ -234,6 +242,7 @@ QList<QByteArray> charsets;
 
     Returns the identifier of the folder that contains the message if any; otherwise returns an
     invalid identifier.
+    \since 1.0
 */
 
 /*!
@@ -242,6 +251,7 @@ QList<QByteArray> charsets;
     Returns the standard folder of the message.
 
     Defaults to DraftsFolder.
+    \since 1.0
 */
 
 /*!
@@ -249,6 +259,7 @@ QList<QByteArray> charsets;
 
     Returns the originating address of the message.
 
+    \since 1.0
     \sa setFrom(), QMessageFilter::bySender()
 */
 
@@ -257,6 +268,7 @@ QList<QByteArray> charsets;
 
     Sets the from address, that is the originating address of the message to \a address.
 
+    \since 1.0
     \sa from()
 */
 
@@ -265,6 +277,7 @@ QList<QByteArray> charsets;
 
     Returns the subject of the message, if present; otherwise returns a null string.
 
+    \since 1.0
     \sa setSubject(), QMessageFilter::bySubject()
 */
 
@@ -273,6 +286,7 @@ QList<QByteArray> charsets;
 
     Sets the subject of the message to \a text.
 
+    \since 1.0
     \sa subject()
 */
 
@@ -282,6 +296,7 @@ QList<QByteArray> charsets;
     Returns the timestamp contained in the origination date header field of the message, if present;
     otherwise returns a null timestamp.
 
+    \since 1.0
     \sa setDate(), QMessageFilter::byTimeStamp()
 */
 
@@ -290,6 +305,7 @@ QList<QByteArray> charsets;
 
     Sets the origination date header field specifying the timestamp of the message to \a d.
 
+    \since 1.0
     \sa date()
 */
 
@@ -299,6 +315,7 @@ QList<QByteArray> charsets;
     Returns the timestamp placed in the message during reception by the device, if present;
     otherwise returns a null timestamp.
 
+    \since 1.0
     \sa setReceivedDate(), QMessageFilter::byReceptionTimeStamp()
 */
 
@@ -307,6 +324,7 @@ QList<QByteArray> charsets;
 
     Sets the timestamp indicating the time of message reception by the device to \a d.
 
+    \since 1.0
     \sa receivedDate()
 */
 
@@ -315,6 +333,7 @@ QList<QByteArray> charsets;
 
     Returns the list of primary recipients for the message.
 
+    \since 1.0
     \sa setTo(), QMessageFilter::byRecipients()
 */
 
@@ -323,6 +342,7 @@ QList<QByteArray> charsets;
 
     Sets the list of primary recipients for the message to \a toList.
 
+    \since 1.0
     \sa to()
 */
 
@@ -331,6 +351,7 @@ QList<QByteArray> charsets;
 
     Sets the primary recipient for the message to \a address.
 
+    \since 1.0
     \sa to()
 */
 
@@ -339,6 +360,7 @@ QList<QByteArray> charsets;
 
     Returns the list of all the cc (carbon copy) recipients specified for the message.
 
+    \since 1.0
     \sa to(), bcc(), setCc(), QMessageFilter::byRecipients()
 */
 
@@ -347,6 +369,7 @@ QList<QByteArray> charsets;
 
     Set the list of cc (carbon copy) recipients for the message to \a ccList.
 
+    \since 1.0
     \sa cc(), setTo(), setBcc()
 */
 
@@ -355,6 +378,7 @@ QList<QByteArray> charsets;
 
     Returns the list of all the bcc (blind carbon copy) recipients specified for the message.
 
+    \since 1.0
     \sa to(), cc(), setBcc()
 */
 
@@ -363,6 +387,7 @@ QList<QByteArray> charsets;
 
     Set the list of bcc (blind carbon copy) recipients for the message to \a bccList.
 
+    \since 1.0
     \sa bcc(), setTo(), setCc()
 */
 
@@ -371,6 +396,7 @@ QList<QByteArray> charsets;
 
     Returns the status flags value for the message.
 
+    \since 1.0
     \sa setStatus(), QMessageFilter::byStatus()
 */
 
@@ -379,6 +405,7 @@ QList<QByteArray> charsets;
 
     Sets the status flags value for the message to \a newStatus.
 
+    \since 1.0
     \sa status()
 */
 
@@ -387,6 +414,7 @@ QList<QByteArray> charsets;
 
     Sets the status flag \a flag for the message to have the value \a set.
 
+    \since 1.0
     \sa status()
 */
 
@@ -397,6 +425,7 @@ QList<QByteArray> charsets;
 
     The default is NormalPriority.
 
+    \since 1.0
     \sa setPriority(), QMessageFilter::byPriority()
 */
 
@@ -405,6 +434,7 @@ QList<QByteArray> charsets;
 
     Sets the priority of the message to \a newPriority.
 
+    \since 1.0
     \sa priority()
 */
 
@@ -413,6 +443,7 @@ QList<QByteArray> charsets;
 
     Returns the complete size of the message as indicated on the originating server.
 
+    \since 1.0
     \sa QMessageFilter::bySize()
 */
 
@@ -422,6 +453,7 @@ QList<QByteArray> charsets;
     Returns the identifier for the body content contained by the Message if a body exists;
     otherwise returns an invalid identifier.
 
+    \since 1.0
     \sa QMessageContentContainer, setBody()
 */
 
@@ -434,6 +466,7 @@ QList<QByteArray> charsets;
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
 
+    \since 1.0
     \sa bodyId(), preferredCharsets()
 */
 
@@ -446,6 +479,7 @@ QList<QByteArray> charsets;
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
 
+    \since 1.0
     \sa bodyId(), preferredCharsets()
 */
 
@@ -456,6 +490,7 @@ QList<QByteArray> charsets;
 
     The body of the message will not be included in the list.
 
+    \since 1.0
     \sa appendAttachments(), clearAttachments()
 */
 
@@ -471,6 +506,7 @@ QList<QByteArray> charsets;
     size is greater than the limit then message sending will fail when
     QMessageService::send() is called.
 
+    \since 1.0
     \sa attachmentIds(), clearAttachments()
 */
 
@@ -479,6 +515,7 @@ QList<QByteArray> charsets;
 
     Clears the list of attachments for the message, leaving only the message body, if any.
 
+    \since 1.0
     \sa attachmentIds(), appendAttachments()
 */
 
@@ -487,6 +524,7 @@ QList<QByteArray> charsets;
 
     Returns true if the message has been modified since it was constructed;
     otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -494,6 +532,7 @@ QList<QByteArray> charsets;
 
     Creates a new message as a response to this message, with properties predetermined according to \a type.
 
+    \since 1.0
     \sa QMessageService::compose()
 */
 
@@ -505,6 +544,7 @@ QList<QByteArray> charsets;
 
     The set of valid charset names is returned by QTextCodec::availableCodecs().
 
+    \since 1.0
     \sa preferredCharsets(), preferredCharsetFor(), setBody()
 */
 void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
@@ -518,6 +558,7 @@ void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
     Returns an ordered-by-preference list of charset names to use when encoding
     unicode QString data to a serialized form.
 
+    \since 1.0
     \sa setPreferredCharsets(), preferredCharsetFor(), setBody()
 */
 QList<QByteArray> QMessage::preferredCharsets()
@@ -529,6 +570,7 @@ QList<QByteArray> QMessage::preferredCharsets()
     Returns the first charset from the preferred list that is capable of encoding
     the content of \a text.
 
+    \since 1.0
     \sa preferredCharsets(), setBody()
 */
 QByteArray QMessage::preferredCharsetFor(const QString &text)

@@ -127,6 +127,7 @@ QGeoMapData::~QGeoMapData()
 
     Any subclasses which override this function should make sure that
     QGeoMapData::init() is called within the body of the overriding function.
+    \since 1.1
 */
 void QGeoMapData::init()
 {
@@ -136,6 +137,7 @@ void QGeoMapData::init()
 
 /*!
     Returns the mapping engine that this map data object is associated with.
+    \since 1.1
 */
 QGeoMappingManagerEngine* QGeoMapData::engine() const
 {
@@ -145,6 +147,7 @@ QGeoMappingManagerEngine* QGeoMapData::engine() const
 /*!
     Returns the QGeoMapObject which acts as the parent to all QGeoMapObject
     instances which are added to the map by the user.
+    \since 1.1
 */
 QGeoMapObject* QGeoMapData::containerObject()
 {
@@ -155,6 +158,7 @@ QGeoMapObject* QGeoMapData::containerObject()
     Sets the size of the map viewport to \a size.
 
     The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
+    \since 1.1
 */
 void QGeoMapData::setWindowSize(const QSizeF &size)
 {
@@ -172,6 +176,7 @@ void QGeoMapData::setWindowSize(const QSizeF &size)
     Returns the size of the map viewport.
 
     The size will be adjusted by the associated QGraphicsGeoMap as it resizes.
+    \since 1.1
 */
 QSizeF QGeoMapData::windowSize() const
 {
@@ -187,6 +192,7 @@ QSizeF QGeoMapData::windowSize() const
     If \a zoomLevel is less than minimumZoomLevel() then minimumZoomLevel()
     will be used, and if \a zoomLevel is  larger than
     maximumZoomLevel() then maximumZoomLevel() will be used.
+    \since 1.1
 */
 void QGeoMapData::setZoomLevel(qreal zoomLevel)
 {
@@ -209,6 +215,7 @@ void QGeoMapData::setZoomLevel(qreal zoomLevel)
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
+    \since 1.1
 */
 qreal QGeoMapData::zoomLevel() const
 {
@@ -219,6 +226,7 @@ qreal QGeoMapData::zoomLevel() const
     \property QGeoMapData::supportsBearing
 
     Returns whether bearing is supported by this engine.
+    \since 1.2
 */
 bool QGeoMapData::supportsBearing() const
 {
@@ -230,6 +238,7 @@ bool QGeoMapData::supportsBearing() const
 
     Value in degrees in the range of 0-360. 0 being equivalent to 0 degrees from
     north.
+    \since 1.2
 */
 void QGeoMapData::setBearing(qreal bearing)
 {
@@ -255,6 +264,7 @@ void QGeoMapData::setBearing(qreal bearing)
 
     Value in degrees in the range of 0-360. 0 being equivalent to 0 degrees from
     north.
+    \since 1.2
 */
 qreal QGeoMapData::bearing() const
 {
@@ -265,6 +275,7 @@ qreal QGeoMapData::bearing() const
     \property QGeoMapData::supportsTilting
 
     Returns whether tilting is supported by this engine.
+    \since 1.2
 */
 bool QGeoMapData::supportsTilting() const
 {
@@ -275,6 +286,7 @@ bool QGeoMapData::supportsTilting() const
     \property QGeoMapData::minimumTilt
 
     Returns minimum tilt supported by this engine.
+    \since 1.2
 */
 qreal QGeoMapData::minimumTilt() const
 {
@@ -285,6 +297,7 @@ qreal QGeoMapData::minimumTilt() const
     \property QGeoMapData::maximumTilt
 
     Returns maximum tilt supported by this engine.
+    \since 1.2
 */
 qreal QGeoMapData::maximumTilt() const
 {
@@ -300,6 +313,7 @@ qreal QGeoMapData::maximumTilt() const
     If \a tilt is less than minimumTilt() then minimumTilt()
     will be used, and if \a tilt is  larger than
     maximumTilt() then maximumTilt() will be used.
+    \since 1.2
 */
 void QGeoMapData::setTilt(qreal tilt)
 {
@@ -325,6 +339,7 @@ void QGeoMapData::setTilt(qreal tilt)
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
+    \since 1.2
 */
 qreal QGeoMapData::tilt() const
 {
@@ -341,6 +356,7 @@ qreal QGeoMapData::tilt() const
     viewed area down.
 
     Subclasses should call QGeoMapData::setCenter() when the pan has completed.
+    \since 1.1
 */
 void QGeoMapData::pan(int dx, int dy)
 {
@@ -350,6 +366,7 @@ void QGeoMapData::pan(int dx, int dy)
 
 /*!
     Centers the map viewport on the coordinate \a center.
+    \since 1.1
 */
 void QGeoMapData::setCenter(const QGeoCoordinate &center)
 {
@@ -366,6 +383,7 @@ void QGeoMapData::setCenter(const QGeoCoordinate &center)
     \property QGeoMapData::center
 
     Returns the coordinate of the point in the center of the map viewport.
+    \since 1.1
 */
 QGeoCoordinate QGeoMapData::center() const
 {
@@ -374,6 +392,7 @@ QGeoCoordinate QGeoMapData::center() const
 
 /*!
     Changes the type of map data to display to \a mapType.
+    \since 1.1
 */
 void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
@@ -390,6 +409,7 @@ void QGeoMapData::setMapType(QGraphicsGeoMap::MapType mapType)
     \property QGeoMapData::mapType
 
     Returns the type of map data which is being displayed.
+    \since 1.1
 */
 QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 {
@@ -398,6 +418,7 @@ QGraphicsGeoMap::MapType QGeoMapData::mapType() const
 
 /*!
     Changes the connectivity mode of this map to \a connectivityMode
+    \since 1.1
 */
 void QGeoMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
 {
@@ -414,6 +435,7 @@ void QGeoMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connecti
     \property QGeoMapData::connectivityMode
 
     Returns the connectivity mode for this map.
+    \since 1.1
 */
 QGraphicsGeoMap::ConnectivityMode QGeoMapData::connectivityMode() const
 {
@@ -422,6 +444,7 @@ QGraphicsGeoMap::ConnectivityMode QGeoMapData::connectivityMode() const
 
 /*!
     Returns the map objects associated with this map.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjects() const
 {
@@ -436,6 +459,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjects() const
     in the order they were added.
 
     The map will take ownership of the \a mapObject.
+    \since 1.1
 */
 void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 {
@@ -445,6 +469,7 @@ void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 /*!
     Removes \a mapObject from the list of map objects managed by this map.
     The map will release ownership of the \a mapObject.
+    \since 1.1
 */
 void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 {
@@ -455,6 +480,7 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
     Clears the map objects associated with this map.
 
     The map objects will be deleted.
+    \since 1.1
 */
 void QGeoMapData::clearMapObjects()
 {
@@ -468,6 +494,7 @@ void QGeoMapData::clearMapObjects()
 
     The bounding box which is returned is defined by the upper left and
     lower right corners of the visible area of the map.
+    \since 1.1
 */
 
 /*!
@@ -481,11 +508,13 @@ void QGeoMapData::clearMapObjects()
     If \a preserveViewportCenter is false the map will be centered on the
     bounding box \a bounds before the zoom level is changed, otherwise the
     center of the map will not be changed.
+    \since 1.1
 */
 
 /*!
     Returns the list of visible map objects managed by this map which
     contain the point \a screenPosition within their boundaries.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
@@ -505,6 +534,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
 /*!
     Returns the list of visible map objects managed by this map which are displayed at
     least partially within the on screen rectangle \a screenRect.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
@@ -528,6 +558,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 /*!
     Returns the list of visible map objects manager by this widget which
     are displayed at least partially within the viewport of the map.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
 {
@@ -544,6 +575,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
 
     An invalid QPointF will be returned if \a coordinate is invalid or is not
     within the current viewport.
+    \since 1.1
 */
 
 /*!
@@ -554,6 +586,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
 
     An invalid QGeoCoordinate will be returned if \a screenPosition is invalid
     or is not within the current viewport.
+    \since 1.1
 */
 
 /*!
@@ -563,6 +596,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInViewport() const
     This will paint the map with paintMap(), then the map overlays with
     QGeoMapOverlay::paint(), then the map objects with paintObjects(), and
     finally paintProviderNotices().
+    \since 1.1
 */
 void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -584,6 +618,7 @@ void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     in the paint() method.
 
     The default implementation does not paint anything.
+    \since 1.1
 */
 void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -600,6 +635,7 @@ void QGeoMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *op
     This implementation should suffice for most common use cases, and supports
     the full range of coordinate systems and transforms available to a
     QGeoMapObject.
+    \since 1.1
 */
 void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -622,6 +658,7 @@ void QGeoMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem
     "mapping.notices.poweredby.alignment", with type Qt::Alignment.
 
     The default implementation does not paint anything.
+    \since 1.1
 */
 void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -634,6 +671,7 @@ void QGeoMapData::paintProviderNotices(QPainter *painter, const QStyleOptionGrap
     the map object \a object which are specific to this QGeoMapData.
 
     The default implementation returns 0.
+    \since 1.1
 */
 QGeoMapObjectInfo *QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
 {
@@ -643,6 +681,7 @@ QGeoMapObjectInfo *QGeoMapData::createMapObjectInfo(QGeoMapObject *object)
 
 /*!
     Returns the map overlays associated with this map.
+    \since 1.1
 */
 QList<QGeoMapOverlay*> QGeoMapData::mapOverlays() const
 {
@@ -655,6 +694,7 @@ QList<QGeoMapOverlay*> QGeoMapData::mapOverlays() const
     The overlays will be drawn in the order in which they were added.
 
     The map will take ownership of \a overlay.
+    \since 1.1
 */
 void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
 {
@@ -669,6 +709,7 @@ void QGeoMapData::addMapOverlay(QGeoMapOverlay *overlay)
     Removes \a overlay from the list of map overlays associated with this map.
 
     The map will release ownership of \a overlay.
+    \since 1.1
 */
 void QGeoMapData::removeMapOverlay(QGeoMapOverlay *overlay)
 {
@@ -682,6 +723,7 @@ void QGeoMapData::removeMapOverlay(QGeoMapOverlay *overlay)
     Clears the map overlays associated with this map.
 
     The map overlays will be deleted.
+    \since 1.1
 */
 void QGeoMapData::clearMapOverlays()
 {
@@ -702,6 +744,7 @@ void QGeoMapData::clearMapOverlays()
 
     If this function needs to be called it should be used as soon as possible,
     preferably in the constructor of the QGeoMapData subclass.
+    \since 1.1
 */
 void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 {
@@ -715,6 +758,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     the map has changed.
 
     The new value is \a windowSize.
+    \since 1.1
 */
 
 /*!
@@ -723,6 +767,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     This signal is emitted when the zoom level of the map has changed.
 
     The new value is \a zoomLevel.
+    \since 1.1
 */
 
 /*!
@@ -731,6 +776,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     This signal is emitted when the bearing of the map has changed.
 
     The new value is \a bearing.
+    \since 1.2
 */
 
 /*!
@@ -739,6 +785,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     This signal is emitted when the tilt of the map has changed.
 
     The new value is \a tilt.
+    \since 1.2
 */
 
 /*!
@@ -747,6 +794,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     This signal is emitted when the center of the map has changed.
 
     The new value is \a coordinate.
+    \since 1.1
 */
 
 /*!
@@ -755,6 +803,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     This signal is emitted when the type of the map has changes.
 
     The value is \a mapType.
+    \since 1.1
 */
 
 /*!
@@ -764,6 +813,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
     map data has changed.
 
     The new value is \a connectivityMode.
+    \since 1.1
 */
 
 /*!
@@ -774,6 +824,7 @@ void QGeoMapData::setBlockPropertyChangeSignals(bool block)
 
 
     If \a target is empty then the entire map will be updated.
+    \since 1.1
 */
 
 /*******************************************************************************

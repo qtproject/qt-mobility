@@ -125,6 +125,7 @@ QGeoManeuver::QGeoManeuver()
 
 /*!
     Constructs a maneuver object from the contents of \a other.
+    \since 1.1
 */
 QGeoManeuver::QGeoManeuver(const QGeoManeuver &other)
     : d_ptr(other.d_ptr) {}
@@ -137,6 +138,7 @@ QGeoManeuver::~QGeoManeuver() {}
 /*!
     Assigns \a other to this maneuver object and then returns
     a reference to this maneuver object.
+    \since 1.1
 */
 QGeoManeuver& QGeoManeuver::operator= (const QGeoManeuver & other)
 {
@@ -146,6 +148,7 @@ QGeoManeuver& QGeoManeuver::operator= (const QGeoManeuver & other)
 
 /*!
     Returns whether this maneuver is equal to \a other.
+    \since 1.1
 */
 bool QGeoManeuver::operator== (const QGeoManeuver &other) const
 {
@@ -154,6 +157,7 @@ bool QGeoManeuver::operator== (const QGeoManeuver &other) const
 
 /*!
     Returns whether this maneuver is not equal to \a other.
+    \since 1.1
 */
 bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 {
@@ -165,6 +169,7 @@ bool QGeoManeuver::operator!= (const QGeoManeuver &other) const
 
     Invalid maneuvers are used when there is no information
     that needs to be attached to the endpoint of a QGeoRouteSegment instance.
+    \since 1.1
 */
 bool QGeoManeuver::isValid() const
 {
@@ -174,6 +179,7 @@ bool QGeoManeuver::isValid() const
 /*!
     Sets the position where instructionText() should be displayed to \a
     position.
+    \since 1.1
 */
 void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 {
@@ -183,6 +189,7 @@ void QGeoManeuver::setPosition(const QGeoCoordinate &position)
 
 /*!
     Returns the position where instructionText() should be displayed.
+    \since 1.1
 */
 QGeoCoordinate QGeoManeuver::position() const
 {
@@ -191,6 +198,7 @@ QGeoCoordinate QGeoManeuver::position() const
 
 /*!
     Sets the textual navigation instructions to \a instructionText.
+    \since 1.1
 */
 void QGeoManeuver::setInstructionText(const QString &instructionText)
 {
@@ -200,6 +208,7 @@ void QGeoManeuver::setInstructionText(const QString &instructionText)
 
 /*!
     Returns the textual navigation instructions.
+    \since 1.1
 */
 QString QGeoManeuver::instructionText() const
 {
@@ -209,6 +218,7 @@ QString QGeoManeuver::instructionText() const
 /*!
     Sets the direction associated with the associated instruction to \a
     direction.
+    \since 1.1
 */
 void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 {
@@ -218,6 +228,7 @@ void QGeoManeuver::setDirection(QGeoManeuver::InstructionDirection direction)
 
 /*!
     Returns the direction associated with the associated instruction.
+    \since 1.1
 */
 QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
 {
@@ -228,6 +239,7 @@ QGeoManeuver::InstructionDirection QGeoManeuver::direction() const
     Sets the estimated time it will take to travel from the point at which the
     associated instruction was issued and the point that the next instruction
     should be issued, in seconds, to \a secs.
+    \since 1.1
 */
 void QGeoManeuver::setTimeToNextInstruction(int secs)
 {
@@ -239,6 +251,7 @@ void QGeoManeuver::setTimeToNextInstruction(int secs)
     Returns the estimated time it will take to travel from the point at which
     the associated instruction was issued and the point that the next
     instruction should be issued, in seconds.
+    \since 1.1
 */
 int QGeoManeuver::timeToNextInstruction() const
 {
@@ -249,6 +262,7 @@ int QGeoManeuver::timeToNextInstruction() const
     Sets the distance, in metres, between the point at which the associated
     instruction was issued and the point that the next instruction should be
     issued to \a distance.
+    \since 1.1
 */
 void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 {
@@ -260,6 +274,7 @@ void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
     Returns the distance, in metres, between the point at which the associated
     instruction was issued and the point that the next instruction should be
     issued.
+    \since 1.1
 */
 qreal QGeoManeuver::distanceToNextInstruction() const
 {
@@ -268,6 +283,7 @@ qreal QGeoManeuver::distanceToNextInstruction() const
 
 /*!
     Sets the waypoint associated with this maneuver to \a coordinate.
+    \since 1.1
 */
 void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
 {
@@ -280,6 +296,7 @@ void QGeoManeuver::setWaypoint(const QGeoCoordinate &coordinate)
 
     If there is not waypoint associated with this maneuver an invalid
     QGeoCoordinate will be returned.
+    \since 1.1
 */
 QGeoCoordinate QGeoManeuver::waypoint() const
 {
