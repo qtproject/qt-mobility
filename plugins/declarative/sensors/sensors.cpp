@@ -246,7 +246,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     The AmbientLightSensor element repors on ambient lighting conditions.
 
-    This element wraps the QAmbientLightSensor class. Please see the documentaiton for
+    This element wraps the QAmbientLightSensor class. Please see the documentation for
     QAmbientLightSensor for details.
 
     \sa {Sensors QML Limitations}
