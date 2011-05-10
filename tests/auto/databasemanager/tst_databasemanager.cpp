@@ -257,7 +257,7 @@ void tst_DatabaseManager::defaultService()
     QVERIFY(compareDescriptor(descriptor,"com.omni.device.accelerometer", "LuthorCorp", 1, 2));
     QVERIFY(descriptor.scope()==QService::UserScope);
 
-    //get a sytem default from user scope
+    //get a system default from user scope
     descriptor = m_dbm->interfaceDefault("com.Dharma.wheel", DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor,"com.dharma.wheel", "DharmaInitiative", 1,0));
     QVERIFY(descriptor.scope() == QService::SystemScope);

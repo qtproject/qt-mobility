@@ -83,7 +83,7 @@ private:
 
     QByteArray  m_iid;
     QString     m_location;
-    QMap<QString, QObject*> m_instances;
+    QMap<QString, QList<QObject *> > m_instances;
 };
 
 QT_END_NAMESPACE

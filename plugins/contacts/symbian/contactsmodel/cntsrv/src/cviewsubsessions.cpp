@@ -688,43 +688,57 @@ contact items are externalized to the client-side.
 @param aMessage.Ptr1() Descriptor containing matching contact IDs (to client).
 */
 void CViewSubSessionBase::GetContactsMatchingFilterL(const RMessage2& aMessage)
-	{
-	const TInt filter(aMessage.Int0());
-	
-	RArray<TContactIdWithMapping> array;
-	CleanupClosePushL(array);
-	TContactIdWithMapping idMap;
+    {
+    const TInt filter(aMessage.Int0());
+    
+    RArray<TContactIdWithMapping> array;
+    CleanupClosePushL(array);
+    TContactIdWithMapping idMap;
 
-	// Filter view contacts.
-	const TInt viewCount(iView->CountL());
-	for (TInt i=0;i<viewCount;++i)
-		{
-		const CViewContact& contact = iView->ContactAtL(i);
-		if(contact.ContactMatchesFilter(filter))
-			{
-			idMap.iId=contact.Id();
-			idMap.iMapping=i;
-			User::LeaveIfError(array.Append(idMap));
-			}
-		}
-
-	// Externalize array to client.
-	const TInt count(array.Count());
-	const TInt maxBufSize = (1+(array.Count()*2))*sizeof(TInt);
-	HBufC8* buf=HBufC8::NewLC(maxBufSize);
-	TPtr8 bufPtr(buf->Des());
-	RDesWriteStream writeStream(bufPtr);
-	CleanupClosePushL(writeStream);
-	writeStream.WriteUint32L(count);
-	for (TInt j=0; j<count; ++j)
-		{
-		writeStream.WriteInt32L(array[j].iId);
-		writeStream.WriteInt32L(array[j].iMapping);
-		}
-	bufPtr.SetLength(maxBufSize);
-	aMessage.WriteL(1,*buf);
-	CleanupStack::PopAndDestroy(3,&array);
-	}
+    CContactIdArray* idVoipArray = NULL;
+    if (filter & CContactDatabase::ECustomFilter3)
+        {
+        // CContactDatabase::ECustomFilter3 was used to filter the contacts 
+        // which support voip call. 
+        MLplCollection& collection = iViewManager.FactoryL().GetCollectorL();
+        collection.Reset();
+        idVoipArray = collection.FindVoipContactsL();
+        CleanupStack::PushL(idVoipArray);
+        }
+    // Filter view contacts.
+    const TInt viewCount(iView->CountL());
+    for (TInt i=0;i<viewCount;++i)
+        {
+        const CViewContact& contact = iView->ContactAtL(i);
+        if(contact.ContactMatchesFilter(filter) ||
+                (idVoipArray && (KErrNotFound !=idVoipArray->Find(contact.Id())))) // Check if the contacts support voip call.
+            {
+            idMap.iId=contact.Id();
+            idMap.iMapping=i;
+            User::LeaveIfError(array.Append(idMap));
+            }
+        }
+    if(idVoipArray)
+        {
+        CleanupStack::PopAndDestroy(idVoipArray);
+        }
+    // Externalize array to client.
+    const TInt count(array.Count());
+    const TInt maxBufSize = (1+(array.Count()*2))*sizeof(TInt);
+    HBufC8* buf=HBufC8::NewLC(maxBufSize);
+    TPtr8 bufPtr(buf->Des());
+    RDesWriteStream writeStream(bufPtr);
+    CleanupClosePushL(writeStream);
+    writeStream.WriteUint32L(count);
+    for (TInt j=0; j<count; ++j)
+        {
+        writeStream.WriteInt32L(array[j].iId);
+        writeStream.WriteInt32L(array[j].iMapping);
+        }
+    bufPtr.SetLength(maxBufSize);
+    aMessage.WriteL(1,*buf);
+    CleanupStack::PopAndDestroy(3,&array);
+    }
 
 
 void CViewSubSessionBase::GetSortPluginUidFromServerL(const RMessage2& aMessage)
@@ -1133,6 +1147,10 @@ void CViewManager::ConstructL()
 	{
 	}
 
+MLplPersistenceLayerFactory& CViewManager::FactoryL()
+    {
+    return iFactory;
+    }
 
 #if defined(_DEBUG)
 void CViewManager::GetDefinitionsOfExistingViewsL(RPointerArray<CContactDefaultViewDefinition>& aViewDefs)

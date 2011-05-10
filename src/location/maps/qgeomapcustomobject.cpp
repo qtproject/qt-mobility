@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoMapCustomObject
     \brief The QGeoMapCustomObject class is a QGeoMapObject used to draw
-    a pixmap on a map.
+    a QGraphicsItem on a map.
 
     \inmodule QtLocation
 
@@ -162,6 +162,11 @@ QGeoMapObject::Type QGeoMapCustomObject::type() const
 }
 
 /*!
+    If the graphics item is modified this
+    method should be called immediately afterwards to inform
+    the map that an update is required. .
+
+    This method causes the triggerUpdate() signal to be emitted.
     \since 1.2
 */
 void QGeoMapCustomObject::update()
@@ -171,6 +176,9 @@ void QGeoMapCustomObject::update()
 
 /*!
 \fn void QGeoMapCustomObject::triggerUpdate()
+
+    This signal indicates that the graphics item has
+    changed and that the map needs to be updated.
     \since 1.2
 */
 

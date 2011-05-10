@@ -50,6 +50,9 @@
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 #include <qglshaderprogram.h>
+#ifndef GL_CLAMP_TO_EDGE
+#define GL_CLAMP_TO_EDGE 0x812F
+#endif
 #endif
 
 #include <QtDebug>
@@ -361,8 +364,8 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
                     m_frame.bits() + m_textureOffsets[i]);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         }
         m_frame.unmap();
     } else if (m_handleType != QAbstractVideoBuffer::QPixmapHandle && m_frame.isValid()) {
@@ -1550,9 +1553,11 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
         if (extensions.contains("ARB_fragment_program"))
             m_shaderTypes |= FragmentProgramShader;
 #endif
-
         if (QGLShaderProgram::hasOpenGLShaderPrograms(m_glContext)
-                && extensions.contains("ARB_shader_objects"))
+#ifndef QT_OPENGL_ES_2
+                && extensions.contains("ARB_shader_objects")
+#endif
+            )
             m_shaderTypes |= GlslShader;
     }
 

@@ -199,6 +199,11 @@
 #define KIntContactFieldVCardMapFavourite   	0x10274DB4
 #define KIntContactFieldPrivateImage            0x10274DB5
 
+/**
+ * Phonebook custom Field value.
+ * IMPP field type.
+ */
+#define KUidContactFieldIMPPValue           0x200100E4
 
 /** @internalComponent */
 #define KStorageTypeText			0

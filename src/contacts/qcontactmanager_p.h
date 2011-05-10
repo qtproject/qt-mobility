@@ -75,7 +75,7 @@ class QContactManagerData
 public:
     QContactManagerData()
         : m_engine(0),
-        m_error(QContactManager::NoError)
+        m_lastError(QContactManager::NoError)
     {
     }
 
@@ -90,13 +90,14 @@ public:
     static QContactManagerEngineV2* engine(const QContactManager* manager);
 
     QContactManagerEngineV2* m_engine;
-    QContactManager::Error m_error;
-    QMap<int, QContactManager::Error> m_errorMap;
+    QContactManager::Error m_lastError;
+    QMap<int, QContactManager::Error> m_lastErrorMap;
 
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;
     static QSet<QContactManager*> m_aliveEngines;
     static QContactManagerData* managerData(QContactManager* manager) {return manager->d;}
+    static QContactManagerData* managerData(const QContactManager* manager) {return manager->d;} // laziness to avoid const_cast
     static QList<QContactActionManagerPlugin*> m_actionManagers;
     static bool m_discoveredStatic;
     static QStringList m_pluginPaths;
@@ -116,6 +117,36 @@ public:
 
 private:
     Q_DISABLE_COPY(QContactManagerData)
+};
+
+/*
+    Helper to hold the error state of a synchronous operation - when destructed, updates the
+    manager's last error variables to the result of this operation.  This means that during
+    callbacks the error state can't be modified behind the engines back. and it's more conceptually
+    correct.
+ */
+class QContactManagerSyncOpErrorHolder
+{
+public:
+    QContactManagerSyncOpErrorHolder(const QContactManager* m, QMap<int, QContactManager::Error> *pUserError = 0)
+        : error(QContactManager::NoError),
+        data(QContactManagerData::managerData(m)),
+        userError(pUserError)
+    {
+    }
+
+    ~QContactManagerSyncOpErrorHolder()
+    {
+        data->m_lastError = error;
+        data->m_lastErrorMap = errorMap;
+        if (userError)
+            *userError = errorMap;
+    }
+
+    QContactManager::Error error;
+    QContactManagerData* data;
+    QMap<int, QContactManager::Error> errorMap;
+    QMap<int, QContactManager::Error> *userError;
 };
 
 QTM_END_NAMESPACE

@@ -549,4 +549,8 @@ EXPORTS
 	?UpdateImageNameL@TCntImageRescaleUtility@@SAXABVCContactItem@@@Z @ 548 NONAME ; void TCntImageRescaleUtility::UpdateImageNameL(class CContactItem const &)
 	?DeleteImageDirectoryL@TCntImageRescaleUtility@@SAXXZ @ 549 NONAME ; void TCntImageRescaleUtility::DeleteImageDirectoryL(void)
 	?ObserverV2@CContactLocalView@@QBEAAVMContactDbObserverV2@@XZ @ 550 NONAME ; class MContactDbObserverV2 & CContactLocalView::ObserverV2(void) const
+	?ScaleAndStoreImage@CContactImagesUtility@@QAEXPAVMContactImageUtilityObserver@@ABVTDesC16@@@Z @ 551 NONAME ; void CContactImagesUtility::ScaleAndStoreImage(class MContactImageUtilityObserver *, class TDesC16 const &)
+	??1CContactImagesUtility@@UAE@XZ @ 552 NONAME ; CContactImagesUtility::~CContactImagesUtility(void)
+	?EnsureImageRemoved@CContactImagesUtility@@QAEXABVTDesC16@@@Z @ 553 NONAME ; void CContactImagesUtility::EnsureImageRemoved(class TDesC16 const &)
+	?NewL@CContactImagesUtility@@SAPAV1@XZ @ 554 NONAME ; class CContactImagesUtility * CContactImagesUtility::NewL(void)
 

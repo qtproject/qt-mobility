@@ -279,8 +279,11 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quin
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfoLinuxCommonPrivate::currentMode();
+    if (mode != QSystemNetworkInfo::UnknownMode)
+        return mode;
+
 #if !defined(QT_NO_NETWORKMANAGER)
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
     QMapIterator<QString, QString> i(activePaths);
     QString devicepath;
     while (i.hasNext()) {
@@ -294,14 +297,17 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         }
         devicepath = i.value();
     }
-    return mode;
-#else // QT_NO_NETWORKMANAGER
-    return QSystemNetworkInfoLinuxCommonPrivate::currentMode();
 #endif // QT_NO_NETWORKMANAGER
+
+    return QSystemNetworkInfo::UnknownMode;
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    QSystemNetworkInfo::NetworkStatus status = QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+    if (status != QSystemNetworkInfo::UndefinedStatus)
+        return status;
+
 #if !defined(QT_NO_NETWORKMANAGER)
     switch (mode) {
     case QSystemNetworkInfo::GsmMode:
@@ -375,11 +381,15 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     }
 #endif // QT_NO_NETWORKMANAGER
 
-    return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+    return QSystemNetworkInfo::UndefinedStatus;
 }
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+    int signalStrength = QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+    if (signalStrength != -1)
+        return signalStrength;
+
 #if !defined(QT_NO_NETWORKMANAGER)
     switch (mode) {
     case QSystemNetworkInfo::GsmMode:
@@ -413,11 +423,15 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     }
 #endif // QT_NO_NETWORKMANAGER
 
-    return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+    return -1;
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    QString name = QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
+    if (!name.isEmpty())
+        return name;
+
 #if !defined(QT_NO_NETWORKMANAGER)
     switch (mode) {
     case QSystemNetworkInfo::GsmMode:
@@ -457,7 +471,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     }
 #endif // QT_NO_NETWORKMANAGER
 
-    return QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
+    return QString();
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
@@ -470,7 +484,7 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
-        : QSystemDeviceInfoLinuxCommonPrivate(parent)
+    : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
 }
 
@@ -485,75 +499,56 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
+    QNetworkManagerInterface iface;
+    foreach (const QDBusObjectPath &path, iface.getDevices()) {
+        QNetworkManagerInterfaceDevice devIface(path.path(), this);
+        if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+            QModemManagerModemGsmCard card(devIface.udi());
+            return card.imei();
+        }
+    }
+#endif // QT_NO_NETWORKMANAGER
 
-     QNetworkManagerInterface iface;
-     foreach (const QDBusObjectPath &path, iface.getDevices()) {
-         QNetworkManagerInterfaceDevice devIface(path.path(), this);
-         if (devIface.deviceType() == DEVICE_TYPE_GSM) {
-             QModemManagerModemGsmCard card(devIface.udi());
-             return card.imei();
-         }
-     }
+    return QSystemDeviceInfoLinuxCommonPrivate::imei();
+}
 
-#endif
-#if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoModemInterface modemIface(modem,this);
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
 
-             QString imei = modemIface.getSerial();
-             if(!imei.isEmpty()) {
-                 return imei;
-             }
-         }
-     }
-#endif
-#endif
-     return QLatin1String("");
- }
+bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType /*type*/)
+{
+    return false;
+}
+
+bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
+{
+    return false;
+}
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
-     QNetworkManagerInterface iface;
-     foreach (const QDBusObjectPath &path, iface.getDevices()) {
-         QNetworkManagerInterfaceDevice devIface(path.path(), this);
-         if (devIface.deviceType() == DEVICE_TYPE_GSM) {
-             QModemManagerModemGsmCard card(devIface.udi());
-             return card.imsi();
-         }
-     }
-#endif
-#if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoSimInterface simInterface(modem,this);
-             if(simInterface.isPresent()) {
-                 QString id = simInterface.getImsi();
-                 if(!id.isEmpty()) {
-                     return id;
-                 }
-             }
-         }
-     }
-#endif
-#endif
-         return QLatin1String("");
-}
+    QNetworkManagerInterface iface;
+    foreach (const QDBusObjectPath &path, iface.getDevices()) {
+        QNetworkManagerInterfaceDevice devIface(path.path(), this);
+        if (devIface.deviceType() == DEVICE_TYPE_GSM) {
+            QModemManagerModemGsmCard card(devIface.udi());
+            return card.imsi();
+        }
+    }
+#endif // QT_NO_NETWORKMANAGER
 
+    return QSystemDeviceInfoLinuxCommonPrivate::imsi();
+}
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
     QSystemScreenSaverPrivate priv;
 
-    if(priv.isScreenLockEnabled()
+    if (priv.isScreenLockEnabled()
         && priv.isScreenSaverActive()) {
         return true;
     }
@@ -563,20 +558,20 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    if(halAvailable()) {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
+    if (halAvailable()) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString model;
         if (iface.isValid()) {
             model = iface.getPropertyString("system.kernel.machine");
-            if(!model.isEmpty())
+            if (!model.isEmpty())
                 model += " ";
             model += iface.getPropertyString("system.chassis.type");
-            if(!model.isEmpty())
+            if (!model.isEmpty())
                 return model;
         }
-#endif
     }
+#endif // QT_NO_HAL
     QFile file("/proc/cpuinfo");
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Could not open /proc/cpuinfo";
@@ -585,35 +580,34 @@ QString QSystemDeviceInfoPrivate::model()
         QString line = cpuinfo.readLine();
         while (!line.isNull()) {
             line = cpuinfo.readLine();
-            if(line.contains("model name")) {
+            if (line.contains("model name"))
                 return line.split(": ").at(1).trimmed();
-            }
         }
     }
+
     return QString();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-    if(halAvailable()) {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
+    if (halAvailable()) {
         QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
         QString productName;
         if (iface.isValid()) {
             productName = iface.getPropertyString("info.product");
-            if(productName.isEmpty()) {
+            if (productName.isEmpty()) {
                 productName = iface.getPropertyString("system.product");
-                if(!productName.isEmpty())
+                if (!productName.isEmpty())
                     return productName;
             } else {
                 return productName;
             }
         }
-#endif
     }
+#endif // QT_NO_HAL
     const QDir dir("/etc");
-    if(dir.exists()) {
-        QStringList langList;
+    if (dir.exists()) {
         QFileInfoList localeList = dir.entryInfoList(QStringList() << "*release",
                                                      QDir::Files | QDir::NoDotAndDotDot,
                                                      QDir::Name);
@@ -624,17 +618,16 @@ QString QSystemDeviceInfoPrivate::productName()
                 QTextStream prodinfo(&file);
                 QString line = prodinfo.readLine();
                 while (!line.isNull()) {
-                    if(filepath.contains("lsb.release")) {
-                        if(line.contains("DISTRIB_DESCRIPTION")) {
+                    if (filepath.contains("lsb.release")) {
+                        if (line.contains("DISTRIB_DESCRIPTION"))
                             return line.split("=").at(1).trimmed();
-                        }
                     } else {
                         return line;
                     }
                     line = prodinfo.readLine();
                 }
             }
-        } //end foreach
+        }
     }
 
     QFile file("/etc/issue");
@@ -645,67 +638,41 @@ QString QSystemDeviceInfoPrivate::productName()
         QString line = prodinfo.readLine();
         while (!line.isNull()) {
             line = prodinfo.readLine();
-            if(!line.isEmpty()) {
+            if (!line.isEmpty()) {
                 QStringList lineList = line.split(" ");
-                for(int i = 0; i < lineList.count(); i++) {
-                    if(lineList.at(i).toFloat()) {
+                for (int i = 0; i < lineList.count(); i++) {
+                    if (lineList.at(i).toFloat())
                         return lineList.at(i-1) + " "+ lineList.at(i);
-                    }
                 }
             }
         }
     }
+
     return QString();
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-#if !defined(QT_NO_DBUS)
 #if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface iface;
     foreach (const QDBusObjectPath &path, iface.getDevices()) {
         QNetworkManagerInterfaceDevice devIface(path.path(), this);
         if (devIface.deviceType() == DEVICE_TYPE_GSM
-                || devIface.deviceType() == DEVICE_TYPE_CDMA) {
+            || devIface.deviceType() == DEVICE_TYPE_CDMA) {
             QModemManager manager(this);
-            if (manager.enumerateDevices().count() > 1) {
+            if (manager.enumerateDevices().count() > 1)
                 return QSystemDeviceInfo::DualSimAvailable;
-            }
 
             QModemManagerModem modem(devIface.udi());
-            if(!modem.unlockRequired().isEmpty()) {
+            if (!modem.unlockRequired().isEmpty())
                 return QSystemDeviceInfo::SimLocked;
-            }
+
             return QSystemDeviceInfo::SingleSimAvailable;
         }
     }
+#endif // QT_NO_NETWORKMANAGER
 
-#endif
-#if !defined(QT_NO_CONNMAN)
-     if(ofonoAvailable()) {
-         QOfonoManagerInterface ofonoManager;
-         QString modem = ofonoManager.currentModem().path();
-         if(!modem.isEmpty()) {
-             QOfonoSimInterface simInterface(modem,this);
-             QString simpin = simInterface.pinRequired();
-             if(simpin == "pin"
-            || simpin == "phone"
-            || simpin == "firstphone"
-            || simpin == "pin2"
-            || simpin == "puk"
-            || simpin == "firstphonepuk"
-            || simpin == "puk2"
-            ) {
-                 return QSystemDeviceInfo::SimLocked;
-             }
-             if(simInterface.isPresent()) {
-                 return QSystemDeviceInfo::SingleSimAvailable;
-             }
-         }
-     }
-#endif
-#endif
-     return QSystemDeviceInfo::SimNotAvailable;
+     return QSystemDeviceInfoLinuxCommonPrivate::simStatus();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

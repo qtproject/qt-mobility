@@ -414,7 +414,7 @@ void QGraphicsVideoItem::paint(
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    if (d->surface && d->updatePaintDevice) {
+    if (d->surface && d->rendererControl && d->updatePaintDevice) {
         d->updatePaintDevice = false;
 
         if (widget)
@@ -426,7 +426,7 @@ void QGraphicsVideoItem::paint(
 
         d->surface->setGLContext(const_cast<QGLContext *>(QGLContext::currentContext()));
 #endif
-        if (d->rendererControl && d->rendererControl->surface() != d->surface)
+        if (d->rendererControl->surface() != d->surface)
             d->rendererControl->setSurface(d->surface);
     }
 
