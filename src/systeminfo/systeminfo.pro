@@ -83,14 +83,23 @@ unix:!simulator {
         DEFINES += TESTR QT_SIMULATOR
     } else {
         linux-*: {
-            contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
+            !contains(bluez_enabled, yes): DEFINES += QT_NO_BLUEZ
 
             SOURCES += linux/qsysteminfo_linux_common.cpp
             HEADERS += linux/qsysteminfo_linux_common_p.h
 
+            contains(QT_CONFIG, dbus): {
+                QT += dbus
+                SOURCES += linux/qhalservice_linux.cpp
+                HEADERS += linux/qhalservice_linux_p.h
+            } else {
+                DEFINES += QT_NO_HAL
+            }
+
             contains(blkid_enabled, yes): {
-                DEFINES += BLKID_SUPPORTED
                 LIBS += -lblkid
+            } else {
+                DEFINES += QT_NO_BLKID
             }
 
             !embedded:!contains(QT_CONFIG,qpa): {
@@ -113,26 +122,28 @@ unix:!simulator {
         !maemo5:!maemo6:linux-*: {
             SOURCES += linux/qsysteminfo_linux.cpp
             HEADERS += linux/qsysteminfo_linux_p.h
+
+            # udev should not be enabled on maemo5 and maemo6
+            contains(udev_enabled, yes): {
+                LIBS += -ludev
+                SOURCES += linux/qudevservice_linux.cpp
+                HEADERS += linux/qudevservice_linux_p.h
+            } else {
+                DEFINES += QT_NO_UDEV
+            }
+
             contains(QT_CONFIG, dbus): {
                 QT += dbus
                 SOURCES += \
-                    linux/qhalservice_linux.cpp \
                     linux/qsysteminfodbushelper.cpp \
-                    linux/qdevicekitservice_linux.cpp
+                    linux/qconnmanservice_linux.cpp \
+                    linux/qofonoservice_linux.cpp
 
                 HEADERS += \
-                    linux/qhalservice_linux_p.h \
                     linux/qsysteminfodbushelper_p.h \
-                    linux/qdevicekitservice_linux_p.h \
-                    linux/qsysteminfo_dbus_p.h
-
-                # udev should not be enabled on maemo5 and maemo6
-                contains(udev_enabled, yes): {
-                    DEFINES += UDEV_SUPPORTED
-                    LIBS += -ludev
-                    SOURCES += linux/qudevservice_linux.cpp
-                    HEADERS += linux/qudevservice_linux_p.h
-                }
+                    linux/qsysteminfo_dbus_p.h \
+                    linux/qconnmanservice_linux_p.h \
+                    linux/qofonoservice_linux_p.h
 
                 contains(networkmanager_enabled, yes): {
                     SOURCES += linux/qnetworkmanagerservice_linux.cpp linux/qnmdbushelper.cpp
@@ -142,20 +153,14 @@ unix:!simulator {
                 }
 
                 contains(CONFIG,meego): {
-                    #for now... udisks
+                    SOURCES += linux/qdevicekitservice_linux.cpp
+                    HEADERS += linux/qdevicekitservice_linux_p.h
                 } else {
-                    DEFINES += QT_NO_UDISKS
+                    DEFINES += QT_NO_UDISKS QT_NO_UPOWER
                     !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
                 }
-
-                contains(connman_enabled, yes): {
-                    SOURCES+= linux/qconnmanservice_linux.cpp linux/qofonoservice_linux.cpp
-                    HEADERS+= linux/qconnmanservice_linux_p.h linux/qofonoservice_linux_p.h
-                } else {
-                    DEFINES += QT_NO_CONNMAN
-                }
             } else {
-                DEFINES += QT_NO_NETWORKMANAGER QT_NO_UDISKS QT_NO_CONNMAN
+                DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER
                 !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
             }
         }
@@ -165,17 +170,11 @@ unix:!simulator {
             CONFIG += link_pkgconfig
             SOURCES += qsysteminfo_maemo.cpp linux/gconfitem.cpp
             HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
-            DEFINES += QT_NO_CONNMAN QT_NO_UDISKS  QT_NO_NETWORKMANAGER
+            DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER QT_NO_UDEV
 
             contains(bme_enabled, yes): {
                 LIBS += -lbmeipc
                 DEFINES += Q_USE_BME
-            }
-
-            contains(QT_CONFIG,dbus): {
-                QT += dbus
-                SOURCES += linux/qhalservice_linux.cpp
-                HEADERS += linux/qhalservice_linux_p.h
             }
 
             PKGCONFIG += glib-2.0 gconf-2.0

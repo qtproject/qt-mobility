@@ -83,6 +83,8 @@ private slots:
     void drawsExactEllipse();
     void pixelChildren();
     void bilinearChildren();
+    void offset_data();
+    void offset();
 
     void autoUpdate();
 
@@ -226,7 +228,7 @@ void tst_QGeoMapObject::findsPixelEllipse()
     }
 
     testPoints.clear();
-    testPoints << QPointF(150, 161) << QPointF(139, 150) << QPointF(158, 158);
+    testPoints << QPointF(150, 161) << QPointF(139, 150) << QPointF(159, 159);
 
     foreach (QPointF tp, testPoints) {
         list = m_helper->map()->mapObjectsAtScreenPosition(tp);
@@ -554,6 +556,103 @@ static struct Cross findCross(QGraphicsGeoMap *map)
     }
 
     return result;
+}
+
+void tst_QGeoMapObject::offset_data()
+{
+    QTest::addColumn<int>("width");
+    QTest::addColumn<int>("height");
+    QTest::addColumn<int>("offsetX");
+    QTest::addColumn<int>("offsetY");
+
+    QTest::newRow("100x100 + -50,-50") << 100 << 100 << -50 << -50;
+    QTest::newRow("100x100 + -50,0") << 100 << 100 << -50 << 0;
+    QTest::newRow("100x100 + -50,50") << 100 << 100 << -50 << 50;
+    QTest::newRow("100x100 + 0,-50") << 100 << 100 << 0 << -50;
+    QTest::newRow("100x100 + 0,0") << 100 << 100 << 0 << 0;
+    QTest::newRow("100x100 + 0,50") << 100 << 100 << 0 << 50;
+    QTest::newRow("100x100 + 50,-50") << 100 << 100 << 50 << -50;
+    QTest::newRow("100x100 + 50,0") << 100 << 100 << 50 << 0;
+    QTest::newRow("100x100 + 50,50") << 100 << 100 << 50 << 50;
+
+    QTest::newRow("200x200 + -50,-50") << 200 << 200 << -50 << -50;
+    QTest::newRow("200x200 + -50,0") << 200 << 200 << -50 << 0;
+    QTest::newRow("200x200 + -50,50") << 200 << 200 << -50 << 50;
+    QTest::newRow("200x200 + 0,-50") << 200 << 200 << 0 << -50;
+    QTest::newRow("200x200 + 0,0") << 200 << 200 << 0 << 0;
+    QTest::newRow("200x200 + 0,50") << 200 << 200 << 0 << 50;
+    QTest::newRow("200x200 + 50,-50") << 200 << 200 << 50 << -50;
+    QTest::newRow("200x200 + 50,0") << 200 << 200 << 50 << 0;
+    QTest::newRow("200x200 + 50,50") << 200 << 200 << 50 << 50;
+}
+
+void tst_QGeoMapObject::offset()
+{
+    QFETCH(int, width);
+    QFETCH(int, height);
+    QFETCH(int, offsetX);
+    QFETCH(int, offsetY);
+
+    QGeoCoordinate center(10.0, 10.0, 0.0);
+    QPoint offset(offsetX, offsetY);
+
+    QGeoMapCustomObject *object = new QGeoMapCustomObject;
+
+    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+    el->setRect(0, 0, width, height);
+    el->setBrush(QBrush(Qt::black));
+
+    object->setGraphicsItem(el);
+    object->setOrigin(center);
+    object->setOffset(offset);
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(center);
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QPointF point = map->coordinateToScreenPosition(center);
+
+    QPointF centerPoint = point;
+    centerPoint += QPointF(offsetX + width / 2.0, offsetY + height / 2.0);
+
+    QList<QPointF> inner;
+    QList<QPointF> outer;
+
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, -3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, 0.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, 0.0);
+
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, 3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(0.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(0.0, -3.0 * height / 4.0);
+
+    inner << centerPoint;
+
+    inner << centerPoint + QPointF(0.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(0.0, 3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, -3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, 0.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, 0.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, 3.0 * height / 4.0);
+
+    for (int i = 0; i < inner.size(); ++i)
+        QCOMPARE(map->mapObjectsAtScreenPosition(inner.at(i)).size(), 1);
+
+    for (int i = 0; i < outer.size(); ++i)
+        QCOMPARE(map->mapObjectsAtScreenPosition(outer.at(i)).size(), 0);
 }
 
 #define EXF_NO_AUTOUPDATE   QEXPECT_FAIL("", "Auto-update not implemented yet", Continue)

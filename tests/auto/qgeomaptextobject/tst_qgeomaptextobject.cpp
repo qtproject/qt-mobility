@@ -74,8 +74,8 @@ private slots:
     void brush();
     void coordinate_data();
     void coordinate();
-    void font_data();
-    void font();
+    void geometry_data();
+    void geometry();
     void offset_data();
     void offset();
     void pen_data();
@@ -377,49 +377,63 @@ void tst_QGeoMapTextObject::coordinate()
 
 }
 
-void tst_QGeoMapTextObject::font_data()
+void tst_QGeoMapTextObject::geometry_data()
 {
-    QTest::addColumn<QFont>("font");
+    QTest::addColumn<int>("size");
+    QTest::addColumn<int>("offsetX");
+    QTest::addColumn<int>("offsetY");
 
-    QFont f = QFont();
+    QTest::newRow("5, -50,-50") << 5 << -50 << -50;
+    QTest::newRow("5, -50,0") << 5 << -50 << 0;
+    QTest::newRow("5, -50,50") << 5 << -50 << 50;
+    QTest::newRow("5, 0,-50") << 5 << 0 << -50;
+    QTest::newRow("5, 0,0") << 5 << 0 << 0;
+    QTest::newRow("5, 0,50") << 5 << 0 << 50;
+    QTest::newRow("5, 50,-50") << 5 << 50 << -50;
+    QTest::newRow("5, 50,0") << 5 << 50 << 0;
+    QTest::newRow("5, 50,50") << 5 << 50 << 50;
 
-    int size = f.pointSize();
-
-    f.setPointSize(size + 5);
-
-    size = f.pointSize();
-
-    QTest::newRow("size+5") << f;
-
-    f.setPointSize(size + 5);
-
-    size = f.pointSize();
-
-    QTest::newRow("size+10") << f;
-
-    f.setPointSize(size + 5);
-
-    size = f.pointSize();
-
-    QTest::newRow("size+15") << f;
+    QTest::newRow("15, -50,-50") << 15 << -50 << -50;
+    QTest::newRow("15, -50,0") << 15 << -50 << 0;
+    QTest::newRow("15, -50,50") << 15 << -50 << 50;
+    QTest::newRow("15, 0,-50") << 15 << 0 << -50;
+    QTest::newRow("15, 0,0") << 15 << 0 << 0;
+    QTest::newRow("15, 0,50") << 15 << 0 << 50;
+    QTest::newRow("15, 50,-50") << 15 << 50 << -50;
+    QTest::newRow("15, 50,0") << 15 << 50 << 0;
+    QTest::newRow("15, 50,50") << 15 << 50 << 50;
 }
 
 // public QFont font() const
-void tst_QGeoMapTextObject::font()
+void tst_QGeoMapTextObject::geometry()
 {
-    QFETCH(QFont, font);
+    QFETCH(int, size);
+    QFETCH(int, offsetX);
+    QFETCH(int, offsetY);
 
+    QFont font = QFont();
+    font.setPointSize(size);
+    QPoint offset(offsetX, offsetY);
     QGeoCoordinate center(50, 50, 0);
 
     QGeoMapTextObject* object = new QGeoMapTextObject();
 
     object->setCoordinate(center);
-
     object->setText("AAAAA");
-
     object->setBrush(Qt::black);
+    object->setFont(font);
+    object->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    object->setOffset(offset);
+
+    QFontMetrics metrics(object->font());
+    QRect bounds = metrics.boundingRect(object->text());
+
+    int width = bounds.width();
+    int height = bounds.height();
 
     QGraphicsGeoMap* map = m_helper->map();
+
+    map->setCenter(center);
 
     map->addMapObject(object);
 
@@ -427,42 +441,66 @@ void tst_QGeoMapTextObject::font()
 
     QVERIFY(list.at(0)==object);
 
-    QSignalSpy spy0(object, SIGNAL(alignmentChanged(Qt::Alignment)));
-    QSignalSpy spy1(object, SIGNAL(brushChanged(QBrush const&)));
-    QSignalSpy spy2(object, SIGNAL(coordinateChanged(QGeoCoordinate const&)));
-    QSignalSpy spy3(object, SIGNAL(fontChanged(QFont const&)));
-    QSignalSpy spy4(object, SIGNAL(offsetChanged(QPoint const&)));
-    QSignalSpy spy5(object, SIGNAL(penChanged(QPen const&)));
-    QSignalSpy spy6(object, SIGNAL(textChanged(QString const&)));
-
-    map->setCenter(center);
-
-    QFontMetrics metrics(object->font());
-
-    QRect bounds = metrics.boundingRect(object->text());
-
     QPointF point = map->coordinateToScreenPosition(center);
+    QPointF topLeft = point + offset;
 
-    QPoint diff(0, bounds.height() / 2 + 1);
+    QRectF inner = QRectF(topLeft.x() + width / 4.0,
+                         topLeft.y() + height / 4.0,
+                         width / 2.0,
+                         height / 2.0);
 
-    point -= diff;
+    QRectF innerTop = QRectF(topLeft.x(),
+                             topLeft.y(),
+                             width,
+                             height / 4.0);
+    QRectF innerBottom = QRectF(topLeft.x(),
+                                topLeft.y() + 3.0 * height / 4.0,
+                                width,
+                                height / 4.0);
+    QRectF innerLeft = QRectF(topLeft.x(),
+                              topLeft.y() + height / 4.0,
+                              width / 4.0,
+                              height / 2.0);
+    QRectF innerRight = QRectF(topLeft.x() + 3.0 * width / 4.0,
+                               topLeft.y() + height / 4.0,
+                               width / 4.0,
+                               height / 2.0);
 
-    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
+    QRectF outer = QRectF(topLeft.x() - width / 4.0,
+                         topLeft.y() - height / 4.0,
+                         3.0 * width / 2.0,
+                         3.0 * height / 2.0);
 
-    object->setFont(font);
+    QRectF outerTop = QRectF(topLeft.x() - width / 4.0,
+                             topLeft.y() - height / 4.0,
+                             3.0 * width / 2.0,
+                             height / 8.0);
+    QRectF outerBottom = QRectF(topLeft.x() - width / 4.0,
+                                topLeft.y() + 9.0 * height / 8.0,
+                                3.0 * width / 2.0,
+                                height / 8.0);
+    QRectF outerLeft = QRectF(topLeft.x() - width / 4.0,
+                              topLeft.y(),
+                              width / 8.0,
+                              height);
+    QRectF outerRight = QRectF(topLeft.x() + 9.0 * width / 8.0,
+                               topLeft.y(),
+                               width / 8.0,
+                               height);
 
-    QCOMPARE(object->font(), font);
+    QCOMPARE(map->mapObjectsInScreenRect(inner).size(), 1);
 
-    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+    QCOMPARE(map->mapObjectsInScreenRect(innerTop).size(), 1);
+    QCOMPARE(map->mapObjectsInScreenRect(innerBottom).size(), 1);
+    QCOMPARE(map->mapObjectsInScreenRect(innerLeft).size(), 1);
+    QCOMPARE(map->mapObjectsInScreenRect(innerRight).size(), 1);
 
-    QCOMPARE(spy0.count(), 0);
-    QCOMPARE(spy1.count(), 0);
-    QCOMPARE(spy2.count(), 0);
-    QCOMPARE(spy3.count(), 1);
-    QCOMPARE(spy4.count(), 0);
-    QCOMPARE(spy5.count(), 0);
-    QCOMPARE(spy6.count(), 0);
+    QCOMPARE(map->mapObjectsInScreenRect(outer).size(), 1);
 
+    QCOMPARE(map->mapObjectsInScreenRect(outerTop).size(), 0);
+    QCOMPARE(map->mapObjectsInScreenRect(outerBottom).size(), 0);
+    QCOMPARE(map->mapObjectsInScreenRect(outerLeft).size(), 0);
+    QCOMPARE(map->mapObjectsInScreenRect(outerRight).size(), 0);
 }
 
 void tst_QGeoMapTextObject::offset_data()
@@ -865,7 +903,7 @@ void tst_QGeoMapTextObject::boundingBox()
     QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
     QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
 
-    QVERIFY(object->boundingBox().width() == width);
+    QVERIFY(qreal(object->boundingBox().width()) == qreal(width));
     QVERIFY(object->boundingBox().height() == height);
 
     QVERIFY(object->boundingBox().topLeft().latitude() == top);
