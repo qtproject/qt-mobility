@@ -98,17 +98,21 @@ void CHeartbeatTimer::RunL()
    if (iStatus == KErrNone)
     {
       TRACES(qDebug() << "CHeartbeatTimer::RunL()->TimerExpired");
+      TRACES(qDebug() << "CHeartbeatTimer::Notify observers Start");
+
       foreach (MHeartBeatObserver *observer, m_observers)
        {
+        TRACES(qDebug() << "observer...:" << observer);
         observer->NotifyheartbeatReceived();
        }
-      if (m_singleShot == false) CFlexTimer::After(m_interval); //Refresh timer if not singleshot
+
+      TRACES(qDebug() << "CHeartbeatTimer::Notify observers End");
+      if (m_singleShot == false) {
+       TRACES(qDebug() << "Timer is non-single shot");
+       CFlexTimer::After(m_interval); //Refresh timer if not singleshot
+       }
     }
 
-   if (iStatus == KErrCancel ) {
-    TRACES(qDebug() << "CHeartbeatTimer::RunL->TimerCancelled");
-    //Take some action ???
-    }
 
    TRACES(qDebug() << "CHeartbeatTimer::RunL()-End");
 }
@@ -160,5 +164,5 @@ void CHeartbeatTimer::ResetTimer()
   TRACES(qDebug() << "iStatus:" << iStatus.Int());
   CFlexTimer::Cancel();
   CFlexTimer::After(m_interval);
-  TRACES(qDebug() << "CHeartbeatTimer::StopTimer-End");
+  TRACES(qDebug() << "CHeartbeatTimer::ResetTimer-End");
  }
