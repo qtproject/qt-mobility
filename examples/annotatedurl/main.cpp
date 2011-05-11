@@ -59,10 +59,6 @@ int main(int argc, char *argv[])
 
     QNearFieldManager manager;
     AnnotatedUrl annotatedUrl;
-    annotatedUrl.connect(&manager, SIGNAL(targetDetected(QNearFieldTarget*)),
-                         SLOT(targetDetected(QNearFieldTarget*)));
-    annotatedUrl.connect(&manager, SIGNAL(targetLost(QNearFieldTarget*)),
-                         SLOT(targetLost(QNearFieldTarget*)));
 
     QNdefFilter filter;
     filter.setOrderMatch(false);
