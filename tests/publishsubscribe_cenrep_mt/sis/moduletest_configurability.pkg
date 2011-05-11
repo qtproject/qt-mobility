@@ -1,0 +1,16 @@
+; Language
+&EN
+
+; SIS header: name, uid, version
+#{"moduletest_configurability"},(0xE056F50B),1,0,0
+
+; Default localized vendor name
+%{"Nokia"}
+
+; Default unique vendor name
+:"Nokia"
+
+"/epoc32/release/armv5/urel/publishsubscribe_cenrep_mt.exe" - "!:\sys\bin\publishsubscribe_cenrep_mt.exe"
+"/epoc32/data/z/resource/apps/publishsubscribe_cenrep_mt.rsc" - "!:\resource\apps\publishsubscribe_cenrep_mt.rsc"
+"/epoc32/data/z/private/10003a3f/import/apps/publishsubscribe_cenrep_mt_reg.rsc" - "!:\private\10003a3f\import\apps\publishsubscribe_cenrep_mt_reg.rsc"
+@"mt_configurability_cenrep.sis", (0x10202BE9)
