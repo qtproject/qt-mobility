@@ -169,6 +169,11 @@ QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::setCurrentFrame(const 
 QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::paint(
             const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+
     if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
         painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
     } else if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
@@ -378,6 +383,11 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
 QAbstractVideoSurface::Error QVideoSurfaceGLPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+
     if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
         painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
     } else if (m_frame.isValid()) {
@@ -815,6 +825,11 @@ void QVideoSurfaceArbFpPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+ 
     const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
     if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
         bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
@@ -1161,6 +1176,11 @@ void QVideoSurfaceGlslPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+
     const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
     if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
         bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
