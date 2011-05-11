@@ -46,8 +46,7 @@ maemo6|meego {
     QT *= dbus
 
     DBUS_INTERFACES += \
-        nfc/maemo6/com.nokia.nfc.Manager.xml \
-        nfc/maemo6/com.nokia.nfc.Device.xml
+        nfc/maemo6/com.nokia.nfc.Manager.xml
 
     DBUS_ADAPTORS += \
         nfc/maemo6/com.nokia.nfc.AccessRequestor.xml \
@@ -70,6 +69,7 @@ maemo6|meego {
         nfc/maemo6/adapter_interface_p.h \
         nfc/maemo6/target_interface_p.h \
         nfc/maemo6/tag_interface_p.h \
+        nfc/maemo6/device_interface_p.h \
         nfc/maemo6/socketrequestor_p.h
 
     SOURCES += \
@@ -80,6 +80,7 @@ maemo6|meego {
         nfc/maemo6/adapter_interface.cpp \
         nfc/maemo6/target_interface.cpp \
         nfc/maemo6/tag_interface.cpp \
+        nfc/maemo6/device_interface.cpp \
         nfc/maemo6/socketrequestor.cpp
 
     OTHER_FILES += \
@@ -88,6 +89,7 @@ maemo6|meego {
         nfc/maemo6/com.nokia.nfc.Adapter.xml \
         nfc/maemo6/com.nokia.nfc.Target.xml \
         nfc/maemo6/com.nokia.nfc.Tag.xml \
+        nfc/maemo6/com.nokia.nfc.Device.xml \
         nfc/maemo6/com.nokia.nfc.LLCPRequestor.xml
 
     # Add OUT_PWD to INCLUDEPATH so that creator picks up headers for generated files

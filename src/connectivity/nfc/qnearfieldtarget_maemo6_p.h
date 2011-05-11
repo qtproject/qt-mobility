@@ -57,6 +57,7 @@
 #include "maemo6/adapter_interface_p.h"
 #include "maemo6/target_interface_p.h"
 #include "maemo6/tag_interface_p.h"
+#include "maemo6/device_interface_p.h"
 
 #include <QtDBus/QDBusPendingReply>
 
@@ -94,28 +95,62 @@ class NearFieldTarget : public T
 {
 public:
     NearFieldTarget(QNearFieldManagerPrivateImpl *manager, Target *target, Tag *tag)
-    :   T(manager), m_manager(manager), m_target(target), m_tag(tag),
+    :   T(manager), m_manager(manager), m_target(target), m_tag(tag), m_device(0),
+        m_callWatcher(new PendingCallWatcher(this))
+    {
+    }
+
+    NearFieldTarget(QNearFieldManagerPrivateImpl *manager, Target *target, Device *device)
+    :   T(manager), m_manager(manager), m_target(target), m_tag(0), m_device(device),
         m_callWatcher(new PendingCallWatcher(this))
     {
     }
 
     ~NearFieldTarget()
     {
+        delete m_device;
         delete m_tag;
         delete m_target;
     }
 
     QByteArray uid() const
     {
-        return m_tag->uID();
+        QStringList fields;
+
+        if (m_tag)
+            fields = m_tag->uID().split(QLatin1Char(':'));
+        else if (m_device)
+            fields = m_device->uID().split(QLatin1Char(':'));
+
+        QByteArray id;
+        foreach (const QString &f, fields)
+            id.append(char(f.toUInt(0, 16)));
+
+        return id;
     }
 
     QNearFieldTarget::Type type() const
     {
-        if (!m_tag)
+        if (m_device)
             return QNearFieldTarget::NfcForumDevice;
 
-        return T::type();
+        if (m_tag) {
+            const QString tagType = m_tag->technology();
+            if (tagType == QLatin1String("jewel"))
+                return QNearFieldTarget::NfcTagType1;
+            else if (tagType == QLatin1String("mifare-ul"))
+                return QNearFieldTarget::NfcTagType2;
+            else if (tagType == QLatin1String("felica"))
+                return QNearFieldTarget::NfcTagType3;
+            else if (tagType == QLatin1String("iso-4a"))
+                return QNearFieldTarget::NfcTagType4;
+            else if (tagType == QLatin1String("mifare-1k"))
+                return QNearFieldTarget::MifareTag;
+            else
+                return QNearFieldTarget::ProprietaryTag;
+        }
+
+        return QNearFieldTarget::ProprietaryTag;
     }
 
     QNearFieldTarget::AccessMethods accessMethods() const
@@ -138,6 +173,9 @@ public:
 
     QNearFieldTarget::RequestId readNdefMessages()
     {
+        if (!m_tag)
+            return QNearFieldTarget::RequestId();
+
         QNearFieldTarget::RequestId id(new QNearFieldTarget::RequestIdPrivate);
 
         QDBusPendingReply<QList<QByteArray> > reply = m_tag->ReadNDEFData();
@@ -148,6 +186,9 @@ public:
 
     QNearFieldTarget::RequestId writeNdefMessages(const QList<QNdefMessage> &messages)
     {
+        if (!m_tag)
+            return QNearFieldTarget::RequestId();
+
         QNearFieldTarget::RequestId id(new QNearFieldTarget::RequestIdPrivate);
         QList<QByteArray> rawMessages;
 
@@ -203,26 +244,9 @@ protected:
     QNearFieldManagerPrivateImpl *m_manager;
     Target *m_target;
     Tag *m_tag;
+    Device *m_device;
     PendingCallWatcher *m_callWatcher;
 };
-
-template <>
-inline QNearFieldTarget::Type NearFieldTarget<QNearFieldTarget>::type() const
-{
-    const QString tagType = m_tag->technology();
-    if (tagType == QLatin1String("jewel"))
-        return QNearFieldTarget::NfcTagType1;
-    else if (tagType == QLatin1String("mifare-ul"))
-        return QNearFieldTarget::NfcTagType2;
-    else if (tagType == QLatin1String("felica"))
-        return QNearFieldTarget::NfcTagType3;
-    else if (tagType == QLatin1String("iso-4a"))
-        return QNearFieldTarget::NfcTagType4;
-    else if (tagType == QLatin1String("mifare-1k"))
-        return QNearFieldTarget::MifareTag;
-    else
-        return QNearFieldTarget::ProprietaryTag;
-}
 
 class TagType1 : public NearFieldTarget<QNearFieldTagType1>
 {

@@ -195,7 +195,8 @@ QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &pat
             else
                 nearFieldTarget = new NearFieldTarget<QNearFieldTarget>(this, target, tag);
         } else if (type == QLatin1String("device")) {
-            nearFieldTarget = new NearFieldTarget<QNearFieldTarget>(this, target, 0);
+            Device *device = new Device(QLatin1String("com.nokia.nfc"), path, m_connection);
+            nearFieldTarget = new NearFieldTarget<QNearFieldTarget>(this, target, device);
         }
 
         if (nearFieldTarget)
