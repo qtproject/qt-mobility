@@ -77,6 +77,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
@@ -88,27 +89,32 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
     \fn QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccountSortOrder::isEmpty() const
 
     Returns true if the sort order remains empty after default construction; otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccountSortOrder::isSupported() const
 
     Returns true if the sort order is supported on the current platform; otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other) const
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 bool QMessageAccountSortOrder::operator!=(const QMessageAccountSortOrder& other) const
 {
@@ -120,6 +126,7 @@ bool QMessageAccountSortOrder::operator!=(const QMessageAccountSortOrder& other)
 
     Returns an sort order that sorts accounts by name, according to \a order.
 
+    \since 1.0
     \sa QMessageAccount::name()
 */
 

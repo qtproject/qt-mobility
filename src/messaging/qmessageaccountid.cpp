@@ -74,6 +74,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
@@ -81,6 +82,7 @@ QTM_BEGIN_NAMESPACE
 
     Constructs an identifier from \a id.
 
+    \since 1.0
     \sa toString()
 */
 
@@ -93,9 +95,12 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
     \fn bool QMessageAccountId::operator==(const QMessageAccountId &other) const
+    \since 1.0
 */
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
 {
     return !operator==(other);
@@ -105,11 +110,13 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
     \fn bool QMessageAccountId::operator<(const QMessageAccountId &other) const
 
     Returns true if this identifier is ordered before \a other using an implementation-defined ordering.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId &other)
+    \since 1.0
 */
 
 /*!
@@ -121,12 +128,14 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
 
     String representations of identifiers should not be used to test for equality, instead
     the equality operator should be used.
+    \since 1.0
 */
 
 /*!
     \fn bool QMessageAccountId::isValid() const
 
     Returns true if this identifier is valid; otherwise returns false.
+    \since 1.0
 */
 
 /*! \typedef QMessageAccountIdList

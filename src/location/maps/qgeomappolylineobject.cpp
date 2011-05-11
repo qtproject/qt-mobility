@@ -81,6 +81,7 @@ QGeoMapPolylineObject::~QGeoMapPolylineObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapPolylineObject::type() const
 {
@@ -100,6 +101,7 @@ QGeoMapObject::Type QGeoMapPolylineObject::type() const
     Invalid coordinates in the list will be ignored, and if the list of
     coordinates contains less than 2 valid coordinates then the polyline object
     will not be displayed.
+    \since 1.1
 */
 void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -126,6 +128,7 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 
     The pen will be treated as a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
+    \since 1.1
 */
 void QGeoMapPolylineObject::setPen(const QPen &pen)
 {
@@ -151,6 +154,7 @@ QPen QGeoMapPolylineObject::pen() const
     the polyline to be drawn by this polyline object has changed.
 
     The new value is \a path.
+    \since 1.1
 */
 
 /*!
@@ -160,6 +164,7 @@ QPen QGeoMapPolylineObject::pen() const
     polyline object has changed.
 
     The new value is \a pen.
+    \since 1.1
 */
 
 /*******************************************************************************

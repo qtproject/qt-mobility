@@ -75,6 +75,7 @@
     store as specified by the QMessageAccountId \a id. If the account does not exist in the
     store, then this constructor will create an empty and invalid QMessageAccount.
 
+    \since 1.0
     \sa QMessageManager::account()
 */
 
@@ -82,11 +83,13 @@
     \fn QMessageAccount::QMessageAccount(const QMessageAccount &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageAccount::operator=(const QMessageAccount& other)
+    \since 1.0
 */
 
 /*!
@@ -99,22 +102,26 @@
     \fn QMessageAccount::id() const
 
     Returns the identifier for this account.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccount::name() const
 
     Returns the name of the account for display purposes.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccount::messageTypes() const
 
     Returns the types of messages this account handles.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccount::defaultAccount(QMessage::Type type)
 
     Returns the default account for messages of type \a type.
+    \since 1.0
 */

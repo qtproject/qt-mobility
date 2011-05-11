@@ -98,6 +98,7 @@ QGeoMapObjectInfo::~QGeoMapObjectInfo()
     This function is run after the constructor.
 
     The default implementation does nothing.
+    \since 1.1
 */
 void QGeoMapObjectInfo::init() {}
 
@@ -106,6 +107,7 @@ void QGeoMapObjectInfo::init() {}
     \a windowSize.
 
     The default implementation does nothing.
+    \since 1.1
 */
 void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
 {
@@ -117,6 +119,7 @@ void QGeoMapObjectInfo::windowSizeChanged(const QSizeF &windowSize)
     \a zoomLevel.
 
     The default implementation does nothing.
+    \since 1.1
 */
 void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
 {
@@ -128,6 +131,7 @@ void QGeoMapObjectInfo::zoomLevelChanged(qreal zoomLevel)
     \a coordinate.
 
     The default implementation does nothing.
+    \since 1.1
 */
 void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
 {
@@ -138,6 +142,7 @@ void QGeoMapObjectInfo::centerChanged(const QGeoCoordinate &coordinate)
     This function is run when the z value of the object changes to \a zValue.
 
     The default implementation does nothing.
+    \since 1.1
 */
 void QGeoMapObjectInfo::zValueChanged(int zValue)
 {
@@ -149,6 +154,7 @@ void QGeoMapObjectInfo::zValueChanged(int zValue)
     \a visible.
 
     The default implementation does nothing.
+    \since 1.1
 */
 void QGeoMapObjectInfo::visibleChanged(bool visible)
 {
@@ -160,6 +166,7 @@ void QGeoMapObjectInfo::visibleChanged(bool visible)
     \a selected.
 
     The default implementation does nothing.
+    \since 1.1
 */
 void QGeoMapObjectInfo::selectedChanged(bool selected)
 {
@@ -171,6 +178,7 @@ void QGeoMapObjectInfo::selectedChanged(bool selected)
     \a origin.
 
     The default implementation does nothing.
+    \since 1.2
 */
 void QGeoMapObjectInfo::originChanged(const QGeoCoordinate &origin)
 {
@@ -182,6 +190,7 @@ void QGeoMapObjectInfo::originChanged(const QGeoCoordinate &origin)
     \a units.
 
     The default implementation does nothing.
+    \since 1.2
 */
 void QGeoMapObjectInfo::unitsChanged(QGeoMapObject::CoordinateUnit units)
 {
@@ -193,6 +202,7 @@ void QGeoMapObjectInfo::unitsChanged(QGeoMapObject::CoordinateUnit units)
     \a transformType.
 
     The default implementation does nothing.
+    \since 1.2
 */
 void QGeoMapObjectInfo::transformTypeChanged(QGeoMapObject::TransformType transformType)
 {
@@ -203,6 +213,7 @@ void QGeoMapObjectInfo::transformTypeChanged(QGeoMapObject::TransformType transf
     Returns a bounding box which contains this map object.
 
     The default implementation returns an invalid bounding box.
+    \since 1.1
 */
 QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
 {
@@ -214,6 +225,7 @@ QGeoBoundingBox QGeoMapObjectInfo::boundingBox() const
     map object.
 
     The default implementation returns false.
+    \since 1.1
 */
 bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 {
@@ -223,6 +235,7 @@ bool QGeoMapObjectInfo::contains(const QGeoCoordinate &coordinate) const
 
 /*!
     Returns the QGeoMapData instance associated with this info object.
+    \since 1.1
 */
 QGeoMapData* QGeoMapObjectInfo::mapData()
 {
@@ -233,6 +246,7 @@ QGeoMapData* QGeoMapObjectInfo::mapData()
 // version
 /*!
     Returns the QGeoMapObject instance associated with this info object.
+    \since 1.1
 */
 QGeoMapObject* QGeoMapObjectInfo::mapObject()
 {
@@ -241,6 +255,7 @@ QGeoMapObject* QGeoMapObjectInfo::mapObject()
 
 /*!
     Returns the QGeoMapObject instance associated with this info object.
+    \since 1.2
 */
 QGeoMapObject* QGeoMapObjectInfo::mapObject() const
 {

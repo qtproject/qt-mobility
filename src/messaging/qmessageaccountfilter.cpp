@@ -66,9 +66,9 @@ QTM_BEGIN_NAMESPACE
     QMessageAccountFilters can be combined using the overloaded operators (&), (|) and (~) as logical
     operators to create more refined queries.
 
-    Evaluation of filters is delayed until they are used in a QMessageManager function 
+    Evaluation of filters is delayed until they are used in a QMessageManager function
     such as queryAccounts, except where explicitly documented otherwise.
-    
+
     \sa QMessageManager, QMessageAccount
 */
 
@@ -86,6 +86,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageAccountFilter::QMessageAccountFilter(const QMessageAccountFilter &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
@@ -97,6 +98,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
     \fn QMessageAccountFilter::operator=(const QMessageAccountFilter& other)
+    \since 1.0
 */
 
 /*!
@@ -104,6 +106,7 @@ QTM_BEGIN_NAMESPACE
 
     Set the match flags for the search filter to \a matchFlags.
 
+    \since 1.0
     \sa matchFlags()
 */
 
@@ -114,6 +117,7 @@ QTM_BEGIN_NAMESPACE
 
     Default is no match flags set.
 
+    \since 1.0
     \sa setMatchFlags()
 */
 
@@ -131,12 +135,14 @@ QTM_BEGIN_NAMESPACE
     empty filter.
 
     The result of combining two empty filters is an empty filter.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccountFilter::isSupported() const
 
     Returns true if the filter is supported on the current platform; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -148,6 +154,7 @@ QTM_BEGIN_NAMESPACE
     If this filter is empty, the result will be a non-matching filter; if this filter is
     non-matching, the result will be an empty filter.
 
+    \since 1.0
     \sa isEmpty()
 */
 
@@ -155,12 +162,14 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageAccountFilter::operator&(const QMessageAccountFilter& other) const
 
     Returns a filter that is the logical AND of this filter and the value of filter \a other.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccountFilter::operator|(const QMessageAccountFilter& other) const
 
     Returns a filter that is the logical OR of this filter and the value of filter \a other.
+    \since 1.0
 */
 
 /*!
@@ -168,6 +177,7 @@ QTM_BEGIN_NAMESPACE
 
     Performs a logical AND with this filter and the filter \a other and assigns the result
     to this filter.
+    \since 1.0
 */
 
 /*!
@@ -175,15 +185,18 @@ QTM_BEGIN_NAMESPACE
 
     Performs a logical OR with this filter and the filter \a other and assigns the result
     to this filter.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 {
@@ -195,6 +208,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     Returns a filter matching accounts whose identifier matches \a id, according to \a cmp.
 
+    \since 1.0
     \sa QMessageAccount::id()
 */
 
@@ -203,6 +217,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     Returns a filter matching accounts whose identifier is a member of \a ids, according to \a cmp.
 
+    \since 1.0
     \sa QMessageAccount::id()
 */
 
@@ -211,6 +226,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     Returns a filter matching accounts whose identifier is a member of the set yielded by \a filter, according to \a cmp.
 
+    \since 1.0
     \sa QMessageAccount::id()
 */
 
@@ -220,7 +236,8 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
     Returns a filter matching accounts who name matches \a pattern, according to \a cmp.
 
     This filter is evaluated when it is constructed.
-    
+
+    \since 1.2
     \sa QMessageAccount::name()
 */
 
@@ -231,6 +248,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
 
+    \since 1.0
     \sa QMessageAccount::name()
 */
 
@@ -239,6 +257,7 @@ bool QMessageAccountFilter::operator!=(const QMessageAccountFilter& other) const
 
     Returns a filter matching accounts whose name matches the substring \a value, according to \a cmp.
 
+    \since 1.0
     \sa QMessageAccount::name()
 */
 

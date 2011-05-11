@@ -134,6 +134,7 @@ QStringList QGeoServiceProvider::availableServiceProviders()
 
     If no plugin matching \a providerName was able to be loaded then error()
     and errorString() will provide details about why this is the case.
+    \since 1.1
 */
 QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QVariant> &parameters)
     : d_ptr(new QGeoServiceProviderPrivate())
@@ -166,6 +167,7 @@ QGeoServiceProvider::~QGeoServiceProvider()
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
     QGeoSearchManager.
+    \since 1.1
 */
 QGeoSearchManager* QGeoServiceProvider::searchManager() const
 {
@@ -212,6 +214,7 @@ QGeoSearchManager* QGeoServiceProvider::searchManager() const
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
     QGeoMappingManager.
+    \since 1.1
 */
 QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 {
@@ -259,6 +262,7 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
     QGeoRoutingManager.
+    \since 1.1
 */
 QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 {
@@ -294,6 +298,7 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 /*!
     Returns an error code describing the error which occurred during the
     last operation that was performed by this class.
+    \since 1.1
 */
 QGeoServiceProvider::Error QGeoServiceProvider::error() const
 {
@@ -303,6 +308,7 @@ QGeoServiceProvider::Error QGeoServiceProvider::error() const
 /*!
     Returns a string describing the error which occurred during the
     last operation that was performed by this class.
+    \since 1.1
 */
 QString QGeoServiceProvider::errorString() const
 {

@@ -166,6 +166,7 @@ QMessageManager::~QMessageManager()
     \fn QMessageManager::error() const
 
     Returns the code of the last error condition reported by the messaging store.
+    \since 1.0
 */
 QMessageManager::Error QMessageManager::error() const
 {
@@ -187,6 +188,7 @@ QMessageManager::Error QMessageManager::error() const
     The performance of querying messages is currently significantly less than
     optimal for some querying criteria on some platforms.
 
+    \since 1.0
     \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -209,6 +211,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     The performance of querying messages is currently significantly less than
     optimal for some querying criteria on some platforms.
 
+    \since 1.0
     \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
@@ -241,6 +244,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     The performance of querying messages is currently significantly less than
     optimal for some querying criteria on some platforms.
 
+    \since 1.0
     \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -265,6 +269,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     The performance of querying messages is currently significantly less than
     optimal for some querying criteria on some platforms.
 
+    \since 1.0
     \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QList<QMessageSortOrder> &sortOrders, uint limit, uint offset) const
@@ -292,6 +297,7 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
 
+    \since 1.0
     \sa error(), countFolders()
 */
 QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
@@ -311,6 +317,7 @@ QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &f
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
 
+    \since 1.0
     \sa error(), countFolders()
 */
 QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &filter, const QList<QMessageFolderSortOrder> &sortOrders, uint limit, uint offset) const
@@ -338,6 +345,7 @@ QMessageFolderIdList QMessageManager::queryFolders(const QMessageFolderFilter &f
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
 
+    \since 1.0
     \sa error(), countAccounts()
 */
 QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
@@ -357,6 +365,7 @@ QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
 
+    \since 1.0
     \sa error(), countAccounts()
 */
 QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter &filter, const QList<QMessageAccountSortOrder> &sortOrders, uint limit, uint offset) const
@@ -380,6 +389,7 @@ QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter
     The performance of counting messages is currently significantly less than optimal
     for some filters on some platforms.
 
+    \since 1.0
     \sa error(), queryMessages()
 */
 int QMessageManager::countMessages(const QMessageFilter& filter) const
@@ -394,6 +404,7 @@ int QMessageManager::countMessages(const QMessageFilter& filter) const
     in QMessageFolderFilter \a filter. If \a filter is empty the count of all
     available folders is returned.
 
+    \since 1.0
     \sa error(), queryFolders()
 */
 int QMessageManager::countFolders(const QMessageFolderFilter& filter) const
@@ -408,6 +419,7 @@ int QMessageManager::countFolders(const QMessageFolderFilter& filter) const
     in QMessageAccountFilter \a filter. If \a filter is empty the count of all
     available accounts is returned.
 
+    \since 1.0
     \sa error(), queryAccounts()
 */
 int QMessageManager::countAccounts(const QMessageAccountFilter& filter) const
@@ -430,6 +442,7 @@ int QMessageManager::countAccounts(const QMessageAccountFilter& filter) const
 
     \a option is ignored on Windows mobile and desktop platforms.
 
+    \since 1.0
     \sa removeMessages(), addMessage(), updateMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::removeMessage(const QMessageId& id, QMessageManager::RemovalOption option)
@@ -464,6 +477,7 @@ bool QMessageManager::removeMessage(const QMessageId& id, QMessageManager::Remov
     }
     \endcode
 
+    \since 1.0
     \sa removeMessage(), addMessage(), updateMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
@@ -478,6 +492,7 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
   Remove account \a id and all associated information (folders, messages etc.)
 
   On Windows mobile and desktop platforms, Maemo 5, and Symbian prior to SR1.11 this function performs no operation.
+  \since 1.2
 */
 bool QMessageManager::removeAccount(const QMessageAccountId &id)
 {
@@ -501,6 +516,7 @@ bool QMessageManager::removeAccount(const QMessageAccountId &id)
 
     Using this function to explicitly set a size or date is not currently supported on some platforms.
 
+    \since 1.0
     \sa message(), updateMessage(), removeMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::addMessage(QMessage *m)
@@ -526,6 +542,7 @@ bool QMessageManager::addMessage(QMessage *m)
     On the Maemo 5 (Fremantle) platform this function may only be used to update the priority and
     status of email type messages.
 
+    \since 1.0
     \sa addMessage(), removeMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::updateMessage(QMessage *m)
@@ -537,6 +554,7 @@ bool QMessageManager::updateMessage(QMessage *m)
     \fn QMessageManager::message(const QMessageId& id) const
 
     Returns the QMessage identified by \a id from the store.
+    \since 1.0
 */
 QMessage QMessageManager::message(const QMessageId& id) const
 {
@@ -547,6 +565,7 @@ QMessage QMessageManager::message(const QMessageId& id) const
     \fn QMessageManager::folder(const QMessageFolderId& id) const
 
     Returns the QMessageFolder identified by \a id from the store.
+    \since 1.0
 */
 QMessageFolder QMessageManager::folder(const QMessageFolderId& id) const
 {
@@ -557,6 +576,7 @@ QMessageFolder QMessageManager::folder(const QMessageFolderId& id) const
     \fn QMessageManager::account(const QMessageAccountId& id) const
 
     Returns the QMessageAccount identified by \a id from the store.
+    \since 1.0
 */
 QMessageAccount QMessageManager::account(const QMessageAccountId& id) const
 {
@@ -576,6 +596,7 @@ QMessageAccount QMessageManager::account(const QMessageAccountId& id) const
     On Linux, Maemo 6 (Harmattan) and Meego.com it is only possible to filter messageRemoved()
     signals with an empty QMessageFilter() that matches all messages.
 
+    \since 1.0
     \sa unregisterNotificationFilter(), messageAdded(), messageRemoved(), messageUpdated()
 */
 QMessageManager::NotificationFilterId QMessageManager::registerNotificationFilter(const QMessageFilter &filter)
@@ -590,6 +611,7 @@ QMessageManager::NotificationFilterId QMessageManager::registerNotificationFilte
     to generate message event signals.
 
     \sa registerNotificationFilter(), messageAdded(), messageRemoved(), messageUpdated()
+    \since 1.0
 */
 void QMessageManager::unregisterNotificationFilter(NotificationFilterId notificationFilterId)
 {
@@ -603,6 +625,7 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     \a matchingFilterIds contains a set of values identifiying registered notification filters
     that matched the message.
 
+    \since 1.0
     \sa messageRemoved(), messageUpdated(), registerNotificationFilter()
 */
 
@@ -616,6 +639,7 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     Since the filters apply to the state of the data after the message removal, the only
     data item that may be subject to filtration is the identifier of the removed message.
 
+    \since 1.0
     \sa messageAdded(), messageUpdated(), registerNotificationFilter()
 */
 
@@ -630,6 +654,7 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     to messages which matched a given filter prior to modification but not afterwards will not
     result in the emission of the messageUpdated signal.
 
+    \since 1.0
     \sa messageAdded(), messageRemoved(), registerNotificationFilter()
 */
 

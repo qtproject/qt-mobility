@@ -80,6 +80,7 @@ QGeoMapCircleObject::QGeoMapCircleObject()
 
 /*!
     Constructs a new circle object based on the circle \a circle.
+    \since 1.1
 */
 QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle)
     : d_ptr(new QGeoMapCircleObjectPrivate())
@@ -92,6 +93,7 @@ QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle)
 /*!
     Constructs a new circle object with a center at coordinate \a center
     and a radius in meters of \a radius.
+    \since 1.1
 */
 QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius)
     : d_ptr(new QGeoMapCircleObjectPrivate())
@@ -112,6 +114,7 @@ QGeoMapCircleObject::~QGeoMapCircleObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapCircleObject::type() const
 {
@@ -127,6 +130,7 @@ QGeoMapObject::Type QGeoMapCircleObject::type() const
 
     The pen will be treated as a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
+    \since 1.1
 */
 void QGeoMapCircleObject::setPen(const QPen &pen)
 {
@@ -148,6 +152,7 @@ QPen QGeoMapCircleObject::pen() const
 
 /*!
   \reimp
+  \since 1.2
   */
 bool QGeoMapCircleObject::contains(const QGeoCoordinate &coordinate) const
 {
@@ -162,6 +167,7 @@ bool QGeoMapCircleObject::contains(const QGeoCoordinate &coordinate) const
 
     The outline around the perimeter of the circle is drawn using the
     QGeoMapCircleObject::pen property.
+    \since 1.1
 */
 void QGeoMapCircleObject::setBrush(const QBrush &brush)
 {
@@ -206,6 +212,7 @@ void QGeoMapCircleObject::setPointCount(quint32 pointCount)
         // setup object
         QGeoBoundingCircle(object->center(), object->radius());
     \endcode
+    \since 1.1
 */
 QGeoBoundingCircle QGeoMapCircleObject::circle() const
 {
@@ -222,6 +229,7 @@ QGeoBoundingCircle QGeoMapCircleObject::circle() const
         object->setCenter(circle.center());
         object->setRadius(circle.radius());
     \endcode
+    \since 1.1
 */
 void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 {
@@ -249,6 +257,7 @@ void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 
     The default value of this property is an invalid coordinate.  While the
     value of this property is invalid the circle object will not be displayed.
+    \since 1.1
 */
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
@@ -271,6 +280,7 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 
     The default value of this property is -1.0. While the value of this
     property is not greater than 0 the circle object will not be displayed.
+    \since 1.1
 */
 void QGeoMapCircleObject::setRadius(qreal radius)
 {
@@ -292,6 +302,7 @@ qreal QGeoMapCircleObject::radius() const
     changed.
 
     The new value is \a center.
+    \since 1.1
 */
 
 /*!
@@ -301,6 +312,7 @@ qreal QGeoMapCircleObject::radius() const
     changed.
 
     The new value is \a radius.
+    \since 1.1
 */
 
 /*!
@@ -310,6 +322,7 @@ qreal QGeoMapCircleObject::radius() const
     the circle object has changed.
 
     The new value is \a pen.
+    \since 1.1
 */
 
 /*!
@@ -319,6 +332,7 @@ qreal QGeoMapCircleObject::radius() const
     the circle object has changed.
 
     The new value is \a brush.
+    \since 1.1
 */
 
 /*******************************************************************************
