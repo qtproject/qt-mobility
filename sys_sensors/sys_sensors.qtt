@@ -249,11 +249,46 @@ Note:
             '));
      }
 
-/*
-    New tests Proposed
-    Lux
-    Gyroscope
-    Dynamic
-*/
+    Sym_Lux : function()
+    {
+        prompt(twiki('*Verify Sym Compass Sensor*
+
+    | *Step* | *Verification* |
+    | Launch *bluewheel* application | |
+    | select *Sensors* and click on *sensor explorer* ||
+    | select *sym.luxsensor* as sensor type ||
+    | click on *start* button ||
+    | select *reading properties* tab ||
+    | change the luminance value around the device | verify the values displayed are changed accordingly |
+            '));
+     }
+
+    Sym_Dynamic : function()
+    {
+        prompt(twiki('*Verify Sym Compass Sensor*
+
+    | *Step* | *Verification* |
+    | Launch *bluewheel* application | |
+    | register a dynamic sensor device ||
+    | select *Sensors* and click on *sensor explorer* | verify the dynamic sensor appears in the sensor list|
+    | click on *start* button ||
+    | select *reading properties* tab ||
+    | change the sensor value depends on the sensor type | verify the values displayed are changed accordingly |
+            '));
+     }
+
+    Sym_Gyroscope : function()
+    {
+        prompt(twiki('*Verify Sym Compass Sensor*
+
+    | *Step* | *Verification* |
+    | Launch *bluewheel* application | |
+    | select *Sensors* and click on *sensor explorer* ||
+    | select *sym.gyroscope* as sensor type ||
+    | click on *start* button ||
+    | select *reading properties* tab ||
+    | slowly turn and move the device around | verify the values displayed are changed accordingly |
+            '));
+     }
 
 }
