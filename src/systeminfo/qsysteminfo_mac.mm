@@ -423,7 +423,6 @@ void QSystemInfoPrivate::disconnectNotify(const char *signal)
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
-    QString errorStr = "Not Available";
     bool useDate = false;
     if(parameter == QLatin1String("versionDate")) {
         useDate = true;
@@ -437,9 +436,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
         return ver;
     }
         break;
-    case QSystemInfo::QtCore:
-       return  qVersion();
-       break;
    case QSystemInfo::Firmware:
        {
            return QSystemDeviceInfoPrivate::model();
@@ -448,7 +444,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     default:
         break;
     };
-  return errorStr;
+  return QString();
 }
 
 

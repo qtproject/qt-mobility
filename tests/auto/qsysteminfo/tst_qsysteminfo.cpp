@@ -240,6 +240,7 @@ void tst_QSystemInfo::tst_hasFeatures_data()
     QTest::newRow("LocationFeature") << QSystemInfo::LocationFeature;
     QTest::newRow("VideoOutFeature") << QSystemInfo::VideoOutFeature;
     QTest::newRow("HapticsFeature") << QSystemInfo::HapticsFeature;
+    QTest::newRow("FmTransmitterFeature") << QSystemInfo::FmTransmitterFeature;
 }
 
 void tst_QSystemInfo::tst_hasFeatures()

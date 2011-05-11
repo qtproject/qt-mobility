@@ -59,7 +59,8 @@
 #include <qmedianetworkaccesscontrol.h>
 
 QT_USE_NAMESPACE
-
+class mediaStatusList;
+/*
 class mediaStatusList : public QObject, public QList<QMediaPlayer::MediaStatus>
 {
     Q_OBJECT
@@ -75,7 +76,7 @@ public:
         connect(obj, aSignal, this, SLOT(mediaStatus(QMediaPlayer::MediaStatus)));
     }
 };
-
+*/
 class tst_QMediaPlayer_xa: public QObject
 {
     Q_OBJECT
