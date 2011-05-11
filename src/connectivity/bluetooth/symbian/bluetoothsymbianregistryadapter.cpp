@@ -69,13 +69,10 @@ BluetoothSymbianRegistryAdapter::BluetoothSymbianRegistryAdapter(const QBluetoot
     : QObject(parent)
     , m_bluetoothDeviceManager(0)
     , m_address(address)
-    , m_pairingStatus(QBluetoothLocalDevice::Unpaired)
+    , m_operation(NoOp)
 {
     TRAP(m_errorCode, m_bluetoothDeviceManager = CBTEngDevMan::NewL(this))
-
-    if (m_errorCode == KErrNone)
-        m_pairingStatus = remoteDevicePairingStatus();
-    else
+    if (m_errorCode != KErrNone) 
         emit registryHandlingError(m_errorCode);
 }
 BluetoothSymbianRegistryAdapter::~BluetoothSymbianRegistryAdapter()
@@ -134,10 +131,15 @@ QBluetoothLocalDevice::Pairing BluetoothSymbianRegistryAdapter::remoteDevicePair
         bool isValidDevicePaired = device->IsValidPaired();
         bool isDevicePaired = device->IsPaired();
         //TODO Check whether check is correct?
-        if (isValidDevicePaired || isDevicePaired)
-            returnValue = QBluetoothLocalDevice::Paired;
-        else if (!isValidDevicePaired && !isDevicePaired)
+        if (isValidDevicePaired || isDevicePaired) {
+            if (device->GlobalSecurity().NoAuthorise())
+                returnValue = QBluetoothLocalDevice::AuthorizedPaired;
+            else
+                returnValue = QBluetoothLocalDevice::Paired;
+        }
+        else if (!isValidDevicePaired && !isDevicePaired) {
             returnValue = QBluetoothLocalDevice::Unpaired;
+        }
 
     } else {
         returnValue = QBluetoothLocalDevice::Unpaired;
@@ -157,8 +159,7 @@ void BluetoothSymbianRegistryAdapter::removePairing()
 {
     // setup current values
     int errorCode = 0;
-    //setup current status so that we emit correct signal when done.
-    m_pairingStatus = QBluetoothLocalDevice::Unpaired;
+    m_operation = RemovePairing;
     // Spesify search criteria
     TBTRegistrySearch searchCriteria;
     TBTDevAddr btAddress(m_address.toUInt64());
@@ -170,18 +171,25 @@ void BluetoothSymbianRegistryAdapter::removePairing()
 
 }
 
-QBluetoothLocalDevice::Pairing BluetoothSymbianRegistryAdapter::pairingStatus() const
+QBluetoothLocalDevice::Pairing BluetoothSymbianRegistryAdapter::pairingStatus()
 {
-    return m_pairingStatus;
+    m_operation = PairingStatus;  // only needed for uniformity
+    QBluetoothLocalDevice::Pairing pairStatus = remoteDevicePairingStatus();
+    m_operation = NoOp;
+    
+    return pairStatus;
 }
 
 void BluetoothSymbianRegistryAdapter::HandleDevManComplete( TInt aErr )
 {
     m_errorCode = aErr;
-    if (aErr != KErrNone)
+    if (aErr != KErrNone) {
         emit registryHandlingError(aErr);
-
-    emit pairingStatusChanged(m_address, m_pairingStatus);
+    }
+    if (m_operation == RemovePairing) {
+        emit pairingStatusChanged(m_address, QBluetoothLocalDevice::Unpaired);
+        m_operation = NoOp;
+    }
 
 }
 

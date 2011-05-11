@@ -75,7 +75,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
 {
     Q_Q(QBluetoothServiceDiscoveryAgent);
     TRAPD(err, startL(address));
-    if (err != KErrNone) {
+    if (err != KErrNone && singleDevice) {
         qDebug() << "Service discovery start failed" << err;
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
@@ -149,7 +149,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aErr
     if (aError == KErrNone && aTotalRecordsCount > 0 && m_sdpAgent && m_attributes) {
         // request attributes
         TRAPD(err, m_sdpAgent->AttributeRequestL(aHandle, *m_attributes));
-        if (err) {
+        if (err && singleDevice) {
             error = QBluetoothServiceDiscoveryAgent::UnknownError;
             emit q->error(error);
         }
@@ -167,15 +167,18 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestResult(TSdpServReco
     m_currentAttributeId = aAttrID;
     TRAPD(err, aAttrValue->AcceptVisitorL(*this));
     if (m_stack.size() != 1) {
-        error = QBluetoothServiceDiscoveryAgent::UnknownError;
-        emit q->error(error);                            
+        if(singleDevice)
+            {
+            error = QBluetoothServiceDiscoveryAgent::UnknownError;
+            emit q->error(error);
+            }
         delete aAttrValue;
         return;
     }
 
     m_serviceInfo.setAttribute(aAttrID, m_stack.pop());
 
-    if (err != KErrNone) {
+    if (err != KErrNone && singleDevice) {
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
     }
@@ -196,11 +199,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRe
             emit q->serviceDiscovered(discoveredServices.last());
             }
         TRAPD(err, m_sdpAgent->NextRecordRequestL());
-        if (err != KErrNone) {
+        if (err != KErrNone && singleDevice) {
             error = QBluetoothServiceDiscoveryAgent::UnknownError;
             emit q->error(error);
         }
-    } else if (aError != KErrEof) {
+    } else if (aError != KErrEof && singleDevice) {
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
     }

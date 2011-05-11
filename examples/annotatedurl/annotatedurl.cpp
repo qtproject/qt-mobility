@@ -78,37 +78,16 @@ AnnotatedUrl::~AnnotatedUrl()
 {
 }
 
-void AnnotatedUrl::targetDetected(const QNdefMessage &message, QNearFieldTarget *target)
-{
-    Q_UNUSED(target);
-
-    displayNdefMessage(message);
-}
-
-void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
-{
-    if (!target->hasNdefMessage())
-        return;
-
-    connect(target, SIGNAL(ndefMessageRead(QNdefMessage)),
-            this, SLOT(displayNdefMessage(QNdefMessage)));
-
-    target->readNdefMessages();
-}
-
-void AnnotatedUrl::targetLost(QNearFieldTarget *target)
-{
-    target->deleteLater();
-}
-
 void AnnotatedUrl::mouseReleaseEvent(QMouseEvent *event)
 {
     if (rect().contains(event->pos()))
         QDesktopServices::openUrl(QUrl(m_url->text()));
 }
 
-void AnnotatedUrl::displayNdefMessage(const QNdefMessage &message)
+void AnnotatedUrl::handleMessage(const QNdefMessage &message, QNearFieldTarget *target)
 {
+    Q_UNUSED(target);
+
     enum {
         MatchedNone,
         MatchedFirst,
@@ -156,3 +135,4 @@ void AnnotatedUrl::displayNdefMessage(const QNdefMessage &message)
         }
     }
 }
+
