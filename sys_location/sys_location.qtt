@@ -54,11 +54,10 @@ testcase = {
     location_is_updated: function()
     {
         prompt(twiki('---+++ Position changes are detected
-    1. Run the fetchgooglemaps example (sources are in examples/fetchgooglemaps).
-    1. Note the initial position displayed in the example.
-    1. Move to a different location.
-    1. Note the updated position displayed in the example.
-    1. Verify that the new position in step 4 corresponds to the move in step 3 (i.e. if the device moved north, the new position should clearly indicate this).'
+        Note that GPS and internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the lightmaps_with_location app (sources are in demos\lightmaps). | Verify that map is displayed and centered with the current position |
+    | Move to a different location | Verify that map is updated and centered with new location |'
        ));
     },
 
@@ -195,7 +194,7 @@ testcase = {
     | Fill in 9 in to Top Left Lat field | |
     | Fill in 0 in to Top Left Long field | |
     | Fill in 0 i to Bottom Right Lat filed | |
-    | Fill in 1 in to Top Left Long field | |
+    | Fill in 1 in to Bottom Right Long field | |
     | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |'
        ));
     },
@@ -282,7 +281,7 @@ testcase = {
     },
 
     request_route_from_one_GPS_location_to_another_data: {
-        route:["-27.575", "153.088", "-27.465", "153.023", "16050", "15989"]
+        route:["-27.575", "153.088", "-27.465", "153.023", "15901", "15987"]
     },
 
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
@@ -299,7 +298,7 @@ testcase = {
         enter(long2);
         select("Ok");
         prompt(twiki("Wait until the route is calculated (should be less than 10 seconds)"));
-        prompt(twiki("Verify the instructions for segments 1 and 5 indicate to 'Head towards Logan rd' and 'Turn left on Logan rd'"));
+        prompt(twiki("Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'"));
         select("routes/route");
         compare(getText("distance"), distance1);
         select("Request Route");
@@ -312,11 +311,46 @@ testcase = {
         prompt(twiki('Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st'));
         compare(getText("distance"), distance2);
     },
+    
+    geocoding: function()
+    {
+        prompt(twiki('---+++ Geocoding
+    Note that testing via proxy is not recommended, incorrect settings can be a cause of the " Socket operation timed out" error
+    | *Step* | *Verification* |
+    | Run the GeoServiceDemo application (sources are /tests/location-testing-tools/geoservicedemo) | |
+    | Select Search By Adress tab | |
+    | Select One-box Search checkbox | |
+    | Fill in "Brandl st, Eight Mile Plains, Australia" in search field | |
+    | Select Geocoding search | |
+    | Press Ok button | |
+    | Wait until data is recieved | |
+    | Select places | Verify that count = 1 |
+    | Select place | Verify that latitude is -27.5798, longitude is 153.1 |
+    | Select address | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is Branl St, post code is 4113 |'
+        ));
+
+    },
+    
+    reverse_geocoding: function()
+    {
+        prompt(twiki('---+++ Reverse geocoding
+    Note that testing via proxy is not recommended, incorrect settings can be a cause of the " Socket operation timed out" error
+    | *Step* | *Verification* |
+    | Run the GeoServiceDemo application | |
+    | Select Reverse Geocoding tab | |
+    | Press Search By Coordinates button | |
+    | Fill in -27.5798 in Latitude field | |
+    | Fill in 153.1 in Longitude field | |
+    | Press Ok button | |
+    | Wait until data is recieved | |
+    | Select places/place/adress | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is 54 Branl St, post code is 4113 |'
+        ));
+   },
 
     displaying_a_map: function()
     {
         prompt(twiki('---+++ Different views are displayed
-    Note that GPS and internet connection is required for this test case.
+    Note that  internet connection is required for this test case.
     Note that Nokia map engine supports only Street, Satellite and Terrain map types
     | *Step* | *Verification* |
     | Run the MapView application (sources are /tests/location-testing-tools/mapviewer) | Map for current location is displayed on the screen |
