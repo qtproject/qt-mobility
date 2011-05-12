@@ -98,7 +98,7 @@ QSystemAlignedTimerPrivate *getSystemAlignedTimerPrivate() { return alignedTimer
 QSystemAlignedTimer::QSystemAlignedTimer(QObject *parent)
     : QObject(parent)
 {
-    d = new QSystemAlignedTimerPrivate(parent);
+    d = new QSystemAlignedTimerPrivate(this);
     connect(d, SIGNAL(timeout()), this, SIGNAL(timeout()));
     connect(d, SIGNAL(error(QSystemAlignedTimer::AlignedTimerError)), this, SIGNAL(error(QSystemAlignedTimer::AlignedTimerError)));
 }
