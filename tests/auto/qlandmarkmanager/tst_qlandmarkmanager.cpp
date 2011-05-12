@@ -7588,7 +7588,7 @@ void tst_QLandmarkManager::importGpx() {
 #ifdef Q_OS_SYMBIAN
     if (type == "asyncAttachSingleCategory") {
         //attaching a category asynchronously on symbian results in 2 dataChanged signals
-        QCOMPARE(dataChanged.count() ==2);
+        QCOMPARE(dataChanged.count(),2);
     }
     else {
         QCOMPARE(dataChanged.count(),1);

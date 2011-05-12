@@ -327,7 +327,7 @@ void tst_QGeoMapRouteObject::pen()
 
     QPointF point = map->coordinateToScreenPosition(path.at(1));
 
-    QPointF diff(pen.width() / 2 - 1, pen.width() / 2 - 1);
+    QPointF diff(pen.width() / 2, pen.width() / 2);
 
     point += diff;
 

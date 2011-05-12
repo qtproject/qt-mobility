@@ -316,10 +316,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString & 
         {
             return S60Version();
         }
-        case QSystemInfo::QtCore:
-        {
-            return qVersion();
-        }
         case QSystemInfo::Firmware:
         {
             QString versionText;

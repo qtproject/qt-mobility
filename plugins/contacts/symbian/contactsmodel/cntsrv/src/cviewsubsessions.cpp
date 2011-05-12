@@ -695,33 +695,43 @@ void CViewSubSessionBase::GetContactsMatchingFilterL(const RMessage2& aMessage)
     CleanupClosePushL(array);
     TContactIdWithMapping idMap;
 
-    CContactIdArray* idVoipArray = NULL;
+    const TInt viewCount(iView->CountL());
     if (filter & CContactDatabase::ECustomFilter3)
         {
         // CContactDatabase::ECustomFilter3 was used to filter the contacts 
-        // which support voip call. 
+        // which can be used in speed dial fetch dialog. 
         MLplCollection& collection = iViewManager.FactoryL().GetCollectorL();
         collection.Reset();
-        idVoipArray = collection.FindVoipContactsL();
-        CleanupStack::PushL(idVoipArray);
+        CContactIdArray* speedDialIDArray = collection.FindSpeedDialContactsL();
+        CleanupStack::PushL(speedDialIDArray);
+       // Filter view contacts.
+        for (TInt i=0;i<viewCount;++i)
+	        {
+	        const CViewContact& contact = iView->ContactAtL(i);
+	        if(KErrNotFound !=speedDialIDArray->Find(contact.Id())) // Check if the contacts support speed dial.
+	            {
+	            idMap.iId=contact.Id();
+	            idMap.iMapping=i;
+	            User::LeaveIfError(array.Append(idMap));
+	            }
+	        }
+        CleanupStack::PopAndDestroy(speedDialIDArray);
         }
-    // Filter view contacts.
-    const TInt viewCount(iView->CountL());
-    for (TInt i=0;i<viewCount;++i)
+        else
         {
-        const CViewContact& contact = iView->ContactAtL(i);
-        if(contact.ContactMatchesFilter(filter) ||
-                (idVoipArray && (KErrNotFound !=idVoipArray->Find(contact.Id())))) // Check if the contacts support voip call.
+        // Filter view contacts.
+        for (TInt i=0;i<viewCount;++i)
             {
-            idMap.iId=contact.Id();
-            idMap.iMapping=i;
-            User::LeaveIfError(array.Append(idMap));
+            const CViewContact& contact = iView->ContactAtL(i);
+            if(contact.ContactMatchesFilter(filter))
+                {
+                idMap.iId=contact.Id();
+                idMap.iMapping=i;
+                User::LeaveIfError(array.Append(idMap));
+                }
             }
         }
-    if(idVoipArray)
-        {
-        CleanupStack::PopAndDestroy(idVoipArray);
-        }
+
     // Externalize array to client.
     const TInt count(array.Count());
     const TInt maxBufSize = (1+(array.Count()*2))*sizeof(TInt);
@@ -1017,12 +1027,12 @@ CContactLocalView& CViewManager::OpenViewL(const RContactViewSortOrder& aSortOrd
 
 	// Register this view as an observer of database events with the
 	// associated CCntDbManager.
-	iManager.RegisterDatabaseEventObserverL(viewHandle.iLocalView->ObserverV2());
+	iManager.RegisterDatabaseEventObserverL(*viewHandle.iLocalView);
 
 	TInt error = iLocalViews.Append(viewHandle);
 	if (error != KErrNone)
 		{
-		iManager.UnRegisterDatabaseEventObserver(viewHandle.iLocalView->ObserverV2());
+		iManager.UnRegisterDatabaseEventObserver(*viewHandle.iLocalView);
 		viewHandle.iLocalView->Close(aObserver);
 		User::Leave(error);
 		}
@@ -1068,12 +1078,12 @@ CContactNamedLocalView& CViewManager::OpenNamedViewL(const TDesC& aName,const RC
 
 	// Register this view as an observer of database events with the
 	// associated CCntDbManager.
-	iManager.RegisterDatabaseEventObserverL(newNamedView->ObserverV2());
+	iManager.RegisterDatabaseEventObserverL(*newNamedView);
 
 	TInt error = iNamedLocalViews.Append(newNamedView);
 	if (error != KErrNone)
 		{
-		iManager.UnRegisterDatabaseEventObserver(newNamedView->ObserverV2());
+		iManager.UnRegisterDatabaseEventObserver(*newNamedView);
 		newNamedView->Close(aObserver);
 		User::Leave(error);
 		}

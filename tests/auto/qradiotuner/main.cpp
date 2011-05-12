@@ -44,11 +44,8 @@
 #include "tst_qradiotuner.h"
 
 #ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_RADIOTUNER_BACKEND
 #include "tst_qradiotuner_xa.h"
-#else
 #include "tst_qradiotuner_s60.h"
-#endif
 #endif
 
 int main(int argc, char**argv)
@@ -58,9 +55,8 @@ int main(int argc, char**argv)
     tst_QRadioTuner test_api;
     ret = QTest::qExec(&test_api, argc, argv);
 #ifdef Q_OS_SYMBIAN
-#ifdef HAS_OPENMAXAL_RADIOTUNER_BACKEND
     char *new_argv[3];
-    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
+    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + "_xa.log";
     QByteArray   bytes  = str.toAscii();
     char arg1[] = "-o";
     new_argv[0] = argv[0];
@@ -68,10 +64,16 @@ int main(int argc, char**argv)
     new_argv[2] = bytes.data();
     tst_QXARadio_xa test_xa;
     ret = QTest::qExec(&test_xa, 3, new_argv);
-#else
+    char *new_argv1[3];
+    QString str1 = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + "_s60.log";
+    QByteArray   bytes1  = str1.toAscii();
+    char arg2[] = "-o";
+    new_argv1[0] = argv[0];
+    new_argv1[1] = arg2;
+    new_argv1[2] = bytes1.data();
     tst_QRadioTuner_s60 test_s60;
-    ret = QTest::qExec(&test_s60, argc, argv);
-#endif
+    ret = QTest::qExec(&test_s60,  3, new_argv1);
+
 #endif
     return ret;
 }

@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef QSYSTEMBATTERYINFO_H
 #define QSYSTEMBATTERYINFO_H
 

@@ -66,10 +66,9 @@ private slots:
 
     void coordinate_data();
     void coordinate();
-    void offset_data();
-    void offset();
-    void pixmap_data();
-    void pixmap();
+    void signalTest();
+    void geometry_data();
+    void geometry();
     void zvalue_data();
     void zvalue();
     void boundingBox();
@@ -217,33 +216,33 @@ void tst_QGeoMapPixmapObject::coordinate()
 
 }
 
-void tst_QGeoMapPixmapObject::offset_data()
-{
-
-    QTest::addColumn<QPoint>("offset");
-    QTest::newRow("10,10") << QPoint(10, 10);
-    QTest::newRow("-10,10") << QPoint(-10, 10);
-    QTest::newRow("10,-10") << QPoint(10, -10);
-    QTest::newRow("-10,-10") << QPoint(-10, -10);
-
-}
-
 // public QPoint offset() const
-void tst_QGeoMapPixmapObject::offset()
+void tst_QGeoMapPixmapObject::signalTest()
 {
-    QFETCH(QPoint, offset);
-
     QGeoCoordinate center(10, 10, 0);
+    QPixmap pixmap(5, 5);
+    QPoint offset(10, 10);
 
     QGeoMapPixmapObject* object = new QGeoMapPixmapObject();
 
+    QSignalSpy spy0(object, SIGNAL(coordinateChanged(QGeoCoordinate const&)));
+    QSignalSpy spy1(object, SIGNAL(pixmapChanged(QPixmap const&)));
+    QSignalSpy spy2(object, SIGNAL(offsetChanged(QPoint const&)));
+
+
     object->setCoordinate(center);
+
+    QCOMPARE(spy0.count(), 1);
+    QCOMPARE(spy1.count(), 0);
+    QCOMPARE(spy2.count(), 0);
 
     QCOMPARE(object->coordinate(), center);
 
-    QPixmap pixmap(5, 5);
-
     object->setPixmap(pixmap);
+
+    QCOMPARE(spy0.count(), 1);
+    QCOMPARE(spy1.count(), 1);
+    QCOMPARE(spy2.count(), 0);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -252,10 +251,6 @@ void tst_QGeoMapPixmapObject::offset()
     QList<QGeoMapObject *> list = map->mapObjects();
 
     QVERIFY(list.at(0)==object);
-
-    QSignalSpy spy0(object, SIGNAL(coordinateChanged(QGeoCoordinate const&)));
-    QSignalSpy spy1(object, SIGNAL(offsetChanged(QPoint const&)));
-    QSignalSpy spy2(object, SIGNAL(pixmapChanged(QPixmap const&)));
 
     map->setCenter(center);
 
@@ -271,38 +266,61 @@ void tst_QGeoMapPixmapObject::offset()
 
     QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
 
-    QCOMPARE(spy0.count(), 0);
+    QCOMPARE(spy0.count(), 1);
     QCOMPARE(spy1.count(), 1);
-    QCOMPARE(spy2.count(), 0);
+    QCOMPARE(spy2.count(), 1);
 
 }
 
-void tst_QGeoMapPixmapObject::pixmap_data()
+void tst_QGeoMapPixmapObject::geometry_data()
 {
-    QTest::addColumn<QPixmap>("pixmap");
-    QTest::newRow("100,100") << QPixmap(100, 100);
-    QTest::newRow("200,200") << QPixmap(200, 200);
-    QTest::newRow("300,300") << QPixmap(300, 300);
+    QTest::addColumn<int>("width");
+    QTest::addColumn<int>("height");
+    QTest::addColumn<int>("offsetX");
+    QTest::addColumn<int>("offsetY");
+
+    QTest::newRow("100x100 + -50,-50") << 100 << 100 << -50 << -50;
+    QTest::newRow("100x100 + -50,0") << 100 << 100 << -50 << 0;
+    QTest::newRow("100x100 + -50,50") << 100 << 100 << -50 << 50;
+    QTest::newRow("100x100 + 0,-50") << 100 << 100 << 0 << -50;
+    QTest::newRow("100x100 + 0,0") << 100 << 100 << 0 << 0;
+    QTest::newRow("100x100 + 0,50") << 100 << 100 << 0 << 50;
+    QTest::newRow("100x100 + 50,-50") << 100 << 100 << 50 << -50;
+    QTest::newRow("100x100 + 50,0") << 100 << 100 << 50 << 0;
+    QTest::newRow("100x100 + 50,50") << 100 << 100 << 50 << 50;
+
+    QTest::newRow("200x200 + -50,-50") << 200 << 200 << -50 << -50;
+    QTest::newRow("200x200 + -50,0") << 200 << 200 << -50 << 0;
+    QTest::newRow("200x200 + -50,50") << 200 << 200 << -50 << 50;
+    QTest::newRow("200x200 + 0,-50") << 200 << 200 << 0 << -50;
+    QTest::newRow("200x200 + 0,0") << 200 << 200 << 0 << 0;
+    QTest::newRow("200x200 + 0,50") << 200 << 200 << 0 << 50;
+    QTest::newRow("200x200 + 50,-50") << 200 << 200 << 50 << -50;
+    QTest::newRow("200x200 + 50,0") << 200 << 200 << 50 << 0;
+    QTest::newRow("200x200 + 50,50") << 200 << 200 << 50 << 50;
 }
 
 // public QPixmap pixmap() const
-void tst_QGeoMapPixmapObject::pixmap()
+void tst_QGeoMapPixmapObject::geometry()
 {
-    QFETCH(QPixmap, pixmap);
+    QFETCH(int, width);
+    QFETCH(int, height);
+    QFETCH(int, offsetX);
+    QFETCH(int, offsetY);
 
+    QPixmap pixmap(width, height);
+    QPoint offset(offsetX, offsetY);
     QGeoCoordinate center(10, 10, 0);
 
     QGeoMapPixmapObject* object = new QGeoMapPixmapObject();
 
     object->setCoordinate(center);
-
-    QCOMPARE(object->coordinate(), center);
-
-    QPixmap p(5, 5);
-
-    object->setPixmap(p);
+    object->setPixmap(pixmap);
+    object->setOffset(offset);
 
     QGraphicsGeoMap* map = m_helper->map();
+
+    map->setCenter(center);
 
     map->addMapObject(object);
 
@@ -310,30 +328,45 @@ void tst_QGeoMapPixmapObject::pixmap()
 
     QVERIFY(list.at(0)==object);
 
-    QSignalSpy spy0(object, SIGNAL(coordinateChanged(QGeoCoordinate const&)));
-    QSignalSpy spy1(object, SIGNAL(offsetChanged(QPoint const&)));
-    QSignalSpy spy2(object, SIGNAL(pixmapChanged(QPixmap const&)));
-
-    map->setCenter(center);
-
     QPointF point = map->coordinateToScreenPosition(center);
 
-    QPoint diff(pixmap.width() - 1, pixmap.height() - 1);
+    QPointF centerPoint = point;
+    centerPoint += QPointF(offsetX + width / 2.0, offsetY + height / 2.0);
 
-    point += diff;
+    QList<QPointF> inner;
+    QList<QPointF> outer;
 
-    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),0);
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, -3.0 * height / 4.0);
 
-    object->setPixmap(pixmap);
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, 0.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, 0.0);
 
-    QCOMPARE(object->pixmap(), pixmap);
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, 3.0 * height / 4.0);
 
-    QCOMPARE(map->mapObjectsAtScreenPosition(point).size(),1);
+    inner << centerPoint + QPointF(0.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(0.0, -3.0 * height / 4.0);
 
-    QCOMPARE(spy0.count(), 0);
-    QCOMPARE(spy1.count(), 0);
-    QCOMPARE(spy2.count(), 1);
+    inner << centerPoint;
 
+    inner << centerPoint + QPointF(0.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(0.0, 3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, -3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, 0.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, 0.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, 3.0 * height / 4.0);
+
+    for (int i = 0; i < inner.size(); ++i)
+        QCOMPARE(map->mapObjectsAtScreenPosition(inner.at(i)).size(), 1);
+
+    for (int i = 0; i < outer.size(); ++i)
+        QCOMPARE(map->mapObjectsAtScreenPosition(outer.at(i)).size(), 0);
 }
 
 void tst_QGeoMapPixmapObject::zvalue_data()
@@ -579,7 +612,7 @@ void tst_QGeoMapPixmapObject::boundingBox()
     QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
     QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
 
-    QVERIFY(object->boundingBox().width() == width);
+    QVERIFY(qreal(object->boundingBox().width()) == qreal(width));
     QVERIFY(object->boundingBox().height() == height);
 
     QVERIFY(object->boundingBox().topLeft().latitude() == top);
