@@ -101,7 +101,7 @@ private:
     Q_DECLARE_PRIVATE(QBluetoothDeviceDiscoveryAgent)
     QBluetoothDeviceDiscoveryAgentPrivate *d_ptr;
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     Q_PRIVATE_SLOT(d_func(), void _q_deviceFound(const QString &address, const QVariantMap &dict));
     Q_PRIVATE_SLOT(d_func(), void _q_propertyChanged(const QString &name, const QDBusVariant &value));
 #endif

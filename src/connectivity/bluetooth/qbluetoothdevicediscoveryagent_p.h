@@ -46,7 +46,7 @@
 
 #include <QVariantMap>
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 class OrgBluezManagerInterface;
 class OrgBluezAdapterInterface;
 class QDBusVariant;
@@ -80,7 +80,7 @@ public:
             QString errorDescription);
 #endif
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     void _q_deviceFound(const QString &address, const QVariantMap &dict);
     void _q_propertyChanged(const QString &name, const QDBusVariant &value);
 #endif
@@ -100,7 +100,7 @@ private:
     bool pendingCancel;
     bool pendingStart;
 
-#if !defined(QT_NO_DBUS)
+#ifdef QTM_BLUEZ_BLUETOOTH
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;
 #endif

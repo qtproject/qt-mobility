@@ -90,7 +90,7 @@ quint16 QRfcommServer::serverPort() const
 }
 
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 void QRfcommServerPrivate::_q_newConnection()
 {
 }

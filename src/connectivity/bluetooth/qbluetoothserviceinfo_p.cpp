@@ -79,7 +79,7 @@ void QBluetoothServiceInfoPrivate::removeRegisteredAttribute(quint16 attributeId
     Q_UNUSED(attributeId);
 }
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 bool QBluetoothServiceInfoPrivate::registerService() const
 {
     return false;

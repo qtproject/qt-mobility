@@ -101,7 +101,7 @@ QBluetooth::SecurityFlags QL2capServer::securityFlags() const
 
 
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 void QL2capServerPrivate::_q_newConnection()
 {
 }

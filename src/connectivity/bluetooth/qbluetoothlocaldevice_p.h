@@ -51,7 +51,7 @@
 #include <btengsettings.h>
 #endif
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 #include <QObject>
 #include <QDBusContext>
 #include <QDBusObjectPath>
@@ -68,7 +68,7 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 class QBluetoothLocalDevicePrivate : public QObject,
                                      protected QDBusContext
 {

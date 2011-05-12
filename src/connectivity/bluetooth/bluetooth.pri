@@ -103,6 +103,7 @@ symbian {
     }
 } else:contains(bluez_enabled, yes):contains(QT_CONFIG, dbus) {
     QT *= dbus
+    DEFINES += QTM_BLUEZ_BLUETOOTH
 
     include(bluez/bluez.pri)
 

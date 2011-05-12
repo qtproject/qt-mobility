@@ -53,7 +53,7 @@
 #include <btsdp.h>
 #endif
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 class OrgBluezManagerInterface;
 class OrgBluezAdapterInterface;
 class OrgBluezDeviceInterface;
@@ -99,7 +99,7 @@ public:
     void _q_deviceDiscoveryFinished();
     void _q_deviceDiscovered(const QBluetoothDeviceInfo &info);
     void _q_serviceDiscoveryFinished();
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     void _q_discoveredServices(QDBusPendingCallWatcher *watcher);
     void _q_createdDevice(QDBusPendingCallWatcher *watcher);
 #endif
@@ -123,7 +123,7 @@ private:
 #ifdef QTM_SYMBIAN_BLUETOOTH
     void startL(const QBluetoothAddress &address);
     void initL(const QBluetoothAddress &address);
-#elif !defined(QT_NO_DBUS)
+#elif defined(QTM_BLUEZ_BLUETOOTH)
     QVariant readAttributeValue(QXmlStreamReader &xml);
 #endif
 
@@ -153,7 +153,7 @@ private:
     TSdpAttributeID m_currentAttributeId;
 
     QStack<QVariant> m_stack;
-#elif !defined(QT_NO_DBUS)
+#elif defined(QTM_BLUEZ_BLUETOOTH)
     OrgBluezManagerInterface *manager;
     OrgBluezAdapterInterface *adapter;
     OrgBluezDeviceInterface *device;
