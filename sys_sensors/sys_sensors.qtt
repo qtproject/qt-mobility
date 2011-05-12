@@ -175,7 +175,7 @@ Note:
     | Invert device on y axis to vertical | Verify that device recognizes that it is *Right Up*, y slider should be in left position and y = -90 |
     | Turn device upside down (face down) | Verify that device recognizes that it is *Face Down*, y slider should be changing from extreme right to extreme left, and y = -180/+ 180  |
     | Return device to the starting position | Verify that device recognizes that it is *Face Up*, all sliders should be in middle position |
-    | z will not change during this test |  |
+    | On Harmattan/Meggo devices, z will not change during this test given there is hardware support, this doesn't apply to Symbian devices and N900. |  |
         '));
     },
 
