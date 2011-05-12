@@ -60,6 +60,9 @@
 #include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 #include <MMFROPCustomCommandConstants.h>
+#ifdef HTTP_COOKIES_ENABLED
+#include <MMFSessionInfoCustomCommandConstants.h>
+#endif
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
 const TUid KHelixUID = {0x101F8514};
@@ -170,6 +173,9 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     , m_audioEndpoint(DefaultAudioEndpoint)
     , m_pendingChanges(0)
     , m_backendInitiatedPause(false)
+#ifdef HTTP_COOKIES_ENABLED
+    , m_destinationPckg(KUidInterfaceMMFControllerSessionInfo)
+#endif
 {
     DP0("S60VideoPlayerSession::S60VideoPlayerSession +++");
 
@@ -644,7 +650,7 @@ void S60VideoPlayerSession::doSetVolumeL(int volume)
 
 /*!
  * Notification to the client that the opening of the video clip has completed.
- * If successful then an \a aError will be ZERO else system wide error.
+ * If successfull then an \a aError will be ZERO else system wide error.
 */
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
@@ -654,9 +660,45 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
     DP1("S60VideoPlayerSession::MvpuoOpenComplete - aError:", aError);
 
     setError(aError);
+#ifdef HTTP_COOKIES_ENABLED
+    if (KErrNone == aError) {
+        TInt err(KErrNone);
+        const QByteArray userAgentString("User-Agent");
+        TInt uasize = m_source.canonicalRequest().rawHeader(userAgentString).size();
+        TPtrC8 userAgent((const unsigned char*)(m_source.canonicalRequest().rawHeader(userAgentString).constData()), uasize);
+        if (userAgent.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("User-Agent"), userAgent);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        const QByteArray refererString("Referer");
+        TInt refsize = m_source.canonicalRequest().rawHeader(refererString).size();
+        TPtrC8 referer((const unsigned char*)m_source.canonicalRequest().rawHeader(refererString).constData(),refsize);
+        if (referer.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("Referer"), referer);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        const QByteArray cookieString("Cookie");
+        TInt cksize = m_source.canonicalRequest().rawHeader(cookieString).size();
+        TPtrC8 cookie((const unsigned char*)m_source.canonicalRequest().rawHeader(cookieString).constData(),cksize);
+        if (cookie.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("Cookie"), cookie);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        m_player->Prepare();
+    }
+#else
     if (KErrNone == aError)
         m_player->Prepare();
-
+#endif
     const TMMFMessageDestinationPckg dest( KUidInterfaceMMFROPController );
     TRAP_IGNORE(m_player->CustomCommandSync(dest, KMMFROPControllerEnablePausedLoadingStatus, KNullDesC8, KNullDesC8));
 
@@ -665,7 +707,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 
 /*!
  * Notification to the client that the opening of the video clip has been preapred.
- * If successful then an \a aError will be ZERO else system wide error.
+ * If successfull then an \a aError will be ZERO else system wide error.
 */
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
@@ -1002,7 +1044,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 }
 
 /*!
-    The default Audio ouptut has been changed.
+    The default Audio output has been changed.
 
     \a aAudioOutput Audio Output object.
 

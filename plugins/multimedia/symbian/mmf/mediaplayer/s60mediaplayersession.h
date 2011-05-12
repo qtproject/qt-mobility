@@ -91,7 +91,7 @@ public:
     QList<QtMultimediaKit::MetaData> availableMetaData() const;
     QStringList availableExtendedMetaData() const;
     QString metaDataKeyAsString(QtMultimediaKit::MetaData key) const;
-    void load(QUrl url);
+    void load(const QMediaContent source);
     int bufferStatus();
     virtual void setVideoRenderer(QObject *renderer);
     void setMediaStatus(QMediaPlayer::MediaStatus);
@@ -167,6 +167,7 @@ signals:
 protected:
     QUrl m_UrlPath;
     bool m_stream;
+    QMediaContent m_source;
 
 private:
     qreal m_playbackRate;
