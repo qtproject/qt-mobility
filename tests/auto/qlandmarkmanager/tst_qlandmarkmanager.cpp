@@ -7762,7 +7762,7 @@ void tst_QLandmarkManager::importGpx() {
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.count(), 0);
-        QCOMPARE(dataChanged.count(), 1);
+        QVERIFY(dataChanged.count() > 0);
     }
 #endif
 }
