@@ -87,6 +87,7 @@ private:
     QRemoteServiceRegister::Entry uniqueEntry2;
 
     QObject *connectToService(const QString &serviceName);
+    bool servicePublished;
 };
 
 bool mySecurityFilterFunction(const void *p)
@@ -159,6 +160,8 @@ void tst_QRemoteServiceRegister::initTestCase()
 
     valid = uniqueEntry2.isValid();
     QVERIFY(valid == true);
+
+    servicePublished = false;
 }
 
 void tst_QRemoteServiceRegister::cleanupTestCase()
@@ -221,6 +224,7 @@ void tst_QRemoteServiceRegister::checkPublish()
 {
     //publish the registered services
     serviceRegister->publishEntries("qt_sfw_example_rsr_unittest");
+    servicePublished = true;
 
     //check instantiation type
     //- default value
@@ -239,6 +243,8 @@ Q_DECLARE_METATYPE(QRemoteServiceRegister::Entry);
 void tst_QRemoteServiceRegister::tst_instanceClosed()
 {
     qRegisterMetaType<QRemoteServiceRegister::Entry>("QRemoteServiceRegister::Entry");
+    if(!servicePublished)
+        serviceRegister->publishEntries("qt_sfw_example_rsr_unittest");
 
     serviceRegister->setSecurityFilter(alwaysPass);
     QSignalSpy spy(serviceRegister,SIGNAL(instanceClosed(QRemoteServiceRegister::Entry)));
@@ -259,8 +265,8 @@ QObject *tst_QRemoteServiceRegister::connectToService(const QString &serviceName
     QServiceManager manager;
 
     QList<QServiceInterfaceDescriptor> list = manager.findInterfaces(serviceName);
-    if (list.isEmpty()) {
-        qWarning() << "Couldn't find service" << serviceName;
+    if (list.isEmpty()) {        
+        qWarning() << "Couldn't find service" << serviceName << manager.findServices("qt_sfw_example_rsr_unittest");
         return 0;
     }
 
