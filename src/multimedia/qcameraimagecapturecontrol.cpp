@@ -96,12 +96,14 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
     hardware initialized, flash is charged, etc).
 
     Returns true if the camera is ready for capture; and false if it is not.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageCaptureControl::readyForCaptureChanged(bool ready)
 
     Signals that a capture control's \a ready state has changed.
+    \since 1.1
 */
 
 /*!
@@ -114,12 +116,14 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
 
     Returns the capture request id number, which is used later
     with imageExposed(), imageCaptured() and imageSaved() signals.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageCaptureControl::cancelCapture()
 
     Cancel pending capture requests.
+    \since 1.1
 */
 
 /*!
@@ -128,6 +132,7 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
     Signals that an image with it \a requestId
     has just been exposed.
     This signal can be used for the shutter sound or other indicaton.
+    \since 1.1
 */
 
 /*!
@@ -135,6 +140,7 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
 
     Signals that an image with it \a requestId
     has been captured and a \a preview is available.
+    \since 1.1
 */
 
 /*!
@@ -144,6 +150,7 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
     This signal is emitted for metadata \a value with a \a key listed in QtMultimediaKit::MetaData enum.
 
     This signal should be emitted between imageExposed and imageSaved signals.
+    \since 1.2
 */
 
 /*!
@@ -153,12 +160,14 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
     This signal is emitted for extended metadata \a value with a \a key not listed in QtMultimediaKit::MetaData enum.
 
     This signal should be emitted between imageExposed and imageSaved signals.
+    \since 1.2
 */
 
 /*!
     \fn QCameraImageCaptureControl::imageAvailable(int requestId, const QVideoFrame &buffer)
 
     Signals that a captured \a buffer with a \a requestId is available.
+    \since 1.2
 */
 
 /*!
@@ -166,18 +175,21 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
 
     Signals that a captured image with a \a requestId has been saved
     to \a fileName.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageCaptureControl::driveMode() const
 
     Returns the current camera drive mode.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageCaptureControl::setDriveMode(QCameraImageCapture::DriveMode mode)
 
     Sets the current camera drive \a mode.
+    \since 1.1
 */
 
 
@@ -186,6 +198,7 @@ QCameraImageCaptureControl::~QCameraImageCaptureControl()
 
     Signals the capture request \a id failed with \a error code and message \a errorString.
 
+    \since 1.1
     \sa QCameraImageCapture::Error
 */
 

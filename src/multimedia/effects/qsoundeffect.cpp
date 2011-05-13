@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlclass SoundEffect QSoundEffect
     \brief The SoundEffect element provides a way to play sound effects in QML.
+    \since 1.0
 
     \inmodule QtMultimediaKit
 
@@ -66,12 +67,14 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlproperty url SoundEffect::source
+    \since 1.0
 
     This property provides a way to control the sound to play.
 */
 
 /*!
     \qmlproperty int SoundEffect::loops
+    \since 1.0
 
     This property provides a way to control the number of times to repeat the sound on each play().
 
@@ -80,6 +83,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlproperty qreal SoundEffect::volume
+    \since 1.0
 
     This property holds the volume of the playback, from 0.0 (silent) to 1.0 (maximum volume).
     Note: Currently this has no effect on Mac OS X and Symbian.
@@ -87,18 +91,21 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlproperty bool SoundEffect::muted
+    \since 1.0
 
     This property provides a way to control muting.
 */
 
 /*!
     \qmlproperty bool SoundEffect::playing
+    \since 1.1
 
     This property indicates if the soundeffect is playing or not.
 */
 
 /*!
     \qmlproperty int SoundEffect::status
+    \since 1.0
 
     This property indicates the following status of the soundeffect.
 
@@ -110,30 +117,35 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlsignal SoundEffect::sourceChanged()
+    \since 1.0
 
     This handler is called when the source has changed.
 */
 
 /*!
     \qmlsignal SoundEffect::loopsChanged()
+    \since 1.0
 
     This handler is called when the number of loops has changed.
 */
 
 /*!
     \qmlsignal SoundEffect::volumeChanged()
+    \since 1.0
 
     This handler is called when the volume has changed.
 */
 
 /*!
     \qmlsignal SoundEffect::mutedChanged()
+    \since 1.0
 
     This handler is called when the mute state has changed.
 */
 
 /*!
     \qmlsignal SoundEffect::playingChanged()
+    \since 1.0
 
     This handler is called when the playing property has changed.
 */
@@ -142,11 +154,13 @@ QT_BEGIN_NAMESPACE
     \qmlsignal SoundEffect::statusChanged()
 
     This handler is called when the status property has changed.
+    \since 1.0
 */
 
 
 /*!
     \internal
+    \since 1.0
 */
 
 QSoundEffect::QSoundEffect(QObject *parent) :
@@ -250,6 +264,7 @@ bool QSoundEffect::isLoaded() const
   This is the default method for SoundEffect.
 
   \snippet doc/src/snippets/multimedia-snippets/soundeffect.qml play sound on click
+  \since 1.0
 */
 void QSoundEffect::play()
 {
@@ -274,6 +289,7 @@ QSoundEffect::Status QSoundEffect::status() const
   Note that if the backend is PulseAudio, due to the limitation of the underlying API,
   tis stop will only prevent next looping but will not be able to stop current playback immediately.
 
+  \since 1.0
  */
 void QSoundEffect::stop()
 {

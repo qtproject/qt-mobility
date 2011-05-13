@@ -115,6 +115,7 @@ QCameraImageProcessing::~QCameraImageProcessing()
 
 /*!
     Returns true if image processing related settings are supported by this camera.
+    \since 1.1
 */
 bool QCameraImageProcessing::isAvailable() const
 {
@@ -124,6 +125,7 @@ bool QCameraImageProcessing::isAvailable() const
 
 /*!
     Returns the white balance mode being used.
+    \since 1.1
 */
 
 QCameraImageProcessing::WhiteBalanceMode QCameraImageProcessing::whiteBalanceMode() const
@@ -133,6 +135,7 @@ QCameraImageProcessing::WhiteBalanceMode QCameraImageProcessing::whiteBalanceMod
 
 /*!
     Sets the white balance to \a mode.
+    \since 1.1
 */
 
 void QCameraImageProcessing::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
@@ -143,6 +146,7 @@ void QCameraImageProcessing::setWhiteBalanceMode(QCameraImageProcessing::WhiteBa
 
 /*!
     Returns true if the white balance \a mode is supported.
+    \since 1.1
 */
 
 bool QCameraImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
@@ -154,6 +158,7 @@ bool QCameraImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessing:
     Returns the current color temperature if the
     manual white balance is active, otherwise the
     return value is undefined.
+    \since 1.1
 */
 
 int QCameraImageProcessing::manualWhiteBalance() const
@@ -168,6 +173,7 @@ int QCameraImageProcessing::manualWhiteBalance() const
 
 /*!
     Sets manual white balance to \a colorTemperature
+    \since 1.1
 */
 
 void QCameraImageProcessing::setManualWhiteBalance(int colorTemperature)
@@ -181,6 +187,7 @@ void QCameraImageProcessing::setManualWhiteBalance(int colorTemperature)
 
 /*!
     Return the contrast.
+    \since 1.1
 */
 int QCameraImageProcessing::contrast() const
 {
@@ -196,6 +203,7 @@ int QCameraImageProcessing::contrast() const
     Set the contrast to \a value.
 
     Valid contrast values range between -100 and 100, the default is 0.
+    \since 1.1
 */
 void QCameraImageProcessing::setContrast(int value)
 {
@@ -206,6 +214,7 @@ void QCameraImageProcessing::setContrast(int value)
 
 /*!
     Returns the saturation value.
+    \since 1.1
 */
 int QCameraImageProcessing::saturation() const
 {
@@ -221,6 +230,7 @@ int QCameraImageProcessing::saturation() const
     Sets the saturation value to \a value.
 
     Valid saturation values range between -100 and 100, the default is 0.
+    \since 1.1
 */
 
 void QCameraImageProcessing::setSaturation(int value)
@@ -234,6 +244,7 @@ void QCameraImageProcessing::setSaturation(int value)
     Identifies if sharpening is supported.
 
     Returns true if sharpening is supported; and false if it is not.
+    \since 1.1
 */
 bool QCameraImageProcessing::isSharpeningSupported() const
 {
@@ -245,6 +256,7 @@ bool QCameraImageProcessing::isSharpeningSupported() const
 
 /*!
     Returns the sharpening level.
+    \since 1.1
 */
 int QCameraImageProcessing::sharpeningLevel() const
 {
@@ -264,6 +276,7 @@ int QCameraImageProcessing::sharpeningLevel() const
 
     Valid sharpening level values range between -1 for default sharpening level,
     0 for sharpening disabled and 100 for maximum sharpening applied.
+    \since 1.1
 */
 
 void QCameraImageProcessing::setSharpeningLevel(int level)
@@ -276,6 +289,7 @@ void QCameraImageProcessing::setSharpeningLevel(int level)
 
 /*!
     Returns true if denoising is supported.
+    \since 1.1
 */
 bool QCameraImageProcessing::isDenoisingSupported() const
 {
@@ -287,6 +301,7 @@ bool QCameraImageProcessing::isDenoisingSupported() const
 
 /*!
     Returns the denoising level.
+    \since 1.1
 */
 int QCameraImageProcessing::denoisingLevel() const
 {
@@ -306,6 +321,7 @@ int QCameraImageProcessing::denoisingLevel() const
 
     Valid denoising level values range between -1 for default denoising level,
     0 for denoising disabled and 100 for maximum denoising applied.
+    \since 1.1
 */
 void QCameraImageProcessing::setDenoisingLevel(int level)
 {

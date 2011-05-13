@@ -90,42 +90,49 @@ QAudioEndpointSelector::~QAudioEndpointSelector()
     \fn QList<QString> QAudioEndpointSelector::availableEndpoints() const
 
     Returns a list of available audio endpoints.
+    \since 1.0
 */
 
 /*!
     \fn QString QAudioEndpointSelector::endpointDescription(const QString& name) const
 
     Returns the description of the endpoint \a name.
+    \since 1.0
 */
 
 /*!
     \fn QString QAudioEndpointSelector::defaultEndpoint() const
 
     Returns the name of the default audio endpoint.
+    \since 1.0
 */
 
 /*!
     \fn QString QAudioEndpointSelector::activeEndpoint() const
 
     Returns the name of the currently selected audio endpoint.
+    \since 1.0
 */
 
 /*!
     \fn QAudioEndpointSelector::setActiveEndpoint(const QString& name)
 
     Set the audio endpoint to \a name.
+    \since 1.0
 */
 
 /*!
     \fn QAudioEndpointSelector::activeEndpointChanged(const QString& name)
 
     Signals that the audio endpoint has changed to \a name.
+    \since 1.0
 */
 
 /*!
     \fn QAudioEndpointSelector::availableEndpointsChanged()
 
     Signals that list of available endpoints has changed.
+    \since 1.0
 */
 
 #include "moc_qaudioendpointselector.cpp"

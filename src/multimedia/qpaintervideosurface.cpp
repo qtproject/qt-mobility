@@ -1318,6 +1318,7 @@ QPainterVideoSurface::~QPainterVideoSurface()
 }
 
 /*!
+    \since 1.0
 */
 QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
@@ -1329,6 +1330,7 @@ QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::isFormatSupported(
         const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const
@@ -1340,6 +1342,7 @@ bool QPainterVideoSurface::isFormatSupported(
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 {
@@ -1373,6 +1376,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::stop()
 {
@@ -1385,6 +1389,7 @@ void QPainterVideoSurface::stop()
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::present(const QVideoFrame &frame)
 {
@@ -1415,6 +1420,7 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::brightness() const
 {
@@ -1422,6 +1428,7 @@ int QPainterVideoSurface::brightness() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setBrightness(int brightness)
 {
@@ -1431,6 +1438,7 @@ void QPainterVideoSurface::setBrightness(int brightness)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::contrast() const
 {
@@ -1438,6 +1446,7 @@ int QPainterVideoSurface::contrast() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setContrast(int contrast)
 {
@@ -1447,6 +1456,7 @@ void QPainterVideoSurface::setContrast(int contrast)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::hue() const
 {
@@ -1454,6 +1464,7 @@ int QPainterVideoSurface::hue() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setHue(int hue)
 {
@@ -1463,6 +1474,7 @@ void QPainterVideoSurface::setHue(int hue)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::saturation() const
 {
@@ -1470,6 +1482,7 @@ int QPainterVideoSurface::saturation() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setSaturation(int saturation)
 {
@@ -1479,6 +1492,7 @@ void QPainterVideoSurface::setSaturation(int saturation)
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::isReady() const
 {
@@ -1486,6 +1500,7 @@ bool QPainterVideoSurface::isReady() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setReady(bool ready)
 {
@@ -1493,6 +1508,7 @@ void QPainterVideoSurface::setReady(bool ready)
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const QRectF &source)
 {
@@ -1522,6 +1538,7 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const 
 
 /*!
     \fn QPainterVideoSurface::frameChanged()
+    \since 1.0
 */
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
@@ -1594,6 +1611,7 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
 */
 
 /*!
+    \since 1.0
 */
 QPainterVideoSurface::ShaderTypes QPainterVideoSurface::supportedShaderTypes() const
 {
@@ -1601,6 +1619,7 @@ QPainterVideoSurface::ShaderTypes QPainterVideoSurface::supportedShaderTypes() c
 }
 
 /*!
+    \since 1.0
 */
 QPainterVideoSurface::ShaderType QPainterVideoSurface::shaderType() const
 {
@@ -1608,6 +1627,7 @@ QPainterVideoSurface::ShaderType QPainterVideoSurface::shaderType() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setShaderType(ShaderType type)
 {

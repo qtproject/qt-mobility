@@ -100,6 +100,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
   \fn QMediaPlaylistControl::playlistProvider() const
 
   Returns the playlist used by this media player.
+  \since 1.0
 */
 
 /*!
@@ -113,18 +114,21 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 
   Returns true if player can use this passed playlist; otherwise returns false.
 
+  \since 1.0
 */
 
 /*!
   \fn QMediaPlaylistControl::currentIndex() const
 
   Returns position of the current media source in the playlist.
+  \since 1.0
 */
 
 /*!
   \fn QMediaPlaylistControl::setCurrentIndex(int position)
 
   Jump to the item at the given \a position.
+  \since 1.0
 */
 
 /*!
@@ -136,6 +140,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
   Returned value depends on the size of playlist, current position
   and playback mode.
 
+  \since 1.0
   \sa QMediaPlaylist::playbackMode
 */
 
@@ -145,6 +150,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
   Returns the index of item, which were current after calling previous()
   \a step times.
 
+  \since 1.0
   \sa QMediaPlaylist::playbackMode
 */
 
@@ -152,12 +158,14 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
   \fn QMediaPlaylistControl::next()
 
   Moves to the next item in playlist.
+  \since 1.0
 */
 
 /*!
   \fn QMediaPlaylistControl::previous()
 
   Returns to the previous item in playlist.
+  \since 1.0
 */
 
 /*!
@@ -165,6 +173,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 
   Returns the playlist navigation mode.
 
+  \since 1.0
   \sa QMediaPlaylist::PlaybackMode
 */
 
@@ -173,6 +182,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 
   Sets the playback \a mode.
 
+  \since 1.0
   \sa QMediaPlaylist::PlaybackMode
 */
 
@@ -180,24 +190,28 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
   \fn QMediaPlaylistControl::playlistProviderChanged()
 
   Signal emitted when the playlist provider has changed.
+  \since 1.0
 */
 
 /*!
   \fn QMediaPlaylistControl::currentIndexChanged(int position)
 
   Signal emitted when the playlist \a position is changed.
+  \since 1.0
 */
 
 /*!
   \fn QMediaPlaylistControl::playbackModeChanged(QMediaPlaylist::PlaybackMode mode)
 
   Signal emitted when the playback \a mode is changed.
+  \since 1.0
 */
 
 /*!
   \fn QMediaPlaylistControl::currentMediaChanged(const QMediaContent& content)
 
   Signal emitted when current media changes to \a content.
+  \since 1.0
 */
 
 #include "moc_qmediaplaylistcontrol.cpp"

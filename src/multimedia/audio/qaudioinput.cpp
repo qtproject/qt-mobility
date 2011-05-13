@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
     \inmodule QtMultimediaKit
     \ingroup  multimedia
-    \since 4.6
+    \since 1.0
 
     You can construct an audio input with the system's
     \l{QAudioDeviceInfo::defaultInputDevice()}{default audio input
@@ -131,6 +131,7 @@ QT_BEGIN_NAMESPACE
     Construct a new audio input and attach it to \a parent.
     The default audio input device is used with the output
     \a format parameters.
+    \since 1.0
 */
 
 QAudioInput::QAudioInput(const QAudioFormat &format, QObject *parent):
@@ -145,6 +146,7 @@ QAudioInput::QAudioInput(const QAudioFormat &format, QObject *parent):
     Construct a new audio input and attach it to \a parent.
     The device referenced by \a audioDevice is used with the input
     \a format parameters.
+    \since 1.0
 */
 
 QAudioInput::QAudioInput(const QAudioDeviceInfo &audioDevice, const QAudioFormat &format, QObject *parent):
@@ -178,6 +180,7 @@ QAudioInput::~QAudioInput()
 
      \l{QAudioInput#Symbian Platform Security Requirements}
 
+     \since 1.0
      \sa QIODevice
 */
 
@@ -200,6 +203,7 @@ void QAudioInput::start(QIODevice* device)
 
     \l{QAudioInput#Symbian Platform Security Requirements}
 
+    \since 1.0
     \sa QIODevice
 */
 
@@ -210,6 +214,7 @@ QIODevice* QAudioInput::start()
 
 /*!
     Returns the QAudioFormat being used.
+    \since 1.0
 */
 
 QAudioFormat QAudioInput::format() const
@@ -222,6 +227,7 @@ QAudioFormat QAudioInput::format() const
 
     Sets error() to QAudio::NoError, state() to QAudio::StoppedState and
     emit stateChanged() signal.
+    \since 1.0
 */
 
 void QAudioInput::stop()
@@ -231,6 +237,7 @@ void QAudioInput::stop()
 
 /*!
     Drops all audio data in the buffers, resets buffers to zero.
+    \since 1.0
 */
 
 void QAudioInput::reset()
@@ -243,6 +250,7 @@ void QAudioInput::reset()
 
     Sets error() to QAudio::NoError, state() to QAudio::SuspendedState and
     emit stateChanged() signal.
+    \since 1.0
 */
 
 void QAudioInput::suspend()
@@ -257,6 +265,7 @@ void QAudioInput::suspend()
     Sets state() to QAudio::ActiveState if you previously called start(QIODevice*).
     Sets state() to QAudio::IdleState if you previously called start().
     emits stateChanged() signal.
+    \since 1.0
 */
 
 void QAudioInput::resume()
@@ -272,6 +281,7 @@ void QAudioInput::resume()
     set is the actual buffer size used, calling bufferSize() anytime after start()
     will return the actual buffer size being used.
 
+    \since 1.0
 */
 
 void QAudioInput::setBufferSize(int value)
@@ -287,6 +297,7 @@ void QAudioInput::setBufferSize(int value)
     If called after start(), returns the actual buffer size being used. This may not be what was set previously
     by setBufferSize().
 
+    \since 1.0
 */
 
 int QAudioInput::bufferSize() const
@@ -299,6 +310,7 @@ int QAudioInput::bufferSize() const
 
     NOTE: returned value is only valid while in QAudio::ActiveState or QAudio::IdleState
     state, otherwise returns zero.
+    \since 1.0
 */
 
 int QAudioInput::bytesReady() const
@@ -314,6 +326,7 @@ int QAudioInput::bytesReady() const
     Returns the period size in bytes.
 
     Note: This is the recommended read size in bytes.
+    \since 1.0
 */
 
 int QAudioInput::periodSize() const
@@ -328,6 +341,7 @@ int QAudioInput::periodSize() const
     The minimum resolution of the timer is platform specific and values
     should be checked with notifyInterval() to confirm actual value
     being used.
+    \since 1.0
 */
 
 void QAudioInput::setNotifyInterval(int ms)
@@ -337,6 +351,7 @@ void QAudioInput::setNotifyInterval(int ms)
 
 /*!
     Returns the notify interval in milliseconds.
+    \since 1.0
 */
 
 int QAudioInput::notifyInterval() const
@@ -347,6 +362,7 @@ int QAudioInput::notifyInterval() const
 /*!
     Returns the amount of audio data processed since start()
     was called in microseconds.
+    \since 1.0
 */
 
 qint64 QAudioInput::processedUSecs() const
@@ -357,6 +373,7 @@ qint64 QAudioInput::processedUSecs() const
 /*!
     Returns the microseconds since start() was called, including time in Idle and
     Suspend states.
+    \since 1.0
 */
 
 qint64 QAudioInput::elapsedUSecs() const
@@ -366,6 +383,7 @@ qint64 QAudioInput::elapsedUSecs() const
 
 /*!
     Returns the error state.
+    \since 1.0
 */
 
 QAudio::Error QAudioInput::error() const
@@ -375,6 +393,7 @@ QAudio::Error QAudioInput::error() const
 
 /*!
     Returns the state of audio processing.
+    \since 1.0
 */
 
 QAudio::State QAudioInput::state() const
@@ -385,12 +404,14 @@ QAudio::State QAudioInput::state() const
 /*!
     \fn QAudioInput::stateChanged(QAudio::State state)
     This signal is emitted when the device \a state has changed.
+    \since 1.0
 */
 
 /*!
     \fn QAudioInput::notify()
     This signal is emitted when x ms of audio data has been processed
     the interval set by setNotifyInterval(x).
+    \since 1.0
 */
 
 QT_END_NAMESPACE
