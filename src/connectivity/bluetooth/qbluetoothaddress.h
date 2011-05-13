@@ -62,6 +62,12 @@ public:
     explicit QBluetoothAddress(const QString &address);
     QBluetoothAddress(const QBluetoothAddress &other);
 
+    ~QBluetoothAddress() {
+        if(d_ptr) {
+            *this = QBluetoothAddress();
+        }
+    }
+
     QBluetoothAddress &operator=(const QBluetoothAddress &other);
 
     bool isNull() const;

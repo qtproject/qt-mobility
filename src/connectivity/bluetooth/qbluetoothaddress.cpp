@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn inline bool QBluetoothAddress::operator!=(const QBluetoothAddress &other) const
 
+
     Compares this Bluetooth address with \a other.
 
     Returns true if the Bluetooth addresses are not equal, otherwise returns false.
@@ -78,19 +79,15 @@ public:
     Constructs an null Bluetooth address.
 */
 QBluetoothAddress::QBluetoothAddress()
-:   d_ptr(new QBluetoothAddressPrivate)
 {
-    Q_D(QBluetoothAddress);
-
-    d->m_address = 0;
-
+    d_ptr = 0;
 }
 
 /*!
     Constructs a new Bluetooth address and assigns \a address to it.
 */
 QBluetoothAddress::QBluetoothAddress(quint64 address)
-:   d_ptr(new QBluetoothAddressPrivate)
+    : d_ptr(new QBluetoothAddressPrivate)
 {
     Q_D(QBluetoothAddress);
     d->m_address = address;
@@ -126,9 +123,14 @@ QBluetoothAddress::QBluetoothAddress(const QString &address)
     Constructs a new Bluetooth address which is a copy of \a other.
 */
 QBluetoothAddress::QBluetoothAddress(const QBluetoothAddress &other)
-    : d_ptr(other.d_ptr)
-
 {
+    if(!other.d_ptr) {
+        d_ptr = 0;
+    }
+    else {
+        d_ptr = new QBluetoothAddressPrivate;
+        d_ptr->m_address = other.d_ptr->m_address;
+    }
 }
 
 /*!
@@ -136,7 +138,15 @@ QBluetoothAddress::QBluetoothAddress(const QBluetoothAddress &other)
 */
 QBluetoothAddress &QBluetoothAddress::operator=(const QBluetoothAddress &other)   
 {
-    d_ptr = other.d_ptr;
+    if(!other.d_ptr) {
+        delete d_ptr;
+        d_ptr = 0;
+    }
+    else {
+        if(!d_ptr)
+            d_ptr = new QBluetoothAddressPrivate;
+        d_ptr->m_address = other.d_ptr->m_address;
+    }
     return *this;
 }
 
@@ -146,7 +156,8 @@ QBluetoothAddress &QBluetoothAddress::operator=(const QBluetoothAddress &other)
 void QBluetoothAddress::clear()
 {
     Q_D(QBluetoothAddress);
-    d->m_address = 0;
+    if(d_ptr)
+        d->m_address = 0;
 }
 
 /*!
@@ -154,6 +165,9 @@ void QBluetoothAddress::clear()
 */
 bool QBluetoothAddress::isNull() const
 {
+    if(!d_ptr)
+        return true;
+
     Q_D(const QBluetoothAddress);
 
     return d->m_address == 0;
@@ -167,6 +181,12 @@ bool QBluetoothAddress::operator<(const QBluetoothAddress &other) const
 {
     Q_D(const QBluetoothAddress);
 
+    if(!d_ptr && other.d_ptr)
+        return true;
+
+    if(!d_ptr || !other.d_ptr)
+        return false;
+
     return d->m_address < other.d_func()->m_address;
 }
 
@@ -178,6 +198,17 @@ bool QBluetoothAddress::operator<(const QBluetoothAddress &other) const
 bool QBluetoothAddress::operator==(const QBluetoothAddress &other) const
 {    
     Q_D(const QBluetoothAddress);
+
+    // check if they are both null
+    if(d_ptr == other.d_ptr)
+        return true;
+
+    if(!d_ptr)
+        return false;
+
+    if(!other.d_ptr)
+        return false;
+
     return d->m_address == other.d_func()->m_address;
 }
 
@@ -187,6 +218,8 @@ bool QBluetoothAddress::operator==(const QBluetoothAddress &other) const
 quint64 QBluetoothAddress::toUInt64() const
 {
     Q_D(const QBluetoothAddress);
+    if(!d_ptr)
+        return 0;
     return d->m_address;
 }
 
@@ -195,6 +228,9 @@ quint64 QBluetoothAddress::toUInt64() const
 */
 QString QBluetoothAddress::toString() const
 {
+    if(!d_ptr)
+        return QString("00:00:00:00:00");
+
     QString s(QLatin1String("%1:%2:%3:%4:%5:%6"));
     Q_D(const QBluetoothAddress);
 
@@ -208,6 +244,7 @@ QString QBluetoothAddress::toString() const
 
 QBluetoothAddressPrivate::QBluetoothAddressPrivate()
 {
+    m_address = 0;
 }
 
 QTM_END_NAMESPACE

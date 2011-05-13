@@ -176,6 +176,10 @@ void tst_QBluetoothAddress::tst_assignment()
 
         QVERIFY(address.toUInt64() == copy1.toUInt64());
         QVERIFY(address.toUInt64() == copy2.toUInt64());
+
+	copy1.clear();
+	QVERIFY(copy1.isNull());
+	QVERIFY2(copy1 != address, "Verify that copy1 is a copy of address, the d_ptr are being copied");
     }
 }
 
