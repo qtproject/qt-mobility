@@ -4449,7 +4449,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
 
     //TODO: symbia matching landmarks with no name
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if (defined(Q_OS_SYMBIAN) || defined(SPARQL_BACKEND))
     QCOMPARE(lms.count(), 11); //backend specific behaviour of returning all results if
                                //empty name is used
 #else
