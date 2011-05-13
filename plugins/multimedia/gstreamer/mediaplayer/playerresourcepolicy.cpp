@@ -174,5 +174,7 @@ void PlayerResourcePolicy::handleResourcesLost()
         emit resourcesLost();
     }
 
+#ifdef HAVE_RESOURCE_POLICY
     m_resourceSet->release();
+#endif
 }
