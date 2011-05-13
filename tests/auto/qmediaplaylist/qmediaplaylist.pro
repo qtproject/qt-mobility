@@ -28,3 +28,4 @@ INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/multimedia/m3u
 CONFIG += mobility
 MOBILITY = multimedia
 
+maemo*:CONFIG += insignificant_test

@@ -1,0 +1,6 @@
+usr/tests/qtm/tst_qvaluespacesubscriber
+usr/tests/qtm/tst_qvaluespacepublisher
+usr/tests/qtm/tst_qvaluespace
+usr/tests/qtm/tst_qcrmlparser
+usr/tests/qtm/tst_qvaluespacesubscriber_oop
+usr/share/libqtm-publishsubscribe-tests/tests.xml

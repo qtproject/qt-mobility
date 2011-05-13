@@ -21,3 +21,4 @@ symbian: {
                         WriteUserData
 }
 
+maemo*:CONFIG += insignificant_test

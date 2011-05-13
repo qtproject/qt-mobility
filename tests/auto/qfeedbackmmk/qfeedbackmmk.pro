@@ -20,3 +20,4 @@ QT += core
 CONFIG += mobility
 MOBILITY = feedback
 
+maemo*:CONFIG += insignificant_test

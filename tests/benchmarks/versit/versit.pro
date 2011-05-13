@@ -34,3 +34,5 @@ symbian: {
     LIBS += -lws32 \
         -lbafl
 }
+
+maemo*:CONFIG += insignificant_test

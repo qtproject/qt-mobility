@@ -27,3 +27,4 @@ MOBILITY = connectivity
 
 DEFINES += SRCDIR=\\\"$$PWD\\\"
 
+maemo*:CONFIG += insignificant_test
