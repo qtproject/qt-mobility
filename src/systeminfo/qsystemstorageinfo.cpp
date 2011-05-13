@@ -56,7 +56,7 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemStorageInfo class provides access to disk storage information from the system.
-    \since 1.1
+    \since 1.0
 */
 
 /*!
@@ -68,8 +68,8 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     \value RemovableDrive        Is a removable disk like MMC.
     \value RemoteDrive           Is a network drive.
     \value CdromDrive            Is a cd rom drive.
-    \value InternalFlashDrive    Is an internal flash disk, or Phone Memory.
-    \value RamDrive              Is a virtual drive made in RAM memory.
+    \value InternalFlashDrive    Is an internal flash disk, or Phone Memory. Since 1.2
+    \value RamDrive              Is a virtual drive made in RAM memory. Since 1.2
 */
 
 /*!
@@ -89,6 +89,7 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     This signal gets emitted when new storage has been added or removed from the system.
     \a added is true when a new drive is found, otherwise false when removed.
     \a vol is the volume's name.
+    \since 1.1
 */
 
 /*!
@@ -98,6 +99,7 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     being the volume name, and \a state being the new state.
 
     The polling time may be different for different platforms.
+   \since 1.2
 */
 
 /*!
@@ -120,6 +122,7 @@ QSystemStorageInfo::~QSystemStorageInfo()
 
 /*!
     Returns the amount of total space on the \a volumeDrive, in bytes.
+    \since 1.0
 */
 qlonglong QSystemStorageInfo::totalDiskSpace(const QString &volumeDrive)
 {
@@ -128,6 +131,7 @@ qlonglong QSystemStorageInfo::totalDiskSpace(const QString &volumeDrive)
 
 /*!
     Returns the amount of available free space on the \a volumeDrive, in bytes.
+    \since 1.0
 */
 qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
 {
@@ -139,6 +143,7 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
     \brief The logical drives.
 
     Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
+    \since 1.0
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
@@ -147,6 +152,7 @@ QStringList QSystemStorageInfo::logicalDrives()
 
 /*!
     Returns the type of volume \a driveVolume
+    \since 1.0
 */
 QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &driveVolume)
 {
@@ -155,6 +161,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 
 /*!
     Returns the uri, or unique identifier for \a driveVolume.
+    \since 1.2
 */
 QString QSystemStorageInfo::uriForDrive(const QString &driveVolume)
 {
@@ -163,6 +170,7 @@ QString QSystemStorageInfo::uriForDrive(const QString &driveVolume)
 
 /*!
     Returns the storage state of volume \a driveVolume
+    \since 1.2
 */
 QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &driveVolume)
 {

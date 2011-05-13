@@ -77,7 +77,7 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
     \class QSystemDisplayInfo
     \ingroup systeminfo
     \inmodule QtSystemInfo
-    \since 1.1
+    \since 1.0
     \brief The QSystemDisplayInfo class provides access to display information from the system.
 */
 
@@ -111,6 +111,7 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
     -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.0
 */
 int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
@@ -126,6 +127,7 @@ int QSystemDisplayInfo::displayBrightness(int screenNumber)
     -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.0
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
@@ -140,6 +142,7 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
     Returns the orientation of the UI QDesktopWidget for \a screen.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int screen)
 {
@@ -151,6 +154,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int scree
     not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 float QSystemDisplayInfo::contrast(int screen)
 {
@@ -162,6 +166,7 @@ float QSystemDisplayInfo::contrast(int screen)
     not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::getDPIWidth(int screen)
 {
@@ -173,6 +178,7 @@ int QSystemDisplayInfo::getDPIWidth(int screen)
     or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::getDPIHeight(int screen)
 {
@@ -184,6 +190,7 @@ int QSystemDisplayInfo::getDPIHeight(int screen)
     or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::physicalHeight(int screen)
 {
@@ -195,6 +202,7 @@ int QSystemDisplayInfo::physicalHeight(int screen)
     on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::physicalWidth(int screen)
 {
@@ -203,6 +211,7 @@ int QSystemDisplayInfo::physicalWidth(int screen)
 
 /*!
     Returns whether the QSystemDisplayInfo::BacklightState for the screen \a screen.
+    \since 1.2
 */
 QSystemDisplayInfo::BacklightState QSystemDisplayInfo::backlightStatus(int screen)
 {
