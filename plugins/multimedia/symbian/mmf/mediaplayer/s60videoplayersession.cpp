@@ -650,7 +650,7 @@ void S60VideoPlayerSession::doSetVolumeL(int volume)
 
 /*!
  * Notification to the client that the opening of the video clip has completed.
- * If successfull then an \a aError will be ZERO else system wide error.
+ * If successful then an \a aError will be ZERO else system wide error.
 */
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
@@ -707,7 +707,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 
 /*!
  * Notification to the client that the opening of the video clip has been preapred.
- * If successfull then an \a aError will be ZERO else system wide error.
+ * If successful then an \a aError will be ZERO else system wide error.
 */
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)

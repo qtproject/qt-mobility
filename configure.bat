@@ -631,7 +631,6 @@ call :compileTest DiskNotifyClientCheck DiskNotifyClient
 call :compileTest ThermalStatus_Symbian thermalstatus_symbian
 call :compileTest Flextimer_Symbian symbianflextimer
 call :compileTest ETelPacketservice_symbian etelpacketservice_symbian
-REM HTML5 related changes
 call :compileTest mmf_http_cookies mmf_http_cookies
 goto noTests
 
