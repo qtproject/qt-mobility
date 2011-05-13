@@ -110,10 +110,10 @@ CQGeoPositionInfoSourceS60* CQGeoPositionInfoSourceS60::NewL(QObject * aParent)
     //check if the second phase construction is successful
     // commented to return the pointer and the application can check if it
     //is valid or not
-   /* if (!self->isValid()) {
-        delete self;
-        self = NULL;
-    }*/
+    /* if (!self->isValid()) {
+         delete self;
+         self = NULL;
+     }*/
 
     return self;
 }
@@ -826,9 +826,9 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 // starts the regular updates
 void CQGeoPositionInfoSourceS60::startUpdates()
 {
-		//SetUpdateInterval if it is not already set from application
-		if (!mUpdateIntervalSet)
-			setUpdateInterval(1000);
+    //SetUpdateInterval if it is not already set from application
+    if (!mUpdateIntervalSet)
+        setUpdateInterval(1000);
 
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
         emit updateTimeout();
