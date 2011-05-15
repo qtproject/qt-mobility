@@ -109,11 +109,13 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageContentContainer::QMessageContentContainer(const QMessageContentContainer &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageContentContainer::operator=(const QMessageContentContainer& other)
+    \since 1.0
 */
 
 /*!
@@ -131,6 +133,7 @@ QTM_BEGIN_NAMESPACE
     The internet media (MIME) type of the container is "multipart" if the container directly
     contains multiple parts rather than directly contains media.
 
+    \since 1.0
     \sa contentSubType(), contentCharset()
 */
 
@@ -139,6 +142,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns the internet media (MIME) subtype of the content.
 
+    \since 1.0
     \sa contentType(), contentCharset()
 */
 
@@ -148,6 +152,7 @@ QTM_BEGIN_NAMESPACE
     Returns the internet media (MIME) content charset, when defined;
     otherwise an empty array is returned.
 
+    \since 1.0
     \sa contentType(), contentSubType()
 */
 
@@ -158,6 +163,7 @@ QTM_BEGIN_NAMESPACE
     otherwise an empty array is returned.
 
     The default is an empty array.
+    \since 1.0
 */
 
 /*!
@@ -165,6 +171,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns true if the entirety of the content contained is available on the device;
     otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -172,6 +179,7 @@ QTM_BEGIN_NAMESPACE
 
     If the size of the container is known then returns an indication of the size of the container
     on the originating server, including contents; otherwise returns 0.
+    \since 1.0
 */
 
 /*!
@@ -179,6 +187,7 @@ QTM_BEGIN_NAMESPACE
 
     For textual content encoded with a recognized charset, returns the content as a unicode string;
     otherwise a null string is returned.
+    \since 1.0
 */
 
 /*!
@@ -190,6 +199,7 @@ QTM_BEGIN_NAMESPACE
     For textual content any text charset encoding such as Shift-JIS, ISO 2022-JP, KOI8-R,
     Windows-1251 etc will not be decoded.
 
+    \since 1.0
     \sa textContent()
 */
 
@@ -198,6 +208,7 @@ QTM_BEGIN_NAMESPACE
 
     For a non-multipart container, writes the content as returned by textContent()
     to the stream \a out; otherwise does nothing.
+    \since 1.0
 */
 
 /*!
@@ -205,6 +216,7 @@ QTM_BEGIN_NAMESPACE
 
     For a non-multipart container, writes the content as returned by content()
     to the stream \a out; otherwise does nothing.
+    \since 1.0
 */
 
 /*!
@@ -213,6 +225,7 @@ QTM_BEGIN_NAMESPACE
     For a multipart container returns a list of identifiers for all content directly contained by
     the container; otherwise returns an empty list.
 
+    \since 1.0
     \sa find(), contains()
 */
 
@@ -223,6 +236,7 @@ QTM_BEGIN_NAMESPACE
     recursively, then returns the value of that other container; otherwise returns an
     empty container constructed with the default constructor.
 
+    \since 1.0
     \sa contains(), contentIds()
 */
 
@@ -232,6 +246,7 @@ QTM_BEGIN_NAMESPACE
     If the container contains content with the identifier \a id, either directly or recursively
     then returns true; otherwise returns false.
 
+    \since 1.0
     \sa find(), contentIds()
 */
 
@@ -241,6 +256,7 @@ QTM_BEGIN_NAMESPACE
     Returns the value of the first header field of the container with the name \a name, if any;
     otherwise returns a null string.
 
+    \since 1.0
     \sa headerFields(), headerFieldValues()
 */
 
@@ -250,6 +266,7 @@ QTM_BEGIN_NAMESPACE
     Returns a list of values of header fields with the name \a name, if any;
     otherwise returns an empty list.
 
+    \since 1.0
     \sa headerFields(), headerFieldValue()
 */
 
@@ -258,6 +275,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns a list of names of header fields of the container.
 
+    \since 1.0
     \sa headerFieldValue(), headerFieldValues()
 */
 

@@ -223,6 +223,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a request to calculate a route through the coordinates \a waypoints.
 
     The route will traverse the elements of \a waypoints in order.
+    \since 1.1
 */
 QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
     : d_ptr(new QGeoRouteRequestPrivate())
@@ -233,6 +234,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
 /*!
     Constructs a request to calculate a route between \a origin and
     \a destination.
+    \since 1.1
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoordinate &destination)
     : d_ptr(new QGeoRouteRequestPrivate())
@@ -243,6 +245,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoord
 
 /*!
     Constructs a route request object from the contents of \a other.
+    \since 1.1
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
     : d_ptr(other.d_ptr) {}
@@ -255,6 +258,7 @@ QGeoRouteRequest::~QGeoRouteRequest() {}
 /*!
     Assigns \a other to this route request object and then returns a reference
     to this route request object.
+    \since 1.1
 */
 QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 {
@@ -264,6 +268,7 @@ QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 
 /*!
     Returns whether this route request and \a other are equal.
+    \since 1.1
 */
 bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
 {
@@ -272,6 +277,7 @@ bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
 
 /*!
     Returns whether this route request and \a other are equal.
+    \since 1.1
 */
 bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
 {
@@ -285,6 +291,7 @@ bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
 
     This request will be invalid until the waypoints have been set to a
     list containing two or more coordinates.
+    \since 1.1
 */
 void QGeoRouteRequest::setWaypoints(const QList<QGeoCoordinate> &waypoints)
 {
@@ -293,6 +300,7 @@ void QGeoRouteRequest::setWaypoints(const QList<QGeoCoordinate> &waypoints)
 
 /*!
     Returns the waypoints that the route will pass through.
+    \since 1.1
 */
 QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 {
@@ -301,6 +309,7 @@ QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 
 /*!
     Sets \a areas as excluded areas that the route must not cross.
+    \since 1.1
 */
 void QGeoRouteRequest::setExcludeAreas(const QList<QGeoBoundingBox> &areas)
 {
@@ -309,6 +318,7 @@ void QGeoRouteRequest::setExcludeAreas(const QList<QGeoBoundingBox> &areas)
 
 /*!
     Returns areas the route must not cross.
+    \since 1.1
 */
 QList<QGeoBoundingBox> QGeoRouteRequest::excludeAreas() const
 {
@@ -319,6 +329,7 @@ QList<QGeoBoundingBox> QGeoRouteRequest::excludeAreas() const
     Sets the number of alternative routes to request to \a alternatives.
 
     The default value is 0.
+    \since 1.1
 */
 void QGeoRouteRequest::setNumberAlternativeRoutes(int alternatives)
 {
@@ -327,6 +338,7 @@ void QGeoRouteRequest::setNumberAlternativeRoutes(int alternatives)
 
 /*!
     Returns the number of alternative routes which will be requested.
+    \since 1.1
 */
 int QGeoRouteRequest::numberAlternativeRoutes() const
 {
@@ -338,6 +350,7 @@ int QGeoRouteRequest::numberAlternativeRoutes() const
     route to \a travelModes.
 
     The default value is QGeoRouteRequest::CarTravel.
+    \since 1.1
 */
 void QGeoRouteRequest::setTravelModes(QGeoRouteRequest::TravelModes travelModes)
 {
@@ -347,6 +360,7 @@ void QGeoRouteRequest::setTravelModes(QGeoRouteRequest::TravelModes travelModes)
 /*!
     Returns the travel modes which this request specifies should be considered
     during the planning of the route.
+    \since 1.1
 */
 QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
 {
@@ -360,6 +374,7 @@ QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
     By default all features are assigned a weight of NeutralFeatureWeight.
 
     It is impossible to assign a weight to QGeoRouteRequest::NoFeature.
+    \since 1.1
 */
 void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureType, QGeoRouteRequest::FeatureWeight featureWeight)
 {
@@ -376,6 +391,7 @@ void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureTyp
 
     If no feature weight has been specified for \a featureType then
     NeutralFeatureWeight will be returned.
+    \since 1.1
 */
 QGeoRouteRequest::FeatureWeight QGeoRouteRequest::featureWeight(QGeoRouteRequest::FeatureType featureType) const
 {
@@ -385,6 +401,7 @@ QGeoRouteRequest::FeatureWeight QGeoRouteRequest::featureWeight(QGeoRouteRequest
 /*!
     Returns the list of features that will be considered when planning the
     route.  Features with a weight of NeutralFeatureWeight will not be returned.
+    \since 1.1
 */
 QList<QGeoRouteRequest::FeatureType> QGeoRouteRequest::featureTypes() const
 {
@@ -396,6 +413,7 @@ QList<QGeoRouteRequest::FeatureType> QGeoRouteRequest::featureTypes() const
     \a optimization.
 
     The default value is QGeoRouteRequest::FastestRoute.
+    \since 1.1
 */
 void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimizations optimization)
 {
@@ -405,6 +423,7 @@ void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimizations
 /*!
     Returns the optimization criteria which this request specifies should be
     used while planning the route.
+    \since 1.1
 */
 QGeoRouteRequest::RouteOptimizations QGeoRouteRequest::routeOptimization() const
 {
@@ -414,6 +433,7 @@ QGeoRouteRequest::RouteOptimizations QGeoRouteRequest::routeOptimization() const
 /*!
     Sets the level of detail to use when representing routing segments to
     \a segmentDetail.
+    \since 1.1
 */
 void QGeoRouteRequest::setSegmentDetail(QGeoRouteRequest::SegmentDetail segmentDetail)
 {
@@ -423,6 +443,7 @@ void QGeoRouteRequest::setSegmentDetail(QGeoRouteRequest::SegmentDetail segmentD
 /*!
     Returns the level of detail which will be used in the representation of
     routing segments.
+    \since 1.1
 */
 QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
 {
@@ -434,6 +455,7 @@ QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
     \a maneuverDetail.
 
     The default value is QGeoRouteRequest::BasicManeuvers.
+    \since 1.1
 */
 void QGeoRouteRequest::setManeuverDetail(QGeoRouteRequest::ManeuverDetail maneuverDetail)
 {
@@ -443,6 +465,7 @@ void QGeoRouteRequest::setManeuverDetail(QGeoRouteRequest::ManeuverDetail maneuv
 /*!
     Returns the level of detail which will be used in the representation of
     routing maneuvers.
+    \since 1.1
 */
 QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 {

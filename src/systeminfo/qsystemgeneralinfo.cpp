@@ -58,29 +58,6 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \inmodule QtSystemInfo
     \since 1.0
     \brief The QSystemInfo class provides access to various general information from the system.
-    \bold NOTE: In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
-
-    \table
-        \header
-            \o Class
-        \row
-            \o QSystemInfo::currentLanguage
-        \row
-            \o QSystemInfo::availableLanguages
-        \row
-            \o QSystemInfo::currentCountryCode
-        \row
-            \o QSystemDisplayInfo::displayBrightness
-        \row
-            \o QSystemDisplayInfo::colorDepth
-        \row
-            \o QSystemScreenSaver::screenSaverInhibited
-        \row
-            \o QSystemScreenSaver::setScreenSaverInhibit
-    \endtable
-
-    Platform notes: Some functionality may or may not be supported on various platforms, depending on if there
-    is a reliable way to gather such information.
 */
 
 /*!
@@ -188,20 +165,18 @@ QStringList QSystemInfo::availableLanguages()
 }
 
 /*!
-    Returns the version of QSystemInfo::Version \a type,
-    with optional platform dependent \a parameter as a string.
+    Returns the version of QSystemInfo::Version \a type, with optional platform dependent
+    \a parameter as a string.
 
-    Version will be returned in "major.minor.build" form.
-
-    In case a particular version does not use the "build" part, it is set to 0.
-    If a particular element is not available at all, an error "Not Installed" will be returned by
-    the API.
+    In case of error or not available, an empty string is returned.
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
     switch(type) {
     case QSystemInfo::QtMobility:
         return QLatin1String(QTM_VERSION_STR);
+    case QSystemInfo::QtCore:
+        return QString(qVersion());
     default:
         return sysinfoPrivate()->version(type, parameter);
     }

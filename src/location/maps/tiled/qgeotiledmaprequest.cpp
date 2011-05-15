@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
-    \since 1.2
+    \since 1.1
 
     The tile is specified by a map type, a zoom level, a row and a column.
 
@@ -85,6 +85,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
 
     The rectangle that the tile occupies on the map at the maximum zoom level
     is also given as \a tileRect.
+    \since 1.1
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode connectivityMode,
         QGraphicsGeoMap::MapType mapType,
@@ -106,6 +107,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode conne
 
 /*!
     Constructs a tiled map request from the contents of \a other.
+    \since 1.1
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(const QGeoTiledMapRequest &other)
     : d_ptr(other.d_ptr) {}
@@ -118,6 +120,7 @@ QGeoTiledMapRequest::~QGeoTiledMapRequest() {}
 /*!
     Assigns \a other to this tiled map request and then returns a reference to
     this tiled map request.
+    \since 1.1
 */
 QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest & other)
 {
@@ -128,6 +131,7 @@ QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest &
 
 /*!
     Returns with this tiled map request is equal to \a other.
+    \since 1.1
 */
 bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
 {
@@ -148,6 +152,7 @@ bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
 
 /*!
     Returns the connectivity mode of the tile request.
+    \since 1.1
 */
 QGraphicsGeoMap::ConnectivityMode QGeoTiledMapRequest::connectivityMode() const
 {
@@ -156,6 +161,7 @@ QGraphicsGeoMap::ConnectivityMode QGeoTiledMapRequest::connectivityMode() const
 
 /*!
     Returns the map type of the requested tile.
+    \since 1.1
 */
 QGraphicsGeoMap::MapType QGeoTiledMapRequest::mapType() const
 {
@@ -167,6 +173,7 @@ QGraphicsGeoMap::MapType QGeoTiledMapRequest::mapType() const
 
     The lower and upper bounds of the zoom level are set by
     the QGeoMappingManager that created this request.
+    \since 1.1
 */
 int QGeoTiledMapRequest::zoomLevel() const
 {
@@ -178,6 +185,7 @@ int QGeoTiledMapRequest::zoomLevel() const
 
     At a zoom level of z the world is represented as a 2^z by 2^z grid
     of tiles, and so the row will be between 0 and 2^z - 1.
+    \since 1.1
 */
 int QGeoTiledMapRequest::row() const
 {
@@ -189,6 +197,7 @@ int QGeoTiledMapRequest::row() const
 
     At a zoom level of z the world is represented as a 2^z by 2^z grid
     of tiles, and so the column will be between 0 and 2^z - 1.
+    \since 1.1
 */
 int QGeoTiledMapRequest::column() const
 {
@@ -206,6 +215,7 @@ int QGeoTiledMapRequest::column() const
 
     The rectangle returned is specified relative to the pixel coordinates of
     the map at the maximum zoom level.
+    \since 1.1
 */
 QRect QGeoTiledMapRequest::tileRect() const
 {
@@ -214,6 +224,7 @@ QRect QGeoTiledMapRequest::tileRect() const
 
 /*!
     Returns a hash of the tiled map request \a key.
+    \since 1.1
 */
 uint qHash(const QGeoTiledMapRequest &key)
 {

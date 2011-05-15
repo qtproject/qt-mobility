@@ -100,6 +100,7 @@ QGeoMapRouteObject::~QGeoMapRouteObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapRouteObject::type() const
 {
@@ -114,6 +115,7 @@ QGeoMapObject::Type QGeoMapRouteObject::type() const
 
     If QGeoRoute::path() returns a list of less than 2 valid QGeoCoordinates
     then the route object will not be displayed.
+    \since 1.1
 */
 QGeoRoute QGeoMapRouteObject::route() const
 {
@@ -134,6 +136,7 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 
     The pen will be treated like a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
+    \since 1.1
 */
 QPen QGeoMapRouteObject::pen() const
 {
@@ -166,6 +169,7 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
     start point and the end point of the line is at least \a detailLevel.
 
     The default value of this property is 6.
+    \since 1.1
 */
 quint32 QGeoMapRouteObject::detailLevel() const
 {
@@ -187,6 +191,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     has changed.
 
     The new value is \a route.
+    \since 1.1
 */
 
 /*!
@@ -196,6 +201,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     changed.
 
     The new value is \a pen.
+    \since 1.1
 */
 
 /*!
@@ -205,6 +211,7 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
     route object has changed.
 
     The new value is \a detailLevel.
+    \since 1.1
 */
 
 /*******************************************************************************

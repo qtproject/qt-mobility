@@ -2442,13 +2442,20 @@ void tst_QLandmarkManager::saveCategory() {
 #else
     QTest::qWait(10);
 #endif
-       QCOMPARE(spyAdd.count(), 1);
-       QCOMPARE(spyChange.count(), 0);
-       QCOMPARE(spyRemove.count(), 0);
-       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(firstCategoryId));
-       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(secondCategoryId));
-       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(thirdCategoryId));
-       spyAdd.clear();
+        QVERIFY(spyAdd.count() > 0);
+        QList<QLandmarkCategoryId> addedCatIds;
+        for (int i=0; i < spyAdd.count(); ++i) {
+            addedCatIds.append(spyAdd.at(i).at(0).value<QList<QLandmarkCategoryId> >());
+        }
+
+        QVERIFY(addedCatIds.contains(firstCategoryId));
+        QVERIFY(addedCatIds.contains(secondCategoryId));
+        QVERIFY(addedCatIds.contains(thirdCategoryId));
+        QCOMPARE(addedCatIds.count(), 3);
+        spyAdd.clear();
+
+        QCOMPARE(spyChange.count(), 0);
+        QCOMPARE(spyRemove.count(), 0);
 
        //try changing multiple categories
        catNew1.setName("CATNew1Changed");
@@ -2481,12 +2488,19 @@ void tst_QLandmarkManager::saveCategory() {
     QTest::qWait(10);
 #endif
        QCOMPARE(spyAdd.count(), 0);
-       QCOMPARE(spyChange.count(), 1);
-       QCOMPARE(spyRemove.count(), 0);
-       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(firstCategoryId));
-       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(secondCategoryId));
-       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(thirdCategoryId));
+
+       QVERIFY(spyChange.count() > 0);
+       QList<QLandmarkCategoryId> changedCatIds;
+       for (int i=0; i < spyChange.count(); ++i)
+           changedCatIds.append(spyChange.at(i).at(0).value<QList<QLandmarkCategoryId > >());
+
+       QVERIFY(changedCatIds.contains(firstCategoryId));
+       QVERIFY(changedCatIds.contains(secondCategoryId));
+       QVERIFY(changedCatIds.contains(thirdCategoryId));
+       QCOMPARE(changedCatIds.count(), 3);
        spyChange.clear();
+
+       QCOMPARE(spyRemove.count(), 0);
    }
 
    //chec that error is cleared on consecutive saves
@@ -3450,13 +3464,20 @@ void tst_QLandmarkManager::removeCategory() {
 #else
     QCOMPARE(spyCatAdd.count(), 1);
 #endif
-    QCOMPARE(spyCatChange.count(), 0);
-    QCOMPARE(spyCatRemove.count(), 1);
-    QCOMPARE(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().count(),3);
-    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catC.categoryId()));
-    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catB.categoryId()));
-    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catA.categoryId()));
     spyCatAdd.clear();
+
+    QCOMPARE(spyCatChange.count(), 0);
+
+    QVERIFY(spyCatRemove.count() > 0);
+    QList<QLandmarkCategoryId> removedCatIds;
+    for (int i=0; i < spyCatRemove.count(); ++i)
+        removedCatIds.append(spyCatRemove.at(i).at(0).value<QList<QLandmarkCategoryId> >());
+
+    QVERIFY(removedCatIds.contains(catC.categoryId()));
+    QVERIFY(removedCatIds.contains(catB.categoryId()));
+    QVERIFY(removedCatIds.contains(catA.categoryId()));
+    QCOMPARE(removedCatIds.count(), 3);
+
     spyCatRemove.clear();
     }
 

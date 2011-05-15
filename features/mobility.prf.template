@@ -122,8 +122,9 @@ contains(MOBILITY, connectivity) {
 # Mobility libs have UID3 0x2002AC89
 # self-signed Mobility libs have UID3 0xE002AC89
 symbian:contains(CONFIG, mobility)::contains(default_deployment.pkg_prerules, pkg_depends_qt):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
+    mobility_pkg_name = QtMobility
     mobility_default_deployment.pkg_prerules += \
         "; Default dependency to QtMobility libraries" \
-        "(0x2002AC89), 1, 2, 0, {\"QtMobility\"}"
+        "(0x2002AC89), 1, 2, 0, {$$addLanguageDependentPkgItem(mobility_pkg_name)}"
     DEPLOYMENT += mobility_default_deployment
 }
