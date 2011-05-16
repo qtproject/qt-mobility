@@ -122,7 +122,7 @@ QSystemStorageInfo::~QSystemStorageInfo()
 */
 qlonglong QSystemStorageInfo::totalDiskSpace(const QString &drive)
 {
-    return storageInfoPrivate()->totalDiskSpace(volumeDrive);
+    return storageInfoPrivate()->totalDiskSpace(drive);
 }
 
 /*!
@@ -130,7 +130,7 @@ qlonglong QSystemStorageInfo::totalDiskSpace(const QString &drive)
 */
 qlonglong QSystemStorageInfo::availableDiskSpace(const QString &drive)
 {
-    return storageInfoPrivate()->availableDiskSpace(volumeDrive);
+    return storageInfoPrivate()->availableDiskSpace(drive);
 }
 
 /*!
@@ -149,7 +149,7 @@ QStringList QSystemStorageInfo::logicalDrives()
 */
 QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &drive)
 {
-    return storageInfoPrivate()->typeForDrive(driveVolume);
+    return storageInfoPrivate()->typeForDrive(drive);
 }
 
 /*!
@@ -158,7 +158,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 */
 QString QSystemStorageInfo::uriForDrive(const QString &drive)
 {
-    return storageInfoPrivate()->uriForDrive(driveVolume);
+    return storageInfoPrivate()->uriForDrive(drive);
 }
 
 /*!
@@ -167,7 +167,7 @@ QString QSystemStorageInfo::uriForDrive(const QString &drive)
 */
 QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &drive)
 {
-    return storageInfoPrivate()->getStorageState(driveVolume);
+    return storageInfoPrivate()->getStorageState(drive);
 }
 
 /*!
