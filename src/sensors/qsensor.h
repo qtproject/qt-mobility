@@ -98,6 +98,11 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(int error READ error NOTIFY sensorError)
+#ifdef Q_QDOC
+    Q_PROPERTY(int maxBufferSize)
+    Q_PROPERTY(int efficientBufferSize)
+    Q_PROPERTY(int bufferSize)
+#endif
 public:
     explicit QSensor(const QByteArray &type, QObject *parent = 0);
     virtual ~QSensor();

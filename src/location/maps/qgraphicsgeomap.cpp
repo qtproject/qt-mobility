@@ -197,6 +197,7 @@ QGraphicsGeoMap::~QGraphicsGeoMap()
 
 /*!
   \reimp
+  \since 1.1
 */
 void QGraphicsGeoMap::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
@@ -207,6 +208,7 @@ void QGraphicsGeoMap::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 /*!
   \reimp
+  \since 1.1
 */
 QPainterPath QGraphicsGeoMap::shape() const
 {
@@ -217,6 +219,7 @@ QPainterPath QGraphicsGeoMap::shape() const
 
 /*!
   \reimp
+  \since 1.1
 */
 void QGraphicsGeoMap::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
@@ -236,6 +239,7 @@ void QGraphicsGeoMap::updateMapDisplay(const QRectF &target)
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
+    \since 1.1
 */
 qreal QGraphicsGeoMap::minimumZoomLevel() const
 {
@@ -252,6 +256,7 @@ qreal QGraphicsGeoMap::minimumZoomLevel() const
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
+    \since 1.1
 */
 qreal QGraphicsGeoMap::maximumZoomLevel() const
 {
@@ -271,6 +276,7 @@ qreal QGraphicsGeoMap::maximumZoomLevel() const
     If zoomLevel is less than minimumZoomLevel then minimumZoomLevel
     will be used, and if zoomLevel is  larger than
     maximumZoomLevel then maximumZoomLevel will be used.
+    \since 1.1
 */
 void QGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
@@ -289,6 +295,7 @@ qreal QGraphicsGeoMap::zoomLevel() const
     \property QGraphicsGeoMap::supportsBearing
     \brief This property holds whether bearing is supported by the
     QGeoMappingManager associated with this widget.
+    \since 1.2
 */
 bool QGraphicsGeoMap::supportsBearing() const
 {
@@ -307,6 +314,7 @@ bool QGraphicsGeoMap::supportsBearing() const
 
     Changes to this property will be ignored if supportsBearing()
     returns false.
+    \since 1.2
 */
 void QGraphicsGeoMap::setBearing(qreal bearing)
 {
@@ -326,6 +334,7 @@ qreal QGraphicsGeoMap::bearing() const
     \property QGraphicsGeoMap::supportsTilting
     \brief This property holds whether tilting is supported by the
     QGeoMappingManager associated with this widget.
+    \since 1.2
 */
 bool QGraphicsGeoMap::supportsTilting() const
 {
@@ -342,6 +351,7 @@ bool QGraphicsGeoMap::supportsTilting() const
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
+    \since 1.2
 */
 qreal QGraphicsGeoMap::minimumTilt() const
 {
@@ -358,6 +368,7 @@ qreal QGraphicsGeoMap::minimumTilt() const
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
+    \since 1.2
 */
 qreal QGraphicsGeoMap::maximumTilt() const
 {
@@ -380,6 +391,7 @@ qreal QGraphicsGeoMap::maximumTilt() const
 
     Changes to this property will be ignored if supportsTilting()
     returns false.
+    \since 1.2
 */
 void QGraphicsGeoMap::setTilt(qreal tilt)
 {
@@ -405,6 +417,7 @@ qreal QGraphicsGeoMap::tilt() const
     viewed area down.
 
     After the panning has occurred the centerChanged() signal will be emitted.
+    \since 1.1
 */
 void QGraphicsGeoMap::pan(int dx, int dy)
 {
@@ -420,6 +433,7 @@ void QGraphicsGeoMap::pan(int dx, int dy)
 
     Panning the map can be more efficient than changing the center by small
     increments.
+    \since 1.1
 */
 void QGraphicsGeoMap::setCenter(const QGeoCoordinate &center)
 {
@@ -438,6 +452,7 @@ QGeoCoordinate QGraphicsGeoMap::center() const
 /*!
     Returns the map types supported by the QGeoMappingManager associated with
     this widget.
+    \since 1.1
 */
 QList<QGraphicsGeoMap::MapType> QGraphicsGeoMap::supportedMapTypes() const
 {
@@ -453,6 +468,7 @@ QList<QGraphicsGeoMap::MapType> QGraphicsGeoMap::supportedMapTypes() const
 
   Setting mapType to a type not present in supportedMapTypes() will do
   nothing.
+    \since 1.1
 */
 void QGraphicsGeoMap::setMapType(QGraphicsGeoMap::MapType mapType)
 {
@@ -475,6 +491,7 @@ QGraphicsGeoMap::MapType QGraphicsGeoMap::mapType() const
 /*!
     Returns the connectivity modes supported by the QGeoMappingManager associated with
     this widget.
+    \since 1.1
 */
 QList<QGraphicsGeoMap::ConnectivityMode> QGraphicsGeoMap::supportedConnectivityModes() const
 {
@@ -490,6 +507,7 @@ QList<QGraphicsGeoMap::ConnectivityMode> QGraphicsGeoMap::supportedConnectivityM
 
   Setting connectivityMode to a mode not present in supportedConnectivityModes() will do
   nothing.
+  \since 1.1
 */
 void QGraphicsGeoMap::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode connectivityMode)
 {
@@ -515,6 +533,7 @@ QGraphicsGeoMap::ConnectivityMode QGraphicsGeoMap::connectivityMode() const
     Custom map objects are map objects based on QGraphicsItem instances, which
     are hard to support in cases where the map rendering is not being
     performed by the Qt Graphics View framwork.
+    \since 1.2
 */
 bool QGraphicsGeoMap::supportsCustomMapObjects() const
 {
@@ -526,6 +545,7 @@ bool QGraphicsGeoMap::supportsCustomMapObjects() const
 
 /*!
     Returns the map objects associated with this map.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjects() const
 {
@@ -546,6 +566,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjects() const
 
     If supportsCustomMapObject() returns false and \a mapObject is a custom map
     object then \a mapObject will not be added to the map.
+    \since 1.1
 */
 void QGraphicsGeoMap::addMapObject(QGeoMapObject *mapObject)
 {
@@ -568,6 +589,7 @@ void QGraphicsGeoMap::addMapObject(QGeoMapObject *mapObject)
     the map object immediately.
 
     The map will release ownership of the \a mapObject.
+    \since 1.1
 */
 void QGraphicsGeoMap::removeMapObject(QGeoMapObject *mapObject)
 {
@@ -583,6 +605,7 @@ void QGraphicsGeoMap::removeMapObject(QGeoMapObject *mapObject)
     Clears the map objects associated with this map.
 
     The map objects will be deleted.
+    \since 1.1
 */
 void QGraphicsGeoMap::clearMapObjects()
 {
@@ -594,6 +617,7 @@ void QGraphicsGeoMap::clearMapObjects()
 
 /*!
     Returns the map overlays associated with this map.
+    \since 1.1
 */
 QList<QGeoMapOverlay*> QGraphicsGeoMap::mapOverlays() const
 {
@@ -609,6 +633,7 @@ QList<QGeoMapOverlay*> QGraphicsGeoMap::mapOverlays() const
     The overlays will be drawn in the order in which they were added.
 
     The map will take ownership of \a overlay.
+    \since 1.1
 */
 void QGraphicsGeoMap::addMapOverlay(QGeoMapOverlay *overlay)
 {
@@ -624,6 +649,7 @@ void QGraphicsGeoMap::addMapOverlay(QGeoMapOverlay *overlay)
     Removes \a overlay from the list of map overlays associated with this map.
 
     The map will release ownership of \a overlay.
+    \since 1.1
 */
 void QGraphicsGeoMap::removeMapOverlay(QGeoMapOverlay *overlay)
 {
@@ -639,6 +665,7 @@ void QGraphicsGeoMap::removeMapOverlay(QGeoMapOverlay *overlay)
     Clears the map overlays associated with this map.
 
     The map overlays will be deleted.
+    \since 1.1
 */
 void QGraphicsGeoMap::clearMapOverlays()
 {
@@ -654,6 +681,7 @@ void QGraphicsGeoMap::clearMapOverlays()
 
     The bounding box which is returned is defined by the upper left and
     lower right corners of the visible area of the map.
+    \since 1.1
 */
 QGeoBoundingBox QGraphicsGeoMap::viewport() const
 {
@@ -672,6 +700,7 @@ QGeoBoundingBox QGraphicsGeoMap::viewport() const
     If \a preserveViewportCenter is false the map will be centered on the
     bounding box \a bounds before the zoom level is changed, otherwise the
     center of the map will not be changed.
+    \since 1.1
 */
 void QGraphicsGeoMap::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 {
@@ -684,6 +713,7 @@ void QGraphicsGeoMap::fitInViewport(const QGeoBoundingBox &bounds, bool preserve
 /*!
     Returns the list of visible map objects managed by this widget which
     contain the point \a screenPosition within their boundaries.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
@@ -697,6 +727,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsAtScreenPosition(const QPointF 
     Returns the list of visible map objects managed by this widget which are
     displayed at least partially within the on screen rectangle
     \a screenRect.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
@@ -709,6 +740,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInScreenRect(const QRectF &scre
 /*!
     Returns the list of visible map objects manager by this widget which
     are displayed at least partially within the viewport of the map.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const
 {
@@ -723,6 +755,7 @@ QList<QGeoMapObject*> QGraphicsGeoMap::mapObjectsInViewport() const
 
     An invalid QPointF will be returned if \a coordinate is invalid or is not
     within the current viewport.
+    \since 1.1
 */
 QPointF QGraphicsGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
@@ -738,6 +771,7 @@ QPointF QGraphicsGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordi
 
     An invalid QGeoCoordinate will be returned if \a screenPosition is invalid
     or is not within the current viewport.
+    \since 1.1
 */
 QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPosition) const
 {
@@ -753,6 +787,7 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
     This signal is emitted when the zoom level of the map changes.
 
     The new value is \a zoomLevel.
+    \since 1.1
 */
 
 /*!
@@ -764,6 +799,7 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
 
     This signal will not be emitted if supportsBearing()
     returns false.
+    \since 1.2
 */
 
 /*!
@@ -775,6 +811,7 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
 
     This signal will not be emitted if supportsTilting()
     returns false.
+    \since 1.2
 */
 
 /*!
@@ -783,6 +820,7 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
     This signal is emitted when the center of the map changes.
 
     The new value is \a coordinate.
+    \since 1.1
 */
 
 /*!
@@ -791,6 +829,7 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
     This signal is emitted when the map type changes.
 
     The new value is \a mapType.
+    \since 1.1
 */
 
 /*!
@@ -800,6 +839,7 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
     map data changes.
 
     The new value is \a connectivityMode.
+    \since 1.1
 */
 
 /*******************************************************************************

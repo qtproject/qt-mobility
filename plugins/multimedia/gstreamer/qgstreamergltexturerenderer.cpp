@@ -200,29 +200,11 @@ GstElement *QGstreamerGLTextureRenderer::videoSink()
                          "colorkey", m_colorKey.rgb(),
                          "autopaint-colorkey", false,
                          "use-framebuffer-memory", true,
+                         "render-mode", m_overlayEnabled ? VIDEO_RENDERSWITCH_XOVERLAY_MODE
+                                                         : VIDEO_RENDERSWITCH_TEXTURE_STREAMING_MODE,
                          (char*)NULL);
 
             g_signal_connect(G_OBJECT(m_videoSink), "frame-ready", G_CALLBACK(handleFrameReady), (gpointer)this);
-
-            if (GST_IS_X_OVERLAY(m_videoSink)) {
-                GstXOverlay *overlay = GST_X_OVERLAY(m_videoSink);
-
-                if (m_winId > 0)
-                    gst_x_overlay_set_xwindow_id(overlay, m_winId);
-
-                if (!m_displayRect.isEmpty())
-                    gst_x_overlay_set_render_rectangle(overlay,
-                                                       m_displayRect.x(),
-                                                       m_displayRect.y(),
-                                                       m_displayRect.width(),
-                                                       m_displayRect.height());
-
-                g_object_set(G_OBJECT(m_videoSink),
-                             "render-mode",
-                             m_overlayEnabled ? VIDEO_RENDERSWITCH_XOVERLAY_MODE : VIDEO_RENDERSWITCH_TEXTURE_STREAMING_MODE,
-                             (char *)NULL);
-            }
-
         } else {
             qWarning() << Q_FUNC_INFO << ": Fallback to QVideoSurfaceGstSink since EGLImageTextureHandle is not supported";
             m_videoSink = reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface));
@@ -421,7 +403,17 @@ void QGstreamerGLTextureRenderer::handleSyncMessage(GstMessage* gm)
 void QGstreamerGLTextureRenderer::precessNewStream()
 {
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink)) {
-        gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_videoSink), m_winId);
+        GstXOverlay *overlay = GST_X_OVERLAY(m_videoSink);
+
+        gst_x_overlay_set_xwindow_id(overlay, m_winId);
+
+        if (!m_displayRect.isEmpty()) {
+            gst_x_overlay_set_render_rectangle(overlay,
+                                               m_displayRect.x(),
+                                               m_displayRect.y(),
+                                               m_displayRect.width(),
+                                               m_displayRect.height());
+        }
 
         GstPad *pad = gst_element_get_static_pad(m_videoSink,"sink");
         m_bufferProbeId = gst_pad_add_buffer_probe(pad, G_CALLBACK(padBufferProbe), this);
@@ -482,7 +474,21 @@ void QGstreamerGLTextureRenderer::setWinId(WId id)
     m_winId = id;
 
     if (m_videoSink && GST_IS_X_OVERLAY(m_videoSink)) {
-        gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_videoSink), m_winId);
+        //don't set winId in NULL state,
+        //texture sink opens xvideo port on set_xwindow_id,
+        //this fails if video resource is not granted by resource policy yet.
+        //state is changed to READY/PAUSED/PLAYING only after resource is granted.
+        GstState pendingState = GST_STATE_NULL;
+        GstState newState = GST_STATE_NULL;
+        GstStateChangeReturn res = gst_element_get_state(m_videoSink,
+                                                         &newState,
+                                                         &pendingState,
+                                                         0);//don't block and return immediately
+
+        if (res != GST_STATE_CHANGE_FAILURE &&
+                newState != GST_STATE_NULL &&
+                pendingState != GST_STATE_NULL)
+            gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_videoSink), m_winId);
     }
 
     if (oldReady != isReady())

@@ -284,9 +284,9 @@ void CSensorBackendSym::StartListeningL()
         // Start listening to the sensor
         // Before calling this api the channel should be found and opened
         iBackendData.iSensorChannel->StartDataListeningL( this,
-                KDesiredReadingCount,
+                m_desiredReadingCount,
                 m_maximumReadingCount,
-                KDefaultBufferingPeriod );
+                m_bufferingPeriod );
         }
     // start property listening if required         //put it above
     if ( iBackendData.iPropertyListening )
@@ -584,6 +584,8 @@ void CSensorBackendSym::InitializeL()
     if(sensor())
         {
         GetPropertiesL();
+        sensor()->setProperty("efficientBufferSize", 1);
+        sensor()->setProperty("maxBufferSize", INT_MAX);
         }
     }
 
@@ -606,14 +608,50 @@ TInt CSensorBackendSym::Close()
  */
 void CSensorBackendSym::start()
     {
+    // defaults
+    m_desiredReadingCount = KDesiredReadingCount;
     m_maximumReadingCount = KMaximumReadingCount;
-    QVariant var = sensor()->property("maximumReadingCount");
+    m_bufferingPeriod = KDefaultBufferingPeriod;
+    m_processAllReadings = KProcessAllReadings;
+
+    QVariant var;
+
+    // bufferSize is a MeeGo-compatible property
+    // It sets the desired and maximum reading counts
+    var = sensor()->property("bufferSize");
+    if (var.isValid())
+        {
+        m_desiredReadingCount = m_maximumReadingCount = var.toInt();
+        if (m_desiredReadingCount > 1) m_processAllReadings = true;
+        }
+
+    // desired reading count is the nominal buffer size
+    var = sensor()->property("desiredReadingCount");
+    if (var.isValid())
+        {
+        m_desiredReadingCount = var.toInt();
+        if (m_desiredReadingCount > 1) m_processAllReadings = true;
+        }
+
+    // maximum reading count is the most readings we'll accept in one go
+    // handy if we can't process everything consistently
+    var = sensor()->property("maximumReadingCount");
     if (var.isValid())
         m_maximumReadingCount = var.toInt();
-    m_processAllReadings = KProcessAllReadings;
+
+    // If the desired reading count is 1, this starts as false
+    // That means that all but the last reading is ignored
+    // set to true to force every reading to be processed
     var = sensor()->property("processAllReadings");
     if (var.isValid())
         m_processAllReadings = var.toBool();
+
+    // Set this to force the system to return readings even if the buffer isn't full
+    // only useful for things like the ambient light sensor that don't update regularly
+    var = sensor()->property("bufferingPeriod");
+    if (var.isValid())
+        m_bufferingPeriod = var.toInt();
+
     // Start listening to sensor, after this call DataRecieved will be called
     // when data is available
     TRAPD(err,StartListeningL())

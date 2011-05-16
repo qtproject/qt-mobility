@@ -76,10 +76,12 @@ QGeoMapOverlay::~QGeoMapOverlay()
 \fn void QGeoMapOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 
 Paints the overlay on \a painter, using the options \a option.
+    \since 1.1
 */
 
 /*!
     \internal
+    \since 1.1
 */
 void QGeoMapOverlay::setMapData(QGeoMapData * mapData)
 {
@@ -93,6 +95,7 @@ void QGeoMapOverlay::setMapData(QGeoMapData * mapData)
     The QGeoMapData instance provides access to information such as the
     zoom level and viewport position as well as methods to convert
     screen positions to coordinates and vice-versa.
+    \since 1.1
 */
 QGeoMapData const * QGeoMapOverlay::mapData() const
 {

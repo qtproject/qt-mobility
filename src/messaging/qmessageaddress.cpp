@@ -82,6 +82,7 @@ QMessageAddress::QMessageAddress()
 
 /*!
     Constructs a message address with the given \a type and \a addressee.
+    \since 1.0
 */
 QMessageAddress::QMessageAddress(Type type, const QString &addressee)
     : d_ptr(new QMessageAddressPrivate(this))
@@ -92,6 +93,7 @@ QMessageAddress::QMessageAddress(Type type, const QString &addressee)
 
 /*!
     Constructs a copy of \a other.
+    \since 1.0
 */
 QMessageAddress::QMessageAddress(const QMessageAddress &other)
     : d_ptr(new QMessageAddressPrivate(this))
@@ -99,7 +101,9 @@ QMessageAddress::QMessageAddress(const QMessageAddress &other)
     this->operator=(other);
 }
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 QMessageAddress& QMessageAddress::operator=(const QMessageAddress& other)
 {
     if (&other != this) {
@@ -119,13 +123,17 @@ QMessageAddress::~QMessageAddress()
     d_ptr = 0;
 }
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 bool QMessageAddress::operator==(const QMessageAddress& other) const
 {
     return ((d_ptr->type == other.d_ptr->type) && (d_ptr->addressee == other.d_ptr->addressee));
 }
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 bool QMessageAddress::operator!=(const QMessageAddress& other) const
 {
     return !operator==(other);
@@ -134,6 +142,7 @@ bool QMessageAddress::operator!=(const QMessageAddress& other) const
 /*!
     Returns the addressee.
 
+    \since 1.0
     \sa setAddressee()
 */
 QString QMessageAddress::addressee() const
@@ -144,6 +153,7 @@ QString QMessageAddress::addressee() const
 /*!
     Sets the addressee to \a addressee.
 
+    \since 1.0
     \sa addressee()
 */
 void QMessageAddress::setAddressee(const QString &addressee)
@@ -154,6 +164,7 @@ void QMessageAddress::setAddressee(const QString &addressee)
 /*!
     Returns the type of the message address.
 
+    \since 1.0
     \sa setType()
 */
 QMessageAddress::Type QMessageAddress::type() const
@@ -164,6 +175,7 @@ QMessageAddress::Type QMessageAddress::type() const
 /*!
     Sets the type of the message address to \a type.
 
+    \since 1.0
     \sa type()
 */
 void QMessageAddress::setType(Type type)
@@ -187,6 +199,7 @@ void QMessageAddress::setType(Type type)
     If the ending delimeter of the address part of the email address is found
     then * \a endDelimeterFound is set to true; otherwise * \a endDelimeterFound is set to false;
 
+    \since 1.0
 */
 void QMessageAddress::parseEmailAddress(const QString &emailAddress, QString *name, QString *address, QString *suffix, bool *startDelimeterFound, bool *endDelimeterFound)
 {
