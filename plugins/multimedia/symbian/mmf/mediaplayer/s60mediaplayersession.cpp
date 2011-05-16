@@ -308,7 +308,7 @@ void S60MediaPlayerSession::stop()
         return;
 
     m_play_requested = false;
-    setState(QMediaPlayer::StoppedState);
+    m_state = QMediaPlayer::StoppedState;
     if (mediaStatus() == QMediaPlayer::BufferingMedia ||
         mediaStatus() == QMediaPlayer::BufferedMedia ||
         mediaStatus() == QMediaPlayer::StalledMedia) 
@@ -319,6 +319,7 @@ void S60MediaPlayerSession::stop()
     stopStalledTimer();
     doStop();
     emit positionChanged(0);
+    emit stateChanged(m_state);
 
     DP0("S60MediaPlayerSession::stop ---");
 }
