@@ -1,5 +1,6 @@
-qt-mobility (1.2.0-beta1+877) unstable; urgency=low
+qt-mobility (1.2.0-beta1+776) unstable; urgency=low
 
+  * Changed version number to correct one
   * Fixes: NB#245823
   * Fixes: NB#225297
   * Fixes: NB#223444
