@@ -54,17 +54,22 @@ QTM_BEGIN_NAMESPACE
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
   detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
+  \since 1.1
 
   \ingroup organizer-requests
  */
 
-/*! Constructs a new detail definition fetch request whose parent is the specified \a parent */
+/*! Constructs a new detail definition fetch request whose parent is the specified \a parent
+  \since 1.1
+*/
 QOrganizerItemDetailDefinitionFetchRequest::QOrganizerItemDetailDefinitionFetchRequest(QObject* parent)
     : QOrganizerAbstractRequest(new QOrganizerItemDetailDefinitionFetchRequestPrivate, parent)
 {
 }
 
-/*! Frees memory in use by this request */
+/*! Frees memory in use by this request
+  \since 1.2
+*/
 QOrganizerItemDetailDefinitionFetchRequest::~QOrganizerItemDetailDefinitionFetchRequest()
 {
     QOrganizerAbstractRequestPrivate::notifyEngine(this);
@@ -75,6 +80,7 @@ QOrganizerItemDetailDefinitionFetchRequest::~QOrganizerItemDetailDefinitionFetch
     \code
         setDefinitionNames(QList<QOrganizerItemDetailDefinition>() << definitionName);
     \endcode
+  \since 1.1
  */
 void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionName(const QString& definitionName)
 {
@@ -84,7 +90,9 @@ void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionName(const QString
     d->m_names.append(definitionName);
 }
 
-/*! Sets the names of the detail definitions to retrieve to \a names */
+/*! Sets the names of the detail definitions to retrieve to \a names
+  \since 1.1
+*/
 void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QOrganizerItemDetailDefinitionFetchRequest);
@@ -92,7 +100,9 @@ void QOrganizerItemDetailDefinitionFetchRequest::setDefinitionNames(const QStrin
     d->m_names = names;
 }
 
-/*! Returns the list of names of the detail definitions that will be retrieved */
+/*! Returns the list of names of the detail definitions that will be retrieved
+  \since 1.1
+*/
 QStringList QOrganizerItemDetailDefinitionFetchRequest::definitionNames() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
@@ -100,7 +110,9 @@ QStringList QOrganizerItemDetailDefinitionFetchRequest::definitionNames() const
     return d->m_names;
 }
 
-/*! Sets the type of organizer item for which detail definitions should be retrieved to \a organizeritemType */
+/*! Sets the type of organizer item for which detail definitions should be retrieved to \a organizeritemType
+  \since 1.1
+*/
 void QOrganizerItemDetailDefinitionFetchRequest::setItemType(const QString& organizeritemType)
 {
     Q_D(QOrganizerItemDetailDefinitionFetchRequest);
@@ -108,7 +120,9 @@ void QOrganizerItemDetailDefinitionFetchRequest::setItemType(const QString& orga
     d->m_organizeritemType = organizeritemType;
 }
 
-/*! Returns the type of organizer item for which detail definitions will be retrieved */
+/*! Returns the type of organizer item for which detail definitions will be retrieved
+    \since 1.1
+*/
 QString QOrganizerItemDetailDefinitionFetchRequest::itemType() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
@@ -118,6 +132,7 @@ QString QOrganizerItemDetailDefinitionFetchRequest::itemType() const
 
 /*!
   Returns the map of detail definition names to detail definitions that was the result of the request
+  \since 1.1
  */
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionFetchRequest::definitions() const
 {
@@ -126,7 +141,9 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemDetailDefinitionFetc
     return d->m_definitions;
 }
 
-/*! Returns the map of input name list indices to errors which occurred */
+/*! Returns the map of input name list indices to errors which occurred
+    \since 1.1
+*/
 QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionFetchRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionFetchRequest);
