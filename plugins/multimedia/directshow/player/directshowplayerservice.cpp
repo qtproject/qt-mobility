@@ -1337,6 +1337,12 @@ void DirectShowPlayerService::run()
             m_executingTask = ReleaseGraph;
 
             doReleaseGraph(&locker);
+            //if the graph is released, we should not process other operations later
+            if (m_pendingTasks & Shutdown) {
+                m_pendingTasks = 0;
+                return;
+            }
+            m_pendingTasks = 0;
         } else if (m_pendingTasks & Shutdown) {
             return;
         } else if (m_pendingTasks & ReleaseAudioOutput) {
