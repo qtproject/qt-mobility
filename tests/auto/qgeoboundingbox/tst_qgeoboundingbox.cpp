@@ -1975,6 +1975,150 @@ void tst_QGeoBoundingBox::unite_data()
                                QGeoCoordinate(-30.0, 150.0))
             << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0));
+
+    QTest::newRow("small gap over zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, -10.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 20.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, 20.0));
+
+    QTest::newRow("small gap before zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -40.0),
+                                QGeoCoordinate(-30.0, -30.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, -10.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -40.0),
+                                QGeoCoordinate(-30.0, -10.0));
+
+    QTest::newRow("small gap after zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 20.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 30.0),
+                                QGeoCoordinate(-30.0, 40.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 40.0));
+
+    QTest::newRow("small gap over dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, 170.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -160.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, -160.0));
+
+    QTest::newRow("small gap before dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 140.0),
+                                QGeoCoordinate(-30.0, 150.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, 170.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 140.0),
+                                QGeoCoordinate(-30.0, 170.0));
+
+    QTest::newRow("small gap after dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -160.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -150.0),
+                                QGeoCoordinate(-30.0, -140.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -140.0));
+
+    QTest::newRow("90-degree inner gap over zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -55.0),
+                                QGeoCoordinate(-30.0, -45.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 45.0),
+                                QGeoCoordinate(-30.0, 55.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -55.0),
+                                QGeoCoordinate(-30.0, 55.0));
+
+    QTest::newRow("90-degree inner gap before zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, -10.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -65.0),
+                                QGeoCoordinate(-30.0, -55.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -65.0),
+                                QGeoCoordinate(-30.0, -10.0));
+
+    QTest::newRow("90-degree inner gap after zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 65.0),
+                                QGeoCoordinate(-30.0, 75.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 20.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 75.0));
+
+    QTest::newRow("90-degree inner gap over dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 125.0),
+                                QGeoCoordinate(-30.0, 135.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -135.0),
+                                QGeoCoordinate(-30.0, -125.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 125.0),
+                                QGeoCoordinate(-30.0, -125.0));
+
+    QTest::newRow("90-degree inner gap before dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, 170.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+                                QGeoCoordinate(-30.0, 60.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+                                QGeoCoordinate(-30.0, 170.0));
+
+    QTest::newRow("90-degree inner gap after dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -160.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -60.0),
+                                QGeoCoordinate(-30.0, -50.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -50.0));
+
+    QTest::newRow("180-degree inner gap centered on zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, -90.0));
+
+    QTest::newRow("180-degree outer gap cenetered on zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+                                QGeoCoordinate(-30.0, 90.0));
+
+    QTest::newRow("180-degree shift centered on zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+                                QGeoCoordinate(-30.0, 180.0));
+
+    QTest::newRow("180-degree inner gap centered on dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0,  -90.0),
+                                QGeoCoordinate(-30.0, 90.0));
+
+    QTest::newRow("180-degree outer gap centered on dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, -90.0));
+
+    QTest::newRow("180-degree shift centered on dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0,  -180.0),
+                                QGeoCoordinate(-30.0, 180.0));
 }
 
 QTEST_MAIN(tst_QGeoBoundingBox)

@@ -692,6 +692,12 @@ QGeoBoundingBox QGeoBoundingBox::translated(double degreesLatitude, double degre
 
 /*!
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the 
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is 
+    independent of the order of the operands.
+
     \since 1.1
 */
 QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) const
@@ -705,11 +711,23 @@ QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) cons
     \fn QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
 
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+    
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the 
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is 
+    independent of the order of the operands.
+
     \since 1.1
 */
 
 /*!
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+    
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the 
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is 
+    independent of the order of the operands.
+
     \since 1.1
 */
 QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingBox)
@@ -736,8 +754,22 @@ QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
     bool wrap2 = (left2 > right2);
 
     if ((wrap1 && wrap2) || (!wrap1 && !wrap2)) {
-        left = qMin(left1, left2);
-        right = qMax(right1, right2);
+
+        double w = qAbs((left1 + right1 - left2 - right2) / 2.0);
+
+        qWarning() << left1 << right1 << left2 << right2 << w;
+
+        if (w < 180.0) {
+            left = qMin(left1, left2);
+            right = qMax(right1, right2);
+        } else if (w > 180.0) {
+            left = qMax(left1, left2);
+            right = qMin(right1, right2);
+        } else {
+            left = -180.0;
+            right = 180.0;
+        }
+
     } else {
         double wrapLeft = 0.0;
         double wrapRight = 0.0;
