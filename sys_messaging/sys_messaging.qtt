@@ -798,6 +798,102 @@ http://www.google.com/      1. return to search results
           }
       },
 
+     bluewheelMessaging_Search_Message_Wildcard_Search : function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Wildcard Search
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in Email account, and network available
+      1. Select Search Message item
+      1. Use By Receipient as search type, Email account as account
+      1. Select Like as condition type
+      1. Fill in the Receipient text box with wildcard, eg %@hotmail.com, use SQL like syntax wildcards
+      1. Click on search button to make search
+      1. Verify that the correct results has been returned
+      1. Repeat this test with Not Like condition type
+      1. Repeat this test for SMS and MMS
+          '));
+          }
+      },
+
+     bluewheelMessaging_Synchronize: function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Synchronize
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in Email account, and network available
+      1. Select Search Message item
+      1. Use By Type as search type, Email account as account
+      1. Click on search button to make search
+      1. In the message view, click on Synchronize button
+      1. Verify synchronization returns in reasonable time
+      1. Send a message to the Email account
+      1. Click on the Synchronize button again
+      1. Verify the new message shows up in the view
+      1. Repeat this test for SMS and MMS
+          '));
+          }
+      },
+
+     bluewheelMessaging_Send_Receive: function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Send Receive
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in Email account, and network available
+      1. Select Search Message item
+      1. Use By Type as search type, Email account as account
+      1. Click on search button to make search
+      1. In the message view, click on Send Receive button
+      1. Verify synchronization returns in reasonable time
+      1. Send a message to the Email account
+      1. Click on the Send Receive button again
+      1. Verify the new message shows up in the view
+      1. Repeat this test for SMS and MMS
+          '));
+          }
+      },
+
+     bluewheelMessaging_Show_Message: function(){
+           if (automatedTestEnvironment()){
+          }else{
+              prompt(twiki('---++++ Blue Wheel Messaging: Show_Message
+
+      1. Start Messaging test application
+      1. Make sure there are some messages in Email account, and network available
+      1. Select Search Message item
+      1. Use By Type as search type, Email account as account
+      1. Click on search button to make search
+      1. In the message view, click on a message, and click on Show
+      1. When being asked, choose Yes
+      1. Verify the message is properly shown with native client
+      1. Close the native messaging client
+      1. Click on another message, and click on Show again
+      1. When being asked, choose to download details
+      1. Verify the message is shown in Bluewheel message client
+      1. Click on Attachments, verify the attachments are shown
+      1. Select an attachment, save it and verify it saves fine
+      1. Close attachment dialog
+      1. Click on Properties, verify the properties are properly shown
+      1. Close properties dialog
+      1. Click on Unread, switch to the native message client, verify the message is marked as Unread status
+      1. Go back to the Bluewheel application, click on Read
+      1. Verify the message is marked as Read status
+      1. Click on Reply button, send reply, verify the message is replied
+      1. Go back, click on Forward button, send, verify the message is forwarded
+      1. Go back, click on Edit button, change something in the message, verify the change are saved
+      1. Go back, click on Move button, select a target folder, verify the message is moved to that folder
+      1. Go back, click on Delete button, verify the message is deleted
+      1. Repeat this test for SMS and MMS
+          '));
+          }
+      },
+
+
+
  
 */
     New tests proposed
@@ -815,24 +911,10 @@ http://www.google.com/      1. return to search results
       bluewheelMessaging_Search_Messages_By_Folder
       bluewheelMessaging_Search_Messages_By_Account
 
-      bluewheelMessaging_Search_Messages_Wildcard_Search
-      
       bluewheelMessaging_Search_Messages_Search_SMS
       bluewheelMessaging_Search_Messages_Search_MMS
       bluewheelMessaging_Search_Messages_Search_Email
       bluewheelMessaging_Search_Messages_Search_Cross_Email_Account_Types
 
-      bluewheelMessaging_Synchronize
-      bluewheelMessaging_Send_Receive
-      bluewheelMessaging_Show_Message_In_Native_Client
-      bluewheelMessaging_Show_Message_In_This_App
-      bluewheelMessaging_Show_Message_Attachments
-      bluewheelMessaging_Show_Message_Properties
-      bluewheelMessaging_Show_Message_Unread
-      bluewheelMessaging_Show_Message_Reply
-      bluewheelMessaging_Show_Message_Forward
-      bluewheelMessaging_Show_Message_Edit
-
-      bluewheelMessaging_Search_Messages_Search_Cross_Email_Account_Types
 */
 }
