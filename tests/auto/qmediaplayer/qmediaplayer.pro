@@ -26,6 +26,8 @@ HEADERS += tst_qmediaplayer.h
 SOURCES += main.cpp tst_qmediaplayer.cpp
 
 include (../../../common.pri)
+include (../qmultimedia_common/mock.pri)
+include (../qmultimedia_common/mockplayer.pri)
 
 CONFIG += mobility
 MOBILITY = multimedia

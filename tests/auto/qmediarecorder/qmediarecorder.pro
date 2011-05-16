@@ -11,10 +11,14 @@ symbian {
     SOURCES += tst_qmediarecorder_mmf.cpp
     TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData AllFiles
 }
+
 HEADERS += tst_qmediarecorder.h
+
 SOURCES += main.cpp tst_qmediarecorder.cpp
 
 include (../../../common.pri)
+include (../qmultimedia_common/mock.pri)
+include (../qmultimedia_common/mockrecorder.pri)
 
 CONFIG += mobility
 MOBILITY = multimedia
