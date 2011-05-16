@@ -125,16 +125,16 @@ public:
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
 
 Q_SIGNALS:
-    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus status);
 
-    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
-    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState state);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType type);
 
-    void nominalCapacityChanged(int cap);
-    void remainingCapacityPercentChanged(int level);
-    void remainingCapacityChanged(int level);
+    void nominalCapacityChanged(int capacity);
+    void remainingCapacityPercentChanged(int capacity);
+    void remainingCapacityChanged(int capacity);
 
-    void currentFlowChanged(int level);
+    void currentFlowChanged(int flow);
     void remainingCapacityBarsChanged(int bars);
     void remainingChargingTimeChanged(int time);
 
