@@ -71,6 +71,7 @@ IMPLEMENT_READING(QGyroscopeReading)
 
     Measured as degrees per second.
     \sa {QGyroscopeReading Units}
+    \since 1.2
 */
 
 qreal QGyroscopeReading::x() const
@@ -80,6 +81,7 @@ qreal QGyroscopeReading::x() const
 
 /*!
     Sets the angular velocity around the x axis to \a x.
+    \since 1.2
 */
 void QGyroscopeReading::setX(qreal x)
 {
@@ -92,6 +94,7 @@ void QGyroscopeReading::setX(qreal x)
 
     Measured as degrees per second.
     \sa {QGyroscopeReading Units}
+    \since 1.2
 */
 
 qreal QGyroscopeReading::y() const
@@ -101,6 +104,7 @@ qreal QGyroscopeReading::y() const
 
 /*!
     Sets the angular velocity around the y axis to \a y.
+    \since 1.2
 */
 void QGyroscopeReading::setY(qreal y)
 {
@@ -113,6 +117,7 @@ void QGyroscopeReading::setY(qreal y)
 
     Measured as degrees per second.
     \sa {QGyroscopeReading Units}
+    \since 1.2
 */
 
 qreal QGyroscopeReading::z() const
@@ -122,6 +127,7 @@ qreal QGyroscopeReading::z() const
 
 /*!
     Sets the angular velocity around the z axis to \a z.
+    \since 1.2
 */
 void QGyroscopeReading::setZ(qreal z)
 {
@@ -139,6 +145,7 @@ void QGyroscopeReading::setZ(qreal z)
 
     The only difference is that the filter() method features a pointer to QGyroscopeReading
     instead of QSensorReading.
+    \since 1.2
 */
 
 /*!
@@ -147,6 +154,7 @@ void QGyroscopeReading::setZ(qreal z)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.2
 */
 
 char const * const QGyroscope::type("QGyroscope");
@@ -165,18 +173,21 @@ char const * const QGyroscope::type("QGyroscope");
     For details about how the sensor works, see \l QGyroscopeReading.
 
     \sa QGyroscopeReading
+    \since 1.2
 */
 
 /*!
     \fn QGyroscope::QGyroscope(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.2
 */
 
 /*!
     \fn QGyroscope::~QGyroscope()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.2
 */
 
 /*!
@@ -185,6 +196,7 @@ char const * const QGyroscope::type("QGyroscope");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.2
 */
 
 #include "moc_qgyroscope.cpp"

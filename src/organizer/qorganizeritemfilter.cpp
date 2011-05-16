@@ -54,6 +54,7 @@
   \class QOrganizerItemFilter
   \brief The QOrganizerItemFilter class is used to select organizer items made available
   through a QOrganizerManager.
+  \since 1.1
 
   \inmodule QtOrganizer
 
@@ -92,6 +93,7 @@
 /*!
   \fn QOrganizerItemFilter::operator!=(const QOrganizerItemFilter& other) const
   Returns true if this filter is not identical to the \a other filter.
+  \since 1.1
   \sa operator==()
  */
 
@@ -110,13 +112,17 @@ QOrganizerItemFilter::QOrganizerItemFilter()
 {
 }
 
-/*! Constructs a new copy of \a other */
+/*! Constructs a new copy of \a other
+  \since 1.1
+*/
 QOrganizerItemFilter::QOrganizerItemFilter(const QOrganizerItemFilter& other)
     : d_ptr(other.d_ptr)
 {
 }
 
-/*! Assigns this filter to be \a other */
+/*! Assigns this filter to be \a other
+  \since 1.1
+*/
 QOrganizerItemFilter& QOrganizerItemFilter::operator=(const QOrganizerItemFilter& other)
 {
     if (this != &other) {
@@ -130,7 +136,9 @@ QOrganizerItemFilter::~QOrganizerItemFilter()
 {
 }
 
-/*! Returns the type of the filter */
+/*! Returns the type of the filter
+  \since 1.1
+*/
 QOrganizerItemFilter::FilterType QOrganizerItemFilter::type() const
 {
     if (!d_ptr)
@@ -138,7 +146,9 @@ QOrganizerItemFilter::FilterType QOrganizerItemFilter::type() const
     return d_ptr->type();
 }
 
-/*! Returns true if the filter has the same type and criteria as \a other */
+/*! Returns true if the filter has the same type and criteria as \a other
+  \since 1.1
+*/
 bool QOrganizerItemFilter::operator==(const QOrganizerItemFilter& other) const
 {
     /* A default filter is only equal to other default filters */
@@ -158,6 +168,7 @@ bool QOrganizerItemFilter::operator==(const QOrganizerItemFilter& other) const
  * Writes \a filter to the stream \a out.
  *
  * A QOrganizerItemIdFilter will not be preserved if streamed to a QDataStream.
+   \since 1.1
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter)
 {
@@ -172,6 +183,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemFilter& filter)
  * Reads an organizer item filter from stream \a in into \a filter.
  *
  * A QOrganizerItemIdFilter will not be preserved if streamed from a QDataStream.
+   \since 1.1
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
 {
@@ -220,6 +232,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemFilter& filter)
 #ifndef QT_NO_DEBUG_STREAM
 /*!
   Outputs \a filter to the debug stream \a dbg
+  \since 1.2
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemFilter& filter)
 {
@@ -246,6 +259,7 @@ QOrganizerItemFilter::QOrganizerItemFilter(QOrganizerItemFilterPrivate *d)
 /*!
  \relates QOrganizerItemFilter
  Returns a filter which is the intersection of the \a left and \a right filters
+ \since 1.1
  \sa QOrganizerItemIntersectionFilter
  */
 const QOrganizerItemFilter operator&(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right)
@@ -274,6 +288,7 @@ const QOrganizerItemFilter operator&(const QOrganizerItemFilter& left, const QOr
 /*!
  \relates QOrganizerItemFilter
  Returns a filter which is the union of the \a left and \a right filters
+ \since 1.1
  \sa QOrganizerItemUnionFilter
  */
 const QOrganizerItemFilter operator|(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right)

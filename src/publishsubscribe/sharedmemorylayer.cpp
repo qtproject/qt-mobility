@@ -460,6 +460,7 @@ unsigned short FixedMemoryTree::findClosest(unsigned int from,
 
 /*!
   Returns the default datum for \a node, or NULL if one doesn't exist.
+  \since 1.0
   */
 NodeDatum * FixedMemoryTree::data(unsigned short node)
 {
@@ -477,6 +478,7 @@ NodeDatum * FixedMemoryTree::data(unsigned short node)
 
 /*!
   Inserts a watch for \a owner at the specified \a path
+  \since 1.0
 */
 bool FixedMemoryTree::addWatch(const char * path, NodeWatch owner)
 {
@@ -494,6 +496,7 @@ bool FixedMemoryTree::addWatch(const char * path, NodeWatch owner)
 
 /*!
   Removes an existing watch for \a owner from the specified \a path
+  \since 1.0
 */
 bool FixedMemoryTree::remWatch(const char * path, NodeWatch owner)
 {
@@ -512,6 +515,7 @@ bool FixedMemoryTree::remWatch(const char * path, NodeWatch owner)
 /*!
   Inserts \a data of length \a dataLen at \a path with the set \a owner.
   Returns true if the tree has visibly changed.
+  \since 1.0
   */
 bool FixedMemoryTree::insert(const char * path, NodeDatum::Type type,
                              const char * data, unsigned int dataLen,
@@ -536,6 +540,7 @@ bool FixedMemoryTree::insert(const char * path, NodeDatum::Type type,
 /*!
   Returns the linear offset of \a subNode within \a node.  Asserts if not
   found.
+  \since 1.0
  */
 unsigned short FixedMemoryTree::offsetOfSubNode(unsigned short node,
                                                 unsigned short subNode)
@@ -578,6 +583,7 @@ bool FixedMemoryTree::remove(const char * path, NodeOwner owner)
   \i Up to 64 entries, double the size each allocation.
   \i From 64 onwards, grow in chunks of 64
   \endlist
+  \since 1.0
  */
 unsigned int FixedMemoryTree::growListSize(unsigned int currentSize)
 {
@@ -598,6 +604,7 @@ unsigned int FixedMemoryTree::growListSize(unsigned int currentSize)
   \i For currentSize < 64, reduce by half if possible
   \i Otherwise, remain the same
   \endlist
+  \since 1.0
  */
 unsigned int FixedMemoryTree::shrunkListSize(unsigned int currentSize,
                                              unsigned int contentSize)
@@ -617,13 +624,14 @@ unsigned int FixedMemoryTree::shrunkListSize(unsigned int currentSize,
   sets \a *match to false and returns the offset where the node would be
   found, should it exist.  Moving all nodes up one notch and inserting the
   new node at the returned offset maintains order.
+  \since 1.0
  */
 unsigned int FixedMemoryTree::locateInNode(Node * node, const char * name,
                                            unsigned int len, bool * match)
 {
     Q_ASSERT(node && name && match);
 
-    // This is a linear search.  It would be possible to replace this with a 
+    // This is a linear search.  It would be possible to replace this with a
     // binary search, which may or may not improve performance depending on the
     // number of sub nodes.
     unsigned short counter = 0;
@@ -651,6 +659,7 @@ unsigned int FixedMemoryTree::locateInNode(Node * node, const char * name,
 /*!
   \internal
   Recursive implementation of FixedMemoryTree::findClosest
+  \since 1.0
  */
 unsigned short FixedMemoryTree::findRecur(unsigned short node,
                                           const char * path,
@@ -688,6 +697,7 @@ unsigned short FixedMemoryTree::findRecur(unsigned short node,
     it was removed, or INVALID_HANDLE if no nodes were removed.  This can
     be used by the parent to determine whether to increment the version
     number and whether to remove the sub node.
+    \since 1.0
     */
 unsigned short FixedMemoryTree::removeRecur(unsigned short node,
                                             NodeOwner owner)
@@ -891,6 +901,7 @@ unsigned short FixedMemoryTree::removeRecur(unsigned short node,
 /*!
   Removes sub node number \a subNodeNumber from \a from's sub node list.  Does
   bump \a from's version number.  Does not touch removed sub node.
+  \since 1.0
  */
 void FixedMemoryTree::removeFrom(unsigned short from,
                                  unsigned short subNodeNumber)
@@ -1039,6 +1050,7 @@ bool FixedMemoryTree::removeRecur(unsigned short node, const char * path,
 /*!
   Removes \a owner as a watch on \a node.  Returns true if owner was removed,
   false if owner was not a watch.
+  \since 1.0
  */
 bool FixedMemoryTree::remWatch(unsigned short node, NodeWatch owner)
 {
@@ -1099,6 +1111,7 @@ bool FixedMemoryTree::remWatch(unsigned short node, NodeWatch owner)
 
 /*!
   Inserts \a owner as a watch on \a node.
+  \since 1.0
  */
 bool FixedMemoryTree::setWatch(unsigned short node,  NodeWatch owner)
 {
@@ -1157,6 +1170,7 @@ bool FixedMemoryTree::setWatch(unsigned short node,  NodeWatch owner)
 /*!
   Inserts \a data of length \a dataLen into \a node.  Returns true if the
   version number of \a node has increased to handle this set.
+  \since 1.0
   */
 bool FixedMemoryTree::setData(unsigned short node,
                               NodeOwner owner,
@@ -1401,6 +1415,7 @@ bool FixedMemoryTree::addWatchRecur(unsigned short node, const char * path,
 
 /*!
   Returns true if the insert should force a version bump.
+  \since 1.0
   */
 bool FixedMemoryTree::insertRecur(unsigned short node,
                                   const char * path,
@@ -1514,7 +1529,9 @@ unsigned int FixedMemoryTree::ptr(void * mem)
     return (unsigned int)((char *)mem - poolMem);
 }
 
-/*! Increment \a node's version number */
+/*! Increment \a node's version number
+    \since 1.0
+*/
 void FixedMemoryTree::bump(unsigned short node)
 {
     ++(versionTable()->entries[node].version);
@@ -1531,6 +1548,7 @@ Node * FixedMemoryTree::node(unsigned int entry)
 /*! Returns the node identified by \a entry, or null if there is no node in that
     slot.  This is different to FixedMemoryTree::node() in that it checks the
     return value (and is thus slower).
+    \since 1.0
  */
 Node * FixedMemoryTree::getNode(unsigned int entry)
 {
@@ -1562,6 +1580,7 @@ unsigned int FixedMemoryTree::version(unsigned int entry)
 /*!
     Creates a new node of \a name (name length \a len) and sets a single \a watch on it.  Returns
     ROOT_VERSION_ENTRY if the new node could not be created.
+    \since 1.0
 */
 unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
                                         NodeWatch owner)
@@ -1606,6 +1625,7 @@ unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
     Creates a new node of \a name (name length \a len) and pre-fills it with \a data of length
     \a dataLen owned by \a owner.  If \a owner is an invalid owner, the node is a virtual node and
     not prefilled with data.  Returns ROOT_VERSION_ENTRY if the new node could not be created.
+    \since 1.0
 */
 unsigned short FixedMemoryTree::newNode(const char * name, unsigned int len,
                                         NodeOwner owner, NodeDatum::Type type,
@@ -2445,7 +2465,7 @@ bool SharedMemoryLayer::value(Handle handle, const QString &subPath,
     bool rv = false;
     if(0xFFFFFFFF == rhandle->currentPath) {
         QByteArray abs_path = rhandle->path + subPath.toUtf8();
-        if (rhandle->path.length() == 1) 
+        if (rhandle->path.length() == 1)
             abs_path = subPath.toUtf8();
         ReadHandle vhandle(abs_path);
         clearHandle(&vhandle);
@@ -2553,6 +2573,7 @@ SharedMemoryLayer::Handle SharedMemoryLayer::item(Handle parent, const QString &
   That is, returns true if a handleChanged() signal is needed :)
 
   The layer MUST be locked for reading.
+  \since 1.0
  */
 
 bool SharedMemoryLayer::refreshHandle(ReadHandle * handle)

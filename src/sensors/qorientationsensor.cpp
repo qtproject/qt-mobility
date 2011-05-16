@@ -102,6 +102,7 @@ IMPLEMENT_READING(QOrientationReading)
     The unit is an enumeration describing the orientation of the device.
 
     \sa {QOrientationReading Units}
+    \since 1.0
 */
 
 QOrientationReading::Orientation QOrientationReading::orientation() const
@@ -111,6 +112,7 @@ QOrientationReading::Orientation QOrientationReading::orientation() const
 
 /*!
     Sets the \a orientation for the reading.
+    \since 1.0
 */
 void QOrientationReading::setOrientation(QOrientationReading::Orientation orientation)
 {
@@ -140,6 +142,7 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 
     The only difference is that the filter() method features a pointer to QOrientationReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -148,6 +151,7 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QOrientationSensor::type("QOrientationSensor");
@@ -166,18 +170,21 @@ char const * const QOrientationSensor::type("QOrientationSensor");
     For details about how the sensor works, see \l QOrientationReading.
 
     \sa QOrientationReading
+    \since 1.0
 */
 
 /*!
     \fn QOrientationSensor::QOrientationSensor(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QOrientationSensor::~QOrientationSensor()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -186,6 +193,7 @@ char const * const QOrientationSensor::type("QOrientationSensor");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 #include "moc_qorientationsensor.cpp"

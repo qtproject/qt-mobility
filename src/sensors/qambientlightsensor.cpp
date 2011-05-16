@@ -80,6 +80,7 @@ IMPLEMENT_READING(QAmbientLightReading)
 
     The value represents the ambient light and comes from QAmbientLightReading::LightLevel.
     \sa {QAmbientLightReading Units}
+    \since 1.0
 */
 
 QAmbientLightReading::LightLevel QAmbientLightReading::lightLevel() const
@@ -89,6 +90,7 @@ QAmbientLightReading::LightLevel QAmbientLightReading::lightLevel() const
 
 /*!
     Sets the ambient light level to \a lightLevel.
+    \since 1.0
 */
 void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightLevel)
 {
@@ -117,6 +119,7 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
 
     The only difference is that the filter() method features a pointer to QAmbientLightReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -125,6 +128,7 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QAmbientLightSensor::type("QAmbientLightSensor");
@@ -143,18 +147,21 @@ char const * const QAmbientLightSensor::type("QAmbientLightSensor");
     For details about how the sensor works, see \l QAmbientLightReading.
 
     \sa QAmbientLightReading
+    \since 1.0
 */
 
 /*!
     \fn QAmbientLightSensor::QAmbientLightSensor(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QAmbientLightSensor::~QAmbientLightSensor()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -163,6 +170,7 @@ char const * const QAmbientLightSensor::type("QAmbientLightSensor");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 #include "moc_qambientlightsensor.cpp"

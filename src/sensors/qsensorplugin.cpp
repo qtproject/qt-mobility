@@ -52,11 +52,13 @@
     backends with QSensorManager.
 
     \sa {Creating a sensor plugin}
+    \since 1.0
 */
 
 /*!
     \fn QSensorPluginInterface::~QSensorPluginInterface()
     \internal
+    \since 1.0
 */
 
 /*!
@@ -68,6 +70,7 @@
     QSensorPluginInterface::sensorsChanged() method instead.
 
     \sa {Creating a sensor plugin}
+    \since 1.0
 */
 
 /*!
@@ -80,11 +83,13 @@
     that registered sensor backends have changed.
 
     \sa {Creating a sensor plugin}
+    \since 1.2
 */
 
 /*!
     \fn QSensorChangesInterface::~QSensorChangesInterface()
     \internal
+    \since 1.2
 */
 /*!
     \fn QSensorChangesInterface::sensorsChanged()
@@ -94,5 +99,6 @@
     registered or unregistered in here.
 
     \sa {Creating a sensor plugin}
+    \since 1.2
 */
 

@@ -115,6 +115,7 @@ IMPLEMENT_READING(QTapReading)
     \brief the direction of the tap.
 
     \sa {QTapReading Units}
+    \since 1.0
 */
 
 QTapReading::TapDirection QTapReading::tapDirection() const
@@ -124,6 +125,7 @@ QTapReading::TapDirection QTapReading::tapDirection() const
 
 /*!
     Sets the tap direction to \a tapDirection.
+    \since 1.0
 */
 void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
 {
@@ -154,6 +156,7 @@ void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
     \o false - single tap
     \endlist
     \sa {QTapReading Units}
+    \since 1.0
 */
 
 bool QTapReading::isDoubleTap() const
@@ -163,6 +166,7 @@ bool QTapReading::isDoubleTap() const
 
 /*!
     Sets the double tap status of the reading to \a doubleTap.
+    \since 1.0
 */
 void QTapReading::setDoubleTap(bool doubleTap)
 {
@@ -180,6 +184,7 @@ void QTapReading::setDoubleTap(bool doubleTap)
 
     The only difference is that the filter() method features a pointer to QTapReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -188,6 +193,7 @@ void QTapReading::setDoubleTap(bool doubleTap)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QTapSensor::type("QTapSensor");
@@ -206,18 +212,21 @@ char const * const QTapSensor::type("QTapSensor");
     For details about how the sensor works, see \l QTapReading.
 
     \sa QTapReading
+    \since 1.0
 */
 
 /*!
     \fn QTapSensor::QTapSensor(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QTapSensor::~QTapSensor()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -226,6 +235,7 @@ char const * const QTapSensor::type("QTapSensor");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 /*!
@@ -240,6 +250,7 @@ char const * const QTapSensor::type("QTapSensor");
 
     Note that you must access this property via QObject::property() and QObject::setProperty().
     The property must be set before calling start().
+    \since 1.0
 */
 
 #include "moc_qtapsensor.cpp"

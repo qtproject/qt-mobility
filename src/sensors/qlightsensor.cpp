@@ -49,7 +49,7 @@ IMPLEMENT_READING(QLightReading)
 /*!
     \class QLightReading
     \ingroup sensors_reading
-    
+
     \since 1.2
 
     \preliminary
@@ -66,6 +66,7 @@ IMPLEMENT_READING(QLightReading)
 
     Measured as lux.
     \sa {QLightReading Units}
+    \since 1.2
 */
 
 qreal QLightReading::lux() const
@@ -75,6 +76,7 @@ qreal QLightReading::lux() const
 
 /*!
     Sets the light level to \a lux.
+    \since 1.2
 */
 void QLightReading::setLux(qreal lux)
 {
@@ -92,6 +94,7 @@ void QLightReading::setLux(qreal lux)
 
     The only difference is that the filter() method features a pointer to QLightReading
     instead of QSensorReading.
+    \since 1.2
 */
 
 /*!
@@ -100,6 +103,7 @@ void QLightReading::setLux(qreal lux)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.2
 */
 
 char const * const QLightSensor::type("QLightSensor");
@@ -118,18 +122,21 @@ char const * const QLightSensor::type("QLightSensor");
     For details about how the sensor works, see \l QLightReading.
 
     \sa QLightReading
+    \since 1.2
 */
 
 /*!
     \fn QLightSensor::QLightSensor(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.2
 */
 
 /*!
     \fn QLightSensor::~QLightSensor()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.2
 */
 
 /*!
@@ -138,6 +145,7 @@ char const * const QLightSensor::type("QLightSensor");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.2
 */
 
 /*!
@@ -145,6 +153,7 @@ char const * const QLightSensor::type("QLightSensor");
     \brief a value indicating the field of view.
 
     This is an angle that represents the field of view of the sensor.
+    \since 1.2
 */
 
 #include "moc_qlightsensor.cpp"

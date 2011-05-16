@@ -114,6 +114,7 @@ QTM_BEGIN_NAMESPACE
   As it is possible that other processes (or other devices) may have caused the
   changes, the timing can not be determined.
 
+  \since 1.1
   \sa itemsAdded(), itemsChanged(), itemsRemoved()
  */
 
@@ -128,6 +129,7 @@ QTM_BEGIN_NAMESPACE
   The list of ids of organizer items added is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
+  \since 1.1
   \sa dataChanged()
  */
 
@@ -142,6 +144,7 @@ QTM_BEGIN_NAMESPACE
   The list of ids of changed organizer items is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
+  \since 1.1
   \sa dataChanged()
  */
 
@@ -156,6 +159,7 @@ QTM_BEGIN_NAMESPACE
   The list of ids of removed organizer items is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
+  \since 1.1
   \sa dataChanged()
  */
 
@@ -163,6 +167,7 @@ QTM_BEGIN_NAMESPACE
   \fn QOrganizerManagerEngine::collectionsAdded(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the collections identified by \a collectionIds have been added to a datastore managed by this engine.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+  \since 1.1
  */
 
 /*!
@@ -170,17 +175,21 @@ QTM_BEGIN_NAMESPACE
   This signal should be emitted at some point once the metadata for the collections identified by \a collectionIds have been modified in a datastore managed by this engine.
   This signal is not emitted if one of the items in this collection has changed - itemsChanged() will be emitted instead.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerManagerEngine::collectionsRemoved(const QList<QOrganizerCollectionId>& collectionIds)
   This signal should be emitted at some point once the collections identified by \a collectionIds have been removed from a datastore managed by this engine.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
+  \since 1.1
  */
 
 
 
-/*! Returns the manager name for this QOrganizerManagerEngine */
+/*! Returns the manager name for this QOrganizerManagerEngine
+  \since 1.1
+*/
 QString QOrganizerManagerEngine::managerName() const
 {
     return QString(QLatin1String("base"));
@@ -190,6 +199,7 @@ QString QOrganizerManagerEngine::managerName() const
   Returns the parameters with which this engine was constructed.  Note that
   the engine may have discarded unused or invalid parameters at the time of
   construction, and these will not be returned.
+  \since 1.1
  */
 QMap<QString, QString> QOrganizerManagerEngine::managerParameters() const
 {
@@ -199,6 +209,7 @@ QMap<QString, QString> QOrganizerManagerEngine::managerParameters() const
 /*!
   Returns the unique URI of this manager, which is built from the manager name and the parameters
   used to construct it.
+  \since 1.1
  */
 QString QOrganizerManagerEngine::managerUri() const
 {
@@ -232,6 +243,7 @@ QString QOrganizerManagerEngine::managerUri() const
   in.  It allows the manager to optimize retrieval of occurrences.  The manager may ignore the
   \a fetchHint, but if it does so each item occurrence it returns must include all of the details
   associated with it in the database.
+  \since 1.1
   */
 QList<QOrganizerItem> QOrganizerManagerEngine::itemOccurrences(const QOrganizerItem& parentItem, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
@@ -256,6 +268,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemOccurrences(const QOrganizerI
 
   Depending on the backend, this filtering operation may involve retrieving
   all the organizer items.  Any error which occurs will be saved in \a error.
+  \since 1.1
  */
 QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
@@ -281,6 +294,7 @@ QList<QOrganizerItemId> QOrganizerManagerEngine::itemIds(const QDateTime& startD
   fetchHint is the default constructed hint, all existing details in the matching organizer items
   will be returned.
 
+  \since 1.1
   \sa QOrganizerItemFetchHint
  */
 QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
@@ -314,6 +328,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::items(const QDateTime& startDate,
 
   All items returned should have a non-zero ID.
 
+  \since 1.1
   \sa QOrganizerItemFetchHint
  */
 QList<QOrganizerItem> QOrganizerManagerEngine::itemsForExport(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
@@ -339,6 +354,7 @@ QList<QOrganizerItem> QOrganizerManagerEngine::itemsForExport(const QDateTime& s
   fetchHint is the default constructed hint, all existing details in the matching organizer items
   will be returned.
 
+  \since 1.1
   \sa QOrganizerItemFetchHint
  */
 QOrganizerItem QOrganizerManagerEngine::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
@@ -351,6 +367,7 @@ QOrganizerItem QOrganizerManagerEngine::item(const QOrganizerItemId& organizerit
 
 /*!
   Returns true if the given \a feature is supported by this engine for organizer items of the given \a organizeritemType
+  \since 1.1
  */
 bool QOrganizerManagerEngine::hasFeature(QOrganizerManager::ManagerFeature feature, const QString& organizeritemType) const
 {
@@ -378,6 +395,7 @@ bool QOrganizerManagerEngine::hasFeature(QOrganizerManager::ManagerFeature featu
    \o A QOrganizerItemDetailFilter or QOrganizerItemDetailRangeFilter with no definition name will be replaced with a QOrganizerItemInvalidFilter
    \o A QOrganizerItemDetailRangeFilter with no range specified will be converted to a QOrganizerItemDetailFilter
   \endlist
+  \since 1.1
 */
 QOrganizerItemFilter QOrganizerManagerEngine::canonicalizedFilter(const QOrganizerItemFilter &filter)
 {
@@ -485,6 +503,7 @@ QOrganizerItemFilter QOrganizerManagerEngine::canonicalizedFilter(const QOrganiz
   Returns a whether the supplied \a filter can be implemented
   natively by this engine.  If not, the base class implementation
   will emulate the functionality.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
 {
@@ -498,6 +517,7 @@ bool QOrganizerManagerEngine::isFilterSupported(const QOrganizerItemFilter& filt
   This is a convenience function, equivalent to retrieving the allowable values
   for the \c QOrganizerItemType::FieldType field of the QOrganizerItemType definition
   which is valid in this engine.
+  \since 1.1
  */
 QStringList QOrganizerManagerEngine::supportedItemTypes() const
 {
@@ -515,6 +535,7 @@ QStringList QOrganizerManagerEngine::supportedItemTypes() const
   \fn int QOrganizerManagerEngine::managerVersion() const
 
   Returns the engine backend implementation version number
+  \since 1.1
  */
 
 /*!
@@ -1544,6 +1565,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerManagerE
 
   Any errors encountered during this operation should be stored to
   \a error.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::validateItem(const QOrganizerItem& item, QOrganizerManager::Error* error) const
 {
@@ -1616,6 +1638,7 @@ bool QOrganizerManagerEngine::validateItem(const QOrganizerItem& item, QOrganize
   By default, modifiable collections are not supported, so this function returns false,
   and \a error is set to QOrganizerManager::NotSupportedError.
   Engines which do implement mutable collections should reimplement this function.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::validateCollection(const QOrganizerCollection& collection, QOrganizerManager::Error* error) const
 {
@@ -1635,6 +1658,7 @@ bool QOrganizerManagerEngine::validateCollection(const QOrganizerCollection& col
 
   Any errors encountered during this operation should be stored to
   \a error.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::validateDefinition(const QOrganizerItemDetailDefinition& definition, QOrganizerManager::Error* error) const
 {
@@ -1674,6 +1698,7 @@ bool QOrganizerManagerEngine::validateDefinition(const QOrganizerItemDetailDefin
 
   Any errors encountered during this operation should be stored to
   \a error.
+  \since 1.1
  */
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerManagerEngine::detailDefinitions(const QString& organizeritemType, QOrganizerManager::Error* error) const
 {
@@ -1689,6 +1714,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerManagerEngine::detailDef
 
   Any errors encountered during this operation should be stored to
   \a error.
+  \since 1.1
  */
 QOrganizerItemDetailDefinition QOrganizerManagerEngine::detailDefinition(const QString& definitionName, const QString& organizeritemType, QOrganizerManager::Error* error) const
 {
@@ -1712,6 +1738,7 @@ QOrganizerItemDetailDefinition QOrganizerManagerEngine::detailDefinition(const Q
 
   Any errors encountered during this operation should be stored to
   \a error.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerManager::Error* error)
 {
@@ -1732,6 +1759,7 @@ bool QOrganizerManagerEngine::saveDetailDefinition(const QOrganizerItemDetailDef
 
   Any errors encountered during this operation should be stored to
   \a error.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::removeDetailDefinition(const QString& definitionName, const QString& organizeritemType, QOrganizerManager::Error* error)
 {
@@ -1751,6 +1779,7 @@ bool QOrganizerManagerEngine::removeDetailDefinition(const QString& definitionNa
 
   Application code should not call this function, since validation of the
   detail will happen in the engine in any case.
+  \since 1.1
  */
 void QOrganizerManagerEngine::setDetailAccessConstraints(QOrganizerItemDetail *detail, QOrganizerItemDetail::AccessConstraints constraints)
 {
@@ -1788,6 +1817,7 @@ void QOrganizerManagerEngine::setDetailAccessConstraints(QOrganizerItemDetail *d
   The default implementation will convert this into a call to saveItems.
 
   \sa managerUri()
+  \since 1.1
  */
 bool QOrganizerManagerEngine::saveItem(QOrganizerItem* item, QOrganizerManager::Error* error)
 {
@@ -1818,6 +1848,7 @@ bool QOrganizerManagerEngine::saveItem(QOrganizerItem* item, QOrganizerManager::
   Any error which occurs will be saved in \a error.
 
   The default implementation will convert this into a call to removeItems.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::removeItem(const QOrganizerItemId& organizeritemId, QOrganizerManager::Error* error)
 {
@@ -1864,6 +1895,7 @@ bool QOrganizerManagerEngine::removeItem(const QOrganizerItemId& organizeritemId
   Any errors encountered during this operation should be stored to
   \a error.
 
+  \since 1.1
   \sa QOrganizerManager::saveItem()
  */
 bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
@@ -1896,6 +1928,7 @@ bool QOrganizerManagerEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, 
   Any errors encountered during this operation should be stored to
   \a error.
 
+  \since 1.1
   \sa QOrganizerManager::removeItem()
  */
 bool QOrganizerManagerEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
@@ -1910,6 +1943,7 @@ bool QOrganizerManagerEngine::removeItems(const QList<QOrganizerItemId>& organiz
     Returns the default collection of the manager.
     Any errors encountered during this operation should be stored to
    \a error.
+   \since 1.1
 */
 QOrganizerCollection QOrganizerManagerEngine::defaultCollection(QOrganizerManager::Error* error) const
 {
@@ -1922,6 +1956,7 @@ QOrganizerCollection QOrganizerManagerEngine::defaultCollection(QOrganizerManage
     Any errors encountered during this operation should be stored to \a error.
     If the given \a collectionId does not specify a valid collection, \a error will
     be set to \c QOrganizerManager::DoesNotExistError.
+    \since 1.1
 */
 QOrganizerCollection QOrganizerManagerEngine::collection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error) const
 {
@@ -1934,6 +1969,7 @@ QOrganizerCollection QOrganizerManagerEngine::collection(const QOrganizerCollect
     Returns the list of all of the collections managed by this manager.
     Any errors encountered during this operation should be stored to
     \a error.
+    \since 1.1
  */
 QList<QOrganizerCollection> QOrganizerManagerEngine::collections(QOrganizerManager::Error* error) const
 {
@@ -1945,6 +1981,7 @@ QList<QOrganizerCollection> QOrganizerManagerEngine::collections(QOrganizerManag
     Returns true if the saving of the \a collection was successfull otherwise false.
     Any errors encountered during this operation should be stored to
     \a error.
+    \since 1.1
 */
 bool QOrganizerManagerEngine::saveCollection(QOrganizerCollection* collection, QOrganizerManager::Error* error)
 {
@@ -1958,6 +1995,7 @@ bool QOrganizerManagerEngine::saveCollection(QOrganizerCollection* collection, Q
     Returns true if the removing of the \a collectionId was successfull otherwise false.
     Any errors encountered during this operation should be stored to
     \a error.
+    \since 1.1
 */
 bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionId& collectionId, QOrganizerManager::Error* error)
 {
@@ -1971,6 +2009,7 @@ bool QOrganizerManagerEngine::removeCollection(const QOrganizerCollectionId& col
   Returns a pruned or modified version of the \a original item which is valid and can be saved in the manager.
   The returned item might have details removed or arbitrarily changed.
   Any error which occurs will be saved to \a error.
+  \since 1.1
  */
 QOrganizerItem QOrganizerManagerEngine::compatibleItem(const QOrganizerItem& original, QOrganizerManager::Error* error) const
 {
@@ -2054,6 +2093,7 @@ QOrganizerItem QOrganizerManagerEngine::compatibleItem(const QOrganizerItem& ori
   The returned item might have meta data removed or arbitrarily changed.  Any error which occurs will be saved to \a error.
   By default, modifiable collections are not supported, and so this function always returns false.
   Any engine which supports mutable collections should reimplement this function.
+  \since 1.1
  */
 QOrganizerCollection QOrganizerManagerEngine::compatibleCollection(const QOrganizerCollection& original, QOrganizerManager::Error* error) const
 {
@@ -2074,6 +2114,7 @@ QOrganizerCollection QOrganizerManagerEngine::compatibleCollection(const QOrgani
 
   The results are undefined if the variants are different types, or
   cannot be compared.
+  \since 1.1
  */
 int QOrganizerManagerEngine::compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity)
 {
@@ -2128,6 +2169,7 @@ int QOrganizerManagerEngine::compareVariant(const QVariant& first, const QVarian
   Returns true if the supplied item \a item matches the supplied filter \a filter.
 
   This function will test each condition in the filter, possibly recursing.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, const QOrganizerItem &item)
 {
@@ -2383,6 +2425,7 @@ bool QOrganizerManagerEngine::testFilter(const QOrganizerItemFilter &filter, con
   infinitely small (i.e., will match anything up to the \a endPeriod) and a default-constructed
   \a endPeriod signifies that the upper bound of the range is infinitely large
   (i.e., will match anything which occurs after the \a startPeriod).
+  \since 1.1
  */
 bool QOrganizerManagerEngine::isItemBetweenDates(const QOrganizerItem& item, const QDateTime& startPeriod, const QDateTime& endPeriod)
 {
@@ -2437,6 +2480,7 @@ bool QOrganizerManagerEngine::isItemBetweenDates(const QOrganizerItem& item, con
 /*!
  * Returns the date associated with \a item that can be used for the purpose of date-sorting
  * the item.
+  \since 1.1
  */
 QDateTime getDateForSorting(const QOrganizerItem& item)
 {
@@ -2480,6 +2524,7 @@ QDateTime getDateForSorting(const QOrganizerItem& item)
  * temporally less than non-all day items on the same date.  For events and todos, the
  * start date is used, or if null, the end date is used.  This function defines a total ordering
  * suitable for use in a sort function.
+  \since 1.1
  */
 bool QOrganizerManagerEngine::itemLessThan(const QOrganizerItem& a, const QOrganizerItem& b)
 {
@@ -2499,6 +2544,7 @@ bool QOrganizerManagerEngine::itemLessThan(const QOrganizerItem& a, const QOrgan
   Compares two organizer items (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
   before \a b according to the sort order, a positive number if \a a should appear after \a b according to the sort order,
   and zero if the two are unable to be sorted.
+  \since 1.1
  */
 int QOrganizerManagerEngine::compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders)
 {
@@ -2548,6 +2594,7 @@ int QOrganizerManagerEngine::compareItem(const QOrganizerItem& a, const QOrganiz
   The first QOrganizerItemSortOrder in the list has the highest priority; if the item \a toAdd is deemed equal to another
   in the \a sorted list, the second QOrganizerItemSortOrder in the list is used (and so on until either the item is inserted
   or there are no more sort order objects in the list).
+  \since 1.1
  */
 void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOrganizerItem& toAdd, const QList<QOrganizerItemSortOrder>& sortOrders)
 {
@@ -2569,6 +2616,7 @@ void QOrganizerManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOr
 /*!
   Returns the engine id from the given \a id.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
+  \since 1.1
  */
 const QOrganizerItemEngineId* QOrganizerManagerEngine::engineItemId(const QOrganizerItemId& id)
 {
@@ -2578,6 +2626,7 @@ const QOrganizerItemEngineId* QOrganizerManagerEngine::engineItemId(const QOrgan
 /*!
   Returns the engine id from the given \a id.
   The caller does not take ownership of the pointer, and should not delete returned id or undefined behavior may occur.
+  \since 1.1
  */
 const QOrganizerCollectionEngineId* QOrganizerManagerEngine::engineCollectionId(const QOrganizerCollectionId& id)
 {
@@ -2603,6 +2652,7 @@ const QOrganizerCollectionEngineId* QOrganizerManagerEngine::engineCollectionId(
   mutex, and make sure you take the mutex in the worker thread before calling any of the
   QOrganizerAbstractRequest::updateXXXXXXRequest functions.  And be careful of lock ordering
   problems :D
+  \since 1.1
  */
 void QOrganizerManagerEngine::requestDestroyed(QOrganizerAbstractRequest* req)
 {
@@ -2629,6 +2679,7 @@ void QOrganizerManagerEngine::requestDestroyed(QOrganizerAbstractRequest* req)
   notified not to touch that request any more.
 
   \sa QOrganizerAbstractRequest::start()
+  \since 1.1
  */
 bool QOrganizerManagerEngine::startRequest(QOrganizerAbstractRequest* req)
 {
@@ -2643,6 +2694,7 @@ bool QOrganizerManagerEngine::startRequest(QOrganizerAbstractRequest* req)
   otherwise returns false.
 
   \sa startRequest(), QOrganizerAbstractRequest::cancel()
+  \since 1.1
  */
 bool QOrganizerManagerEngine::cancelRequest(QOrganizerAbstractRequest* req)
 {
@@ -2660,6 +2712,7 @@ bool QOrganizerManagerEngine::cancelRequest(QOrganizerAbstractRequest* req)
   clients may call it in a loop.
 
   \sa startRequest()
+  \since 1.1
  */
 bool QOrganizerManagerEngine::waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs)
 {
@@ -2672,6 +2725,7 @@ bool QOrganizerManagerEngine::waitForRequestFinished(QOrganizerAbstractRequest* 
   Updates the given asynchronous request \a req by setting the new \a state
   of the request.  If the new state is different, the stateChanged() signal
   will be emitted by the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateRequestState(QOrganizerAbstractRequest* req, QOrganizerAbstractRequest::State state)
 {
@@ -2692,6 +2746,7 @@ void QOrganizerManagerEngine::updateRequestState(QOrganizerAbstractRequest* req,
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateItemOccurrenceFetchRequest(QOrganizerItemOccurrenceFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
 {
@@ -2717,6 +2772,7 @@ void QOrganizerManagerEngine::updateItemOccurrenceFetchRequest(QOrganizerItemOcc
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateItemIdFetchRequest(QOrganizerItemIdFetchRequest* req, const QList<QOrganizerItemId>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
 {
@@ -2742,6 +2798,7 @@ void QOrganizerManagerEngine::updateItemIdFetchRequest(QOrganizerItemIdFetchRequ
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateItemFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
 {
@@ -2767,6 +2824,7 @@ void QOrganizerManagerEngine::updateItemFetchRequest(QOrganizerItemFetchRequest*
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateItemFetchForExportRequest(QOrganizerItemFetchForExportRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
 {
@@ -2792,6 +2850,7 @@ void QOrganizerManagerEngine::updateItemFetchForExportRequest(QOrganizerItemFetc
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateItemRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {
@@ -2817,6 +2876,7 @@ void QOrganizerManagerEngine::updateItemRemoveRequest(QOrganizerItemRemoveReques
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateItemSaveRequest(QOrganizerItemSaveRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {
@@ -2843,6 +2903,7 @@ void QOrganizerManagerEngine::updateItemSaveRequest(QOrganizerItemSaveRequest* r
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest* req, const QList<QOrganizerItemDetailDefinition>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {
@@ -2869,6 +2930,7 @@ void QOrganizerManagerEngine::updateDefinitionSaveRequest(QOrganizerItemDetailDe
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest* req, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {
@@ -2894,6 +2956,7 @@ void QOrganizerManagerEngine::updateDefinitionRemoveRequest(QOrganizerItemDetail
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest* req, const QMap<QString, QOrganizerItemDetailDefinition>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {
@@ -2919,6 +2982,7 @@ void QOrganizerManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDetailD
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionFetchRequest* req, const QList<QOrganizerCollection>& result, QOrganizerManager::Error error, QOrganizerAbstractRequest::State newState)
 {
@@ -2943,6 +3007,7 @@ void QOrganizerManagerEngine::updateCollectionFetchRequest(QOrganizerCollectionF
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateCollectionRemoveRequest(QOrganizerCollectionRemoveRequest* req, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {
@@ -2967,6 +3032,7 @@ void QOrganizerManagerEngine::updateCollectionRemoveRequest(QOrganizerCollection
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.1
  */
 void QOrganizerManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSaveRequest* req, const QList<QOrganizerCollection>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {
@@ -3003,6 +3069,7 @@ void QOrganizerManagerEngine::updateCollectionSaveRequest(QOrganizerCollectionSa
   fetchHint is the default constructed hint, all existing details in the matching
   organizer items will be returned.
 
+  \since 1.2
   \sa QOrganizerItemFetchHint
  */
 QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
@@ -3026,6 +3093,7 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDat
   fetchHint is the default constructed hint, all existing details in the matching
   organizer items will be returned.
 
+  \since 1.2
   \sa QOrganizerItemFetchHint
  */
 QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDate, const QDateTime& endDate, int maxCount, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
@@ -3035,7 +3103,9 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::items(const QDateTime& startDat
     return list.mid(0, maxCount);
 }
 
-/*! \reimp */
+/*! \reimp
+  \since 1.2
+*/
 bool QOrganizerManagerEngineV2::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     return QOrganizerManagerEngine::saveItems(items, errorMap, error);
@@ -3062,6 +3132,7 @@ bool QOrganizerManagerEngineV2::saveItems(QList<QOrganizerItem>* items, QMap<int
   will be updated with the new value.
 
   Any errors encountered during this operation should be stored to \a error.
+  \since 1.2
  */
 bool QOrganizerManagerEngineV2::saveItems(QList<QOrganizerItem> *items, const QStringList &definitionMask, QMap<int, QOrganizerManager::Error> *errorMap, QOrganizerManager::Error *error)
 {
@@ -3204,6 +3275,7 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::itemsForExport(const QDateTime&
   definition mask should be used which corresponds to the detail definition hint.  This is to ensure
   that no data is lost by overwriting an existing item with a restricted version of it.
 
+  \since 1.2
   \sa QOrganizerItemFetchHint
  */
 QList<QOrganizerItem> QOrganizerManagerEngineV2::itemsForExport(const QList<QOrganizerItemId> &ids, const QOrganizerItemFetchHint &fetchHint, QMap<int, QOrganizerManager::Error> *errorMap, QOrganizerManager::Error *error) const
@@ -3246,6 +3318,7 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2::itemsForExport(const QList<QOrg
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+  \since 1.2
  */
 void QOrganizerManagerEngineV2::updateItemFetchByIdRequest(QOrganizerItemFetchByIdRequest* req, const QList<QOrganizerItem>& result, QOrganizerManager::Error error, const QMap<int, QOrganizerManager::Error>& errorMap, QOrganizerAbstractRequest::State newState)
 {

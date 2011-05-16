@@ -109,6 +109,7 @@ IMPLEMENT_READING(QRotationReading)
 
     Measured as degrees.
     \sa {QRotationReading Units}
+    \since 1.0
 */
 
 qreal QRotationReading::x() const
@@ -118,6 +119,7 @@ qreal QRotationReading::x() const
 
 /*!
     Sets the rotation around the x axis to \a x.
+    \since 1.0
 */
 void QRotationReading::setX(qreal x)
 {
@@ -130,6 +132,7 @@ void QRotationReading::setX(qreal x)
 
     Measured as degrees.
     \sa {QRotationReading Units}
+    \since 1.0
 */
 
 qreal QRotationReading::y() const
@@ -139,6 +142,7 @@ qreal QRotationReading::y() const
 
 /*!
     Sets the rotation around the y axis to \a y.
+    \since 1.0
 */
 void QRotationReading::setY(qreal y)
 {
@@ -151,6 +155,7 @@ void QRotationReading::setY(qreal y)
 
     Measured as degrees.
     \sa {QRotationReading Units}
+    \since 1.0
 */
 
 qreal QRotationReading::z() const
@@ -160,6 +165,7 @@ qreal QRotationReading::z() const
 
 /*!
     Sets the rotation around the z axis to \a z.
+    \since 1.0
 */
 void QRotationReading::setZ(qreal z)
 {
@@ -177,6 +183,7 @@ void QRotationReading::setZ(qreal z)
 
     The only difference is that the filter() method features a pointer to QRotationReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -185,6 +192,7 @@ void QRotationReading::setZ(qreal z)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QRotationSensor::type("QRotationSensor");
@@ -203,18 +211,21 @@ char const * const QRotationSensor::type("QRotationSensor");
     For details about how the sensor works, see \l QRotationReading.
 
     \sa QRotationReading
+    \since 1.0
 */
 
 /*!
     \fn QRotationSensor::QRotationSensor(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QRotationSensor::~QRotationSensor()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -223,6 +234,7 @@ char const * const QRotationSensor::type("QRotationSensor");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 /*!
@@ -231,6 +243,7 @@ char const * const QRotationSensor::type("QRotationSensor");
 
     Returns true if z is available.
     Returns false if z is not available.
+    \since 1.0
 */
 
 #include "moc_qrotationsensor.cpp"

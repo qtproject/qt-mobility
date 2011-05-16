@@ -114,6 +114,7 @@ QTM_BEGIN_NAMESPACE
 
     Signal that is emitted when interest in \a attribute changes.  If \a interested is true at
     least on QValueSpaceSubscriber is interested in the value of \a attribute.
+    \since 1.0
 */
 
 class QValueSpacePublisherPrivate
@@ -192,6 +193,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path, c
 /*!
     Constructs a QValueSpacePublisher with the specified \a parent that publishes values under
     \a path.
+    \since 1.0
 */
 QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
 :   QObject(parent), d(new QValueSpacePublisherPrivate(path))
@@ -210,6 +212,7 @@ QValueSpacePublisher::QValueSpacePublisher(const QString &path, QObject *parent)
     If no suitable layer is found, the constructed QValueSpacePublisher will be unconnected.
 
     \sa isConnected()
+    \since 1.0
 */
 QValueSpacePublisher::QValueSpacePublisher(QValueSpace::LayerOptions filter,
                                            const QString &path,
@@ -230,6 +233,7 @@ QValueSpacePublisher::QValueSpacePublisher(QValueSpace::LayerOptions filter,
     unconnected.
 
     \sa isConnected()
+    \since 1.0
 */
 
 QValueSpacePublisher::QValueSpacePublisher(const QUuid &uuid, const QString &path, QObject *parent)
@@ -241,6 +245,7 @@ QValueSpacePublisher::QValueSpacePublisher(const QUuid &uuid, const QString &pat
 /*!
     Destroys the QValueSpacePublisher.  This will remove all values published by this publisher in
     \l {QValueSpace::TransientLayer}{non-permanent} layers.
+    \since 1.0
 */
 QValueSpacePublisher::~QValueSpacePublisher()
 {
@@ -258,6 +263,7 @@ QValueSpacePublisher::~QValueSpacePublisher()
 
 /*!
     Returns the path that this QValueSpacePublisher refers to.
+    \since 1.0
 */
 QString QValueSpacePublisher::path() const
 {
@@ -271,6 +277,7 @@ QString QValueSpacePublisher::path() const
 /*!
     Returns true if this QValueSpacePublisher is connected to an available layer; otherwise returns
     false.
+    \since 1.0
 */
 bool QValueSpacePublisher::isConnected() const
 {
@@ -286,6 +293,7 @@ bool QValueSpacePublisher::isConnected() const
     processes in the system will be able to see the attribute changes.
 
     Generally, calling this function is unnecessary.
+    \since 1.0
 */
 void QValueSpacePublisher::sync()
 {
@@ -308,6 +316,7 @@ void QValueSpacePublisher::sync()
 
         // QValueSpaceSubscriber("/Device/State").value() == QVariant("Starting")
     \endcode
+    \since 1.0
 */
 void QValueSpacePublisher::setValue(const QString &name, const QVariant &data)
 {
@@ -337,6 +346,7 @@ void QValueSpacePublisher::setValue(const QString &name, const QVariant &data)
         // QValueSpaceSubscriber("/Device/State").value() == QVariant();
         // QValueSpaceSubscriber("/Device/State/Memory").value() == QVariant();
     \endcode
+    \since 1.0
 */
 void QValueSpacePublisher::resetValue(const QString &name)
 {
@@ -361,6 +371,7 @@ void QValueSpacePublisher::resetValue(const QString &name)
     your implementation.
 
     \sa interestChanged()
+    \since 1.0
 */
 void QValueSpacePublisher::connectNotify(const char *member)
 {

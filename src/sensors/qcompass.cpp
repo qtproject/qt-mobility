@@ -78,6 +78,7 @@ IMPLEMENT_READING(QCompassReading)
     Measured in degrees from magnetic north in a clockwise direction based
     the top of the UI.
     \sa {QCompassReading Units}
+    \since 1.0
 */
 
 qreal QCompassReading::azimuth() const
@@ -89,6 +90,7 @@ qreal QCompassReading::azimuth() const
     Sets the \a azimuth of the device.
 
     \sa {QCompassReading Units}
+    \since 1.0
 */
 void QCompassReading::setAzimuth(qreal azimuth)
 {
@@ -101,6 +103,7 @@ void QCompassReading::setAzimuth(qreal azimuth)
 
     Measured as a value from 0 to 1 with higher values being better.
     \sa {QCompassReading Units}, {http://wiki.forum.nokia.com/index.php/CS001671_-_Calibrating_the_magnetometer_sensor}{CS001671 - Calibrating the magnetometer sensor}
+    \since 1.0
 */
 
 qreal QCompassReading::calibrationLevel() const
@@ -110,6 +113,7 @@ qreal QCompassReading::calibrationLevel() const
 
 /*!
     Sets the calibration level of the reading to \a calibrationLevel.
+    \since 1.0
 */
 void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
 {
@@ -127,6 +131,7 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
 
     The only difference is that the filter() method features a pointer to QCompassReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -135,6 +140,7 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QCompass::type("QCompass");
@@ -153,18 +159,21 @@ char const * const QCompass::type("QCompass");
     For details about how the sensor works, see \l QCompassReading.
 
     \sa QCompassReading
+    \since 1.0
 */
 
 /*!
     \fn QCompass::QCompass(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QCompass::~QCompass()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -173,6 +182,7 @@ char const * const QCompass::type("QCompass");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 #include "moc_qcompass.cpp"
