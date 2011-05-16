@@ -47,6 +47,7 @@
 #include "qgeomapcustomobject.h"
 #include "qgraphicsgeomap.h"
 #include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QPointer>
@@ -85,6 +86,7 @@ private slots:
     void bilinearChildren();
     void offset_data();
     void offset();
+    void boundingBox();
 
     void autoUpdate();
 
@@ -653,6 +655,60 @@ void tst_QGeoMapObject::offset()
 
     for (int i = 0; i < outer.size(); ++i)
         QCOMPARE(map->mapObjectsAtScreenPosition(outer.at(i)).size(), 0);
+}
+
+void tst_QGeoMapObject::boundingBox()
+{
+    int objectWidth = 50;
+    int objectHeight = 20;
+    int offsetX = -1 * objectWidth / 2;
+    int offsetY = -1 * objectHeight / 2;
+
+    QGeoCoordinate center(0.0, 0.0, 0.0);
+
+    QGeoMapCustomObject *object = new QGeoMapCustomObject;
+
+    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+    el->setRect(0, 0, objectWidth, objectHeight);
+    el->setBrush(QBrush(Qt::black));
+
+    object->setGraphicsItem(el);
+    object->setOrigin(center);
+    object->setOffset(QPoint(offsetX, offsetY));
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(center);
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
+
+    double width = object->boundingBox().width();
+    double height = object->boundingBox().height();
+
+    double top = object->boundingBox().topLeft().latitude();
+    double bottom = object->boundingBox().bottomRight().latitude();
+
+    QVERIFY(object->boundingBox().topLeft().longitude() < object->boundingBox().bottomRight().longitude());
+
+    QGeoCoordinate dateline(0.0, 180.0, 0.0);
+
+    object->setOrigin(dateline);
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QCOMPARE(object->boundingBox().width(), width);
+    QCOMPARE(object->boundingBox().height(), height);
+
+    QVERIFY(object->boundingBox().topLeft().latitude() == top);
+    QVERIFY(object->boundingBox().bottomRight().latitude() == bottom);
+
+    QVERIFY(object->boundingBox().topLeft().longitude() > object->boundingBox().bottomRight().longitude());
 }
 
 #define EXF_NO_AUTOUPDATE   QEXPECT_FAIL("", "Auto-update not implemented yet", Continue)
