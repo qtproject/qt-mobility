@@ -77,6 +77,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageFolderSortOrder::QMessageFolderSortOrder(const QMessageFolderSortOrder &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
@@ -88,18 +89,21 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
     \fn QMessageFolderSortOrder::operator=(const QMessageFolderSortOrder& other)
+    \since 1.0
 */
 
 /*!
     \fn QMessageFolderSortOrder::isEmpty() const
 
     Returns true if the sort order remains empty after default construction; otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \fn QMessageFolderSortOrder::isSupported() const
 
     Returns true if the sort order is supported on the current platform; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -109,6 +113,7 @@ QTM_BEGIN_NAMESPACE
     of \a other.
 
     This function determines sorting precedence.
+    \since 1.0
 */
 
 /*!
@@ -118,15 +123,18 @@ QTM_BEGIN_NAMESPACE
     to this sort order.
 
     This function determines sorting precedence.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageFolderSortOrder::operator==(const QMessageFolderSortOrder& other) const
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 bool QMessageFolderSortOrder::operator!=(const QMessageFolderSortOrder& other) const
 {
@@ -138,6 +146,7 @@ bool QMessageFolderSortOrder::operator!=(const QMessageFolderSortOrder& other) c
 
     Returns a sort order that sorts folders by display name, according to \a order.
 
+    \since 1.0
     \sa QMessageFolder::name()
 */
 
@@ -146,6 +155,7 @@ bool QMessageFolderSortOrder::operator!=(const QMessageFolderSortOrder& other) c
 
     Returns a sort order that sorts messages by path according to \a order.
 
+    \since 1.0
     \sa QMessageFolder::path()
 */
 

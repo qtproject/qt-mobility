@@ -135,6 +135,7 @@ QGeoMapCustomObject::QGeoMapCustomObject()
 /*!
     Constructs a new custom object which will draw a QGraphicsItem at an
     offset of \a offset pixels from the coordinate \a coordinate.
+    \since 1.2
 */
 QGeoMapCustomObject::QGeoMapCustomObject(const QGeoCoordinate &coordinate, const QPoint &offset)
     : d_ptr(new QGeoMapCustomObjectPrivate())
@@ -153,6 +154,7 @@ QGeoMapCustomObject::~QGeoMapCustomObject()
 
 /*!
     \reimp
+    \since 1.2
 */
 QGeoMapObject::Type QGeoMapCustomObject::type() const
 {
@@ -165,6 +167,7 @@ QGeoMapObject::Type QGeoMapCustomObject::type() const
     the map that an update is required. .
 
     This method causes the triggerUpdate() signal to be emitted.
+    \since 1.2
 */
 void QGeoMapCustomObject::update()
 {
@@ -176,6 +179,7 @@ void QGeoMapCustomObject::update()
 
     This signal indicates that the graphics item has
     changed and that the map needs to be updated.
+    \since 1.2
 */
 
 /*!
@@ -184,6 +188,7 @@ void QGeoMapCustomObject::update()
     be drawn by this custom object.
 
     If the graphics item is 0 then nothing will be drawn.
+    \since 1.2
 */
 
 QGraphicsItem* QGeoMapCustomObject::graphicsItem() const
@@ -208,6 +213,7 @@ void QGeoMapCustomObject::setGraphicsItem(QGraphicsItem *graphicsItem)
     draws is changed.
 
     The new value will be \a graphicsItem.
+    \since 1.2
 */
 
 /*!
@@ -220,6 +226,7 @@ void QGeoMapCustomObject::setGraphicsItem(QGraphicsItem *graphicsItem)
     coordinate specified by QGeoMapCustomObject::coordinate.
 
     The offset is in pixels and is independent of the zoom level of the map.
+    \since 1.2
 */
 QPoint QGeoMapCustomObject::offset() const
 {
@@ -243,15 +250,17 @@ void QGeoMapCustomObject::setOffset(const QPoint &offset)
 
 /*!
 \fn void QGeoMapCustomObject::offsetChanged(const QPoint &offset)
-    
-    This signal is emitted when the on-screen offset from the coordinate 
+
+    This signal is emitted when the on-screen offset from the coordinate
     at which this custom object should be drawn has changed.
 
     The new value will be \a offset.
+    \since 1.2
 */
 
 /*!
     Sets the origin of the object to \a origin.
+    \since 1.2
 */
 void QGeoMapCustomObject::setOrigin(const QGeoCoordinate &origin)
 {
@@ -264,6 +273,7 @@ void QGeoMapCustomObject::setOrigin(const QGeoCoordinate &origin)
     Note that setting this property will reset the transformType property to
     the default for the units given. For PixelUnit, this is ExactTransform,
     and for all others, BilinearTransform.
+    \since 1.2
 */
 void QGeoMapCustomObject::setUnits(const CoordinateUnit &unit)
 {
@@ -272,6 +282,7 @@ void QGeoMapCustomObject::setUnits(const CoordinateUnit &unit)
 
 /*!
     Sets the transform type of the object to \a type.
+    \since 1.2
 */
 void QGeoMapCustomObject::setTransformType(const TransformType &type)
 {

@@ -90,6 +90,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageSortOrder::QMessageSortOrder(const QMessageSortOrder &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
@@ -101,18 +102,21 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
     \fn QMessageSortOrder::operator=(const QMessageSortOrder& other)
+    \since 1.0
 */
 
 /*!
     \fn QMessageSortOrder::isEmpty() const
 
     Returns true if the sort order remains empty after default construction; otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \fn QMessageSortOrder::isSupported() const
 
     Returns true if the sort order is supported on the current platform; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -125,6 +129,7 @@ QTM_BEGIN_NAMESPACE
 
     On the Windows Mobile platform bySubject() and byReceptionTimeStamp() sort orders can not
     be combined with each other.
+    \since 1.0
 */
 
 /*!
@@ -137,15 +142,18 @@ QTM_BEGIN_NAMESPACE
 
     On the Windows Mobile platform bySubject() and byReceptionTimeStamp() sort orders can not
     be combined with each other.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageSortOrder::operator==(const QMessageSortOrder& other) const
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 {
@@ -157,6 +165,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Returns a sort order that sorts messages by their message type, according to \a order.
 
+    \since 1.0
     \sa QMessage::type()
 */
 
@@ -167,6 +176,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Not supported on the Windows mobile and desktop platforms.
 
+    \since 1.0
     \sa QMessage::from()
 */
 
@@ -177,6 +187,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Not supported on the Windows mobile and desktop platforms.
 
+    \since 1.0
     \sa QMessage::to()
 */
 
@@ -185,6 +196,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Returns a sort order that sorts messages by their subject, according to \a order.
 
+    \since 1.0
     \sa QMessage::subject()
 */
 
@@ -195,6 +207,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Not supported on the Windows mobile platform.
 
+    \since 1.0
     \sa QMessage::date(), byReceptionTimeStamp()
 */
 
@@ -203,6 +216,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Returns a sort order that sorts messages by their reception timestamp, according to \a order.
 
+    \since 1.0
     \sa QMessage::receivedDate()
 */
 
@@ -211,6 +225,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Returns a sort order that sorts messages by their status value \a flag, according to \a order.
 
+    \since 1.0
     \sa QMessage::status()
 */
 
@@ -219,6 +234,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Returns a sort order that sorts messages by their priority, according to \a order.
 
+    \since 1.0
     \sa QMessage::priority()
 */
 
@@ -229,6 +245,7 @@ bool QMessageSortOrder::operator!=(const QMessageSortOrder& other) const
 
     Not supported on the Windows mobile platform.
 
+    \since 1.0
     \sa QMessage::size()
 */
 

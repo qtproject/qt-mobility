@@ -102,7 +102,7 @@ unix:!simulator {
                 DEFINES += QT_NO_BLKID
             }
 
-            !embedded:!contains(QT_CONFIG,qpa): {
+            !contains(QT_CONFIG,embedded):!contains(QT_CONFIG,qpa): {
                 LIBS += -lX11 -lXrandr
             }
 
@@ -157,11 +157,11 @@ unix:!simulator {
                     HEADERS += linux/qdevicekitservice_linux_p.h
                 } else {
                     DEFINES += QT_NO_UDISKS QT_NO_UPOWER
-                    !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
+                    !contains(QT_CONFIG,embedded):!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
                 }
             } else {
                 DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER
-                !embedded:!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
+                !contains(QT_CONFIG,embedded):!contains(QT_CONFIG,qpa): LIBS += -lX11 -lXrandr
             }
         }
 
@@ -254,7 +254,7 @@ unix:!simulator {
             LIBS += -lptiengine
         }
 
-        contains(symbianflextimer_tenabled, yes) { #disabled until test crash is fixed
+        contains(symbianflextimer_enabled, yes) { #disabled until test crash is fixed
             message("SymbianFlexTimer enabled")
             SOURCES += qsystemalignedtimer_symbian.cpp heartbeattimer_s60.cpp
             HEADERS += qsystemalignedtimer_symbian_p.h heartbeattimer_s60.h

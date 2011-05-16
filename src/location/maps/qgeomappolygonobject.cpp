@@ -81,6 +81,7 @@ QGeoMapPolygonObject::~QGeoMapPolygonObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapPolygonObject::type() const
 {
@@ -101,6 +102,7 @@ QGeoMapObject::Type QGeoMapPolygonObject::type() const
     coordinates contains less than 3 valid coordinates then the polygon object
     will not be displayed.
 
+    \since 1.1
 */
 void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -128,6 +130,7 @@ QList<QGeoCoordinate> QGeoMapPolygonObject::path() const
 
     The pen will be treated as a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
+    \since 1.1
 */
 void QGeoMapPolygonObject::setPen(const QPen &pen)
 {
@@ -155,6 +158,7 @@ QPen QGeoMapPolygonObject::pen() const
 
     The outline around the perimeter of the polygon is drawn using the
     QGeoMapPolygonObject::pen property.
+    \since 1.1
 */
 void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
@@ -176,6 +180,7 @@ QBrush QGeoMapPolygonObject::brush() const
     the polygon to be drawn by this polygon object has changed.
 
     The new value is \a path.
+    \since 1.1
 */
 
 /*!
@@ -185,6 +190,7 @@ QBrush QGeoMapPolygonObject::brush() const
     polygon object has changed.
 
     The new value is \a pen.
+    \since 1.1
 */
 
 /*!
@@ -194,6 +200,7 @@ QBrush QGeoMapPolygonObject::brush() const
     this polygon object has changed.
 
     The new value is \a brush.
+    \since 1.1
 */
 
 /*******************************************************************************

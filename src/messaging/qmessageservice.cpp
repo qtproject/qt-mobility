@@ -140,6 +140,7 @@ QTM_BEGIN_NAMESPACE
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
 
+    \since 1.0
     \sa  QMessage, QMessageFilter, QMessageSortOrder, messagesFound(), progressChanged(), countMessages()
 */
 
@@ -170,6 +171,7 @@ QTM_BEGIN_NAMESPACE
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
 
+    \since 1.0
     \sa  QMessage, QMessageFilter, QMessageSortOrder, messagesFound(), progressChanged(), countMessages()
 */
 
@@ -192,6 +194,7 @@ QTM_BEGIN_NAMESPACE
     Note: This function should not initiate network activity, instead only message data
     already stored on the device will be used during evaluation of the function.
 
+    \since 1.0
     \sa  QMessage, QMessageFilter, messagesCounted(), progressChanged(), queryMessages()
 */
 
@@ -210,11 +213,12 @@ QTM_BEGIN_NAMESPACE
     Currently on the Maemo 5 (Fremantle), Symbian, and Windows Mobile platforms the service
     action object enters the FinishedState when the message is queued for sending
     rather than actually sent.
-  
+
     On the MeeGo.com platform this function is not yet supported for SMS type messages.
 
     Returns true if the operation can be initiated; otherwise returns false.
 
+    \since 1.0
     \sa QMessage, QMessageAccountId
 */
 
@@ -230,6 +234,7 @@ QTM_BEGIN_NAMESPACE
     On the QMF platform implementation of this function is left as a task for system
     integrators.
 
+    \since 1.0
     \sa QMessage::type()
 */
 
@@ -246,6 +251,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns true if the operation can be initiated; otherwise returns false.
 
+    \since 1.0
     \sa QMessageId, QMessage::Removed
 */
 
@@ -260,6 +266,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns true if the operation can be initiated; otherwise returns false.
 
+    \since 1.0
     \sa QMessageId, QMessage::Removed
 */
 
@@ -271,6 +278,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns true if the operation can be initiated; otherwise returns false.
 
+    \since 1.0
     \sa QMessageContentContainerId
 */
 
@@ -288,6 +296,7 @@ QTM_BEGIN_NAMESPACE
     On the QMF platform implementation of this function is left as a task for system
     integrators.
 
+    \since 1.0
     \sa QMessageId, QMessage::type()
 */
 
@@ -302,6 +311,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns true if the operation can be initiated; otherwise returns false.
 
+    \since 1.0
     \sa QMessageManager::addMessage(), QMessageManager::updateMessage(), QMessageManager::removeMessage(), QMessageManager::removeMessages()
 */
 
@@ -313,19 +323,21 @@ QTM_BEGIN_NAMESPACE
     The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
 
     On Windows mobile and desktop platforms this function is not supported. On Symbian prior to SR1.11 this function is not supported. On Symbian SR1.11 this function is only partially supported.
-    
+
     Returns true if the operation can be initiated; otherwise returns false.
+    \since 1.2
 */
 
 /*!
     \fn QMessageService::synchronize(const QMessageAccountId &id)
-  
+
     Initiate synchronization with external server identified by \a id
 
     On Windows mobile and desktop platforms, and Maemo 5 this function performs no operation.
 
     Returns true if the operation can be initiated; otherwise returns false.
-    
+
+    \since 1.2
     \sa QMessageManager::addMessage(), QMessageManager::updateMessage(), QMessageManager::removeMessage(), QMessageManager::removeMessages()
 */
 
@@ -334,6 +346,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns the current state of the operation.
 
+    \since 1.0
     \sa stateChanged()
 */
 
@@ -341,6 +354,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageService::cancel()
 
     Attempts to cancel the last requested operation.
+    \since 1.0
 */
 
 /*!
@@ -348,6 +362,7 @@ QTM_BEGIN_NAMESPACE
 
     This signal is emitted when the state of the operation changes, with the new state described by \a newState.
 
+    \since 1.0
     \sa state()
 */
 
@@ -359,6 +374,7 @@ QTM_BEGIN_NAMESPACE
 
     \a ids is the list of identifiers of messages found.
 
+    \since 1.0
     \sa queryMessages()
 */
 
@@ -370,6 +386,7 @@ QTM_BEGIN_NAMESPACE
 
     \a count is the number of matching messages found.
 
+    \since 1.0
     \sa queryMessages()
 */
 
@@ -382,12 +399,14 @@ QTM_BEGIN_NAMESPACE
     the number of progress steps is unknown.
 
     \a value is the number of progress steps completed so far.
+    \since 1.0
 */
 
 /*!
     \fn QMessageService::error() const
 
     Returns a value indicating the last error condition encountered by the operation.
+    \since 1.0
 */
 
 #include "moc_qmessageservice.cpp"

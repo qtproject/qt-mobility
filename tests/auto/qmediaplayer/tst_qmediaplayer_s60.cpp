@@ -44,7 +44,7 @@
 #include "tst_qmediaplayer_s60.h"
 #include <qmediastreamscontrol.h>
 
-static const QString TestFilePath = QLatin1String("f:/data/testfiles/");
+static const QString TestFilePath = QLatin1String("c:/data/testfiles/");
 
 // Comment out the following line if the test device does not have network
 // access.
