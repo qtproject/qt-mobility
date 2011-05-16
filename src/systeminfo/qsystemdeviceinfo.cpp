@@ -409,9 +409,8 @@ QString QSystemDeviceInfo::manufacturer()
     \property QSystemDeviceInfo::model
     \brief The model name.
 
-    Returns the model information of the device. In the case of desktops where no
-    model information is present, the CPU architect, such as i686, and machine type, such as Server,
-    Desktop or Laptop.
+    Returns the model information of the device. In the case where no model information is present,
+    the CPU architect, such as i686, or machine type, such as Server, Desktop or Laptop.
     \since 1.0
 */
 QString QSystemDeviceInfo::model()
@@ -423,7 +422,8 @@ QString QSystemDeviceInfo::model()
     \property QSystemDeviceInfo::productName
     \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
+    Returns the product name of the device. In the case where no product name is available, an empty
+    string is returned.
     \since 1.0
 */
 QString QSystemDeviceInfo::productName()
