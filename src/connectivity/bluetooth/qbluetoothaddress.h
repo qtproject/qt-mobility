@@ -62,7 +62,7 @@ public:
     explicit QBluetoothAddress(const QString &address);
     QBluetoothAddress(const QBluetoothAddress &other);
 
-    ~QBluetoothAddress() {
+    inline ~QBluetoothAddress() {
         if(d_ptr) {
             *this = QBluetoothAddress();
         }
