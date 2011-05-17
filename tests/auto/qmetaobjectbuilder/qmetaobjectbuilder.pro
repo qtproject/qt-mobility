@@ -9,7 +9,12 @@ QT = core
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_qmetaobjectbuilder.cpp
+
+contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 8) {
+    SOURCES += tst_qmetaobjectbuilder_47.cpp
+} else {
+    SOURCES += tst_qmetaobjectbuilder.cpp
+}
 
 CONFIG += mobility
 MOBILITY = serviceframework

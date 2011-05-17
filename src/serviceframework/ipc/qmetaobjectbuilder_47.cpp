@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qmetaobjectbuilder_p.h"
+#include "qmetaobjectbuilder_47_p.h"
 #include <QDebug>
 
 #ifndef Q_OS_WIN
@@ -117,8 +117,6 @@ enum PropertyFlags  {
     EnumOrFlag = 0x00000008,
     StdCppSet = 0x00000100,
 //    Override = 0x00000200,
-    Constant = 0x00000400,
-    Final = 0x00000800,
     Designable = 0x00001000,
     ResolveDesignable = 0x00002000,
     Scriptable = 0x00004000,
@@ -130,7 +128,7 @@ enum PropertyFlags  {
     User = 0x00100000,
     ResolveUser = 0x00200000,
     Notify = 0x00400000,
-    Revisioned = 0x00800000
+    Dynamic = 0x00800000
 };
 
 enum MethodFlags  {
@@ -147,8 +145,7 @@ enum MethodFlags  {
 
     MethodCompatibility = 0x10,
     MethodCloned = 0x20,
-    MethodScriptable = 0x40,
-    MethodRevisioned = 0x80
+    MethodScriptable = 0x40
 };
 
 struct QMetaObjectPrivate
@@ -626,8 +623,6 @@ QMetaPropertyBuilder QMetaObjectBuilder::addProperty(const QMetaProperty& protot
     property.setUser(prototype.isUser());
     property.setStdCppSet(prototype.hasStdCppSet());
     property.setEnumOrFlag(prototype.isEnumType());
-    property.setConstant(prototype.isConstant());
-    property.setFinal(prototype.isFinal());
     if (prototype.hasNotifySignal()) {
         // Find an existing method for the notify signal, or add a new one.
         QMetaMethod method = prototype.notifySignal();
@@ -801,7 +796,7 @@ void QMetaObjectBuilder::addMetaObject
     }
 
     if ((members & StaticMetacall) != 0) {
-        if (priv(prototype->d.data)->revision >= 6) {
+        if (priv(prototype->d.data)->revision >= 2) {
             const QMetaObjectExtraData *extra =
                 (const QMetaObjectExtraData *)(prototype->d.extradata);
             if (extra && extra->static_metacall)
@@ -895,7 +890,7 @@ const QMetaObject *QMetaObjectBuilder::relatedMetaObject(int index) const
 QByteArray QMetaObjectBuilder::classInfoName(int index) const
 {
     if (index >= 0 && index < d->classInfoNames.size())
-        return d->classInfoNames[index]; 
+        return d->classInfoNames[index];
     else
         return QByteArray();
 }
@@ -910,7 +905,7 @@ QByteArray QMetaObjectBuilder::classInfoName(int index) const
 QByteArray QMetaObjectBuilder::classInfoValue(int index) const
 {
     if (index >= 0 && index < d->classInfoValues.size())
-        return d->classInfoValues[index]; 
+        return d->classInfoValues[index];
     else
         return QByteArray();
 }
@@ -1184,9 +1179,9 @@ static QByteArray buildParameterNames
 
 // Build a QMetaObject in "buf" based on the information in "d".
 // If "buf" is null, then return the number of bytes needed to
-// build the QMetaObject.  Returns -1 if the metaobject if 
+// build the QMetaObject.  Returns -1 if the metaobject if
 // relocatable is set, but the metaobject contains extradata.
-static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf, 
+static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf,
                            bool relocatable)
 {
     int size = 0;
@@ -1195,7 +1190,7 @@ static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf,
     int index;
     bool hasNotifySignals = false;
 
-    if (relocatable && 
+    if (relocatable &&
         (d->relatedMetaObjects.size() > 0 || d->staticMetacallFunction))
         return -1;
 
@@ -1271,8 +1266,8 @@ static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf,
     char *str = reinterpret_cast<char *>(buf + size);
     if (buf) {
         if (relocatable) {
-            meta->d.stringdata = reinterpret_cast<const char *>((quintptr)size);
-            meta->d.data = reinterpret_cast<uint *>((quintptr)pmetaSize);
+            meta->d.stringdata = reinterpret_cast<const char *>((intptr_t)size);
+            meta->d.data = reinterpret_cast<uint *>((intptr_t)pmetaSize);
         } else {
             meta->d.stringdata = str;
             meta->d.data = reinterpret_cast<uint *>(data);
@@ -1472,7 +1467,7 @@ QMetaObject *QMetaObjectBuilder::toMetaObject() const
     The data is specific to the architecture on which it was created, but is not
     specific to the process that created it.  Not all meta object builder's can
     be converted to data in this way.  If \a ok is provided, it will be set to
-    true if the conversion succeeds, and false otherwise.  If a 
+    true if the conversion succeeds, and false otherwise.  If a
     staticMetacallFunction() or any relatedMetaObject()'s are specified the
     conversion to relocatable data will fail.
 */
@@ -1495,12 +1490,12 @@ QByteArray QMetaObjectBuilder::toRelocatableData(bool *ok) const
 /*
     \internal
 
-    Sets the \a data returned from toRelocatableData() onto a concrete 
+    Sets the \a data returned from toRelocatableData() onto a concrete
     QMetaObject instance, \a output.  As the meta object's super class is not
     saved in the relocatable data, it must be passed as \a superClass.
 */
-void QMetaObjectBuilder::fromRelocatableData(QMetaObject *output, 
-                                             const QMetaObject *superclass, 
+void QMetaObjectBuilder::fromRelocatableData(QMetaObject *output,
+                                             const QMetaObject *superclass,
                                              const QByteArray &data)
 {
     if (!output)
@@ -1509,8 +1504,8 @@ void QMetaObjectBuilder::fromRelocatableData(QMetaObject *output,
     const char *buf = data.constData();
     const QMetaObject *dataMo = reinterpret_cast<const QMetaObject *>(buf);
 
-    quintptr stringdataOffset = (quintptr)dataMo->d.stringdata;
-    quintptr dataOffset = (quintptr)dataMo->d.data;
+    intptr_t stringdataOffset = (intptr_t)dataMo->d.stringdata;
+    intptr_t dataOffset = (intptr_t)dataMo->d.data;
 
     output->d.superdata = superclass;
     output->d.stringdata = buf + stringdataOffset;
@@ -2294,27 +2289,16 @@ bool QMetaPropertyBuilder::isEnumOrFlag() const
 }
 
 /*!
-    Returns true if the property is constant; otherwise returns false.
-    The default value is false.
-*/
-bool QMetaPropertyBuilder::isConstant() const
-{
-    QMetaPropertyBuilderPrivate *d = d_func();
-    if (d)
-        return d->flag(Constant);
-    else
-        return false;
-}
+    Returns true if the property has the dynamic flag set;
+    otherwise returns false.  The default value is false.
 
-/*!
-    Returns true if the property is final; otherwise returns false.
-    The default value is false.
+    \sa setDynamic()
 */
-bool QMetaPropertyBuilder::isFinal() const
+bool QMetaPropertyBuilder::isDynamic() const
 {
     QMetaPropertyBuilderPrivate *d = d_func();
     if (d)
-        return d->flag(Final);
+        return d->flag(Dynamic);
     else
         return false;
 }
@@ -2443,29 +2427,17 @@ void QMetaPropertyBuilder::setEnumOrFlag(bool value)
 }
 
 /*!
-    Sets the \c CONSTANT flag on this property to \a value.
+    Sets this property to have the dynamic flag if \a value is
+    true.
 
-    \sa isConstant()
+    \sa isDynamic()
 */
-void QMetaPropertyBuilder::setConstant(bool value)
+void QMetaPropertyBuilder::setDynamic(bool value)
 {
     QMetaPropertyBuilderPrivate *d = d_func();
     if (d)
-        d->setFlag(Constant, value);
+        d->setFlag(Dynamic, value);
 }
-
-/*!
-    Sets the \c FINAL flag on this property to \a value.
-
-    \sa isFinal()
-*/
-void QMetaPropertyBuilder::setFinal(bool value)
-{
-    QMetaPropertyBuilderPrivate *d = d_func();
-    if (d)
-        d->setFlag(Final, value);
-}
-
 
 /*!
     \class QMetaEnumBuilder

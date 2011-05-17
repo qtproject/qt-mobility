@@ -69,8 +69,6 @@ class QMetaPropertyBuilderPrivate;
 class QMetaEnumBuilder;
 class QMetaEnumBuilderPrivate;
 
-typedef const QMetaObject& (*QMetaObjectAccessor)();
-
 #ifdef IGNORE_METAOBJECTBUILDER_EXPORT
   class QMetaObjectBuilder
 #else
@@ -174,7 +172,7 @@ public:
     int indexOfEnumerator(const QByteArray& name);
     int indexOfClassInfo(const QByteArray& name);
 
-    typedef QMetaObjectExtraData::StaticMetacallFunction StaticMetacallFunction;
+    typedef int (*StaticMetacallFunction)(QMetaObject::Call, int, void **);
 
     QMetaObjectBuilder::StaticMetacallFunction staticMetacallFunction() const;
     void setStaticMetacallFunction(QMetaObjectBuilder::StaticMetacallFunction value);
@@ -271,8 +269,7 @@ public:
     bool isUser() const;
     bool hasStdCppSet() const;
     bool isEnumOrFlag() const;
-    bool isConstant() const;
-    bool isFinal() const;
+    bool isDynamic() const;
 
     void setReadable(bool value);
     void setWritable(bool value);
@@ -284,8 +281,7 @@ public:
     void setUser(bool value);
     void setStdCppSet(bool value);
     void setEnumOrFlag(bool value);
-    void setConstant(bool value);
-    void setFinal(bool value);
+    void setDynamic(bool value);
 
 private:
     const QMetaObjectBuilder *_mobj;
