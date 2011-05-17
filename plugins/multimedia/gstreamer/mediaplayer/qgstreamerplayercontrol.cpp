@@ -551,7 +551,9 @@ void QGstreamerPlayerControl::setBufferProgress(int progress)
                 m_session->state() != QMediaPlayer::PlayingState)
             m_session->play();
 
-        if (m_bufferProgress < 100 && m_session->state() == QMediaPlayer::PlayingState)
+        if (m_bufferProgress < 100 &&
+                (m_session->state() == QMediaPlayer::PlayingState ||
+                 m_session->pendingState() == QMediaPlayer::PlayingState))
             m_session->pause();
     }
 

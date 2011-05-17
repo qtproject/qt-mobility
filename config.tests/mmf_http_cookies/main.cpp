@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,51 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIANETWORKACCESSCONTROL_H_
-#define S60MEDIANETWORKACCESSCONTROL_H_
+#include "\epoc32\include\platform\mw\MMFSessionInfoCustomCommandConstants.h"
 
-
-#include <QtCore/qobject.h>
-#include <QtCore/qlist.h>
-#include <QtCore/qstring.h>
-#include <qmetaobject.h>
-#include <QtNetwork/qnetworkconfiguration.h>
-#include <commdbconnpref.h>
-#include <commdb.h>
-#include <mmf/common/mmfcontrollerframeworkbase.h>
-#include <qmedianetworkaccesscontrol.h>
-#include "s60mediaplayercontrol.h"
-
-QT_BEGIN_NAMESPACE
-class QMediaPlayerControl;
-class QMediaNetworkAccessControl;
-class QNetworkConfiguration;
-QT_END_NAMESPACE
-
-class S60MediaNetworkAccessControl : public QMediaNetworkAccessControl
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    TMMFSessionInfoControllerMessage m;
 
-public:
-
-    S60MediaNetworkAccessControl(QObject *parent = 0);
-    ~S60MediaNetworkAccessControl();
-
-    virtual void setConfigurations(const QList<QNetworkConfiguration> &configurations);
-    virtual QNetworkConfiguration currentConfiguration() const;
-    int accessPointId();
-    TBool isLastAccessPoint();
-    void resetIndex();
-
-public Q_SLOTS:
-    void accessPointChanged(int);
-
-private:
-    void retriveAccesspointIDL(const QList<QNetworkConfiguration> &);
-    QList<int> m_IapIdList;
-    QList<QNetworkConfiguration> m_NetworkObjectList;
-    QNetworkConfiguration m_NetworkObject;
-    int m_iapId;
-    int m_currentIndex;
-};
-#endif /* S60MEDIANETWORKACCESSCONTROL_H_ */
+    return 0;
+}

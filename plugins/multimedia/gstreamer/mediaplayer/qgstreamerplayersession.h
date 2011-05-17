@@ -73,6 +73,7 @@ public:
     QNetworkRequest request() const;
 
     QMediaPlayer::State state() const { return m_state; }
+    QMediaPlayer::State pendingState() const { return m_pendingState; }
 
     qint64 duration() const;
     qint64 position() const;

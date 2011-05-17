@@ -42,6 +42,7 @@
 //TESTED_COMPONENT=src/multimedia
 
 #include <QtTest/QtTest>
+#include <QtGui/QImageReader>
 #include <QDebug>
 
 #include <qabstractvideosurface.h>
@@ -141,6 +142,8 @@ private slots:
     void testCameraCapture();
     void testCaptureToBuffer();
     void testCameraCaptureMetadata();
+    void testExposureCompensation();
+    void testExposureMode();
 private:
 };
 
@@ -355,7 +358,9 @@ void tst_QCameraBackend::testCameraCapture()
     QString location = savedSignal.last().last().toString();
     QVERIFY(!location.isEmpty());
     QVERIFY(QFileInfo(location).exists());
-    QVERIFY(QImage().load(location));
+    QImageReader reader(location);
+    reader.setScaledSize(QSize(320,240));
+    QVERIFY(!reader.read().isNull());
 
     QFile(location).remove();
 }
@@ -425,8 +430,13 @@ void tst_QCameraBackend::testCaptureToBuffer()
     frame = QVideoFrame();
 
     QVERIFY(!data.isEmpty());
-    QImage img;
-    QVERIFY(img.loadFromData(data));
+    QBuffer buffer;
+    buffer.setData(data);
+    buffer.open(QIODevice::ReadOnly);
+    QImageReader reader(&buffer, "JPG");
+    reader.setScaledSize(QSize(640,480));
+    QImage img(reader.read());
+    QVERIFY(!img.isNull());
 
     capturedSignal.clear();
     imageAvailableSignal.clear();
@@ -519,6 +529,76 @@ void tst_QCameraBackend::testCameraCaptureMetadata()
     QTRY_VERIFY(!savedSignal.isEmpty());
     QVERIFY(!metadataSignal.isEmpty());
     QCOMPARE(metadataSignal.first().first().toInt(), id);
+}
+
+void tst_QCameraBackend::testExposureCompensation()
+{
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN)
+    QSKIP("Capture exposure parameters are supported only on mobile platforms", SkipAll);
+#endif
+
+    QCamera camera;
+    QCameraExposure *exposure = camera.exposure();
+
+    QSignalSpy exposureCompensationSignal(exposure, SIGNAL(exposureCompensationChanged(qreal)));
+
+    //it should be possible to set exposure parameters in Unloaded state
+    QCOMPARE(exposure->exposureCompensation()+1.0, 1.0);
+    exposure->setExposureCompensation(1.5);
+    QCOMPARE(exposure->exposureCompensation(), 1.5);
+    QTRY_COMPARE(exposureCompensationSignal.count(), 1);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.5);
+
+    //exposureCompensationChanged should not be emitted when value is not changed
+    exposure->setExposureCompensation(1.5);
+    QTest::qWait(50);
+    QCOMPARE(exposureCompensationSignal.count(), 1);
+
+    //exposure compensation should be preserved during load/start
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+
+    QCOMPARE(exposure->exposureCompensation(), 1.5);
+
+    exposureCompensationSignal.clear();
+    exposure->setExposureCompensation(-1.5);
+    QCOMPARE(exposure->exposureCompensation(), -1.5);
+    QTRY_COMPARE(exposureCompensationSignal.count(), 1);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), -1.5);
+
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+
+    QCOMPARE(exposure->exposureCompensation(), -1.5);
+
+    exposureCompensationSignal.clear();
+    exposure->setExposureCompensation(1.5);
+    QCOMPARE(exposure->exposureCompensation(), 1.5);
+    QTRY_COMPARE(exposureCompensationSignal.count(), 1);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.5);
+}
+
+void tst_QCameraBackend::testExposureMode()
+{
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN)
+    QSKIP("Capture exposure parameters are supported only on mobile platforms", SkipAll);
+#endif
+
+    QCamera camera;
+    QCameraExposure *exposure = camera.exposure();
+
+#ifdef Q_WS_MAEMO_6
+    QEXPECT_FAIL("", "Camerabin reports Manual exposure instead of Auto", Continue);
+#endif
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
+
+    exposure->setExposureMode(QCameraExposure::ExposurePortrait);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
+
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
 }
 
 QTEST_MAIN(tst_QCameraBackend)

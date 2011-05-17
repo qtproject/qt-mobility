@@ -1,3 +1,6 @@
+#ifndef CAMERAKEYEVENT_SYMBIAN_H
+#define CAMERAKEYEVENT_SYMBIAN_H
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -38,79 +41,47 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
-import QtMultimediaKit 1.1
+/*
+ * Description:
+ * This header can be used to register application on Symbian platforms
+ * for the Camera capture button key events. Application can avoid native
+ * camera application from starting by not forwarding the key event.
+ *
+ * Usage:
+ * Application needs to include this header and include the needed Symbian
+ * libraries. Optionally application can include camerakeyevent_symbian.pri
+ * file. Application can register and unregister for the Camera capture
+ * key events by creating/destructing the QSymbianCameraKeyListener helper
+ * object. The widget needs to be shown before it registers for the
+ * Camera key event.
+ *
+ * Libraries needed:
+ * User needs to define following in the .pro file (or optionally include
+ * the camerakeyevent_symbian.pri):
+ * LIBS += -lcone -lws32
+ *
+ * Symbian Capabilities needed:
+ * To use this header user needs to have SwEvent capability (included in
+ * the camerakeyevent_symbian.pri):
+ * TARGET.CAPABILITY += SwEvent
+ */
 
-Rectangle {
-    id : cameraUI
-    color: "black"
-    state: "PhotoCapture"
+#include <QtCore/QObject>
 
-    states: [
-        State {
-            name: "PhotoCapture"
-            StateChangeScript {
-                script: {
-                    camera.visible = true
-                    camera.focus = true
-                    stillControls.visible = true
-                    photoPreview.visible = false
-                }
-            }
-        },
-        State {
-            name: "PhotoPreview"
-            StateChangeScript {
-                script: {
-                    camera.visible = false                    
-                    stillControls.visible = false
-                    photoPreview.visible = true
-                    photoPreview.focus = true
-                }
-            }
-        }
-    ]
+QT_BEGIN_NAMESPACE
+QT_FORWARD_DECLARE_CLASS(QWidget)
+QT_END_NAMESPACE
 
-    PhotoPreview {
-        id : photoPreview
-        anchors.fill : parent
-        onClosed: cameraUI.state = "PhotoCapture"
-        focus: visible
+QT_USE_NAMESPACE
 
-        Keys.onPressed : {
-            //return to capture mode if the shutter button is touched
-            if (event.key == Qt.Key_CameraFocus && !event.isAutoRepeat) {
-                cameraUI.state = "PhotoCapture"
-                event.accepted = true;
-            }
-        }
-    }
+class QSymbianCameraKeyListener : public QObject
+{
+    Q_OBJECT
+public:
+    QSymbianCameraKeyListener(QWidget *parent = 0);
+    ~QSymbianCameraKeyListener();
+private:
+    QWidget *m_widget;
+};
 
-    Camera {
-        id: camera
-        x: 0
-        y: 0
-        width: parent.width - stillControls.buttonsPanelWidth
-        height: parent.height
-        focus: visible //to receive focus and capture key events
-        //captureResolution : "640x480"
-
-        flashMode: stillControls.flashMode
-        whiteBalanceMode: stillControls.whiteBalance
-        exposureCompensation: stillControls.exposureCompensation
-
-        onImageCaptured : {
-            photoPreview.source = preview
-            stillControls.previewAvailable = true
-            cameraUI.state = "PhotoPreview"
-        }
-    }
-
-    CaptureControls {
-        id: stillControls
-        anchors.fill: parent
-        camera: camera
-        onPreviewSelected: cameraUI.state = "PhotoPreview"
-    }
-
-}
+#endif // CAMERAKEYEVENT_SYMBIAN_H

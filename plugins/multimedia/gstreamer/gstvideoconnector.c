@@ -236,7 +236,12 @@ static GstCaps *gst_video_connector_getcaps (GstPad * pad)
     GstVideoConnector *element;
     element = GST_VIDEO_CONNECTOR (GST_PAD_PARENT (pad));
 
+#if (GST_VERSION_MICRO > 25)
     GstCaps *caps = gst_pad_peer_get_caps_reffed(element->srcpad);
+#else
+    GstCaps *caps = gst_pad_peer_get_caps(element->srcpad);
+#endif
+
     if (!caps)
         caps = gst_caps_new_any();
 
