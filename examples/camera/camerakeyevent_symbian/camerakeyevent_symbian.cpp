@@ -38,35 +38,64 @@
 **
 ****************************************************************************/
 
-#include "camera.h"
-#ifdef Q_OS_SYMBIAN
 #include "camerakeyevent_symbian.h"
-#endif // Q_OS_SYMBIAN
 
-#include <QtGui>
+#include <QtGui/QWidget>    // WId
+#include <eikon.hrh>        // EKeyCamera
+#include <coecntrl.h>       // CCoeControl (WId)
+#include <w32std.h>         // RWindowbase, RWindowGroup, RWsSession
 
-int main(int argc, char *argv[])
+QSymbianCameraKeyListener::QSymbianCameraKeyListener(QWidget *widget):
+    QObject(widget),
+    m_widget(widget)
 {
-#if defined (Q_OS_SYMBIAN)
-    QApplication::setGraphicsSystem("raster");
-    QApplication app(argc, argv);
-    // lock orientation before constructing camera
-    CAknAppUi* appUi = dynamic_cast<CAknAppUi*>(CEikonEnv::Static()->AppUi());
-    if(appUi){
-        QT_TRAP_THROWING(appUi ->SetOrientationL(CAknAppUi::EAppUiOrientationLandscape));
+    if (!m_widget)
+        return;
+
+    // Get view's native Symbian window
+    WId windowId = 0;
+    if (m_widget->internalWinId())
+        windowId = m_widget->internalWinId();
+    else if (m_widget->parentWidget() && m_widget->effectiveWinId())
+        windowId = m_widget->effectiveWinId();
+    RWindowBase *window = windowId ? static_cast<RWindowBase*>(windowId->DrawableWindow()) : 0;
+
+    // Get hold of the window group
+    TInt wGroupId = window ? window->WindowGroupId() : 0;
+    if (!wGroupId)
+        return;
+    RWsSession &wsSession = CCoeEnv::Static()->WsSession();
+    TUint wGroupHandle = wsSession.GetWindowGroupHandle(wGroupId);
+    if (wGroupHandle) {
+        RWindowGroup wGroup(wsSession);
+        wGroup.Construct(wGroupHandle);
+        if (wGroup.CaptureKey(EKeyCamera, 0, 0, 100) < 0)
+            qWarning("Unable to register for camera capture key events, SwEvent capability may be missing");
     }
-#else
-    QApplication app(argc, argv);
-#endif
+}
 
-    Camera camera;
+QSymbianCameraKeyListener::~QSymbianCameraKeyListener()
+{
+    if (!m_widget)
+        return;
 
-#ifdef Q_OS_SYMBIAN
-    camera.showMaximized();
-    new QSymbianCameraKeyListener(&camera);
-#else
-    camera.show();
-#endif
-    
-    return app.exec();
-};
+    // Get view's native Symbian window
+    WId windowId = 0;
+    if (m_widget->internalWinId())
+        windowId = m_widget->internalWinId();
+    else if (m_widget->parentWidget() && m_widget->effectiveWinId())
+        windowId = m_widget->effectiveWinId();
+    RWindowBase *window = windowId ? static_cast<RWindowBase*>(windowId->DrawableWindow()) : 0;
+
+    // Get hold of the window group
+    TInt wGroupId = window ? window->WindowGroupId() : 0;
+    if (!wGroupId)
+        return;
+    RWsSession &wsSession = CCoeEnv::Static()->WsSession();
+    TUint wGroupHandle = wsSession.GetWindowGroupHandle(wGroupId);
+    if (wGroupHandle) {
+        RWindowGroup wGroup(wsSession);
+        wGroup.Construct(wGroupHandle);
+        wGroup.CancelCaptureKey(EKeyCamera);
+    }
+}

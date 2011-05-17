@@ -1,3 +1,6 @@
+#ifndef CAMERAKEYEVENT_SYMBIAN_H
+#define CAMERAKEYEVENT_SYMBIAN_H
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -38,35 +41,47 @@
 **
 ****************************************************************************/
 
-#include "camera.h"
-#ifdef Q_OS_SYMBIAN
-#include "camerakeyevent_symbian.h"
-#endif // Q_OS_SYMBIAN
+/*
+ * Description:
+ * This header can be used to register application on Symbian platforms
+ * for the Camera capture button key events. Application can avoid native
+ * camera application from starting by not forwarding the key event.
+ *
+ * Usage:
+ * Application needs to include this header and include the needed Symbian
+ * libraries. Optionally application can include camerakeyevent_symbian.pri
+ * file. Application can register and unregister for the Camera capture
+ * key events by creating/destructing the QSymbianCameraKeyListener helper
+ * object. The widget needs to be shown before it registers for the
+ * Camera key event.
+ *
+ * Libraries needed:
+ * User needs to define following in the .pro file (or optionally include
+ * the camerakeyevent_symbian.pri):
+ * LIBS += -lcone -lws32
+ *
+ * Symbian Capabilities needed:
+ * To use this header user needs to have SwEvent capability (included in
+ * the camerakeyevent_symbian.pri):
+ * TARGET.CAPABILITY += SwEvent
+ */
 
-#include <QtGui>
+#include <QtCore/QObject>
 
-int main(int argc, char *argv[])
+QT_BEGIN_NAMESPACE
+QT_FORWARD_DECLARE_CLASS(QWidget)
+QT_END_NAMESPACE
+
+QT_USE_NAMESPACE
+
+class QSymbianCameraKeyListener : public QObject
 {
-#if defined (Q_OS_SYMBIAN)
-    QApplication::setGraphicsSystem("raster");
-    QApplication app(argc, argv);
-    // lock orientation before constructing camera
-    CAknAppUi* appUi = dynamic_cast<CAknAppUi*>(CEikonEnv::Static()->AppUi());
-    if(appUi){
-        QT_TRAP_THROWING(appUi ->SetOrientationL(CAknAppUi::EAppUiOrientationLandscape));
-    }
-#else
-    QApplication app(argc, argv);
-#endif
-
-    Camera camera;
-
-#ifdef Q_OS_SYMBIAN
-    camera.showMaximized();
-    new QSymbianCameraKeyListener(&camera);
-#else
-    camera.show();
-#endif
-    
-    return app.exec();
+    Q_OBJECT
+public:
+    QSymbianCameraKeyListener(QWidget *parent = 0);
+    ~QSymbianCameraKeyListener();
+private:
+    QWidget *m_widget;
 };
+
+#endif // CAMERAKEYEVENT_SYMBIAN_H
