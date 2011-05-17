@@ -197,9 +197,10 @@ QVersitDocument QVersitOrganizerExporter::document() const
 }
 
 /*!
- * Returns the map of errors encountered in the most recent call to exportItems().  The key is
+ * Returns the map of errors encountered in the most recent call to exportItems(). The key is
  * the index into the input list of organizer items and the value is the error that occurred on that
- * item.
+ * item. If errors occur, export does not generate EmptyContactError or NoNameError errors but
+ * just succeeds in creating the empty, albeit invalid, vCard. QVersitContactExporter never fails.
  *
  * \sa exportItems()
  */
