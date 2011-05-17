@@ -28,13 +28,9 @@ REM Contact Model
 REM Log Engine contact matching plug-in implementation
 #include <cntmatchlog.iby>
 
-REM Configurable heap size for contact server.
-#ifndef CONTACT_SERVER_MAX_HEAPSIZE
-#define CONTACT_SERVER_MAX_HEAPSIZE  0x200000
-#endif
 
 #ifndef FF_QT_IN_UDA
-file=ABI_DIR/BUILD_DIR/cntsrv.exe		System/Programs/cntsrv.exe       heapmax=CONTACT_SERVER_MAX_HEAPSIZE
+file=ABI_DIR/BUILD_DIR/cntsrv.exe		System/Programs/cntsrv.exe
 file=ABI_DIR/BUILD_DIR/cntmodel.dll		System/Libs/cntmodel.dll
 file=ABI_DIR/BUILD_DIR/cntview.dll		System/Libs/cntview.dll
 
