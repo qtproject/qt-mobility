@@ -38,58 +38,64 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
-#include <QtDeclarative/QDeclarativeView>
-#include <QtDeclarative/QDeclarativeEngine>
-
-#if !defined(QT_NO_OPENGL)
-#include <QtOpenGL/QGLWidget>
-#endif
-
-#ifdef Q_OS_SYMBIAN
 #include "camerakeyevent_symbian.h"
-#endif // Q_OS_SYMBIAN
 
-int main(int argc, char *argv[])
+#include <QtGui/QWidget>    // WId
+#include <eikon.hrh>        // EKeyCamera
+#include <coecntrl.h>       // CCoeControl (WId)
+#include <w32std.h>         // RWindowbase, RWindowGroup, RWsSession
+
+QSymbianCameraKeyListener::QSymbianCameraKeyListener(QWidget *widget):
+    QObject(widget),
+    m_widget(widget)
 {
+    if (!m_widget)
+        return;
 
-#if defined (Q_WS_X11) || defined (Q_WS_MAC) || defined (Q_OS_SYMBIAN)
-    //### default to using raster graphics backend for now
-    bool gsSpecified = false;
-    for (int i = 0; i < argc; ++i) {
-        QString arg = argv[i];
-        if (arg == "-graphicssystem") {
-            gsSpecified = true;
-            break;
-        }
+    // Get view's native Symbian window
+    WId windowId = 0;
+    if (m_widget->internalWinId())
+        windowId = m_widget->internalWinId();
+    else if (m_widget->parentWidget() && m_widget->effectiveWinId())
+        windowId = m_widget->effectiveWinId();
+    RWindowBase *window = windowId ? static_cast<RWindowBase*>(windowId->DrawableWindow()) : 0;
+
+    // Get hold of the window group
+    TInt wGroupId = window ? window->WindowGroupId() : 0;
+    if (!wGroupId)
+        return;
+    RWsSession &wsSession = CCoeEnv::Static()->WsSession();
+    TUint wGroupHandle = wsSession.GetWindowGroupHandle(wGroupId);
+    if (wGroupHandle) {
+        RWindowGroup wGroup(wsSession);
+        wGroup.Construct(wGroupHandle);
+        if (wGroup.CaptureKey(EKeyCamera, 0, 0, 100) < 0)
+            qWarning("Unable to register for camera capture key events, SwEvent capability may be missing");
     }
-
-    if (!gsSpecified)
-        QApplication::setGraphicsSystem("raster");
-#endif
-
-    QApplication application(argc, argv);
-    const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
-    QDeclarativeView view;
-#if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_S60)
-    view.setViewport(new QGLWidget);
-#endif
-    view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    // Qt.quit() called in embedded .qml by default only emits
-    // quit() signal, so do this (optionally use Qt.exit()).
-    QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    view.setGeometry(application.desktop()->screenGeometry());
-    view.showFullScreen();
-#ifdef Q_OS_SYMBIAN
-    new QSymbianCameraKeyListener(&view);
-#endif // Q_OS_SYMBIAN
-#else
-    view.setGeometry(QRect(100, 100, 800, 480));
-    view.show();
-#endif
-    return application.exec();
 }
 
+QSymbianCameraKeyListener::~QSymbianCameraKeyListener()
+{
+    if (!m_widget)
+        return;
+
+    // Get view's native Symbian window
+    WId windowId = 0;
+    if (m_widget->internalWinId())
+        windowId = m_widget->internalWinId();
+    else if (m_widget->parentWidget() && m_widget->effectiveWinId())
+        windowId = m_widget->effectiveWinId();
+    RWindowBase *window = windowId ? static_cast<RWindowBase*>(windowId->DrawableWindow()) : 0;
+
+    // Get hold of the window group
+    TInt wGroupId = window ? window->WindowGroupId() : 0;
+    if (!wGroupId)
+        return;
+    RWsSession &wsSession = CCoeEnv::Static()->WsSession();
+    TUint wGroupHandle = wsSession.GetWindowGroupHandle(wGroupId);
+    if (wGroupHandle) {
+        RWindowGroup wGroup(wsSession);
+        wGroup.Construct(wGroupHandle);
+        wGroup.CancelCaptureKey(EKeyCamera);
+    }
+}
