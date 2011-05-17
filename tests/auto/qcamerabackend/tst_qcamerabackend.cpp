@@ -541,7 +541,7 @@ void tst_QCameraBackend::testExposureCompensation()
     QTRY_COMPARE(exposureCompensationSignal.count(), 1);
     QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.5);
 
-    //exposureCompensationChanged should not be emited when value is not changed
+    //exposureCompensationChanged should not be emitted when value is not changed
     exposure->setExposureCompensation(1.5);
     QTest::qWait(50);
     QCOMPARE(exposureCompensationSignal.count(), 1);
