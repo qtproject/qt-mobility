@@ -56,7 +56,7 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemStorageInfo class provides access to disk storage information from the system.
-    \since 1.1
+    \since 1.0
 */
 
 /*!
@@ -68,8 +68,8 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     \value RemovableDrive        Is a removable disk like MMC.
     \value RemoteDrive           Is a network drive.
     \value CdromDrive            Is a cd rom drive.
-    \value InternalFlashDrive    Is an internal flash disk, or Phone Memory.
-    \value RamDrive              Is a virtual drive made in RAM memory.
+    \value InternalFlashDrive    Is an internal flash disk, or Phone Memory. Since 1.2
+    \value RamDrive              Is a virtual drive made in RAM memory. Since 1.2
 */
 
 /*!
@@ -84,20 +84,19 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
 */
 
 /*!
-    \fn void QSystemStorageInfo::logicalDriveChanged(bool added, const QString &vol)
+    \fn void QSystemStorageInfo::logicalDriveChanged(bool added, const QString &drive)
 
-    This signal gets emitted when new storage has been added or removed from the system.
-    \a added is true when a new drive is found, otherwise false when removed.
-    \a vol is the volume's name.
+    This signal gets emitted when a new \a drive storage has been added or removed. If \a added is true,
+    it means a new drive is found, otherwise a drive is removed.
+    \since 1.1
 */
 
 /*!
-    \fn void QSystemStorageInfo::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
+    \fn void QSystemStorageInfo::storageStateChanged(const QString &drive, QSystemStorageInfo::StorageState state)
 
-    This signal gets emitted when a volume has changed from one StorageState to another, \a vol
-    being the volume name, and \a state being the new state.
-
-    The polling time may be different for different platforms.
+    This signal gets emitted when the storage state of a \a drive has changed to \a state. Note that the
+    polling time may be different for different platforms.
+    \since 1.2
 */
 
 /*!
@@ -119,26 +118,26 @@ QSystemStorageInfo::~QSystemStorageInfo()
 }
 
 /*!
-    Returns the amount of total space on the \a volumeDrive, in bytes.
+    Returns the amount of total space on the \a drive, in bytes.
 */
-qlonglong QSystemStorageInfo::totalDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::totalDiskSpace(const QString &drive)
 {
-    return storageInfoPrivate()->totalDiskSpace(volumeDrive);
+    return storageInfoPrivate()->totalDiskSpace(drive);
 }
 
 /*!
-    Returns the amount of available free space on the \a volumeDrive, in bytes.
+    Returns the amount of available free space on the \a drive, in bytes.
 */
-qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::availableDiskSpace(const QString &drive)
 {
-    return storageInfoPrivate()->availableDiskSpace(volumeDrive);
+    return storageInfoPrivate()->availableDiskSpace(drive);
 }
 
 /*!
     \property QSystemStorageInfo::logicalDrives
-    \brief The logical drives.
+    \brief The  list of logical drives.
 
-    Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
+    Returns a QStringList of drives or volumes, or an empty list if no drives are found.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
@@ -146,31 +145,34 @@ QStringList QSystemStorageInfo::logicalDrives()
 }
 
 /*!
-    Returns the type of volume \a driveVolume
+    Returns the type of the give \a drive.
 */
-QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &drive)
 {
-    return storageInfoPrivate()->typeForDrive(driveVolume);
+    return storageInfoPrivate()->typeForDrive(drive);
 }
 
 /*!
-    Returns the uri, or unique identifier for \a driveVolume.
+    Returns the URI, or unique identifier for the given \a drive.
+    \since 1.2
 */
-QString QSystemStorageInfo::uriForDrive(const QString &driveVolume)
+QString QSystemStorageInfo::uriForDrive(const QString &drive)
 {
-    return storageInfoPrivate()->uriForDrive(driveVolume);
+    return storageInfoPrivate()->uriForDrive(drive);
 }
 
 /*!
-    Returns the storage state of volume \a driveVolume
+    Returns the storage state of the given \a drive.
+    \since 1.2
 */
-QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &driveVolume)
+QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &drive)
 {
-    return storageInfoPrivate()->getStorageState(driveVolume);
+    return storageInfoPrivate()->getStorageState(drive);
 }
 
-/*! internal
-  */
+/*!
+    \internal
+*/
 void QSystemStorageInfo::connectNotify(const char *signal)
 {
      if (QLatin1String(signal) ==

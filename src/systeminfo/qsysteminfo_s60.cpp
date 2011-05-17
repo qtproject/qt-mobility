@@ -1476,17 +1476,23 @@ QString QSystemDeviceInfoPrivate::manufacturer()
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    return DeviceInfo::instance()->phoneInfo()->model();
-}
-
-QString QSystemDeviceInfoPrivate::productName()
-{
+    // The model() function should return something like RM-XXX
+    // However, CTelephony::TPhoneIdV1.iModel returns something like N8
+    // The productName() function should return something like N8
+    // However, SysUtil::GetSWVersion returns something like RM-XXX
+    // This is done as a fix for MOBILITY-2804
     QString productname;
     TBuf<KSysUtilVersionTextLength> versionBuf;
     if (SysUtil::GetSWVersion(versionBuf) == KErrNone) {
         productname = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
     }
     return productname.split("\n").at(2);
+}
+
+QString QSystemDeviceInfoPrivate::productName()
+{
+    // Read the docs in QSystemDeviceInfoPrivate::model() for this
+    return DeviceInfo::instance()->phoneInfo()->model();
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel() const
