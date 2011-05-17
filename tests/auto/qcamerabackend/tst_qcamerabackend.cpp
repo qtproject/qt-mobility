@@ -42,6 +42,7 @@
 //TESTED_COMPONENT=src/multimedia
 
 #include <QtTest/QtTest>
+#include <QtGui/QImageReader>
 #include <QDebug>
 
 #include <qabstractvideosurface.h>
@@ -357,7 +358,9 @@ void tst_QCameraBackend::testCameraCapture()
     QString location = savedSignal.last().last().toString();
     QVERIFY(!location.isEmpty());
     QVERIFY(QFileInfo(location).exists());
-    QVERIFY(QImage().load(location));
+    QImageReader reader(location);
+    reader.setScaledSize(QSize(320,240));
+    QVERIFY(!reader.read().isNull());
 
     QFile(location).remove();
 }
@@ -427,8 +430,13 @@ void tst_QCameraBackend::testCaptureToBuffer()
     frame = QVideoFrame();
 
     QVERIFY(!data.isEmpty());
-    QImage img;
-    QVERIFY(img.loadFromData(data));
+    QBuffer buffer;
+    buffer.setData(data);
+    buffer.open(QIODevice::ReadOnly);
+    QImageReader reader(&buffer, "JPG");
+    reader.setScaledSize(QSize(640,480));
+    QImage img(reader.read());
+    QVERIFY(!img.isNull());
 
     capturedSignal.clear();
     imageAvailableSignal.clear();
