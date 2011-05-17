@@ -120,14 +120,14 @@ public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> CancelAccessRequest(const QDBusObjectPath &in0, const QString &in1)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(in0) << qVariantFromValue(in1);
+        argumentList << QVariant::fromValue(in0) << QVariant::fromValue(in1);
         return asyncCallWithArgumentList(QLatin1String("CancelAccessRequest"), argumentList);
     }
 
     inline QDBusPendingReply<> CancelHandoverRequest(const QString &in0)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(in0);
+        argumentList << QVariant::fromValue(in0);
         return asyncCallWithArgumentList(QLatin1String("CancelHandoverRequest"), argumentList);
     }
 
@@ -140,35 +140,35 @@ public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> RegisterUIAgent(const QDBusObjectPath &in0)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(in0);
+        argumentList << QVariant::fromValue(in0);
         return asyncCallWithArgumentList(QLatin1String("RegisterUIAgent"), argumentList);
     }
 
     inline QDBusPendingReply<> RequestAccess(const QDBusObjectPath &in0, const QString &in1)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(in0) << qVariantFromValue(in1);
+        argumentList << QVariant::fromValue(in0) << QVariant::fromValue(in1);
         return asyncCallWithArgumentList(QLatin1String("RequestAccess"), argumentList);
     }
 
     inline QDBusPendingReply<> RequestHandover(const QDBusObjectPath &in0, const QString &in1, const QString &in2)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(in0) << qVariantFromValue(in1) << qVariantFromValue(in2);
+        argumentList << QVariant::fromValue(in0) << QVariant::fromValue(in1) << QVariant::fromValue(in2);
         return asyncCallWithArgumentList(QLatin1String("RequestHandover"), argumentList);
     }
 
     inline QDBusPendingReply<> SetProperty(const QString &in0, const QDBusVariant &in1)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(in0) << qVariantFromValue(in1);
+        argumentList << QVariant::fromValue(in0) << QVariant::fromValue(in1);
         return asyncCallWithArgumentList(QLatin1String("SetProperty"), argumentList);
     }
 
     inline QDBusPendingReply<> UnregisterUIAgent(const QDBusObjectPath &in0)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(in0);
+        argumentList << QVariant::fromValue(in0);
         return asyncCallWithArgumentList(QLatin1String("UnregisterUIAgent"), argumentList);
     }
 
