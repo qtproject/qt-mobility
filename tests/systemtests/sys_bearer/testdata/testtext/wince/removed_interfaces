@@ -1,0 +1,13 @@
+%RED% Instructions for Windows CE Platform %ENDCOLOR%
+
+---++++ Removed network interfaces
+
+   1. Pre: Added network interfaces has been executed successfully
+   1. Run the bearercloud application
+   1. Verify the cloud space shows a network in the green circle
+   1. Open StartMenu -> All Settings -> Connections tab -> Connections icon -> Wireless Networks
+   1. Select the WLAN from the list
+   1. Press Options -> Delete, and then Yes in the confirm dialog
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is not displayed in the circle
