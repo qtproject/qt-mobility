@@ -4,14 +4,14 @@ contains(tunerlib_s60_enabled, yes) {
 
 	LIBS += -ltunerutility
 	DEFINES += TUNERLIBUSED
-	INCLUDEPATH += $${EPOCROOT}epoc32\include\mmf\common
+	INCLUDEPATH += $${EPOCROOT}epoc32/include/mmf/common
 
 	HEADERS += $$PWD/s60radiotunercontrol_31.h
     SOURCES += $$PWD/s60radiotunercontrol_31.cpp
 }
 
 contains(radioutility_s60_enabled, yes) {
-	LIBS += -lRadio_Utility
+	LIBS += -lradio_utility
 	DEFINES += RADIOUTILITYLIBUSED
 
     HEADERS += $$PWD/s60radiotunercontrol_since32.h

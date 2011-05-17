@@ -7,7 +7,7 @@ isEmpty(QT_LIBINFIX):symbian {
 
     SUBDIRS =
     TARGET = "QtMobility"
-    TARGET.UID3 = 0x2002AC89
+    TARGET.UID3 = 0x2002ac89
 
     VERSION = 1.2.0
 
@@ -505,7 +505,7 @@ isEmpty(QT_LIBINFIX):symbian {
 
     # Support backup and restore for QtMobility libraries and applications
     mobilitybackup.sources = backup_registration.xml
-    mobilitybackup.path = c:/private/10202D56/import/packages/$$replace(TARGET.UID3, 0x,)
+    mobilitybackup.path = c:/private/10202d56/import/packages/$$replace(TARGET.UID3, 0x,)
 
     DEPLOYMENT += qtmobilitydeployment\
                 mobilitybackup
