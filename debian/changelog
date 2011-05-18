@@ -1,3 +1,9 @@
+qt-mobility (1.2.0+339) unstable; urgency=low
+
+  * Fixes: NB#
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 18 May 2011 11:49:48 +1000
+
 qt-mobility (1.2.0-beta1+776) unstable; urgency=low
 
   * Changed version number to correct one
@@ -9,7 +15,7 @@ qt-mobility (1.2.0-beta1+776) unstable; urgency=low
   * Fixes: NB#255174
   * Fixes: NB#242937
 
- -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 16 May 2011 08:11:48 +1000
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Mon, 16 May 2011 08:11:48 +1000
 
 qt-mobility (1.2.0-beta1+488) unstable; urgency=low
 
