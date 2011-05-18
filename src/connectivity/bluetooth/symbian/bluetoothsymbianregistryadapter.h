@@ -78,13 +78,14 @@ public:
     ~BluetoothSymbianRegistryAdapter();
 
     void removePairing();
-    QBluetoothLocalDevice::Pairing pairingStatus() const;
+    QBluetoothLocalDevice::Pairing pairingStatus();
     int errorCode() const;
     QString pairingErrorString() const;
 
 public: //from MBTEngDevManObserver
     virtual void HandleDevManComplete( TInt aErr );
     virtual void HandleGetDevicesComplete( TInt aErr,CBTDeviceArray* aDeviceArray );
+
 
 private:
     QBluetoothLocalDevice::Pairing remoteDevicePairingStatus();
@@ -93,12 +94,18 @@ private:
 Q_SIGNALS: // SIGNALS
     void registryHandlingError(int errorCode);
     void pairingStatusChanged(const QBluetoothAddress &address, QBluetoothLocalDevice::Pairing pairing);
-private:
 
+private:
+    enum Operation {
+        NoOp,
+        PairingStatus, 
+        RemovePairing
+    };
+private:
     // Symbian registry hander
     CBTEngDevMan *m_bluetoothDeviceManager;
     const QBluetoothAddress &m_address;
-    QBluetoothLocalDevice::Pairing m_pairingStatus;
+    Operation m_operation;
 
     int m_errorCode;
     QString m_pairingErrorString;
