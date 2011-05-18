@@ -65,8 +65,7 @@ public:
     {
         int id = mob.propertyCount();
         mob.addSignal("__" + QByteArray::number(id) + "()");
-        QMetaPropertyBuilder build = mob.addProperty(name, type, id);
-        build.setDynamic(true);
+        mob.addProperty(name, type, id);
         qFree(mem);
         mem = mob.toMetaObject();
 

@@ -216,19 +216,20 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
  *  If it is a local video file then loads the video playersession.
 */
 
-void S60MediaPlayerSession::load(QUrl url)
+void S60MediaPlayerSession::load(const QMediaContent source)
 {
     DP0("S60MediaPlayerSession::load +++");
 
+    m_source = source;
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
-    m_stream = (url.scheme() == "file")?false:true;
-    m_UrlPath = url;
+    m_stream = (source.canonicalUrl().scheme() == "file")?false:true;
+    m_UrlPath = source.canonicalUrl();
     TRAPD(err,
-        if(m_stream)
-            doLoadUrlL(QString2TPtrC(url.toString()));
+        if (m_stream)
+            doLoadUrlL(QString2TPtrC(source.canonicalUrl().toString()));
         else
-            doLoadL(QString2TPtrC(QDir::toNativeSeparators(QDir::cleanPath(url.toLocalFile())))));
+            doLoadL(QString2TPtrC(QDir::toNativeSeparators(source.canonicalUrl().toLocalFile()))));
     setError(err);
 
     DP0("S60MediaPlayerSession::load ---");
@@ -307,7 +308,7 @@ void S60MediaPlayerSession::stop()
         return;
 
     m_play_requested = false;
-    setState(QMediaPlayer::StoppedState);
+    m_state = QMediaPlayer::StoppedState;
     if (mediaStatus() == QMediaPlayer::BufferingMedia ||
         mediaStatus() == QMediaPlayer::BufferedMedia ||
         mediaStatus() == QMediaPlayer::StalledMedia) 
@@ -318,6 +319,7 @@ void S60MediaPlayerSession::stop()
     stopStalledTimer();
     doStop();
     emit positionChanged(0);
+    emit stateChanged(m_state);
 
     DP0("S60MediaPlayerSession::stop ---");
 }

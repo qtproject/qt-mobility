@@ -97,30 +97,35 @@ QCameraLocksControl::~QCameraLocksControl()
     \fn QCameraLocksControl::supportedLocks() const
 
     Returns the lock types, the camera supports.
+    \since 1.1
 */
 
 /*!
     \fn QCameraLocksControl::lockStatus(QCamera::LockType lock) const
 
     Returns the camera \a lock status.
+    \since 1.1
 */
 
 /*!
     \fn QCameraLocksControl::searchAndLock(QCamera::LockTypes locks)
 
     Request camera \a locks.
+    \since 1.1
 */
 
 /*!
     \fn QCameraLocksControl::unlock(QCamera::LockTypes locks)
 
     Unlock camera \a locks.
+    \since 1.1
 */
 
 /*!
     \fn QCameraLocksControl::lockStatusChanged(QCamera::LockType lock, QCamera::LockStatus status, QCamera::LockChangeReason reason)
 
     Signals the \a lock \a status was changed with a specified \a reason.
+    \since 1.1
 */
 
 

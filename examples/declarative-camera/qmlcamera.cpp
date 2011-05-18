@@ -47,6 +47,10 @@
 #include <QtOpenGL/QGLWidget>
 #endif
 
+#ifdef Q_OS_SYMBIAN
+#include "camerakeyevent_symbian.h"
+#endif // Q_OS_SYMBIAN
+
 int main(int argc, char *argv[])
 {
 
@@ -79,6 +83,9 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     view.setGeometry(application.desktop()->screenGeometry());
     view.showFullScreen();
+#ifdef Q_OS_SYMBIAN
+    new QSymbianCameraKeyListener(&view);
+#endif // Q_OS_SYMBIAN
 #else
     view.setGeometry(QRect(100, 100, 800, 480));
     view.show();

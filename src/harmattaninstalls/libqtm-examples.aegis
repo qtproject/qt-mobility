@@ -3,6 +3,7 @@
         <credential name="TrackerReadAccess" />
         <for path="/usr/lib/qtmobility/examples/declarative-music-browser" />
         <for path="/usr/lib/qtmobility/examples/documentproperties" />
+        <for path="/usr/lib/qtmobility/examples/mediabrowser" />
     </request>
     <request>
         <credential name="TrackerReadAccess" />

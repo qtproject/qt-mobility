@@ -571,18 +571,20 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
 
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
-    if (!m_isValid)
+    if (!m_isValid || event->isAutoRepeat())
         return;
 
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->searchAndLock();
+        event->accept();
         break;
     case Qt::Key_Camera:
         if (m_camera->captureMode() == QCamera::CaptureStillImage)
             captureImage();
         //else
         //    m_recorder->record();
+        event->accept();
         break;
     default:
         QDeclarativeItem::keyPressEvent(event);
@@ -591,16 +593,18 @@ void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 
 void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 {
-    if (!m_isValid)
+    if (!m_isValid || event->isAutoRepeat())
         return;
 
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->unlock();
+        event->accept();
         break;
     case Qt::Key_Camera:
         //if (m_camera->captureMode() == QCamera::CaptureVideo)
         //    m_recorder->stop();
+        event->accept();
         break;
     default:
         QDeclarativeItem::keyReleaseEvent(event);

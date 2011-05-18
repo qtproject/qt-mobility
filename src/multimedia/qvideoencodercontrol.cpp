@@ -98,12 +98,14 @@ QVideoEncoderControl::~QVideoEncoderControl()
     \fn QVideoEncoderControl::supportedVideoCodecs() const
 
     Returns the list of supported video codecs.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::videoCodecDescription(const QString &codec) const
 
     Returns a description of a video \a codec.
+    \since 1.0
 */
 
 /*!
@@ -112,18 +114,21 @@ QVideoEncoderControl::~QVideoEncoderControl()
     Returns a list of supported encoding options for a video \a codec.
 
     The names and types of the options in the list is system dependent.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::encodingOption(const QString &codec, const QString &option) const
 
     Returns the value of a video \a codec \a option.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
 
     Sets the \a value of a \a codec specific \a option.
+    \since 1.0
 */
 
 /*!
@@ -140,6 +145,7 @@ QVideoEncoderControl::~QVideoEncoderControl()
     If the encoder supports arbitrary resolutions within the supported resolutions range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.
 
+    \since 1.0
     \sa QVideoEncoderSettings::resolution()
 */
 
@@ -157,6 +163,7 @@ QVideoEncoderControl::~QVideoEncoderControl()
     If the encoder supports arbitrary frame rates within the supported range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.
 
+    \since 1.0
     \sa QVideoEncoderSettings::frameRate()
 */
 
@@ -168,12 +175,14 @@ QVideoEncoderControl::~QVideoEncoderControl()
     The returned value may be different tha passed to QVideoEncoderControl::setVideoSettings()
     if the settings contains the default or undefined parameters.
     In this case if the undefined parameters are already resolved, they should be returned.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::setVideoSettings(const QVideoEncoderSettings &settings)
 
     Sets the selected video encoder \a settings.
+    \since 1.0
 */
 
 #include "moc_qvideoencodercontrol.cpp"

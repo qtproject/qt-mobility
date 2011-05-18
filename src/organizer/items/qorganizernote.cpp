@@ -48,6 +48,7 @@ QTM_USE_NAMESPACE
   \brief The QOrganizerNote class provides a note which is not associated with any particular point in time
   \inmodule QtOrganizer
   \ingroup organizer-items
+  \since 1.1
 
   A note is a convenience facade for a QOrganizerItem
   that has its type set to TypeNote.  It contains information which is

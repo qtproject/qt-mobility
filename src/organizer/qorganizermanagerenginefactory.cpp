@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerManagerEngineFactory
   \brief The QOrganizerManagerEngineFactory class provides the interface for
  plugins that implement QOrganizerManagerEngine functionality.
+  \since 1.1
 
   \inmodule QtOrganizer
   \ingroup organizer-backends
@@ -82,6 +83,7 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
   occurs, this function may return a null pointer, and the client developer will get an
   invalid QOrganizerManager in return.  Any error should be stored in the supplied \a error
   reference.
+  \since 1.1
  */
 
 /*!
@@ -97,6 +99,7 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
 
   Engine implementers must implement this function, but should not need
   to call it.
+  \since 1.1
  */
 
 /*!
@@ -112,6 +115,7 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
 
   Engine implementers must implement this function, but should not need
   to call it.
+  \since 1.1
  */
 
 /*!
@@ -122,12 +126,14 @@ QOrganizerManagerEngineFactory::~QOrganizerManagerEngineFactory()
 
   Typically this would be of the form "com.nokia.qt.organizeritems.engines.memory", with
   the appropriate domain and engine name substituted.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerManagerEngineFactory::supportedImplementationVersions() const
 
   This function should return a list of versions of the engine which this factory can instantiate.
+  \since 1.1
  */
 QList<int> QOrganizerManagerEngineFactory::supportedImplementationVersions() const
 {
@@ -138,12 +144,14 @@ QList<int> QOrganizerManagerEngineFactory::supportedImplementationVersions() con
   \fn QOrganizerItemEngineLocalId* QOrganizerItemManagerEngineFactory::createItemEngineLocalId() const
 
   This abstract function create and return an QOrganizerItemEngineLocalId.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerCollectionEngineLocalId* QOrganizerItemManagerEngineFactory::createCollectionEngineLocalId()const
 
   This abstract function create and return an QOrganizerCollectionEngineLocalId.
+  \since 1.1
  */
 
 QTM_END_NAMESPACE

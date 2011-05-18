@@ -1462,10 +1462,7 @@ bool S60ImageCaptureSession::isExposureModeSupported(QCameraExposure::ExposureMo
             else
                 return false;
         case QCameraExposure::ExposureAuto:
-            if(supportedModes & CCamera::EExposureAuto)
-                return true;
-            else
-                return false;
+            return true; // Always supported
         case QCameraExposure::ExposureNight:
             if(supportedModes & CCamera::EExposureNight)
                 return true;

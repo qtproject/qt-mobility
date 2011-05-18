@@ -19,8 +19,8 @@ MOBILITY = bearer
 
 symbian {
     TARGET.CAPABILITY = All -TCB  
-    INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
-    INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
+    INCLUDEPATH += /epoc32/include/app
+    INCLUDEPATH += /epoc32/include/platform/app
 }
 
 maemo5|maemo6 {

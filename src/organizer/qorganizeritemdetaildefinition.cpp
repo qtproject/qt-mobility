@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemDetailDefinition
   \brief The QOrganizerItemDetailDefinition class provides the specification for fields in a detail.
   \inmodule QtOrganizer
+  \since 1.1
 
   The QOrganizerItemDetailDefinition class provides the specification for
   a detail that can be included in any particular QOrganizerItem.
@@ -63,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \fn QOrganizerItemDetailDefinition::operator!=(const QOrganizerItemDetailDefinition& other) const
   Returns true if this detail definition has different allowable field types or uniqueness to the \a other definition
+  \since 1.1
  */
 
 /*! Construct a new, invalid QOrganizerItemDetailDefinition */
@@ -71,13 +73,17 @@ QOrganizerItemDetailDefinition::QOrganizerItemDetailDefinition()
 {
 }
 
-/*! Constructs a new QOrganizerItemDetailDefinition from \a other */
+/*! Constructs a new QOrganizerItemDetailDefinition from \a other
+  \since 1.1
+*/
 QOrganizerItemDetailDefinition::QOrganizerItemDetailDefinition(const QOrganizerItemDetailDefinition& other)
     : d(other.d)
 {
 }
 
-/*! Assigns this QOrganizerItemDetailDefinition to \a other */
+/*! Assigns this QOrganizerItemDetailDefinition to \a other
+  \since 1.1
+*/
 QOrganizerItemDetailDefinition& QOrganizerItemDetailDefinition::operator=(const QOrganizerItemDetailDefinition& other)
 {
     d = other.d;
@@ -89,7 +95,9 @@ QOrganizerItemDetailDefinition::~QOrganizerItemDetailDefinition()
 {
 }
 
-/*! Returns true if the definition has the same type, uniqueness and allowable value datatypes as \a other */
+/*! Returns true if the definition has the same type, uniqueness and allowable value datatypes as \a other
+  \since 1.1
+*/
 bool QOrganizerItemDetailDefinition::operator==(const QOrganizerItemDetailDefinition& other) const
 {
     if (d->m_name != other.d->m_name)
@@ -101,7 +109,9 @@ bool QOrganizerItemDetailDefinition::operator==(const QOrganizerItemDetailDefini
     return true;
 }
 
-/*! Returns true if the id and fields of this definition are empty */
+/*! Returns true if the id and fields of this definition are empty
+    \since 1.1
+*/
 bool QOrganizerItemDetailDefinition::isEmpty() const
 {
     if (!d->m_name.isEmpty())
@@ -114,6 +124,7 @@ bool QOrganizerItemDetailDefinition::isEmpty() const
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a definition to the stream \a out.
+  \since 1.1
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailDefinition& definition)
 {
@@ -126,6 +137,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailDefinition& 
 
 /*!
  * Reads a detail definition from stream \a in into \a definition.
+  \since 1.1
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailDefinition& definition)
 {
@@ -169,7 +181,9 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemDetailDefinition& definition)
 }
 #endif
 
-/*! Sets the unique identifier of this detail type to \a definitionName. */
+/*! Sets the unique identifier of this detail type to \a definitionName.
+  \since 1.1
+*/
 void QOrganizerItemDetailDefinition::setName(const QString& definitionName)
 {
     d->m_name = definitionName;
@@ -179,44 +193,57 @@ void QOrganizerItemDetailDefinition::setName(const QString& definitionName)
   Sets whether an organizer item can have more than one detail of this type.
   If \a unique is true, only one detail of this type can be added.
   Otherwise, any number can be added.
+  \since 1.1
  */
 void QOrganizerItemDetailDefinition::setUnique(bool unique)
 {
     d->m_unique = unique;
 }
 
-/*! Returns the identifier of this detail definition */
+/*! Returns the identifier of this detail definition
+  \since 1.1
+*/
 QString QOrganizerItemDetailDefinition::name() const
 {
     return d->m_name;
 }
 
-/*! Returns the per-organizer item uniqueness of this definition */
+/*! Returns the per-organizer item uniqueness of this definition
+  \since 1.1
+*/
 bool QOrganizerItemDetailDefinition::isUnique() const
 {
     return d->m_unique;
 }
 
-/*! Sets the fields which constitute the data of details of this this definition to \a fields */
+/*! Sets the fields which constitute the data of details of this this definition to \a fields
+  \since 1.1
+*/
 void QOrganizerItemDetailDefinition::setFields(const QMap<QString, QOrganizerItemDetailFieldDefinition>& fields)
 {
     d->m_fields = fields;
 }
 
-/*! Returns the map of keys to fields which are present in details of this definition */
+/*! Returns the map of keys to fields which are present in details of this definition
+  \since 1.1
+*/
 QMap<QString, QOrganizerItemDetailFieldDefinition> QOrganizerItemDetailDefinition::fields() const
 {
     return d->m_fields;
 }
 
 /*! Inserts the field \a field into the map of fields which constitute the data of details of this definition for the given field key \a key.
-    If another field for that key already exists in the definition, it will be overwritten. */
+    If another field for that key already exists in the definition, it will be overwritten.
+  \since 1.1
+*/
 void QOrganizerItemDetailDefinition::insertField(const QString& key, const QOrganizerItemDetailFieldDefinition& field)
 {
     d->m_fields.insert(key, field);
 }
 
-/*! Removes the field associated with the given field key \a key from the map of fields which constitute the data of details of this definition. */
+/*! Removes the field associated with the given field key \a key from the map of fields which constitute the data of details of this definition.
+  \since 1.1
+*/
 void QOrganizerItemDetailDefinition::removeField(const QString& key)
 {
     d->m_fields.remove(key);

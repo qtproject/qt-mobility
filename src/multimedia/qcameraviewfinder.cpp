@@ -94,6 +94,7 @@ QCameraViewfinder::~QCameraViewfinder()
 
 /*!
   \reimp
+  \since 1.1
 */
 QMediaObject *QCameraViewfinder::mediaObject() const
 {
@@ -102,6 +103,7 @@ QMediaObject *QCameraViewfinder::mediaObject() const
 
 /*!
   \reimp
+  \since 1.1
 */
 bool QCameraViewfinder::setMediaObject(QMediaObject *object)
 {

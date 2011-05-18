@@ -97,24 +97,28 @@ QMediaContainerControl::~QMediaContainerControl()
     \fn QMediaContainerControl::supportedContainers() const
 
     Returns a list of MIME types of supported container formats.
+    \since 1.0
 */
 
 /*!
     \fn QMediaContainerControl::containerMimeType() const
 
     Returns the MIME type of the selected container format.
+    \since 1.0
 */
 
 /*!
     \fn QMediaContainerControl::setContainerMimeType(const QString &mimeType)
 
     Sets the current container format to the format identified by the given \a mimeType.
+    \since 1.0
 */
 
 /*!
     \fn QMediaContainerControl::containerDescription(const QString &mimeType) const
 
     Returns a description of the container format identified by the given \a mimeType.
+    \since 1.0
 */
 
 #include "moc_qmediacontainercontrol.cpp"

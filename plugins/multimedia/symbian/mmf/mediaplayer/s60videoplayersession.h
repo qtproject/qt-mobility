@@ -198,6 +198,9 @@ private:
     S60VideoDisplay *m_videoOutputDisplay;
     RWindow *m_displayWindow;
     QSize m_nativeSize;
+#ifdef HTTP_COOKIES_ENABLED
+    TMMFMessageDestinationPckg m_destinationPckg;
+#endif
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     CAudioOutput *m_audioOutput;
 #endif

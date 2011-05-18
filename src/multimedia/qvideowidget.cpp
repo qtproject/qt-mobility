@@ -647,6 +647,7 @@ QVideoWidget::~QVideoWidget()
 /*!
     \property QVideoWidget::mediaObject
     \brief the media object which provides the video displayed by a widget.
+    \since 1.0
 */
 
 QMediaObject *QVideoWidget::mediaObject() const
@@ -656,6 +657,7 @@ QMediaObject *QVideoWidget::mediaObject() const
 
 /*!
     \internal
+    \since 1.0
 */
 bool QVideoWidget::setMediaObject(QMediaObject *object)
 {
@@ -701,6 +703,7 @@ bool QVideoWidget::setMediaObject(QMediaObject *object)
 /*!
     \property QVideoWidget::aspectRatioMode
     \brief how video is scaled with respect to its aspect ratio.
+    \since 1.0
 */
 
 Qt::AspectRatioMode QVideoWidget::aspectRatioMode() const
@@ -723,6 +726,7 @@ void QVideoWidget::setAspectRatioMode(Qt::AspectRatioMode mode)
 /*!
     \property QVideoWidget::fullScreen
     \brief whether video display is confined to a window or is fullScreen.
+    \since 1.0
 */
 
 void QVideoWidget::setFullScreen(bool fullScreen)
@@ -748,6 +752,7 @@ void QVideoWidget::setFullScreen(bool fullScreen)
 
     Signals that the \a fullScreen mode of a video widget has changed.
 
+    \since 1.0
     \sa fullScreen
 */
 
@@ -756,6 +761,7 @@ void QVideoWidget::setFullScreen(bool fullScreen)
     \brief an adjustment to the brightness of displayed video.
 
     Valid brightness values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 int QVideoWidget::brightness() const
@@ -780,6 +786,7 @@ void QVideoWidget::setBrightness(int brightness)
 
     Signals that a video widgets's \a brightness adjustment has changed.
 
+    \since 1.0
     \sa brightness
 */
 
@@ -789,6 +796,7 @@ void QVideoWidget::setBrightness(int brightness)
 
     Valid contrast values range between -100 and 100, the default is 0.
 
+    \since 1.0
 */
 
 int QVideoWidget::contrast() const
@@ -813,6 +821,7 @@ void QVideoWidget::setContrast(int contrast)
 
     Signals that a video widgets's \a contrast adjustment has changed.
 
+    \since 1.0
     \sa contrast
 */
 
@@ -821,6 +830,7 @@ void QVideoWidget::setContrast(int contrast)
     \brief an adjustment to the hue of displayed video.
 
     Valid hue values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 int QVideoWidget::hue() const
@@ -845,6 +855,7 @@ void QVideoWidget::setHue(int hue)
 
     Signals that a video widgets's \a hue has changed.
 
+    \since 1.0
     \sa hue
 */
 
@@ -853,6 +864,7 @@ void QVideoWidget::setHue(int hue)
     \brief an adjustment to the saturation of displayed video.
 
     Valid saturation values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 int QVideoWidget::saturation() const
@@ -878,12 +890,14 @@ void QVideoWidget::setSaturation(int saturation)
 
     Signals that a video widgets's \a saturation has changed.
 
+    \since 1.0
     \sa saturation
 */
 
 /*!
   Returns the size hint for the current back end,
   if there is one, or else the size hint from QWidget.
+  \since 1.0
  */
 QSize QVideoWidget::sizeHint() const
 {
@@ -900,6 +914,7 @@ QSize QVideoWidget::sizeHint() const
 /*!
   Current event \a event.
   Returns the value of the baseclass QWidget::event(QEvent *event) function.
+  \since 1.0
 */
 bool QVideoWidget::event(QEvent *event)
 {
@@ -932,6 +947,7 @@ bool QVideoWidget::event(QEvent *event)
 
 /*!
   Handles the show \a event.
+  \since 1.0
  */
 void QVideoWidget::showEvent(QShowEvent *event)
 {
@@ -956,6 +972,7 @@ void QVideoWidget::showEvent(QShowEvent *event)
 /*!
 
   Handles the hide \a event.
+  \since 1.0
 */
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
@@ -969,6 +986,7 @@ void QVideoWidget::hideEvent(QHideEvent *event)
 
 /*!
   Handles the resize \a event.
+  \since 1.0
  */
 void QVideoWidget::resizeEvent(QResizeEvent *event)
 {
@@ -982,6 +1000,7 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
 
 /*!
   Handles the move \a event.
+  \since 1.0
  */
 void QVideoWidget::moveEvent(QMoveEvent *event)
 {
@@ -993,6 +1012,7 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
 
 /*!
   Handles the paint \a event.
+  \since 1.0
  */
 void QVideoWidget::paintEvent(QPaintEvent *event)
 {
@@ -1012,6 +1032,7 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 /*!
     \reimp
     \internal
+    \since 1.1
 */
 bool QVideoWidget::winEvent(MSG *message, long *result)
 {

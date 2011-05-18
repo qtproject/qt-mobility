@@ -80,18 +80,18 @@ public:
         CriticalStorageState, //2%
     }; //1.2
 
-    Q_INVOKABLE qlonglong totalDiskSpace(const QString &driveVolume);
-    Q_INVOKABLE qlonglong availableDiskSpace(const QString &driveVolume);
+    Q_INVOKABLE qlonglong totalDiskSpace(const QString &drive);
+    Q_INVOKABLE qlonglong availableDiskSpace(const QString &drive);
     static QStringList logicalDrives();
 
-    Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+    Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &drive);
 
-    Q_INVOKABLE QString uriForDrive(const QString &driveVolume); //1.2
-    Q_INVOKABLE QSystemStorageInfo::StorageState getStorageState(const QString &volume); //1.2
+    Q_INVOKABLE QString uriForDrive(const QString &drive); //1.2
+    Q_INVOKABLE QSystemStorageInfo::StorageState getStorageState(const QString &drive); //1.2
 
 Q_SIGNALS:
-    void logicalDriveChanged(bool added,const QString &vol);
-    void storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state); //1.2
+    void logicalDriveChanged(bool added,const QString &drive);
+    void storageStateChanged(const QString &drive, QSystemStorageInfo::StorageState state); //1.2
 
 private:
        QSystemStorageInfoPrivate *d;

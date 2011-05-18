@@ -90,11 +90,12 @@ public:
 
     Services may call this function to notify the service client about service related
     context information of the given \a type. The contextual information is stored in \a data.
+    \since 1.0
 */
 
 
 /*!
-    Constrcuts a service context with the given \a parent.
+    Constructs a service context with the given \a parent.
 */
 QServiceContext::QServiceContext(QObject* parent)
     : QObject(parent)
@@ -122,6 +123,7 @@ QServiceContext::~QServiceContext()
 
     By default, this value is empty but you can change this by calling
     setClientId().
+    \since 1.0
 */
 QString QServiceContext::clientId() const
 {
@@ -130,6 +132,7 @@ QString QServiceContext::clientId() const
 
 /*!
     Sets the \a id of the client using the service.
+    \since 1.0
 */
 void QServiceContext::setClientId(const QString& id)
 {
@@ -142,6 +145,7 @@ void QServiceContext::setClientId(const QString& id)
 
     By default, this value is empty but you can change this by calling
     setClientName(). This string is translated and can be shown to the user.
+    \since 1.0
 */
 QString QServiceContext::clientName() const
 {
@@ -157,6 +161,7 @@ void QServiceContext::setClientName(const QString& name)
     Returns the client data associated to \a key.
 
     \sa setClientData(), resetClientData()
+    \since 1.1
 */
 QVariant QServiceContext::clientData(const QString& key) const
 {
@@ -174,6 +179,7 @@ QVariant QServiceContext::clientData(const QString& key) const
     can be retrieved via \a key.
 
     \sa clientData(), resetClientData()
+    \since 1.1
 */
 void QServiceContext::setClientData(const QString& key, const QVariant& value)
 {
@@ -188,6 +194,7 @@ void QServiceContext::setClientData(const QString& key, const QVariant& value)
     Deletes all client data associated to the service context.
 
     \sa clientData(), setClientData()
+    \since 1.1
 */
 void QServiceContext::resetClientData()
 {

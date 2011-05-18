@@ -91,6 +91,7 @@ QTM_BEGIN_NAMESPACE
     will invoke the \c {buttonInfoChanged()} slot whenever any value under \c {/Device/Buttons}
     changes.  This includes the value of \c {/Device/Buttons} itself, a change of a subpath such as
     \c {/Device/Buttons/2/Name} or the creation or removal of a subpath.
+    \since 1.0
 */
 
 /*!
@@ -100,6 +101,7 @@ QTM_BEGIN_NAMESPACE
 
     \bold {Note:} that if a value changes multiple times in quick succession, only the most recent
     value may be accessible via the value() function.
+    \since 1.0
 */
 
 /*!
@@ -109,12 +111,14 @@ QTM_BEGIN_NAMESPACE
 
     Settings this property causes the QValueSpaceSubscriber to disconnect and reconnect to the
     Value Space with the new path.  As a result all signal/slot connections are disconnected.
+    \since 1.0
 */
 
 /*!
     \property QValueSpaceSubscriber::value
 
     This property holds the value of the path that this QValueSpaceSubscriber refers to.
+    \since 1.0
 */
 
 class QValueSpaceSubscriberPrivateProxy : public QObject
@@ -314,6 +318,7 @@ bool QValueSpaceSubscriberPrivate::disconnect(QValueSpaceSubscriber * space)
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to the root path.
 
     The constructed Value Space subscriber will access all available layers.
+    \since 1.0
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
 :   QObject(parent)
@@ -325,6 +330,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QObject *parent)
     Constructs a QValueSpaceSubscriber with the specified \a parent that refers to \a path.
 
     The constructed Value Space subscriber will access all available layers.
+    \since 1.0
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *parent)
 :   QObject(parent)
@@ -340,6 +346,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QString &path, QObject *paren
     unconnected.
 
     \sa isConnected()
+    \since 1.0
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(QValueSpace::LayerOptions filter,
                                              const QString &path,
@@ -360,6 +367,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(QValueSpace::LayerOptions filter,
     unconnected.
 
     \sa QValueSpace, isConnected()
+    \since 1.0
 */
 QValueSpaceSubscriber::QValueSpaceSubscriber(const QUuid &uuid,
                                              const QString &path,
@@ -371,6 +379,7 @@ QValueSpaceSubscriber::QValueSpaceSubscriber(const QUuid &uuid,
 
 /*!
     Destroys the QValueSpaceSubscriber.
+    \since 1.0
 */
 QValueSpaceSubscriber::~QValueSpaceSubscriber()
 {
@@ -384,6 +393,7 @@ QValueSpaceSubscriber::~QValueSpaceSubscriber()
     space with the new \a path.
 
     Calling this function disconnects all signal/slot connections.
+    \since 1.0
 */
 void QValueSpaceSubscriber::setPath(const QString &path)
 {
@@ -404,6 +414,7 @@ void QValueSpaceSubscriber::setPath(const QString &path)
     space with the specified \a path.
 
     Calling this function disconnects all signal/slot connections.
+    \since 1.0
 */
 void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 {
@@ -426,6 +437,7 @@ QString QValueSpaceSubscriber::path() const
 /*!
     Changes the path to the absolute path if \a path starts with a '/'; otherwise changes to the
     sub path of the current path.
+    \since 1.0
 */
 void QValueSpaceSubscriber::cd(const QString &path)
 {
@@ -437,6 +449,7 @@ void QValueSpaceSubscriber::cd(const QString &path)
 
 /*!
     Sets the path to parent of the current path.
+    \since 1.0
 */
 void QValueSpaceSubscriber::cdUp()
 {
@@ -456,6 +469,7 @@ void QValueSpaceSubscriber::cdUp()
     Returns true if this QValueSpaceSubscriber is connected to at least one available layer;
     otherwise returns false.  An unconnected QValueSpaceSubscriber is constructed if the filtering
     parameters passed to the constructor eliminate all available layers.
+    \since 1.0
 */
 bool QValueSpaceSubscriber::isConnected() const
 {
@@ -475,6 +489,7 @@ bool QValueSpaceSubscriber::isConnected() const
         // Is true
         equiv.value() == base.value("Nokia/General/Mappings");
     \endcode
+    \since 1.0
 */
 QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &def) const
 {
@@ -511,6 +526,7 @@ QVariant QValueSpaceSubscriber::valuex(const QVariant &def) const
 
     Registers for change notifications in response to connection to the contentsChanged()
     \a signal.
+    \since 1.0
 */
 void QValueSpaceSubscriber::connectNotify(const char *signal)
 {
@@ -525,6 +541,7 @@ void QValueSpaceSubscriber::connectNotify(const char *signal)
 
     Unregisters for change notifications in response to disconnection from the contentsChanged()
     \a signal.
+    \since 1.0
 */
 void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 {
@@ -547,6 +564,7 @@ void QValueSpaceSubscriber::disconnectNotify(const char *signal)
 
     \c { QValueSpaceSubscriber("/Settings").subPaths() } will return a list containing
     \c { { Nokia, Qt } } in no particular order.
+    \since 1.0
 */
 QStringList QValueSpaceSubscriber::subPaths() const
 {

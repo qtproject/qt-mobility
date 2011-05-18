@@ -74,6 +74,7 @@ QOrganizerManagerEngineV2Wrapper::~QOrganizerManagerEngineV2Wrapper()
 /*! \reimp
  * This function calls the wrapped engine's items function and ensures the results are sorted by
  * date (if no sort order is given).
+   \since 1.2
  */
 QList<QOrganizerItem> QOrganizerManagerEngineV2Wrapper::items(
         const QDateTime& startDate,
@@ -93,6 +94,7 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2Wrapper::items(
 /*! \reimp
  * This function calls the wrapped engine's items function and ensures the results are sorted by
  * date and truncates the list after maxCount items (if maxCount is not negative)
+   \since 1.2
  */
 QList<QOrganizerItem> QOrganizerManagerEngineV2Wrapper::items(
         const QDateTime& startDate,
@@ -109,7 +111,9 @@ QList<QOrganizerItem> QOrganizerManagerEngineV2Wrapper::items(
     return list.mid(0, maxCount);
 }
 
-/*! \reimp */
+/*! \reimp
+   \since 1.2
+*/
 void QOrganizerManagerEngineV2Wrapper::requestDestroyed(QOrganizerAbstractRequest* req)
 {
     RequestController* controller = m_controllerForRequest.value(req);
@@ -123,7 +127,9 @@ void QOrganizerManagerEngineV2Wrapper::requestDestroyed(QOrganizerAbstractReques
     }
 }
 
-/*! \reimp */
+/*! \reimp
+   \since 1.2
+*/
 bool QOrganizerManagerEngineV2Wrapper::startRequest(QOrganizerAbstractRequest* req)
 {
     if (req->type() == QOrganizerAbstractRequest::ItemFetchRequest

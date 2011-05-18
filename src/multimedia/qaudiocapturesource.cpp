@@ -107,6 +107,7 @@ public:
 
 /*!
     Construct a QAudioCaptureSource using the QMediaService from \a provider, with \a parent.
+    \since 1.0
 */
 
 QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider *provider):
@@ -135,6 +136,7 @@ QAudioCaptureSource::~QAudioCaptureSource()
 
 /*!
     Returns the error state of the audio capture service.
+    \since 1.0
 */
 
 QtMultimediaKit::AvailabilityError QAudioCaptureSource::availabilityError() const
@@ -146,6 +148,7 @@ QtMultimediaKit::AvailabilityError QAudioCaptureSource::availabilityError() cons
 
 /*!
     Returns true if the audio capture service is available, otherwise returns false.
+    \since 1.0
 */
 bool QAudioCaptureSource::isAvailable() const
 {
@@ -161,6 +164,7 @@ bool QAudioCaptureSource::isAvailable() const
 
 /*!
     Returns a list of available audio inputs
+    \since 1.0
 */
 
 QList<QString> QAudioCaptureSource::audioInputs() const
@@ -176,6 +180,7 @@ QList<QString> QAudioCaptureSource::audioInputs() const
 
 /*!
     Returns the description of the audio input device with \a name.
+    \since 1.0
 */
 
 QString QAudioCaptureSource::audioDescription(const QString& name) const
@@ -190,6 +195,7 @@ QString QAudioCaptureSource::audioDescription(const QString& name) const
 
 /*!
     Returns the default audio input name.
+    \since 1.0
 */
 
 QString QAudioCaptureSource::defaultAudioInput() const
@@ -204,6 +210,7 @@ QString QAudioCaptureSource::defaultAudioInput() const
 
 /*!
     Returns the active audio input name.
+    \since 1.0
 */
 
 QString QAudioCaptureSource::activeAudioInput() const
@@ -218,6 +225,7 @@ QString QAudioCaptureSource::activeAudioInput() const
 
 /*!
     Set the active audio input to \a name.
+    \since 1.0
 */
 
 void QAudioCaptureSource::setAudioInput(const QString& name)
@@ -232,16 +240,19 @@ void QAudioCaptureSource::setAudioInput(const QString& name)
     \fn QAudioCaptureSource::activeAudioInputChanged(const QString& name)
 
     Signal emitted when active audio input changes to \a name.
+    \since 1.0
 */
 
 /*!
     \fn QAudioCaptureSource::availableAudioInputsChanged()
 
     Signal is emitted when the available audio inputs change.
+    \since 1.0
 */
 
 /*!
   \internal
+  \since 1.0
 */
 void QAudioCaptureSource::statusChanged()
 {

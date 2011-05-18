@@ -72,6 +72,7 @@ QT_BEGIN_NAMESPACE
     Defines the interface name of the QMediaStreamsControl class.
 
     \relates QMediaStreamsControl
+    \since 1.0
 */
 
 /*!
@@ -105,12 +106,14 @@ QMediaStreamsControl::~QMediaStreamsControl()
     \fn QMediaStreamsControl::streamCount()
 
     Returns the number of media streams.
+    \since 1.0
 */
 
 /*!
     \fn QMediaStreamsControl::streamType(int stream)
 
     Return the type of a media \a stream.
+    \since 1.0
 */
 
 /*!
@@ -119,12 +122,14 @@ QMediaStreamsControl::~QMediaStreamsControl()
     Returns the meta-data value of \a key for a given \a stream.
 
     Useful metadata keya are QtMultimediaKit::Title, QtMultimediaKit::Description and QtMultimediaKit::Language.
+    \since 1.0
 */
 
 /*!
     \fn QMediaStreamsControl::isActive(int stream)
 
     Returns true if the media \a stream is active.
+    \since 1.0
 */
 
 /*!
@@ -135,18 +140,21 @@ QMediaStreamsControl::~QMediaStreamsControl()
     Setting the active state of a media stream to true will activate it.  If any other stream
     of the same type was previously active it will be deactivated. Setting the active state fo a
     media stream to false will deactivate it.
+    \since 1.0
 */
 
 /*!
     \fn QMediaStreamsControl::streamsChanged()
 
     The signal is emitted when the available streams list is changed.
+    \since 1.0
 */
 
 /*!
     \fn QMediaStreamsControl::activeStreamsChanged()
 
     The signal is emitted when the active streams list is changed.
+    \since 1.0
 */
 
 #include "moc_qmediastreamscontrol.cpp"

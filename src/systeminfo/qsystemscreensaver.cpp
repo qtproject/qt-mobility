@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemScreenSaver class provides access to screen saver and blanking.
-    \since 1.1
+    \since 1.0
 
     On platforms where there is no one default screensaver mechanism, such as Linux, this class
     may not be available.
@@ -93,6 +93,7 @@ bool QSystemScreenSaver::screenSaverInhibited()
 
 /*!
     Set the inhibition of the screensaver to be \a on.
+    \since 1.2
 */
 void QSystemScreenSaver::setScreenSaverInhibited(bool on)
 {

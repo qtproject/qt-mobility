@@ -67,7 +67,7 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \value Os                    Operating system version / platform ID.
     \value QtCore                Qt library version.
     \value Firmware              Version of (flashable) system as a whole.
-    \value QtMobility            QtMobility library version.
+    \value QtMobility            QtMobility library version. Since 1.1
 */
 
 /*!
@@ -87,7 +87,7 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \value LocationFeature        Global Positioning System (GPS) and/or other location feature available.
     \value VideoOutFeature        Video out feature available.
     \value HapticsFeature         Haptics feature available.
-    \value FmTransmitterFeature   FM Radio transmitter available.
+    \value FmTransmitterFeature   FM Radio transmitter available. Since 1.2
 */
 
 /*!
@@ -95,6 +95,8 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
 
     This signal is emitted whenever the current language changes, specified by \a lang,
     which is in 2 letter, ISO 639-1 specification form.
+
+    \since 1.0
 */
 
 /*!
@@ -147,6 +149,7 @@ void QSystemInfo::disconnectNotify(const char *signal)
     \brief The current Language
 
     Returns the current language in 2 letter ISO 639-1 format.
+   \since 1.0
  */
 QString QSystemInfo::currentLanguage()
 {
@@ -158,6 +161,7 @@ QString QSystemInfo::currentLanguage()
 
     Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format.
     If the Qt translations cannot be found, returns the current system language.
+    \since 1.0
 */
 QStringList QSystemInfo::availableLanguages()
 {
@@ -169,6 +173,7 @@ QStringList QSystemInfo::availableLanguages()
     \a parameter as a string.
 
     In case of error or not available, an empty string is returned.
+    \since 1.0
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
@@ -187,6 +192,7 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
     \brief The current locale country code.
 
     Returns the 2 letter ISO 3166-1 for the current country code.
+    \since 1.0
 */
 QString QSystemInfo::currentCountryCode()
 {
@@ -195,6 +201,7 @@ QString QSystemInfo::currentCountryCode()
 
 /*!
     Returns true if the QSystemInfo::Feature \a feature is supported, otherwise false.
+    \since 1.0
 */
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 {

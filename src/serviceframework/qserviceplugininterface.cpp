@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \internal
+    \since 1.0
 */
 QServicePluginInterface::QServicePluginInterface()
 {
@@ -60,6 +61,7 @@ QServicePluginInterface::QServicePluginInterface()
 
 /*!
     \internal
+    \since 1.0
 */
 QServicePluginInterface::~QServicePluginInterface()
 {
@@ -75,6 +77,7 @@ QServicePluginInterface::~QServicePluginInterface()
 
     This function returns a null pointer if the plug-in doesn't
     support the given \a descriptor.
+    \since 1.0
 */
 
 /*!
@@ -87,6 +90,7 @@ QServicePluginInterface::~QServicePluginInterface()
     The default implementation for this function does nothing.
 
     \sa QServiceManager::addService()
+    \since 1.0
 */
 void QServicePluginInterface::installService()
 {
@@ -102,6 +106,7 @@ void QServicePluginInterface::installService()
     The default implementation for this function does nothing.
 
     \sa QServiceManager::removeService()
+    \since 1.0
 */
 
 void QServicePluginInterface::uninstallService()

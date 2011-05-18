@@ -9,8 +9,8 @@ symbian|wince*|maemo*|win32|mac {
     symbian {
 
         SOURCES += $$PWD/support_symbian.cpp
-        INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
-        INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
+        INCLUDEPATH += /epoc32/include/app
+        INCLUDEPATH += /epoc32/include/platform/app
     }
     win32 {
         SOURCES += $$PWD/support_win.cpp

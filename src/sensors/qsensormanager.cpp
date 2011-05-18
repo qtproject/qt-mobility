@@ -219,6 +219,7 @@ void QSensorManagerPrivate::loadPlugins()
     Register a sensor for \a type. The \a identifier must be unique.
 
     The \a factory will be asked to create instances of the backend.
+    \since 1.0
 */
 void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, QSensorBackendFactory *factory)
 {
@@ -252,6 +253,7 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
     Note that this only prevents new instance of the backend from being created. It does not
     invalidate the existing instances of the backend. The backend code should handle the
     disappearance of the underlying hardware itself.
+    \since 1.2
 */
 void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray &identifier)
 {
@@ -294,6 +296,7 @@ void QSensorManager::unregisterBackend(const QByteArray &type, const QByteArray 
 
 /*!
     \internal
+    \since 1.0
 */
 void QSensorManager::registerStaticPlugin(CreatePluginFunc func)
 {
@@ -303,6 +306,7 @@ void QSensorManager::registerStaticPlugin(CreatePluginFunc func)
 
 /*!
     Create a backend for \a sensor. Returns null if no suitable backend exists.
+    \since 1.0
 */
 QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 {
@@ -365,6 +369,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     Returns true if the backend identified by \a type and \a identifier is registered.
 
     This is a convenience method that helps out plugins doing dynamic registration.
+    \since 1.2
 */
 bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArray &identifier)
 {
@@ -385,6 +390,7 @@ bool QSensorManager::isBackendRegistered(const QByteArray &type, const QByteArra
 
 /*!
     Returns a list of all sensor types.
+    \since 1.0
 */
 QList<QByteArray> QSensor::sensorTypes()
 {
@@ -397,6 +403,7 @@ QList<QByteArray> QSensor::sensorTypes()
 /*!
     Returns a list of ids for each of the sensors for \a type.
     If there are no sensors of that type available the list will be empty.
+    \since 1.0
 */
 QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
 {
@@ -422,6 +429,7 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
     registered for that type or if it is specified in \c{Sensors.conf}.
 
     \sa {Determining the default sensor for a type}
+    \since 1.0
 */
 QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 {
@@ -464,11 +472,13 @@ void QSensor::registerInstance()
     This interface must be implemented in order to register a sensor backend.
 
     \sa {Creating a sensor plugin}
+    \since 1.0
 */
 
 /*!
     \fn QSensorBackendFactory::~QSensorBackendFactory()
     \internal
+    \since 1.0
 */
 
 /*!
@@ -478,6 +488,7 @@ void QSensor::registerInstance()
     it should check with the \a sensor to see which one is requested.
 
     If the factory cannot create a backend it should return 0.
+    \since 1.0
 */
 
 /*!

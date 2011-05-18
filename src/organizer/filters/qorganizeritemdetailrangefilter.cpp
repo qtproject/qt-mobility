@@ -52,7 +52,8 @@ QTM_BEGIN_NAMESPACE
   a detail value range criterion.
   \inmodule QtOrganizer
   \ingroup organizer-filters
- 
+  \since 1.1
+
   It may be used to select organizeritems which contain a detail of a particular definition with a particular value
  */
 
@@ -61,6 +62,7 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemDetailRangeFilter);
 /*!
  * \fn QOrganizerItemDetailRangeFilter::QOrganizerItemDetailRangeFilter(const QOrganizerItemFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new detail range filter
+   \since 1.1
  */
 
 /*!
@@ -74,6 +76,7 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemDetailRangeFilter);
 
 /*!
  * Constructs a new detail range filter
+   \since 1.1
  */
 QOrganizerItemDetailRangeFilter::QOrganizerItemDetailRangeFilter()
     : QOrganizerItemFilter(new QOrganizerItemDetailRangeFilterPrivate)
@@ -83,6 +86,7 @@ QOrganizerItemDetailRangeFilter::QOrganizerItemDetailRangeFilter()
 /*!
  * Sets the value range criterion of the filter to within \a min and \a max, with boundary conditions specified in the given \a flags
  * \sa minValue(), maxValue()
+   \since 1.1
  */
 void QOrganizerItemDetailRangeFilter::setRange(const QVariant& min, const QVariant& max, RangeFlags flags)
 {
@@ -106,6 +110,7 @@ void QOrganizerItemDetailRangeFilter::setRange(const QVariant& min, const QVaria
  * Unsupported flags will be ignored.
  *
  * \sa matchFlags()
+   \since 1.1
  */
 void QOrganizerItemDetailRangeFilter::setMatchFlags(QOrganizerItemFilter::MatchFlags flags)
 {
@@ -118,6 +123,7 @@ void QOrganizerItemDetailRangeFilter::setMatchFlags(QOrganizerItemFilter::MatchF
  * Sets the name of the detail definition of which type details will be inspected for matching values to \a definitionName,
  * and the name of the field which will be inspected in details of that definition to \a fieldName.
  * \sa detailDefinitionName(), detailFieldName()
+   \since 1.1
  */
 void QOrganizerItemDetailRangeFilter::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
 {
@@ -129,6 +135,7 @@ void QOrganizerItemDetailRangeFilter::setDetailDefinitionName(const QString& def
 /*!
  * Returns the match flags of the criterion, which define semantics such as case sensitivity, prefix matching, exact matching, etc.
  * \sa setMatchFlags()
+   \since 1.1
  */
 QOrganizerItemFilter::MatchFlags QOrganizerItemDetailRangeFilter::matchFlags() const
 {
@@ -139,6 +146,7 @@ QOrganizerItemFilter::MatchFlags QOrganizerItemDetailRangeFilter::matchFlags() c
 /*!
  * Returns the definition name of the details which will be inspected for matching values
  * \sa setDetailDefinitionName()
+   \since 1.1
  */
 QString QOrganizerItemDetailRangeFilter::detailDefinitionName() const
 {
@@ -149,6 +157,7 @@ QString QOrganizerItemDetailRangeFilter::detailDefinitionName() const
 /*!
  * Returns the name of the field which contains the value which will be matched against the value criterion
  * \sa setDetailDefinitionName()
+   \since 1.1
  */
 QString QOrganizerItemDetailRangeFilter::detailFieldName() const
 {
@@ -159,6 +168,7 @@ QString QOrganizerItemDetailRangeFilter::detailFieldName() const
 /*!
  * Returns the lower bound of the value range criterion
  * \sa setRange()
+   \since 1.1
  */
 QVariant QOrganizerItemDetailRangeFilter::minValue() const
 {
@@ -169,6 +179,7 @@ QVariant QOrganizerItemDetailRangeFilter::minValue() const
 /*!
  * Returns the upper bound of the value range criterion
  * \sa setRange()
+   \since 1.1
  */
 QVariant QOrganizerItemDetailRangeFilter::maxValue() const
 {
@@ -179,6 +190,7 @@ QVariant QOrganizerItemDetailRangeFilter::maxValue() const
 /*!
  * Returns a set of flags which defines the boundary condition semantics of the value range criterion
  * \sa setRange()
+   \since 1.1
  */
 QOrganizerItemDetailRangeFilter::RangeFlags QOrganizerItemDetailRangeFilter::rangeFlags() const
 {

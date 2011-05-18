@@ -99,12 +99,14 @@ QVideoRendererControl::~QVideoRendererControl()
     \fn QVideoRendererControl::surface() const
 
     Returns the surface a video producer renders to.
+    \since 1.0
 */
 
 /*!
     \fn QVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
 
     Sets the \a surface a video producer renders to.
+    \since 1.0
 */
 
 #include "moc_qvideorenderercontrol.cpp"

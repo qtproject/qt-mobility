@@ -39,10 +39,11 @@
 **
 ****************************************************************************/
 
-/*
-This header gets used in a number of different QML plugins
-and also in the source tree of Mobility itself.
+#include "\epoc32\include\platform\mw\MMFSessionInfoCustomCommandConstants.h"
 
-So this header is just a wrapper to grab it from there.
-*/
-#include "../../../../src/serviceframework/ipc/qmetaobjectbuilder_p.h"
+int main(int argc, char *argv[])
+{
+    TMMFSessionInfoControllerMessage m;
+
+    return 0;
+}

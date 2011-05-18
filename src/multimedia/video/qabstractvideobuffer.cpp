@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QAbstractVideoBuffer
     \brief The QAbstractVideoBuffer class is an abstraction for video data.
-    \since 4.6
+    \since 1.0
     \inmodule QtMultimediaKit
 
     The QVideoFrame class makes use of a QAbstractVideoBuffer internally to reference a buffer of
@@ -88,7 +88,7 @@ QT_BEGIN_NAMESPACE
     \value NotMapped The video buffer has is not mapped to memory.
     \value ReadOnly The mapped memory is populated with data from the video buffer when mapped, but
     the content of the mapped memory may be discarded when unmapped.
-    \value WriteOnly The mapped memory in unitialized when mapped, and the content will be used to
+    \value WriteOnly The mapped memory is uninitialized when mapped, and the content will be used to
     populate the video buffer when unmapped.
     \value ReadWrite The mapped memory is populated with data from the video buffer, and the
     video buffer is repopulated with the content of the mapped memory.
@@ -132,6 +132,7 @@ QAbstractVideoBuffer::~QAbstractVideoBuffer()
 /*!
     Returns the type of a video buffer's handle.
 
+    \since 1.0
     \sa handle()
 */
 
@@ -145,6 +146,7 @@ QAbstractVideoBuffer::HandleType QAbstractVideoBuffer::handleType() const
 
     Returns the mode a video buffer is mapped in.
 
+    \since 1.0
     \sa map()
 */
 
@@ -171,6 +173,7 @@ QAbstractVideoBuffer::HandleType QAbstractVideoBuffer::handleType() const
     \note Writing to memory that is mapped as read-only is undefined, and may result in changes
     to shared data.
 
+    \since 1.0
     \sa unmap(), mapMode()
 */
 
@@ -182,6 +185,7 @@ QAbstractVideoBuffer::HandleType QAbstractVideoBuffer::handleType() const
     If the \l {QAbstractVideoBuffer::MapMode}{MapMode} included the QAbstractVideoBuffer::WriteOnly
     flag this will persist the current content of the mapped memory to the video frame.
 
+    \since 1.0
     \sa map()
 */
 
@@ -190,6 +194,7 @@ QAbstractVideoBuffer::HandleType QAbstractVideoBuffer::handleType() const
 
     The type of the handle is given by handleType() function.
 
+    \since 1.0
     \sa handleType()
 */
 

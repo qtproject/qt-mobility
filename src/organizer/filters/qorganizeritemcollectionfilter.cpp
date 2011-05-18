@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemCollectionFilter
   \brief The QOrganizerItemCollectionFilter class provides a filter based around a list of organizeritem ids
+  \since 1.1
 
   \ingroup organizeritems-filters
 
@@ -62,10 +63,12 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemCollectionFilter);
 /*!
  * \fn QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter(const QOrganizerItemFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem id filter
+ \since 1.1
  */
 
 /*!
  * Constructs a new organizeritem id filter
+   \since 1.1
  */
 QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
     : QOrganizerItemFilter(new QOrganizerItemCollectionFilterPrivate)
@@ -75,6 +78,7 @@ QOrganizerItemCollectionFilter::QOrganizerItemCollectionFilter()
 /*!
  * Clears the list which contains the ids of possible matching organizeritems, and sets it to the list
  * which contains a single id \a id.
+   \since 1.1
  */
 void QOrganizerItemCollectionFilter::setCollectionId(const QOrganizerCollectionId &id)
 {
@@ -85,6 +89,7 @@ void QOrganizerItemCollectionFilter::setCollectionId(const QOrganizerCollectionI
 
 /*!
  * Sets the list which contains the ids of possible matching organizeritems to \a ids
+   \since 1.1
  */
 void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerCollectionId> &ids)
 {
@@ -94,6 +99,7 @@ void QOrganizerItemCollectionFilter::setCollectionIds(const QSet<QOrganizerColle
 
 /*!
  * Returns the list of ids of organizeritems which match this filter
+   \since 1.1
  */
 QSet<QOrganizerCollectionId> QOrganizerItemCollectionFilter::collectionIds() const
 {

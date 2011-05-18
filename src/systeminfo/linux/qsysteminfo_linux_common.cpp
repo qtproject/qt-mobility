@@ -2048,7 +2048,6 @@ QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
     blkid_probe pr = NULL;
     uint64_t size;
     const char *label;
-    char *ret;
     int result = 0;
 
     updateMountedEntries();
@@ -2072,7 +2071,6 @@ QString QSystemStorageInfoPrivate::uriForDrive(const QString &driveVolume)
 
         blkid_probe_lookup_value(pr, "UUID", &label, NULL);
 
-        ret = strdup(label);
         blkid_free_probe (pr);
         close(fd);
         return label;

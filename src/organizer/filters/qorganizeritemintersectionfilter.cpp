@@ -51,7 +51,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemIntersectionFilter class provides a filter which intersects the results of other filters.
   \inmodule QtOrganizer
   \ingroup organizer-filters
- 
+  \since 1.1
+
   It may be used to select organizeritems which match all of the filters in the intersection
  */
 
@@ -60,10 +61,12 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemIntersectionFilter);
 /*!
  * \fn QOrganizerItemIntersectionFilter::QOrganizerItemIntersectionFilter(const QOrganizerItemFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new intersection filter
+   \since 1.1
  */
 
 /*!
  * Constructs a new intersection filter
+   \since 1.1
  */
 QOrganizerItemIntersectionFilter::QOrganizerItemIntersectionFilter()
     : QOrganizerItemFilter(new QOrganizerItemIntersectionFilterPrivate)
@@ -73,6 +76,7 @@ QOrganizerItemIntersectionFilter::QOrganizerItemIntersectionFilter()
 /*!
  * Sets the filters whose criteria will be intersected to \a filters
  * \sa filters(), clear()
+   \since 1.1
  */
 void QOrganizerItemIntersectionFilter::setFilters(const QList<QOrganizerItemFilter>& filters)
 {
@@ -83,6 +87,7 @@ void QOrganizerItemIntersectionFilter::setFilters(const QList<QOrganizerItemFilt
 /*!
  * Clears the list of filters.  A cleared intersection filter will match no items.
  * \sa filters(), setFilters()
+   \since 1.1
  */
 void QOrganizerItemIntersectionFilter::clear()
 {
@@ -93,6 +98,7 @@ void QOrganizerItemIntersectionFilter::clear()
 /*!
  * Prepends the given \a filter to the list of intersected filters
  * \sa append(), filters()
+   \since 1.1
  */
 void QOrganizerItemIntersectionFilter::prepend(const QOrganizerItemFilter& filter)
 {
@@ -103,6 +109,7 @@ void QOrganizerItemIntersectionFilter::prepend(const QOrganizerItemFilter& filte
 /*!
  * Appends the given \a filter to the list of intersected filters
  * \sa operator<<(), prepend(), filters()
+   \since 1.1
  */
 void QOrganizerItemIntersectionFilter::append(const QOrganizerItemFilter& filter)
 {
@@ -113,6 +120,7 @@ void QOrganizerItemIntersectionFilter::append(const QOrganizerItemFilter& filter
 /*!
  * Removes the given \a filter from the intersection list
  * \sa filters(), append(), prepend(), clear()
+   \since 1.1
  */
 void QOrganizerItemIntersectionFilter::remove(const QOrganizerItemFilter& filter)
 {
@@ -123,6 +131,7 @@ void QOrganizerItemIntersectionFilter::remove(const QOrganizerItemFilter& filter
 /*!
  * Appends the given \a filter to the list of intersected filters
  * \sa append()
+   \since 1.1
  */
 QOrganizerItemIntersectionFilter& QOrganizerItemIntersectionFilter::operator<<(const QOrganizerItemFilter& filter)
 {
@@ -134,6 +143,7 @@ QOrganizerItemIntersectionFilter& QOrganizerItemIntersectionFilter::operator<<(c
 /*!
  * Returns the list of filters which form the intersection filter
  * \sa setFilters(), prepend(), append(), remove()
+   \since 1.1
  */
 QList<QOrganizerItemFilter> QOrganizerItemIntersectionFilter::filters() const
 {

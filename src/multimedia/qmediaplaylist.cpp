@@ -138,6 +138,7 @@ QMediaPlaylist::~QMediaPlaylist()
 /*!
   Returns the QMediaObject instance that this QMediaPlaylist is bound too,
   or 0 otherwise.
+  \since 1.0
 */
 QMediaObject *QMediaPlaylist::mediaObject() const
 {
@@ -148,6 +149,7 @@ QMediaObject *QMediaPlaylist::mediaObject() const
   \internal
   If \a mediaObject is null or doesn't have an intrinsic playlist,
   internal local memory playlist source will be created.
+  \since 1.0
 */
 bool QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
 {
@@ -233,6 +235,7 @@ bool QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
 
   This property defines the order, items in playlist are played.
 
+  \since 1.0
   \sa QMediaPlaylist::PlaybackMode
 */
 
@@ -249,6 +252,7 @@ void QMediaPlaylist::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
 
 /*!
   Returns position of the current media content in the playlist.
+  \since 1.0
 */
 int QMediaPlaylist::currentIndex() const
 {
@@ -257,6 +261,7 @@ int QMediaPlaylist::currentIndex() const
 
 /*!
   Returns the current media content.
+  \since 1.0
 */
 
 QMediaContent QMediaPlaylist::currentMedia() const
@@ -271,6 +276,7 @@ QMediaContent QMediaPlaylist::currentMedia() const
   Returned value depends on the size of playlist, current position
   and playback mode.
 
+  \since 1.0
   \sa QMediaPlaylist::playbackMode
 */
 int QMediaPlaylist::nextIndex(int steps) const
@@ -282,6 +288,7 @@ int QMediaPlaylist::nextIndex(int steps) const
   Returns the index of the item, which would be current after calling previous()
   \a steps times.
 
+  \since 1.0
   \sa QMediaPlaylist::playbackMode
 */
 
@@ -294,6 +301,7 @@ int QMediaPlaylist::previousIndex(int steps) const
 /*!
   Returns the number of items in the playlist.
 
+  \since 1.0
   \sa isEmpty()
   */
 int QMediaPlaylist::mediaCount() const
@@ -304,6 +312,7 @@ int QMediaPlaylist::mediaCount() const
 /*!
   Returns true if the playlist contains no items; otherwise returns false.
 
+  \since 1.0
   \sa mediaCount()
   */
 bool QMediaPlaylist::isEmpty() const
@@ -314,6 +323,7 @@ bool QMediaPlaylist::isEmpty() const
 /*!
   Returns true if the playlist can be modified; otherwise returns false.
 
+  \since 1.0
   \sa mediaCount()
   */
 bool QMediaPlaylist::isReadOnly() const
@@ -323,6 +333,7 @@ bool QMediaPlaylist::isReadOnly() const
 
 /*!
   Returns the media content at \a index in the playlist.
+  \since 1.0
 */
 
 QMediaContent QMediaPlaylist::media(int index) const
@@ -334,6 +345,7 @@ QMediaContent QMediaPlaylist::media(int index) const
   Append the media \a content to the playlist.
 
   Returns true if the operation is successful, otherwise return false.
+  \since 1.0
   */
 bool QMediaPlaylist::addMedia(const QMediaContent &content)
 {
@@ -344,6 +356,7 @@ bool QMediaPlaylist::addMedia(const QMediaContent &content)
   Append multiple media content \a items to the playlist.
 
   Returns true if the operation is successful, otherwise return false.
+  \since 1.0
   */
 bool QMediaPlaylist::addMedia(const QList<QMediaContent> &items)
 {
@@ -354,6 +367,7 @@ bool QMediaPlaylist::addMedia(const QList<QMediaContent> &items)
   Insert the media \a content to the playlist at position \a pos.
 
   Returns true if the operation is successful, otherwise false.
+  \since 1.0
 */
 
 bool QMediaPlaylist::insertMedia(int pos, const QMediaContent &content)
@@ -365,6 +379,7 @@ bool QMediaPlaylist::insertMedia(int pos, const QMediaContent &content)
   Insert multiple media content \a items to the playlist at position \a pos.
 
   Returns true if the operation is successful, otherwise false.
+  \since 1.0
 */
 
 bool QMediaPlaylist::insertMedia(int pos, const QList<QMediaContent> &items)
@@ -376,6 +391,7 @@ bool QMediaPlaylist::insertMedia(int pos, const QList<QMediaContent> &items)
   Remove the item from the playlist at position \a pos.
 
   Returns true if the operation is successful, otherwise return false.
+  \since 1.0
   */
 bool QMediaPlaylist::removeMedia(int pos)
 {
@@ -387,6 +403,7 @@ bool QMediaPlaylist::removeMedia(int pos)
   Remove items in the playlist from \a start to \a end inclusive.
 
   Returns true if the operation is successful, otherwise return false.
+  \since 1.0
   */
 bool QMediaPlaylist::removeMedia(int start, int end)
 {
@@ -398,6 +415,7 @@ bool QMediaPlaylist::removeMedia(int start, int end)
   Remove all the items from the playlist.
 
   Returns true if the operation is successful, otherwise return false.
+  \since 1.0
   */
 bool QMediaPlaylist::clear()
 {
@@ -431,6 +449,7 @@ bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWriter *writer)
 
   QMediaPlaylist::loaded() signal is emitted if playlist was loaded successfully,
   otherwise the playlist emits loadFailed().
+  \since 1.0
 */
 void QMediaPlaylist::load(const QUrl &location, const char *format)
 {
@@ -477,6 +496,7 @@ void QMediaPlaylist::load(const QUrl &location, const char *format)
 
   QMediaPlaylist::loaded() signal is emitted if playlist was loaded successfully,
   otherwise the playlist emits loadFailed().
+  \since 1.0
 */
 void QMediaPlaylist::load(QIODevice * device, const char *format)
 {
@@ -520,6 +540,7 @@ void QMediaPlaylist::load(QIODevice * device, const char *format)
   otherwise format is guessed from location name.
 
   Returns true if playlist was saved successfully, otherwise returns false.
+  \since 1.0
   */
 bool QMediaPlaylist::save(const QUrl &location, const char *format)
 {
@@ -546,6 +567,7 @@ bool QMediaPlaylist::save(const QUrl &location, const char *format)
   Save playlist to QIODevice \a device using format \a format.
 
   Returns true if playlist was saved successfully, otherwise returns false.
+  \since 1.0
 */
 bool QMediaPlaylist::save(QIODevice * device, const char *format)
 {
@@ -577,6 +599,7 @@ bool QMediaPlaylist::save(QIODevice * device, const char *format)
 
 /*!
     Returns the last error condition.
+    \since 1.0
 */
 QMediaPlaylist::Error QMediaPlaylist::error() const
 {
@@ -585,6 +608,7 @@ QMediaPlaylist::Error QMediaPlaylist::error() const
 
 /*!
     Returns the string describing the last error condition.
+    \since 1.0
 */
 QString QMediaPlaylist::errorString() const
 {
@@ -593,6 +617,7 @@ QString QMediaPlaylist::errorString() const
 
 /*!
   Shuffle items in the playlist.
+  \since 1.0
 */
 void QMediaPlaylist::shuffle()
 {
@@ -602,6 +627,7 @@ void QMediaPlaylist::shuffle()
 
 /*!
     Advance to the next media content in playlist.
+    \since 1.0
 */
 void QMediaPlaylist::next()
 {
@@ -610,6 +636,7 @@ void QMediaPlaylist::next()
 
 /*!
     Return to the previous media content in playlist.
+    \since 1.0
 */
 void QMediaPlaylist::previous()
 {
@@ -618,6 +645,7 @@ void QMediaPlaylist::previous()
 
 /*!
     Activate media content from playlist at position \a playlistPosition.
+    \since 1.0
 */
 
 void QMediaPlaylist::setCurrentIndex(int playlistPosition)
@@ -630,6 +658,7 @@ void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 
     This signal is emitted after media has been inserted into the playlist.
     The new items are those between \a start and \a end inclusive.
+    \since 1.0
  */
 
 /*!
@@ -637,6 +666,7 @@ void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 
     This signal is emitted after media has been removed from the playlist.
     The removed items are those between \a start and \a end inclusive.
+    \since 1.0
  */
 
 /*!
@@ -644,58 +674,68 @@ void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 
     This signal is emitted after media has been changed in the playlist
     between \a start and \a end positions inclusive.
+    \since 1.0
  */
 
 /*!
     \fn void QMediaPlaylist::currentIndexChanged(int position)
 
     Signal emitted when playlist position changed to \a position.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaPlaylist::playbackModeChanged(QMediaPlaylist::PlaybackMode mode)
 
     Signal emitted when playback mode changed to \a mode.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaPlaylist::mediaAboutToBeInserted(int start, int end)
 
     Signal emitted when items are to be inserted at \a start and ending at \a end.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaPlaylist::mediaAboutToBeRemoved(int start, int end)
 
     Signal emitted when item are to be deleted at \a start and ending at \a end.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaPlaylist::currentMediaChanged(const QMediaContent &content)
 
     Signal emitted when current media changes to \a content.
+    \since 1.0
 */
 
 /*!
     \property QMediaPlaylist::currentIndex
     \brief Current position.
+    \since 1.0
 */
 
 /*!
     \property QMediaPlaylist::currentMedia
     \brief Current media content.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlaylist::loaded()
 
     Signal emitted when playlist finished loading.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlaylist::loadFailed()
 
     Signal emitted if failed to load playlist.
+    \since 1.0
 */
 
 /*!

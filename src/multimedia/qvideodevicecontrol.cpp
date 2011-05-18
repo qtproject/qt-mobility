@@ -88,60 +88,70 @@ QVideoDeviceControl::~QVideoDeviceControl()
     \fn QVideoDeviceControl::deviceCount() const
 
     Returns the number of available video devices;
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::deviceName(int index) const
 
     Returns the name of the video device at \a index.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::deviceDescription(int index) const
 
     Returns a description of the video device at \a index.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::deviceIcon(int index) const
 
     Returns an icon for the video device at \a index.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::defaultDevice() const
 
     Returns the index of the default video device.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::selectedDevice() const
 
     Returns the index of the selected video device.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::setSelectedDevice(int index)
 
     Sets the selected video device \a index.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::devicesChanged()
 
     Signals that the list of available video devices has changed.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::selectedDeviceChanged(int index)
 
     Signals that the selected video device \a index has changed.
+    \since 1.0
 */
 
 /*!
     \fn QVideoDeviceControl::selectedDeviceChanged(const QString &name)
 
     Signals that the selected video device \a name has changed.
+    \since 1.0
 */
 
 #include "moc_qvideodevicecontrol.cpp"
