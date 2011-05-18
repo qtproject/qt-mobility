@@ -533,7 +533,7 @@ Description: Qt Mobility PublishSubscribe development package
 Package: libqtm-location
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, ${misc:Depends}, libqtsparql-tracker, tracker (>= 0.9.30)
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqtsparql-tracker, tracker (>= 0.9.35)
 Recommends: positioningd
 Description: Qt Mobility Location module
  Qt Mobility Project delivers a set of new APIs to Qt with features that are

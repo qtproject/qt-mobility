@@ -717,12 +717,17 @@ void tst_QGeoMapGroupObject::boundingBox()
 {
 
     QGeoCoordinate center(0, 0, 0);
+    QGeoCoordinate circleCenter1(0, 1, 0);
+    QGeoCoordinate circleCenter2(0, -1, 0);
 
-    QGeoMapCircleObject* circle = new QGeoMapCircleObject(center, 1000);
+    QGeoMapCircleObject* circle1 = new QGeoMapCircleObject(circleCenter1, 1000);
+    QGeoMapCircleObject* circle2 = new QGeoMapCircleObject(circleCenter2, 1000);
 
     QGeoMapGroupObject* object = new QGeoMapGroupObject();
-    object->addChildObject(circle);
-    QVERIFY(object->childObjects().at(0)==circle);
+    object->addChildObject(circle1);
+    object->addChildObject(circle2);
+    QVERIFY(object->childObjects().at(0)==circle1);
+    QVERIFY(object->childObjects().at(1)==circle2);
 
     QGraphicsGeoMap* map = m_helper->map();
 
@@ -733,11 +738,37 @@ void tst_QGeoMapGroupObject::boundingBox()
 
     QVERIFY(list.at(0)==object);
 
-    QVERIFY2(circle->boundingBox().width()>0,"no bounding box");
-    QVERIFY2(circle->boundingBox().height()>0,"no bounding box");
     QVERIFY2(object->boundingBox().width()>0,"no bounding box");
     QVERIFY2(object->boundingBox().height()>0,"no bounding box");
 
+    double width = object->boundingBox().width();
+    double height = object->boundingBox().height();
+
+    double top = object->boundingBox().topLeft().latitude();
+    double bottom = object->boundingBox().bottomRight().latitude();
+
+    QVERIFY(object->boundingBox().topLeft().longitude() < object->boundingBox().bottomRight().longitude());
+
+    QGeoCoordinate circle1Dateline(0.0, -179.0, 0.0);
+    QGeoCoordinate circle2Dateline(0.0, 179.0, 0.0);
+
+    circle1->setCenter(circle1Dateline);
+    circle2->setCenter(circle2Dateline);
+
+    qWarning() << circle1->boundingBox().topLeft() << circle1->boundingBox().bottomRight();
+    qWarning() << circle2->boundingBox().topLeft() << circle2->boundingBox().bottomRight();
+    qWarning() << object->boundingBox().topLeft() << object->boundingBox().bottomRight();
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QCOMPARE(object->boundingBox().width(), width);
+    QCOMPARE(object->boundingBox().height(), height);
+
+    QVERIFY(object->boundingBox().topLeft().latitude() == top);
+    QVERIFY(object->boundingBox().bottomRight().latitude() == bottom);
+
+    QVERIFY(object->boundingBox().topLeft().longitude() > object->boundingBox().bottomRight().longitude());
 }
 
 QTEST_MAIN(tst_QGeoMapGroupObject)
