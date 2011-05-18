@@ -52,7 +52,8 @@ QTM_BEGIN_NAMESPACE
     results of other filters.
    \inmodule QtOrganizer
    \ingroup organizer-filters
- 
+   \since 1.1
+
    It may be used to select organizeritems which match all of the filters in the union
  */
 
@@ -61,10 +62,12 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemUnionFilter);
 /*!
  * \fn QOrganizerItemUnionFilter::QOrganizerItemUnionFilter(const QOrganizerItemFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new union filter
+   \since 1.1
  */
 
 /*!
  * Constructs a new intersection filter
+   \since 1.1
  */
 QOrganizerItemUnionFilter::QOrganizerItemUnionFilter()
     : QOrganizerItemFilter(new QOrganizerItemUnionFilterPrivate)
@@ -74,6 +77,7 @@ QOrganizerItemUnionFilter::QOrganizerItemUnionFilter()
 /*!
  * Sets the filters whose criteria will be unioned to \a filters
  * \sa filters()
+   \since 1.1
  */
 void QOrganizerItemUnionFilter::setFilters(const QList<QOrganizerItemFilter>& filters)
 {
@@ -84,6 +88,7 @@ void QOrganizerItemUnionFilter::setFilters(const QList<QOrganizerItemFilter>& fi
 /*!
  * Prepends the given \a filter to the list of unioned filters
  * \sa append(), filters()
+   \since 1.1
  */
 void QOrganizerItemUnionFilter::prepend(const QOrganizerItemFilter& filter)
 {
@@ -94,6 +99,7 @@ void QOrganizerItemUnionFilter::prepend(const QOrganizerItemFilter& filter)
 /*!
  * Appends the given \a filter to the list of unioned filters
  * \sa operator<<(), prepend(), filters()
+   \since 1.1
  */
 void QOrganizerItemUnionFilter::append(const QOrganizerItemFilter& filter)
 {
@@ -104,6 +110,7 @@ void QOrganizerItemUnionFilter::append(const QOrganizerItemFilter& filter)
 /*!
  * Removes the given \a filter from the union list
  * \sa filters(), append(), prepend(), clear()
+   \since 1.1
  */
 void QOrganizerItemUnionFilter::remove(const QOrganizerItemFilter& filter)
 {
@@ -114,6 +121,7 @@ void QOrganizerItemUnionFilter::remove(const QOrganizerItemFilter& filter)
 /*!
  * Clears the list of filters.  A cleared union filter will match no items.
  * \sa filters(), remove()
+   \since 1.1
  */
 void QOrganizerItemUnionFilter::clear()
 {
@@ -124,6 +132,7 @@ void QOrganizerItemUnionFilter::clear()
 /*!
  * Appends the given \a filter to the list of unioned filters
  * \sa append()
+   \since 1.1
  */
 QOrganizerItemUnionFilter& QOrganizerItemUnionFilter::operator<<(const QOrganizerItemFilter& filter)
 {
@@ -135,6 +144,7 @@ QOrganizerItemUnionFilter& QOrganizerItemUnionFilter::operator<<(const QOrganize
 /*!
  * Returns the list of filters which form the union filter
  * \sa setFilters(), prepend(), append(), remove()
+   \since 1.1
  */
 QList<QOrganizerItemFilter> QOrganizerItemUnionFilter::filters() const
 {

@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemSortOrder
   \brief The QOrganizerItemSortOrder class defines how a list of organizer items should be ordered according to some criteria
+  \since 1.1
 
   \inmodule QtOrganizer
  */
@@ -65,11 +66,13 @@ QTM_BEGIN_NAMESPACE
 /*!
  * \fn QOrganizerItemSortOrder::operator QList<QOrganizerItemSortOrder>() const
  * Constructs a new list of sort orders containing only the current sort order
+  \since 1.1
  */
 
 /*!
  * \fn QOrganizerItemSortOrder::operator!=(const QOrganizerItemSortOrder& other) const
  * Returns true if this sort order is not identical to the \a other sort order
+   \since 1.1
  * \sa operator==()
  */
 
@@ -90,6 +93,7 @@ QOrganizerItemSortOrder::~QOrganizerItemSortOrder()
 
 /*!
  * Constructs a copy of the \a other sort order
+   \since 1.1
  */
 QOrganizerItemSortOrder::QOrganizerItemSortOrder(const QOrganizerItemSortOrder& other)
     : d(other.d)
@@ -99,6 +103,7 @@ QOrganizerItemSortOrder::QOrganizerItemSortOrder(const QOrganizerItemSortOrder& 
 
 /*!
  * Assigns this sort order to be equal to \a other
+   \since 1.1
  */
 QOrganizerItemSortOrder& QOrganizerItemSortOrder::operator=(const QOrganizerItemSortOrder& other)
 {
@@ -110,6 +115,7 @@ QOrganizerItemSortOrder& QOrganizerItemSortOrder::operator=(const QOrganizerItem
 
 /*!
  * Returns true if the sort order is able to be used to sort a list of organizer items; otherwise, returns false
+  \since 1.1
  */
 bool QOrganizerItemSortOrder::isValid() const
 {
@@ -122,6 +128,7 @@ bool QOrganizerItemSortOrder::isValid() const
 /*!
  * Returns true if this sort order is identical to the \a other sort order
  * \sa operator!=()
+   \since 1.1
  */
 bool QOrganizerItemSortOrder::operator ==(const QOrganizerItemSortOrder& other) const
 {
@@ -137,6 +144,7 @@ bool QOrganizerItemSortOrder::operator ==(const QOrganizerItemSortOrder& other) 
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a sortOrder to the stream \a out.
+   \since 1.1
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemSortOrder& sortOrder)
 {
@@ -151,6 +159,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemSortOrder& sortOrd
 
 /*!
  * Reads a sort order from stream \a in into \a sortOrder.
+   \since 1.1
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder)
 {
@@ -177,6 +186,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemSortOrder& sortOrder)
 #ifndef QT_NO_DEBUG_STREAM
 /*!
   Outputs \a sortOrder to the debug stream \a dbg
+  \since 1.2
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemSortOrder& sortOrder)
 {
@@ -189,7 +199,7 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemSortOrder& sortOrder)
     dbg.nospace() << ",";
     dbg.nospace() << "blankPolicy=";
     dbg.nospace() << static_cast<quint32>(sortOrder.blankPolicy());
-    dbg.nospace() << ","; 
+    dbg.nospace() << ",";
     dbg.nospace() << "direction=";
     dbg.nospace() << static_cast<quint32>(sortOrder.direction());
     dbg.nospace() << ",";
@@ -204,6 +214,7 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemSortOrder& sortOrder)
  * Sets the definition name of the details which will be inspected to perform sorting to \a definitionName,
  * and the name of those details' fields which contains the value which organizer items will be sorted by to \a fieldName
  * \sa detailDefinitionName(), detailFieldName()
+   \since 1.1
  */
 void QOrganizerItemSortOrder::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
 {
@@ -219,6 +230,7 @@ void QOrganizerItemSortOrder::setDetailDefinitionName(const QString& definitionN
 /*!
  * Sets the sort order's policy on blank values with respect to sorting to \a blankPolicy
  * \sa blankPolicy()
+   \since 1.1
  */
 void QOrganizerItemSortOrder::setBlankPolicy(BlankPolicy blankPolicy)
 {
@@ -228,6 +240,7 @@ void QOrganizerItemSortOrder::setBlankPolicy(BlankPolicy blankPolicy)
 /*!
  * Sets the sort order direction to \a direction
  * \sa direction()
+   \since 1.1
  */
 void QOrganizerItemSortOrder::setDirection(Qt::SortOrder direction)
 {
@@ -239,6 +252,7 @@ void QOrganizerItemSortOrder::setDirection(Qt::SortOrder direction)
  * Note that if an organizer item has multiple details of the definition, the result of the sorting
  * is undefined.
  * \sa setDetailDefinitionName()
+   \since 1.1
  */
 QString QOrganizerItemSortOrder::detailDefinitionName() const
 {
@@ -248,6 +262,7 @@ QString QOrganizerItemSortOrder::detailDefinitionName() const
 /*!
  * Returns the name of the field in the definition which will be inspected to perform sorting
  * \sa setDetailDefinitionName()
+   \since 1.1
  */
 QString QOrganizerItemSortOrder::detailFieldName() const
 {
@@ -257,6 +272,7 @@ QString QOrganizerItemSortOrder::detailFieldName() const
 /*!
  * Returns the blank policy of the sort order
  * \sa setBlankPolicy()
+   \since 1.1
  */
 QOrganizerItemSortOrder::BlankPolicy QOrganizerItemSortOrder::blankPolicy() const
 {
@@ -266,6 +282,7 @@ QOrganizerItemSortOrder::BlankPolicy QOrganizerItemSortOrder::blankPolicy() cons
 /*!
  * Returns the direction of the sort order
  * \sa setDirection()
+   \since 1.1
  */
 Qt::SortOrder QOrganizerItemSortOrder::direction() const
 {
@@ -275,6 +292,7 @@ Qt::SortOrder QOrganizerItemSortOrder::direction() const
 /*!
  * Returns the case sensitivity of the sort order
  * \sa setCaseSensitivity()
+   \since 1.1
  */
 Qt::CaseSensitivity QOrganizerItemSortOrder::caseSensitivity() const
 {
@@ -284,6 +302,7 @@ Qt::CaseSensitivity QOrganizerItemSortOrder::caseSensitivity() const
 /*!
  * Sets the case sensitivity of the sort order to \a sensitivity
  * \sa caseSensitivity()
+   \since 1.1
  */
 void QOrganizerItemSortOrder::setCaseSensitivity(Qt::CaseSensitivity sensitivity)
 {

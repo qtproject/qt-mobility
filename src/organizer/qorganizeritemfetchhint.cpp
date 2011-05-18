@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemFetchHint class provides hints to the manager about which organizer item
   information needs to be retrieved in an asynchronous fetch request or a synchronous
   function call.
+  \since 1.1
 
   \inmodule QtOrganizer
 
@@ -98,6 +99,7 @@ QOrganizerItemFetchHint::QOrganizerItemFetchHint()
 
 /*!
   Constructs a new organizer item fetch hint as a copy of \a other
+  \since 1.1
  */
 QOrganizerItemFetchHint::QOrganizerItemFetchHint(const QOrganizerItemFetchHint &other)
     : d(other.d)
@@ -113,6 +115,7 @@ QOrganizerItemFetchHint::~QOrganizerItemFetchHint()
 
 /*!
   Assigns this fetch hint to be equal to the \a other fetch hint
+  \since 1.1
  */
 QOrganizerItemFetchHint& QOrganizerItemFetchHint::operator=(const QOrganizerItemFetchHint& other)
 {
@@ -126,6 +129,7 @@ QOrganizerItemFetchHint& QOrganizerItemFetchHint::operator=(const QOrganizerItem
   This hint may be ignored by the backend, in which case it will return the full set of details for
   each organizer item retrieved.
 
+  \since 1.1
   \sa setDetailDefinitionsHint()
  */
 QStringList QOrganizerItemFetchHint::detailDefinitionsHint() const
@@ -139,6 +143,7 @@ QStringList QOrganizerItemFetchHint::detailDefinitionsHint() const
   This hint may be ignored by the backend, in which case it will return the full set of details for
   each organizer item retrieved.
 
+  \since 1.1
   \sa detailDefinitionsHint()
  */
 void QOrganizerItemFetchHint::setDetailDefinitionsHint(const QStringList& definitionNames)
@@ -151,6 +156,7 @@ void QOrganizerItemFetchHint::setDetailDefinitionsHint(const QStringList& defini
   These hints may be ignored by the backend, in which case it will return
   the full set of information accessible in an organizer item.
 
+  \since 1.1
   \sa setOptimizationHints()
  */
 QOrganizerItemFetchHint::OptimizationHints QOrganizerItemFetchHint::optimizationHints() const
@@ -163,6 +169,7 @@ QOrganizerItemFetchHint::OptimizationHints QOrganizerItemFetchHint::optimization
   These hints may be ignored by the backend, in which case it will return
   the full set of information accessible in an organizer item.
 
+  \since 1.1
   \sa optimizationHints()
  */
 void QOrganizerItemFetchHint::setOptimizationHints(OptimizationHints hints)
@@ -199,6 +206,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemFetchHint& hint)
 #ifndef QT_NO_DEBUG_STREAM
 /*!
   Outputs \a hint to the debug stream \a dbg
+  \since 1.2
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemFetchHint& hint)
 {

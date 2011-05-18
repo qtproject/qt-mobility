@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
     request collections from an organizer manager.
 
   \inmodule QtOrganizer
+  \since 1.1
 
 
   For a QOrganizerCollectionFetchRequest, the resultsAvailable() signal will be emitted when the resultant
@@ -59,19 +60,25 @@ QTM_BEGIN_NAMESPACE
   \ingroup organizeritems-requests
  */
 
-/*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
+/*! Constructs a new organizeritem fetch request whose parent is the specified \a parent
+  \since 1.1
+*/
 QOrganizerCollectionFetchRequest::QOrganizerCollectionFetchRequest(QObject* parent)
     : QOrganizerAbstractRequest(new QOrganizerCollectionFetchRequestPrivate, parent)
 {
 }
 
-/*! Frees memory in use by this request */
+/*! Frees memory in use by this request
+  \since 1.2
+*/
 QOrganizerCollectionFetchRequest::~QOrganizerCollectionFetchRequest()
 {
     QOrganizerAbstractRequestPrivate::notifyEngine(this);
 }
 
-/*! Returns the collections retrieved by this request */
+/*! Returns the collections retrieved by this request
+  \since 1.1
+*/
 QList<QOrganizerCollection> QOrganizerCollectionFetchRequest::collections() const
 {
     Q_D(const QOrganizerCollectionFetchRequest);

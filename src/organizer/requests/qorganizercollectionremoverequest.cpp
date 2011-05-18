@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
     request organizeritems from a organizeritems store manager.
 
   \inmodule QtOrganizer
+  \since 1.1
 
 
   For a QOrganizerCollectionRemoveRequest, the resultsAvailable() signal will be emitted when the resultant
@@ -61,19 +62,25 @@ QTM_BEGIN_NAMESPACE
   \inmodule QtOrganizer
  */
 
-/*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
+/*! Constructs a new organizeritem fetch request whose parent is the specified \a parent
+  \since 1.1
+*/
 QOrganizerCollectionRemoveRequest::QOrganizerCollectionRemoveRequest(QObject* parent)
     : QOrganizerAbstractRequest(new QOrganizerCollectionRemoveRequestPrivate, parent)
 {
 }
 
-/*! Frees memory in use by this request */
+/*! Frees memory in use by this request
+  \since 1.2
+*/
 QOrganizerCollectionRemoveRequest::~QOrganizerCollectionRemoveRequest()
 {
     QOrganizerAbstractRequestPrivate::notifyEngine(this);
 }
 
-/*! Sets the list of ids of collections which will be removed by this request to a list containing the single element \a collectionId */
+/*! Sets the list of ids of collections which will be removed by this request to a list containing the single element \a collectionId
+  \since 1.1
+*/
 void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollectionId& collectionId)
 {
     Q_D(QOrganizerCollectionRemoveRequest);
@@ -82,7 +89,9 @@ void QOrganizerCollectionRemoveRequest::setCollectionId(const QOrganizerCollecti
     d->m_collectionIds.append(collectionId);
 }
 
-/*! Sets the list of ids of collections which will be removed by this request to \a collectionIds */
+/*! Sets the list of ids of collections which will be removed by this request to \a collectionIds
+    \since 1.1
+*/
 void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerCollectionId>& collectionIds)
 {
     Q_D(QOrganizerCollectionRemoveRequest);
@@ -90,7 +99,9 @@ void QOrganizerCollectionRemoveRequest::setCollectionIds(const QList<QOrganizerC
     d->m_collectionIds = collectionIds;
 }
 
-/*! Returns the list of ids of collections which will be removed by this request if possible */
+/*! Returns the list of ids of collections which will be removed by this request if possible
+  \since 1.1
+*/
 QList<QOrganizerCollectionId> QOrganizerCollectionRemoveRequest::collectionIds() const
 {
     Q_D(const QOrganizerCollectionRemoveRequest);
@@ -98,7 +109,9 @@ QList<QOrganizerCollectionId> QOrganizerCollectionRemoveRequest::collectionIds()
     return d->m_collectionIds;
 }
 
-/*! Returns any errors which occurred during the request */
+/*! Returns any errors which occurred during the request
+  \since 1.1
+*/
 QMap<int, QOrganizerManager::Error> QOrganizerCollectionRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerCollectionRemoveRequest);

@@ -89,6 +89,7 @@ public:
 /*!
     Create a new signal intercepter which traps \a signal on \a sender.
     The object will be attached to \a parent, if present.
+    \since 1.1
 */
 QSignalIntercepter::QSignalIntercepter
             ( QObject *sender, const QByteArray& signal, QObject *parent )
@@ -160,6 +161,7 @@ QSignalIntercepter::~QSignalIntercepter()
 
 /*!
     Returns the sender that this signal interceptor is attached to.
+    \since 1.1
 */
 QObject *QSignalIntercepter::sender() const
 {
@@ -168,6 +170,7 @@ QObject *QSignalIntercepter::sender() const
 
 /*!
     Returns the name of the signal that this signal interceptor is attached to.
+    \since 1.1
 */
 QByteArray QSignalIntercepter::signal() const
 {
@@ -178,6 +181,7 @@ QByteArray QSignalIntercepter::signal() const
     Returns true if this signal intercepter is valid; that is, there was
     a signal present with the specified parameters when this object
     was constructed.
+    \since 1.1
 */
 bool QSignalIntercepter::isValid() const
 {
@@ -186,6 +190,7 @@ bool QSignalIntercepter::isValid() const
 
 /*!
     \internal
+    \since 1.1
 */
 int QSignalIntercepter::qt_metacall(QMetaObject::Call c, int id, void **a)
 {
@@ -230,6 +235,7 @@ int QSignalIntercepter::qt_metacall(QMetaObject::Call c, int id, void **a)
 
     Called when the signal that is being intercepted is activated.
     The arguments to the signal are passed in the list \a args.
+    \since 1.1
 */
 
 // Get the QVariant type number for a type name.
@@ -253,6 +259,7 @@ int QSignalIntercepter::typeFromName( const QByteArray& type )
     specification.  The array of types is returned from this function,
     and the number of arguments is returned in \a nargs.  Returns null
     if \a member is invalid.  The return value must be freed with qFree().
+    \since 1.1
 */
 int *QSignalIntercepter::connectionTypes( const QByteArray& member, int& nargs )
 {

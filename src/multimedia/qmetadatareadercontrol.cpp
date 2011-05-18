@@ -108,18 +108,21 @@ QMetaDataReaderControl::~QMetaDataReaderControl()
     Identifies if meta-data is available from a media service.
 
     Returns true if the meta-data is available and false otherwise.
+    \since 1.0
 */
 
 /*!
     \fn QVariant QMetaDataReaderControl::metaData(QtMultimediaKit::MetaData key) const
 
     Returns the meta-data for the given \a key.
+    \since 1.0
 */
 
 /*!
     \fn QMetaDataReaderControl::availableMetaData() const
 
     Returns a list of keys there is meta-data available for.
+    \since 1.0
 */
 
 /*!
@@ -129,12 +132,14 @@ QMetaDataReaderControl::~QMetaDataReaderControl()
 
     The valid selection of keys for extended meta-data is determined by the provider and the meaning
     and type may differ between providers.
+    \since 1.0
 */
 
 /*!
     \fn QMetaDataReaderControl::availableExtendedMetaData() const
 
     Returns a list of keys there is extended meta-data available for.
+    \since 1.0
 */
 
 
@@ -142,6 +147,7 @@ QMetaDataReaderControl::~QMetaDataReaderControl()
     \fn void QMetaDataReaderControl::metaDataChanged()
 
     Signal the changes of meta-data.
+    \since 1.0
 */
 
 /*!
@@ -149,6 +155,7 @@ QMetaDataReaderControl::~QMetaDataReaderControl()
 
     Signal the availability of meta-data has changed, \a available will
     be true if the multimedia object has meta-data.
+    \since 1.0
 */
 
 #include "moc_qmetadatareadercontrol.cpp"

@@ -51,7 +51,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemDetailFilter class provides a filter based around a detail value criterion
   \inmodule QtOrganizer
   \ingroup organizer-filters
-  
+  \since 1.1
+
   It may be used to select organizeritems which contain a detail of a particular definition with a particular value
  */
 
@@ -60,10 +61,12 @@ Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemDetailFilter);
 /*!
  * \fn QOrganizerItemDetailFilter::QOrganizerItemDetailFilter(const QOrganizerItemFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new detail filter
+   \since 1.1
  */
 
 /*!
  * Constructs a new detail filter
+   \since 1.1
  */
 QOrganizerItemDetailFilter::QOrganizerItemDetailFilter()
     : QOrganizerItemFilter(new QOrganizerItemDetailFilterPrivate)
@@ -74,6 +77,7 @@ QOrganizerItemDetailFilter::QOrganizerItemDetailFilter()
  * Sets the name of the detail definition of which details will be matched to \a definitionName, and the name of the field in
  * details of that definition which will contain the value criterion to \a fieldName
  * \sa detailDefinitionName()
+   \since 1.1
  */
 void QOrganizerItemDetailFilter::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
 {
@@ -85,6 +89,7 @@ void QOrganizerItemDetailFilter::setDetailDefinitionName(const QString& definiti
 /*!
  * Sets the value criterion of the filter to \a value
  * \sa value()
+   \since 1.1
  */
 void QOrganizerItemDetailFilter::setValue(const QVariant& value)
 {
@@ -95,6 +100,7 @@ void QOrganizerItemDetailFilter::setValue(const QVariant& value)
 /*!
  * Sets the semantics of the value matching criterion to those defined in \a flags
  * \sa matchFlags()
+   \since 1.1
  */
 void QOrganizerItemDetailFilter::setMatchFlags(QOrganizerItemFilter::MatchFlags flags)
 {
@@ -105,6 +111,7 @@ void QOrganizerItemDetailFilter::setMatchFlags(QOrganizerItemFilter::MatchFlags 
 /*!
  * Returns the semantics of the value matching criterion
  * \sa setMatchFlags()
+   \since 1.1
  */
 QOrganizerItemFilter::MatchFlags QOrganizerItemDetailFilter::matchFlags() const
 {
@@ -115,6 +122,7 @@ QOrganizerItemFilter::MatchFlags QOrganizerItemDetailFilter::matchFlags() const
 /*!
  * Returns the definition name of the details which will be inspected for matching values
  * \sa setDetailDefinitionName()
+   \since 1.1
  */
 QString QOrganizerItemDetailFilter::detailDefinitionName() const
 {
@@ -125,6 +133,7 @@ QString QOrganizerItemDetailFilter::detailDefinitionName() const
 /*!
  * Returns the name of the field which contains the value which will be matched against the value criterion
  * \sa setDetailDefinitionName()
+   \since 1.1
  */
 QString QOrganizerItemDetailFilter::detailFieldName() const
 {
@@ -135,6 +144,7 @@ QString QOrganizerItemDetailFilter::detailFieldName() const
 /*!
  * Returns the value criterion of the detail filter
  * \sa setValue()
+   \since 1.1
  */
 QVariant QOrganizerItemDetailFilter::value() const
 {

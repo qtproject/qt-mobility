@@ -94,17 +94,20 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
 /*!
     \fn QCameraImageProcessingControl::whiteBalanceMode() const
     Return the white balance mode being used.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageProcessingControl::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
     Set the white balance mode to \a mode
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageProcessingControl::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
     Returns true if the white balance \a mode is supported.
     The backend should support at least QCameraImageProcessing::WhiteBalanceAuto mode.
+    \since 1.1
 */
 
 /*!
@@ -116,11 +119,13 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
     but some parameter may not be available depending on other
     camera settings, like presets.
     In such case the currently supported parameters should be returned.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageProcessingControl::processingParameter(ProcessingParameter parameter) const
     Returns the image processing \a parameter value.
+    \since 1.1
 */
 
 /*!
@@ -137,6 +142,7 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
     For sharpening and denoising the range is 0..100,
     0 for sharpening or denoising disabled
     and 100 for maximum sharpening/denoising applied.
+    \since 1.1
 */
 
 /*!

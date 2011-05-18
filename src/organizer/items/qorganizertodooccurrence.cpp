@@ -48,6 +48,7 @@ QTM_USE_NAMESPACE
   \brief The QOrganizerTodoOccurrence class provides an occurrence of a task which should be completed
   \inmodule QtOrganizer
   \ingroup organizer-items
+  \since 1.1
 
   A todo occurrence is a specific instance of a todo item.  An occurrence
   which is retrieved from a manager may not actually be persisted in that
@@ -62,6 +63,7 @@ QTM_USE_NAMESPACE
 /*!
   Sets the date time at which the task should be started to \a startDateTime.  For all-day tasks,
   the time part can be set to any valid value.
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
@@ -73,6 +75,7 @@ void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 /*!
   Returns the date time at which the task should be started.  For all-day tasks, the time part is
   meaningless.
+  \since 1.1
  */
 QDateTime QOrganizerTodoOccurrence::startDateTime() const
 {
@@ -83,6 +86,7 @@ QDateTime QOrganizerTodoOccurrence::startDateTime() const
 /*!
   Sets the date time by which the task should be completed to \a dueDateTime.  For all-day tasks,
   the time part can be set to any valid value.
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 {
@@ -94,6 +98,7 @@ void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 /*!
   Returns the date time by which the task should be completed.  For all-day tasks, the time part is
   meaningless.
+  \since 1.1
  */
 QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 {
@@ -104,6 +109,7 @@ QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 /*!
   Sets the todo occurrence's parent to be the todo identified by the
   given \a parentId
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setParentId(const QOrganizerItemId& parentId)
 {
@@ -114,6 +120,7 @@ void QOrganizerTodoOccurrence::setParentId(const QOrganizerItemId& parentId)
 
 /*!
   Returns the id of the todo which is this occurrence's parent
+  \since 1.1
  */
 QOrganizerItemId QOrganizerTodoOccurrence::parentId() const
 {
@@ -124,6 +131,7 @@ QOrganizerItemId QOrganizerTodoOccurrence::parentId() const
 /*!
   Sets the date at which this occurrence was originally going to occur,
   to the given \a date.
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setOriginalDate(const QDate& date)
 {
@@ -134,6 +142,7 @@ void QOrganizerTodoOccurrence::setOriginalDate(const QDate& date)
 
 /*!
   Returns the date at which the occurrence was originally going to occur.
+  \since 1.1
  */
 QDate QOrganizerTodoOccurrence::originalDate() const
 {
@@ -143,6 +152,7 @@ QDate QOrganizerTodoOccurrence::originalDate() const
 
 /*!
   Sets the priority of the todo occurrence to \a priority
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setPriority(QOrganizerItemPriority::Priority priority)
 {
@@ -153,6 +163,7 @@ void QOrganizerTodoOccurrence::setPriority(QOrganizerItemPriority::Priority prio
 
 /*!
   Returns the priority of the todo occurrence.
+  \since 1.1
  */
 QOrganizerItemPriority::Priority QOrganizerTodoOccurrence::priority() const
 {
@@ -163,6 +174,7 @@ QOrganizerItemPriority::Priority QOrganizerTodoOccurrence::priority() const
 /*!
   Sets the percentage of progress completed on the task described
   by the todo occurrence item to \a percentage
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setProgressPercentage(int percentage)
 {
@@ -175,6 +187,7 @@ void QOrganizerTodoOccurrence::setProgressPercentage(int percentage)
 /*!
   Returns the percentage of progress completed on the task described
   by the todo occurrence.
+  \since 1.1
  */
 int QOrganizerTodoOccurrence::progressPercentage() const
 {
@@ -184,6 +197,7 @@ int QOrganizerTodoOccurrence::progressPercentage() const
 
 /*!
   Sets the progress status of the todo occurrence to \a status
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setStatus(QOrganizerTodoProgress::Status status)
 {
@@ -194,6 +208,7 @@ void QOrganizerTodoOccurrence::setStatus(QOrganizerTodoProgress::Status status)
 
 /*!
   Returns the progress status of the task described by the todo occurrence
+  \since 1.1
  */
 QOrganizerTodoProgress::Status QOrganizerTodoOccurrence::status() const
 {
@@ -203,6 +218,7 @@ QOrganizerTodoProgress::Status QOrganizerTodoOccurrence::status() const
 
 /*!
   Sets the date and time at which the task described by the todo occurrence was completed to \a finishedDateTime
+  \since 1.1
  */
 void QOrganizerTodoOccurrence::setFinishedDateTime(const QDateTime& finishedDateTime)
 {
@@ -213,6 +229,7 @@ void QOrganizerTodoOccurrence::setFinishedDateTime(const QDateTime& finishedDate
 
 /*!
   Returns the date and time at which the task described by the todo occurrence was completed, if known.
+  \since 1.1
  */
 QDateTime QOrganizerTodoOccurrence::finishedDateTime() const
 {

@@ -73,6 +73,7 @@ IMPLEMENT_READING(QAccelerometerReading)
 
     The scale of the values is meters per second squared.
     \sa {QAccelerometerReading Units}
+    \since 1.0
 */
 
 qreal QAccelerometerReading::x() const
@@ -82,6 +83,7 @@ qreal QAccelerometerReading::x() const
 
 /*!
     Sets the acceleration on the X axis to \a x.
+    \since 1.0
 */
 void QAccelerometerReading::setX(qreal x)
 {
@@ -94,6 +96,7 @@ void QAccelerometerReading::setX(qreal x)
 
     The scale of the values is meters per second squared.
     \sa {QAccelerometerReading Units}
+    \since 1.0
 */
 
 qreal QAccelerometerReading::y() const
@@ -103,6 +106,7 @@ qreal QAccelerometerReading::y() const
 
 /*!
     Sets the acceleration on the Y axis to \a y.
+    \since 1.0
 */
 void QAccelerometerReading::setY(qreal y)
 {
@@ -115,6 +119,7 @@ void QAccelerometerReading::setY(qreal y)
 
     The scale of the values is meters per second squared.
     \sa {QAccelerometerReading Units}
+    \since 1.0
 */
 
 qreal QAccelerometerReading::z() const
@@ -124,6 +129,7 @@ qreal QAccelerometerReading::z() const
 
 /*!
     Sets the acceleration on the Z axis to \a z.
+    \since 1.0
 */
 void QAccelerometerReading::setZ(qreal z)
 {
@@ -141,6 +147,7 @@ void QAccelerometerReading::setZ(qreal z)
 
     The only difference is that the filter() method features a pointer to QAccelerometerReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -149,6 +156,7 @@ void QAccelerometerReading::setZ(qreal z)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QAccelerometer::type("QAccelerometer");
@@ -167,18 +175,21 @@ char const * const QAccelerometer::type("QAccelerometer");
     For details about how the sensor works, see \l QAccelerometerReading.
 
     \sa QAccelerometerReading
+    \since 1.0
 */
 
 /*!
     \fn QAccelerometer::QAccelerometer(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QAccelerometer::~QAccelerometer()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -187,6 +198,7 @@ char const * const QAccelerometer::type("QAccelerometer");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 #include "moc_qaccelerometer.cpp"

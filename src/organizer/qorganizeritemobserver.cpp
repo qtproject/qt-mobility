@@ -60,12 +60,14 @@ QTM_USE_NAMESPACE
   \brief The QOrganizerItemObserver class is a simple class that emits a signal when a single
   particular item is updated or deleted.
   \inmodule QtOrganizer
+  \since 1.2
 
   \ingroup organizer-main
  */
 
 /*!
   Constructs a QOrganizerItemObserver to observe the item in \a manager with the given \a itemId.
+  \since 1.2
  */
 QOrganizerItemObserver::QOrganizerItemObserver(QOrganizerManager* manager,
                                                const QOrganizerItemId& itemId,
@@ -92,6 +94,7 @@ QOrganizerItemObserver::~QOrganizerItemObserver()
 
 /*!
   Returns the id of the item that this object observes.
+  \since 1.2
  */
 QOrganizerItemId QOrganizerItemObserver::itemId() const {
     return d->m_id;
@@ -101,12 +104,14 @@ QOrganizerItemId QOrganizerItemObserver::itemId() const {
   \fn void QOrganizerItemObserver::itemChanged()
 
   This signal is emitted when the observed item is changed in the manager.
+  \since 1.2
  */
 
 /*!
   \fn void QOrganizerItemObserver::itemRemoved()
 
   This signal is emitted when the observed item is removed from the manager.
+  \since 1.2
  */
 
 #include "moc_qorganizeritemobserver.cpp"

@@ -48,12 +48,14 @@ QTM_USE_NAMESPACE
   \brief The QOrganizerJournal class supplies a journal which is associated with a particular point in time
   \inmodule QtOrganizer
   \ingroup organizer-items
+  \since 1.1
 
   A journal consists of personal data which is associated with a particular point in time.
  */
 
 /*!
   Sets the date time which this journal is associated with to \a dateTime
+  \since 1.1
  */
 void QOrganizerJournal::setDateTime(const QDateTime& dateTime)
 {
@@ -64,6 +66,7 @@ void QOrganizerJournal::setDateTime(const QDateTime& dateTime)
 
 /*!
   Returns the date time associated with this journal
+  \since 1.1
  */
 QDateTime QOrganizerJournal::dateTime() const
 {

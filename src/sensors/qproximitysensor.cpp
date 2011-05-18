@@ -70,6 +70,7 @@ IMPLEMENT_READING(QProximityReading)
     Set to false is nothing is close.
 
     \sa QProximityReading_Units
+    \since 1.0
 */
 
 bool QProximityReading::close() const
@@ -79,6 +80,7 @@ bool QProximityReading::close() const
 
 /*!
     Sets the close value to \a close.
+    \since 1.0
 */
 void QProximityReading::setClose(bool close)
 {
@@ -96,6 +98,7 @@ void QProximityReading::setClose(bool close)
 
     The only difference is that the filter() method features a pointer to QProximityReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -104,6 +107,7 @@ void QProximityReading::setClose(bool close)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QProximitySensor::type("QProximitySensor");
@@ -122,18 +126,21 @@ char const * const QProximitySensor::type("QProximitySensor");
     For details about how the sensor works, see \l QProximityReading.
 
     \sa QProximityReading
+    \since 1.0
 */
 
 /*!
     \fn QProximitySensor::QProximitySensor(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QProximitySensor::~QProximitySensor()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -142,6 +149,7 @@ char const * const QProximitySensor::type("QProximitySensor");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 #include "moc_qproximitysensor.cpp"

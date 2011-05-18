@@ -99,6 +99,7 @@ QAbstractSecuritySession::~QAbstractSecuritySession()
 
     Returns true if the security session has sufficient rights to access the required
     service \a capabilities.
+    \since 1.0
 */
 
 #include "moc_qabstractsecuritysession.cpp"

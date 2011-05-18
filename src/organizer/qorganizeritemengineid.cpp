@@ -46,6 +46,7 @@
   \relates QOrganizerItemId
   \brief The QOrganizerItemEngineId class uniquely identifies an item within a
   particular engine plugin.
+   \since 1.1
 
   \inmodule QtOrganizer
   \ingroup organizer-backends
@@ -69,6 +70,7 @@
   Returns true if this id is equal to the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
   since the function which calls this function (in QOrganizerItemId) does that check for you.
+  \since 1.1
  */
 
 /*!
@@ -76,6 +78,7 @@
   Returns true if this id is less than the \a other id; false otherwise.
   Note that when implementing this function, you do not have to check that the type is the same,
   since the function which calls this function (in QOrganizerItemId) does that check for you.
+  \since 1.1
  */
 
 /*!
@@ -84,6 +87,7 @@
   the id.  If the item which the id identifies has not been deleted,
   the id should still be valid in the manager identified by the
   manager URI returned by this function.
+  \since 1.1
  */
 
 /*!
@@ -92,21 +96,25 @@
   required to identify a particular item in the manager which created
   the id, formatted according to the serialization format of the
   manager.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerItemEngineId::clone() const
   Returns a deep-copy clone of this id.
   The caller takes ownership of the returned engine item id.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerItemEngineId::debugStreamOut(QDebug& dbg) const
   Streams this id out to the debug stream \a dbg.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerItemEngineId::hash() const
   Returns the hash value of this id.
+  \since 1.1
  */
 

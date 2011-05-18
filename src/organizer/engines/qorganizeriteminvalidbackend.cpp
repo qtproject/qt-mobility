@@ -48,8 +48,9 @@
   \brief The QOrganizerItemInvalidEngine class provides an implementation of
   QOrganizerManagerEngine whose functions always return an error.
   \inmodule QtOrganizer
-  
+
   The invalid engine may be used as a reference or test engine, but does nothing.
+  \since 1.1
  */
 
 QTM_BEGIN_NAMESPACE
@@ -59,7 +60,9 @@ QOrganizerItemInvalidEngine::QOrganizerItemInvalidEngine()
 {
 }
 
-/*! \reimp */
+/*! \reimp
+  \since 1.1
+*/
 QString QOrganizerItemInvalidEngine::managerName() const
 {
     return QString(QLatin1String("invalid"));

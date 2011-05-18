@@ -100,6 +100,7 @@ QMediaContent::QMediaContent()
 
 /*!
     Constructs a media content with \a url providing a reference to the content.
+    \since 1.0
 */
 
 QMediaContent::QMediaContent(const QUrl &url):
@@ -113,6 +114,7 @@ QMediaContent::QMediaContent(const QUrl &url):
 
     This constructor can be used to reference media content via network protocols such as HTTP.
     This may include additional information required to obtain the resource, such as Cookies or HTTP headers.
+    \since 1.0
 */
 
 QMediaContent::QMediaContent(const QNetworkRequest &request):
@@ -123,6 +125,7 @@ QMediaContent::QMediaContent(const QNetworkRequest &request):
 
 /*!
     Constructs a media content with \a resource providing a reference to the content.
+    \since 1.0
 */
 
 QMediaContent::QMediaContent(const QMediaResource &resource):
@@ -133,6 +136,7 @@ QMediaContent::QMediaContent(const QMediaResource &resource):
 
 /*!
     Constructs a media content with \a resources providing a reference to the content.
+    \since 1.0
 */
 
 QMediaContent::QMediaContent(const QMediaResourceList &resources):
@@ -142,6 +146,7 @@ QMediaContent::QMediaContent(const QMediaResourceList &resources):
 
 /*!
     Constructs a copy of the media content \a other.
+    \since 1.0
 */
 
 QMediaContent::QMediaContent(const QMediaContent &other):
@@ -159,6 +164,7 @@ QMediaContent::~QMediaContent()
 
 /*!
     Assigns the value of \a other to this media content.
+    \since 1.0
 */
 
 QMediaContent& QMediaContent::operator=(const QMediaContent &other)
@@ -169,6 +175,7 @@ QMediaContent& QMediaContent::operator=(const QMediaContent &other)
 
 /*!
     Returns true if \a other is equivalent to this media content; false otherwise.
+    \since 1.0
 */
 
 bool QMediaContent::operator==(const QMediaContent &other) const
@@ -180,6 +187,7 @@ bool QMediaContent::operator==(const QMediaContent &other) const
 
 /*!
     Returns true if \a other is not equivalent to this media content; false otherwise.
+    \since 1.0
 */
 
 bool QMediaContent::operator!=(const QMediaContent &other) const
@@ -189,6 +197,7 @@ bool QMediaContent::operator!=(const QMediaContent &other) const
 
 /*!
     Returns true if this media content is null (uninitialized); false otherwise.
+    \since 1.0
 */
 
 bool QMediaContent::isNull() const
@@ -198,6 +207,7 @@ bool QMediaContent::isNull() const
 
 /*!
     Returns a QUrl that represents that canonical resource for this media content.
+    \since 1.0
 */
 
 QUrl QMediaContent::canonicalUrl() const
@@ -207,6 +217,7 @@ QUrl QMediaContent::canonicalUrl() const
 
 /*!
     Returns a QNetworkRequest that represents that canonical resource for this media content.
+    \since 1.0
 */
 
 QNetworkRequest QMediaContent::canonicalRequest() const
@@ -216,6 +227,7 @@ QNetworkRequest QMediaContent::canonicalRequest() const
 
 /*!
     Returns a QMediaResource that represents that canonical resource for this media content.
+    \since 1.0
 */
 
 QMediaResource QMediaContent::canonicalResource() const
@@ -228,6 +240,7 @@ QMediaResource QMediaContent::canonicalResource() const
 /*!
     Returns a list of alternative resources for this media content.  The first item in this list
     is always the canonical resource.
+    \since 1.0
 */
 
 QMediaResourceList QMediaContent::resources() const

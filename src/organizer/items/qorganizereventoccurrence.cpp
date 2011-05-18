@@ -48,6 +48,7 @@ QTM_USE_NAMESPACE
   \brief The QOrganizerEventOccurrence class provides an occurrence of an event.
   \inmodule QtOrganizer
   \ingroup organizer-items
+  \since 1.1
 
   An event occurrence is where the occurrence differs from the generating
   event in some way.  An occurrence which is retrieved from a manager may not
@@ -62,6 +63,7 @@ QTM_USE_NAMESPACE
 /*!
   Sets the start date time of the event occurrence to \a startDateTime.
   instance).  For all-day events, the time part is meaningless.
+  \since 1.1
  */
 void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
@@ -73,6 +75,7 @@ void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 /*!
   Returns the date time at which the event occurrence begins.
   For all-day events, the time part can be set to any valid value.
+  \since 1.1
  */
 QDateTime QOrganizerEventOccurrence::startDateTime() const
 {
@@ -84,6 +87,7 @@ QDateTime QOrganizerEventOccurrence::startDateTime() const
   Sets the end date time of the event occurrence to \a endDateTime.
   For all-day events, the time part can be set to any valid value, and the date is to be interpreted
   as the inclusive end date.
+  \since 1.1
  */
 void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
 {
@@ -96,6 +100,7 @@ void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
   Returns the date time at which the event occurrence ends.
   For all-day events, the time part is meaningless, and the date is to be interpreted
   as the inclusive end date.
+  \since 1.1
  */
 QDateTime QOrganizerEventOccurrence::endDateTime() const
 {
@@ -106,6 +111,7 @@ QDateTime QOrganizerEventOccurrence::endDateTime() const
 /*!
   Sets the event occurrence's parent to be the event identified by the
   given \a parentId
+  \since 1.1
  */
 void QOrganizerEventOccurrence::setParentId(const QOrganizerItemId& parentId)
 {
@@ -116,6 +122,7 @@ void QOrganizerEventOccurrence::setParentId(const QOrganizerItemId& parentId)
 
 /*!
   Returns the id of the event which is this occurrence's parent
+  \since 1.1
  */
 QOrganizerItemId QOrganizerEventOccurrence::parentId() const
 {
@@ -126,6 +133,7 @@ QOrganizerItemId QOrganizerEventOccurrence::parentId() const
 /*!
   Sets the date at which this occurrence was originally going to occur,
   to the given \a date.
+  \since 1.1
  */
 void QOrganizerEventOccurrence::setOriginalDate(const QDate& date)
 {
@@ -136,6 +144,7 @@ void QOrganizerEventOccurrence::setOriginalDate(const QDate& date)
 
 /*!
   Returns the date at which the occurrence was originally going to occur.
+  \since 1.1
  */
 QDate QOrganizerEventOccurrence::originalDate() const
 {
@@ -145,6 +154,7 @@ QDate QOrganizerEventOccurrence::originalDate() const
 
 /*!
   Sets the priority of the event occurrence to \a priority
+  \since 1.1
  */
 void QOrganizerEventOccurrence::setPriority(QOrganizerItemPriority::Priority priority)
 {
@@ -155,6 +165,7 @@ void QOrganizerEventOccurrence::setPriority(QOrganizerItemPriority::Priority pri
 
 /*!
   Returns the priority of the event occurrence
+  \since 1.1
  */
 QOrganizerItemPriority::Priority QOrganizerEventOccurrence::priority() const
 {
@@ -164,6 +175,7 @@ QOrganizerItemPriority::Priority QOrganizerEventOccurrence::priority() const
 
 /*!
   Returns the label of the location at which the event occurrence is held, if known
+  \since 1.1
  */
 QString QOrganizerEventOccurrence::location() const
 {
@@ -173,6 +185,7 @@ QString QOrganizerEventOccurrence::location() const
 
 /*!
   Sets the label of the location at which the event occurrence is held to \a location
+  \since 1.1
  */
 void QOrganizerEventOccurrence::setLocation(const QString& location)
 {
