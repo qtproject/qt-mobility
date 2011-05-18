@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qmetaobjectbuilder_47_p.h"
+#include "qmetaobjectbuilder_p.h"
 #include <QDebug>
 
 #ifndef Q_OS_WIN
