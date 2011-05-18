@@ -1,0 +1,121 @@
+****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/systeminfo
+
+testcase = {
+
+    Configurable_Signal_Strength: function()
+    {
+        skip('Configurable Signal Strength not implemented yet', SkipAll);
+    },
+
+    Storage_changed_notification: function()
+    {
+        prompt(twiki('*Storage changed notification*
+
+    1 Verify that target supports removable storage, if not then pass this test now otherwise continue with the next steps
+    1 Ensure that target system does not have any removable storage inserted/mounted
+    1 Start application *examples/qsysinfo*
+    1 Switch to the *Storage* tab
+    1 Verify that the removable storage status is unavailable
+    1 Insert/mount the storage
+    1 Verify that the storage appears with correct size
+    1 Remove/unmount the removable media
+    1 Verify that the storage disappears or marked unavailable
+    1 *Note:* On S60 platforms removing a media might cause qsysinfo to be closed, which is usual
+        '));
+    }
+
+    Query_OS_Qt_firmware_versions: function()
+    {
+        prompt(twiki('*Query OS, Qt and firmware versions*
+
+    1 Start the bluewheel application and open *SystemInfo*
+    1 Open *General/Features*
+    1 From the *Version* pulldown menu select *Os*
+    1 Verify the Os version is what is expected for the platform
+    1 From the *Version* pulldown menu select *QtCore*
+    1 Verify the Qt version is what is expected
+    1 From the *Version* pulldown menu select *Firmware*
+    1 Verify the Firmware version is what is expected for the platform
+    1 From the *Version* pulldown menu select *QtMobility*
+    1 Verify the QtMobility version is what is expected
+        '));
+    }
+
+    Query_device_hardware_features: function()
+    {
+        prompt(twiki('*Query device hardware features*
+
+    1 Start the bluewheel application and open *SystemInfo*
+    1 Open *General/Features*
+    1 From the *Feature* pulldown menu select *Bluetooth*
+    1 Verify the Bluetooth status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Camera*
+    1 Verify the camera status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Fmradio*
+    1 Verify the Fmradio status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Ir*
+    1 Verify the Ir status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Led*
+    1 Verify the Led status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Memcard*
+    1 Verify the Memcard status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Usb*
+    1 Verify the Usb status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Vib*
+    1 Verify the Vib status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Wlan*
+    1 Verify the Wlan status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Sim*
+    1 Verify the Sim status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Location*
+    1 Verify the Location status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *VideoOut*
+    1 Verify the VideoOut status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *Haptics*
+    1 Verify the Haptics status is what is expected for the platform
+    1 From the *Feature* pulldown menu select *FmTransmitter*
+    1 Verify the FmTransmitter status is what is expected for the platform
+        '));
+    }
+}
