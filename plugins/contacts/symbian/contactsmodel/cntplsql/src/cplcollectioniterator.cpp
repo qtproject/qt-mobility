@@ -854,41 +854,42 @@ CContactIdArray* CPlCollection::DeletedL()
 	}
 
 /**
-Perform a synchronous find all contacts which support Voip call.
+Perform a synchronous find all contacts which support speed dial fetch dialog.
 
-@return Array of contact IDs resulting from the search.
+Precondition: The speed dial fetch dialog lists all contacts which include 
+              EPhoneNumber, ESipAddress or KUidContactFieldIMPPValue.
+
+@return Array of contact IDs resulting from the search. The array should be deleted
+ by the client.
 */
-CContactIdArray* CPlCollection::FindVoipContactsL()
+CContactIdArray* CPlCollection::FindSpeedDialContactsL()
     {
     CContactIdArray* idsFound = CContactIdArray::NewL();
     CleanupStack::PushL(idsFound);
-    // Search through the sip address fields in KSqlContactCommAddrTableName
-    _LIT(KSqlFormate, "select distinct %S from %S where (%S = %d) except select distinct %S from %S where (%S = %d)");
-    HBufC* sqlString = HBufC::NewLC(KSqlFormate().Length()
-            + KCommAddrType().Length() + 2 * KContactId().Length()
-            + 2 * KSqlContactCommAddrTableName().Length()
-            + 2 * KCommAddrType().Length());
+    // Search the contact IDs which include ESipAddress or EPhoneNumber in KSqlContactCommAddrTableName.
+    _LIT(KSelectPhoneSIP, "select distinct %S from %S where (%S = %d) or (%S = %d)");
+    HBufC* selectSIPOnly = HBufC::NewLC(KSelectPhoneSIP().Length()
+            +  KContactId().Length() + KSqlContactCommAddrTableName().Length()
+            + 2 * KCommAddrType().Length() +2 * KCommAddrValue().Length());
 
-    sqlString->Des().Format(KSqlFormate, &KContactId,
+    selectSIPOnly->Des().Format(KSelectPhoneSIP, &KContactId,
             &KSqlContactCommAddrTableName, &KCommAddrType,
-            CPplCommAddrTable::ESipAddress, &KContactId,
-            &KSqlContactCommAddrTableName, &KCommAddrType,
+            CPplCommAddrTable::ESipAddress, &KCommAddrType,
             CPplCommAddrTable::EPhoneNumber);
 
     RSqlStatement selectStatement;
     CleanupClosePushL(selectStatement);
 
     User::LeaveIfError(selectStatement.Prepare(iContactsFile.NamedDatabase(),
-            *sqlString));
-    TInt err;
+            *selectSIPOnly));
     const TInt idIndex = selectStatement.ColumnIndex(KContactId);
     User::LeaveIfError(idIndex);
-    while((err = selectStatement.Next()) == KSqlAtRow)
+    while(KSqlAtRow == selectStatement.Next())
         {
         TInt contactId = selectStatement.ColumnInt(idIndex);
         idsFound->AddL(contactId);
         }
-    
+
     // Search through the searchable text for any other fields.
 
     iSelectStatement->Reset();
@@ -896,30 +897,26 @@ CContactIdArray* CPlCollection::FindVoipContactsL()
     iSelectStatement->SetParamL(KContactTypeFlags, KSpace);
     iSelectStatement->SetParamL(KContactTextFieldHeader, KSpace);
     iSelectStatement->SetParamL(KContactTextFields, KSpace);
-    HBufC* searchCond = NULL;
-    // Make the sql statement to filter the contacts which include the phone number or Sip address in
-    // KSqlContactCommAddrTableName. Then check the contacts if have the IMPP data in the result set.
+    HBufC* selectIMPPOnlyCond = NULL;
+    // Go through the contacts in KSqlContactTableName to find all contacts which doesn't
+    // include the phone number or Sip address in KSqlContactCommAddrTableName.
+    // Then check the contacts if it has the IMPP data in the result set.
     _LIT(KWhereClause, "%S not in (select distinct %S from %S where (%S = %d) or (%S = %d) )");
-    searchCond = HBufC::NewLC(KWhereClause().Length() 
+    selectIMPPOnlyCond = HBufC::NewLC(KWhereClause().Length() 
             + 2 * KContactId().Length() + KSqlContactCommAddrTableName().Length()
-            + 2 * KCommAddrType().Length());
-    searchCond->Des().Format(KWhereClause, &KContactId, &KContactId,
+            + 2 * KCommAddrType().Length() + 2 * KCommAddrValue().Length());
+    selectIMPPOnlyCond->Des().Format(KWhereClause, &KContactId, &KContactId,
             &KSqlContactCommAddrTableName, &KCommAddrType,
             CPplCommAddrTable::EPhoneNumber, &KCommAddrType,
             CPplCommAddrTable::ESipAddress);
-    iSelectStatement->SetConditionL(*searchCond);
+    iSelectStatement->SetConditionL(*selectIMPPOnlyCond);
 
     selectStatement.Reset();
     User::LeaveIfError(selectStatement.Prepare(iContactsFile.NamedDatabase(),
             iSelectStatement->SqlStringL()));
-    CContactItemFieldDef *fieldDef = new (ELeave) CContactItemFieldDef;
-    CleanupStack::PushL(fieldDef);
-    fieldDef->AppendL(TUid::Uid(KUidContactFieldIMPPValue));
-    while ( FindL(idsFound, fieldDef, selectStatement))
-        {
-        // Keep performing find iteration until EFalse is returned.
-        }
-    CleanupStack::PopAndDestroy(4); // sqlString, selectStatement, searchCond, fieldDef
+    FindIMPPContactsL(idsFound, selectStatement);
+
+    CleanupStack::PopAndDestroy(3); // selectSIPOnly, selectStatement, selectIMPPOnlyCond
     CleanupStack::Pop(idsFound);
     return (idsFound);
     }
@@ -1727,22 +1724,20 @@ CContactIdArray* CPlCollection::FindAsyncL(TBool& aMoreToGo, TUint aSessionId)
 	}
 
 /**
-Perform a synchronous find for the given field definition.
+Perform a synchronous find contacts which includes IMPP data in the SQL result.
 
 @param aIdsFound Contacts IDs found.
-@param aFieldDef Field definition to use.
+@param aStatement The SQL statement include the selecting result.
 
-@return ETrue if all iterations have been completed, EFalse otherwise.
 */
-TBool CPlCollection::FindL(CContactIdArray *aIdsFound, const CContactItemFieldDef *aFieldDef, RSqlStatement aStatement)
+void CPlCollection::FindIMPPContactsL(CContactIdArray *aIdsFound, RSqlStatement aStatement)
     {
     const CContactTemplate& systemTemplate =
                     iContactsFile.ContactProperties().SystemTemplateManager().TemplateL();
-
     CContactItemField* field = CContactItemField::NewLC(); // construct just once
-
-    TInt iterCount = 0;
-    TInt err;
+    CContactItemFieldDef *fieldDef = new (ELeave) CContactItemFieldDef;
+    CleanupStack::PushL(fieldDef);
+    fieldDef->AppendL(TUid::Uid(KUidContactFieldIMPPValue));
 
     const TInt idIndex = aStatement.ColumnIndex(KContactId);
     User::LeaveIfError(idIndex);
@@ -1753,26 +1748,14 @@ TBool CPlCollection::FindL(CContactIdArray *aIdsFound, const CContactItemFieldDe
     User::LeaveIfError(textHeaderIndex);
     const TInt textFieldsIndex = aStatement.ColumnIndex(KContactTextFields);
     User::LeaveIfError(textFieldsIndex);
-
-    while (iterCount < KFindIterations)
+    // Go through the SQL result to find the contacts which include fieldDef 
+    while(KSqlAtRow == aStatement.Next())
         {
-        err = aStatement.Next();
-        if (err != KSqlAtRow)
-            {
-            User::LeaveIfError(err);
-            break;
-            }
         TContactItemId id = aStatement.ColumnInt(idIndex);
-        if (aIdsFound->Find(id) != KErrNotFound)
-            {
-            // If the id in the result also, ignore the it.
-            ++iterCount;
-            continue;
-            }
         TInt typeFlags = aStatement.ColumnInt(typeFlagsIndex);
         TUid contactType = TCntPersistenceUtility::TypeFlagsToContactTypeUid(
                 typeFlags);
-
+        // Check the contact type.
         if (iContactsFile.ContactProperties().CheckType(contactType))
             {
             TPtrC8 textHeader;
@@ -1789,11 +1772,11 @@ TBool CPlCollection::FindL(CContactIdArray *aIdsFound, const CContactItemFieldDe
 
             TCardinality count;
             rootStream >> count;
-
+            // Check the contact if include the field type in fieldDef 
             for (TInt i = 0; i < count; ++i)
                 {
                 field->Reset();
-                if (field->RestoreIfMatchL(rootStream, aFieldDef,
+                if (field->RestoreIfMatchL(rootStream, fieldDef,
                         &systemTemplate.CardFields(), textBuf, i))
                     {
                     aIdsFound->AddL(id);
@@ -1802,12 +1785,9 @@ TBool CPlCollection::FindL(CContactIdArray *aIdsFound, const CContactItemFieldDe
                 }
             CleanupStack::PopAndDestroy(4, &textHeaderStream); // rootStream, textBuf, textHeader, textHeaderStream
             }
-        ++iterCount;
         }
 
-    CleanupStack::PopAndDestroy(field);
-
-    return (iterCount == KFindIterations);
+    CleanupStack::PopAndDestroy(2); //field,fieldDef
     }
 /**
 Perform a synchronous find for the given text and field definition.

@@ -1820,7 +1820,7 @@ void tst_QGalleryQueryModel::galleryChanged()
     QCOMPARE(galleryChangedSpy.count(), 0);
 
     model.setGallery(gallery);
-    QCOMPARE(model.gallery() ,gallery);
+    QCOMPARE(model.gallery(), static_cast<QAbstractGallery*>(gallery));
     QCOMPARE(galleryChangedSpy.count(), 1);
 
 }

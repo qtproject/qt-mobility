@@ -467,6 +467,30 @@ private slots:
         delete filter2;
     }
 
+    void testFilter3()
+    {
+        TestSensor sensor;
+        sensor.setProperty("doThis", "setOne");
+        QSignalSpy spy(&sensor, SIGNAL(readingChanged()));
+        sensor.start();
+        QCOMPARE(spy.count(), 1); // reading changes
+        sensor.stop();
+
+        TestSensorFilter *filter2 = new MyFilter;
+        sensor.addFilter(filter2);
+        sensor.start();
+        QCOMPARE(spy.count(), 1); // filter suppresses reading so it does not change
+        sensor.stop();
+        delete filter2;
+
+        TestSensorFilter *filter1 = new ModFilter;
+        sensor.addFilter(filter1);
+        sensor.start();
+        QCOMPARE(spy.count(), 2); // filter does not suppress reading
+        sensor.stop();
+        delete filter1;
+    }
+
     void testStart2()
     {
         TestSensor sensor;

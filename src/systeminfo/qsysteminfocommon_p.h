@@ -75,8 +75,10 @@
 
 #if defined(ALIGNEDTIMER_MEEGO)
 #include "qsystemalignedtimer_meego_p.h"
+#elif defined(ALIGNEDTIMER_SYMBIAN)
+#include "qsystemalignedtimer_symbian_p.h"
 #else
 #include "qsystemalignedtimer_stub_p.h"
-#endif // ALIGNEDTIMER_MEEGO
+#endif
 
 #endif // QSYSTEMINFOCOMMON_H

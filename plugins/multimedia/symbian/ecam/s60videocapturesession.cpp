@@ -1581,6 +1581,9 @@ QList<int> S60VideoCaptureSession::doGetSupportedSampleRatesL(const QAudioEncode
 {
     QList<int> sampleRates;
 
+    if (m_captureState < EOpenComplete)
+        return sampleRates;
+
 #ifndef S60_31_PLATFORM
     RArray<TUint> supportedSampleRates;
     CleanupClosePushL(supportedSampleRates);

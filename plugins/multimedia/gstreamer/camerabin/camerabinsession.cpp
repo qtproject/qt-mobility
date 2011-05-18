@@ -345,6 +345,11 @@ void CameraBinSession::setupCaptureResolution()
         g_object_set(G_OBJECT(m_pipeline), PREVIEW_CAPS_PROPERTY, previewCaps, NULL);
         gst_caps_unref(previewCaps);
 
+        //on low res cameras the viewfinder resolution should not be bigger
+        //then capture resolution
+        if (viewfinderResolution.width() > resolution.width())
+            viewfinderResolution = resolution;
+
 #if CAMERABIN_DEBUG
             qDebug() << Q_FUNC_INFO << "set viewfinder resolution" << viewfinderResolution;
 #endif
@@ -360,6 +365,19 @@ void CameraBinSession::setupCaptureResolution()
     if (m_captureMode == QCamera::CaptureVideo) {
         QSize resolution = m_videoEncodeControl->videoSettings().resolution();
         qreal framerate = m_videoEncodeControl->videoSettings().frameRate();
+
+        if (resolution.isEmpty()) {
+            //select the hightest supported resolution
+
+            updateVideoSourceCaps();
+            bool continuous = false;
+            QList<QSize> resolutions = supportedResolutions(qMakePair<int,int>(0,0),
+                                                            &continuous,
+                                                            QCamera::CaptureVideo);
+            if (!resolutions.isEmpty())
+                resolution = resolutions.last();
+        }
+
         if (!resolution.isEmpty() || framerate > 0) {
 #if CAMERABIN_DEBUG
             qDebug() << Q_FUNC_INFO << "set video resolution" << resolution;
@@ -1092,8 +1110,7 @@ static QPair<int,int> valueRange(const GValue *value, bool *continuous)
 
 static bool resolutionLessThan(const QSize &r1, const QSize &r2)
 {
-     return r1.width() < r2.width() ||
-            (r1.width() == r2.width() && r1.height() < r2.height());
+     return r1.width()*r1.height() < r2.width()*r2.height();
 }
 
 
@@ -1207,8 +1224,10 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate,
         if (mode == QCamera::CaptureStillImage)
             minSize = QSize(640, 480);
 #elif defined(Q_WS_MAEMO_6)
-        if (mode == QCamera::CaptureStillImage)
-            maxSize = QSize(4000, 3000);
+        if (cameraRole() == FrontCamera && maxSize.width() > 640)
+            maxSize = QSize(640, 480);
+        else if (mode == QCamera::CaptureVideo && maxSize.width() > 1280)
+            maxSize = QSize(1280, 720);
 #else
         Q_UNUSED(mode);
 #endif

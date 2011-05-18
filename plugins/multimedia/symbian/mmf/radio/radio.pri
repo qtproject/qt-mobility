@@ -11,8 +11,8 @@ contains(tunerlib_s60_enabled, yes) {
 }
 
 contains(radioutility_s60_enabled, yes) {
-	LIBS += -lradio_utility
-	DEFINES += RADIOUTILITYLIBUSED
+    LIBS += -lradio_utility
+    DEFINES += RADIOUTILITYLIBUSED
 
     HEADERS += $$PWD/s60radiotunercontrol_since32.h
     SOURCES += $$PWD/s60radiotunercontrol_since32.cpp

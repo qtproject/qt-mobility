@@ -719,6 +719,54 @@ int QSensor::error() const
     \since 1.2
 */
 
+/*!
+    \property QSensor::maxBufferSize
+
+    The property holds the maximum buffer size.
+
+    Note that this may be undefined, in which case the sensor does not support any form of buffering.
+
+    \sa QSensor::bufferSize, QSensor::efficientBufferSize
+*/
+
+/*!
+    \property QSensor::efficientBufferSize
+
+    The property holds the most efficient buffer size. Normally this is 1 (which means
+    no particular size is most efficient). Some sensor drivers have a FIFO buffer which
+    makes it more efficient to deliver the FIFO's size worth of readings at one time.
+
+    Note that this may be undefined, in which case the sensor does not support any form of buffering.
+
+    \sa QSensor::bufferSize, QSensor::maxBufferSize
+*/
+
+/*!
+    \property QSensor::bufferSize
+
+    This property holds the size of the buffer. By default (and if the property
+    is left undefined), the buffer size is 1, which means no buffering.
+    If the maximum buffer size is 1 (or undefined), then buffering is not supported
+    by the sensor.
+
+    Setting bufferSize greater than maxBufferSize will cause maxBufferSize to be used.
+
+    Buffering is turned on when bufferSize is greater than 1. The sensor will collect
+    the requested number of samples and deliver them all to the application at one time.
+    They will be delivered to the application as a burst of changed readings so it is
+    particularly important that the application processes each reading immediately or
+    saves the values somewhere else.
+
+    If stop() is called when buffering is on-going, the partial buffer is not delivered.
+
+    When the sensor is started with buffering option, values are collected from that
+    moment onwards. There is no pre-existing buffer that can be utilized.
+
+    The buffer size can only be changed while the sensor is not active.
+
+    \sa QSensor::maxBufferSize, QSensor::efficientBufferSize
+*/
+
 // =====================================================================
 
 /*!

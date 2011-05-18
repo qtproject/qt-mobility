@@ -56,7 +56,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemDeviceInfo class provides access to device information from the system.
-    \since 1.2
+    \since 1.0
 */
 
 /*!
@@ -71,31 +71,36 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
 
     This signal is emitted when battery level has changed to \a level.
+    \since 1.1
 */
 
 /*!
     \fn void QSystemDeviceInfo::batteryStatusChanged(QSystemDeviceInfo::BatteryStatus status)
 
     This signal is emitted when battery status has changed to \a status.
+    \since 1.1
 */
 
 /*!
     \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
     This signal is emitted when the power state has changed to \a state, such as when a phone gets
-    plugged in to the wall.
+    plugged in to the wall
+    \since 1.1
 */
 
 /*!
     \fn void QSystemDeviceInfo::thermalStateChanged(QSystemDeviceInfo::ThermalState state)
 
     This signal is emitted when the thermal state has changed to \a state.
+    \since 1.2
 */
 
 /*!
     \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
     This signal is emitted whenever the users active profile changes to \a profile.
+    \since 1.2
 */
 
 /*!
@@ -201,30 +206,35 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
 
     This signal is emitted whenever bluetooth state changes to \a on.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemDeviceInfo::wirelessKeyboardConnected(bool connected)
 
     This signal is emitted whenever a wireless keyboard is connected, specified by \a connected
+    \since 1.2
 */
 
 /*!
     \fn void QSystemDeviceInfo::keyboardFlipped(bool open)
 
     This signal is emitted whenever a phone flips open, specified by \a open.
+    \since 1.2
 */
 
 /*!
     \fn void QSystemDeviceInfo::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags type)
 
     This signal is emitted whenever the lock state changes, with LockType \a type.
+    \since 1.2
 */
 
 /*!
     \fn void QSystemDeviceInfo::deviceLocked(bool isLocked)
 
     This signal is emitted whenever the device lock state changes to \a isLocked.
+   \since 1.2
 */
 
 /*!
@@ -351,6 +361,7 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
     \brief The supported inputmethods.
 
     Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.
+    \since 1.0
 */
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 {
@@ -362,6 +373,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
     \brief The IMEI.
 
     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
+    \since 1.0
 */
 QString QSystemDeviceInfo::imei()
 {
@@ -373,6 +385,7 @@ QString QSystemDeviceInfo::imei()
     \brief The IMSI.
 
     Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.
+    \since 1.0
 */
 QString QSystemDeviceInfo::imsi()
 {
@@ -385,6 +398,7 @@ QString QSystemDeviceInfo::imsi()
 
     Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor
     of the motherboard.
+    \since 1.0
 */
 QString QSystemDeviceInfo::manufacturer()
 {
@@ -395,9 +409,9 @@ QString QSystemDeviceInfo::manufacturer()
     \property QSystemDeviceInfo::model
     \brief The model name.
 
-    Returns the model information of the device. In the case of desktops where no
-    model information is present, the CPU architect, such as i686, and machine type, such as Server,
-    Desktop or Laptop.
+    Returns the model information of the device. In the case where no model information is present,
+    the CPU architect, such as i686, or machine type, such as Server, Desktop or Laptop.
+    \since 1.0
 */
 QString QSystemDeviceInfo::model()
 {
@@ -408,7 +422,9 @@ QString QSystemDeviceInfo::model()
     \property QSystemDeviceInfo::productName
     \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
+    Returns the product name of the device. In the case where no product name is available, an empty
+    string is returned.
+    \since 1.0
 */
 QString QSystemDeviceInfo::productName()
 {
@@ -419,6 +435,7 @@ QString QSystemDeviceInfo::productName()
     \brief The battery level.
 
     Returns the battery charge level as percentage 1 - 100 scale.
+    \since 1.0
 */
 int QSystemDeviceInfo::batteryLevel() const
 {
@@ -430,6 +447,7 @@ int QSystemDeviceInfo::batteryLevel() const
     \brief The battery status.
 
     Returns the battery charge status.
+    \since 1.0
 */
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
 {
@@ -451,6 +469,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
     \brief the status of the sim card.
 
     Returns the QSystemDeviceInfo::simStatus status of SIM card.
+    \since 1.0
 */
 QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
 {
@@ -462,6 +481,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
     \brief Device lock.
 
     Returns true if the device is locked, otherwise false.
+    \since 1.0
 */
 bool QSystemDeviceInfo::isDeviceLocked()
 {
@@ -473,6 +493,7 @@ bool QSystemDeviceInfo::isDeviceLocked()
     \brief the device profile
 
     Gets the current QSystemDeviceInfo::currentProfile device profile.
+    \since 1.2
 */
 QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 {
@@ -484,6 +505,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
     \brief the power state.
 
     Gets the current QSystemDeviceInfo::currentPowerState state.
+    \since 1.2
 */
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 {
@@ -495,6 +517,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
     \brief the thermal state.
 
     Gets the current QSystemDeviceInfo::currentThermalState state.
+    \since 1.2
 */
 QSystemDeviceInfo::ThermalState QSystemDeviceInfo::currentThermalState()
 {
@@ -506,6 +529,7 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfo::currentThermalState()
     \brief bluetooth power state.
 
     Gets the current bluetooth power state.
+    \since 1.1
 */
 bool QSystemDeviceInfo::currentBluetoothPowerState()
 {
@@ -517,6 +541,7 @@ bool QSystemDeviceInfo::currentBluetoothPowerState()
     \brief The Keyboard Type
 
     Returns the type of keyboards found.
+    \since 1.2
 */
 QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardTypes()
 {
@@ -528,6 +553,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardTypes()
     \brief wireless keyboard connected
 
     Returns true if a wireless keyboard is connected, otherwise false;
+    \since 1.2
 */
 bool QSystemDeviceInfo::isWirelessKeyboardConnected()
 {
@@ -539,6 +565,7 @@ bool QSystemDeviceInfo::isWirelessKeyboardConnected()
     \brief Flip keyboard open.
 
     Returns true if the flip keyboard is open, otherwise false;
+    \since 1.2
 */
 bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 {
@@ -547,6 +574,7 @@ bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 
 /*!
     Returns true if the key pad, indicated by \a type, light is on, otherwise false;
+    \since 1.2
 */
 bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
@@ -558,6 +586,7 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 
     Depending on security enforcement on platform, this may return a non unique number, or 0.
     This will be a 160 bit hex QByteArray unique ID constant to this device.
+    \since 1.2
 */
 QByteArray QSystemDeviceInfo::uniqueDeviceID()
 {
@@ -570,6 +599,7 @@ QByteArray QSystemDeviceInfo::uniqueDeviceID()
 
     Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
     The LockType must be currently active not just enabled.
+    \since 1.2
 */
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 {
@@ -578,6 +608,7 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 
 /*!
     Returns a QSystemDeviceInfo::ProfileDetails for the currently active profile.
+    \since 1.2
 */
 QSystemDeviceInfo::ProfileDetails QSystemDeviceInfo::activeProfileDetails()
 {
