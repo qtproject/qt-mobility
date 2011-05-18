@@ -544,13 +544,13 @@ void tst_QCameraBackend::testExposureCompensation()
 
     //it should be possible to set exposure parameters in Unloaded state
     QCOMPARE(exposure->exposureCompensation()+1.0, 1.0);
-    exposure->setExposureCompensation(1.5);
-    QCOMPARE(exposure->exposureCompensation(), 1.5);
+    exposure->setExposureCompensation(1.0);
+    QCOMPARE(exposure->exposureCompensation(), 1.0);
     QTRY_COMPARE(exposureCompensationSignal.count(), 1);
-    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.5);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.0);
 
     //exposureCompensationChanged should not be emitted when value is not changed
-    exposure->setExposureCompensation(1.5);
+    exposure->setExposureCompensation(1.0);
     QTest::qWait(50);
     QCOMPARE(exposureCompensationSignal.count(), 1);
 
@@ -558,24 +558,24 @@ void tst_QCameraBackend::testExposureCompensation()
     camera.load();
     QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
 
-    QCOMPARE(exposure->exposureCompensation(), 1.5);
+    QCOMPARE(exposure->exposureCompensation(), 1.0);
 
     exposureCompensationSignal.clear();
-    exposure->setExposureCompensation(-1.5);
-    QCOMPARE(exposure->exposureCompensation(), -1.5);
+    exposure->setExposureCompensation(-1.0);
+    QCOMPARE(exposure->exposureCompensation(), -1.0);
     QTRY_COMPARE(exposureCompensationSignal.count(), 1);
-    QCOMPARE(exposureCompensationSignal.last().first().toReal(), -1.5);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), -1.0);
 
     camera.start();
     QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
 
-    QCOMPARE(exposure->exposureCompensation(), -1.5);
+    QCOMPARE(exposure->exposureCompensation(), -1.0);
 
     exposureCompensationSignal.clear();
-    exposure->setExposureCompensation(1.5);
-    QCOMPARE(exposure->exposureCompensation(), 1.5);
+    exposure->setExposureCompensation(1.0);
+    QCOMPARE(exposure->exposureCompensation(), 1.0);
     QTRY_COMPARE(exposureCompensationSignal.count(), 1);
-    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.5);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.0);
 }
 
 void tst_QCameraBackend::testExposureMode()
