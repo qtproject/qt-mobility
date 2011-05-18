@@ -39,20 +39,21 @@
 **
 ****************************************************************************/
 
-#include <QObject>
-#include <QList>
-#include <QtDBus>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusError>
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusMessage>
-#include <QtDBus/QDBusReply>
-#include <QtDBus/QDBusPendingCallWatcher>
-#include <QtDBus/QDBusObjectPath>
+#if !defined(QT_NO_HAL)
 
 #include "qhalservice_linux_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+#define HAL_DBUS_SERVICE "org.freedesktop.Hal"
+
+#define HAL_DBUS_MANAGER_PATH "/org/freedesktop/Hal/Manager"
+#define HAL_DBUS_MANAGER_INTERFACE "org.freedesktop.Hal.Manager"
+
+#define HAL_DEVICE_INTERFACE "org.freedesktop.Hal.Device"
+
+#define HAL_DEVICES_LAPTOPPANEL_INTERFACE "org.freedesktop.Hal.Device.LaptopPanel"
+#define HAL_DEVICE_KILLSWITCH_INTERFACE "org.freedesktop.Hal.Device.KillSwitch"
 
 class QHalInterfacePrivate
 {
@@ -62,19 +63,15 @@ public:
 };
 
 QHalInterface::QHalInterface(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
     d = new QHalInterfacePrivate();
-    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
-                                                QLatin1String(HAL_DBUS_MANAGER_PATH),
-                                                QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
-                                                QDBusConnection::systemBus());
-    if (!d->connectionInterface->isValid()) {
+    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE), QLatin1String(HAL_DBUS_MANAGER_PATH),
+                                                QLatin1String(HAL_DBUS_MANAGER_INTERFACE), QDBusConnection::systemBus());
+    if (!d->connectionInterface->isValid())
         d->valid = false;
-        return;
-    } else {
+    else
         d->valid = true;
-    }
 }
 
 QHalInterface::~QHalInterface()
@@ -83,80 +80,26 @@ QHalInterface::~QHalInterface()
     delete d;
 }
 
-void QHalInterface::connectNotify(const char *signal)
-{
-    qWarning() << Q_FUNC_INFO << signal;
-   if (QLatin1String(signal) ==
-       QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-                                                          deviceAdded(QString))))) {
-
-      if (QDBusConnection::systemBus().connect(QLatin1String(HAL_DBUS_SERVICE),
-                               HAL_DBUS_MANAGER_PATH,
-                               QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
-                               QLatin1String("DeviceAdded"),
-                                 this,SIGNAL(deviceAdded(QString)))) {
-      }
-   }
-   if (QLatin1String(signal) ==
-       QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-                                                          deviceRemoved(QString))))) {
-      if (QDBusConnection::systemBus().connect(QLatin1String(HAL_DBUS_SERVICE),
-                               HAL_DBUS_MANAGER_PATH,
-                               QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
-                               QLatin1String("DeviceRemoved"),
-                                 this,SIGNAL(deviceRemoved(QString)))) {
-      }
-   }
-}
-
-void QHalInterface::disconnectNotify(const char *signal)
-{
-    Q_UNUSED(signal);
-}
-
 bool QHalInterface::isValid()
 {
     return d->valid;
 }
 
-QDBusInterface *QHalInterface::connectionInterface()  const
-{
-    return d->connectionInterface;
-}
-
 QStringList QHalInterface::findDeviceByCapability(const QString &cap)
 {
-    QDBusReply<  QStringList > reply = d->connectionInterface->call(QLatin1String("FindDeviceByCapability"), cap);
-    if (!reply.isValid()) {
-//        qDebug() << reply.error().message();
-    } else {
-
+    QDBusReply<QStringList> reply = d->connectionInterface->call(QLatin1String("FindDeviceByCapability"), cap);
+    if (reply.isValid())
         return reply.value();
-    }
     return QStringList();
 }
 
 QStringList QHalInterface::getAllDevices()
 {
-    QDBusReply<  QStringList > reply = d->connectionInterface->call(QLatin1String("GetAllDevices"));
-    if (!reply.isValid()) {
-//        qDebug() << reply.error().message();
-    } else {
-
+    QDBusReply<QStringList> reply = d->connectionInterface->call(QLatin1String("GetAllDevices"));
+    if (reply.isValid())
         return reply.value();
-    }
     return QStringList();
 }
-
-bool QHalInterface::deviceExists(const QString &path)
-{
-    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("DeviceExists"), path);
-    if (!reply.isValid()) {
-        return reply.value();
-    }
-    return false;
-}
-/////////
 
 class QHalDeviceInterfacePrivate
 {
@@ -167,22 +110,16 @@ public:
 };
 
 QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject *parent )
-        : QObject(parent)
-{/*
- qDBusRegisterMetaType<QHalPropertyList>();*/
-
+    : QObject(parent)
+{
     d = new QHalDeviceInterfacePrivate();
     d->path = devicePathName;
-    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
-                                                d->path,
-                                                QLatin1String(HAL_DEVICE_INTERFACE),
-                                                QDBusConnection::systemBus());
-    if (!d->connectionInterface->isValid()) {
+    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE), d->path,
+                                                QLatin1String(HAL_DEVICE_INTERFACE), QDBusConnection::systemBus());
+    if (!d->connectionInterface->isValid())
         d->valid = false;
-        return;
-    } else {
+    else
         d->valid = true;
-    }
 }
 
 QHalDeviceInterface::~QHalDeviceInterface()
@@ -198,91 +135,41 @@ bool QHalDeviceInterface::isValid()
 
 bool QHalDeviceInterface::setConnections()
 {
-    if(!isValid() )
+    if (!isValid())
         return false;
-    bool allOk = false;
 
-    if (QDBusConnection::systemBus().connect(QLatin1String(HAL_DBUS_SERVICE),
-                               d->path,
-                               QLatin1String(HAL_DEVICE_INTERFACE),
-                               QLatin1String("PropertyModified"),
-                               this,SIGNAL(propertyModified( int, QVariantList)))) {
-        allOk = true;
+    if (QDBusConnection::systemBus().connect(QLatin1String(HAL_DBUS_SERVICE), d->path,
+                                             QLatin1String(HAL_DEVICE_INTERFACE), QLatin1String("PropertyModified"),
+                                             this, SIGNAL(propertyModified(int, QVariantList)))) {
+        return true;
     }
-    return allOk;
+
+    return false;
 }
 
 bool QHalDeviceInterface::getPropertyBool(const QString &prop)
 {
-    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("GetPropertyBoolean"), prop);
-    if ( reply.isValid() ) {
+    QDBusReply<bool> reply = d->connectionInterface->call(QLatin1String("GetPropertyBoolean"), prop);
+    if (reply.isValid())
         return reply.value();
-    } else {
-//        qDebug() << reply.error().message();
-    }
     return false;
 }
 
 QString QHalDeviceInterface::getPropertyString(const QString &prop)
 {
-    QDBusReply< QString > reply = d->connectionInterface->call(QLatin1String("GetPropertyString"), prop);
-    if ( reply.isValid() ) {
+    QDBusReply<QString> reply = d->connectionInterface->call(QLatin1String("GetPropertyString"), prop);
+    if (reply.isValid())
         return reply.value();
-    } else {
-//        qDebug() << reply.error().message();
-    }
     return QString();
-}
-
-QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
-{
-    QDBusReply< QStringList > reply = d->connectionInterface->call(QLatin1String("GetPropertyStringList"), prop);
-    if ( reply.isValid() ) {
-        return reply.value();
-    } else {
-//        qDebug() << reply.error().message();
-    }
-    return QStringList();
 }
 
 qint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
 {
-    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("GetPropertyInteger"), prop);
-    if ( reply.isValid() ) {
+    QDBusReply<qint32> reply = d->connectionInterface->call(QLatin1String("GetPropertyInteger"), prop);
+    if (reply.isValid())
         return reply.value();
-    } else {
-//        qDebug() << reply.error().message();
-    }
     return 0;
 }
-
-
-bool QHalDeviceInterface::queryCapability(const QString &cap)
-{
-    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("QueryCapability"), cap);
-    if ( reply.isValid() ) {
-        return reply.value();
-    } else {
-//        qDebug() << reply.error().message();
-    }
-    return false;
-}
-
-
-
-bool QHalDeviceInterface::propertyExists(const QString &prop)
-{
-    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("PropertyExists"), prop);
-    if ( reply.isValid() ) {
-        return reply.value();
-    } else {
-//        qDebug() << reply.error().message();
-    }
-    return false;
-
-}
-
-/////////
 
 class QHalDeviceLaptopPanelInterfacePrivate
 {
@@ -293,20 +180,16 @@ public:
 };
 
 QHalDeviceLaptopPanelInterface::QHalDeviceLaptopPanelInterface(const QString &devicePathName, QObject *parent )
-        : QObject(parent)
+    : QObject(parent)
 {
     d = new QHalDeviceLaptopPanelInterfacePrivate();
     d->path = devicePathName;
-    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
-                                                d->path,
-                                                QLatin1String(HAL_DEVICES_LAPTOPPANEL_INTERFACE),
-                                                QDBusConnection::systemBus());
-    if (!d->connectionInterface->isValid()) {
+    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE), d->path,
+                                                QLatin1String(HAL_DEVICES_LAPTOPPANEL_INTERFACE), QDBusConnection::systemBus());
+    if (!d->connectionInterface->isValid())
         d->valid = false;
-        return;
-    } else {
+    else
         d->valid = true;
-    }
 }
 
 QHalDeviceLaptopPanelInterface::~QHalDeviceLaptopPanelInterface()
@@ -315,76 +198,16 @@ QHalDeviceLaptopPanelInterface::~QHalDeviceLaptopPanelInterface()
     delete d;
 }
 
-bool QHalDeviceLaptopPanelInterface::isValid()
-{
-    return d->valid;
-}
-
 quint32 QHalDeviceLaptopPanelInterface::getBrightness()
 {
-    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("GetBrightness"));
-    if ( reply.isValid() ) {
-//        qDebug() << __FUNCTION__ << reply.value();
+    QDBusReply<qint32> reply = d->connectionInterface->call(QLatin1String("GetBrightness"));
+    if (reply.isValid())
         return reply.value();
-    }
-    return -1;
-}
-
-void QHalDeviceLaptopPanelInterface::setBrightness(quint32 brightness)
-{
-    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("SetBrightness"), brightness);
-    if ( reply.isValid() ) {
-//        qDebug() << __FUNCTION__ << reply.value();
-    }
-}
-
-////////////////
-class QHalDeviceKillSwitchInterfacePrivate
-{
-public:
-    QDBusInterface *connectionInterface;
-    QString path;
-    bool valid;
-};
-
-QHalDeviceKillSwitchInterface::QHalDeviceKillSwitchInterface(const QString &devicePathName, QObject *parent )
-        : QObject(parent)
-{
-    d = new QHalDeviceKillSwitchInterfacePrivate();
-    d->path = devicePathName;
-    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
-                                                d->path,
-                                                QLatin1String(HAL_DEVICE_KILLSWITCH_INTERFACE),
-                                                QDBusConnection::systemBus());
-    if (!d->connectionInterface->isValid()) {
-        d->valid = false;
-        return;
-    } else {
-        d->valid = true;
-    }
-}
-
-QHalDeviceKillSwitchInterface::~QHalDeviceKillSwitchInterface()
-{
-    delete d->connectionInterface;
-    delete d;
-}
-
-bool QHalDeviceKillSwitchInterface::isValid()
-{
-    return d->valid;
-}
-
-quint32 QHalDeviceKillSwitchInterface::getPower()
-{
-    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("GetPower"));
-    if ( reply.isValid() ) {
-        qDebug() << __FUNCTION__ << reply.value();
-        return reply.value();
-    }
     return -1;
 }
 
 #include "moc_qhalservice_linux_p.cpp"
 
 QTM_END_NAMESPACE
+
+#endif // QT_NO_HAL

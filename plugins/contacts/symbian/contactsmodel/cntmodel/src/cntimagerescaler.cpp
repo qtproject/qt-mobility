@@ -20,7 +20,6 @@
 
 #include <bitmaptransforms.h>
 #include <imageconversion.h>
-#include <hal.h>
 #include <bautils.h>
 #include <cntitem.h>
 #include <cntfield.h>
@@ -29,6 +28,7 @@
 #include <driveinfo.h>
 #include <bautils.h>
 
+#define KImageMaxSizePixels TSize(640, 640)
 _LIT8(KMimeTypeJPEG, "image/jpeg");
 const TInt KMaximumReductionFactor = 8;
 
@@ -54,15 +54,6 @@ void CImageRescaler::ConstructL()
     {
     User::LeaveIfError( iFs.Connect() );
     
-    TInt screenWidth = 0;
-    TInt screenHeight = 0;
-    
-    HAL::Get( HALData::EDisplayXPixels, screenWidth );
-    HAL::Get ( HALData::EDisplayYPixels, screenHeight );
-    
-    TInt length = screenHeight > screenWidth ? screenHeight : screenWidth;
-    iScreenSize = TSize( length, length );
-    
     iWait = new( ELeave ) CActiveSchedulerWait();
     
     iImagesDirPath.Zero();
@@ -71,23 +62,20 @@ void CImageRescaler::ConstructL()
     CActiveScheduler::Add( this );    
     }
 
-
-
 CImageRescaler::~CImageRescaler()
     {
     Cancel();
+    Reset();
     iFs.Close();
     delete iWait;
-    delete iImageEncoder;
-    delete iImageDecoder;
-    delete iBitmap;
-    delete iScaler;
     }
 
 
 /**
 Parse through contact fields and find the image field. Copy the image
 pointed by the path to an internal folder and update the contact fields.
+This function is used internally by contacts model when saving/updating
+a contact that has an image. It is a synchronous function
 
 @param aItem Contact containing fields to be processed. Once the image
 is resized and copied into the new location, this parameter will contain
@@ -114,13 +102,102 @@ void CImageRescaler::ProcessImageFieldL(CContactItem& aItem)
         TPtrC oldImagePath = imageField.TextStorage()->Text();
         
         // Do not resize if old image is stored in private folder
-        if (oldImagePath.Length() && oldImagePath.Find(iImagesDirPath) == KErrNotFound)
+        if ( oldImagePath.Length() && !ExistsInImagesDirectory(oldImagePath) )
             {
             // Resize image if needed
             TPath newImagePath;
             newImagePath = ResizeAndCopyImage(oldImagePath, aItem);
             TCntImageRescaleUtility::StoreImageFieldL( aItem, newImagePath );
             }
+        }
+    }
+
+/**
+Get the destionation path of the rescaled image.
+
+@return Path to the image stored in the contacts images folder. This will be empty
+if the image processing is not complete, has been cancelled or there was an error
+when processing.
+*/
+TPath CImageRescaler::DestinationPath() const
+    {
+    if (iState == EComplete)
+        {
+        return iDestFile;
+        }
+    else
+        {
+        return TPath();
+        }
+    }
+
+TPath CImageRescaler::GenerateDestPath(const TDesC& aSrcPath)
+    {
+    // Image file type
+    TParse p;
+    TInt err = p.Set(aSrcPath, NULL, NULL);
+    TPath destFile;
+    
+    if (err == KErrNone)
+        {
+        // Generate the image path
+        // Format <path>_timestamp_filename.ext
+        destFile.Append(iImagesDirPath);
+        destFile.Append(_L("_"));
+        
+        TTime time;
+        time.UniversalTime();
+        destFile.AppendNum(time.Int64());
+        destFile.Append(_L("_"));
+        destFile.Append(p.NameAndExt());
+        }
+    
+    return destFile;
+    }
+
+/*
+Scale down an image,if need be, and store it in the contacts images directory. Use
+CImageRescaler::DestinationPath() functions to get the last generated image. This is
+an asynchronous method that completes with an error status stored in the aRequestStatus.
+
+@param aRequestStatus Request status to be used to complete the request.
+@param aSrcPath A path to the source image
+
+@pre aRequestStatus must not be NULL
+*/
+void CImageRescaler::ScaleAndStoreImage(TRequestStatus* aRequestStatus, const TDesC& aSrcPath)
+    {
+    ASSERT(aRequestStatus != NULL);
+    iRequestStatus = aRequestStatus;
+    *iRequestStatus = KRequestPending;
+    
+    // Cancel an on going request
+    Cancel();
+    
+    // Reset image file paths
+    iSourceFile.Zero();
+    iSourceFile.Copy(aSrcPath);
+    iDestFile = GenerateDestPath(aSrcPath);
+    
+    iState = EStartRescale;
+    SetActive();
+    TRequestStatus* status = &iStatus;
+    User::RequestComplete(status, KErrNone);
+    }
+
+/**
+Ensures that the image provided is removed from the contact images folder. The image is
+only removed if it exists in the folder, otherwise nothing happens.
+
+@param aImagePath A path pointing to the image to be removed.
+*/
+void CImageRescaler::EnsureImageRemoved(const TDesC& aImagePath)
+    {
+    // Check if aImagePath exists in the contact images folder
+    if (ExistsInImagesDirectory(aImagePath))
+        {
+        // Ignore the error.
+        BaflUtils::DeleteFile(iFs, aImagePath);
         }
     }
 
@@ -145,29 +222,14 @@ TPath CImageRescaler::ResizeAndCopyImage(const TDesC& aSourceFile, const CContac
         oldFile.Append(guid);
         oldFile.Append(_L("*"));
         
-        // Remove previous file
+        // Remove previous file(s)
         BaflUtils::DeleteFile(iFs, oldFile); // Error value not necessary
         }
     
-    // Image file type
-    TParse p;
-    p.Set(aSourceFile, NULL, NULL);
-    
-    // Generate the image path
-    // Format <path>guid_timestamp_filename.ext
-    TPath destFile;
-    destFile.Append(iImagesDirPath);
-    destFile.Append(guid);
-    destFile.Append(_L("_"));
-    
-    TTime time;
-    time.UniversalTime();
-    destFile.AppendNum(time.Int64());
-    destFile.Append(_L("_"));
-    destFile.Append(p.NameAndExt());
+    TPath destFile = GenerateDestPath(aSourceFile);
     
     // Check the size of the image
-    if (IsImageToLarge(aSourceFile))
+    if (IsImageTooLarge(aSourceFile))
         {
         // Resize image
         TRAPD(err, ResizeImageL(aSourceFile, destFile));
@@ -193,7 +255,7 @@ TPath CImageRescaler::ResizeAndCopyImage(const TDesC& aSourceFile, const CContac
     return destFile;
     }
 
-TBool CImageRescaler::IsImageToLarge(const TDesC& aSourceFile) const
+TBool CImageRescaler::IsImageTooLarge(const TDesC& aSourceFile) const
 {
     TEntry srcFile;
     if (iFs.Entry(aSourceFile,srcFile) != KErrNone) {
@@ -216,12 +278,6 @@ Resize an image synchronously
 void CImageRescaler::ResizeImageL(const TDesC& aSourceFile, const TDesC& aDestFile)
     {
     // Synchronous rescaling
-    // Test args
-    if (!aSourceFile.Length() || !aDestFile.Length() || !BaflUtils::FileExists(iFs, aSourceFile))
-        {
-        User::Leave(KErrArgument);
-        }
-    
     // Cancel any current requests
     Cancel();
     
@@ -247,6 +303,20 @@ Start decoding asychronously
 */
 void CImageRescaler::DecodeL()
     {
+    ASSERT(iDestFile.Length());
+    // Check for a valid source file
+    if (!iSourceFile.Length() || !BaflUtils::FileExists(iFs, iSourceFile))
+        {
+        User::Leave(KErrArgument);
+        }
+    
+    // If there is no images dir or the source file does not exist, do not do any 
+    // rescaling and complete with KErrNotFound error
+    if (!iImagesDirPath.Length())
+        {
+        User::Leave(KErrNotFound);
+        }
+    
     delete iImageDecoder;
     iImageDecoder = NULL;
     delete iBitmap;
@@ -255,21 +325,16 @@ void CImageRescaler::DecodeL()
     // create the decoder
     // create the bitmap
     iBitmap = new( ELeave )CFbsBitmap();
-    iImageDecoder = CImageDecoder::FileNewL( iFs, iSourceFile );
+    iImageDecoder = CImageDecoder::FileNewL( iFs, iSourceFile, CImageDecoder::EPreferFastDecode );
     
-    TSize size(iScreenSize);
+    TSize size = KImageMaxSizePixels;
     TSize orignialSize( iImageDecoder->FrameInfo().iOverallSizeInPixels );
-    TBool fullyScaleable( iImageDecoder->FrameInfo().iFlags & TFrameInfo::EFullyScaleable );
     
     // size in both x and y dimension must be non-zero, positive value
     TSize loadSize( orignialSize) ;
     if( orignialSize.iHeight < size.iHeight || orignialSize.iWidth < size.iWidth )
         {
         loadSize = orignialSize;
-        }
-    else if(fullyScaleable)
-        {
-        // image fully scalable, decoder converts to required size
         }
     else 
         {
@@ -299,7 +364,7 @@ void CImageRescaler::DecodeL()
     User::LeaveIfError( iBitmap->Create( loadSize, iImageDecoder->FrameInfo().iFrameDisplayMode ));
 
     iState = EDecoding;
-    iImageDecoder->Convert( &iStatus, * iBitmap );
+    iImageDecoder->Convert( &iStatus, *iBitmap );
     SetActive();
     }
 
@@ -312,7 +377,8 @@ void CImageRescaler::ScaleL()
     iScaler = NULL;
     
     iScaler = CBitmapScaler::NewL();
-    iScaler->Scale( &iStatus, *iBitmap, iScreenSize);
+    TSize s = KImageMaxSizePixels;
+    iScaler->Scale( &iStatus, *iBitmap, s);
 
     iState = EScaling;
     SetActive();
@@ -326,7 +392,7 @@ void CImageRescaler::EncodeL()
     delete iImageEncoder; 
     iImageEncoder = NULL;
 
-    iImageEncoder = CImageEncoder::FileNewL( iFs, iDestFile, KMimeTypeJPEG);
+    iImageEncoder = CImageEncoder::FileNewL( iFs, iDestFile, KMimeTypeJPEG, CImageEncoder::EPreferFastEncode );
     
     // Start converstion to a JPEG image
     iState = EEncoding;
@@ -352,13 +418,19 @@ void CImageRescaler::DoCancel()
         }
 
     iErr = KErrCancel;
-    StopWait();
+    CompleteRerescale();
     }
 
 void CImageRescaler::RunL()
     {
     switch( iState ) 
         {
+        case EStartRescale:
+            {
+            // Start rescaling process
+            DecodeL();
+            break;
+            }
         case EDecoding:
             {
             if(iStatus == KErrNone) 
@@ -374,14 +446,14 @@ void CImageRescaler::RunL()
                 {
                 // Unknown error
                 iErr = iStatus.Int();
-                StopWait();
+                CompleteRerescale();
                 }
             break;
             }
         case EEncoding:
             {
             iErr = iStatus.Int();
-            StopWait();
+            CompleteRerescale();
             break;
             }
         case EScaling:
@@ -391,8 +463,8 @@ void CImageRescaler::RunL()
             }
         default:
             {
-            iErr = KErrCompletion;
-            StopWait();
+            iErr = KErrGeneral;
+            CompleteRerescale();
             break;
             }
         }   
@@ -406,11 +478,23 @@ void CImageRescaler::StopWait()
         }
     }
 
+void CImageRescaler::CompleteRerescale()
+    {
+    iState = EComplete;
+    if (iRequestStatus)
+        {
+        TRequestStatus* status = iRequestStatus;
+        User::RequestComplete( status, iErr );
+        iRequestStatus = NULL;
+        }
+    StopWait();
+    }
+
 TInt CImageRescaler::RunError( TInt aError )
     {
     // Called when RunL leaves, notify error
     iErr = aError;
-    StopWait();
+    CompleteRerescale();
     return KErrNone;
     }
 
@@ -444,3 +528,23 @@ void CImageRescaler::Reset()
         }
     }
 
+/*
+Check if the provided image exists in the contact images directory
+
+@param A path pointing to the image to check.
+@return True if the image exist in the image, false if the image path is empty or
+does not exist in the contact images directory.
+*/
+TBool CImageRescaler::ExistsInImagesDirectory(const TDesC& aImagePath) const
+    {
+    if (iImagesDirPath.Length() && aImagePath.Length() && aImagePath.Find(iImagesDirPath) != KErrNotFound)
+        {
+        return true;
+        }
+    else
+        {
+        return false;
+        }
+    }
+
+// End file

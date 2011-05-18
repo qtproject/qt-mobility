@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-impl
 
@@ -88,6 +89,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new engine with the specified \a parent, using \a parameters
     to pass any implementation specific data to the engine.
+    \since 1.1
 */
 QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
     : QObject(parent),
@@ -110,6 +112,7 @@ QGeoRoutingManagerEngine::~QGeoRoutingManagerEngine()
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setManagerName(const QString &managerName)
 {
@@ -122,6 +125,7 @@ void QGeoRoutingManagerEngine::setManagerName(const QString &managerName)
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 QString QGeoRoutingManagerEngine::managerName() const
 {
@@ -133,6 +137,7 @@ QString QGeoRoutingManagerEngine::managerName() const
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setManagerVersion(int managerVersion)
 {
@@ -144,6 +149,7 @@ void QGeoRoutingManagerEngine::setManagerVersion(int managerVersion)
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 int QGeoRoutingManagerEngine::managerVersion() const
 {
@@ -172,6 +178,7 @@ int QGeoRoutingManagerEngine::managerVersion() const
     this can be done in the slot connected to QGeoRoutingManagerEngine::finished(),
     QGeoRoutingManagerEngine::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
+    \since 1.1
 */
 
 /*!
@@ -200,6 +207,7 @@ int QGeoRoutingManagerEngine::managerVersion() const
     this can be done in the slot connected to QGeoRoutingManagerEngine::finished(),
     QGeoRoutingManagerEngine::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
+    \since 1.1
 */
 QGeoRouteReply* QGeoRoutingManagerEngine::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
@@ -215,6 +223,7 @@ QGeoRouteReply* QGeoRoutingManagerEngine::updateRoute(const QGeoRoute &route, co
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it does not support updating routes.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportsRouteUpdates(bool supported)
 {
@@ -223,6 +232,7 @@ void QGeoRoutingManagerEngine::setSupportsRouteUpdates(bool supported)
 
 /*!
     Returns whether this engine supports updating routes.
+    \since 1.1
 */
 bool QGeoRoutingManagerEngine::supportsRouteUpdates() const
 {
@@ -235,6 +245,7 @@ bool QGeoRoutingManagerEngine::supportsRouteUpdates() const
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it does not support alternative routes.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportsAlternativeRoutes(bool supported)
 {
@@ -243,6 +254,7 @@ void QGeoRoutingManagerEngine::setSupportsAlternativeRoutes(bool supported)
 
 /*!
     Returns whether this engine supports request for alternative routes.
+    \since 1.1
 */
 bool QGeoRoutingManagerEngine::supportsAlternativeRoutes() const
 {
@@ -255,6 +267,7 @@ bool QGeoRoutingManagerEngine::supportsAlternativeRoutes() const
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it does not support excluding areas.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportsExcludeAreas(bool supported)
 {
@@ -263,6 +276,7 @@ void QGeoRoutingManagerEngine::setSupportsExcludeAreas(bool supported)
 
 /*!
     Returns whether this engine supports the exclusion of areas from routes.
+    \since 1.1
 */
 bool QGeoRoutingManagerEngine::supportsExcludeAreas() const
 {
@@ -275,6 +289,7 @@ bool QGeoRoutingManagerEngine::supportsExcludeAreas() const
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it supports no travel modes at all.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes)
 {
@@ -283,6 +298,7 @@ void QGeoRoutingManagerEngine::setSupportedTravelModes(QGeoRouteRequest::TravelM
 
 /*!
     Returns the travel modes supported by this engine.
+    \since 1.1
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManagerEngine::supportedTravelModes() const
 {
@@ -296,6 +312,7 @@ QGeoRouteRequest::TravelModes QGeoRoutingManagerEngine::supportedTravelModes() c
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it supports no feature types at all.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportedFeatureTypes(QGeoRouteRequest::FeatureTypes featureTypes)
 {
@@ -305,6 +322,7 @@ void QGeoRoutingManagerEngine::setSupportedFeatureTypes(QGeoRouteRequest::Featur
 /*!
     Returns the types of features that this engine can take into account
     during route planning.
+    \since 1.1
 */
 QGeoRouteRequest::FeatureTypes QGeoRoutingManagerEngine::supportedFeatureTypes() const
 {
@@ -318,6 +336,7 @@ QGeoRouteRequest::FeatureTypes QGeoRoutingManagerEngine::supportedFeatureTypes()
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it supports no feaure weights at all.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportedFeatureWeights(QGeoRouteRequest::FeatureWeights featureWeights)
 {
@@ -328,6 +347,7 @@ void QGeoRoutingManagerEngine::setSupportedFeatureWeights(QGeoRouteRequest::Feat
 /*!
     Returns the weightings which this engine can apply to different features
     during route planning.
+    \since 1.1
 */
 QGeoRouteRequest::FeatureWeights QGeoRoutingManagerEngine::supportedFeatureWeights() const
 {
@@ -340,6 +360,7 @@ QGeoRouteRequest::FeatureWeights QGeoRoutingManagerEngine::supportedFeatureWeigh
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it supports no route optimizations at all.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations)
 {
@@ -348,6 +369,7 @@ void QGeoRoutingManagerEngine::setSupportedRouteOptimizations(QGeoRouteRequest::
 
 /*!
     Returns the route optimizations supported by this engine.
+    \since 1.1
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManagerEngine::supportedRouteOptimizations() const
 {
@@ -361,6 +383,7 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManagerEngine::supportedRouteOpt
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it supports no segment detail at all.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportedSegmentDetails(QGeoRouteRequest::SegmentDetails segmentDetails)
 {
@@ -370,6 +393,7 @@ void QGeoRoutingManagerEngine::setSupportedSegmentDetails(QGeoRouteRequest::Segm
 /*!
     Returns the levels of detail for routing segments which can be
     requested by this engine.
+    \since 1.1
 */
 QGeoRouteRequest::SegmentDetails QGeoRoutingManagerEngine::supportedSegmentDetails() const
 {
@@ -383,6 +407,7 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManagerEngine::supportedSegmentDetai
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
     engine will report that it supports no maneuver details at all.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setSupportedManeuverDetails(QGeoRouteRequest::ManeuverDetails maneuverDetails)
 {
@@ -392,6 +417,7 @@ void QGeoRoutingManagerEngine::setSupportedManeuverDetails(QGeoRouteRequest::Man
 /*!
     Returns the levels of detail for navigation maneuvers which can be
     requested by this engine.
+    \since 1.1
 */
 QGeoRouteRequest::ManeuverDetails QGeoRoutingManagerEngine::supportedManeuverDetails() const
 {
@@ -405,6 +431,7 @@ QGeoRouteRequest::ManeuverDetails QGeoRoutingManagerEngine::supportedManeuverDet
     in different languages, they will be returned in the language of \a locale.
 
     The locale used defaults to the system locale if this is not set.
+    \since 1.1
 */
 void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 {
@@ -414,6 +441,7 @@ void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
 /*!
     Returns the locale used to hint to this routing manager about what
     language to use for addresses and instructions.
+    \since 1.1
 */
 QLocale QGeoRoutingManagerEngine::locale() const
 {
@@ -432,6 +460,7 @@ This signal and QGeoRouteReply::finished() will be emitted at the same time.
 
 \note Do no delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.
+\since 1.1
 */
 
 /*!
@@ -447,6 +476,7 @@ This signal and QGeoRouteReply::error() will be emitted at the same time.
 
 \note Do no delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.
+\since 1.1
 */
 
 /*******************************************************************************

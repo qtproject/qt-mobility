@@ -57,9 +57,10 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -82,6 +83,7 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
     \code
         setDefinitionNames(QList<QContactDetailDefinition>() << definitionName);
     \endcode
+    \since 1.0
  */
 void QContactDetailDefinitionFetchRequest::setDefinitionName(const QString& definitionName)
 {
@@ -91,7 +93,9 @@ void QContactDetailDefinitionFetchRequest::setDefinitionName(const QString& defi
     d->m_names.append(definitionName);
 }
 
-/*! Sets the names of the detail definitions to retrieve to \a names */
+/*! Sets the names of the detail definitions to retrieve to \a names
+    \since 1.0
+*/
 void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
@@ -99,7 +103,9 @@ void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList&
     d->m_names = names;
 }
 
-/*! Returns the list of names of the detail definitions that will be retrieved */
+/*! Returns the list of names of the detail definitions that will be retrieved
+    \since 1.0
+*/
 QStringList QContactDetailDefinitionFetchRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
@@ -107,7 +113,9 @@ QStringList QContactDetailDefinitionFetchRequest::definitionNames() const
     return d->m_names;
 }
 
-/*! Sets the type of contact for which detail definitions should be retrieved to \a contactType */
+/*! Sets the type of contact for which detail definitions should be retrieved to \a contactType
+    \since 1.0
+*/
 void QContactDetailDefinitionFetchRequest::setContactType(const QString& contactType)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
@@ -115,7 +123,9 @@ void QContactDetailDefinitionFetchRequest::setContactType(const QString& contact
     d->m_contactType = contactType;
 }
 
-/*! Returns the type of contact for which detail definitions will be retrieved */
+/*! Returns the type of contact for which detail definitions will be retrieved
+    \since 1.0
+*/
 QString QContactDetailDefinitionFetchRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
@@ -125,6 +135,7 @@ QString QContactDetailDefinitionFetchRequest::contactType() const
 
 /*!
   Returns the map of detail definition names to detail definitions that was the result of the request
+  \since 1.0
  */
 QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {
@@ -133,7 +144,9 @@ QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::de
     return d->m_definitions;
 }
 
-/*! Returns the map of input name list indices to errors which occurred */
+/*! Returns the map of input name list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactDetailDefinitionFetchRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);

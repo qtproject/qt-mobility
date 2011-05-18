@@ -153,7 +153,7 @@ void tst_QGeoMapCircleObject::qgeomapcircleobject()
     pen.setCosmetic(true);
     QCOMPARE(object->pen(), pen);
     //TODO: is this value really correct ?
-    QCOMPARE(object->radius(), -1.0);
+    QCOMPARE(object->radius(), qreal(-1.0));
 
     //check if can be added to map
 

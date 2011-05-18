@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     QBluetoothTransferRequest is part of the Bluetooth Transfer API and is the class holding the
     information necessary to initiate a transfer over Bluetooth.
@@ -81,7 +82,7 @@ QBluetoothTransferRequest::QBluetoothTransferRequest(const QBluetoothAddress &ad
 :d_ptr(new QBluetoothTransferRequestPrivate)
 {
     Q_D(QBluetoothTransferRequest);
-    
+
     d->m_address = address;
 }
 
@@ -111,7 +112,7 @@ QBluetoothTransferRequest::~QBluetoothTransferRequest()
 QVariant QBluetoothTransferRequest::attribute(Attribute code, const QVariant &defaultValue) const
 {
     Q_D(const QBluetoothTransferRequest);
-    
+
     if (d->m_parameters.contains((int)code)) {
         return d->m_parameters.value((int)code);
     } else {
@@ -129,7 +130,7 @@ QVariant QBluetoothTransferRequest::attribute(Attribute code, const QVariant &de
 void QBluetoothTransferRequest::setAttribute(Attribute code, const QVariant &value)
 {
     Q_D(QBluetoothTransferRequest);
-    
+
     d->m_parameters.insert((int)code, value);
 }
 
@@ -139,7 +140,7 @@ void QBluetoothTransferRequest::setAttribute(Attribute code, const QVariant &val
 QBluetoothAddress QBluetoothTransferRequest::address() const
 {
     Q_D(const QBluetoothTransferRequest);
-    
+
     return d->m_address;
 }
 
@@ -160,7 +161,7 @@ bool QBluetoothTransferRequest::operator!=(const QBluetoothTransferRequest &othe
 QBluetoothTransferRequest &QBluetoothTransferRequest::operator=(const QBluetoothTransferRequest &other)
 {
     Q_D(QBluetoothTransferRequest);
-    
+
     d->m_address = other.d_func()->m_address;
     d->m_parameters = other.d_func()->m_parameters;
 

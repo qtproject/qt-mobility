@@ -58,9 +58,10 @@
   through a QContactManager.
 
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-main
- 
+
   This class is used as a parameter to various functions offered by QContactManager, to allow
   selection of contacts which have certain details or properties.
  */
@@ -123,7 +124,9 @@ QContactFilter::QContactFilter(const QContactFilter& other)
 {
 }
 
-/*! Assigns this filter to be \a other */
+/*! Assigns this filter to be \a other
+   \since 1.0
+*/
 QContactFilter& QContactFilter::operator=(const QContactFilter& other)
 {
     if (this != &other) {
@@ -145,7 +148,9 @@ QContactFilter::FilterType QContactFilter::type() const
     return d_ptr->type();
 }
 
-/*! Returns true if the filter has the same type and criteria as \a other */
+/*! Returns true if the filter has the same type and criteria as \a other
+  \since 1.0
+*/
 bool QContactFilter::operator==(const QContactFilter& other) const
 {
     /* A default filter is only equal to other default filters */

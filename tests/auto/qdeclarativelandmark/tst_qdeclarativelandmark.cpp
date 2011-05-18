@@ -412,7 +412,7 @@ void tst_QDeclarativeLandmark::defaultProperties()
     QCOMPARE(source_obj->property("name").toString(), QString());
     QCOMPARE(source_obj->property("phoneNumber").toString(), QString());
     QCOMPARE(source_obj->property("description").toString(), QString());
-    QCOMPARE(source_obj->property("radius").toReal(),0.0);
+    QCOMPARE(source_obj->property("radius").toReal(),qreal(0.0));
     QCOMPARE(source_obj->property("iconSource").toUrl(), QUrl());
     QCOMPARE(source_obj->property("url").toUrl(), QUrl());
     delete source_obj;
@@ -1005,6 +1005,10 @@ void tst_QDeclarativeLandmark::update_data()
 
 void tst_QDeclarativeLandmark::databaseChanges()
 {
+#if defined(Q_OS_SYMBIAN)
+    QSKIP("Test-case timing instability, skipping test step.", SkipAll);
+#endif
+
     int originalCategoryCount = m_manager->categoryIds().count();
 
     // Test adding and removing of categories

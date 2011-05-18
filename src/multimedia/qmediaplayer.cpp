@@ -67,8 +67,9 @@ QT_BEGIN_NAMESPACE
     \brief The QMediaPlayer class allows the playing of a media source.
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
 
     The QMediaPlayer class is a high level media playback class. It can be used
     to playback such content as songs, movies and internet radio. The content
@@ -701,10 +702,16 @@ QtMultimediaKit::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeTyp
 }
 
 /*!
+    \deprecated
     Returns a list of MIME types supported by the media player.
 
     The \a flags argument causes the resultant list to be restricted to MIME types which can be supported
     given additional requirements, such as performance indicators.
+
+    This function may not return useful results on some platforms, and support for a specific file of a
+    given mime type is not guaranteed even if the mime type is in general supported.  In addition, in some
+    cases this function will need to load all available media plugins and query them for their support, which
+    may take some time.
 */
 QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 {

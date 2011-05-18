@@ -60,6 +60,7 @@
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \since 1.2
 */
 
 /*

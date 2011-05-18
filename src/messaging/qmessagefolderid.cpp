@@ -44,22 +44,23 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageFolderId
-    
-    \inmodule QtMessaging
-    
-    \ingroup messaging
 
-    \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message 
+    \inmodule QtMessaging
+
+    \ingroup messaging
+    \since 1.0
+
+    \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message
     folder, within the scope of the messaging store.
 
     A QMessageFolderId can be constructed from a string, or converted to a string with toString().
 
-    A QMessageFolderId instance can be tested for validity with isValid(), and compared to other 
+    A QMessageFolderId instance can be tested for validity with isValid(), and compared to other
     instances for equality.
-    
-    If the message a QMessageFolderId identifies is removed from the messaging store then the 
+
+    If the message a QMessageFolderId identifies is removed from the messaging store then the
     identifier will not be reused.
-    
+
     \sa QMessageFolder
 */
 
@@ -73,33 +74,39 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \fn QMessageFolderId::QMessageFolderId(const QString& id)
 
     Constructs an identifier from \a id.
-    
+
+    \since 1.0
     \sa toString()
 */
 
 /*!
     \fn QMessageFolderId::~QMessageFolderId()
-    
+
     Destroys the identifier.
 */
 
 /*!
     \internal
     \fn QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId &other)
+    \since 1.0
 */
 
 /*!
     \internal
     \fn bool QMessageFolderId::operator==(const QMessageFolderId &other) const
+    \since 1.0
 */
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
 {
     return !operator==(other);
@@ -109,23 +116,26 @@ bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
     \fn bool QMessageFolderId::operator<(const QMessageFolderId &other) const
 
     Returns true if this identifier is ordered before \a other using an implementation-defined ordering.
+    \since 1.0
 */
 
 /*!
     \fn bool QMessageFolderId::toString() const
 
     Returns the string representation of this identifier.
-    
+
     A null string should be returned if and only if the identifier is invalid.
 
-    String representations of identifiers should not be used to test for equality, instead 
+    String representations of identifiers should not be used to test for equality, instead
     the equality operator should be used.
+    \since 1.0
 */
 
 /*!
     \fn bool QMessageFolderId::isValid() const
 
     Returns true if this identifier is valid; otherwise returns false.
+    \since 1.0
 */
 
 /*! \typedef QMessageFolderIdList

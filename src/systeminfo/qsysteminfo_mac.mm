@@ -107,7 +107,7 @@
 #include <QtCore/qmutex.h>
 #include <QEventLoop>
 
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
 
 #include <CoreLocation/CLLocation.h>
 #include <CoreLocation/CLLocationManager.h>
@@ -184,7 +184,7 @@ bool hasIOServiceMatching(const QString &classstr)
 
 
 
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
 
 @interface QtMNSListener : NSObject
 {
@@ -423,7 +423,6 @@ void QSystemInfoPrivate::disconnectNotify(const char *signal)
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
-    QString errorStr = "Not Available";
     bool useDate = false;
     if(parameter == QLatin1String("versionDate")) {
         useDate = true;
@@ -437,9 +436,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
         return ver;
     }
         break;
-    case QSystemInfo::QtCore:
-       return  qVersion();
-       break;
    case QSystemInfo::Firmware:
        {
            return QSystemDeviceInfoPrivate::model();
@@ -448,7 +444,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     default:
         break;
     };
-  return errorStr;
+  return QString();
 }
 
 
@@ -539,7 +535,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::LocationFeature:
         {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
             CLLocationManager *locationManager = [[CLLocationManager alloc] init];
             if ([locationManager locationServicesEnabled]) {
                 featureSupported = true;
@@ -583,7 +579,7 @@ void networkChangeCallback(SCDynamicStoreRef /*dynamicStore*/, CFArrayRef change
     return;
 }
 
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
 QtMLangListener *langListener;
 #endif
 
@@ -602,7 +598,7 @@ QLangLoopThread::~QLangLoopThread()
 void QLangLoopThread::stop()
 {
     keepRunning = false;
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
     CFRunLoopStop(CFRunLoopGetCurrent());
     [langListener release];
 #endif
@@ -610,7 +606,7 @@ void QLangLoopThread::stop()
 
 void QLangLoopThread::doWork()
 {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
     if(QThread::currentThread() != &t) {
         QMetaObject::invokeMethod(this, "doWork",
                                   Qt::QueuedConnection);
@@ -632,7 +628,7 @@ void QLangLoopThread::doWork()
 #endif
 }
 
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
 QtMNSListener *listener;
 #endif
 
@@ -652,7 +648,7 @@ void QRunLoopThread::stop()
     QMutexLocker locker(&mutex);
     CFRunLoopStop(CFRunLoopGetCurrent());
     keepRunning = false;
-//#ifdef MAC_SDK_10_6
+//#ifndef MAC_SDK_10_5
 //    [listener release];
 //    [delegate release];
 //#endif
@@ -663,7 +659,7 @@ void QRunLoopThread::stop()
 
 void QRunLoopThread::doWork()
 {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
     if(QThread::currentThread() != &t) {
         QMetaObject::invokeMethod(this, "doWork",
                                   Qt::QueuedConnection);
@@ -795,7 +791,7 @@ void QDASessionThread::stop()
 
 void QDASessionThread::doWork()
 {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
     if(QThread::currentThread() != &t) {
         QMetaObject::invokeMethod(this, "doWork",
                                   Qt::QueuedConnection);
@@ -880,7 +876,7 @@ void QBluetoothListenerThread::stop()
 
 void QBluetoothListenerThread::doWork()
 {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
     if(QThread::currentThread() != &t) {
         QMetaObject::invokeMethod(this, "doWork",
                                   Qt::QueuedConnection);
@@ -973,7 +969,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 if([[CWInterface supportedInterfaces] count] > 0 ) {
         hasWifi = true;
@@ -991,7 +987,7 @@ if([[CWInterface supportedInterfaces] count] > 0 ) {
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
     if(hasWifi && networkThreadOk && runloopThread->keepRunning) {
         runloopThread->stop();
         delete runloopThread;
@@ -1012,7 +1008,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
     }
     if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
         || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
         if(hasWifi) {
             runloopThread = new QRunLoopThread();
             runloopThread->doWork();
@@ -1030,7 +1026,7 @@ void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
     }
     if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
         || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
         if(hasWifi && networkThreadOk) {
             runloopThread->stop();
             [delegate release];
@@ -1152,7 +1148,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
             if(hasWifi) {
                 NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
                 CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceForMode(mode).name())];
@@ -1223,7 +1219,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         {
             int signalQuality = 0;
             if(hasWifi) {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
                 NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
                 QString name = interfaceForMode(mode).name();
                 CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
@@ -1350,7 +1346,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         {
             QString name = interfaceForMode(mode).name();
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
             if(hasWifi) {
                 CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
                 QString netname = nsstringToQString([wifiInterface ssid]);
@@ -1451,7 +1447,7 @@ void QSystemNetworkInfoPrivate::wifiNetworkChanged(const QString &notification, 
         Q_EMIT networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
     }
     if(notification == QLatin1String("POWER_CHANGED_NOTIFICATION")) {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
             if(!rssiTimer->isActive()) {
@@ -1516,7 +1512,12 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
     long bitsPerPixel = 0;
+#ifndef MAC_SDK_10_5
+    CGDisplayModeRef mode = CGDisplayCopyDisplayMode(getCGId(screen));
+    bitsPerPixel = stringFromCFString(CGDisplayModeCopyPixelEncoding(mode)).toLong();
+#else
     bitsPerPixel = CGDisplayBitsPerPixel(getCGId(screen));
+#endif
     return (int)bitsPerPixel;
 }
 
@@ -1938,7 +1939,7 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
 
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString &))))) {
-#ifdef MAC_SDK_10_6
+#ifndef MAC_SDK_10_5
      //   DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
 #else
        // DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);

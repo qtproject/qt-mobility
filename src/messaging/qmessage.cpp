@@ -60,36 +60,37 @@ QList<QByteArray> charsets;
     \class QMessage
 
     \brief The QMessage class provides a convenient interface for working with messages.
-    
-    
+
+
     \inmodule QtMessaging
-    
+
     \ingroup messaging
-   
-    QMessage supports a number of types. Including internet email messages, 
+    \since 1.0
+
+    QMessage supports a number of types. Including internet email messages,
     and the telephony types SMS and MMS.
-     
-    The QMessageId identifier for a message is returned by id(). Messages can be constructed by 
-    retrieval from the messaging store via their identifier using QMessageManager::message(). A 
-    QMessage can also be constructed piece by piece using functions such as 
-    setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments(). 
-    
+
+    The QMessageId identifier for a message is returned by id(). Messages can be constructed by
+    retrieval from the messaging store via their identifier using QMessageManager::message(). A
+    QMessage can also be constructed piece by piece using functions such as
+    setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments().
+
     If a message has been modified since it was last constructed isModified() returns true.
 
-    A list of attachments identifiers will be returned by attachmentIds() and an identifier for the 
-    message body will be returned by bodyId(). Attachments can be appended to the content of the 
+    A list of attachments identifiers will be returned by attachmentIds() and an identifier for the
+    message body will be returned by bodyId(). Attachments can be appended to the content of the
     message using appendAttachments(), the body of the message can be set with setBody().
-    
+
     The folder and account a message is associated with are returned by parentFolderId() and
     parentAccountId() respectively.
 
-    Message data that is less commonly accessed or relatively large should be lazily retrieved 
+    Message data that is less commonly accessed or relatively large should be lazily retrieved
     on demand by the associated getter function.
-        
+
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
     or email addresses.
-    
+
     \sa QMessageContentContainer, QMessageManager, QMessageId
 */
 
@@ -97,17 +98,17 @@ QList<QByteArray> charsets;
     \enum QMessage::Type
 
     This enum type is used to describe the type of a message.
-    
+
     \value NoType             The message type is not defined.
     \value Mms                The message is an MMS, Multimedia Messaging Service object.
     \value Sms                The message is an SMS, Short Message Service object.
     \value Email              The message is an Email, Internet Message Format object.
     \value InstantMessage     The message is an instant message object, such as XMPP.
     \value AnyType            Bitflag value that matches any message type defined.
-    
+
     \sa type(), setType()
 */
-    
+
 /*!
     \enum QMessage::Status
 
@@ -117,7 +118,7 @@ QList<QByteArray> charsets;
     \value HasAttachments  This flag indicates that the message contains at least one sub-part with 'Attachment' disposition.
     \value Incoming        This flag indicates that the message has been sent from an external source.
     \value Removed         This flag indicates that the message has been deleted from or moved on the originating server.
-    
+
     \sa status(), setStatus()
 */
 
@@ -155,7 +156,7 @@ QList<QByteArray> charsets;
 
 /*!
     \fn QMessage::QMessage()
-    
+
     Constructs an empty message.
 */
 
@@ -163,7 +164,8 @@ QList<QByteArray> charsets;
     \fn QMessage::QMessage(const QMessageId& id)
 
     Constructs a message from data stored in the messaging store with identifier \a id.
-    
+
+    \since 1.0
     \sa QMessageManager::message()
 */
 
@@ -171,339 +173,378 @@ QList<QByteArray> charsets;
     \fn QMessage::QMessage(const QMessage &other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessage::operator=(const QMessage& other)
+    \since 1.0
 */
 
 /*!
     \fn QMessage::~QMessage()
-    
+
     Destroys the message.
 */
 
 /*!
     \fn QMessage::id() const
-  
+
     Returns the identifier of the message.
 
     \sa QMessageFilter::byId()
+    \since 1.0
 */
-    
+
 /*!
     \fn QMessage::type() const
-    
+
     Returns the Type of the message.
-    
+
+    \since 1.0
     \sa setType(), QMessageFilter::byType()
 */
-    
+
 /*!
     \fn QMessage::setType(Type t)
-    
+
     Sets the Type of the message to \a t.
-    
+
     The type of a message may be set for non-empty messages.
-    
+
+    \since 1.0
     \sa type()
 */
 
 /*!
     \fn QMessage::parentAccountId() const
-    
-    Returns the identifier of the parent account of the message if any; otherwise returns an 
+
+    Returns the identifier of the parent account of the message if any; otherwise returns an
     invalid identifier.
+    \since 1.0
 */
-    
+
 /*!
     \fn QMessage::setParentAccountId(const QMessageAccountId &accountId)
-    
+
     Sets the parent account of the message to the account with identifier \a accountId.
-    
+
     This operation is only permitted on new messages that have not yet been inserted into
     the message store. Attempting to change the parent account of a message already
     in the message store will result in an error when attempting to update the message
     with QMessageStore::update().
+    \since 1.0
 */
-    
+
 /*!
     \fn QMessage::parentFolderId() const
-  
-    Returns the identifier of the folder that contains the message if any; otherwise returns an 
+
+    Returns the identifier of the folder that contains the message if any; otherwise returns an
     invalid identifier.
+    \since 1.0
 */
 
 /*!
     \fn QMessage::standardFolder() const
-  
+
     Returns the standard folder of the message.
-    
+
     Defaults to DraftsFolder.
+    \since 1.0
 */
-    
+
 /*!
     \fn QMessage::from() const
-  
+
     Returns the originating address of the message.
 
+    \since 1.0
     \sa setFrom(), QMessageFilter::bySender()
 */
 
 /*!
     \fn QMessage::setFrom(const QMessageAddress &address)
-  
+
     Sets the from address, that is the originating address of the message to \a address.
 
+    \since 1.0
     \sa from()
 */
 
 /*!
     \fn QMessage::subject() const
-  
+
     Returns the subject of the message, if present; otherwise returns a null string.
 
+    \since 1.0
     \sa setSubject(), QMessageFilter::bySubject()
 */
 
 /*!
     \fn QMessage::setSubject(const QString &text)
-    
+
     Sets the subject of the message to \a text.
-    
+
+    \since 1.0
     \sa subject()
 */
 
 /*!
     \fn QMessage::date() const
-  
-    Returns the timestamp contained in the origination date header field of the message, if present; 
+
+    Returns the timestamp contained in the origination date header field of the message, if present;
     otherwise returns a null timestamp.
-    
+
+    \since 1.0
     \sa setDate(), QMessageFilter::byTimeStamp()
 */
 
 /*!
     \fn QMessage::setDate(const QDateTime &d)
-  
+
     Sets the origination date header field specifying the timestamp of the message to \a d.
-    
+
+    \since 1.0
     \sa date()
 */
 
 /*!
     \fn QMessage::receivedDate() const
-  
+
     Returns the timestamp placed in the message during reception by the device, if present;
     otherwise returns a null timestamp.
-    
+
+    \since 1.0
     \sa setReceivedDate(), QMessageFilter::byReceptionTimeStamp()
 */
 
 /*!
     \fn QMessage::setReceivedDate(const QDateTime &d)
-  
+
     Sets the timestamp indicating the time of message reception by the device to \a d.
-    
+
+    \since 1.0
     \sa receivedDate()
 */
 
-/*! 
+/*!
     \fn QMessage::to() const
-  
+
     Returns the list of primary recipients for the message.
 
+    \since 1.0
     \sa setTo(), QMessageFilter::byRecipients()
 */
 
-/*! 
+/*!
     \fn QMessage::setTo(const QMessageAddressList& toList)
-  
+
     Sets the list of primary recipients for the message to \a toList.
-    
+
+    \since 1.0
     \sa to()
 */
 
-/*! 
+/*!
     \fn QMessage::setTo(const QMessageAddress& address)
-  
+
     Sets the primary recipient for the message to \a address.
-    
+
+    \since 1.0
     \sa to()
 */
 
 /*!
     \fn QMessage::cc() const
-  
+
     Returns the list of all the cc (carbon copy) recipients specified for the message.
 
+    \since 1.0
     \sa to(), bcc(), setCc(), QMessageFilter::byRecipients()
-*/  
+*/
 
 /*!
    \fn QMessage::setCc(const QMessageAddressList& ccList)
-  
+
     Set the list of cc (carbon copy) recipients for the message to \a ccList.
 
+    \since 1.0
     \sa cc(), setTo(), setBcc()
-*/  
+*/
 
 /*!
     \fn QMessage::bcc() const
-  
+
     Returns the list of all the bcc (blind carbon copy) recipients specified for the message.
 
+    \since 1.0
     \sa to(), cc(), setBcc()
-*/  
+*/
 
 /*!
     \fn QMessage::setBcc(const QMessageAddressList& bccList)
-  
+
     Set the list of bcc (blind carbon copy) recipients for the message to \a bccList.
 
+    \since 1.0
     \sa bcc(), setTo(), setCc()
-*/  
+*/
 
 /*!
     \fn QMessage::status() const
-    
+
     Returns the status flags value for the message.
 
+    \since 1.0
     \sa setStatus(), QMessageFilter::byStatus()
 */
 
 /*!
     \fn QMessage::setStatus(QMessage::StatusFlags newStatus)
-    
+
     Sets the status flags value for the message to \a newStatus.
 
+    \since 1.0
     \sa status()
 */
 
 /*!
     \fn QMessage::setStatus(QMessage::Status flag, bool set)
-    
+
     Sets the status flag \a flag for the message to have the value \a set.
 
+    \since 1.0
     \sa status()
 */
 
 /*!
     \fn QMessage::priority() const
-    
+
     Returns the priority of the message.
 
     The default is NormalPriority.
 
+    \since 1.0
     \sa setPriority(), QMessageFilter::byPriority()
 */
 
 /*!
     \fn QMessage::setPriority(Priority newPriority)
-    
+
     Sets the priority of the message to \a newPriority.
 
+    \since 1.0
     \sa priority()
 */
 
 /*!
     \fn QMessage::size() const
-    
+
     Returns the complete size of the message as indicated on the originating server.
-    
+
+    \since 1.0
     \sa QMessageFilter::bySize()
 */
 
 /*!
     \fn QMessage::bodyId() const
-  
-    Returns the identifier for the body content contained by the Message if a body exists; 
+
+    Returns the identifier for the body content contained by the Message if a body exists;
     otherwise returns an invalid identifier.
-    
+
+    \since 1.0
     \sa QMessageContentContainer, setBody()
 */
 
 /*!
     \fn QMessage::setBody(const QString &body, const QByteArray &mimeType)
-  
+
     Sets the body text of the message to be the string \a body.
-    
+
     The internet media (MIME) content type of the body is set to \a mimeType, if provided.
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
-    
+
+    \since 1.0
     \sa bodyId(), preferredCharsets()
 */
 
 /*!
     \fn QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
-  
+
     Sets the body text of the message to be the text read from the stream \a in.
-    
+
     The internet media (MIME) content type of the body is set to \a mimeType, if provided.
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
-    
+
+    \since 1.0
     \sa bodyId(), preferredCharsets()
 */
 
 /*!
     \fn QMessage::attachmentIds() const
-  
+
     Returns a list of attachment identifiers for the message.
 
     The body of the message will not be included in the list.
-    
+
+    \since 1.0
     \sa appendAttachments(), clearAttachments()
 */
 
 /*!
     \fn QMessage::appendAttachments(const QStringList &fileNames)
-  
-    Append the contents of the files specified by \a fileNames to the end of the list of 
-    attachments for the message. The internet media (MIME) type of the attachments will be 
+
+    Append the contents of the files specified by \a fileNames to the end of the list of
+    attachments for the message. The internet media (MIME) type of the attachments will be
     determined by examining the files or file names.
-    
-    Symbian OS based devices have a limit for MMS message size. The message size limit 
+
+    Symbian OS based devices have a limit for MMS message size. The message size limit
     varies between different devices, but is frequently 600 000 bytes. If the attachment
-    size is greater than the limit then message sending will fail when 
+    size is greater than the limit then message sending will fail when
     QMessageService::send() is called.
 
+    \since 1.0
     \sa attachmentIds(), clearAttachments()
 */
 
 /*!
     \fn QMessage::clearAttachments()
-  
+
     Clears the list of attachments for the message, leaving only the message body, if any.
 
+    \since 1.0
     \sa attachmentIds(), appendAttachments()
-*/  
+*/
 
 /*!
     \fn QMessage::isModified() const
-    
-    Returns true if the message has been modified since it was constructed; 
+
+    Returns true if the message has been modified since it was constructed;
     otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \fn QMessage::createResponseMessage(ResponseType type) const
 
     Creates a new message as a response to this message, with properties predetermined according to \a type.
-  
+
+    \since 1.0
     \sa QMessageService::compose()
 */
 
 /*!
     \fn QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
-    
-    Sets the ordered-by-preference list of names of charsets to use when encoding 
+
+    Sets the ordered-by-preference list of names of charsets to use when encoding
     unicode QString data to a serialized form to \a charsetNames.
 
     The set of valid charset names is returned by QTextCodec::availableCodecs().
 
+    \since 1.0
     \sa preferredCharsets(), preferredCharsetFor(), setBody()
 */
 void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
@@ -513,10 +554,11 @@ void QMessage::setPreferredCharsets(const QList<QByteArray> &charsetNames)
 
 /*!
     \fn QMessage::preferredCharsets()
-    
-    Returns an ordered-by-preference list of charset names to use when encoding 
+
+    Returns an ordered-by-preference list of charset names to use when encoding
     unicode QString data to a serialized form.
 
+    \since 1.0
     \sa setPreferredCharsets(), preferredCharsetFor(), setBody()
 */
 QList<QByteArray> QMessage::preferredCharsets()
@@ -528,6 +570,7 @@ QList<QByteArray> QMessage::preferredCharsets()
     Returns the first charset from the preferred list that is capable of encoding
     the content of \a text.
 
+    \since 1.0
     \sa preferredCharsets(), setBody()
 */
 QByteArray QMessage::preferredCharsetFor(const QString &text)

@@ -77,9 +77,10 @@ QTM_BEGIN_NAMESPACE
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
-  
+
   \inmodule QtContacts
-  
+   \since 1.0
+
    \ingroup contacts-details
 
    This leaf-class has been part of the default schema since version
@@ -105,6 +106,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 
    Returns the identifier of the backend store to which the contact
    containing this detail should be synchronized.
+   \since 1.0
  */
 
 /*!
@@ -112,6 +114,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 
    Sets the identifier of the backend store to which the contact
    containing this detail should be synchronized to \a syncTarget.
+   \since 1.0
  */
 
 /* ==================== QContactEmailAddress ======================= */
@@ -123,6 +126,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
    \brief The QContactEmailAddress class contains an email address of
    a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -145,11 +149,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactEmailAddress::FieldEmailAddress, "EmailAddress"
 /*!
    \fn QContactEmailAddress::emailAddress() const
    Returns the email address of the contact which is stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactEmailAddress::setEmailAddress(const QString& emailAddress)
    Sets the email address of the contact which is stored in this detail to \a emailAddress.
+   \since 1.0
  */
 
 /* ==================== QContactFamily ======================= */
@@ -158,6 +164,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactEmailAddress::FieldEmailAddress, "EmailAddress"
    \brief The QContactFamily class contains names of
    family members of a contact.
    \ingroup contacts-details
+   \since 1.1
 
    This leaf-class has been part of the default schema since version
    1.1 of the Qt Mobility project.
@@ -188,21 +195,25 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
 /*!
    \fn QContactFamily::spouse() const
    Returns the name of the spouse of the contact which is stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactFamily::setSpouse(const QString& spouseName)
    Sets the name of the spouse of the contact which is stored in this detail to \a spouseName.
+   \since 1.0
  */
 
 /*!
    \fn QContactFamily::children() const
    Returns the names of the children of the contact which is stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactFamily::setChildren(const QStringList& childrenNames)
    Sets the names of the children of the contact which is stored in this detail to \a childrenNames.
+   \since 1.0
  */
 
 /* ==================== QContactFavorite ======================= */
@@ -211,6 +222,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
    \brief The QContactFavorite class indicates if a contact is a favorite contact as well as the
    position it should appear in an ordered list of favorites.
    \ingroup contacts-details
+   \since 1.1
 
    This leaf-class has been part of the default schema since version
    1.1 of the Qt Mobility project.
@@ -244,7 +256,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
  */
 
 /*!
-   \fn QContactFavorite::setFavorite(bool isFavorite) 
+   \fn QContactFavorite::setFavorite(bool isFavorite)
    If \a isFavorite is true, marks the contact as a favorite.  Otherwise, marks the contact as not a favorite.
  */
 
@@ -254,7 +266,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
  */
 
 /*!
-   \fn QContactFavorite::setIndex(int index) 
+   \fn QContactFavorite::setIndex(int index)
    Sets the index of the favorite contact to \a index.
  */
 
@@ -279,6 +291,7 @@ QContactFilter QContactFavorite::match()
    \class QContactAnniversary
    \brief The QContactAnniversary class contains an anniversary of a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -384,6 +397,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
    \fn QContactAnniversary::setOriginalDate(const QDate& date)
    Sets the original date of the event stored in this detail to \a date.
+   \since 1.0
  */
 
 /*!
@@ -391,6 +405,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
    Returns the original date and time of the event stored in this detail.
    If the original event occurrence stored is a QDate, this returns a QDateTime with the
    time set to midnight.
+   \since 1.0
  */
 
 /*!
@@ -401,31 +416,37 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
    \fn QContactAnniversary::calendarId() const
  * Returns the identifier of the calendar entry associated with this anniversary.
+ * \since 1.0
  */
 
 /*!
    \fn QContactAnniversary::setCalendarId(const QString& calendarId)
    Sets the identifier of the calendar entry associated with this anniversary to \a calendarId.
+   \since 1.0
  */
 
 /*!
    \fn QContactAnniversary::event() const
    Returns the name of the event for which this detail contains information.
+   \since 1.0
  */
 
 /*!
    \fn QContactAnniversary::setEvent(const QString& event)
    Sets the name of the event for which this detail contains information to \a event.
+   \since 1.0
  */
 
 /*!
    \fn QContactAnniversary::setSubType(const QString& subType)
    Sets the subtype which this detail implements to be the given \a subType.
+   \since 1.0
  */
 
 /*!
    \fn QContactAnniversary::subType() const
    Returns the subtype that this detail implements, if defined.
+   \since 1.0
  */
 
 /* ==================== QContactAvatar ======================= */
@@ -434,6 +455,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
    \class QContactAvatar
    \ingroup contacts-details
    \brief The QContactAvatar class contains avatar URLs of a contact.
+   \since 1.0
 
    Users can specify avatar URLs for a contact using this detail.
    Generally, a URL will specify the location of a full-sized
@@ -482,21 +504,25 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldVideoUrl, "VideoUrl");
 /*!
   \fn QContactAvatar::imageUrl() const
   Returns the url of an avatar image associated with the contact
+  \since 1.0
  */
 
 /*!
   \fn QContactAvatar::setImageUrl(const QUrl& imageUrl)
   Sets the url of an avatar image associated with the contact to \a imageUrl
+  \since 1.0
  */
 
 /*!
   \fn QContactAvatar::videoUrl() const
   Returns the url of an avatar video associated with the contact
+  \since 1.0
  */
 
 /*!
   \fn QContactAvatar::setVideoUrl(const QUrl& videoUrl)
   Sets the url of an avatar video associated with the contact to \a videoUrl
+  \since 1.0
  */
 
 /* ==================== QContactAddress ======================= */
@@ -506,6 +532,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldVideoUrl, "VideoUrl");
    \class QContactAddress
    \brief The QContactAddress class contains an address of a contact.
    \ingroup contacts-details
+   \since 1.0
 
    The fields in the QContactAddress class are based on the segments
    of the ADR property of a Versit vCard file.
@@ -625,51 +652,61 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International")
 /*!
    \fn QContactAddress::postOfficeBox() const
    Returns the post office box segment of the address stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::setPostOfficeBox(const QString& postOfficeBox)
    Sets the post office box segment of the address stored in this detail to \a postOfficeBox.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::street() const
    Returns the street segment of the address stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::setStreet(const QString& street)
    Sets the street segment of the address stored in this detail to \a street.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::locality() const
    Returns the locality segment of the address stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::setLocality(const QString& locality)
    Sets the locality segment of the address stored in this detail to \a locality.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::region() const
    Returns the region segment of the address stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::setRegion(const QString& region)
    Sets the region segment of the address stored in this detail to \a region.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::postcode() const
    Returns the postcode segment of the address stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::setPostcode(const QString& postcode)
    Sets the postcode segment of the address stored in this detail to \a postcode.
+   \since 1.0
  */
 
 /*!
@@ -680,21 +717,25 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International")
 /*!
    \fn QContactAddress::setCountry(const QString& country)
    Sets the country segment of the address stored in this detail to \a country.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::setSubTypes(const QStringList& subTypes)
    Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::setSubTypes(const QString& subType)
    Sets the subtypes which this detail implements to be just the given \a subType.
+   \since 1.0
  */
 
 /*!
    \fn QContactAddress::subTypes() const
    Returns the list of subtypes that this detail implements.
+   \since 1.0
  */
 
 /*!
@@ -749,6 +790,7 @@ QContactFilter QContactAddress::match(const QString &subString)
    \brief The QContactUrl class contains a url associated with
    a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -806,11 +848,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeBlog, "Blog");
 /*!
    \fn QContactUrl::url() const
    Returns the url stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactUrl::setUrl(const QString& url)
    Sets the url stored in this detail to \a url.
+   \since 1.0
  */
 
 /*!
@@ -822,11 +866,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeBlog, "Blog");
 /*!
    \fn QContactUrl::setSubType(const QString& subType)
    Sets the subtype which this detail implements to be the given \a subType.
+   \since 1.0
  */
 
 /*!
    \fn QContactUrl::subType() const
    Returns the subtype that this detail implements, if defined.
+   \since 1.0
  */
 
 /* ==================== QContactPhonenumber ======================= */
@@ -836,6 +882,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeBlog, "Blog");
     \brief The QContactPhoneNumber class provides a phone number
     of a contact.
     \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -976,26 +1023,31 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
 /*!
    \fn QContactPhoneNumber::number() const
    Returns the phone number stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactPhoneNumber::setNumber(const QString& number)
    Sets the phone number stored in this detail to \a number.
+   \since 1.0
  */
 
 /*!
    \fn QContactPhoneNumber::setSubTypes(const QStringList& subTypes)
    Sets the subtypes which this detail implements to be those contained in the list of given \a subTypes
+   \since 1.0
  */
 
 /*!
    \fn QContactPhoneNumber::setSubTypes(const QString& subType)
    Sets the subtypes which this detail implements to be just the given \a subType.
+   \since 1.0
  */
 
 /*!
    \fn QContactPhoneNumber::subTypes() const
    Returns the list of subtypes that this detail implements.
+   \since 1.0
  */
 
 /* ==================== QContactBirthday ======================= */
@@ -1004,6 +1056,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
    \class QContactBirthday
    \brief The QContactBirthday class contains a birthday of a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1041,11 +1094,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldCalendarId, "CalendarId");
    \fn QContactBirthday::date() const
    Returns the date of the birthday which is stored in this detail.
    If the birthday stored is a QDateTime, this returns the date portion.
+   \since 1.0
  */
 
 /*!
    \fn QContactBirthday::setDate(const QDate& date)
    Sets the date of the birthday which is stored in this detail to \a date.
+   \since 1.0
  */
 
 /*!
@@ -1077,6 +1132,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldCalendarId, "CalendarId");
    \class QContactGender
    \brief The QContactGender class contains the gender of a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1120,6 +1176,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGender::GenderUnspecified, "Unspecified");
    Returns the gender of the contact, as stored in this detail.  The
    possible values for the value stored are "Male", "Female" and
    "Unspecified".
+   \since 1.0
  */
 
 /*!
@@ -1128,6 +1185,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGender::GenderUnspecified, "Unspecified");
    Sets the gender of the contact (as stored in this detail) to \a
    gender, if \a gender is either "Male" or "Female", otherwise sets
    it to "Unspecified".
+   \since 1.0
  */
 
 /* ==================== QContactGeolocation ======================= */
@@ -1224,11 +1282,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 /*!
    \fn QContactGeoLocation::setLabel(const QString& label)
    Sets the label of the location stored in the detail to \a label.
+   \since 1.0
  */
 
 /*!
    \fn QContactGeoLocation::label() const
    Returns the label of the location stored in the detail.
+   \since 1.0
  */
 
 /*!
@@ -1236,6 +1296,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Sets the latitude portion of the coordinate (in decimal degrees) of
    the location stored in the detail to \a latitude.
+   \since 1.0
  */
 
 /*!
@@ -1243,6 +1304,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Returns the latitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
+   \since 1.0
  */
 
 /*!
@@ -1250,6 +1312,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Sets the longitude portion of the coordinate (in decimal degrees)
    of the location stored in the detail to \a longitude.
+   \since 1.0
  */
 
 /*!
@@ -1257,6 +1320,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Returns the longitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
+   \since 1.0
  */
 
 /*!
@@ -1264,6 +1328,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Specifies that the latitude and longitude portions of the location
    stored in the detail are accurate to within \a accuracy metres.
+   \since 1.0
  */
 
 /*!
@@ -1271,6 +1336,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Returns the accuracy (in metres) of the latitude and longitude of
    the location stored in the detail.
+   \since 1.0
  */
 
 /*!
@@ -1278,11 +1344,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Sets the altitude portion of the coordinate (in metres above the
    ellipsoid) of the location stored in the detail to \a altitude.
+   \since 1.0
  */
 
 /*!
    \fn QContactGeoLocation::altitude() const
    Returns the altitude (in metres) of the location stored in the detail.
+   \since 1.0
  */
 
 /*!
@@ -1290,6 +1358,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Sets the altitude-accuracy portion of the coordinate (in metres) of
    the location stored in the detail to \a altitudeAccuracy.
+   \since 1.0
  */
 
 /*!
@@ -1297,6 +1366,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Returns the accuracy of the altitude portion of the location stored
    in the detail.
+   \since 1.0
  */
 
 /*!
@@ -1305,6 +1375,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
    Sets the heading portion of the coordinate (in decimal degrees
    clockwise relative to true north) of the location-aware device at
    the time of measurement to \a heading.
+   \since 1.0
  */
 
 /*!
@@ -1313,6 +1384,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
    Returns the heading (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
    measurement.
+   \since 1.0
  */
 
 /*!
@@ -1320,6 +1392,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Sets the speed portion of the coordinate (in metres per second) of
    the location-aware device at the time of measurement to \a speed.
+   \since 1.0
  */
 
 /*!
@@ -1328,6 +1401,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
    Returns the speed (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
    measurement.
+   \since 1.0
  */
 
 /*!
@@ -1335,6 +1409,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Sets the creation (or first-valid) timestamp of the location
    information to \a timestamp.
+   \since 1.0
  */
 
 /*!
@@ -1342,6 +1417,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
    Returns the timestamp associated with the location stored in the
    detail.
+   \since 1.0
  */
 
 /* ==================== QContactGuid ======================= */
@@ -1351,6 +1427,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
    \brief The QContactGuid class contains a globally unique
    Id of a contact, for use in synchronization with other datastores.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1375,11 +1452,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGuid::FieldGuid, "Guid");
 
    Returns the globally unique identifier which is stored in this
    detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactGuid::setGuid(const QString& guid)
    Sets the globally unique identifier which is stored in this detail to \a guid.
+   \since 1.0
  */
 
 /* ==================== QContactHobby ======================= */
@@ -1425,6 +1504,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactHobby::FieldHobby, "Hobby");
    \class QContactName
    \brief The QContactName class contains a name of a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1487,33 +1567,39 @@ Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldCustomLabel, "CustomLabel");
 /*!
    \fn QContactName::prefix() const
    Returns the prefix segment of the name stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::setPrefix(const QString& prefix)
    Sets the prefix segment of the name stored in this detail to \a prefix.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::firstName() const
    Returns the first (given) name segment of the name stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::setFirstName(const QString& firstName)
    Sets the first name segment of the name stored in this detail to \a firstName.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::middleName() const
-   
+
    Returns the middle (additional, or other) name segment of the name
    stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::setMiddleName(const QString& middleName)
    Sets the middle name segment of the name stored in this detail to \a middleName.
+   \since 1.0
  */
 
 /*!
@@ -1521,31 +1607,37 @@ Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldCustomLabel, "CustomLabel");
 
    Returns the last (family, or surname) name segment of the name
    stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::setLastName(const QString& lastName)
    Sets the last name segment of the name stored in this detail to \a lastName.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::suffix() const
    Returns the suffix segment of the name stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::setSuffix(const QString& suffix)
    Sets the suffix segment of the name stored in this detail to \a suffix.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::customLabel() const
    Returns the custom label of the name stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactName::setCustomLabel(const QString& customLabel)
    Sets the custom label of the name stored in this detail to \a customLabel.
+   \since 1.0
  */
 
 /* ==================== QContactNickname ======================= */
@@ -1554,6 +1646,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldCustomLabel, "CustomLabel");
    \class QContactNickname
    \brief The QContactNickname class contains a nickname of a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1576,11 +1669,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNickname::FieldNickname, "Nickname");
 /*!
    \fn QContactNickname::setNickname(const QString& nickname)
    Sets the nickname of the contact which is stored in this detail to \a nickname.
+   \since 1.0
  */
 
 /*!
    \fn QContactNickname::nickname() const
    Returns the nickname of the contact which is stored in this detail.
+   \since 1.0
  */
 
 /* ==================== QContactNote ======================= */
@@ -1590,6 +1685,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNickname::FieldNickname, "Nickname");
    \brief The QContactNote class contains a note associated
    with a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1613,11 +1709,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
 /*!
    \fn QContactNote::setNote(const QString& note)
    Sets a note associated with a contact to \a note.
+   \since 1.0
  */
 
 /*!
    \fn QContactNote::note() const
    Returns a string for a note associated with a contact.
+   \since 1.0
  */
 
 /* ==================== QContactTag ======================= */
@@ -1627,6 +1725,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
    \brief The QContactTag class contains a tag associated with a
    contact.
    \ingroup contacts-details
+   \since 1.0
 
    Typically the tags associated with a contact will be distinct,
    although this is usually only enforced when the contact is saved
@@ -1660,11 +1759,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTag::FieldTag, "Tag");
 /*!
    \fn QContactTag::setTag(const QString& tag)
    Sets the tag associated with a contact which is stored in this detail to \a tag.
+   \since 1.0
  */
 
 /*!
    \fn QContactTag::tag() const
    Returns the tag associated with a contact which is stored in this detail.
+   \since 1.0
  */
 
 /*!
@@ -1689,6 +1790,7 @@ QContactFilter QContactTag::match(const QString &subString)
    \ingroup contacts-details
    \brief The QContactThumbnail class contains a thumbnail used
    in display lists to represent the contact.
+   \since 1.0
 
    Users can specify a thumbnail image for a contact via this detail.
    Support for this detail is backend specific; some managers will save
@@ -1732,11 +1834,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactThumbnail::FieldThumbnail, "Thumbnail");
 /*!
   \fn QContactThumbnail::thumbnail() const
   Returns the thumbnail image of the contact
+  \since 1.0
  */
 
 /*!
   \fn QContactThumbnail::setThumbnail(const QImage& thumbnail)
   Sets the thumbnail image of the contact to be \a thumbnail
+  \since 1.0
  */
 
 /* ==================== QContactTimestamp ======================= */
@@ -1746,6 +1850,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactThumbnail::FieldThumbnail, "Thumbnail");
    \brief The QContactTimestamp class contains the creation and
    last-modified timestamp associated with the contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1776,21 +1881,25 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::FieldCreationTimestamp, "CreationTim
 /*!
    \fn QContactTimestamp::created() const
    Returns the creation timestamp saved in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactTimestamp::lastModified() const
    Returns the last-modified timestamp saved in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactTimestamp::setCreated(const QDateTime& dateTime)
    Sets the creation timestamp saved in this detail to \a dateTime.
+   \since 1.0
  */
 
 /*!
    \fn QContactTimestamp::setLastModified(const QDateTime& dateTime)
    Sets the last-modified timestamp saved in this detail to \a dateTime.
+   \since 1.0
  */
 
 /* ==================== QContactType ======================= */
@@ -1799,6 +1908,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::FieldCreationTimestamp, "CreationTim
    \class QContactType
    \brief The QContactType class describes the type of the contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1848,11 +1958,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeGroup, "Group");
 /*!
    \fn QContactType::type() const
    Returns the contact type value stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactType::setType(const QString& type)
    Sets the type of the contact to be the give \a type.
+   \since 1.0
  */
 
 /* ==================== QContactDisplayLabel ======================= */
@@ -1863,6 +1975,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeGroup, "Group");
    \brief The QContactDisplayLabel class is the (possibly synthesized)
    display label of a contact.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1887,6 +2000,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::FieldLabel, "Label");
 /*!
    \fn QContactDisplayLabel::label() const
    Returns the display label of the contact.
+   \since 1.0
  */
 
 /* ==================== QContactOnlineAccount ======================= */
@@ -1897,6 +2011,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::FieldLabel, "Label");
    \class QContactOnlineAccount
    \brief The QContactOnlineAccount class provides an online account,
    which the contact uses to communicate with friends and family.
+   \since 1.0
 
    A QContactOnlineAccount consists of the account details required to
    communicate with the contact, including the account URI, the capabilities
@@ -2072,9 +2187,10 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
 
 /*!
    \fn QContactOnlineAccount::setAccountUri(const QString& accountUri)
-   
+
    Sets the universal resource identifier of the contact's online
    account to \a accountUri.
+   \since 1.0
  */
 
 /*!
@@ -2082,6 +2198,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
 
    Returns the universal resource identifier of the online account of
    the contact.
+   \since 1.0
  */
 
 /*!
@@ -2089,28 +2206,33 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
 
    Sets the service provider of the contact's online account to \a
    serviceProvider.
+   \since 1.0
  */
 
 /*!
    \fn QContactOnlineAccount::serviceProvider() const
    Returns the service provider of the online account of the contact.
+   \since 1.0
  */
 
 /*!
    \fn QContactOnlineAccount::setSubTypes(const QStringList& subTypes)
-   
+
    Sets the subtypes which this detail implements to be those
    contained in the list of given \a subTypes.
+   \since 1.0
  */
 
 /*!
    \fn QContactOnlineAccount::setSubTypes(const QString& subType)
    Sets the subtypes which this detail implements to be just the given \a subType.
+   \since 1.0
  */
 
 /*!
    \fn QContactOnlineAccount::subTypes() const
    Returns the list of subtypes that this detail implements.
+   \since 1.0
  */
 
 /*!
@@ -2120,6 +2242,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
    presence information to \a capabilities.  The \a capabilities list is a
    list of service-provider specified strings which together identify the
    types of communication which may be possible.
+   \since 1.0
  */
 
 /*!
@@ -2127,6 +2250,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
 
    Returns the capabilities of the online account about which this detail stores
    presence information.
+   \since 1.0
  */
 
 /* ==================== QContactOrganization ======================= */
@@ -2136,6 +2260,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
    \brief The QContactOrganization class provides details about an
    organization that the contact is either a part of, or stands for.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -2206,77 +2331,90 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
 /*!
    \fn QContactOrganization::setName(const QString& name)
    Sets the name of the organization stored in this detail to \a name.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::name() const
    Returns the name of the organization stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::setLogoUrl(const QUrl& logo)
    Sets the url of the logo of the organization stored in this detail to \a logo.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::logoUrl() const
    Returns the url of the logo of the organization stored in this detail.
+   \since 1.0
  */
 
 
 /*!
    \fn QContactOrganization::setDepartment(const QStringList& department)
-   
+
    Sets the contact's department of the organization stored in this
    detail to \a department.  The department is a list of progressively
    finer-grained information.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::department() const
    Returns the contact's department stored in this detail.
+   \since 1.0
  */
 
 
 /*!
    \fn QContactOrganization::setLocation(const QString& location)
-   
+
    Sets the location (e.g. city or suburb) of the organization stored
    in this detail to \a location.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::location() const
    Returns the location of the organization stored in this detail.
+   \since 1.0
  */
 
 
 /*!
    \fn QContactOrganization::setRole(const QString& role)
    Sets the contact's role within the organization stored in this detail to \a role.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::role() const
    Returns the contact's role within the organization stored in this detail.
+   \since 1.0
  */
 
 
 /*!
    \fn QContactOrganization::setTitle(const QString& title)
    Sets the contact's title within the organization stored in this detail to \a title.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::title() const
    Returns the contact's title within the organization stored in this detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactOrganization::setAssistantName(const QString& assistantName)
-   
+
    Sets the name of the default assistant of contacts belonging to
    this organization to \a assistantName.
+   \since 1.0
  */
 
 /*!
@@ -2284,6 +2422,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
 
    Returns the name of the default assistant of contacts belonging to
    this organization.
+   \since 1.0
  */
 
 /* ==================== QContactRingtone ======================= */
@@ -2293,6 +2432,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
    \brief The QContactRingtone class provides a ringtone associated
    with a contact
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -2333,6 +2473,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
   \fn QContactRingtone::audioRingtoneUrl() const
 
   Returns the uri of the audio ringtone stored in the ringtone detail.
+   \since 1.0
  */
 
 /*!
@@ -2340,12 +2481,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
 
   Sets the uri of the audio ringtone stored in the ringtone detail
   to \a audioRingtoneUrl.
+   \since 1.0
  */
 
 /*!
   \fn QContactRingtone::videoRingtoneUrl() const
 
   Returns the uri of the video ringtone stored in the ringtone detail.
+   \since 1.0
  */
 
 /*!
@@ -2353,6 +2496,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
 
   Sets the uri of the video ringtone stored in the ringtone detail
   to \a videoRingtoneUrl.
+   \since 1.0
  */
 
 /*!
@@ -2360,6 +2504,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
   \internal
 
   Returns the uri of the vibration ringtone stored in the ringtone detail.
+   \since 1.0
  */
 
 /*!
@@ -2368,6 +2513,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
 
   Sets the uri of the vibration ringtone stored in the ringtone detail
   to \a vibrationRingtoneUrl.
+   \since 1.0
  */
 
 /* ==================== QContactPresence ======================= */
@@ -2377,6 +2523,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
    \class QContactPresence
    \brief The QContactPresence class provides presence information
    for an online account of a contact.
+   \since 1.0
 
    Presence information for a particular QContactOnlineAccount detail is provided
    in a QContactPresence detail which is linked (via linkedDetailUris()) to the
@@ -2448,12 +2595,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Sets the timestamp for the last update of the presence detail to be
    \a updateTimestamp.
+   \since 1.0
  */
 
 /*!
    \fn QContactPresence::timestamp() const
 
     Returns the timestamp at which the data in the presence detail was valid.
+   \since 1.0
  */
 
 /*!
@@ -2462,6 +2611,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
    Sets the last-known nickname used by the contact during
    communications via the online account about which this detail
    stores presence information to \a nickname.
+   \since 1.0
  */
 
 /*!
@@ -2469,6 +2619,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Returns the last-known nickname used by the contact during
    communications via the online account.
+   \since 1.0
  */
 
 /*!
@@ -2491,6 +2642,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Sets the presence state of the online account according to the presence
    information provider to the given \a presenceState.
+   \since 1.0
  */
 
 /*!
@@ -2498,6 +2650,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Returns the presence state of the online account according to the
    presence provider.
+   \since 1.0
  */
 
 /*!
@@ -2507,12 +2660,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
    This function is generally called by presence providers to allow custom
    naming of states, or to allow finer grained state reporting than is
    provided by the presence state API.
+   \since 1.0
  */
 
 /*!
    \fn QContactPresence::presenceStateText() const
 
    Returns the text corresponding to the current presence state.
+   \since 1.0
  */
 
 /*!
@@ -2522,6 +2677,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
    about which this detail stores presence information, to \a customMessage.
    This custom message would have been set by the contact,
    and does not necessarily correspond to a particular presence state.
+   \since 1.0
  */
 
 /*!
@@ -2529,6 +2685,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Returns the custom status message from the contact for the online account
    about which this detail stores presence information.
+   \since 1.0
  */
 
 /*!
@@ -2536,6 +2693,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Sets the last-known status image url of the contact for the online account
    about which this detail stores presence information, to \a presenceStateImageUrl.
+   \since 1.0
  */
 
 /*!
@@ -2543,6 +2701,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Returns the last-known status image url of the contact for the online account
    about which this detail stores presence information.
+   \since 1.0
  */
 
 /* ==================== QContactGlobalPresence ======================= */
@@ -2552,6 +2711,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
    \brief The QContactGlobalPresence class provides aggregated presence information
    for a contact, synthesized or supplied by the backend.
    \ingroup contacts-details
+   \since 1.0
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -2611,12 +2771,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
 
    Sets the update timestamp of the global presence detail to be
    \a updateTimestamp.
+   \since 1.0
  */
 
 /*!
    \fn QContactGlobalPresence::timestamp() const
 
     Returns the timestamp at which the data in the global presence detail was valid.
+   \since 1.0
  */
 
 /*!
@@ -2625,6 +2787,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
    Sets the last-known nickname used by the contact during
    communications via any online account about which this detail
    aggregates presence information to \a nickname.
+   \since 1.0
  */
 
 /*!
@@ -2633,6 +2796,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
    Returns the last-known nickname used by the contact during
    communications via any online account about which this detail
    aggregates presence information.
+   \since 1.0
  */
 
 /*!
@@ -2641,6 +2805,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
    Sets the presence state of this aggregate detail according to the presence
    information available from the presence providers which this detail aggregates
    to the given \a presenceState.
+   \since 1.0
  */
 
 /*!
@@ -2648,6 +2813,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
 
    Returns the aggregate presence state of any online accounts about which this detail
    aggregates presence information.
+   \since 1.0
  */
 
 /*!
@@ -2657,12 +2823,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
    This function is generally called by presence providers to allow custom
    naming of states, or to allow finer grained state reporting than is
    provided by the presence state API.
+   \since 1.0
  */
 
 /*!
    \fn QContactGlobalPresence::presenceStateText() const
 
    Returns the text corresponding to the current presence state.
+   \since 1.0
  */
 
 /*!
@@ -2670,6 +2838,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
 
    Sets the custom status message from the contact for the aggregate presence
    detail, to \a customMessage.
+   \since 1.0
  */
 
 /*!
@@ -2677,18 +2846,21 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
 
    Returns the custom status message from the contact for the aggregate presence
    detail.
+   \since 1.0
  */
 
 /*!
    \fn QContactGlobalPresence::setPresenceStateImageUrl(const QUrl& presenceStateImageUrl)
 
    Sets the last-known status image url of the contact to \a presenceStateImageUrl.
+   \since 1.0
  */
 
 /*!
    \fn QContactGlobalPresence::presenceStateImageUrl() const
 
    Returns the last-known status image url of the contact.
+   \since 1.0
  */
 
 /*!
@@ -2714,6 +2886,7 @@ QContactFilter QContactGlobalPresence::match(QContactPresence::PresenceState sta
 /*!
     Returns a filter suitable for finding contacts with a display label containing the specified
     \a label.
+    \since 1.0
 */
 QContactFilter QContactDisplayLabel::match(const QString &label)
 {
@@ -2730,6 +2903,7 @@ QContactFilter QContactDisplayLabel::match(const QString &label)
     Returns a filter suitable for finding contacts with a name with a first name containing the
     specified \a firstName and a last name containing the specified \a lastName.  If either
     parameter is empty, any value will match that component.
+   \since 1.0
 */
 QContactFilter QContactName::match(const QString &firstName, const QString &lastName)
 {
@@ -2777,6 +2951,7 @@ QContactFilter QContactName::match(const QString &firstName, const QString &last
 /*!
     Returns a filter suitable for finding contacts with any name field (e.g. first, last) that
     contains the supplied \a name.
+    \since 1.0
 */
 QContactFilter QContactName::match(const QString &name)
 {
@@ -2801,6 +2976,7 @@ QContactFilter QContactName::match(const QString &name)
 /*!
     Returns a filter suitable for finding contacts with an email address containing the specified
     \a emailAddress.
+    \since 1.0
 */
 QContactFilter QContactEmailAddress::match(const QString &emailAddress)
 {
@@ -2814,6 +2990,7 @@ QContactFilter QContactEmailAddress::match(const QString &emailAddress)
 /*!
     Returns a filter suitable for finding contacts with a phone number containing the specified
     \a number.
+   \since 1.0
 */
 QContactFilter QContactPhoneNumber::match(const QString &number)
 {

@@ -52,16 +52,16 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemDeviceInfoPrivate;
 
-class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
+class Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
+
     Q_PROPERTY(Profile currentProfile READ currentProfile NOTIFY currentProfileChanged)
     Q_PROPERTY(PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
     Q_PROPERTY(ThermalState currentThermalState READ currentThermalState NOTIFY thermalStateChanged)
     Q_PROPERTY(SimStatus simStatus READ simStatus CONSTANT)
     Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
     Q_PROPERTY(QSystemDeviceInfo::InputMethodFlags inputMethodType READ inputMethodType)
-
     Q_PROPERTY(QString imei READ imei CONSTANT)
     Q_PROPERTY(QString imsi READ imsi CONSTANT)
     Q_PROPERTY(QString manufacturer READ manufacturer CONSTANT)
@@ -70,12 +70,10 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked NOTIFY deviceLocked)
     Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState NOTIFY bluetoothStateChanged)
-
     Q_PROPERTY(KeyboardTypeFlags keyboardTypes READ keyboardTypes)//1.2
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
     Q_PROPERTY(bool isKeyboardFlippedOpen READ isKeyboardFlippedOpen NOTIFY keyboardFlipped)//1.2
     Q_PROPERTY(QSystemDeviceInfo::LockTypeFlags lockStatus READ lockStatus NOTIFY lockStatusChanged)
-
     Q_PROPERTY(QByteArray uniqueDeviceID READ uniqueDeviceID CONSTANT)
 
     Q_ENUMS(BatteryStatus)
@@ -91,7 +89,6 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_FLAGS(LockType LockTypeFlags) //1.2
 
 public:
-
     explicit QSystemDeviceInfo(QObject *parent = 0);
     virtual ~QSystemDeviceInfo();
 
@@ -140,7 +137,6 @@ public:
         BeepProfile
     };
 
-
     enum SimStatus {
         SimNotAvailable = 0,
         SingleSimAvailable,
@@ -156,19 +152,19 @@ public:
         FullQwertyKeyboard = 0x0000008,
         WirelessKeyboard = 0x0000010,
         FlipKeyboard = 0x0000020
-      };//1.2
+    };//1.2
     Q_DECLARE_FLAGS(KeyboardTypeFlags, KeyboardType)//1.2
 
     enum KeypadType {
        PrimaryKeypad = 0,
        SecondaryKeypad
     }; //1.2
+
 //    enum KeypadType {
-//       PrimaryKeypad = 0x0000001,
-//       SecondaryKeypad = 0x0000002
+//        PrimaryKeypad = 0x0000001,
+//        SecondaryKeypad = 0x0000002
 //    }; //1.2
 //    Q_DECLARE_FLAGS(KeypadTypeFlags, KeypadType)//1.2
-
 
     enum LockType {
         UnknownLock = 0,
@@ -204,22 +200,23 @@ public:
     QByteArray uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
-    class  Q_SYSINFO_EXPORT ProfileDetails  {
+    class Q_SYSINFO_EXPORT ProfileDetails  {
     public:
         ProfileDetails();
-        ProfileDetails(const ProfileDetails &);
-        ProfileDetails &operator=(const ProfileDetails &);
+        ProfileDetails(const ProfileDetails &other);
+        ProfileDetails &operator=(const ProfileDetails &other);
 
         ~ProfileDetails();
 
         int messageRingtoneVolume() const;
         int voiceRingtoneVolume() const;
         bool vibrationActive() const;
+
     private:
-         friend class QSystemDeviceInfo;
+        friend class QSystemDeviceInfo;
     };
 
-    Q_INVOKABLE ProfileDetails activeProfileDetails();//1.2
+    Q_INVOKABLE ProfileDetails activeProfileDetails(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
@@ -228,12 +225,10 @@ Q_SIGNALS:
     void thermalStateChanged(QSystemDeviceInfo::ThermalState thermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
     void bluetoothStateChanged(bool on);
-
-    void wirelessKeyboardConnected(bool connected);//1.2
-    void keyboardFlipped(bool open);//1.2
+    void wirelessKeyboardConnected(bool connected); //1.2
+    void keyboardFlipped(bool open); //1.2
     void deviceLocked(bool isLocked); // 1.2
     void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
-
 
 private:
     QSystemDeviceInfoPrivate *d;
@@ -246,9 +241,7 @@ protected:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSystemDeviceInfo::InputMethodFlags )
 
-
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMDEVICEINFO_H

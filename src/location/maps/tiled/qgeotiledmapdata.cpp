@@ -100,6 +100,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.1
+
     This class assumes that at a zoom level of z the world is represented as a
     2^z by 2^z grid of tiles, and that the Mercator projection is used to map
     back and forth between coordinate and positions on the map.
@@ -116,7 +118,7 @@ QTM_BEGIN_NAMESPACE
     worldReferenceViewportRect().
 
     NOTE: QGeoTiledMapData blocks property change signals from QGeoMapData by calling
-    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in 
+    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in
     QGeoTiledMapData subclasses will cause the signals being emitted at wrong time.
 */
 
@@ -173,6 +175,7 @@ QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double l
 
 /*!
     \reimp
+    \since 1.1
 */
 QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordwgs) const
 {
@@ -182,6 +185,7 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &screenPosition) const
 {
@@ -234,6 +238,7 @@ QPoint QGeoTiledMapDataPrivate::coordinateToWorldReferencePosition(double lng, d
     map at the maximum zoom level.
 
     The default implementation is based on the Mercator projection.
+    \since 1.1
 */
 QPoint QGeoTiledMapData::coordinateToWorldReferencePosition(const QGeoCoordinate &coordinate) const
 {
@@ -254,6 +259,7 @@ qreal rmod(const qreal a, const qreal b)
     The pixel position is relative the entire map at the maximum zoom level.
 
     The default implementation is based on the Mercator projection.
+    \since 1.1
 */
 QGeoCoordinate QGeoTiledMapData::worldReferencePositionToCoordinate(const QPoint &pixel) const
 {
@@ -290,6 +296,7 @@ QGeoCoordinate QGeoTiledMapData::worldReferencePositionToCoordinate(const QPoint
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 {
@@ -315,6 +322,7 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
@@ -357,6 +365,7 @@ void QGeoTiledMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode con
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoCoordinate QGeoTiledMapData::center() const
 {
@@ -366,6 +375,7 @@ QGeoCoordinate QGeoTiledMapData::center() const
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
 {
@@ -486,6 +496,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setWindowSize(const QSizeF &size)
 {
@@ -510,6 +521,7 @@ void QGeoTiledMapData::setWindowSize(const QSizeF &size)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::pan(int dx, int dy)
 {
@@ -547,6 +559,7 @@ void QGeoTiledMapData::pan(int dx, int dy)
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoBoundingBox QGeoTiledMapData::viewport() const
 {
@@ -562,6 +575,7 @@ QGeoBoundingBox QGeoTiledMapData::viewport() const
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 {
@@ -597,6 +611,7 @@ void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserv
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -606,6 +621,7 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -615,6 +631,7 @@ void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphic
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObjectInfo *QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
 {
@@ -800,6 +817,7 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
 
 /*!
     \reimp
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
@@ -877,6 +895,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 
 /*!
     \reimp
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
@@ -942,6 +961,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 /*!
     Returns the center of the viewport, in pixels on the entire
     map as a pixmap at the maximum zoom level.
+    \since 1.1
 */
 QPoint QGeoTiledMapData::worldReferenceViewportCenter() const
 {
@@ -952,6 +972,7 @@ QPoint QGeoTiledMapData::worldReferenceViewportCenter() const
 /*!
     Returns the size, in pixels, of the entire map as a pixmap at the maximum
     zoom level.
+    \since 1.1
 */
 QSize QGeoTiledMapData::worldReferenceSize() const
 {
@@ -962,6 +983,7 @@ QSize QGeoTiledMapData::worldReferenceSize() const
 /*!
     Returns the visible screen rectangle, in pixels on the entire map
     as a pixmap at the maximum zoom level.
+    \since 1.1
 */
 QRect QGeoTiledMapData::worldReferenceViewportRect() const
 {
@@ -972,6 +994,7 @@ QRect QGeoTiledMapData::worldReferenceViewportRect() const
 /*!
     Returns the ratio between a single pixel on the screen and a pixel on
     the entire map as a pixmap at the maximum zoom level.
+    \since 1.1
 */
 int QGeoTiledMapData::zoomFactor() const
 {
@@ -983,6 +1006,7 @@ int QGeoTiledMapData::zoomFactor() const
     Forces the map display to update in the region specified by \a target.
 
     If \a target is empty the entire map display will be updated.
+    \since 1.1
 */
 void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 {

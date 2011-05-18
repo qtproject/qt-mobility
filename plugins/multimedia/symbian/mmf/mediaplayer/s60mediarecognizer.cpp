@@ -51,8 +51,10 @@
 #include <apgcli.h>
 
 static const TInt KMimeTypePrefixLength = 6; // "audio/" or "video/"
+
 _LIT(KMimeTypePrefixAudio, "audio/");
 _LIT(KMimeTypePrefixVideo, "video/");
+_LIT(KMimeTypeRingingTone, "application/vnd.nokia.ringing-tone");
 
 /*!
     Construct a media Recognizer with the given \a parent.
@@ -94,7 +96,7 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
     if (isStream)
         return Url;
     else
-        return identifyMediaType(url.toLocalFile());
+        return identifyMediaType(QDir::cleanPath(url.toLocalFile()));
 }
 
 /*!
@@ -137,7 +139,8 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QStrin
             if (err == KErrNone) {
                 const TPtrC mimeType = recognizerResult.iDataType.Des();
 
-                if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixAudio) == 0) {
+                if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixAudio) == 0 ||
+                        mimeType.Compare(KMimeTypeRingingTone) == 0) {
                     result = Audio;
                 } else if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixVideo) == 0) {
                     result = Video;

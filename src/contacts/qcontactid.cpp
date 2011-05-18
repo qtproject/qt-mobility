@@ -49,12 +49,13 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactId
-  
+
   \inmodule QtContacts
-  
+
   \brief The QContactId class provides information that uniquely identifies
   a contact in a particular manager.
- 
+  \since 1.0
+
   It consists of a manager URI which identifies the manager which contains the contact,
   and the local id of the contact in that manager.
 
@@ -98,14 +99,18 @@ QContactId::QContactId(const QContactId& other)
 {
 }
 
-/*! Assigns the contact id to be equal to \a other */
+/*! Assigns the contact id to be equal to \a other
+    \since 1.0
+*/
 QContactId& QContactId::operator=(const QContactId& other)
 {
     d = other.d;
     return *this;
 }
 
-/*! Returns true if the contact id has the same manager URI and local id as \a other */
+/*! Returns true if the contact id has the same manager URI and local id as \a other
+    \since 1.0
+*/
 bool QContactId::operator==(const QContactId& other) const
 {
     if (d->m_managerUri != other.d->m_managerUri)
@@ -115,7 +120,9 @@ bool QContactId::operator==(const QContactId& other) const
     return true;
 }
 
-/*! Returns true if either the manager URI or local id of the contact id is different to that of \a other */
+/*! Returns true if either the manager URI or local id of the contact id is different to that of \a other
+    \since 1.0
+*/
 bool QContactId::operator!=(const QContactId& other) const
 {
     return !(*this == other);
@@ -134,6 +141,7 @@ bool QContactId::operator!=(const QContactId& other) const
 
     This operator is provided primarily to allow use of a QContactId
     as a key in a QMap.
+    \since 1.0
  */
 bool QContactId::operator<(const QContactId& other) const
 {
@@ -146,6 +154,7 @@ bool QContactId::operator<(const QContactId& other) const
 
 /*!
  * Returns the hash value for \a key.
+ * \since 1.0
  */
 uint qHash(const QContactId &key)
 {
@@ -188,6 +197,7 @@ QDataStream& operator>>(QDataStream& in, QContactId& id)
 
 /*!
  * Returns the URI of the manager which contains the contact identified by this id
+ * \since 1.0
  */
 QString QContactId::managerUri() const
 {
@@ -196,6 +206,7 @@ QString QContactId::managerUri() const
 
 /*!
  * Returns the manager-local id of the contact identified by this contact id
+ * \since 1.0
  */
 QContactLocalId QContactId::localId() const
 {
@@ -204,6 +215,7 @@ QContactLocalId QContactId::localId() const
 
 /*!
  * Sets the URI of the manager which contains the contact identified by this id to \a uri
+ * \since 1.0
  */
 void QContactId::setManagerUri(const QString& uri)
 {
@@ -212,6 +224,7 @@ void QContactId::setManagerUri(const QString& uri)
 
 /*!
  * Sets the manager-local id of the contact identified by this contact id to \a id
+ * \since 1.0
  */
 void QContactId::setLocalId(const QContactLocalId& id)
 {

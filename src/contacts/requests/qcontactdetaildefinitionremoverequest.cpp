@@ -56,10 +56,11 @@ QTM_BEGIN_NAMESPACE
 
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
-  
-  
+
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -84,6 +85,7 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
       setDefinitionNames(QStringList(definitionName));
   \endcode
 
+  \since 1.0
   \sa setContactType()
  */
 void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
@@ -98,6 +100,7 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& def
   Sets the names of the detail definitions to remove from the manager to \a names.
   Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
   definitions exist for contacts of the given contact type, specified via setContactType().
+  \since 1.0
   \sa setContactType()
  */
 void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
@@ -107,7 +110,9 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList
     d->m_names = names;
 }
 
-/*! Returns the list of names of the detail definitions that will be removed from the manager */
+/*! Returns the list of names of the detail definitions that will be removed from the manager
+    \since 1.0
+*/
 QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
@@ -117,6 +122,7 @@ QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 
 /*!
   Sets the type of contact for which detail definitions should be removed to \a contactType
+  \since 1.0
  */
 void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
 {
@@ -125,7 +131,9 @@ void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contac
     d->m_contactType = contactType;
 }
 
-/*! Returns the type of contact for which detail definitions will be removed */
+/*! Returns the type of contact for which detail definitions will be removed
+    \since 1.0
+*/
 QString QContactDetailDefinitionRemoveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
@@ -133,7 +141,9 @@ QString QContactDetailDefinitionRemoveRequest::contactType() const
     return d->m_contactType;
 }
 
-/*! Returns the map of input name list indices to errors which occurred */
+/*! Returns the map of input name list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);

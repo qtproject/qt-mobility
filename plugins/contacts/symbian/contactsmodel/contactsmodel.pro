@@ -65,7 +65,7 @@ publicincheaders = cntdef.h cntdb.h cntdbobs.h cntfield.h cntfldst.h cntfilt.h c
 
 # these headers come from ./inc and go to APP_LAYER_PLATFORM_EXPORT_PATH
 platformincheaders = cntmodel.rh cntviewfindconfig.h cntviewfindconfig.inl cntviewstore.h \
-    cntphonenumparser.h cntviewsortpluginbase.h cntsyncecom.h cntconvertercallback.h cntdb_internal.h
+    cntphonenumparser.h cntviewsortpluginbase.h cntsyncecom.h cntconvertercallback.h cntdb_internal.h cntimagesutility.h
 
 # these headers come from ./cntvcard and go to APP_LAYER_PUBLIC_EXPORT_PATH
 publiccntvcardheaders = cntvcard.h

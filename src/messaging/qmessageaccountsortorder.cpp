@@ -45,28 +45,29 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageAccountSortOrder
 
-    \brief The QMessageAccountSortOrder class defines the parameters used for sorting a subset of 
+    \brief The QMessageAccountSortOrder class defines the parameters used for sorting a subset of
     queried accounts from the messaging store.
-    
-    \inmodule QtMessaging
-    
-    \ingroup messaging
 
-    A QMessageAccountSortOrder is composed of a account property to sort and a sort order. 
-    The QMessageAccountSortOrder class is used in conjunction with the QMessageManager::queryAccounts() 
+    \inmodule QtMessaging
+
+    \ingroup messaging
+    \since 1.0
+
+    A QMessageAccountSortOrder is composed of a account property to sort and a sort order.
+    The QMessageAccountSortOrder class is used in conjunction with the QMessageManager::queryAccounts()
     function to sort account results according to the criteria defined by the sort order.
-    
+
     \sa QMessageManager, QMessageAccountFilter
 */
 
 /*!
     \fn QMessageAccountSortOrder::QMessageAccountSortOrder()
-  
+
     Create a QMessageAccountSortOrder with specifying matching parameters.
 
-    A default-constructed sort order (one for which isEmpty() returns true) sorts no accounts. 
+    A default-constructed sort order (one for which isEmpty() returns true) sorts no accounts.
 
-    The result of combining an empty sort order with a non-empty sort order is the same as the original 
+    The result of combining an empty sort order with a non-empty sort order is the same as the original
     non-empty sort order.
 
     The result of combining two empty sort orders is an empty sort order.
@@ -74,40 +75,46 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \fn QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
-  
+
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccountSortOrder::~QMessageAccountSortOrder()
-    
+
     Destroys the sort order.
 */
 
 /*!
     \internal
     \fn QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
+    \since 1.0
 */
-    
+
 /*!
     \fn QMessageAccountSortOrder::isEmpty() const
-  
+
     Returns true if the sort order remains empty after default construction; otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccountSortOrder::isSupported() const
-  
+
     Returns true if the sort order is supported on the current platform; otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other) const
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 bool QMessageAccountSortOrder::operator!=(const QMessageAccountSortOrder& other) const
 {
@@ -116,9 +123,10 @@ bool QMessageAccountSortOrder::operator!=(const QMessageAccountSortOrder& other)
 
 /*!
     \fn QMessageAccountSortOrder::byName(Qt::SortOrder order)
-  
+
     Returns an sort order that sorts accounts by name, according to \a order.
 
+    \since 1.0
     \sa QMessageAccount::name()
 */
 

@@ -299,13 +299,6 @@ void QDeclarativeGeoMapPolygonObject::removeCoordinate(QDeclarativeCoordinate* c
     polygon is visible.
 */
 
-/*!
-    \qmlproperty bool MapPolygon::selected
-
-    This property holds a boolean corresponding to whether or not the
-    polygon is selected.
-*/
-
 #include "moc_qdeclarativegeomappolygonobject_p.cpp"
 
 QTM_END_NAMESPACE

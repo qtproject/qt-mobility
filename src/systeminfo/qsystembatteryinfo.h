@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef QSYSTEMBATTERYINFO_H
 #define QSYSTEMBATTERYINFO_H
 
@@ -60,11 +59,9 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
     Q_PROPERTY(int remainingCapacity READ remainingCapacity NOTIFY remainingCapacityChanged)
     Q_PROPERTY(int voltage READ voltage CONSTANT)
     Q_PROPERTY(int remainingChargingTime READ remainingChargingTime NOTIFY remainingChargingTimeChanged)
-
     Q_PROPERTY(int currentFlow READ currentFlow  NOTIFY currentFlowChanged)
     Q_PROPERTY(int remainingCapacityBars READ remainingCapacityBars NOTIFY remainingCapacityBarsChanged)
     Q_PROPERTY(int maxBars READ maxBars CONSTANT)
-
     Q_PROPERTY(ChargerType chargerType READ chargerType NOTIFY chargerTypeChanged)
     Q_PROPERTY(ChargingState chargingState READ chargingState NOTIFY chargingStateChanged)
     Q_PROPERTY(EnergyUnit energyMeasurementUnit READ energyMeasurementUnit CONSTANT)
@@ -74,7 +71,6 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
     Q_ENUMS(ChargerType)
     Q_ENUMS(ChargingState)
     Q_ENUMS(EnergyUnit)
-
 
 public:
     explicit QSystemBatteryInfo(QObject *parent = 0);
@@ -109,12 +105,11 @@ public:
     enum EnergyUnit {
         UnitUnknown = -1,
         UnitmAh,
-        UnitmWh,
+        UnitmWh
     };
 
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
-
 
     int nominalCapacity() const;
     int remainingCapacityPercent() const;
@@ -130,16 +125,16 @@ public:
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
 
 Q_SIGNALS:
-    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus status);
 
-    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
-    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState state);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType type);
 
-    void nominalCapacityChanged(int cap);
-    void remainingCapacityPercentChanged(int level);
-    void remainingCapacityChanged(int level);
+    void nominalCapacityChanged(int capacity);
+    void remainingCapacityPercentChanged(int capacity);
+    void remainingCapacityChanged(int capacity);
 
-    void currentFlowChanged(int level);
+    void currentFlowChanged(int flow);
     void remainingCapacityBarsChanged(int bars);
     void remainingChargingTimeChanged(int time);
 
@@ -149,9 +144,9 @@ private:
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
-
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
+
 #endif // QSYSTEMBATTERYINFO_H

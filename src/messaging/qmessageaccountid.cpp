@@ -44,22 +44,23 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageAccountId
-    
-    \inmodule QtMessaging
-    
-    \ingroup messaging
 
-    \brief The QMessageAccountId class provides a unique identifier for a QMessageAccount 
+    \inmodule QtMessaging
+
+    \ingroup messaging
+    \since 1.0
+
+    \brief The QMessageAccountId class provides a unique identifier for a QMessageAccount
     messaging account, within the scope of the messaging store.
 
     A QMessageAccountId can be constructed from a string, or converted to a string with toString().
 
-    A QMessageAccountId instance can be tested for validity with isValid(), and compared to other 
+    A QMessageAccountId instance can be tested for validity with isValid(), and compared to other
     instances for equality.
-    
-    If the message a QMessageAccountId identifies is removed from the messaging store then the 
+
+    If the message a QMessageAccountId identifies is removed from the messaging store then the
     identifier will not be reused.
-    
+
     \sa QMessageAccount
 */
 
@@ -73,28 +74,33 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 /*!
     \fn QMessageAccountId::QMessageAccountId(const QString& id)
 
     Constructs an identifier from \a id.
-    
+
+    \since 1.0
     \sa toString()
 */
 
 /*!
     \fn QMessageAccountId::~QMessageAccountId()
-    
+
     Destroys the identifier.
 */
 
 /*!
     \internal
     \fn bool QMessageAccountId::operator==(const QMessageAccountId &other) const
+    \since 1.0
 */
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
 {
     return !operator==(other);
@@ -104,28 +110,32 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
     \fn bool QMessageAccountId::operator<(const QMessageAccountId &other) const
 
     Returns true if this identifier is ordered before \a other using an implementation-defined ordering.
+    \since 1.0
 */
 
 /*!
     \internal
     \fn QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId &other)
+    \since 1.0
 */
 
 /*!
     \fn bool QMessageAccountId::toString() const
 
     Returns the string representation of this identifier.
-    
+
     A null string should be returned if and only if the identifier is invalid.
 
-    String representations of identifiers should not be used to test for equality, instead 
+    String representations of identifiers should not be used to test for equality, instead
     the equality operator should be used.
+    \since 1.0
 */
 
 /*!
     \fn bool QMessageAccountId::isValid() const
 
     Returns true if this identifier is valid; otherwise returns false.
+    \since 1.0
 */
 
 /*! \typedef QMessageAccountIdList

@@ -43,7 +43,6 @@
 
 #include <QtTest/QtTest>
 #include "qdeclarativegeneralinfo_p.h"
-#include <QDebug>
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemInfo::Version);
@@ -91,7 +90,7 @@ void tst_QDeclarativeSystemInfo::tst_availableLanguages()
     QDeclarativeGeneralInfo si;
     QVERIFY(!si.availableLanguages().isEmpty());
     QStringList available = si.availableLanguages();
-    foreach(QString lang, available) {
+    foreach (QString lang, available) {
         QCOMPARE(lang.length(), 2);
         QVERIFY(lang == lang.toLower());
     }
@@ -99,25 +98,21 @@ void tst_QDeclarativeSystemInfo::tst_availableLanguages()
 
 void tst_QDeclarativeSystemInfo::tst_versions_data()
 {
- QTest::addColumn<QSystemInfo::Version>("version");
- QTest::addColumn<QString>("parameter");
+    QTest::addColumn<QSystemInfo::Version>("version");
+    QTest::addColumn<QString>("parameter");
 
- QTest::newRow("Os") << QSystemInfo::Os << "";
- QTest::newRow("QtCore") << QSystemInfo::QtCore << "";
- QTest::newRow("Firmware") << QSystemInfo::Firmware << "";
-
+    QTest::newRow("Os") << QSystemInfo::Os << "";
+    QTest::newRow("QtCore") << QSystemInfo::QtCore << "";
+    QTest::newRow("Firmware") << QSystemInfo::Firmware << "";
 }
 
 void tst_QDeclarativeSystemInfo::tst_versions()
 {
-    {
-        QFETCH(QSystemInfo::Version, version);
-        QFETCH(QString, parameter);
-        QDeclarativeGeneralInfo si;
-        QString vers = si.version(version, parameter);
-        QVERIFY(!vers.isEmpty()
-            || vers.isEmpty());
-    }
+    QFETCH(QSystemInfo::Version, version);
+    QFETCH(QString, parameter);
+    QDeclarativeGeneralInfo si;
+    QString vers = si.version(version, parameter);
+    QVERIFY(!vers.isEmpty() || vers.isEmpty());
 }
 
 void tst_QDeclarativeSystemInfo::tst_countryCode()
@@ -149,13 +144,10 @@ void tst_QDeclarativeSystemInfo::tst_hasFeatures_data()
 
 void tst_QDeclarativeSystemInfo::tst_hasFeatures()
 {
-    {
-        QFETCH(QSystemInfo::Feature, feature);
-        QDeclarativeGeneralInfo si;
-        qWarning() << si.hasFeatureSupported(feature);
-        QVERIFY(si.hasFeatureSupported(feature) == false
-                || si.hasFeatureSupported(feature) == true);
-    }
+    QFETCH(QSystemInfo::Feature, feature);
+    QDeclarativeGeneralInfo si;
+    QVERIFY(si.hasFeatureSupported(feature) == false
+            || si.hasFeatureSupported(feature) == true);
 }
 
 void tst_QDeclarativeSystemInfo::tst_detailFeatures_data()

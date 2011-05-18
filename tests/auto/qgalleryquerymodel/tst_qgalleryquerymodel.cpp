@@ -89,6 +89,8 @@ private Q_SLOTS:
     void invalidIndex();
     void hierarchy();
     void setGallery();
+    void galleryChanged();
+    void errorChanged();
 
 private:
     void populateGallery(QtTestGallery *gallery) const;
@@ -1807,6 +1809,45 @@ void tst_QGalleryQueryModel::setGallery()
     index = model.index(0, 0);
     QCOMPARE(index.isValid(), false);
 }
+
+void tst_QGalleryQueryModel::galleryChanged()
+{
+    QtTestGallery *gallery;
+    gallery = new (QtTestGallery);
+    QGalleryQueryModel model;
+
+    QSignalSpy galleryChangedSpy(&model, SIGNAL(galleryChanged()));
+    QCOMPARE(galleryChangedSpy.count(), 0);
+
+    model.setGallery(gallery);
+    QCOMPARE(model.gallery(), static_cast<QAbstractGallery*>(gallery));
+    QCOMPARE(galleryChangedSpy.count(), 1);
+
+}
+
+void tst_QGalleryQueryModel::errorChanged()
+{
+
+    QtTestGallery gallery;
+
+    QGalleryQueryModel model(&gallery);
+
+    QSignalSpy errorChangedSpy(&model, SIGNAL(errorChanged()));
+
+    model.execute();
+    QCOMPARE(model.error(), int(QGalleryAbstractRequest::NoError));
+    QCOMPARE(errorChangedSpy.count(),0);
+
+    gallery.setError(120, QLatin1String("bad connection"));
+    model.execute();
+    QCOMPARE(model.state(), QGalleryAbstractRequest::Error);
+    QCOMPARE(model.error(),120);
+    QCOMPARE(model.errorString(), QLatin1String("bad connection"));
+    QCOMPARE(errorChangedSpy.count(),1);
+
+
+}
+
 
 QTEST_MAIN(tst_QGalleryQueryModel)
 

@@ -24,8 +24,9 @@ else:TARGET = QmlCamera
 RESOURCES += declarative-camera.qrc
 
 symbian {
+    include(camerakeyevent_symbian/camerakeyevent_symbian.pri)
     load(data_caging_paths)
-    TARGET.CAPABILITY = UserEnvironment NetworkServices Location ReadUserData WriteUserData
+    TARGET.CAPABILITY += UserEnvironment NetworkServices Location ReadUserData WriteUserData
     TARGET.EPOCHEAPSIZE = 0x20000 0x3000000
 }
 

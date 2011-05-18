@@ -108,6 +108,7 @@ public:
         qmlRegisterType<QDeclarativeOrganizerItemIntersectionFilter>(uri, 1, 1, "IntersectionFilter");
         qmlRegisterType<QDeclarativeOrganizerItemUnionFilter>(uri, 1, 1, "UnionFilter");
         qmlRegisterType<QDeclarativeOrganizerItemInvalidFilter>(uri, 1, 1, "InvalidFilter");
+        qmlRegisterType<QDeclarativeOrganizerItemCompoundFilter>();
     }
 };
 

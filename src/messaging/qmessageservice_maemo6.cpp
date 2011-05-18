@@ -55,7 +55,8 @@ QMessageServicePrivate::QMessageServicePrivate(QMessageService *parent)
    _state(QMessageService::InactiveState),
    _error(QMessageManager::NoError),
    _active(false), _actionId(-1),
-   _pendingRequestCount(0)
+   _pendingRequestCount(0),
+   _totalRequestCount(0)
 {
 
 }
@@ -102,6 +103,8 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
             _pendingRequestCount++;
 	}
     }
+
+    _totalRequestCount = _pendingRequestCount;
 
     if (_pendingRequestCount > 0) {
         _sortOrder = sortOrder;
@@ -155,6 +158,8 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
 	}
     }
 
+    _totalRequestCount = _pendingRequestCount;
+
     if (_pendingRequestCount > 0) {
         _sortOrder = sortOrder;
         _limit = limit;
@@ -198,6 +203,8 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
 	}
     }
 
+    _totalRequestCount = _pendingRequestCount;
+
     if (_pendingRequestCount > 0) {
         _state = QMessageService::ActiveState;
         emit stateChanged(_state);
@@ -240,6 +247,7 @@ void QMessageServicePrivate::cancel()
     _active = false;
     _error = QMessageManager::NoError;
     _pendingRequestCount = 0;
+    _totalRequestCount = 0;
 
     QObjectList deleteList;
     foreach (QObject *child, q_ptr->children()) {
@@ -257,9 +265,12 @@ void QMessageServicePrivate::cancel()
 void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
 {
     if (!_active)
-	return;
+	return;       
 
     _pendingRequestCount--;
+
+    if (_totalRequestCount > 0)
+        progressChanged(_totalRequestCount - _pendingRequestCount, _totalRequestCount);
 
     if (!isFiltered) {
         _filtered = false;
@@ -276,6 +287,7 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
     _ids.append(ids);
 
     if (_pendingRequestCount == 0) {
+        _totalRequestCount = 0;
         if (!_filtered) {
             MessagingHelper::filterMessages(_ids, _filter);
         }
@@ -297,16 +309,26 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
 
 void QMessageServicePrivate::messagesCounted(int count)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "begin" ;
+
     if (!_active)
 	return;
 
     _pendingRequestCount--;
     _count += count;
+
+    if (_totalRequestCount > 0)
+        progressChanged(_totalRequestCount - _pendingRequestCount, _totalRequestCount);
+
+    qDebug() << __PRETTY_FUNCTION__ << "_pendingRequestCount ="  << _pendingRequestCount;
     if (_pendingRequestCount == 0) {
-        emit q_ptr->messagesCounted(_count);
+        _totalRequestCount = 0;
+        qDebug() << __PRETTY_FUNCTION__ << "emiting messagesCounted()" ;
+        emit q_ptr->messagesCounted(_count);        
         setFinished(true);
         _count = 0;
     }
+    qDebug() << __PRETTY_FUNCTION__ << "end" ;
 }
 
 bool QMessageServicePrivate::compose(const QMessage &message)
@@ -369,6 +391,7 @@ bool QMessageServicePrivate::show(const QMessageId &id)
 
 void QMessageServicePrivate::progressChanged(uint value, uint total)
 {
+    qDebug() << __PRETTY_FUNCTION__ << "emitting progressChanged" << value << "/" << total;
     emit q_ptr->progressChanged(value, total);
 }
 

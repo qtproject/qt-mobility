@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QBluetoothAddress
     \brief The QBluetoothAddress class provides a Bluetooth address.
+    \since 1.2
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
@@ -136,7 +137,7 @@ QBluetoothAddress::QBluetoothAddress(const QBluetoothAddress &other)
 /*!
     Assigns \a other to this Bluetooth address.
 */
-QBluetoothAddress &QBluetoothAddress::operator=(const QBluetoothAddress &other)   
+QBluetoothAddress &QBluetoothAddress::operator=(const QBluetoothAddress &other)
 {
     if(!other.d_ptr) {
         delete d_ptr;
@@ -196,7 +197,7 @@ bool QBluetoothAddress::operator<(const QBluetoothAddress &other) const
     Returns true if the Bluetooth address are equal, otherwise returns false.
 */
 bool QBluetoothAddress::operator==(const QBluetoothAddress &other) const
-{    
+{
     Q_D(const QBluetoothAddress);
 
     // check if they are both null

@@ -53,6 +53,8 @@
 #include <QtCore/qsize.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/qdir.h>
+#include <QtGui/qdesktopservices.h>
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || (GST_VERSION_MICRO > 20)
 #define USE_PLAYBIN2
@@ -87,6 +89,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_bus(0),
      m_videoOutput(0),
      m_renderer(0),
+     m_haveQueueElement(false),
 #if defined(HAVE_GST_APPSRC)
      m_appSrc(0),
 #endif
@@ -98,7 +101,9 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_seekable(false),
      m_lastPosition(0),
      m_duration(-1),
-     m_durationQueries(0)
+     m_durationQueries(0),
+     m_everPlayed(false) ,
+     m_sourceType(UnknownSrc)
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -154,6 +159,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
         g_object_set(G_OBJECT(m_playbin), "video-sink", m_videoOutputBin, NULL);
 
         g_signal_connect(G_OBJECT(m_playbin), "notify::source", G_CALLBACK(playbinNotifySource), this);
+        g_signal_connect(G_OBJECT(m_playbin), "element-added",  G_CALLBACK(handleElementAdded), this);
 
         // Initial volume
         double volume = 1.0;
@@ -200,6 +206,7 @@ void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIO
     m_request = request;
     m_duration = -1;
     m_lastPosition = 0;
+    m_haveQueueElement = false;
 
     if (m_appSrc)
         m_appSrc->deleteLater();
@@ -228,6 +235,7 @@ void QGstreamerPlayerSession::loadFromUri(const QNetworkRequest &request)
     m_request = request;
     m_duration = -1;
     m_lastPosition = 0;
+    m_haveQueueElement = false;
 
     if (m_playbin) {
         m_tags.clear();
@@ -277,6 +285,41 @@ void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
         }
         emit playbackRateChanged(m_playbackRate);
     }
+}
+
+QMediaTimeRange QGstreamerPlayerSession::availablePlaybackRanges() const
+{
+    QMediaTimeRange ranges;
+#if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 31)
+    //GST_FORMAT_TIME would be more appropriate, but unfortunately it's not supported.
+    //with GST_FORMAT_PERCENT media is treated as encoded with constant bitrate.
+    GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
+
+    if (gst_element_query(m_playbin, query)) {
+        for (guint index = 0; index < gst_query_get_n_buffering_ranges(query); index++) {
+            gint64 rangeStart = 0;
+            gint64 rangeStop = 0;
+
+            //This query should return values in GST_FORMAT_PERCENT_MAX range,
+            //but queue2 returns values in 0..100 range instead
+            if (gst_query_parse_nth_buffering_range(query, index, &rangeStart, &rangeStop))
+                ranges.addInterval(rangeStart * duration() / 100,
+                                   rangeStop * duration() / 100);
+        }
+    }
+
+    gst_query_unref(query);
+#endif
+
+    //without queue2 element in pipeline all the media is considered available
+    if (ranges.isEmpty() && duration() > 0 && !m_haveQueueElement)
+        ranges.addInterval(0, duration());
+
+#ifdef DEBUG_PLAYBIN
+    qDebug() << ranges;
+#endif
+
+    return ranges;
 }
 
 int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType streamType) const
@@ -673,6 +716,7 @@ bool QGstreamerPlayerSession::isSeekable() const
 
 bool QGstreamerPlayerSession::play()
 {
+    m_everPlayed = false;
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PlayingState;
         if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
@@ -709,6 +753,7 @@ bool QGstreamerPlayerSession::pause()
 
 void QGstreamerPlayerSession::stop()
 {
+    m_everPlayed = false;
     if (m_playbin) {
         if (m_renderer)
             m_renderer->stopRenderer();
@@ -828,6 +873,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             updateDuration();
         }
 
+#ifdef DEBUG_PLAYBIN
+        if (m_sourceType == MMSSrc && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
+            qDebug() << "Message from MMSSrc: " << GST_MESSAGE_TYPE(gm);
+        }
+#endif
+
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_BUFFERING) {
             int progress = 0;
             gst_message_parse_buffering(gm, &progress);
@@ -875,6 +926,11 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                         //check for seekable
                         if (oldState == GST_STATE_READY) {
+                            if (m_sourceType == SoupHTTPSrc || m_sourceType == MMSSrc) {
+                                //since udpsrc is a live source, it is not applicable here
+                                m_everPlayed = true;
+                            }
+
                             getStreamsInfo();
                             updateVideoResolutionTag();
 
@@ -912,6 +968,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         break;
                     }
                     case GST_STATE_PLAYING:
+                        m_everPlayed = true;
                         if (m_state != QMediaPlayer::PlayingState)
                             emit stateChanged(m_state = QMediaPlayer::PlayingState);
 
@@ -929,19 +986,16 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             case GST_MESSAGE_UNKNOWN:
                 break;
             case GST_MESSAGE_ERROR: {
-                    emit invalidMedia();
-                    stop();
                     GError *err;
                     gchar *debug;
                     gst_message_parse_error(gm, &err, &debug);
                     if (err->domain == GST_STREAM_ERROR && err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND)
-                        emit error(int(QMediaPlayer::FormatError), tr("Cannot play stream of type: <unknown>"));
+                        processInvalidMedia(QMediaPlayer::FormatError, tr("Cannot play stream of type: <unknown>"));
                     else
-                        emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                        processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
                     qWarning() << "Error:" << QString::fromUtf8(err->message);
                     g_error_free(err);
                     g_free(debug);
-                    stop();
                 }
                 break;
             case GST_MESSAGE_WARNING:
@@ -1030,28 +1084,26 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             gst_message_parse_error(gm, &err, &debug);
             // If the source has given up, so do we.
             if (qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
-                emit invalidMedia();
-                stop();
+                bool everPlayed = m_everPlayed;
                 // Try and differentiate network related resource errors from the others
                 if (!m_request.url().isRelative() && m_request.url().scheme().compare(QLatin1String("file"), Qt::CaseInsensitive) != 0 ) {
-                    if (err->domain == GST_RESOURCE_ERROR && (
-                        err->code == GST_RESOURCE_ERROR_BUSY ||
-                        err->code == GST_RESOURCE_ERROR_OPEN_READ ||
-                        err->code == GST_RESOURCE_ERROR_READ ||
-                        err->code == GST_RESOURCE_ERROR_SEEK ||
-                        err->code == GST_RESOURCE_ERROR_SYNC)) {
-                        emit error(int(QMediaPlayer::NetworkError), QString::fromUtf8(err->message));
+                    if (everPlayed ||
+                        (err->domain == GST_RESOURCE_ERROR && (
+                         err->code == GST_RESOURCE_ERROR_BUSY ||
+                         err->code == GST_RESOURCE_ERROR_OPEN_READ ||
+                         err->code == GST_RESOURCE_ERROR_READ ||
+                         err->code == GST_RESOURCE_ERROR_SEEK ||
+                         err->code == GST_RESOURCE_ERROR_SYNC))) {
+                        processInvalidMedia(QMediaPlayer::NetworkError, QString::fromUtf8(err->message));
                     } else {
-                        emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                        processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
                     }
                 }
                 else
-                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                    processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
             } else if (err->domain == GST_STREAM_ERROR
                        && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
-                emit invalidMedia();
-                stop();
-                emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+                processInvalidMedia(QMediaPlayer::AccessDeniedError, QString::fromUtf8(err->message));
             } else {
                 handlePlaybin2 = m_usePlaybin2;
             }
@@ -1059,6 +1111,14 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 qWarning() << "Error:" << QString::fromUtf8(err->message);
             g_error_free(err);
             g_free(debug);
+        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT
+                   && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0
+                   && m_sourceType == UDPSrc
+                   && gst_structure_has_name(gst_message_get_structure(gm), "GstUDPSrcTimeout")) {
+            //since udpsrc will not generate an error for the timeout event,
+            //we need to process its element message here and treat it as an error.
+            processInvalidMedia(m_everPlayed ? QMediaPlayer::NetworkError : QMediaPlayer::ResourceError,
+                                tr("UDP source timeout"));
         } else {
             handlePlaybin2 = m_usePlaybin2;
         }
@@ -1079,14 +1139,10 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 gst_message_parse_error(gm, &err, &debug);
                 if (qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "decodebin2", 10) == 0
                     || qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "uridecodebin", 12) == 0) {
-                    emit invalidMedia();
-                    stop();
-                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                    processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
                 } else if (err->domain == GST_STREAM_ERROR
                            && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
-                    emit invalidMedia();
-                    stop();
-                    emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+                    processInvalidMedia(QMediaPlayer::AccessDeniedError, QString::fromUtf8(err->message));
                 }
                 qWarning() << "Error:" << QString::fromUtf8(err->message);
                 g_error_free(err);
@@ -1312,6 +1368,10 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
     if (source == 0)
         return;
 
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Playbin source added:" << G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source));
+#endif
+
     // Turn off icecast metadata request, will be re-set if in QNetworkRequest
     // (souphttpsrc docs say is false by default, but header appears in request
     // @version 0.10.21)
@@ -1357,10 +1417,23 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
         gst_structure_free(extras);
     }
 
-    gst_object_unref(source);
+    //set timeout property to 5 seconds
+    if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstUDPSrc") == 0) {
+        //udpsrc timeout unit = microsecond
+        g_object_set(G_OBJECT(source), "timeout", 5000000, NULL);
+        self->m_sourceType = UDPSrc;
+    } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstSoupHTTPSrc") == 0) {
+        //souphttpsrc timeout unit = second
+        g_object_set(G_OBJECT(source), "timeout", 5, NULL);
+        self->m_sourceType = SoupHTTPSrc;
+    } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstMMSSrc") == 0) {
+        self->m_sourceType = MMSSrc;
+        g_object_set(G_OBJECT(source), "tcp-timeout", 5000000, NULL);
+    } else {
+        self->m_sourceType = UnknownSrc;
+    }
 
-    // NOTE: code assumes souphttpsrc, but written so anything with "extra-headers"
-    // should be functional.
+    gst_object_unref(source);
 }
 
 void QGstreamerPlayerSession::handleVolumeChange(GObject *o, GParamSpec *p, gpointer d)
@@ -1419,4 +1492,46 @@ void QGstreamerPlayerSession::updateMuted()
 #endif
         emit mutedStateChanged(muted);
     }
+}
+
+
+void QGstreamerPlayerSession::handleElementAdded(GstBin *bin, GstElement *element, QGstreamerPlayerSession *session)
+{
+    Q_UNUSED(bin);
+    //we have to configure queue2 element to enable media downloading
+    //and reporting available ranges,
+    //but it's added dynamically to playbin2
+
+    gchar *elementName = gst_element_get_name(element);
+
+    if (g_str_has_prefix(elementName, "queue2")) {
+        session->m_haveQueueElement = true;
+
+        if (session->property("mediaDownloadEnabled").toBool()) {
+            QDir cacheDir(QDesktopServices::storageLocation(QDesktopServices::CacheLocation));
+            QString cacheLocation = cacheDir.absoluteFilePath("gstmedia__XXXXXX");
+#ifdef DEBUG_PLAYBIN
+            qDebug() << "set queue2 temp-location" << cacheLocation;
+#endif
+            g_object_set(G_OBJECT(element), "temp-template", cacheLocation.toUtf8().constData(), NULL);
+        } else {
+            g_object_set(G_OBJECT(element), "temp-template", NULL, NULL);
+        }
+    } else if (g_str_has_prefix(elementName, "uridecodebin") ||
+               g_str_has_prefix(elementName, "decodebin2")) {
+        //listen for queue2 element added to uridecodebin/decodebin2 as well.
+        //Don't touch other bins since they may have unrelated queues
+        g_signal_connect(element, "element-added",
+                         G_CALLBACK(handleElementAdded), session);
+    }
+
+    g_free(elementName);
+}
+
+//doing proper operations when detecting an invalidMedia: change media status before signal the erorr
+void QGstreamerPlayerSession::processInvalidMedia(QMediaPlayer::Error errorCode, const QString& errorString)
+{
+    emit invalidMedia();
+    stop();
+    emit error(int(errorCode), errorString);
 }

@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
 
     \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
+    \since 1.0
 
     When multiple Value Space layers are available QValueSpacePublisher only publishes values to
     the layer with the highest order.  The layers that QValueSpacePublisher can access can be

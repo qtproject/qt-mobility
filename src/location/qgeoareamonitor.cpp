@@ -51,7 +51,8 @@
     changes for a specified set of coordinates.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in
@@ -129,6 +130,7 @@ QGeoAreaMonitor::~QGeoAreaMonitor()
 
     Note: Subclass implementations must call the base implementation of
     setCenter() so that center() returns the correct value.
+    \since 1.0
 */
 void QGeoAreaMonitor::setCenter(const QGeoCoordinate &coordinate)
 {
@@ -155,6 +157,7 @@ QGeoCoordinate QGeoAreaMonitor::center() const
 
     Note: Subclass implementations must call the base implementation of
     setRadius() so that radius() returns the correct value.
+    \since 1.0
 */
 void QGeoAreaMonitor::setRadius(qreal radius)
 {
@@ -172,8 +175,9 @@ qreal QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 
-    Note: Symbian applications will need to have the Location capability 
+    Note: Symbian applications will need to have the Location capability
     otherwise this will return 0.
+    \since 1.0
 */
 QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
@@ -199,6 +203,7 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
     monitored area to a position within the monitored area.
 
     The \a update holds the new position.
+    \since 1.0
 */
 
 /*!
@@ -208,6 +213,7 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
     monitored area to a position outside the monitored area.
 
     The \a update holds the new position.
+    \since 1.0
 */
 
 QTM_END_NAMESPACE

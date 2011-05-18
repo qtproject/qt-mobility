@@ -302,14 +302,17 @@ TInt CCntDbNotifyMonitor::NumberOfListeners() const
 	}
 
 
-TInt CCntDbNotifyMonitor::RunError(TInt /*aError*/)
+TInt CCntDbNotifyMonitor::RunError(TInt aError)
 	{
 #if defined(__VERBOSE_DEBUG__)	
 	TContactDbObserverEvent& event = iEventMsg();
 	DebugLogNotification(_L("[CNTMODEL] CCntDbNotifyMonitor::RunError"), event);		
 #endif
 
-	Start();
+	if (aError != KErrDied && aError != KErrServerTerminated)
+	    {
+	    Start();
+	    }
 		
 	return KErrNone;
 	}

@@ -66,6 +66,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-places
 
@@ -212,6 +213,7 @@ QGeoSearchManager::~QGeoSearchManager()
 
     The combination of managerName() and managerVersion() should be unique
     amongst the plugin implementations.
+    \since 1.1
 */
 QString QGeoSearchManager::managerName() const
 {
@@ -227,6 +229,7 @@ QString QGeoSearchManager::managerName() const
 
     The combination of managerName() and managerVersion() should be unique
     amongst the plugin implementations.
+    \since 1.1
 */
 int QGeoSearchManager::managerVersion() const
 {
@@ -266,6 +269,7 @@ int QGeoSearchManager::managerVersion() const
     this can be done in the slot connected to QGeoSearchManager::finished(),
     QGeoSearchManager::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
+    \since 1.1
 */
 QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, QGeoBoundingArea *bounds)
 {
@@ -311,6 +315,7 @@ QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, QGeoBoun
     this can be done in the slot connected to QGeoSearchManager::finished(),
     QGeoSearchManager::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
+    \since 1.1
 */
 QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordinate, QGeoBoundingArea *bounds)
 {
@@ -373,6 +378,7 @@ QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordin
     this can be done in the slot connected to QGeoSearchManager::finished(),
     QGeoSearchManager::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
+    \since 1.1
 */
 QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
         QGeoSearchManager::SearchTypes searchTypes,
@@ -446,6 +452,7 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
 
 /*!
     Returns whether this manager supports geocoding.
+    \since 1.1
 */
 bool QGeoSearchManager::supportsGeocoding() const
 {
@@ -457,6 +464,7 @@ bool QGeoSearchManager::supportsGeocoding() const
 
 /*!
     Returns whether this manager supports reverse geocoding.
+    \since 1.1
 */
 bool QGeoSearchManager::supportsReverseGeocoding() const
 {
@@ -465,6 +473,7 @@ bool QGeoSearchManager::supportsReverseGeocoding() const
 
 /*!
     Returns the search types supported by the search() function with this manager.
+    \since 1.1
 */
 QGeoSearchManager::SearchTypes QGeoSearchManager::supportedSearchTypes() const
 {
@@ -482,6 +491,7 @@ QGeoSearchManager::SearchTypes QGeoSearchManager::supportedSearchTypes() const
     provider. This does not indicate that search() does not support
     landmark searching, only that any landmark searching which occurs within in
     search() is done without the use of a QLandmarkManager.
+    \since 1.1
 */
 QLandmarkManager* QGeoSearchManager::defaultLandmarkManager() const
 {
@@ -496,6 +506,7 @@ QLandmarkManager* QGeoSearchManager::defaultLandmarkManager() const
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
+    \since 1.1
 */
 void QGeoSearchManager::setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
 {
@@ -508,6 +519,7 @@ void QGeoSearchManager::setAdditionalLandmarkManagers(const QList<QLandmarkManag
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
+    \since 1.1
 */
 QList<QLandmarkManager *> QGeoSearchManager::additionalLandmarkManagers() const
 {
@@ -523,6 +535,7 @@ QList<QLandmarkManager *> QGeoSearchManager::additionalLandmarkManagers() const
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
+    \since 1.1
 */
 void QGeoSearchManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkManager)
 {
@@ -538,6 +551,7 @@ void QGeoSearchManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkM
     in different languages, they will be returned in the language of \a locale.
 
     The locale used defaults to the system locale if this is not set.
+    \since 1.1
 */
 void QGeoSearchManager::setLocale(const QLocale &locale)
 {
@@ -547,6 +561,7 @@ void QGeoSearchManager::setLocale(const QLocale &locale)
 /*!
     Returns the locale used to hint to this search manager about what
     language to use for the results.
+    \since 1.1
 */
 QLocale QGeoSearchManager::locale() const
 {
@@ -566,6 +581,7 @@ QLocale QGeoSearchManager::locale() const
 
     \note Do no delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 
 /*!
@@ -581,6 +597,7 @@ QLocale QGeoSearchManager::locale() const
 
     \note Do no delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 
 /*******************************************************************************

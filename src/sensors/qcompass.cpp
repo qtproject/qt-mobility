@@ -50,6 +50,7 @@ IMPLEMENT_READING(QCompassReading)
     \class QCompassReading
     \ingroup sensors_reading
     \inmodule QtSensors
+    \since 1.0
 
     \brief The QCompassReading class represents one reading from a
            compass.
@@ -86,7 +87,7 @@ qreal QCompassReading::azimuth() const
 
 /*!
     Sets the \a azimuth of the device.
-    
+
     \sa {QCompassReading Units}
 */
 void QCompassReading::setAzimuth(qreal azimuth)

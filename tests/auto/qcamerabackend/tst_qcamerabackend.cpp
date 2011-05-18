@@ -42,6 +42,7 @@
 //TESTED_COMPONENT=src/multimedia
 
 #include <QtTest/QtTest>
+#include <QtGui/QImageReader>
 #include <QDebug>
 
 #include <qabstractvideosurface.h>
@@ -137,9 +138,12 @@ private slots:
     void testCtorWithDevice();
 
     void testCameraStates();
+    void testCaptureMode();
     void testCameraCapture();
     void testCaptureToBuffer();
     void testCameraCaptureMetadata();
+    void testExposureCompensation();
+    void testExposureMode();
 private:
 };
 
@@ -240,6 +244,82 @@ void tst_QCameraBackend::testCameraStates()
     QCOMPARE(errorSignal.count(), 0);
 }
 
+void tst_QCameraBackend::testCaptureMode()
+{
+    QCamera camera;
+
+    QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
+    QSignalSpy stateChangedSignal(&camera, SIGNAL(stateChanged(QCamera::State)));
+    QSignalSpy captureModeSignal(&camera, SIGNAL(captureModeChanged(QCamera::CaptureMode)));
+
+    QCOMPARE(camera.captureMode(), QCamera::CaptureStillImage);
+
+    if (!camera.isCaptureModeSupported(QCamera::CaptureVideo)) {
+        camera.setCaptureMode(QCamera::CaptureVideo);
+        QCOMPARE(camera.captureMode(), QCamera::CaptureStillImage);
+        QSKIP("Video capture not supported", SkipAll);
+    }
+
+    camera.setCaptureMode(QCamera::CaptureVideo);
+    QCOMPARE(camera.captureMode(), QCamera::CaptureVideo);
+    QTRY_COMPARE(captureModeSignal.size(), 1);
+    QCOMPARE(captureModeSignal.last().first().value<QCamera::CaptureMode>(), QCamera::CaptureVideo);
+    captureModeSignal.clear();
+
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+    //capture mode should still be video
+    QCOMPARE(camera.captureMode(), QCamera::CaptureVideo);
+
+    //it should be possible to switch capture mode in Loaded state
+    camera.setCaptureMode(QCamera::CaptureStillImage);
+    QTRY_COMPARE(captureModeSignal.size(), 1);
+    QCOMPARE(captureModeSignal.last().first().value<QCamera::CaptureMode>(), QCamera::CaptureStillImage);
+    captureModeSignal.clear();
+
+    camera.setCaptureMode(QCamera::CaptureVideo);
+    QTRY_COMPARE(captureModeSignal.size(), 1);
+    QCOMPARE(captureModeSignal.last().first().value<QCamera::CaptureMode>(), QCamera::CaptureVideo);
+    captureModeSignal.clear();
+
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    //capture mode should still be video
+    QCOMPARE(camera.captureMode(), QCamera::CaptureVideo);
+
+    stateChangedSignal.clear();
+    //it should be possible to switch capture mode in Active state
+    camera.setCaptureMode(QCamera::CaptureStillImage);
+    //camera may leave Active status, but should return to Active
+    QTest::qWait(10); //camera may leave Active status async
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(camera.captureMode(), QCamera::CaptureStillImage);
+    QVERIFY2(stateChangedSignal.isEmpty(), "camera should not change the state during capture mode changes");
+
+    QCOMPARE(captureModeSignal.size(), 1);
+    QCOMPARE(captureModeSignal.last().first().value<QCamera::CaptureMode>(), QCamera::CaptureStillImage);
+    captureModeSignal.clear();
+
+    camera.setCaptureMode(QCamera::CaptureVideo);
+    //camera may leave Active status, but should return to Active
+    QTest::qWait(10); //camera may leave Active status async
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(camera.captureMode(), QCamera::CaptureVideo);
+
+    QVERIFY2(stateChangedSignal.isEmpty(), "camera should not change the state during capture mode changes");
+
+    QCOMPARE(captureModeSignal.size(), 1);
+    QCOMPARE(captureModeSignal.last().first().value<QCamera::CaptureMode>(), QCamera::CaptureVideo);
+    captureModeSignal.clear();
+
+    camera.stop();
+    QCOMPARE(camera.captureMode(), QCamera::CaptureVideo);
+    camera.unload();
+    QCOMPARE(camera.captureMode(), QCamera::CaptureVideo);
+
+    QVERIFY2(errorSignal.isEmpty(), QString("Camera error: %1").arg(camera.errorString()).toLocal8Bit());
+}
+
 void tst_QCameraBackend::testCameraCapture()
 {
     QCamera camera;
@@ -253,19 +333,11 @@ void tst_QCameraBackend::testCameraCapture()
     QSignalSpy savedSignal(&imageCapture, SIGNAL(imageSaved(int,QString)));
     QSignalSpy errorSignal(&imageCapture, SIGNAL(error(int, QCameraImageCapture::Error,QString)));
 
-
     imageCapture.capture();
-    QCOMPARE(capturedSignal.size(), 0);
-#ifdef Q_OS_LINUX
-    QEXPECT_FAIL("", "QTMOBILITY-1480", Continue);
-#endif
-    QCOMPARE(errorSignal.size(), 1);
-#ifdef Q_OS_LINUX
-    QEXPECT_FAIL("", "QTMOBILITY-1480", Continue);
-#endif
+    QTRY_COMPARE(errorSignal.size(), 1);
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NotReadyError);
+    QCOMPARE(capturedSignal.size(), 0);
     errorSignal.clear();
-
 
     camera.start();
 
@@ -286,7 +358,9 @@ void tst_QCameraBackend::testCameraCapture()
     QString location = savedSignal.last().last().toString();
     QVERIFY(!location.isEmpty());
     QVERIFY(QFileInfo(location).exists());
-    QVERIFY(QImage().load(location));
+    QImageReader reader(location);
+    reader.setScaledSize(QSize(320,240));
+    QVERIFY(!reader.read().isNull());
 
     QFile(location).remove();
 }
@@ -356,8 +430,13 @@ void tst_QCameraBackend::testCaptureToBuffer()
     frame = QVideoFrame();
 
     QVERIFY(!data.isEmpty());
-    QImage img;
-    QVERIFY(img.loadFromData(data));
+    QBuffer buffer;
+    buffer.setData(data);
+    buffer.open(QIODevice::ReadOnly);
+    QImageReader reader(&buffer, "JPG");
+    reader.setScaledSize(QSize(640,480));
+    QImage img(reader.read());
+    QVERIFY(!img.isNull());
 
     capturedSignal.clear();
     imageAvailableSignal.clear();
@@ -450,6 +529,76 @@ void tst_QCameraBackend::testCameraCaptureMetadata()
     QTRY_VERIFY(!savedSignal.isEmpty());
     QVERIFY(!metadataSignal.isEmpty());
     QCOMPARE(metadataSignal.first().first().toInt(), id);
+}
+
+void tst_QCameraBackend::testExposureCompensation()
+{
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN)
+    QSKIP("Capture exposure parameters are supported only on mobile platforms", SkipAll);
+#endif
+
+    QCamera camera;
+    QCameraExposure *exposure = camera.exposure();
+
+    QSignalSpy exposureCompensationSignal(exposure, SIGNAL(exposureCompensationChanged(qreal)));
+
+    //it should be possible to set exposure parameters in Unloaded state
+    QCOMPARE(exposure->exposureCompensation()+1.0, 1.0);
+    exposure->setExposureCompensation(1.5);
+    QCOMPARE(exposure->exposureCompensation(), 1.5);
+    QTRY_COMPARE(exposureCompensationSignal.count(), 1);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.5);
+
+    //exposureCompensationChanged should not be emitted when value is not changed
+    exposure->setExposureCompensation(1.5);
+    QTest::qWait(50);
+    QCOMPARE(exposureCompensationSignal.count(), 1);
+
+    //exposure compensation should be preserved during load/start
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+
+    QCOMPARE(exposure->exposureCompensation(), 1.5);
+
+    exposureCompensationSignal.clear();
+    exposure->setExposureCompensation(-1.5);
+    QCOMPARE(exposure->exposureCompensation(), -1.5);
+    QTRY_COMPARE(exposureCompensationSignal.count(), 1);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), -1.5);
+
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+
+    QCOMPARE(exposure->exposureCompensation(), -1.5);
+
+    exposureCompensationSignal.clear();
+    exposure->setExposureCompensation(1.5);
+    QCOMPARE(exposure->exposureCompensation(), 1.5);
+    QTRY_COMPARE(exposureCompensationSignal.count(), 1);
+    QCOMPARE(exposureCompensationSignal.last().first().toReal(), 1.5);
+}
+
+void tst_QCameraBackend::testExposureMode()
+{
+#if !defined(Q_WS_MAEMO_6) && !defined(Q_WS_MAEMO_5) && !defined(Q_OS_SYMBIAN)
+    QSKIP("Capture exposure parameters are supported only on mobile platforms", SkipAll);
+#endif
+
+    QCamera camera;
+    QCameraExposure *exposure = camera.exposure();
+
+#ifdef Q_WS_MAEMO_6
+    QEXPECT_FAIL("", "Camerabin reports Manual exposure instead of Auto", Continue);
+#endif
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
+
+    exposure->setExposureMode(QCameraExposure::ExposurePortrait);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
+
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
 }
 
 QTEST_MAIN(tst_QCameraBackend)

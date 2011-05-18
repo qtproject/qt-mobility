@@ -57,9 +57,10 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -75,7 +76,9 @@ QContactFetchRequest::~QContactFetchRequest()
     QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
-/*! Sets the contact filter used to determine which contacts will be retrieved to \a filter */
+/*! Sets the contact filter used to determine which contacts will be retrieved to \a filter
+   \since 1.0
+*/
 void QContactFetchRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactFetchRequest);
@@ -83,7 +86,9 @@ void QContactFetchRequest::setFilter(const QContactFilter& filter)
     d->m_filter = filter;
 }
 
-/*! Sets the sort order of the result to \a sorting.  Only has an effect if called prior to calling \c start() */
+/*! Sets the sort order of the result to \a sorting.  Only has an effect if called prior to calling \c start()
+    \since 1.0
+*/
 void QContactFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
 {
     Q_D(QContactFetchRequest);
@@ -97,6 +102,7 @@ void QContactFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
   using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
   replace the previously saved contact in the backend).
+  \since 1.0
   \sa QContactFetchHint
  */
 void QContactFetchRequest::setFetchHint(const QContactFetchHint &fetchHint)
@@ -106,7 +112,9 @@ void QContactFetchRequest::setFetchHint(const QContactFetchHint &fetchHint)
     d->m_fetchHint = fetchHint;
 }
 
-/*! Returns the filter that will be used to select contacts to be returned */
+/*! Returns the filter that will be used to select contacts to be returned
+    \since 1.0
+*/
 QContactFilter QContactFetchRequest::filter() const
 {
     Q_D(const QContactFetchRequest);
@@ -114,7 +122,9 @@ QContactFilter QContactFetchRequest::filter() const
     return d->m_filter;
 }
 
-/*! Returns the sort ordering that will be used sort the results of this request */
+/*! Returns the sort ordering that will be used sort the results of this request
+    \since 1.0
+*/
 QList<QContactSortOrder> QContactFetchRequest::sorting() const
 {
     Q_D(const QContactFetchRequest);
@@ -128,6 +138,7 @@ QList<QContactSortOrder> QContactFetchRequest::sorting() const
   using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
   replace the previously saved contact in the backend).
+  \since 1.0
   \sa QContactFetchHint
  */
 QContactFetchHint QContactFetchRequest::fetchHint() const
@@ -137,7 +148,9 @@ QContactFetchHint QContactFetchRequest::fetchHint() const
     return d->m_fetchHint;
 }
 
-/*! Returns the list of contacts retrieved by this request */
+/*! Returns the list of contacts retrieved by this request
+    \since 1.0
+*/
 QList<QContact> QContactFetchRequest::contacts() const
 {
     Q_D(const QContactFetchRequest);

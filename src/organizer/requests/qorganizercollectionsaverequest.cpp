@@ -57,6 +57,8 @@ QTM_BEGIN_NAMESPACE
   the overall operation error (which may be retrieved by calling error()) is updated.
 
   \ingroup organizeritems-requests
+
+  \inmodule QtOrganizer
  */
 
 /*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */

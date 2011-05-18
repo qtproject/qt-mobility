@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass LandmarkNameFilter QDeclarativeLandmarkNameFilter
     \brief The LandmarkNameFilter element specifies a name filter for landmark model.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     The LandmarkNameFilter element specifies a name filter for landmark model.
     Logical combinations of this and other landmark filters can be
@@ -102,7 +102,7 @@ QLandmarkFilter* QDeclarativeLandmarkNameFilter::filter()
 /*!
     \qmlclass LandmarkCategoryFilter QDeclarativeLandmarkCategoryFilter
     \brief The LandmarkCategoryFilter element specifies a category filter for landmark model.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -150,7 +150,7 @@ QLandmarkFilter* QDeclarativeLandmarkCategoryFilter::filter()
 /*!
     \qmlclass LandmarkBoxFilter QDeclarativeLandmarkBoxFilter
     \brief The LandmarkBoxFilter element specifies a box (rectangle) filter for landmark model.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -231,7 +231,7 @@ QLandmarkFilter* QDeclarativeLandmarkBoxFilter::filter()
 /*!
     \qmlclass LandmarkProximityFilter QDeclarativeLandmarkProximityFilter
     \brief The LandmarkProximityFilter element specifies a proximity filter for landmark model.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     The LandmarkProximityFilter element specifies a proximity filter for landmark model.
     Logical combinations of this and other landmark filters can be
@@ -386,7 +386,7 @@ template <class T>
 /*!
     \qmlclass LandmarkUnionFilter QDeclarativeLandmarkUnionFilter
     \brief The LandmarkUnionFilter element specifies a union of landmark filters.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -415,7 +415,7 @@ QDeclarativeLandmarkUnionFilter::QDeclarativeLandmarkUnionFilter(QObject* parent
 /*!
     \qmlclass LandmarkIntersectionFilter QDeclarativeLandmarkIntersectionFilter
     \brief The LandmarkIntersectionFilter element specifies an insection of landmark filters.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 

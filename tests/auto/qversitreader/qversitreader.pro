@@ -5,8 +5,6 @@ CONFIG+=testcase
 
 include(../../../common.pri)
 
-requires(contains(build_unit_tests, yes))
-
 DEPENDPATH += .
 INCLUDEPATH += \
     . \

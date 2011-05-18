@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
     The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
     defined in QCameraExposureControl_iid.

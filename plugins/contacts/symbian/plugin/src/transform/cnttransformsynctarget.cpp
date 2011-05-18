@@ -140,10 +140,7 @@ void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefin
         // Not all fields are supported, replace:
         fields.clear();
         f.setDataType(QVariant::String);
-        f.setAllowableValues(QVariantList()
-                << QString("private")
-                << QString("public")
-                << QString("none"));
+        f.setAllowableValues(QVariantList());
         fields.insert(QContactSyncTarget::FieldSyncTarget, f);
 
         d.setFields(fields);

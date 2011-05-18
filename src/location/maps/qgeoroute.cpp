@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRoute class represents a route between two points.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -94,6 +95,7 @@ QGeoRoute::~QGeoRoute()
 /*!
     Assigns the contents of \a other to this route and returns a reference to
     this route.
+    \since 1.1
 */
 QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 {
@@ -103,6 +105,7 @@ QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 
 /*!
     Returns whether this route and \a other are equal.
+    \since 1.1
 */
 bool QGeoRoute::operator ==(const QGeoRoute &other) const
 {
@@ -111,6 +114,7 @@ bool QGeoRoute::operator ==(const QGeoRoute &other) const
 
 /*!
     Returns whether this route and \a other are not equal.
+    \since 1.1
 */
 bool QGeoRoute::operator !=(const QGeoRoute &other) const
 {
@@ -123,6 +127,7 @@ bool QGeoRoute::operator !=(const QGeoRoute &other) const
     Service providers which support the updating of routes commonly assign
     IDs to routes.  If this route came from such a service provider changing
     the ID will probably cause route updates to stop working.
+    \since 1.1
 */
 void QGeoRoute::setRouteId(const QString &id)
 {
@@ -135,6 +140,7 @@ void QGeoRoute::setRouteId(const QString &id)
     Service providers which support the updating of routes commonly assign
     IDs to routes.  If this route did not come from such a service provider
     the function will return an empty string.
+    \since 1.1
 */
 QString QGeoRoute::routeId() const
 {
@@ -153,6 +159,7 @@ void QGeoRoute::setRequest(const QGeoRouteRequest &request)
 /*!
     Returns the route request which describes the criteria used in
     the calculation of this route.
+    \since 1.1
 */
 QGeoRouteRequest QGeoRoute::request() const
 {
@@ -161,6 +168,7 @@ QGeoRouteRequest QGeoRoute::request() const
 
 /*!
     Sets the bounding box which encompasses the entire route to \a bounds.
+    \since 1.1
 */
 void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
 {
@@ -169,6 +177,7 @@ void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
 
 /*!
     Returns a bounding box which encompasses the entire route.
+    \since 1.1
 */
 QGeoBoundingBox QGeoRoute::bounds() const
 {
@@ -177,6 +186,7 @@ QGeoBoundingBox QGeoRoute::bounds() const
 
 /*!
     Sets the first route segment in the route to \a routeSegment.
+    \since 1.1
 */
 void QGeoRoute::setFirstRouteSegment(const QGeoRouteSegment &routeSegment)
 {
@@ -191,6 +201,7 @@ void QGeoRoute::setFirstRouteSegment(const QGeoRouteSegment &routeSegment)
 
     The remaining route segments can be accessed sequentially with
     QGeoRouteSegment::nextRouteSegment.
+    \since 1.1
 */
 QGeoRouteSegment QGeoRoute::firstRouteSegment() const
 {
@@ -200,6 +211,7 @@ QGeoRouteSegment QGeoRoute::firstRouteSegment() const
 /*!
     Sets the estimated amount of time it will take to traverse this route,
     in seconds, to \a secs.
+    \since 1.1
 */
 void QGeoRoute::setTravelTime(int secs)
 {
@@ -209,6 +221,7 @@ void QGeoRoute::setTravelTime(int secs)
 /*!
     Returns the estimated amount of time it will take to traverse this route,
     in seconds.
+    \since 1.1
 */
 int QGeoRoute::travelTime() const
 {
@@ -217,6 +230,7 @@ int QGeoRoute::travelTime() const
 
 /*!
     Sets the distance covered by this route, in metres, to \a distance.
+    \since 1.1
 */
 void QGeoRoute::setDistance(qreal distance)
 {
@@ -225,6 +239,7 @@ void QGeoRoute::setDistance(qreal distance)
 
 /*!
     Returns the distance covered by this route, in metres.
+    \since 1.1
 */
 qreal QGeoRoute::distance() const
 {
@@ -235,6 +250,7 @@ qreal QGeoRoute::distance() const
     Sets the travel mode for this route to \a mode.
 
     This should be one of the travel modes returned by request().travelModes().
+    \since 1.1
 */
 void QGeoRoute::setTravelMode(QGeoRouteRequest::TravelMode mode)
 {
@@ -245,6 +261,7 @@ void QGeoRoute::setTravelMode(QGeoRouteRequest::TravelMode mode)
     Returns the travel mode for the this route.
 
     This should be one of the travel modes returned by request().travelModes().
+    \since 1.1
 */
 QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 {
@@ -256,6 +273,7 @@ QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 
     The coordinates in \a path should be listed in the order in which they
     would be traversed by someone traveling along this segment of the route.
+    \since 1.1
 */
 void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -267,6 +285,7 @@ void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 
     The coordinates should be listed in the order in which they
     would be traversed by someone traveling along this segment of the route.
+    \since 1.1
 */
 QList<QGeoCoordinate> QGeoRoute::path() const
 {

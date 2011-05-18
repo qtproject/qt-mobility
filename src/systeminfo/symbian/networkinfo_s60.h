@@ -45,14 +45,23 @@
 #include <e32base.h>
 #include <e32debug.h>
 #include <etelmm.h>
+#include <etelpckt.h>
 #include <etel.h>
 #include <QList>
+
+//from etelbearers.h
+const TUint KGprsBearer  = 20;
+const TUint KEGprsBearer = 21;
+const TUint KUmtsBearer  = 22;
+const TUint KHsdpaBearer = 23;
+const TUint KDefaultBearer = 24;
 
 class MNetworkObserver
     {
 public:
     virtual void ChangedNetworkMode() = 0;
     virtual void ChangedNetworkStatus() = 0;
+    virtual void ChangedCellDataTechnology() = 0;
     };
 
 class MNetworkInfoObserver
@@ -60,6 +69,7 @@ class MNetworkInfoObserver
 public:
     virtual void changedNetworkStatus() = 0;
     virtual void changedNetworkMode() = 0;
+    virtual void changedCellDataTechnology() = 0;
     };
 
 class CNetworkBase : public CActive
@@ -82,6 +92,13 @@ protected:
     RTelServer::TPhoneInfo iPhoneInfo;
     TBool iConstructed;
     MNetworkObserver *iObserver;
+    //For CellData Technology
+    RPacketService::TDynamicCapsFlags iDynCaps;
+#ifdef ETELPACKETSERVICE_SUPPORTED
+    RPacketService iPacketService;
+#endif
+    RPacketService::TStatus iPacketServiceStatus;
+    bool iPacketdataserviceCaps;
     };
 
 class CNetworkMode : private CNetworkBase
@@ -155,16 +172,35 @@ private:
     */
     };
 
+class CPacketDataStatus : private CNetworkBase
+ {
+ public:
+    CPacketDataStatus();
+    ~CPacketDataStatus();
+    TBool IsDynamicCapsSupported();
+    TUint DynamicCaps();
+    void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
+    void Remove() {RemoveObserver();};
+    bool NetworkCtrlCapsenabled();
+ private : //From CNetworkBase
+    virtual void DoCancel();
+    virtual void RunL() ;
+    virtual void StartMonitoring();
+ };
+
 class CNetworkInfo : public CBase, public MNetworkObserver
 {
 private :
         CNetworkMode iNetMode;
         CNetworkStatus iNetStat;
+        CPacketDataStatus iPacketDataStatus;
         QList<MNetworkInfoObserver *> iObservers;
+        TUint32 iCellDataTechnology;
 
 protected :
     virtual void ChangedNetworkMode() ;
     virtual void ChangedNetworkStatus();
+    virtual void ChangedCellDataTechnology();
 
 public :
         CNetworkInfo();
@@ -176,6 +212,7 @@ public :
         RMobilePhone::TMobilePhoneRegistrationStatus GetStatus() const;
 #endif
        TUint32 GetCapability () const;
+       TUint CellDataTechnology();
 };
 
 

@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     belong to a certain category.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-filter
 */
@@ -60,6 +61,7 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkCategoryFilter)
 /*!
     Creates a filter that searches for landmarks that belong to the category
     identified by \a categoryId.
+    \since 1.1
 */
 QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId)
         : QLandmarkFilter(new QLandmarkCategoryFilterPrivate(categoryId))
@@ -69,6 +71,7 @@ QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &cate
 /*!
     \fn QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkFilter &other)
     Constructs a copy of \a other if possible, otherwise constructs a new category filter.
+    \since 1.1
 */
 
 /*!
@@ -81,6 +84,7 @@ QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
 
 /*!
     Returns the category identifier that this filter matches by.
+    \since 1.1
 */
 QLandmarkCategoryId QLandmarkCategoryFilter::categoryId() const
 {
@@ -91,6 +95,7 @@ QLandmarkCategoryId QLandmarkCategoryFilter::categoryId() const
 /*!
     Sets the category identifier that this filter matches by
     to \a categoryId.
+    \since 1.1
 */
 void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
@@ -101,6 +106,7 @@ void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryI
 /*!
     Convenience function to set the \a category that this filter matches by.
     It is equivalent to calling setCategory(category.categoryId()).
+    \since 1.1
 */
 void QLandmarkCategoryFilter::setCategory(const QLandmarkCategory &category)
 {

@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     QBluetoothLocalDevice provides functions for getting and setting the state of local Bluetooth
     devices.
@@ -131,7 +132,7 @@ QBluetoothLocalDevice::~QBluetoothLocalDevice()
     otherwise return false.
 */
 bool QBluetoothLocalDevice::isValid() const
-{    
+{
     return d_ptr;
 }
 

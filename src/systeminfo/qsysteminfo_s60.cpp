@@ -316,10 +316,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString & 
         {
             return S60Version();
         }
-        case QSystemInfo::QtCore:
-        {
-            return qVersion();
-        }
         case QSystemInfo::Firmware:
         {
             QString versionText;
@@ -420,30 +416,36 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     : QObject(parent)
 {
+ TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate<---");
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
 #ifdef ETELMM_SUPPORTED
     DeviceInfo::instance()->networkInfo()->addObserver(this);
 #endif
-    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
+    DeviceInfo::instance()->wlanInfo()->addObserver(this);
+    /*connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
         this, SLOT(wlanNetworkNameChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
         this, SLOT(wlanNetworkSignalStrengthChanged()));
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
-        this, SLOT(wlanNetworkStatusChanged()));
+        this, SLOT(wlanNetworkStatusChanged()));*/
     DeviceInfo::instance()->subscriberInfo();
+ TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate--->");
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
+  TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate<--");
+
     DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
 #ifdef ETELMM_SUPPORTED
     DeviceInfo::instance()->networkInfo()->removeObserver(this);
 #endif
-    DeviceInfo::instance()->wlanInfo()->FreeResources();
+    DeviceInfo::instance()->wlanInfo()->removeObserver(this);
+  TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate-->");
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -697,6 +699,11 @@ void QSystemNetworkInfoPrivate::changedNetworkStatus()
     emit networkStatusChanged(mode, networkStatus(mode));
 }
 
+void QSystemNetworkInfoPrivate::changedCellDataTechnology()
+ {
+  emit cellDataTechnologyChanged(cellDataTechnology());
+ }
+
 void QSystemNetworkInfoPrivate::changedCellId(int cellIdTel)
 {
     emit cellIdChanged(cellIdTel);
@@ -777,6 +784,23 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
+#ifdef ETELPACKETSERVICE_SUPPORTED
+  TUint celldatatechnology = DeviceInfo::instance()->networkInfo()->CellDataTechnology();
+  switch (celldatatechnology )
+   {
+    case KHsdpaBearer:
+      return QSystemNetworkInfo::HspaDataTechnology;
+
+    case KEGprsBearer:
+      return QSystemNetworkInfo::EdgeDataTechnology;
+
+    case KGprsBearer:
+      return QSystemNetworkInfo::GprsDataTechnology;
+
+    case KUmtsBearer:
+      return QSystemNetworkInfo::UmtsDataTechnology;
+   }
+#endif
     return QSystemNetworkInfo::UnknownDataTechnology;
 }
 
@@ -1452,17 +1476,23 @@ QString QSystemDeviceInfoPrivate::manufacturer()
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    return DeviceInfo::instance()->phoneInfo()->model();
-}
-
-QString QSystemDeviceInfoPrivate::productName()
-{
+    // The model() function should return something like RM-XXX
+    // However, CTelephony::TPhoneIdV1.iModel returns something like N8
+    // The productName() function should return something like N8
+    // However, SysUtil::GetSWVersion returns something like RM-XXX
+    // This is done as a fix for MOBILITY-2804
     QString productname;
     TBuf<KSysUtilVersionTextLength> versionBuf;
     if (SysUtil::GetSWVersion(versionBuf) == KErrNone) {
         productname = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
     }
     return productname.split("\n").at(2);
+}
+
+QString QSystemDeviceInfoPrivate::productName()
+{
+    // Read the docs in QSystemDeviceInfoPrivate::model() for this
+    return DeviceInfo::instance()->phoneInfo()->model();
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel() const

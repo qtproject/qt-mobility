@@ -61,7 +61,7 @@ CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoP
         mSupportedMethods(PositioningMethod(0)),
         mCurrentMethod(PositioningMethod(0)),
         mListSize(0),
-        mMinUpdateInterval(0),
+        mMinUpdateInterval(100),
         mStartUpdates(FALSE),
         mRegularUpdateTimedOut(FALSE),
         mModuleFlags(0)
@@ -141,9 +141,10 @@ void CQGeoPositionInfoSourceS60::ConstructL()
 
         CleanupStack::PushL(mDevStatusUpdateAO);
 
-        if (mCurrentModuleId != TUid::Null())
+        if (mCurrentModuleId != TUid::Null()) {
             mRegUpdateAO = CQMLBackendAO::NewL(this, RegularUpdate, mCurrentModuleId);
-
+            mRegUpdateAO->setUpdateInterval(updateInterval());
+        }
         CleanupStack::Pop(2);
     }
 
@@ -902,7 +903,6 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
         mCurrentModuleId = mList[index].mUid ;
         lRegLocker.unlock();
 
-
         index = checkModule(mCurrentModuleId);
 
         if (index >= 0 && index < mListSize) {
@@ -912,15 +912,12 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
             lRegLocker_interval.unlock();
         }
 
+        int value = mRegUpdateAO->setUpdateInterval(updateInterval);
+        //as the positioning module has changed,
+        //possibility of the minimumupdateinterval being changed
+        if (value != updateInterval)
+            QGeoPositionInfoSource::setUpdateInterval(value);
 
-        if (updateInterval) {
-            int value = mRegUpdateAO->setUpdateInterval(updateInterval);
-            //as the poistioning module has changed
-            //possibility of the minimumupdateinterval being changed
-            if (value != updateInterval)
-                QGeoPositionInfoSource::setUpdateInterval(value);
-
-        }
     }
 
 }

@@ -50,6 +50,7 @@ IMPLEMENT_READING(QRotationReading)
     \class QRotationReading
     \ingroup sensors_reading
     \inmodule QtSensors
+    \since 1.0
 
     \brief The QRotationReading class represents one reading from the
            rotation sensor.
@@ -74,7 +75,7 @@ IMPLEMENT_READING(QRotationReading)
      (twice-rotated) z-axis and incrementing towards the x-axis.
     \endlist
 
-    Here is a visualisation showing the order in which angles are applied.
+    Here is a visualization showing the order in which angles are applied.
 
     \image sensors-rotation-anim.gif
 

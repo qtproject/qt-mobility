@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     QBluetoothSocket supports two socket types, \l {QBluetoothSocket::L2capSocket}{L2CAP} and
     \l {QBluetoothSocket::RfcommSocket}{RFCOMM}.
@@ -247,7 +248,7 @@ QBluetoothSocket::QBluetoothSocket(QObject *parent)
     Destroys the Bluetooth socket.
 */
 QBluetoothSocket::~QBluetoothSocket()
-{    
+{
     delete d_ptr;
     d_ptr = 0;
 }
@@ -450,7 +451,7 @@ void QBluetoothSocket::setSocketError(QBluetoothSocket::SocketError error_)
 void QBluetoothSocket::doDeviceDiscovery(const QBluetoothServiceInfo &service, OpenMode openMode)
 {
     Q_D(QBluetoothSocket);
-    
+
     qDebug() << "Starting discovery";
 
     if(d->discoveryAgent) {
@@ -458,7 +459,7 @@ void QBluetoothSocket::doDeviceDiscovery(const QBluetoothServiceInfo &service, O
     }
 
     d->discoveryAgent = new QBluetoothServiceDiscoveryAgent(service.device().address(),this);
-    
+
     qDebug() << "Got agent";
 
     connect(d->discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
@@ -474,7 +475,7 @@ void QBluetoothSocket::doDeviceDiscovery(const QBluetoothServiceInfo &service, O
 
     // we have to ID the service somehow
     Q_ASSERT(!d->discoveryAgent->uuidFilter().isEmpty());
-    
+
     qDebug() << "UUID filter" << d->discoveryAgent->uuidFilter();
 
     d->discoveryAgent->start(QBluetoothServiceDiscoveryAgent::FullDiscovery);

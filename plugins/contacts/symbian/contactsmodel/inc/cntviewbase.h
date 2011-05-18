@@ -616,28 +616,6 @@ The view preferences and sort order are specified on construction.
 @released
 */
 	{
-#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
-private:
-    NONSHARABLE_CLASS(CContactLocalViewExtension) : public CBase, public MContactDbObserverV2
-    /** An extension class that holds member data added to this class.
-
-    It was created for binary compatibility purposes. 
-    @internalComponent
-    @released */
-        {
-        public:
-            static CContactLocalViewExtension* NewL(CContactLocalView& aLocalView);
-            ~CContactLocalViewExtension(){};
-
-        private:
-            CContactLocalViewExtension(CContactLocalView& aLocalView) : iLocalView(aLocalView){};
-            void HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent);
-            
-        private:
-            CContactLocalView& iLocalView;  // Not own
-        };
-#endif
-    
 public:
 	IMPORT_C static CContactLocalView* NewL(MContactViewObserver& aObserver,const CContactDatabase& aDb,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes);
 	IMPORT_C static CContactLocalView* NewL(MContactViewObserver& aObserver,const CContactDatabase& aDb,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes,
@@ -646,7 +624,6 @@ public:
 		MLplPersistenceLayerFactory* aFactory,const TDesC8& aSortPluginName);
 
 	IMPORT_C const RContactViewSortOrder& SortOrder() const;
-    IMPORT_C MContactDbObserverV2& ObserverV2() const;
 public: // From CContactViewBase.
 	TContactItemId AtL(TInt aIndex) const;
 	TInt CountL() const;
@@ -671,9 +648,7 @@ protected:
 protected:
 	void SetState(TState aState);
 private: // From MContactDbObserver.
-    virtual void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
-private:
-    void HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent);
+	virtual void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
 	
 private:
 	void SortComplete(TInt aSortErr);	
@@ -704,11 +679,7 @@ private:
 	CContactTextDef*	iTextDef;
 	TContactViewPreferences iViewPreferences;
 	TBool iSpare0;
-#ifdef __SYMBIAN_CNTMODEL_USE_SQLITE__
-	CContactLocalViewExtension* iLocalExtension;
-#else
 	TInt iSpare;
-#endif
 	};
 
 class RContactRemoteView : public RSubSessionBase
@@ -723,7 +694,9 @@ server side view object.
 public:
 	void OpenL(const CContactDatabase& aDb,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes,const TUid& aSortPluginImplUid,const TDesC8& aSortPluginName);
 	void OpenL(const CContactDatabase& aDb,const TDesC& aName,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes,const TUid& aSortPluginImplUid,const TDesC8& aSortPluginName);
+	void ReOpenL(const CContactDatabase& aDb);
 	void Close();
+	RContactRemoteView();
 public: // From CContactViewBase
 	TContactItemId AtL(TInt aIndex) const;
 	CViewContact*  ContactAtL(TInt aIndex);
@@ -748,6 +721,13 @@ private:
 private:
 	CViewContact* iContact;
 	RContactViewSortOrder iSortOrder ;
+	// Pointer to RCntModel. Not owned.
+	RCntModel* iRCntModel;
+	// View parameters. Owned.
+	HBufC8* iViewParams;
+	// View name. Owned.
+	HBufC* iViewName;
+	friend class CContactRemoteViewBase;
 	};
 
 

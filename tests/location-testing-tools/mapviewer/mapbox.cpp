@@ -44,14 +44,20 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
 #include <qgeocoordinate.h>
+
 #include <qgeomaprectangleobject.h>
 #include <qgeomapcircleobject.h>
-#include <qgeomappolylineobject.h>
+#include <qgeomapcustomobject.h>
+#include <qgeomappixmapobject.h>
 #include <qgeomappolygonobject.h>
+#include <qgeomappolylineobject.h>
 #include <qgeomaprouteobject.h>
+#include <qgeomaptextobject.h>
 
 #include <qgeoroutingmanager.h>
 #include <qgeoroutereply.h>
+#include <qgeoroute.h>
+#include <qgeoroutesegment.h>
 
 #include <QApplication>
 #include <QVBoxLayout>
@@ -524,6 +530,63 @@ void MapBox::routeFinished()
     m_mapWidget->addMapObject(route);
 }
 
+void MapBox::addPixmap(const QGeoCoordinate &coord, const QPoint &offset, const QPixmap &pixmap)
+{
+    QGeoMapPixmapObject *pixmapObject = new QGeoMapPixmapObject(coord, offset, pixmap);
+    m_mapWidget->addMapObject(pixmapObject);
+}
+
+void MapBox::addText(const QGeoCoordinate &coord, const QString &text, const QFont &font, const QPoint &offset, Qt::Alignment alignment)
+{
+    QGeoMapTextObject *textObject = new QGeoMapTextObject(coord, text, font, offset, alignment);
+    m_mapWidget->addMapObject(textObject);
+}
+
+void MapBox::addFakeRoute(const QList<QGeoCoordinate> &waypoints, int segments)
+{
+    QGeoRoute route;
+
+    int index = 0;
+    QGeoRouteSegment lastSegment;
+    for (int i = 0; i < segments; ++i) {
+        QGeoRouteSegment segment;
+
+        QList<QGeoCoordinate> path;
+
+        int limit = (waypoints.size() * (i + 1)) / segments;
+        for (; index < limit; ++index)
+            path.append(waypoints.at(index));
+
+        segment.setPath(path);
+
+        if (i == 0)
+            route.setFirstRouteSegment(segment);
+        else
+            lastSegment.setNextRouteSegment(segment);
+        lastSegment = segment;
+    }
+
+    QPen pen(QColor(0, 0, 255, 127)); // blue, semi-transparent
+    pen.setWidth(7);
+    //pen.setCosmetic(true);
+    pen.setCapStyle(Qt::RoundCap);
+
+    QGeoMapRouteObject * routeObject = new QGeoMapRouteObject(route);
+
+    routeObject->setPen(pen);
+
+    m_mapWidget->addMapObject(routeObject);
+}
+
+void MapBox::addCustom(const QGeoCoordinate &coord, const QPoint &offset, QGraphicsItem *graphicsItem)
+{
+    QGeoMapCustomObject *customObject = new QGeoMapCustomObject(coord, offset);
+    //customObject->setUnits(QGeoMapObject::MeterUnit);
+    //customObject->setTransformType();
+    customObject->setGraphicsItem(graphicsItem);
+    m_mapWidget->addMapObject(customObject);
+}
+
 void MapBox::mapContextMenu(QGraphicsSceneContextMenuEvent * event, QGeoMapObject * clickedMapObject)
 {
     if (!m_popupMenu)
@@ -647,6 +710,14 @@ void MapBox::createMenus()
     menuItem = subMenuItem->addAction(tr("Go to"));
     connect(menuItem, SIGNAL(triggered()),
             m_coordControlDialog, SLOT(show()));
+
+    //**************************************************************
+    subMenuItem = m_popupMenuMapObject->addMenu(tr("Tests"));
+    m_popupMenu->addMenu(subMenuItem);
+
+    menuItem = subMenuItem->addAction(tr("Dateline"));
+    connect(menuItem, SIGNAL(triggered()),
+            this, SLOT(testDateline()));
 }
 
 void MapBox::gotoCoordsClicked()

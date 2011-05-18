@@ -48,24 +48,26 @@ QTM_BEGIN_NAMESPACE
   \class QContactManagerEngineFactory
   \brief The QContactManagerEngineFactory class provides the interface for
  plugins that implement QContactManagerEngine functionality.
-  
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-backends
- 
+
   This class provides a simple interface for the creation of
   manager engine instances.  Each factory has a specific id
   associated with it, which forms the \c managerName parameter
   when creating \l QContactManager objects.
- 
+
   More information on writing a contacts engine plugin is available in
   the \l{Qt Contacts Manager Engines} documentation.
- 
+
   \sa QContactManager, QContactManagerEngine
  */
 
 /*!
   A default, empty destructor.
+  \since 1.0
  */
 QContactManagerEngineFactory::~QContactManagerEngineFactory()
 {
@@ -83,6 +85,7 @@ QContactManagerEngineFactory::~QContactManagerEngineFactory()
   occurs, this function may return a null pointer, and the client developer will get an
   invalid QContactManager in return.  Any error should be stored in the supplied \a error
   reference.
+  \since 1.0
  */
 
 /*!
@@ -93,12 +96,14 @@ QContactManagerEngineFactory::~QContactManagerEngineFactory()
 
   Typically this would be of the form "com.nokia.qt.contacts.engines.memory", with
   the appropriate domain and engine name substituted.
+  \since 1.0
  */
 
 /*!
   \fn QContactManagerEngineFactory::supportedImplementationVersions() const
 
   This function should return a list of versions of the engine which this factory can instantiate.
+  \since 1.0
  */
 QList<int> QContactManagerEngineFactory::supportedImplementationVersions() const
 {

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,12 +38,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#if defined(QT_NO_DBUS)
-sjkp //error is no QtDBus
-#endif
-#include <connman/version.h>
 
-int main(int argc, char** argv)
+#include <QtCore/qdebug.h>
+
+#include "dsvideorenderer.h"
+
+QT_BEGIN_NAMESPACE
+
+DSVideoRendererControl::DSVideoRendererControl(DSCameraSession* session, QObject *parent)
+    :QVideoRendererControl(parent),
+    m_surface(0),
+    m_session(session)
 {
-    return 0;
 }
+
+DSVideoRendererControl::~DSVideoRendererControl()
+{
+}
+
+QAbstractVideoSurface* DSVideoRendererControl::surface() const
+{
+    return m_surface;
+}
+
+void DSVideoRendererControl::setSurface(QAbstractVideoSurface *surface)
+{
+    m_surface = surface;
+    if(m_session)
+        m_session->setSurface(m_surface);
+}
+
+QT_END_NAMESPACE
+

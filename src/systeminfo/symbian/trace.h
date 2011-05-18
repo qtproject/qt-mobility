@@ -39,9 +39,15 @@
 **
 ****************************************************************************/
 
+#ifndef TRACE_H
+#define TRACE_H
+
+
 #ifdef SYSTEMINFO_DEBUG
 #include <qDebug>
 #define TRACES(x) x
 #else
 #define TRACES(x)
+#endif
+
 #endif

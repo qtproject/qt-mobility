@@ -61,6 +61,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-request
+    \since 1.1
 */
 
 /*!
@@ -80,6 +81,7 @@ QLandmarkRemoveRequest::~QLandmarkRemoveRequest()
 
 /*!
     Returns the list of identifiers of landmarks which will be removed.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 {
@@ -91,6 +93,7 @@ QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 /*!
     Sets the list of \a landmarkIds of landmarks which will be removed.
 
+    \since 1.1
     \sa setLandmarkId()
 */
 void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
@@ -105,6 +108,7 @@ void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkId
     It is the equivalent of calling setLandmarkIds() with a single \a landmarkId
     in the ID list.
 
+    \since 1.1
     \sa setLandmarkIds()
 */
 void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
@@ -120,6 +124,7 @@ void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
     This function is the equivalent of calling setLandmarkIds() with the IDs of
     the \a landmarks.
 
+    \since 1.1
     \sa setLandmarkIds()
 */
 void QLandmarkRemoveRequest::setLandmarks(const QList<QLandmark> &landmarks)
@@ -135,6 +140,7 @@ void QLandmarkRemoveRequest::setLandmarks(const QList<QLandmark> &landmarks)
     Convenience function that sets a single \a landmark to be removed.
     This function is the equivalent of calling setLandmarkIds()
     with the ID of \a landmark.
+    \since 1.1
 */
 void QLandmarkRemoveRequest::setLandmark(const QLandmark &landmark)
 {
@@ -147,6 +153,7 @@ void QLandmarkRemoveRequest::setLandmark(const QLandmark &landmark)
 /*!
     Returns the mapping of input landmark ID list indices
     to the errors which occurred.
+    \since 1.1
 */
 QMap<int, QLandmarkManager::Error> QLandmarkRemoveRequest::errorMap() const
 {

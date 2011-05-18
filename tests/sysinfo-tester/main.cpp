@@ -129,6 +129,33 @@ static const symbol_t NetworkMode_lut[] =
   {0,0}
 };
 
+static const symbol_t BatteryStatus_lut[] =
+{
+    SYM(QSystemBatteryInfo::BatteryUnknown),
+    SYM(QSystemBatteryInfo::BatteryCritical),
+    SYM(QSystemBatteryInfo::BatteryVeryLow),
+    SYM(QSystemBatteryInfo::BatteryLow),
+    SYM(QSystemBatteryInfo::BatteryOk),
+    SYM(QSystemBatteryInfo::BatteryFull),
+};
+
+static const symbol_t ChargingState_lut[] =
+{
+    SYM(QSystemBatteryInfo::NotCharging),
+    SYM(QSystemBatteryInfo::Charging),
+    SYM(QSystemBatteryInfo::BatteryVeryLow),
+    SYM(QSystemBatteryInfo::ChargingError),
+};
+
+static const symbol_t ChargerType_lut[] =
+{
+    SYM(QSystemBatteryInfo::UnknownCharger),
+    SYM(QSystemBatteryInfo::NoCharger),
+    SYM(QSystemBatteryInfo::WallCharger),
+    SYM(QSystemBatteryInfo::USB_500mACharger),
+    SYM(QSystemBatteryInfo::USB_100mACharger),
+};
+
 /* ------------------------------------------------------------------------- *
  * test_systeminfo
  * ------------------------------------------------------------------------- */
@@ -311,8 +338,8 @@ static void test_systemnetworkinfo(void)
 
 
   for(const symbol_t *sym = NetworkMode_lut; sym->key; ++sym) {
-    QtMobility::QSystemNetworkInfo::NetworkMode mode =
-    (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
+      QtMobility::QSystemNetworkInfo::NetworkMode mode =
+              (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
 
     if(QCoreApplication::arguments().count() > 2)
         if(!QString(sym->key).contains(QCoreApplication::arguments().at(2),Qt::CaseInsensitive))
@@ -338,6 +365,9 @@ static void test_systemnetworkinfo(void)
   }
 }
 
+/* ------------------------------------------------------------------------- *
+ * test_systemscreensaver
+ * ------------------------------------------------------------------------- */
 static void test_systemscreensaver(void)
 {
   QSystemScreenSaver screensaver;
@@ -345,6 +375,10 @@ static void test_systemscreensaver(void)
   X(screensaver.screenSaverInhibited());
   X(screensaver.setScreenSaverInhibit());
 }
+
+/* ------------------------------------------------------------------------- *
+ * test_systembatteryinfo
+ * ------------------------------------------------------------------------- */
 
 static void test_systembatteryinfo(void)
 {
@@ -362,6 +396,7 @@ static void test_systembatteryinfo(void)
     X(batInfo.batteryStatus());
     X(batInfo.energyMeasurementUnit());
 }
+
 
 struct dummy_t
 {

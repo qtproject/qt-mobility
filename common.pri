@@ -102,6 +102,7 @@ contains(build_unit_tests, yes) {
         testplugin {
             DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
         } else {
+            VERSION = 1.1.4
             #check that plugin_type is set or warn otherwise
             isEmpty(PLUGIN_TYPE) {
                 message(PLUGIN_TYPE not specified - install rule may not work)

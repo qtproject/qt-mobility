@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-impl
 
@@ -70,6 +71,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new engine with the specified \a parent, using \a parameters
     to pass any implementation specific data to the engine.
+    \since 1.1
 */
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
     : QObject(parent),
@@ -100,6 +102,7 @@ QGeoMappingManagerEngine::~QGeoMappingManagerEngine()
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 void QGeoMappingManagerEngine::setManagerName(const QString &managerName)
 {
@@ -112,6 +115,7 @@ void QGeoMappingManagerEngine::setManagerName(const QString &managerName)
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 QString QGeoMappingManagerEngine::managerName() const
 {
@@ -123,6 +127,7 @@ QString QGeoMappingManagerEngine::managerName() const
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 void QGeoMappingManagerEngine::setManagerVersion(int managerVersion)
 {
@@ -134,6 +139,7 @@ void QGeoMappingManagerEngine::setManagerVersion(int managerVersion)
 
     The combination of managerName() and managerVersion() should be unique
     amongst plugin implementations.
+    \since 1.1
 */
 int QGeoMappingManagerEngine::managerVersion() const
 {
@@ -157,10 +163,12 @@ int QGeoMappingManagerEngine::managerVersion() const
     Subclasses of QGeoMappingManagerEngine are free to override this function
     to return subclasses of QGeoMapData in order to customize the
     map.
+    \since 1.1
 */
 
 /*!
     Returns a list of the map types supported by this engine.
+    \since 1.1
 */
 QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() const
 {
@@ -170,6 +178,7 @@ QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() co
 
 /*!
     Returns a list of the connectivity modes supported by this engine.
+    \since 1.1
 */
 QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManagerEngine::supportedConnectivityModes() const
 {
@@ -182,6 +191,7 @@ QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManagerEngine::supportedConn
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
+    \since 1.1
 */
 qreal QGeoMappingManagerEngine::minimumZoomLevel() const
 {
@@ -194,6 +204,7 @@ qreal QGeoMappingManagerEngine::minimumZoomLevel() const
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
+    \since 1.1
 */
 qreal QGeoMappingManagerEngine::maximumZoomLevel() const
 
@@ -207,6 +218,7 @@ qreal QGeoMappingManagerEngine::maximumZoomLevel() const
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
     that supportedMapTypes() provides accurate information.
+    \since 1.1
 */
 void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes)
 {
@@ -223,6 +235,7 @@ void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap:
     If createMapData does not specify a connectivity mode the first mode from
     \a connectivityModes will be used, or QGraphicsGeoMap::NoConnectivity will
     be used if \a connectivityModes is empty.
+    \since 1.1
 */
 void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes)
 {
@@ -238,6 +251,7 @@ void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphi
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
     minimumZoomLevel() provides accurate information.
+    \since 1.1
 */
 void QGeoMappingManagerEngine::setMinimumZoomLevel(qreal minimumZoom)
 {
@@ -253,6 +267,7 @@ void QGeoMappingManagerEngine::setMinimumZoomLevel(qreal minimumZoom)
 
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
     maximumZoomLevel() provides accurate information.
+    \since 1.1
 */
 void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 {
@@ -262,6 +277,7 @@ void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 
 /*!
     Return whether bearing is supported by this engine.
+    \since 1.1
 */
 bool QGeoMappingManagerEngine::supportsBearing() const
 {
@@ -271,6 +287,7 @@ bool QGeoMappingManagerEngine::supportsBearing() const
 
 /*!
     Return whether tilting is supported by this engine.
+    \since 1.2
 */
 bool QGeoMappingManagerEngine::supportsTilting() const
 {
@@ -283,6 +300,7 @@ bool QGeoMappingManagerEngine::supportsTilting() const
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
+    \since 1.2
 */
 qreal QGeoMappingManagerEngine::minimumTilt() const
 {
@@ -295,6 +313,7 @@ qreal QGeoMappingManagerEngine::minimumTilt() const
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
+    \since 1.2
 */
 qreal QGeoMappingManagerEngine::maximumTilt() const
 {
@@ -311,6 +330,7 @@ qreal QGeoMappingManagerEngine::maximumTilt() const
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
     minimumTilt() provides accurate information. If no minimum value is set
     by the subclass the value of 0 is used.
+    \since 1.2
 */
 void QGeoMappingManagerEngine::setMinimumTilt(qreal minimumTilt)
 {
@@ -327,6 +347,7 @@ void QGeoMappingManagerEngine::setMinimumTilt(qreal minimumTilt)
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
     maximumTilt() provides accurate information. If no maximum value is set
     by the subclass the value of 0 is used.
+    \since 1.2
 */
 void QGeoMappingManagerEngine::setMaximumTilt(qreal maximumTilt)
 {
@@ -341,6 +362,7 @@ void QGeoMappingManagerEngine::setMaximumTilt(qreal maximumTilt)
     supportsBearing() provides accurate information. If no value is set
     by the subclass then bearing support is disabled and supportsBearing set
     to false.
+    \since 1.2
 */
 void QGeoMappingManagerEngine::setSupportsBearing(bool supportsBearing)
 {
@@ -355,6 +377,7 @@ void QGeoMappingManagerEngine::setSupportsBearing(bool supportsBearing)
     supportsTilting() provides accurate information. If no value is set
     by the subclass then tilting support is disabled and supportsTilting set
     to false.
+    \since 1.2
 */
 void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
 {
@@ -368,6 +391,7 @@ void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
     Custom map objects are map objects based on QGraphicsItem instances, which
     are hard to support in cases where the map rendering is not being
     performed by the Qt Graphics View framwork.
+    \since 1.2
 */
 bool QGeoMappingManagerEngine::supportsCustomMapObjects() const
 {
@@ -381,6 +405,7 @@ bool QGeoMappingManagerEngine::supportsCustomMapObjects() const
     Custom map objects are map objects based on QGraphicsItem instances, which
     are hard to support in cases where the map rendering is not being
     performed by the Qt Graphics View framwork.
+    \since 1.2
 */
 void QGeoMappingManagerEngine::setSupportsCustomMapObjects(bool supportsCustomMapObjects)
 {
@@ -395,6 +420,7 @@ void QGeoMappingManagerEngine::setSupportsCustomMapObjects(bool supportsCustomMa
     in different languages, they will be returned in the language of \a locale.
 
     The locale used defaults to the system locale if this is not set.
+    \since 1.2
 */
 void QGeoMappingManagerEngine::setLocale(const QLocale &locale)
 {
@@ -404,6 +430,7 @@ void QGeoMappingManagerEngine::setLocale(const QLocale &locale)
 /*!
     Returns the locale used to hint to this mapping manager about what
     language to use for map labels.
+    \since 1.2
 */
 QLocale QGeoMappingManagerEngine::locale() const
 {

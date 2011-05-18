@@ -54,6 +54,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.1
+
     Subclasses of QGeoTiledMappingManagerEngine need to provide an implementation
     of getTileImage().
 
@@ -124,6 +126,7 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     this can be done in the slot connected to QGeoTiledMapReply::finished() or
     QGeoTiledMapReply::error() with deleteLater().
 
+    \since 1.1
 */
 
 /*!
@@ -142,6 +145,7 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     QGeoTiledMapData instance. Subclasses of QGeoTiledMappingManagerEngine are
     free to override this function to return subclasses of QGeoTiledMapData in
     order to customize the map.
+    \since 1.1
 */
 QGeoMapData* QGeoTiledMappingManagerEngine::createMapData()
 {
@@ -150,6 +154,7 @@ QGeoMapData* QGeoTiledMappingManagerEngine::createMapData()
 
 /*!
     Returns the size of the tiles returned by this tiled mapping manager.
+    \since 1.1
 */
 QSize QGeoTiledMappingManagerEngine::tileSize() const
 {
@@ -163,6 +168,7 @@ QSize QGeoTiledMappingManagerEngine::tileSize() const
 
     Subclasses of QGeoTiledMappingManagerEngine should use this function to
     ensure tileSize() provides accurate information.
+    \since 1.1
 */
 void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 {

@@ -111,6 +111,7 @@ QMKSPEC=
 OS="other"
 # By default, all modules are requested.  Reset this later if -modules is supplied
 ORGANIZER_REQUESTED=yes
+TEST_USE_SIMULATOR=
 NFC_SYMBIAN=auto
 MAC_DEPLOY=
 
@@ -164,6 +165,7 @@ usage()
     echo "-qmake-exec <name>  Sets custom binary name for qmake binary"
     echo "                    (default: qmake)"
     echo "-no-nfc-symbian     Disables the NFC Sybmian backend."
+#    echo "-test-sim           Use simulator backend for testing systeminfo"
 #    echo "-staticconfig <name>"
 #    echo "                    Avoids running of configuration tests. The default"
 #    echo "                    values are sourced from features/platformconfig/<name>.pri"
@@ -293,6 +295,9 @@ while [ "$#" -gt 0 ]; do
             LANGUAGES=$2
             shift
             ;;
+        -test-sim)
+            TEST_USE_SIMULATOR="yes"
+            ;; 
         -no-nfc-symbian)
             NFC_SYMBIAN=no
             ;;
@@ -324,6 +329,11 @@ checkostype()
     if [ `uname -s` = "${match}" ]; then
         OS="darwin"
         QMKSPEC="-spec macx-g++"
+        if [[ `gcc --version` =~ .*llvm.* ]]; then
+            QMKSPEC="-spec macx-llvm"
+        else
+           QMKSPEC="-spec macx-g++"
+        fi
         echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
     fi
 }
@@ -339,7 +349,7 @@ findUniversal()
     echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
-    SOMETIME=`$QMAKE_EXEC -spec macx-g++ 2.pro 2>&1`
+    SOMETIME=`$QMAKE_EXEC $QMKSPEC 2.pro 2>&1`
     rm 2.pro
     if [ -e "mac.inc" ]; then
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
@@ -500,6 +510,12 @@ else
     echo "build_tools = yes" >> "$CONFIG_IN"
 fi
 
+if [ -z "$TEST_USE_SIMULATOR" ]; then
+    echo "test_use_sim = no" >> "$CONFIG_IN"
+else
+    echo "test_use_sim = yes" >> "$CONFIG_IN"
+fi
+
 #process languages
 if [ -z "LANGUAGES" ]; then
     echo "selected_languages =" >> "$CONFIG_IN"
@@ -586,7 +602,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
 #compile tests
     compileTest QMF qmf
     compileTest NetworkManager networkmanager
-    compileTest "CoreWLAN (MacOS 10.6)" corewlan
+    compileTest "CoreWLAN (MacOS >= 10.6)" corewlan
     compileTest Immersion immersion
     compileTest "MeegoTouch Feedback" meegotouchfeedback
     compileTest "Maemo ICD" maemo-icd
@@ -594,6 +610,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Maemo5 contacts dependencies" maemo5-contacts
     compileTest "Maemo5 organizer dependencies" maemo5-calendar
     compileTest "Maemo6 landmarks dependencies" maemo6-landmarks
+    compileTest "Maemo Battery Managment Entity" bme
     compileTest "Bluez" bluez
     compileTest "Proj.4" proj
     compileTest "Gstreamer Photography" gstreamer-photography
@@ -601,7 +618,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Blkid" blkid
     compileTest "Pulse Audio" pulseaudio
     compileTest "udev" udev
-    compileTest "iphb" iphb
+    compileTest "Maemo Heartbeat" iphb
 
     if [ "$NFC_SYMBIAN" = auto ]; then
         compileTest "Symbian NFC" nfc_symbian
@@ -616,7 +633,6 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     fi
 
     if [ "$LINUX_TARGET" = meego ]; then
-        compileTest connman connman
         compileTest "Location GeoClue master provider" geoclue-master
         compileTest "Location Gypsy provider" gypsy
     else
