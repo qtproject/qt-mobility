@@ -1,6 +1,8 @@
 TARGET = tst_qmetaobjectbuilder
 INCLUDEPATH += ../../../src/serviceframework
 INCLUDEPATH += ../../../src/serviceframework/ipc
+include(../../../src/serviceframework/ipc/metaobjectbuilder.pri)
+INCLUDEPATH += ../../../src/serviceframework/$$OBJECTBUILDER_INCLUDEPATH
 
 CONFIG+=testcase
 

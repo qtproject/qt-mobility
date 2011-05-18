@@ -44,7 +44,7 @@
 #include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 #include <QtCore/qlocale.h>
-#include <qmetaobjectbuilder_47_p.h>
+#include <qmetaobjectbuilder_p.h>
 
 QTM_USE_NAMESPACE
 
