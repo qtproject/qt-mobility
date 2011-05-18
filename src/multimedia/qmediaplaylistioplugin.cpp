@@ -48,6 +48,7 @@ QT_BEGIN_NAMESPACE
     
     \brief The QMediaPlaylistReader class provides an interface for reading a playlist file.
     \inmodule QtMultimediaKit
+    \since 1.0
 
     \sa QMediaPlaylistIOPlugin
 */

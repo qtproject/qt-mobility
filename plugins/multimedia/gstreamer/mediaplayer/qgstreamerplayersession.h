@@ -73,6 +73,7 @@ public:
     QNetworkRequest request() const;
 
     QMediaPlayer::State state() const { return m_state; }
+    QMediaPlayer::State pendingState() const { return m_pendingState; }
 
     qint64 duration() const;
     qint64 position() const;
@@ -158,6 +159,7 @@ private:
     static void handleMutedChange(GObject *o, GParamSpec *p, gpointer d);
     static void insertColorSpaceElement(GstElement *element, gpointer data);
     static void handleElementAdded(GstBin *bin, GstElement *element, QGstreamerPlayerSession *session);
+    void processInvalidMedia(QMediaPlayer::Error errorCode, const QString& errorString);
 
     QNetworkRequest m_request;
     QMediaPlayer::State m_state;
@@ -200,6 +202,16 @@ private:
     mutable qint64 m_lastPosition;
     qint64 m_duration;
     int m_durationQueries;
+
+    enum SourceType
+    {
+        UnknownSrc,
+        SoupHTTPSrc,
+        UDPSrc,
+        MMSSrc
+    };
+    SourceType m_sourceType;
+    bool m_everPlayed;
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H

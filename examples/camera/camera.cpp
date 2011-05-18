@@ -150,11 +150,15 @@ void Camera::setCamera(const QByteArray &cameraDevice)
 
 void Camera::keyPressEvent(QKeyEvent * event)
 {
+    if (event->isAutoRepeat())
+        return;
+
     switch (event->key()) {
 #if QT_VERSION >= 0x040700
     case Qt::Key_CameraFocus:
         displayViewfinder();
         camera->searchAndLock();
+        event->accept();
         break;
     case Qt::Key_Camera:
         if (camera->captureMode() == QCamera::CaptureStillImage) {
@@ -165,6 +169,7 @@ void Camera::keyPressEvent(QKeyEvent * event)
             else
                 record();
         }
+        event->accept();
         break;
 #endif
     default:
@@ -174,6 +179,9 @@ void Camera::keyPressEvent(QKeyEvent * event)
 
 void Camera::keyReleaseEvent(QKeyEvent * event)
 {
+    if (event->isAutoRepeat())
+        return;
+
     switch (event->key()) {
 #if QT_VERSION >= 0x040700
     case Qt::Key_CameraFocus:

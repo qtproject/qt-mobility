@@ -57,9 +57,10 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -81,6 +82,7 @@ QContactSaveRequest::~QContactSaveRequest()
   \code
       setContacts(QList<QContact>() << contact);
   \endcode
+  \since 1.0
  */
 void QContactSaveRequest::setContact(const QContact& contact)
 {
@@ -90,7 +92,9 @@ void QContactSaveRequest::setContact(const QContact& contact)
     d->m_contacts.append(contact);
 }
 
-/*! Sets the list of contacts to be saved to \a contacts */
+/*! Sets the list of contacts to be saved to \a contacts
+    \since 1.0
+*/
 void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 {
     Q_D(QContactSaveRequest);
@@ -101,6 +105,7 @@ void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 /*! Returns the list of contacts which will be saved if called prior to calling \c start(),
     otherwise returns the list of contacts with their ids set appropriately (successfully
     saved new contacts will have an id assigned).
+    \since 1.0
 */
 QList<QContact> QContactSaveRequest::contacts() const
 {
@@ -109,7 +114,9 @@ QList<QContact> QContactSaveRequest::contacts() const
     return d->m_contacts;
 }
 
-/*! Returns the map of input contact list indices to errors which occurred */
+/*! Returns the map of input contact list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
 {
     Q_D(const QContactSaveRequest);

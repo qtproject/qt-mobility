@@ -56,9 +56,10 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -80,6 +81,7 @@ QContactRemoveRequest::~QContactRemoveRequest()
   \code
       setContactIds(QList<QContactLocalId>() << contactIds);
   \endcode
+  \since 1.0
  */
 void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
 {
@@ -89,7 +91,9 @@ void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
     d->m_contactIds.append(contactId);
 }
 
-/*! Sets the list of ids of contacts which will be removed to \a contactIds */
+/*! Sets the list of ids of contacts which will be removed to \a contactIds
+    \since 1.0
+*/
 void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)
 {
     Q_D(QContactRemoveRequest);
@@ -97,7 +101,9 @@ void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactI
     d->m_contactIds = contactIds;
 }
 
-/*! Returns the list of ids of contacts which will be removed */
+/*! Returns the list of ids of contacts which will be removed
+    \since 1.0
+*/
 QList<QContactLocalId> QContactRemoveRequest::contactIds() const
 {
     Q_D(const QContactRemoveRequest);
@@ -105,7 +111,9 @@ QList<QContactLocalId> QContactRemoveRequest::contactIds() const
     return d->m_contactIds;
 }
 
-/*! Returns the map of input contact list indices to errors which occurred */
+/*! Returns the map of input contact list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactRemoveRequest::errorMap() const
 {
     Q_D(const QContactRemoveRequest);

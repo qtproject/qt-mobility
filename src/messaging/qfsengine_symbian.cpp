@@ -2905,6 +2905,7 @@ MEmailTextContent* CFSEngine::textContentById(TMessageContentId contentId, MEmai
                 if (err == KErrNone) {
                     retContent = textContentById(contentId, pContent);
                     if (retContent) {
+                        pMultipart->Release();
                         break;
                     } else {
                         pContent->Release();

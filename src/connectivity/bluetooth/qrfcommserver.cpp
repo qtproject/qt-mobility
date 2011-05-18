@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     QRfcommServer is used to implement Bluetooth services over RFCOMM.
 

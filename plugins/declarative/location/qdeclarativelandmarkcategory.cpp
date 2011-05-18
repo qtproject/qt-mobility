@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass LandmarkCategory QDeclarativeLandmarkCategory
     \brief The LandmarkCategory element presents one landmark category.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 

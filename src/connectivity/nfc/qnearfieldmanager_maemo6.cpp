@@ -440,7 +440,7 @@ void QNearFieldManagerPrivateImpl::_q_targetLost(const QDBusObjectPath &targetPa
     // haven't seen target so just drop this event
     if (!nearFieldTarget) {
         // We either haven't seen target (started after target was detected by system) or the
-        // application deleted the target. Remove from map and dont emit anything.
+        // application deleted the target. Remove from map and don't emit anything.
         m_targets.remove(targetPath.path());
         return;
     }

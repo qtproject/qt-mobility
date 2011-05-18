@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \since 1.2
 
     RTD-Text encapsulates a user displayable text record.
 */

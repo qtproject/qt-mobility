@@ -1026,16 +1026,40 @@ private:
     }
 
     void clearDb() {
+
+#ifdef Q_OS_SYMBIAN  //workaround for MOBILITY-2275
+        bool successfulRemoval = true;
+        for (int x=0; x < 5; x++)
+        {
+#endif
         QList<QLandmarkId> lmIds = m_manager->landmarkIds();
         for(int i=0; i < lmIds.count(); ++i) {
+#ifndef Q_OS_SYMBIAN
             QVERIFY(m_manager->removeLandmark(lmIds.at(i)));
+#else //workaround for MOBILITY-2275
+            if (!m_manager->removeLandmark(lmIds.at(i)))
+                successfulRemoval = false;
+#endif
         }
 
         QList<QLandmarkCategoryId> catIds = m_manager->categoryIds();
         for (int i=0; i < catIds.count(); ++i) {
-            if (!m_manager->isReadOnly(catIds.at(i)))
+            if (!m_manager->isReadOnly(catIds.at(i))) {
+#ifndef Q_OS_SYMBIAN
                 QVERIFY(m_manager->removeCategory(catIds.at(i)));
+#else //workaround for MOBILITY-2275
+                if (!m_manager->removeCategory(catIds.at(i)))
+                    successfulRemoval = false;
+#endif
+            }
         }
+#ifdef Q_OS_SYMBIAN
+        }
+        if (!successfulRemoval) {
+            qWarning() << "Clearing of all landmarks was not successful, needed "
+                          "to iterate over the landmarks again to try remove them all";
+        }
+#endif
 
         //try ensure notifications for these deletions
         //are made prior to each test function
@@ -1259,6 +1283,7 @@ private slots:
     void isReadOnly();
     void isFeatureSupported();
     void notificationCheck();
+    void managerName();
 #endif
 
 #ifdef TEST_SIGNALS
@@ -2417,13 +2442,20 @@ void tst_QLandmarkManager::saveCategory() {
 #else
     QTest::qWait(10);
 #endif
-       QCOMPARE(spyAdd.count(), 1);
-       QCOMPARE(spyChange.count(), 0);
-       QCOMPARE(spyRemove.count(), 0);
-       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(firstCategoryId));
-       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(secondCategoryId));
-       QVERIFY(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(thirdCategoryId));
-       spyAdd.clear();
+        QVERIFY(spyAdd.count() > 0);
+        QList<QLandmarkCategoryId> addedCatIds;
+        for (int i=0; i < spyAdd.count(); ++i) {
+            addedCatIds.append(spyAdd.at(i).at(0).value<QList<QLandmarkCategoryId> >());
+        }
+
+        QVERIFY(addedCatIds.contains(firstCategoryId));
+        QVERIFY(addedCatIds.contains(secondCategoryId));
+        QVERIFY(addedCatIds.contains(thirdCategoryId));
+        QCOMPARE(addedCatIds.count(), 3);
+        spyAdd.clear();
+
+        QCOMPARE(spyChange.count(), 0);
+        QCOMPARE(spyRemove.count(), 0);
 
        //try changing multiple categories
        catNew1.setName("CATNew1Changed");
@@ -2456,12 +2488,19 @@ void tst_QLandmarkManager::saveCategory() {
     QTest::qWait(10);
 #endif
        QCOMPARE(spyAdd.count(), 0);
-       QCOMPARE(spyChange.count(), 1);
-       QCOMPARE(spyRemove.count(), 0);
-       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(firstCategoryId));
-       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(secondCategoryId));
-       QVERIFY(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(thirdCategoryId));
+
+       QVERIFY(spyChange.count() > 0);
+       QList<QLandmarkCategoryId> changedCatIds;
+       for (int i=0; i < spyChange.count(); ++i)
+           changedCatIds.append(spyChange.at(i).at(0).value<QList<QLandmarkCategoryId > >());
+
+       QVERIFY(changedCatIds.contains(firstCategoryId));
+       QVERIFY(changedCatIds.contains(secondCategoryId));
+       QVERIFY(changedCatIds.contains(thirdCategoryId));
+       QCOMPARE(changedCatIds.count(), 3);
        spyChange.clear();
+
+       QCOMPARE(spyRemove.count(), 0);
    }
 
    //chec that error is cleared on consecutive saves
@@ -3425,13 +3464,20 @@ void tst_QLandmarkManager::removeCategory() {
 #else
     QCOMPARE(spyCatAdd.count(), 1);
 #endif
-    QCOMPARE(spyCatChange.count(), 0);
-    QCOMPARE(spyCatRemove.count(), 1);
-    QCOMPARE(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().count(),3);
-    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catC.categoryId()));
-    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catB.categoryId()));
-    QVERIFY(spyCatRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().contains(catA.categoryId()));
     spyCatAdd.clear();
+
+    QCOMPARE(spyCatChange.count(), 0);
+
+    QVERIFY(spyCatRemove.count() > 0);
+    QList<QLandmarkCategoryId> removedCatIds;
+    for (int i=0; i < spyCatRemove.count(); ++i)
+        removedCatIds.append(spyCatRemove.at(i).at(0).value<QList<QLandmarkCategoryId> >());
+
+    QVERIFY(removedCatIds.contains(catC.categoryId()));
+    QVERIFY(removedCatIds.contains(catB.categoryId()));
+    QVERIFY(removedCatIds.contains(catA.categoryId()));
+    QCOMPARE(removedCatIds.count(), 3);
+
     spyCatRemove.clear();
     }
 
@@ -7532,16 +7578,25 @@ void tst_QLandmarkManager::importGpx() {
 
     QList<QLandmarkId> ids;
     QCOMPARE(spyAdd.count(), 0);
-#ifdef Q_OS_SYMBIAN
-    if (type == "asyncAttachSingleCategory")
-        QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
-#endif
+
 
 #if defined (SPARQL_BACKEND)
     //TODO: Signalling in mameo 6 need optmization
     QVERIFY(dataChanged.count() == 1 || dataChanged.count() ==2);
 #else
+
+#ifdef Q_OS_SYMBIAN
+    if (type == "asyncAttachSingleCategory") {
+        //attaching a category asynchronously on symbian results in 2 dataChanged signals
+        QCOMPARE(dataChanged.count() ==2);
+    }
+    else {
+        QCOMPARE(dataChanged.count(),1);
+    }
+#else
     QCOMPARE(dataChanged.count(),1);
+#endif
+
 #endif
     spyAdd.clear();
     dataChanged.clear();
@@ -7616,7 +7671,7 @@ void tst_QLandmarkManager::importGpx() {
 #if defined(SPARQL_BACKEND)
     QTest::qWait(2000);
 #else
-    QTest::qWait(10);
+    QTest::qWait(50);
 #endif
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
@@ -7626,9 +7681,12 @@ void tst_QLandmarkManager::importGpx() {
 #ifdef Q_OS_SYMBIAN
     QCOMPARE(spyAdd.count(), 0);
 
-    if (type == "syncAttachSingleCategory" || type == "asyncAttachSingleCategory") //WORKAROUND
-        QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
-    QCOMPARE(dataChanged.count(),1);
+    if (type == "syncAttachSingleCategory" || type == "asyncAttachSingleCategory") {
+        //attaching a category on symbian results in 2 dataChanged signals
+        QCOMPARE(dataChanged.count(), 2);
+    } else {
+        QCOMPARE(dataChanged.count(),1);
+    }
 #else
     QCOMPARE(spyAdd.count(), 1);
     ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
@@ -7880,9 +7938,13 @@ void tst_QLandmarkManager::importLmx() {
             QCOMPARE(spyCatAdd.count(), 1);
         }
 
-        if (type == "asyncAttachSingleCategory") //WORKAROUND
-            QEXPECT_FAIL("", "MOBILITY-1733: inconsistent datachanged signalling on symbian", Continue);
-        QCOMPARE(spyDataChanged.count(), 1);
+        if (type == "asyncAttachSingleCategory")  {
+            //attaching a single category on symbian results in 2 data changed signals
+            QCOMPARE(spyDataChanged.count(), 2);
+        } else {
+            QCOMPARE(spyDataChanged.count(), 1);
+        }
+
         spyDataChanged.clear();
 #else
     QCOMPARE(spyRemove.count(), 0);
@@ -9027,6 +9089,18 @@ void tst_QLandmarkManager::notificationCheck()
     //check that we can receive an signal from import from another process
 }
 
+void tst_QLandmarkManager::managerName()
+{
+    QString managerName;
+#ifdef Q_OS_SYMBIAN
+     managerName = "com.nokia.qt.landmarks.engines.symbian";
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
+     managerName = "com.nokia.qt.landmarks.engines.qsparql";
+#else
+    managerName = "com.nokia.qt.landmarks.engines.sqlite";
+#endif
+    QCOMPARE(m_manager->managerName(), managerName);
+}
 #endif
 
 #ifndef Q_OS_SYMBIAN
@@ -9971,6 +10045,7 @@ void tst_QLandmarkManager::removeStress_data()
 #ifdef SAVE_STRESS
 void tst_QLandmarkManager::saveStress()
 {
+    qDebug() << "Start of save stress function";
     QLandmarkCategory cat1;
     cat1.setName("cat1");
     QVERIFY(m_manager->saveCategory(&cat1));
@@ -10065,6 +10140,7 @@ void tst_QLandmarkManager::saveStress()
        }
     }
 #endif
+    qDebug() << "End of save stress function";
 }
 
 void tst_QLandmarkManager::saveStress_data()

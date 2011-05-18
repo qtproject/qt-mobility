@@ -50,12 +50,13 @@ QTM_BEGIN_NAMESPACE
    \class QContactUnionFilter
    \brief The QContactUnionFilter class provides a filter which unions the
     results of other filters.
-   
-  
-  \inmodule QtContacts
-  
+
+
+   \inmodule QtContacts
+   \since 1.0
+
    \ingroup contacts-filters
- 
+
    It may be used to select contacts which match all of the filters in the union
  */
 
@@ -64,6 +65,7 @@ Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactUnionFilter);
 /*!
  * \fn QContactUnionFilter::QContactUnionFilter(const QContactFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new union filter
+ * \since 1.0
  */
 
 /*!
@@ -77,6 +79,7 @@ QContactUnionFilter::QContactUnionFilter()
 /*!
  * Sets the filters whose criteria will be unioned to \a filters
  * \sa filters()
+ * \since 1.0
  */
 void QContactUnionFilter::setFilters(const QList<QContactFilter>& filters)
 {
@@ -96,6 +99,7 @@ void QContactUnionFilter::clear()
 
 /*!
  * Prepends the given \a filter to the list of unioned filters
+ * \since 1.0
  * \sa append(), filters()
  */
 void QContactUnionFilter::prepend(const QContactFilter& filter)
@@ -106,6 +110,7 @@ void QContactUnionFilter::prepend(const QContactFilter& filter)
 
 /*!
  * Appends the given \a filter to the list of unioned filters
+ * \since 1.0
  * \sa operator<<(), prepend(), filters()
  */
 void QContactUnionFilter::append(const QContactFilter& filter)
@@ -116,6 +121,7 @@ void QContactUnionFilter::append(const QContactFilter& filter)
 
 /*!
  * Removes the given \a filter from the union list
+ * \since 1.0
  * \sa filters(), append(), prepend(), clear()
  */
 void QContactUnionFilter::remove(const QContactFilter& filter)

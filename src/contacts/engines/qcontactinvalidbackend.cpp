@@ -45,12 +45,13 @@
 
 /*!
   \class QContactInvalidEngine
-  
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   \brief The QContactInvalidEngine class provides an implementation of
   QContactManagerEngine whose functions always return an error.
-  
+
   The invalid engine may be used as a reference or test engine, but does nothing.
  */
 
@@ -61,7 +62,9 @@ QContactInvalidEngine::QContactInvalidEngine()
 {
 }
 
-/*! \reimp */
+/*! \reimp
+   \since 1.0
+*/
 QString QContactInvalidEngine::managerName() const
 {
     return QString(QLatin1String("invalid"));

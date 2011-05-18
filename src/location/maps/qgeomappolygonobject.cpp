@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     a polygon on a map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -80,6 +81,7 @@ QGeoMapPolygonObject::~QGeoMapPolygonObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapPolygonObject::type() const
 {
@@ -100,12 +102,16 @@ QGeoMapObject::Type QGeoMapPolygonObject::type() const
     coordinates contains less than 3 valid coordinates then the polygon object
     will not be displayed.
 
+    \since 1.1
 */
 void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
-        setOrigin(path.at(0));
+        if (path.size() != 0)
+            setOrigin(path.at(0));
+        else
+            setOrigin(QGeoCoordinate());
         emit pathChanged(emit d_ptr->path);
     }
 }
@@ -124,6 +130,7 @@ QList<QGeoCoordinate> QGeoMapPolygonObject::path() const
 
     The pen will be treated as a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
+    \since 1.1
 */
 void QGeoMapPolygonObject::setPen(const QPen &pen)
 {
@@ -151,6 +158,7 @@ QPen QGeoMapPolygonObject::pen() const
 
     The outline around the perimeter of the polygon is drawn using the
     QGeoMapPolygonObject::pen property.
+    \since 1.1
 */
 void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
@@ -168,28 +176,31 @@ QBrush QGeoMapPolygonObject::brush() const
 /*!
 \fn void QGeoMapPolygonObject::pathChanged(const QList<QGeoCoordinate> &path)
 
-    This signal is emitted when the ordered list of coordinates that define 
+    This signal is emitted when the ordered list of coordinates that define
     the polygon to be drawn by this polygon object has changed.
 
     The new value is \a path.
+    \since 1.1
 */
 
 /*!
 \fn void QGeoMapPolygonObject::penChanged(const QPen &pen)
 
-    This signal is emitted when the pen used to draw the edge of this 
+    This signal is emitted when the pen used to draw the edge of this
     polygon object has changed.
 
     The new value is \a pen.
+    \since 1.1
 */
 
 /*!
 \fn void QGeoMapPolygonObject::brushChanged(const QBrush &brush)
 
-    This signal is emitted when the brush used to fill in the interior of 
+    This signal is emitted when the brush used to fill in the interior of
     this polygon object has changed.
-    
+
     The new value is \a brush.
+    \since 1.1
 */
 
 /*******************************************************************************

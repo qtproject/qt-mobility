@@ -55,6 +55,7 @@ QTM_USE_NAMESPACE
 
   \ingroup versit
   \inmodule QtVersit
+  \since 1.1
 
   This class is used to convert a list of \l {QOrganizerItem}{QOrganizerItems} (which may be stored
   in a QOrganizerManager) into a QVersitDocument (which may be written to an I/O device using
@@ -95,7 +96,7 @@ QTM_USE_NAMESPACE
   fields in the \a detail that were considered by the QVersitOrganizerExporter or another handler in
   processing the detail.  \a document holds the state of the document before the detail was
   processed by the exporter.
-  
+
   \a toBeRemoved and \a toBeAdded are initially filled with a list of properties that the exporter
   will remove from and add to the document.  These lists can be modified (by removing, modifying or
   adding properties) by the handler to control the changes that will actually be made to the

@@ -55,6 +55,7 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemNetworkInfo class provides access to various networking status and signals.
+    \since 1.0
 */
 
 /*!
@@ -84,7 +85,7 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
     \value EthernetMode            Wired Local Area network.
     \value BluetoothMode           Bluetooth network.
     \value WimaxMode               Wimax network.
-    \value LteMode                 Lte network.
+    \value LteMode                 Lte network. Since 1.2
 */
 
 /*!
@@ -102,48 +103,56 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
     \fn void QSystemNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status)
 
     This signal is emitted whenever the network status of \a mode changes, specified by \a status.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength)
 
     This signal is emitted whenever the network \a mode signal strength changes, specified by \a strength.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::currentMobileCountryCodeChanged(const QString &mcc)
 
     This signal is emitted whenever the Mobile Country Code changes, specified by \a mcc.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::currentMobileNetworkCodeChanged(const QString &mnc)
 
     This signal is emitted whenever the network Mobile Network Code changes, specified by \a mnc.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString & name)
 
     This signal is emitted whenever the network \a mode name changes, specified by \a name.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::cellIdChanged(int cellId)
 
     This signal is emitted whenever the network cell changes, specified by \a cellId.
+    \since 1.2
 */
 
 /*!
     \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
 
     This signal is emitted whenever the network mode changes, specified by \a mode.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology cellTech)
 
     This signal is emitted whenever the cellular technology changes, specified by \a cellTech.
+    \since 1.2
 */
 
 /*!
@@ -166,6 +175,7 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 
 /*!
     Returns the status of the network \a mode.
+    \since 1.0
 */
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -175,9 +185,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 /*!
     Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling. -1 is returned
     if not available or on error.
-
-    In the case of QSystemNetworkInfo::EthernetMode, it will either be 100 for carrier active, or 0 for when
-    there is no carrier or cable connected.
+    \since 1.0
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -193,6 +201,7 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
     \brief The devices Cell ID
 
     Returns the Cell ID of the connected tower or based station. -1 is returned if not available or on error.
+    \since 1.2
 */
 int QSystemNetworkInfo::cellId()
 {
@@ -205,6 +214,7 @@ int QSystemNetworkInfo::cellId()
 
     Returns the location area code of the current cellular radio network. -1 is returned if not available
     or on error.
+    \since 1.0
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
@@ -216,6 +226,7 @@ int QSystemNetworkInfo::locationAreaCode()
     \brief The current MCC.
 
     Returns the current Mobile Country Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
@@ -227,6 +238,7 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
     \brief The current MNC.
 
     Returns the current Mobile Network Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
@@ -238,6 +250,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
     \brief The home MNC.
 
     Returns the home Mobile Country Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -249,6 +262,7 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
     \brief The home MCC.
 
     Returns the home Mobile Network Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
@@ -260,6 +274,7 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
     available or on error.
 
     For WLAN this returns the network's current SSID.
+    \since 1.0
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -269,6 +284,7 @@ QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 /*!
     Returns the MAC address for the interface servicing the network \a mode. An empty string is
     returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -278,6 +294,7 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 /*!
     Returns the first found QNetworkInterface for type \a mode. If none is found, or it can't be represented
     by QNetworkInterface (e.g. Bluetooth), an invalid QNetworkInterface object is returned.
+    \since 1.0
 */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -289,6 +306,7 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 
     Returns the current active network mode. If more than one mode is active, returns the
     default or preferred mode. If no modes are active, returns UnknownMode.
+    \since 1.0
 */
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
 {
@@ -384,6 +402,7 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
 
     If no data technology is active, or data technology is not supported, QSystemNetworkInfo::UnknownDataTechnology
     is returned.
+    \since 1.2
 */
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfo::cellDataTechnology()
 {

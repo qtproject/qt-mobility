@@ -59,22 +59,23 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactMemoryEngine
-  
+
   \inmodule QtContacts
-  
+
   \brief The QContactMemoryEngine class provides an in-memory implementation
   of a contacts backend.
+   \since 1.0
 
   \internal
- 
+
   It may be used as a reference implementation, or when persistent storage is not required.
- 
+
   During construction, it will load the in-memory data associated with the memory store
   identified by the "id" parameter from the given parameters if it exists, or a new,
   anonymous store if it does not.
- 
+
   Data stored in this engine is only available in the current process.
- 
+
   This engine supports sharing, so an internal reference count is increased
   whenever a manager uses this backend, and is decreased when the manager
   no longer requires this engine.
@@ -230,7 +231,7 @@ QList<QContact> QContactMemoryEngine::contacts(const QContactFilter& filter, con
 }
 
 /*! Saves the given contact \a theContact, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts as required 
+    filling the \a changeSet with ids of changed contacts as required
     Returns true if the operation was successful otherwise false.
 */
 bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error* error)
@@ -381,7 +382,7 @@ bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactI
         *error = QContactManager::BadArgumentError;
         return false;
     }
-    
+
     QContactChangeSet changeSet;
     QContactLocalId current;
     QContactManager::Error operationError = QContactManager::NoError;
@@ -435,7 +436,7 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
 }
 
 /*! Saves the given relationship \a relationship, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required 
+    filling the \a changeSet with ids of changed contacts and relationships as required
     Returns true if the operation was successful otherwise false.
 */
 bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
@@ -527,7 +528,7 @@ bool QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relati
 }
 
 /*! Removes the given relationship \a relationship, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts and relationships as required 
+    filling the \a changeSet with ids of changed contacts and relationships as required
     Returns true if the operation was successful otherwise false.
 */
 bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
@@ -594,7 +595,7 @@ QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(
 }
 
 /*! Saves the given detail definition \a def, storing any error to \a error and
-    filling the \a changeSet with ids of changed contacts as required 
+    filling the \a changeSet with ids of changed contacts as required
     Returns true if the operation was successful otherwise false.
 */
 bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error)

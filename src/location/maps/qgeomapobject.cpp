@@ -57,6 +57,7 @@ QTM_BEGIN_NAMESPACE
     \class QGeoMapObject
     \brief The QGeoMapObject class is a graphical item to be displayed on a map.
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -165,6 +166,7 @@ QGeoMapObject::~QGeoMapObject()
 
 /*!
     Returns the type of this map object.
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapObject::type() const
 {
@@ -183,6 +185,7 @@ QGeoMapObject::Type QGeoMapObject::type() const
     they were added to the map or map object.
 
     This is the same behaviour as QGraphicsItem.
+    \since 1.1
 */
 void QGeoMapObject::setZValue(int zValue)
 {
@@ -200,6 +203,7 @@ int QGeoMapObject::zValue() const
 /*!
     \property QGeoMapObject::visible
     \brief This property holds whether the map object is visible.
+    \since 1.1
 */
 void QGeoMapObject::setVisible(bool visible)
 {
@@ -217,6 +221,7 @@ bool QGeoMapObject::isVisible() const
 /*!
     \property QGeoMapObject::selected
     \brief This property holds whether the map object is selected.
+    \since 1.1
 */
 void QGeoMapObject::setSelected(bool selected)
 {
@@ -236,6 +241,7 @@ bool QGeoMapObject::isSelected() const
 
     The default implementation requires the object to be added to a map
     before this function returns a valid bounding box.
+    \since 1.1
 */
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
@@ -251,6 +257,7 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 
     The default implementation requires the object to be added to a map
     before this function is able to return true.
+    \since 1.1
 */
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
@@ -262,6 +269,7 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 
 /*!
     \internal
+    \since 1.1
 */
 bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 {
@@ -271,6 +279,7 @@ bool QGeoMapObject::operator<(const QGeoMapObject &other) const
 
 /*!
     \internal
+    \since 1.1
 */
 bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 {
@@ -284,6 +293,7 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
     This will create an appropriate QGeoMapObjectInfo instance for
     this QGeoMapObject and will connect the appropriate signals to it
     so that it can be kept up to date.
+    \since 1.1
 */
 void QGeoMapObject::setMapData(QGeoMapData *mapData)
 {
@@ -349,6 +359,7 @@ void QGeoMapObject::setMapData(QGeoMapData *mapData)
     Returns the QGeoMapData instance associated with this object.
 
     Will return 0 if not QGeoMapData instance has been set.
+    \since 1.1
 */
 QGeoMapData* QGeoMapObject::mapData() const
 {
@@ -361,6 +372,7 @@ QGeoMapData* QGeoMapObject::mapData() const
 
     This will mostly be useful when implementing custom QGeoMapData
     subclasses.
+    \since 1.1
 */
 QGeoMapObjectInfo *QGeoMapObject::info() const
 {
@@ -382,6 +394,7 @@ QGeoMapObject::TransformType QGeoMapObject::transformType() const
 
 /*!
     Sets the transform type of the object to \a type.
+    \since 1.2
 */
 void QGeoMapObject::setTransformType(const TransformType &type)
 {
@@ -409,6 +422,7 @@ QGeoCoordinate QGeoMapObject::origin() const
 
 /*!
     Sets the origin of the object to \a origin.
+    \since 1.2
 */
 void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
 {
@@ -439,6 +453,7 @@ QGeoMapObject::CoordinateUnit QGeoMapObject::units() const
     Note that setting this property will reset the transformType property to
     the default for the units given. For PixelUnit, this is ExactTransform,
     and for all others, BilinearTransform.
+    \since 1.2
 */
 void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 {
@@ -458,19 +473,21 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
 /*!
 \fn void QGeoMapObject::zValueChanged(int zValue)
 
-    This signal is emitted when the z value of the map object 
+    This signal is emitted when the z value of the map object
     has changed.
 
     The new value is \a zValue.
+    \since 1.1
 */
 
 /*!
 \fn void QGeoMapObject::visibleChanged(bool visible)
 
-    This signal is emitted when the visible state of the map object 
+    This signal is emitted when the visible state of the map object
     has changed.
 
     The new value is \a visible.
+    \since 1.1
 */
 
 /*!
@@ -480,6 +497,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
     has changed.
 
     The new vlaue is \a selected.
+    \since 1.1
 */
 
 /*!
@@ -488,6 +506,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
     This signal is emitted when the origin of the map object has changed.
 
     The new value is \a origin.
+    \since 1.2
 */
 
 /*!
@@ -496,6 +515,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
     This signal is emitted when the coordinate units of the map object have changed.
 
     The new value is \a units.
+    \since 1.2
 */
 
 /*!
@@ -504,6 +524,7 @@ void QGeoMapObject::setUnits(const CoordinateUnit &unit)
     This signal is emitted when the transform type of the map object has changed.
 
     The new value is \a transformType.
+    \since 1.2
 */
 
 /*******************************************************************************

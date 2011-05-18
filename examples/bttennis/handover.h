@@ -79,7 +79,6 @@ signals:
     void bluetoothServiceChanged();
 
 private:
-    QNearFieldManager *m_manager;
     QLlcpServer *m_server;
     QLlcpSocket *m_client;
     QLlcpSocket *m_remote;

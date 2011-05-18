@@ -75,7 +75,7 @@ void tst_QGeoRoute::constructor()
     QGeoBoundingBox *boundingbox = new QGeoBoundingBox();
 
     QCOMPARE(qgeoroute->bounds(),*boundingbox);
-    QCOMPARE(qgeoroute->distance(),0.0);
+    QCOMPARE(qgeoroute->distance(), qreal(0.0));
     QCOMPARE(qgeoroute->path().size(),0);
     QCOMPARE(qgeoroute->routeId(),empty);
     QCOMPARE(qgeoroute->travelTime(),0);
@@ -118,8 +118,7 @@ void tst_QGeoRoute::bounds()
 
     qgeoboundingbox->setWidth(23.1);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->bounds().width(),qgeoboundingbox->width());
+    QVERIFY(qgeoroute->bounds().width() != qgeoboundingbox->width());
 
     delete qgeoboundingbox;
 
@@ -128,14 +127,13 @@ void tst_QGeoRoute::bounds()
 
 void tst_QGeoRoute::distance()
 {
-    double distance = 0.0;
+    qreal distance = 0.0;
 
     qgeoroute->setDistance(distance);
     QCOMPARE(qgeoroute->distance(),distance);
 
     distance = 34.4324;
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->distance(),distance);
+    QVERIFY(qgeoroute->distance() != distance);
 
     qgeoroute->setDistance(distance);
     QCOMPARE(qgeoroute->distance(),distance);
@@ -207,8 +205,7 @@ void tst_QGeoRoute::request()
 
     QGeoRouteRequest *qgeorouterequestcopy = new QGeoRouteRequest(path);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->request(),*qgeorouterequestcopy);
+    QVERIFY(qgeoroute->request() != *qgeorouterequestcopy);
 
     delete qgeocoordinatecopy;
     delete qgeocoordinatecopy2;
@@ -225,8 +222,7 @@ void tst_QGeoRoute::routeId()
     QCOMPARE (qgeoroute->routeId(),text);
 
     text="routeId 1111";
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE (qgeoroute->routeId(),text);
+    QVERIFY (qgeoroute->routeId() != text);
 
 }
 
@@ -244,9 +240,7 @@ void tst_QGeoRoute::firstrouteSegments()
     qgeoroutesegmentcopy->setDistance(435.432);
     qgeoroutesegmentcopy->setTravelTime(786);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->firstRouteSegment(),*qgeoroutesegmentcopy);
-
+    QVERIFY(qgeoroute->firstRouteSegment() != *qgeoroutesegmentcopy);
 
     delete qgeoroutesegment;
     delete qgeoroutesegmentcopy;
@@ -280,8 +274,7 @@ void tst_QGeoRoute::travelTime()
 
     time = 35;
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE (qgeoroute->travelTime(),time);
+    QVERIFY (qgeoroute->travelTime() != time);
 
     qgeoroute->setTravelTime(time);
     QCOMPARE (qgeoroute->travelTime(),time);

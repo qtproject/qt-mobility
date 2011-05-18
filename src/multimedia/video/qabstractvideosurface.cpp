@@ -109,7 +109,7 @@ QAbstractVideoSurface::QAbstractVideoSurface(QObject *parent)
     This is deprecated.
 
     Since we need to build without access to Qt's private headers we can't reliably inherit
-    from QObjectPrivate.  Binary compatability means we can't remove this constructor or
+    from QObjectPrivate.  Binary compatibility means we can't remove this constructor or
     add a d pointer to QAbstractVideoSurface.
 */
 

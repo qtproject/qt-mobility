@@ -46,6 +46,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageStore
+    \since 1.0
     \internal
 */
 

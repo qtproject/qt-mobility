@@ -28,7 +28,6 @@ REM Contact Model
 REM Log Engine contact matching plug-in implementation
 #include <cntmatchlog.iby>
 
-
 #ifndef FF_QT_IN_UDA
 file=ABI_DIR/BUILD_DIR/cntsrv.exe		System/Programs/cntsrv.exe
 file=ABI_DIR/BUILD_DIR/cntmodel.dll		System/Libs/cntmodel.dll

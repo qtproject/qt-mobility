@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
     \class QBluetoothDeviceDiscoveryAgent
     \brief The QBluetoothDeviceDiscoveryAgent class provides an API for discovering nearby
            Bluetooth devices.
+    \since 1.2
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
@@ -69,7 +70,7 @@ QTM_BEGIN_NAMESPACE
     \value NoError          No error has occurred.
     \value PoweredOff       Bluetooth adaptor is powered off, power it on before doing discovery.
     \value IOFailure        Writing or reading from device resulted in an error.
-    \value UnknownError     An unknown error has occurred.    
+    \value UnknownError     An unknown error has occurred.
 */
 
 /*!

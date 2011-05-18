@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-filter
+    \since 1.1
 
     Conceptually it performs an AND operation and thus may be used to
     select landmarks which match all of it's constituent filters.
@@ -78,6 +79,7 @@ QLandmarkIntersectionFilter::QLandmarkIntersectionFilter()
 /*!
     \fn QLandmarkIntersectionFilter::QLandmarkIntersectionFilter(const QLandmarkFilter &other)
     Constructs a copy of \a other if possible, otherwise constructs a new intersection filter.
+    \since 1.1
 */
 
 /*!
@@ -90,6 +92,7 @@ QLandmarkIntersectionFilter::~QLandmarkIntersectionFilter()
 
 /*!
     Sets the \a filters whose criteria will be intersected.
+    \since 1.1
     \sa filters()
  */
 void QLandmarkIntersectionFilter::setFilters(const QList<QLandmarkFilter> &filters)
@@ -100,6 +103,7 @@ void QLandmarkIntersectionFilter::setFilters(const QList<QLandmarkFilter> &filte
 
 /*!
     Prepends the given \a filter to the list of intersected filters
+    \since 1.1
     \sa append(), filters()
 */
 void QLandmarkIntersectionFilter::prepend(const QLandmarkFilter &filter)
@@ -110,6 +114,7 @@ void QLandmarkIntersectionFilter::prepend(const QLandmarkFilter &filter)
 
 /*!
     Appends the given \a filter to the list of intersected filters
+    \since 1.1
     \sa operator<<(), prepend(), filters()
 */
 void QLandmarkIntersectionFilter::append(const QLandmarkFilter &filter)
@@ -120,6 +125,7 @@ void QLandmarkIntersectionFilter::append(const QLandmarkFilter &filter)
 
 /*!
     Removes the given \a filter from the list of intersected filters.
+    \since 1.1
     \sa filters(), append(), prepend()
 */
 void QLandmarkIntersectionFilter::remove(const QLandmarkFilter &filter)
@@ -130,6 +136,7 @@ void QLandmarkIntersectionFilter::remove(const QLandmarkFilter &filter)
 
 /*!
     Removes all filters from the list of intersected filters.
+    \since 1.1
 */
 void QLandmarkIntersectionFilter::clear()
 {
@@ -139,6 +146,7 @@ void QLandmarkIntersectionFilter::clear()
 
 /*!
     Appends the given \a filter to the list of intersected filters
+    \since 1.1
     \sa append()
  */
 QLandmarkIntersectionFilter& QLandmarkIntersectionFilter::operator<<(const QLandmarkFilter &filter)
@@ -150,6 +158,7 @@ QLandmarkIntersectionFilter& QLandmarkIntersectionFilter::operator<<(const QLand
 
 /*!
     Returns the list of filters which form the intersection filter
+    \since 1.1
     \sa setFilters(), prepend(), append(), remove()
  */
 QList<QLandmarkFilter> QLandmarkIntersectionFilter::filters() const

@@ -50,6 +50,9 @@
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 #include <qglshaderprogram.h>
+#ifndef GL_CLAMP_TO_EDGE
+#define GL_CLAMP_TO_EDGE 0x812F
+#endif
 #endif
 
 #include <QtDebug>
@@ -166,6 +169,11 @@ QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::setCurrentFrame(const 
 QAbstractVideoSurface::Error QVideoSurfaceGenericPainter::paint(
             const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+
     if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
         painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
     } else if (m_frame.map(QAbstractVideoBuffer::ReadOnly)) {
@@ -361,8 +369,8 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
                     m_frame.bits() + m_textureOffsets[i]);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         }
         m_frame.unmap();
     } else if (m_handleType != QAbstractVideoBuffer::QPixmapHandle && m_frame.isValid()) {
@@ -375,6 +383,11 @@ QAbstractVideoSurface::Error QVideoSurfaceGLPainter::setCurrentFrame(const QVide
 QAbstractVideoSurface::Error QVideoSurfaceGLPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+
     if (m_frame.handleType() == QAbstractVideoBuffer::QPixmapHandle) {
         painter->drawPixmap(target, m_frame.handle().value<QPixmap>(), source);
     } else if (m_frame.isValid()) {
@@ -812,6 +825,11 @@ void QVideoSurfaceArbFpPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+ 
     const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
     if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
         bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
@@ -1158,6 +1176,11 @@ void QVideoSurfaceGlslPainter::stop()
 QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
+    if (!m_frame.isValid()) {
+        painter->fillRect(target, Qt::black);
+        return QAbstractVideoSurface::NoError;
+    }
+
     const QAbstractVideoBuffer::HandleType h = m_frame.handleType();
     if (h == QAbstractVideoBuffer::NoHandle || h == QAbstractVideoBuffer::GLTextureHandle) {
         bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
@@ -1280,6 +1303,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
 /*!
     \class QPainterVideoSurface
+    \since 1.0
     \internal
 */
 
@@ -1387,7 +1411,7 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
     if (!m_ready) {
         if (!isActive())
             setError(StoppedError);
-    } else if (frame.isValid() 
+    } else if (frame.isValid()
             && (frame.pixelFormat() != m_pixelFormat || frame.size() != m_frameSize)) {
         setError(IncorrectFormatError);
 
@@ -1549,9 +1573,11 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
         if (extensions.contains("ARB_fragment_program"))
             m_shaderTypes |= FragmentProgramShader;
 #endif
-
         if (QGLShaderProgram::hasOpenGLShaderPrograms(m_glContext)
-                && extensions.contains("ARB_shader_objects"))
+#ifndef QT_OPENGL_ES_2
+                && extensions.contains("ARB_shader_objects")
+#endif
+            )
             m_shaderTypes |= GlslShader;
     }
 

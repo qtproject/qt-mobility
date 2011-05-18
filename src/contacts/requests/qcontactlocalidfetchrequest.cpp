@@ -57,9 +57,10 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -75,7 +76,9 @@ QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
     QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
-/*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter */
+/*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter
+    \since 1.0
+*/
 void QContactLocalIdFetchRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactLocalIdFetchRequest);
@@ -84,7 +87,9 @@ void QContactLocalIdFetchRequest::setFilter(const QContactFilter& filter)
 }
 
 /*! Sets the future sort ordering of the result of the request to \a sorting.  This function only has
-    effect on the result if called prior to calling \c start() */
+    effect on the result if called prior to calling \c start()
+    \since 1.0
+*/
 void QContactLocalIdFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
 {
     Q_D(QContactLocalIdFetchRequest);
@@ -92,7 +97,9 @@ void QContactLocalIdFetchRequest::setSorting(const QList<QContactSortOrder>& sor
     d->m_sorting = sorting;
 }
 
-/*! Returns the filter which will be used to select the contacts whose ids will be returned */
+/*! Returns the filter which will be used to select the contacts whose ids will be returned
+    \since 1.0
+*/
 QContactFilter QContactLocalIdFetchRequest::filter() const
 {
     Q_D(const QContactLocalIdFetchRequest);
@@ -100,7 +107,9 @@ QContactFilter QContactLocalIdFetchRequest::filter() const
     return d->m_filter;
 }
 
-/*! Returns the sort ordering which will be used to sort the result */
+/*! Returns the sort ordering which will be used to sort the result
+    \since 1.0
+*/
 QList<QContactSortOrder> QContactLocalIdFetchRequest::sorting() const
 {
     Q_D(const QContactLocalIdFetchRequest);
@@ -108,7 +117,9 @@ QList<QContactSortOrder> QContactLocalIdFetchRequest::sorting() const
     return d->m_sorting;
 }
 
-/*! Returns the list of ids of contacts which matched the request */
+/*! Returns the list of ids of contacts which matched the request
+    \since 1.0
+*/
 QList<QContactLocalId> QContactLocalIdFetchRequest::ids() const
 {
     Q_D(const QContactLocalIdFetchRequest);

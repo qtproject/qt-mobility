@@ -400,13 +400,6 @@ void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextOb
     text is visible.
 */
 
-/*!
-    \qmlproperty bool MapText::selected
-
-    This property holds a boolean corresponding to whether or not the
-    text is selected.
-*/
-
 #include "moc_qdeclarativegeomaptextobject_p.cpp"
 
 QTM_END_NAMESPACE

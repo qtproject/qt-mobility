@@ -60,6 +60,7 @@ QTM_BEGIN_NAMESPACE
   asynchronous requests to be made of a manager if it supports them.
 
   \inmodule QtContacts
+  \since 1.0
 
   \ingroup contacts-main
 
@@ -132,6 +133,7 @@ QTM_BEGIN_NAMESPACE
   \fn QContactAbstractRequest::stateChanged(QContactAbstractRequest::State newState)
   This signal is emitted when the state of the request is changed.  The new state of
   the request will be contained in \a newState.
+  \since 1.0
  */
 
 
@@ -140,6 +142,8 @@ QTM_BEGIN_NAMESPACE
   This signal is emitted when new results are available.  Results can include
   the operation error which may be accessed via error(), or derived-class-specific
   results which are accessible through the derived class API.
+  \since 1.0
+
 
   \sa error()
  */
@@ -193,6 +197,7 @@ QContactAbstractRequest::~QContactAbstractRequest()
 
 /*!
   Returns true if the request is in the \c QContactAbstractRequest::InactiveState state; otherwise, returns false
+  \since 1.0
 
   \sa state()
  */
@@ -204,6 +209,7 @@ bool QContactAbstractRequest::isInactive() const
 
 /*!
   Returns true if the request is in the \c QContactAbstractRequest::ActiveState state; otherwise, returns false
+  \since 1.0
 
   \sa state()
  */
@@ -215,6 +221,7 @@ bool QContactAbstractRequest::isActive() const
 
 /*!
   Returns true if the request is in the \c QContactAbstractRequest::FinishedState; otherwise, returns false
+  \since 1.0
 
   \sa state()
  */
@@ -226,6 +233,7 @@ bool QContactAbstractRequest::isFinished() const
 
 /*!
   Returns true if the request is in the \c QContactAbstractRequest::CanceledState; otherwise, returns false
+  \since 1.0
 
   \sa state()
  */
@@ -235,7 +243,9 @@ bool QContactAbstractRequest::isCanceled() const
     return (d_ptr->m_state == QContactAbstractRequest::CanceledState);
 }
 
-/*! Returns the overall error of the most recent asynchronous operation */
+/*! Returns the overall error of the most recent asynchronous operation
+  \since 1.0
+*/
 QContactManager::Error QContactAbstractRequest::error() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
@@ -244,6 +254,7 @@ QContactManager::Error QContactAbstractRequest::error() const
 
 /*!
   Returns the type of this asynchronous request
+  \since 1.0
  */
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 {
@@ -253,6 +264,7 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 
 /*!
   Returns the current state of the request.
+  \since 1.0
  */
 QContactAbstractRequest::State QContactAbstractRequest::state() const
 {
@@ -260,7 +272,9 @@ QContactAbstractRequest::State QContactAbstractRequest::state() const
     return d_ptr->m_state;
 }
 
-/*! Returns a pointer to the manager of which this request instance requests operations */
+/*! Returns a pointer to the manager of which this request instance requests operations
+  \since 1.0
+*/
 QContactManager* QContactAbstractRequest::manager() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
@@ -271,6 +285,7 @@ QContactManager* QContactAbstractRequest::manager() const
     Sets the manager of which this request instance requests operations to \a manager
 
     If the request is currently active, this function will return without updating the \a manager object.
+  \since 1.0
 */
 void QContactAbstractRequest::setManager(QContactManager* manager)
 {
@@ -283,7 +298,9 @@ void QContactAbstractRequest::setManager(QContactManager* manager)
 }
 
 /*! Attempts to start the request.  Returns false if the request is not in the \c QContactAbstractRequest::Inactive, \c QContactAbstractRequest::Finished or \c QContactAbstractRequest::Cancelled states,
-    or if the request was unable to be performed by the manager engine; otherwise returns true. */
+    or if the request was unable to be performed by the manager engine; otherwise returns true.
+  \since 1.0
+*/
 bool QContactAbstractRequest::start()
 {
     QMutexLocker ml(&d_ptr->m_mutex);
@@ -298,7 +315,9 @@ bool QContactAbstractRequest::start()
 }
 
 /*! Attempts to cancel the request.  Returns false if the request is not in the \c QContactAbstractRequest::Active state,
-    or if the request is unable to be cancelled by the manager engine; otherwise returns true. */
+    or if the request is unable to be cancelled by the manager engine; otherwise returns true.
+  \since 1.0
+*/
 bool QContactAbstractRequest::cancel()
 {
     QMutexLocker ml(&d_ptr->m_mutex);
@@ -318,6 +337,7 @@ bool QContactAbstractRequest::cancel()
     Note that any signals generated while waiting for the request to complete may be queued and delivered
     some time after this function has returned, when the calling thread's event loop is dispatched.  If your code
     depends on your slots being invoked, you may need to process events after calling this function.
+  \since 1.0
  */
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {

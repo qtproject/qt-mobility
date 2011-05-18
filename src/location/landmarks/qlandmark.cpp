@@ -155,6 +155,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     \inmodule QtLocation
 
     \ingroup landmarks-main
+    \since 1.1
 
     \brief The QLandmark class represents a point of interest.
 
@@ -208,6 +209,7 @@ QLandmark::QLandmark()
     QGeoPlace ordinaryPlace;
     QLandmark lm3 = ordinarPlace; //(2)lm3 has the details of ordinaryPlace's coordinate, address and viewport.
     /endcode
+    \since 1.1
 */
 QLandmark::QLandmark(const QGeoPlace &other)
     : QGeoPlace(other)
@@ -227,6 +229,7 @@ QLandmark::QLandmark(const QGeoPlace &other)
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QLandmark::QLandmark(const QLandmark &other)
         : QGeoPlace(other)
@@ -242,6 +245,7 @@ QLandmark::~QLandmark()
 
 /*!
     Assigns \a other to this landmark and returns a reference to this landmark.
+    \since 1.1
 */
 QLandmark &QLandmark::operator= (const QLandmark & other)
 {
@@ -266,6 +270,7 @@ inline const QLandmarkPrivate* QLandmark::d_func() const
     Two landmarks are considered equal if both the landmark details
     and identifiers are equal.
 
+    \since 1.1
     \sa operator!=()
 */
 bool QLandmark::operator== (const QLandmark &other) const
@@ -280,11 +285,13 @@ bool QLandmark::operator== (const QLandmark &other) const
     Returns true if this landmark not is equal to \a other, otherwise
     returns false.
 
+    \since 1.1
     \sa operator==()
 */
 
 /*!
     Returns the name of the landmark.
+    \since 1.1
 */
 QString QLandmark::name() const
 {
@@ -296,6 +303,7 @@ QString QLandmark::name() const
     Sets the \a name of the landmark.
 
     Using the default manager on the Symbian platform, the name is restricted to a length of 256 characters.
+    \since 1.1
 */
 void QLandmark::setName(const QString &name)
 {
@@ -307,6 +315,7 @@ void QLandmark::setName(const QString &name)
     Returns a of list identifiers of categories that this landmark
     belongs to.
 
+    \since 1.1
     \sa setCategoryIds()
 */
 QList<QLandmarkCategoryId> QLandmark::categoryIds() const
@@ -319,6 +328,7 @@ QList<QLandmarkCategoryId> QLandmark::categoryIds() const
     Sets the categories that this landmark belongs to via
     a list of \a categoryIds.
 
+    \since 1.1
     \sa addCategoryId(), removeCategoryId()
 
 */
@@ -338,6 +348,7 @@ void QLandmark::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
     Adds another category that this landmark will be associated
     with via its \a categoryId.
 
+    \since 1.1
     \sa setCategoryIds(), removeCategoryId()
 */
 void QLandmark::addCategoryId(const QLandmarkCategoryId &categoryId)
@@ -350,6 +361,7 @@ void QLandmark::addCategoryId(const QLandmarkCategoryId &categoryId)
 /*!
     Removes a category from a landmark, by using its \a categoryId.
 
+    \since 1.1
     \sa addCategoryId(), categoryIds()
 */
 void QLandmark::removeCategoryId(const QLandmarkCategoryId &categoryId)
@@ -360,6 +372,7 @@ void QLandmark::removeCategoryId(const QLandmarkCategoryId &categoryId)
 
 /*!
     Returns a description of the landmark.
+    \since 1.1
 */
 QString QLandmark::description() const
 {
@@ -371,6 +384,7 @@ QString QLandmark::description() const
     Sets the \a description of the landmark.
 
     Using the default manager on the Symbian platform, the description is restricted to a length of 4096 characters.
+    \since 1.1
 */
 void QLandmark::setDescription(const QString &description)
 {
@@ -380,6 +394,7 @@ void QLandmark::setDescription(const QString &description)
 
 /*!
     Returns the url of the landmark's icon.
+    \since 1.1
 */
 QUrl QLandmark::iconUrl() const
 {
@@ -389,6 +404,7 @@ QUrl QLandmark::iconUrl() const
 
 /*!
     Sets the \a url of the landmark's icon.
+    \since 1.1
 */
 void QLandmark::setIconUrl(const QUrl &url)
 {
@@ -402,6 +418,7 @@ void QLandmark::setIconUrl(const QUrl &url)
     The coverage radius is relevant for large landmarks
     such as cities.  Note that landmark searches over a given area
     do not factor in the coverage radius.
+    \since 1.1
 */
 qreal QLandmark::radius() const
 {
@@ -412,6 +429,7 @@ qreal QLandmark::radius() const
 /*!
     Sets the coverage \a radius of the landmark.  The unit of the \a radius
     is meters.
+    \since 1.1
 */
 void QLandmark::setRadius(qreal radius)
 {
@@ -424,6 +442,7 @@ void QLandmark::setRadius(qreal radius)
 
 /*!
     Returns the phone number of the landmark.
+    \since 1.1
 */
 QString QLandmark::phoneNumber() const
 {
@@ -433,6 +452,7 @@ QString QLandmark::phoneNumber() const
 
 /*!
     Sets the \a phoneNumber of the landmark.
+    \since 1.1
 */
 void QLandmark::setPhoneNumber(const QString &phoneNumber)
 {
@@ -441,6 +461,7 @@ void QLandmark::setPhoneNumber(const QString &phoneNumber)
 }
 /*!
     Returns the url of the landmark.
+    \since 1.1
 */
 QUrl QLandmark::url() const
 {
@@ -450,6 +471,7 @@ QUrl QLandmark::url() const
 
 /*!
     Sets the \a url of the landmark.
+    \since 1.1
 */
 void QLandmark::setUrl(const QUrl &url)
 {
@@ -459,6 +481,7 @@ void QLandmark::setUrl(const QUrl &url)
 
 /*!
     Returns the identifier of the landmark.
+    \since 1.1
 */
 QLandmarkId QLandmark::landmarkId() const
 {
@@ -471,6 +494,7 @@ QLandmarkId QLandmark::landmarkId() const
 
     Note that saving a new landmark using a QLandmarkManager
     will automatically assign the landmark a valid identifier.
+    \since 1.1
 */
 void QLandmark::setLandmarkId(const QLandmarkId &id)
 {
@@ -480,6 +504,7 @@ void QLandmark::setLandmarkId(const QLandmarkId &id)
 
 /*!
     Clears all the data fields of the landmark.
+    \since 1.1
 */
 void QLandmark::clear()
 {

@@ -216,19 +216,20 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
  *  If it is a local video file then loads the video playersession.
 */
 
-void S60MediaPlayerSession::load(QUrl url)
+void S60MediaPlayerSession::load(const QMediaContent source)
 {
     DP0("S60MediaPlayerSession::load +++");
 
+    m_source = source;
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
-    m_stream = (url.scheme() == "file")?false:true;
-    m_UrlPath = url;
+    m_stream = (source.canonicalUrl().scheme() == "file")?false:true;
+    m_UrlPath = source.canonicalUrl();
     TRAPD(err,
-        if(m_stream)
-            doLoadUrlL(QString2TPtrC(url.toString()));
+        if (m_stream)
+            doLoadUrlL(QString2TPtrC(source.canonicalUrl().toString()));
         else
-            doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));
+            doLoadL(QString2TPtrC(QDir::toNativeSeparators(source.canonicalUrl().toLocalFile()))));
     setError(err);
 
     DP0("S60MediaPlayerSession::load ---");
@@ -290,6 +291,7 @@ void S60MediaPlayerSession::pause()
     setState(QMediaPlayer::PausedState);
     stopProgressTimer();
     TRAP_IGNORE(doPauseL());
+    m_play_requested = false;
 
     DP0("S60MediaPlayerSession::pause ---");
 }
@@ -306,7 +308,7 @@ void S60MediaPlayerSession::stop()
         return;
 
     m_play_requested = false;
-    setState(QMediaPlayer::StoppedState);
+    m_state = QMediaPlayer::StoppedState;
     if (mediaStatus() == QMediaPlayer::BufferingMedia ||
         mediaStatus() == QMediaPlayer::BufferedMedia ||
         mediaStatus() == QMediaPlayer::StalledMedia) 
@@ -317,6 +319,7 @@ void S60MediaPlayerSession::stop()
     stopStalledTimer();
     doStop();
     emit positionChanged(0);
+    emit stateChanged(m_state);
 
     DP0("S60MediaPlayerSession::stop ---");
 }
@@ -336,9 +339,9 @@ void S60MediaPlayerSession::reset()
     stopStalledTimer();
     doStop();
     doClose();
-    emit positionChanged(0);
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
+    setPosition(0);
 
     DP0("S60MediaPlayerSession::reset ---");
 }
@@ -779,6 +782,8 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrServerBusy:
         case KErrCompletion:  
         case KErrBadPower:    
+        case KErrMMInvalidProtocol:
+        case KErrMMInvalidURL:
             return QMediaPlayer::ResourceError;
         
         case KErrMMPartialPlayback:   
@@ -797,8 +802,6 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrMMServerSocket:
         case KErrMMServerNotSupported:
         case KErrMMUDPReceive:
-        case KErrMMInvalidProtocol:
-        case KErrMMInvalidURL:
         case KErrMMMulticast:
         case KErrMMProxyServer:
         case KErrMMProxyServerNotSupported:
@@ -871,7 +874,9 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString, bool
 
     emit this->error(mediaError, symbianError);
 
-    if (mediaError !=QMediaPlayer::NoError) {
+    if (m_error == KErrInUse) {
+        pause();
+    } else if (mediaError != QMediaPlayer::NoError) {
         m_play_requested = false;
         setMediaStatus(QMediaPlayer::InvalidMedia);
         stop();

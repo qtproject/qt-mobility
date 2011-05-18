@@ -81,11 +81,12 @@ public:
 
 /*!
     \class QMediaServiceProviderHint
-    
+
     \brief The QMediaServiceProviderHint class describes what is required of a QMediaService.
 
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     The QMediaServiceProvider class uses hints to select an appropriate media service.
 */
@@ -523,7 +524,7 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 
 /*!
     \class QMediaServiceProvider
-    
+
     \brief The QMediaServiceProvider class provides an abstract allocator for media services.
 */
 
@@ -637,7 +638,7 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
 /*!
     \class QMediaServiceProviderPlugin
-    
+
     \brief The QMediaServiceProviderPlugin class interface provides an interface for QMediaService
     plug-ins.
 

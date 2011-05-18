@@ -135,6 +135,7 @@ public:
 
         connect(m_navigator, SIGNAL(currentIndexChanged(int)), SIGNAL(currentIndexChanged(int)));
         connect(m_navigator, SIGNAL(activated(QMediaContent)), SIGNAL(currentMediaChanged(QMediaContent)));
+        connect(m_navigator, SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)), SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
     }
 
     virtual ~QLocalMediaPlaylistControl() {};

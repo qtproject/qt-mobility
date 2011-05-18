@@ -56,30 +56,8 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \class QSystemInfo
     \ingroup systeminfo
     \inmodule QtSystemInfo
+    \since 1.0
     \brief The QSystemInfo class provides access to various general information from the system.
-    \bold NOTE: In the future, parts of the QtSystemInfo API may be moved and renamed into an existing Qt class that provides similiar functionality.
-
-    \table
-        \header
-            \o Class
-        \row
-            \o QSystemInfo::currentLanguage
-        \row
-            \o QSystemInfo::availableLanguages
-        \row
-            \o QSystemInfo::currentCountryCode
-        \row
-            \o QSystemDisplayInfo::displayBrightness
-        \row
-            \o QSystemDisplayInfo::colorDepth
-        \row
-            \o QSystemScreenSaver::screenSaverInhibited
-        \row
-            \o QSystemScreenSaver::setScreenSaverInhibit
-    \endtable
-
-    Platform notes: Some functionality may or may not be supported on various platforms, depending on if there
-    is a reliable way to gather such information.
 */
 
 /*!
@@ -89,7 +67,7 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \value Os                    Operating system version / platform ID.
     \value QtCore                Qt library version.
     \value Firmware              Version of (flashable) system as a whole.
-    \value QtMobility            QtMobility library version.
+    \value QtMobility            QtMobility library version. Since 1.1
 */
 
 /*!
@@ -109,7 +87,7 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \value LocationFeature        Global Positioning System (GPS) and/or other location feature available.
     \value VideoOutFeature        Video out feature available.
     \value HapticsFeature         Haptics feature available.
-    \value FmTransmitterFeature   FM Radio transmitter available.
+    \value FmTransmitterFeature   FM Radio transmitter available. Since 1.2
 */
 
 /*!
@@ -117,6 +95,8 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
 
     This signal is emitted whenever the current language changes, specified by \a lang,
     which is in 2 letter, ISO 639-1 specification form.
+
+    \since 1.0
 */
 
 /*!
@@ -169,6 +149,7 @@ void QSystemInfo::disconnectNotify(const char *signal)
     \brief The current Language
 
     Returns the current language in 2 letter ISO 639-1 format.
+   \since 1.0
  */
 QString QSystemInfo::currentLanguage()
 {
@@ -180,6 +161,7 @@ QString QSystemInfo::currentLanguage()
 
     Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format.
     If the Qt translations cannot be found, returns the current system language.
+    \since 1.0
 */
 QStringList QSystemInfo::availableLanguages()
 {
@@ -187,20 +169,19 @@ QStringList QSystemInfo::availableLanguages()
 }
 
 /*!
-    Returns the version of QSystemInfo::Version \a type,
-    with optional platform dependent \a parameter as a string.
+    Returns the version of QSystemInfo::Version \a type, with optional platform dependent
+    \a parameter as a string.
 
-    Version will be returned in "major.minor.build" form.
-
-    In case a particular version does not use the "build" part, it is set to 0.
-    If a particular element is not available at all, an error "Not Installed" will be returned by
-    the API.
+    In case of error or not available, an empty string is returned.
+    \since 1.0
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
     switch(type) {
     case QSystemInfo::QtMobility:
         return QLatin1String(QTM_VERSION_STR);
+    case QSystemInfo::QtCore:
+        return QString(qVersion());
     default:
         return sysinfoPrivate()->version(type, parameter);
     }
@@ -211,6 +192,7 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
     \brief The current locale country code.
 
     Returns the 2 letter ISO 3166-1 for the current country code.
+    \since 1.0
 */
 QString QSystemInfo::currentCountryCode()
 {
@@ -219,6 +201,7 @@ QString QSystemInfo::currentCountryCode()
 
 /*!
     Returns true if the QSystemInfo::Feature \a feature is supported, otherwise false.
+    \since 1.0
 */
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 {

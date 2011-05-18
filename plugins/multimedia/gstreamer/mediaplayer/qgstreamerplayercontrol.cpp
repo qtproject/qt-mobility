@@ -227,6 +227,13 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
         return;
 
     pushState();
+#ifdef Q_WS_MAEMO_6
+    //this is a work around for the gstreamer bug,
+    //should be remove once it get fixed
+    if (newState == QMediaPlayer::PlayingState && m_mediaStatus == QMediaPlayer::InvalidMedia) {
+        setMedia(m_currentResource, m_stream);
+    }
+#endif
 
     if (m_mediaStatus == QMediaPlayer::EndOfMedia) {
         m_mediaStatus = QMediaPlayer::BufferedMedia;
@@ -492,7 +499,7 @@ void QGstreamerPlayerControl::updateMediaStatus()
     case QMediaPlayer::StoppedState:
         if (m_currentResource.isNull())
             m_mediaStatus = QMediaPlayer::NoMedia;
-        else
+        else if (oldStatus != QMediaPlayer::InvalidMedia)
             m_mediaStatus = QMediaPlayer::LoadingMedia;
         break;
 
@@ -544,7 +551,9 @@ void QGstreamerPlayerControl::setBufferProgress(int progress)
                 m_session->state() != QMediaPlayer::PlayingState)
             m_session->play();
 
-        if (m_bufferProgress < 100 && m_session->state() == QMediaPlayer::PlayingState)
+        if (m_bufferProgress < 100 &&
+                (m_session->state() == QMediaPlayer::PlayingState ||
+                 m_session->pendingState() == QMediaPlayer::PlayingState))
             m_session->pause();
     }
 

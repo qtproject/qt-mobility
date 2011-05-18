@@ -101,8 +101,7 @@ void tst_QGeoRoutingManager::locale()
 
     QCOMPARE(qgeoroutingmanager->locale(),*german);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroutingmanager->locale(),*english);
+    QVERIFY(qgeoroutingmanager->locale() != *english);
 
     delete german;
     delete english;

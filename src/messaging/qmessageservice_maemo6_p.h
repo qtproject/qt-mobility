@@ -88,7 +88,8 @@ public:
     QMessageManager::Error _error;
     bool _active;
     int _actionId;
-    int _pendingRequestCount;
+    uint _pendingRequestCount;
+    uint _totalRequestCount;
 
     QMessageIdList _ids;
     int _count;

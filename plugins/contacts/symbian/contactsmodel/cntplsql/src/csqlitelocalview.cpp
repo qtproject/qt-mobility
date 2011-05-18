@@ -101,7 +101,7 @@ EXPORT_C CContactLocalView::~CContactLocalView()
 		{
         const_cast<CContactDatabase&>(iDb).RemoveObserver(*this);
 		}
-
+		
 	delete iAsyncSorter; //Add this though we don't use it in local view any more
 	delete iViewCntMgr;
 	}

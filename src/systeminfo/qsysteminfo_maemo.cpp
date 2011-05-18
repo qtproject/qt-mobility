@@ -38,21 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon_p.h"
+
 #include "qsysteminfo_maemo_p.h"
-#include <QStringList>
-#include <QSize>
-#include <QFile>
-#include <QTextStream>
-#include <QLocale>
-#include <QLibraryInfo>
-//#include <QtGui>
-#include <QDesktopWidget>
-#include <QDebug>
-#include <QTimer>
-#include <QDir>
-#include <QTimer>
-#include <QMapIterator>
+
+#include <QtGui/qdesktopwidget.h>
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -61,27 +50,19 @@
 #if !defined(Q_WS_MAEMO_6)
 #if !defined(SW_KEYPAD_SLIDE)
 #define SW_KEYPAD_SLIDE 0x0a
-#endif
-#endif
+#endif // SW_KEYPAD_SLIDE
+#endif // Q_WS_MAEMO_6
 
 #define BITS_PER_LONG (sizeof(long) * 8)
 #define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
 #define OFF(x)  ((x)%BITS_PER_LONG)
-#define BIT(x)  (1UL<<OFF(x))
 #define LONG(x) ((x)/BITS_PER_LONG)
-#define test_bit(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
+#define TEST_BIT(bit, array)    ((array[LONG(bit)] >> OFF(bit)) & 1)
 
 #if !defined(QT_NO_DBUS)
-#include "linux/gconfitem_p.h" // Temporarily here.
-#endif
+#include "linux/gconfitem_p.h"
+#endif // QT_NO_DBUS
 
-#ifdef Q_WS_X11
-#include <QX11Info>
-#include <X11/Xlib.h>
-
-#endif
-
-#include <QDBusInterface>
 #ifdef Q_USE_BME
 extern "C" {
 #include <errno.h>
@@ -90,17 +71,14 @@ extern "C" {
 #include "bme/bmemsg.h"
 #include "bme/em_isi.h"
 }
-#endif
+#endif // Q_USE_BME
 
 static QString sysinfodValueForKey(const QString& key)
 {
-    QString value = "";
+    QString value;
 #if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.SystemInfo",
-                                       "/com/nokia/SystemInfo",
-                                       "com.nokia.SystemInfo",
-                                       QDBusConnection::systemBus());
-
+    QDBusInterface connectionInterface("com.nokia.SystemInfo", "/com/nokia/SystemInfo",
+                                       "com.nokia.SystemInfo", QDBusConnection::systemBus());
     QDBusReply<QByteArray> reply = connectionInterface.call("GetConfigValue", key);
     if (reply.isValid()) {
         /*
@@ -112,27 +90,27 @@ static QString sysinfodValueForKey(const QString& key)
          */
         value = reply.value();
     }
-#endif
+#endif // QT_NO_DBUS
     return value;
 }
 
 #if !defined(QT_NO_DBUS)
 QDBusArgument &operator<<(QDBusArgument &argument, const ProfileDataValue &value)
 {
-  argument.beginStructure();
-  argument << value.key << value.val << value.type;
-  argument.endStructure();
-  return argument;
+    argument.beginStructure();
+    argument << value.key << value.val << value.type;
+    argument.endStructure();
+    return argument;
 }
 
 const QDBusArgument &operator>>(const QDBusArgument &argument, ProfileDataValue &value)
 {
-  argument.beginStructure();
-  argument >> value.key >> value.val >> value.type;
-  argument.endStructure();
-  return argument;
+    argument.beginStructure();
+    argument >> value.key >> value.val >> value.type;
+    argument.endStructure();
+    return argument;
 }
-#endif
+#endif // QT_NO_DBUS
 
 QTM_BEGIN_NAMESPACE
 
@@ -205,14 +183,6 @@ QString QSystemInfoPrivate::currentCountryCode() const
 QString QSystemInfoPrivate::version(QSystemInfo::Version type, const QString &parameter)
 {
     switch(type) {
-    case QSystemInfo::Os: {
-        QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver"); //("/device/content-ver");
-        if (!sysinfodValue.isEmpty()) {
-            sysinfodValue =  sysinfodValue.section("_", 2, 4);
-            return sysinfodValue;
-        }
-    }
-
     case QSystemInfo::Firmware: {
         QString sysinfodValue = sysinfodValueForKey("/device/sw-release-ver");
         if (!sysinfodValue.isEmpty())
@@ -254,12 +224,14 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     }
 
     case QSystemInfo::HapticsFeature: {
+#if !defined(QT_NO_HAL)
         QHalInterface iface;
         const QStringList touchSupport(iface.findDeviceByCapability("input.touchpad"));
         if (touchSupport.count())
             featureSupported = true;
         else
             featureSupported = false;
+#endif // QT_NO_HAL
         break;
     }
 
@@ -782,6 +754,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
             qDebug() << "unable to connect to icdStatusChanged";
         }
 
+#if !defined(QT_NO_HAL)
         if (!QDBusConnection::systemBus().connect("org.freedesktop.Hal", "/org/freedesktop/Hal/Manager", "org.freedesktop.Hal.Manager", QLatin1String("DeviceAdded"),
                                                   this, SLOT(updateAttachedDevices(QString)))) {
             qDebug() << "unable to connect to updateAttachedDevices (1)";
@@ -791,6 +764,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
                                                   this, SLOT(updateAttachedDevices(QString)))) {
             qDebug() << "unable to connect to updateAttachedDevices (2)";
         }
+#endif // QT_NO_HAL
 
         if (!QDBusConnection::systemBus().connect(service, path, "com.nokia.csd.CSNet.NetworkRegistration", "RegistrationChanged",
                                                   this, SLOT(slotRegistrationChanged(QString)))) {
@@ -1296,7 +1270,7 @@ void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
     QSystemDeviceInfoLinuxCommonPrivate::disconnectNotify(signal);
 }
 
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
@@ -1423,7 +1397,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
         QHalInterface iface;
         const QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
@@ -1439,7 +1413,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
                 }
             }
         }
-#endif
+#endif // QT_NO_HAL
     return QSystemDeviceInfo::UnknownPower;
 }
 
@@ -1471,37 +1445,6 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 #endif
      return QSystemDeviceInfo::UnknownThermal;
 }
-
-#if !defined(QT_NO_DBUS)
- void QSystemDeviceInfoPrivate::setupBluetooth()
- {
-     QDBusInterface *connectionInterface;
-     connectionInterface = new QDBusInterface("org.bluez",
-                                              "/",
-                                              "org.bluez.Manager",
-                                              QDBusConnection::systemBus(), this);
-     if (connectionInterface->isValid()) {
-
-         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
-         if (reply.isValid()) {
-             QDBusInterface *adapterInterface;
-             adapterInterface = new QDBusInterface("org.bluez",
-                                                   reply.value().path(),
-                                                   "org.bluez.Adapter",
-                                                   QDBusConnection::systemBus(), this);
-             if (adapterInterface->isValid()) {
-                 if (!QDBusConnection::systemBus().connect("org.bluez",
-                                           reply.value().path(),
-                                            "org.bluez.Adapter",
-                                            "PropertyChanged",
-                                            this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
-                     qDebug() << "bluez could not connect signal";
-                 }
-             }
-         }
-     }
- }
-#endif
 
 #if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &name, QDBusVariant value)
@@ -1653,7 +1596,7 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
     int eventFd = ::open("/dev/input/gpio-keys", O_RDONLY | O_NONBLOCK);
 
     if ((eventFd != -1) && (ioctl(eventFd, EVIOCGSW(KEY_MAX), bits) != -1)) {
-            keyboardFlippedOpen = (0 == test_bit(SW_KEYPAD_SLIDE, bits));
+            keyboardFlippedOpen = (0 == TEST_BIT(SW_KEYPAD_SLIDE, bits));
     }
     if (eventFd != -1) {
         ::close(eventFd);
@@ -2221,7 +2164,7 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxComm
       emEvents(new EmEvents())
 #endif
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     QHalInterface iface;
     QStringList list = iface.findDeviceByCapability("battery");
     if (!list.isEmpty()) {
@@ -2238,14 +2181,14 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxComm
             }
         }
     }
-#endif
+#endif // QT_NO_HAL
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
 }
 
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
 void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
 {
     QHalInterface iface;
@@ -2277,7 +2220,7 @@ void QSystemBatteryInfoPrivate::halChangedMaemo(int count,QVariantList map)
          }
     }
 }
-#endif
+#endif // QT_NO_HAL
 
 void QSystemBatteryInfoPrivate::connectNotify(const char *signal)
 {

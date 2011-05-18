@@ -200,6 +200,8 @@ QVariantList CameraBinExposure::supportedParameterRange(ExposureParameter parame
 
 bool CameraBinExposure::setExposureParameter(ExposureParameter parameter, const QVariant& value)
 {
+    QVariant oldValue = exposureParameter(parameter);
+
     switch (parameter) {
     case QCameraExposureControl::ExposureCompensation:
         gst_photography_set_ev_compensation(m_session->photography(), value.toReal());
@@ -216,6 +218,10 @@ bool CameraBinExposure::setExposureParameter(ExposureParameter parameter, const 
     default:
         return false;
     }
+
+    QVariant newValue = exposureParameter(parameter);
+    if (!qFuzzyCompare(oldValue.toReal(), newValue.toReal()))
+        emit exposureParameterChanged(parameter);
 
     return true;
 }

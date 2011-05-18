@@ -38,12 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#if defined(QT_NO_DBUS)
-sjkp //error is no QtDBus
-#endif
-#include <connman/version.h>
 
-int main(int argc, char** argv)
+#include "\epoc32\include\platform\mw\MMFSessionInfoCustomCommandConstants.h"
+
+int main(int argc, char *argv[])
 {
+    TMMFSessionInfoControllerMessage m;
+
     return 0;
 }

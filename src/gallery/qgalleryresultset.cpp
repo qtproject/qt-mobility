@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
     \class QGalleryResultSet
 
     \ingroup gallery
+    \since 1.1
 
     \inmodule QtGallery
 
@@ -120,24 +121,28 @@ QGalleryResultSet::~QGalleryResultSet()
 
     Returns a positive integer key for a \a property name, or a negative
     integer if the property name is invalid.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryResultSet::propertyAttributes(int key) const
 
     Returns the attributes of the property identified by \a key.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryResultSet::propertyType(int key) const
 
     Returns the type of the property identified by \a key.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryResultSet::itemCount() const
 
     Returns the number of items in a result set.
+    \since 1.1
 */
 
 /*!
@@ -145,6 +150,7 @@ QGalleryResultSet::~QGalleryResultSet()
     otherwise returns false.
 
     \sa currentIndex()
+    \since 1.1
 */
 
 bool QGalleryResultSet::isValid() const
@@ -160,6 +166,7 @@ bool QGalleryResultSet::isValid() const
     Returns the ID of the item a result set is currently positioned on.
 
     \sa currentIndex()
+    \since 1.1
 */
 
 /*!
@@ -168,6 +175,7 @@ bool QGalleryResultSet::isValid() const
     Returns the URL of the item a result set is currently positioned on.
 
     \sa currentIndex(), resources()
+    \since 1.1
 */
 
 /*!
@@ -176,6 +184,7 @@ bool QGalleryResultSet::isValid() const
     Returns the type of the item a result set is currently positioned on.
 
     \sa currentIndex()
+    \since 1.1
 */
 
 /*!
@@ -187,6 +196,7 @@ bool QGalleryResultSet::isValid() const
     URL.
 
     \sa currentIndex(), itemUrl()
+    \since 1.1
 */
 
 QList<QGalleryResource> QGalleryResultSet::resources() const
@@ -205,6 +215,7 @@ QList<QGalleryResource> QGalleryResultSet::resources() const
     \fn QGalleryResultSet::metaData(int key) const
 
     Returns the meta-data value of the current item for \a key.
+    \since 1.1
 */
 
 /*!
@@ -214,6 +225,7 @@ QList<QGalleryResource> QGalleryResultSet::resources() const
 
     Returns true if the value was changed successfully; otherwise returns
     false.
+    \since 1.1
 */
 
 /*!
@@ -222,6 +234,7 @@ QList<QGalleryResource> QGalleryResultSet::resources() const
     Returns the index of the item a result set currently positioned on.
 
     \sa fetch()
+    \since 1.1
 */
 
 /*!
@@ -231,6 +244,7 @@ QList<QGalleryResource> QGalleryResultSet::resources() const
 
     Returns true if the result set is positioned on a valid item on return;
     otherwise returns false.
+    \since 1.1
 */
 
 /*!
@@ -238,6 +252,7 @@ QList<QGalleryResource> QGalleryResultSet::resources() const
 
     Returns true if the result set is positioned on a valid item on return;
     otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryResultSet::fetchNext()
@@ -251,6 +266,7 @@ bool QGalleryResultSet::fetchNext()
 
     Returns true if the result set is positioned on a valid item on return;
     otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryResultSet::fetchPrevious()
@@ -263,6 +279,7 @@ bool QGalleryResultSet::fetchPrevious()
 
     Returns true if the result set is positioned on a valid item on return;
     otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryResultSet::fetchFirst()
@@ -275,6 +292,7 @@ bool QGalleryResultSet::fetchFirst()
 
     Returns true if the result set is positioned on a valid item on return;
     otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryResultSet::fetchLast()
@@ -286,12 +304,14 @@ bool QGalleryResultSet::fetchLast()
     \fn QGalleryResultSet::currentItemChanged()
 
     Signals that the item the result set is positioned on has changed.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryResultSet::currentIndexChanged(int index)
 
     Signals that a result set has been repositioned on a new \a index.
+    \since 1.1
 */
 
 /*!
@@ -299,6 +319,7 @@ bool QGalleryResultSet::fetchLast()
 
     Signals that \a count items have been inserted into a result set at
     \a index.
+    \since 1.1
 */
 
 /*!
@@ -306,6 +327,7 @@ bool QGalleryResultSet::fetchLast()
 
     Signals that \a count items have been removed from a result set at
     \a index.
+    \since 1.1
 */
 
 /*!
@@ -313,6 +335,7 @@ bool QGalleryResultSet::fetchLast()
 
     Signals that \a count items have been moved \a from an existing index \a to
     a new index.
+    \since 1.1
 */
 
 /*!
@@ -320,6 +343,7 @@ bool QGalleryResultSet::fetchLast()
 
     Signals that the meta-data identified by \a keys of \a count items starting
     at \a index has changed.
+    \since 1.1
 */
 
 #include "moc_qgalleryresultset.cpp"

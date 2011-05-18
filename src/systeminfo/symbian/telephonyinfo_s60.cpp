@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "telephonyinfo_s60.h"
-#include "trace.h"
 #ifdef ETELMM_SUPPORTED
 #include <etelmm.h>
 #include <mmtsy_names.h>

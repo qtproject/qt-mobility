@@ -81,7 +81,7 @@ SOURCES += \
     qgstutils.cpp
 
 
-!win32:!embedded:!mac:!symbian:!simulator:!contains(QT_CONFIG, qpa) {
+!win32:!contains(QT_CONFIG,embedded):!mac:!symbian:!simulator:!contains(QT_CONFIG, qpa) {
     LIBS += -lXv -lX11 -lXext
 
     HEADERS += \

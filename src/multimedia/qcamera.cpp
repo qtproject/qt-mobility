@@ -68,6 +68,7 @@ public:
         qRegisterMetaType<QCamera::Error>("QCamera::Error");
         qRegisterMetaType<QCamera::State>("QCamera::State");
         qRegisterMetaType<QCamera::Status>("QCamera::Status");
+        qRegisterMetaType<QCamera::CaptureMode>("QCamera::CaptureMode");
         qRegisterMetaType<QCamera::LockType>("QCamera::LockType");
         qRegisterMetaType<QCamera::LockStatus>("QCamera::LockStatus");
         qRegisterMetaType<QCamera::LockChangeReason>("QCamera::LockChangeReason");
@@ -84,6 +85,7 @@ public:
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
     QCamera can be used with QVideoWidget for viewfinder display,
     QMediaRecorder for video recording and QCameraImageCapture for image taking.

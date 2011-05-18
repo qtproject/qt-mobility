@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QSYSTEMINFO_MAEMO_P_H
 #define QSYSTEMINFO_MAEMO_P_H
 
@@ -52,45 +53,28 @@
 // We mean it.
 //
 
-
-#include <QObject>
-#include <QSize>
-#include <QHash>
-
 #include "linux/qsysteminfo_linux_common_p.h"
-#include "qsysteminfo.h"
-#include <qmobilityglobal.h>
-#if !defined(QT_NO_DBUS)
-#include "linux/qhalservice_linux_p.h"
 
+#if !defined(QT_NO_DBUS)
 struct ProfileDataValue {
     QString key;
     QString val;
     QString type;
-    };
+};
 
 Q_DECLARE_METATYPE(ProfileDataValue)
 Q_DECLARE_METATYPE(QList<ProfileDataValue>)
-
-#endif
+#endif // QT_NO_DBUS
 
 #ifdef Q_USE_BME
 extern "C" {
 #include "bme/bmeipc.h"
 }
 #include <mqueue.h>
-#endif
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-class QStringList;
-class QTimer;
-QT_END_NAMESPACE
+#endif // Q_USE_BME
 
 QTM_BEGIN_NAMESPACE
 
-class QSystemNetworkInfo;
 class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
 {
     Q_OBJECT
@@ -99,18 +83,12 @@ public:
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
 
-    QStringList availableLanguages() const;
-    QString version(QSystemInfo::Version,  const QString &parameter = QString());
-    virtual QString currentLanguage() const;
-    QString currentCountryCode() const;
-
     bool hasFeatureSupported(QSystemInfo::Feature feature);
+    QString currentCountryCode() const;
+    virtual QString currentLanguage() const;
+    QString version(QSystemInfo::Version,  const QString &parameter = QString());
+    QStringList availableLanguages() const;
 };
-
-class QNetworkManagerInterface;
-class QNetworkManagerInterfaceDeviceWired;
-class QNetworkManagerInterfaceDeviceWireless;
-class QNetworkManagerInterfaceAccessPoint;
 
 class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
 {
@@ -121,23 +99,20 @@ public:
     virtual ~QSystemNetworkInfoPrivate();
 
     int cellId();
-    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
-
     int locationAreaCode();
-
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString currentMobileCountryCode();
     QString currentMobileNetworkCode();
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
-
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::CellDataTechnology cellDataTechnology();
     QSystemNetworkInfo::NetworkMode currentMode();
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
 
 #if defined(Q_WS_MAEMO_5)
     void setWlanSignalStrengthCheckEnabled(bool enabled);
 #endif // Q_WS_MAEMO_5
-    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
 
 #if defined(Q_WS_MAEMO_6)
 protected:
@@ -232,50 +207,42 @@ class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
+    bool isDeviceLocked();
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    bool vibrationActive(); //1.2
+    int messageRingtoneVolume(); //1.2
+    int voiceRingtoneVolume(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QString imei();
     QString imsi();
+    QString model();
+    QString productName();
     QSystemDeviceInfo::SimStatus simStatus();
-    bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
     QSystemDeviceInfo::ThermalState currentThermalState();
-    QString model();
-    QString productName();
-    bool isKeyboardFlippedOpen();//1.2
-    bool keypadLightOn(QSystemDeviceInfo::KeypadType type);//1.2
-
-    int messageRingtoneVolume();//1.2
-    int voiceRingtoneVolume();//1.2
-    bool vibrationActive();//1.2
-
-    QSystemDeviceInfo::LockTypeFlags lockStatus();//1.2
+    QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
     QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
-    QByteArray uniqueDeviceID(); //1.2
-
 
 Q_SIGNALS:
     void keyboardFlipped(bool open);
 
-protected:
-
 #if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-    void setupBluetooth();
-
 private Q_SLOTS:
+#if !defined(QT_NO_HAL)
     void halChanged(int,QVariantList);
+#endif // QT_NO_HAL
     void bluezPropertyChanged(const QString&, QDBusVariant);
     void deviceModeChanged(QString newMode);
     void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
     void deviceStateChanged(int device, int state);
     void touchAndKeyboardStateChanged(const QString& state);
-
     void socketActivated(int);
+
 private:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -310,12 +277,13 @@ private:
 
     QSystemDeviceInfo::PowerState previousPowerState;
     QSystemDeviceInfo::LockTypeFlags  currentLockType;
-#endif
-     QSocketNotifier *notifier;
-     int gpioFD;
-     int currentBatteryLevel;
-};
+#endif // QT_NO_DBUS
 
+private:
+    QSocketNotifier *notifier;
+    int gpioFD;
+    int currentBatteryLevel;
+};
 
 class QSystemScreenSaverPrivate : public QObject
 {
@@ -349,6 +317,7 @@ class EmCurrentMeasurement;
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
 {
     Q_OBJECT
+
 public:
     QSystemBatteryInfoPrivate(QSystemBatteryInfoLinuxCommonPrivate *parent = 0);
     ~QSystemBatteryInfoPrivate();
@@ -356,12 +325,13 @@ public:
     int currentFlow() const;
 
 private Q_SLOTS:
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_HAL)
     void halChangedMaemo(int,QVariantList);
-#endif
+#endif // QT_NO_HAL
+
 #ifdef Q_USE_BME
     void onMeasurement(int socket);
-#endif
+#endif // Q_USE_BME
 
 private:
     void connectNotify(const char *signal);
@@ -381,15 +351,9 @@ private:
     QScopedPointer<EmIpc> emIpc;
     QScopedPointer<EmEvents> emEvents;
     QScopedPointer<EmCurrentMeasurement> emCurrentMeasurements;
-#endif
+#endif // Q_USE_BME
 };
-
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif /*QSYSTEMINFO_MAEMO_P_H*/
-
-// End of file
-
+#endif // QSYSTEMINFO_MAEMO_P_H

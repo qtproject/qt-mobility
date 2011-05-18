@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
   uniquely identifies a specific implementation of an action
   \ingroup contacts-actions
   \inmodule QtContacts
+  \since 1.2
 */
 
 /*!

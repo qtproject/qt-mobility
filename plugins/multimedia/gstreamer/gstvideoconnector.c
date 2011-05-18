@@ -84,6 +84,8 @@ static gboolean gst_video_connector_handle_sink_event (GstPad * pad,
 static gboolean gst_video_connector_new_buffer_probe(GstObject *pad, GstBuffer *buffer, guint * object);
 static void gst_video_connector_resend_new_segment(GstElement * element, gboolean emitFailedSignal);
 static gboolean gst_video_connector_setcaps (GstPad  *pad, GstCaps *caps);
+static GstCaps *gst_video_connector_getcaps (GstPad * pad);
+static gboolean gst_video_connector_acceptcaps (GstPad * pad, GstCaps * caps);
 
 static void
 gst_video_connector_base_init (gpointer g_class)
@@ -140,6 +142,10 @@ gst_video_connector_init (GstVideoConnector *element,
                                      GST_DEBUG_FUNCPTR (gst_video_connector_buffer_alloc));
     gst_pad_set_setcaps_function(element->sinkpad,
                                GST_DEBUG_FUNCPTR (gst_video_connector_setcaps));
+    gst_pad_set_getcaps_function(element->sinkpad,
+                               GST_DEBUG_FUNCPTR(gst_video_connector_getcaps));
+    gst_pad_set_acceptcaps_function(element->sinkpad,
+                               GST_DEBUG_FUNCPTR(gst_video_connector_acceptcaps));
 
     gst_element_add_pad (GST_ELEMENT (element), element->sinkpad);
 
@@ -186,6 +192,10 @@ gst_video_connector_buffer_alloc (GstPad * pad, guint64 offset, guint size,
     GstFlowReturn res = GST_FLOW_OK;
     element = GST_VIDEO_CONNECTOR (GST_PAD_PARENT (pad));
 
+    if (!buf)
+        return GST_FLOW_ERROR;
+    *buf = NULL;
+
     GST_OBJECT_LOCK (element);
     gst_object_ref(element->srcpad);
     GST_OBJECT_UNLOCK (element);
@@ -219,6 +229,31 @@ gst_video_connector_setcaps (GstPad  *pad, GstCaps *caps)
     }
 
     return TRUE;
+}
+
+static GstCaps *gst_video_connector_getcaps (GstPad * pad)
+{
+    GstVideoConnector *element;
+    element = GST_VIDEO_CONNECTOR (GST_PAD_PARENT (pad));
+
+#if (GST_VERSION_MICRO > 25)
+    GstCaps *caps = gst_pad_peer_get_caps_reffed(element->srcpad);
+#else
+    GstCaps *caps = gst_pad_peer_get_caps(element->srcpad);
+#endif
+
+    if (!caps)
+        caps = gst_caps_new_any();
+
+    return caps;
+}
+
+static gboolean gst_video_connector_acceptcaps (GstPad * pad, GstCaps * caps)
+{
+    GstVideoConnector *element;
+    element = GST_VIDEO_CONNECTOR (GST_PAD_PARENT (pad));
+
+    return gst_pad_peer_accept_caps(element->srcpad, caps);
 }
 
 static void

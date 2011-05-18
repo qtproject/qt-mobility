@@ -430,7 +430,9 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
 
     // If msec is not 0 and is less than the value returned by minimumUpdateInterval(),
     // the interval will be set to the minimum interval.
-    if (aMilliSec != 0 && aMilliSec <= minimumUpdateInterval) {
+    // if (aMilliSec != 0 && aMilliSec <= minimumUpdateInterval) {
+    // workaround, not accepting zero as value, see QTMOBILITY-995
+    if (aMilliSec <= minimumUpdateInterval) {
         mUpdateInterval = minimumUpdateInterval;
     } else {
         mUpdateInterval = aMilliSec;
@@ -444,7 +446,6 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     // will set Either zero, minimum or +ve value
     // seconds converted to TTimeIntervalMicroSeconds
     aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(mUpdateInterval * 1000));
-
     // set the timeout to the smaller of 150% of interval or update interval + 10 seconds
     TInt64 mUpdateTimeout = (mUpdateInterval * 3) / 2;
     if (mUpdateTimeout > mUpdateInterval + 10000)

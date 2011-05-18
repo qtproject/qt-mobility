@@ -351,7 +351,6 @@ QString QDeclarativeCamera::errorString() const
          \o The initial camera state, with camera not loaded,
            the camera capabilities except of supported capture modes
            are unknown.
-
            While the supported settings are unknown in this state,
            it's allowed to set the camera capture settings like codec,
            resolution, or frame rate.
@@ -369,6 +368,28 @@ QString QDeclarativeCamera::errorString() const
            the viewfinder displays video frames and the
            camera is ready for capture.
     \endtable
+*/
+/*!
+    \enum QDeclarativeCamera::State
+    \value UnloadedState
+            The initial camera state, with camera not loaded,
+            the camera capabilities except of supported capture modes
+            are unknown.
+            While the supported settings are unknown in this state,
+            it's allowed to set the camera capture settings like codec,
+            resolution, or frame rate.
+
+    \value LoadedState
+            The camera is loaded and ready to be configured.
+            In the Idle state it's allowed to query camera capabilities,
+            set capture resolution, codecs, etc.
+            The viewfinder is not active in the loaded state.
+
+    \value ActiveState
+            In the active state as soon as camera is started
+            the viewfinder displays video frames and the
+            camera is ready for capture.
+
 
     The default camera state is ActiveState.
 */
@@ -452,7 +473,26 @@ void QDeclarativeCamera::stop()
         For example in continuous focusing mode, the focus is considered locked as long
         and the object is in focus, even while the actual focusing distance may be constantly changing.
     \endtable
+*/
+/*!
+    \enum QDeclarativeCamera::LockStatus
+    \value Unlocked
+        The application is not interested in camera settings value.
+        The camera may keep this parameter without changes, this is common with camera focus,
+        or adjust exposure and white balance constantly to keep the viewfinder image nice.
 
+    \value Searching
+        The application has requested the camera focus, exposure or white balance lock with
+        searchAndLock(). This state indicates the camera is focusing or calculating exposure and white balance.
+
+    \value Locked
+        The camera focus, exposure or white balance is locked.
+        The camera is ready to capture, application may check the exposure parameters.
+
+        The locked state usually means the requested parameter stays the same,
+        except in the cases when the parameter is requested to be constantly updated.
+        For example in continuous focusing mode, the focus is considered locked as long
+        and the object is in focus, even while the actual focusing distance may be constantly changing.
 */
 QDeclarativeCamera::LockStatus QDeclarativeCamera::lockStatus() const
 {
@@ -531,18 +571,20 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
 
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
-    if (!m_isValid)
+    if (!m_isValid || event->isAutoRepeat())
         return;
 
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->searchAndLock();
+        event->accept();
         break;
     case Qt::Key_Camera:
         if (m_camera->captureMode() == QCamera::CaptureStillImage)
             captureImage();
         //else
         //    m_recorder->record();
+        event->accept();
         break;
     default:
         QDeclarativeItem::keyPressEvent(event);
@@ -551,16 +593,18 @@ void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 
 void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 {
-    if (!m_isValid)
+    if (!m_isValid || event->isAutoRepeat())
         return;
 
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->unlock();
+        event->accept();
         break;
     case Qt::Key_Camera:
         //if (m_camera->captureMode() == QCamera::CaptureVideo)
         //    m_recorder->stop();
+        event->accept();
         break;
     default:
         QDeclarativeItem::keyReleaseEvent(event);
@@ -588,6 +632,22 @@ void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
     \endtable
 
 */
+/*!
+    \enum QDeclarativeCamera::FlashMode
+    \value FlashOff             Flash is Off.
+    \value FlashOn              Flash is On.
+    \value FlashAuto            Automatic flash.
+    \value FlashRedEyeReduction Red eye reduction flash.
+    \value FlashFill            Use flash to fillin shadows.
+    \value FlashTorch           Constant light source, useful for focusing and video capture.
+    \value FlashSlowSyncFrontCurtain
+                                Use the flash in conjunction with a slow shutter speed.
+                                This mode allows better exposure of distant objects and/or motion blur effect.
+    \value FlashSlowSyncRearCurtain
+                                The similar mode to FlashSlowSyncFrontCurtain but flash is fired at the end of exposure.
+    \value FlashManual          Flash power is manually set.
+
+*/
 int QDeclarativeCamera::flashMode() const
 {
     if (!m_isValid)
@@ -610,6 +670,12 @@ void QDeclarativeCamera::setFlashMode(int mode)
     Adjustment for the automatically calculated exposure.  The value is
     in EV units.
  */
+/*!
+    \property QDeclarativeCamera::exposureCompensation
+
+    Adjustment for the automatically calculated exposure.  The value is
+    in EV units.
+ */
 qreal QDeclarativeCamera::exposureCompensation() const
 {
     if (!m_isValid)
@@ -626,6 +692,11 @@ void QDeclarativeCamera::setExposureCompensation(qreal ev)
 
 /*!
     \qmlproperty real Camera::isoSensitivity
+
+    The sensor's ISO sensitivity.
+ */
+/*!
+    \property QDeclarativeCamera::isoSensitivity
 
     The sensor's ISO sensitivity.
  */
@@ -650,6 +721,11 @@ void QDeclarativeCamera::setManualIsoSensitivity(int iso)
 
     The camera's shutter speed, in seconds.
 */
+/*!
+    \property QDeclarativeCamera::shutterSpeed
+
+    The camera's shutter speed, in seconds.
+*/
 qreal QDeclarativeCamera::shutterSpeed() const
 {
     if (!m_isValid)
@@ -660,6 +736,11 @@ qreal QDeclarativeCamera::shutterSpeed() const
 
 /*!
     \qmlproperty real Camera::aperture
+
+    The lens aperture as an F number (the ratio of the focal length to effective aperture diameter).
+*/
+/*!
+    \property QDeclarativeCamera::aperture
 
     The lens aperture as an F number (the ratio of the focal length to effective aperture diameter).
 */
@@ -691,6 +772,27 @@ qreal QDeclarativeCamera::aperture() const
     \endtable
 
 */
+/*!
+    \enum QDeclarativeCamera::ExposureMode
+    \value ExposureManual        Manual mode.
+    \value ExposureAuto          Automatic mode.
+    \value ExposureNight         Night mode.
+    \value ExposureBacklight     Backlight exposure mode.
+    \value ExposureSpotlight     Spotlight exposure mode.
+    \value ExposureSports        Spots exposure mode.
+    \value ExposureSnow          Snow exposure mode.
+    \value ExposureBeach         Beach exposure mode.
+    \value ExposureLargeAperture Use larger aperture with small depth of field.
+    \value ExposureSmallAperture Use smaller aperture.
+    \value ExposurePortrait      Portrait exposure mode.
+    \value ExposureModeVendor    The base value for device specific exposure modes.
+
+*/
+/*!
+    \property QDeclarativeCamera::exposureMode
+
+    Camera exposure modes.
+*/
 QDeclarativeCamera::ExposureMode QDeclarativeCamera::exposureMode() const
 {
     if (!m_isValid)
@@ -712,6 +814,12 @@ void QDeclarativeCamera::setExposureMode(QDeclarativeCamera::ExposureMode mode)
 
 /*!
     \qmlproperty size Camera::captureResolution
+
+    The resolution to capture the image at.  If empty, the system will pick
+    a good size.
+*/
+/*!
+    \property QDeclarativeCamera::captureResolution
 
     The resolution to capture the image at.  If empty, the system will pick
     a good size.
@@ -743,6 +851,11 @@ void QDeclarativeCamera::setCaptureResolution(const QSize &resolution)
 
     The maximum optical zoom factor, or 1.0 if optical zoom is not supported.
 */
+/*!
+    \property QDeclarativeCamera::maximumOpticalZoom
+
+    The maximum optical zoom factor, or 1.0 if optical zoom is not supported.
+*/
 qreal QDeclarativeCamera::maximumOpticalZoom() const
 {
     if (!m_isValid)
@@ -756,6 +869,11 @@ qreal QDeclarativeCamera::maximumOpticalZoom() const
 
     The maximum digital zoom factor, or 1.0 if digital zoom is not supported.
 */
+/*!
+    \property  QDeclarativeCamera::maximumDigitalZoom
+
+    The maximum digital zoom factor, or 1.0 if digital zoom is not supported.
+*/
 qreal QDeclarativeCamera::maximumDigitalZoom() const
 {
     if (!m_isValid)
@@ -766,6 +884,11 @@ qreal QDeclarativeCamera::maximumDigitalZoom() const
 
 /*!
     \qmlproperty real Camera::opticalZoom
+
+    The current optical zoom factor.
+*/
+/*!
+    \property QDeclarativeCamera::opticalZoom
 
     The current optical zoom factor.
 */
@@ -788,6 +911,11 @@ void QDeclarativeCamera::setOpticalZoom(qreal value)
 
     The current digital zoom factor.
 */
+/*!
+    \property   QDeclarativeCamera::digitalZoom
+
+    The current digital zoom factor.
+*/
 qreal QDeclarativeCamera::digitalZoom() const
 {
     if (!m_isValid)
@@ -802,6 +930,20 @@ void QDeclarativeCamera::setDigitalZoom(qreal value)
         m_focus->zoomTo(opticalZoom(), value);
 }
 
+/*!
+    \enum QDeclarativeCamera::WhiteBalanceMode
+    \value WhiteBalanceManual       Manual white balance. In this mode the manual white balance property value is used.
+    \value WhiteBalanceAuto         Auto white balance mode.
+    \value WhiteBalanceSunlight     Sunlight white balance mode.
+    \value WhiteBalanceCloudy       Cloudy white balance mode.
+    \value WhiteBalanceShade        Shade white balance mode.
+    \value WhiteBalanceTungsten     Tungsten white balance mode.
+    \value WhiteBalanceFluorescent  Fluorescent white balance mode.
+    \value WhiteBalanceIncandescent Incandescent white balance mode.
+    \value WhiteBalanceFlash        Flash white balance mode.
+    \value WhiteBalanceSunset       Sunset white balance mode.
+    \value WhiteBalanceVendor       Vendor defined white balance mode.
+*/
 /*!
     \qmlproperty enumeration Camera::whiteBalanceMode
 
@@ -822,6 +964,11 @@ void QDeclarativeCamera::setDigitalZoom(qreal value)
 
     \sa manualWhiteBalance
 */
+/*!
+    \property QDeclarativeCamera::whiteBalanceMode
+
+    \sa WhiteBalanceMode
+*/
 QDeclarativeCamera::WhiteBalanceMode QDeclarativeCamera::whiteBalanceMode() const
 {
     if (!m_isValid)
@@ -840,6 +987,13 @@ void QDeclarativeCamera::setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMod
 
 /*!
     \qmlproperty int Camera::manualWhiteBalance
+
+    The color temperature used when in manual white balance mode (WhiteBalanceManual).
+
+    \sa whiteBalanceMode
+*/
+/*!
+    \property QCamera::manualWhiteBalance
 
     The color temperature used when in manual white balance mode (WhiteBalanceManual).
 
@@ -877,6 +1031,15 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
     \row \o NotSupportedFeatureError \o The feature is not supported.
     \endtable
 */
+/*!
+    \enum QDeclarativeCamera::Error
+    \value NoError                  No errors have occurred.
+    \value CameraError              An error has occurred.
+    \value InvalidRequestError      System resource doesn't support requested functionality.
+    \value ServiceMissingError      No camera service available.
+    \value NotSupportedFeatureError The feature is not supported.
+*/
+
 
 /*!
     \qmlsignal Camera::onCaptureFailed(message)

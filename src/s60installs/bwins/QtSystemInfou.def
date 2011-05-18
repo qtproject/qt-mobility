@@ -225,4 +225,5 @@ EXPORTS
 	?staticMetaObject@QSystemBatteryInfo@QtMobility@@2UQMetaObject@@B @ 224 NONAME ; struct QMetaObject const QtMobility::QSystemBatteryInfo::staticMetaObject
 	?currentThermalState@QSystemDeviceInfo@QtMobility@@QAE?AW4ThermalState@12@XZ @ 225 NONAME ; enum QtMobility::QSystemDeviceInfo::ThermalState QtMobility::QSystemDeviceInfo::currentThermalState(void)
 	?thermalStateChanged@QSystemDeviceInfo@QtMobility@@IAEXW4ThermalState@12@@Z @ 226 NONAME ; void QtMobility::QSystemDeviceInfo::thermalStateChanged(enum QtMobility::QSystemDeviceInfo::ThermalState)
+	?connectNotify@QSystemStorageInfo@QtMobility@@EAEXPBD@Z @ 227 NONAME ; void QtMobility::QSystemStorageInfo::connectNotify(char const *)
 

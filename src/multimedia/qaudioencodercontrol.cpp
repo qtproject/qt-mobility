@@ -49,8 +49,9 @@ QT_BEGIN_NAMESPACE
     \class QAudioEncoderControl
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
 
     \brief The QAudioEncoderControl class provides access to the settings of a
     media service that performs audio encoding.

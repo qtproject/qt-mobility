@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     a route on a map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -99,6 +100,7 @@ QGeoMapRouteObject::~QGeoMapRouteObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapRouteObject::type() const
 {
@@ -113,6 +115,7 @@ QGeoMapObject::Type QGeoMapRouteObject::type() const
 
     If QGeoRoute::path() returns a list of less than 2 valid QGeoCoordinates
     then the route object will not be displayed.
+    \since 1.1
 */
 QGeoRoute QGeoMapRouteObject::route() const
 {
@@ -133,6 +136,7 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 
     The pen will be treated like a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
+    \since 1.1
 */
 QPen QGeoMapRouteObject::pen() const
 {
@@ -165,6 +169,7 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
     start point and the end point of the line is at least \a detailLevel.
 
     The default value of this property is 6.
+    \since 1.1
 */
 quint32 QGeoMapRouteObject::detailLevel() const
 {
@@ -182,28 +187,31 @@ void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 /*!
 \fn void QGeoMapRouteObject::routeChanged(const QGeoRoute &route)
 
-    This signal is emitted when the route drawn by this route object 
+    This signal is emitted when the route drawn by this route object
     has changed.
 
     The new value is \a route.
+    \since 1.1
 */
 
 /*!
 \fn void QGeoMapRouteObject::penChanged(const QPen &pen)
 
-    This signal is emitted when the pen used to draw this route object has 
+    This signal is emitted when the pen used to draw this route object has
     changed.
 
     The new value is \a pen.
+    \since 1.1
 */
 
 /*!
 \fn void QGeoMapRouteObject::detailLevelChanged(quint32 detailLevel)
 
-    This signal is emitted when the level of detail used to draw this 
+    This signal is emitted when the level of detail used to draw this
     route object has changed.
 
     The new value is \a detailLevel.
+    \since 1.1
 */
 
 /*******************************************************************************

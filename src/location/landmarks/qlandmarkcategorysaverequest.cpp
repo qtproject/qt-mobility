@@ -61,6 +61,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-request
+    \since 1.1
 */
 
 /*!
@@ -83,6 +84,7 @@ QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest()
     finished, any new categories saved will have had their QLandmarkCategoryId set.
     (Categories which were updated or failed to save will remain unchanged, use the
     errorMap() function to determine which particular categories failed to save.)
+    \since 1.1
 */
 QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 {
@@ -93,6 +95,7 @@ QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 
 /*!
     Sets the list of \a categories to be saved.
+    \since 1.1
     \sa setCategory()
 */
 void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> &categories)
@@ -106,6 +109,7 @@ void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> 
     Convenience function to set a single \a category to be saved.  This function
     is the equivalent of calling setCategories() with a single \a category.
 
+    \since 1.1
     \sa setCategories()
 */
 void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category)
@@ -119,6 +123,7 @@ void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category
 /*!
     Returns the mapping of the input category list indices to the
     errors which occurred.
+    \since 1.1
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategorySaveRequest::errorMap() const
 {

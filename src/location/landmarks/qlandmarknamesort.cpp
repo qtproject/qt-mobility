@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-sort
+    \since 1.1
 
     Note that some manager's may not support case sensitive sorting.
 */
@@ -60,6 +61,7 @@ Q_IMPLEMENT_LANDMARKSORTORDER_PRIVATE(QLandmarkNameSort)
 /*!
     Creates a sort order that sorts by name according to the given \a direction and
     case \a sensitivity.
+    \since 1.1
 */
 QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction, Qt::CaseSensitivity sensitivity)
         : QLandmarkSortOrder(new QLandmarkNameSortPrivate())
@@ -72,6 +74,7 @@ QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction, Qt::CaseSensitivit
 /*!
     \fn QLandmarkNameSort::QLandmarkNameSort(const QLandmarkSortOrder &other)
     Constructs a copy of \a other if possible, otherwise constructs a new name sort order.
+    \since 1.1
 */
 
 /*!
@@ -83,6 +86,7 @@ QLandmarkNameSort::~QLandmarkNameSort()
 
 /*!
     Returns the case sensitivity of the sort order.
+    \since 1.1
 */
 Qt::CaseSensitivity QLandmarkNameSort::caseSensitivity() const
 {
@@ -92,6 +96,7 @@ Qt::CaseSensitivity QLandmarkNameSort::caseSensitivity() const
 
 /*!
     Sets the the \a caseSensitivity of the sort order.
+    \since 1.1
 */
 void QLandmarkNameSort::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 {

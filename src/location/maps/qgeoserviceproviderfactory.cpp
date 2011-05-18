@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-impl
 
@@ -75,6 +76,7 @@ Returns the string used to identify the service provider behind this implementat
 
 The combination of providerName() and providerVersion() should be unique
 amongst the plugins.
+\since 1.1
 */
 
 /*!
@@ -84,6 +86,7 @@ Returns the version of the plugin.
 
 The combination of providerName() and providerVersion() should be unique
 amongst the plugins.
+\since 1.1
 */
 
 /*!
@@ -99,6 +102,7 @@ amongst the plugins.
 
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+    \since 1.1
 */
 QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
@@ -124,6 +128,7 @@ QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(c
 
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+    \since 1.1
 */
 QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
@@ -149,6 +154,7 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine
 
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+    \since 1.1
 */
 QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,

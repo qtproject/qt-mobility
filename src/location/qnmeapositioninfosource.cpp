@@ -429,7 +429,8 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
     \brief The QNmeaPositionInfoSource class provides positional information using a NMEA data source.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     NMEA is a commonly used protocol for the specification of one's global
@@ -465,6 +466,7 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
 /*!
     Constructs a QNmeaPositionInfoSource instance with the given \a parent
     and \a updateMode.
+    \since 1.0
 */
 QNmeaPositionInfoSource::QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent)
         : QGeoPositionInfoSource(parent),
@@ -495,6 +497,7 @@ QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
 
     Returns true if the sentence was succsesfully parsed, otherwise returns false and should not
     modifiy \a posInfo or \a hasFix.
+    \since 1.0
 */
 bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int size,
         QGeoPositionInfo *posInfo, bool *hasFix)
@@ -504,6 +507,7 @@ bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int siz
 
 /*!
     Returns the update mode.
+    \since 1.0
 */
 QNmeaPositionInfoSource::UpdateMode QNmeaPositionInfoSource::updateMode() const
 {
@@ -521,6 +525,7 @@ QNmeaPositionInfoSource::UpdateMode QNmeaPositionInfoSource::updateMode() const
     source to be notified when data is available for reading.
     QNmeaPositionInfoSource does not assume the ownership of the device,
     and hence does not deallocate it upon destruction.
+    \since 1.0
 */
 void QNmeaPositionInfoSource::setDevice(QIODevice *device)
 {
@@ -534,6 +539,7 @@ void QNmeaPositionInfoSource::setDevice(QIODevice *device)
 
 /*!
     Returns the NMEA data source.
+    \since 1.0
 */
 QIODevice *QNmeaPositionInfoSource::device() const
 {
@@ -542,6 +548,7 @@ QIODevice *QNmeaPositionInfoSource::device() const
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::setUpdateInterval(int msec)
 {
@@ -557,6 +564,7 @@ void QNmeaPositionInfoSource::setUpdateInterval(int msec)
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::startUpdates()
 {
@@ -565,6 +573,7 @@ void QNmeaPositionInfoSource::startUpdates()
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::stopUpdates()
 {
@@ -573,6 +582,7 @@ void QNmeaPositionInfoSource::stopUpdates()
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::requestUpdate(int msec)
 {
@@ -581,6 +591,7 @@ void QNmeaPositionInfoSource::requestUpdate(int msec)
 
 /*!
     \reimp
+    \since 1.0
 */
 QGeoPositionInfo QNmeaPositionInfoSource::lastKnownPosition(bool) const
 {
@@ -590,6 +601,7 @@ QGeoPositionInfo QNmeaPositionInfoSource::lastKnownPosition(bool) const
 
 /*!
     \reimp
+    \since 1.0
 */
 QGeoPositionInfoSource::PositioningMethods QNmeaPositionInfoSource::supportedPositioningMethods() const
 {
@@ -598,6 +610,7 @@ QGeoPositionInfoSource::PositioningMethods QNmeaPositionInfoSource::supportedPos
 
 /*!
     \reimp
+    \since 1.0
 */
 int QNmeaPositionInfoSource::minimumUpdateInterval() const
 {

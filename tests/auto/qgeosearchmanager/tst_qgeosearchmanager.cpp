@@ -121,8 +121,7 @@ void tst_QGeoSearchManager::locale()
 
     QCOMPARE(qgeosearchmanager->locale(),*english);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeosearchmanager->locale(),*german);
+    QVERIFY(qgeosearchmanager->locale() != *german);
 
     delete german;
     delete english;

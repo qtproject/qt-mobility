@@ -198,32 +198,19 @@ void tst_QSystemNetworkInfo::tst_networkStatus_data()
 
 void tst_QSystemNetworkInfo::tst_networkStatus()
 {
-//    QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+    QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+
     QSystemNetworkInfo ni;
-    QList<QSystemNetworkInfo::NetworkMode> modeList;
-    modeList << QSystemNetworkInfo::GsmMode;
-    modeList << QSystemNetworkInfo::CdmaMode;
-    modeList << QSystemNetworkInfo::WcdmaMode;
-    modeList << QSystemNetworkInfo::WlanMode;
-    modeList << QSystemNetworkInfo::EthernetMode;
-    modeList << QSystemNetworkInfo::BluetoothMode;
-    modeList << QSystemNetworkInfo::WimaxMode;
-    modeList << QSystemNetworkInfo::LteMode;
-
-    foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
-        QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
-
-        QVERIFY( status == QSystemNetworkInfo::UndefinedStatus
-                 || status == QSystemNetworkInfo::NoNetworkAvailable
-                 || status == QSystemNetworkInfo::EmergencyOnly
-                 || status == QSystemNetworkInfo::Searching
-                 || status == QSystemNetworkInfo::Busy
-                 || status == QSystemNetworkInfo::Connected
-                 || status == QSystemNetworkInfo::HomeNetwork
-                 || status == QSystemNetworkInfo::Denied
-                 || status == QSystemNetworkInfo::Roaming);
-    }
-
+    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
+    QVERIFY(status == QSystemNetworkInfo::UndefinedStatus
+            || status == QSystemNetworkInfo::NoNetworkAvailable
+            || status == QSystemNetworkInfo::EmergencyOnly
+            || status == QSystemNetworkInfo::Searching
+            || status == QSystemNetworkInfo::Busy
+            || status == QSystemNetworkInfo::Connected
+            || status == QSystemNetworkInfo::HomeNetwork
+            || status == QSystemNetworkInfo::Denied
+            || status == QSystemNetworkInfo::Roaming);
 }
 
 void tst_QSystemNetworkInfo::tst_mode_data()
@@ -237,7 +224,6 @@ void tst_QSystemNetworkInfo::tst_mode_data()
     QTest::newRow("EthernetMode") << QSystemNetworkInfo::EthernetMode;
     QTest::newRow("BluetoothMode") << QSystemNetworkInfo::BluetoothMode;
     QTest::newRow("WimaxMode") << QSystemNetworkInfo::WimaxMode;
-
     QTest::newRow("LteMode") << QSystemNetworkInfo::LteMode;
 }
 
@@ -249,10 +235,10 @@ void tst_QSystemNetworkInfo::tst_networkSignalStrength_data()
 void tst_QSystemNetworkInfo::tst_networkSignalStrength()
 {
     QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+
     QSystemNetworkInfo ni;
     qint32 strength = ni.networkSignalStrength(mode);
-    QVERIFY( strength > -2
-            && strength < 101);
+    QVERIFY(strength > -2 && strength < 101);
 }
 
 void  tst_QSystemNetworkInfo::tst_cellId()
@@ -269,39 +255,32 @@ void  tst_QSystemNetworkInfo::tst_locationAreaCode()
     QVERIFY(lac > -2);
 }
 
-
 void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
     QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
 
-    if ((mode == QSystemNetworkInfo::GsmMode
-        || mode == QSystemNetworkInfo::CdmaMode
-        || mode == QSystemNetworkInfo::LteMode)
-            && (QSystemNetworkInfo::HomeNetwork == status
-                || QSystemNetworkInfo::Connected == status
-                || QSystemNetworkInfo::Roaming == status)) {
-//    qDebug() << ni.currentMobileCountryCode();
-    if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
-        || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
-        || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
-        || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::GsmMode)
-        || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
-        || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
-        || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)
-        ) {
-        QVERIFY(!ni.currentMobileCountryCode().isEmpty());
-        bool ok;
-         ni.currentMobileCountryCode().toInt(&ok);
-        QVERIFY(ok);
-        QVERIFY(ni.currentMobileCountryCode().count() == 3);
-    } else {
-        QVERIFY(ni.currentMobileCountryCode().isEmpty());
+    if ((mode == QSystemNetworkInfo::GsmMode || mode == QSystemNetworkInfo::CdmaMode || mode == QSystemNetworkInfo::LteMode)
+        && (QSystemNetworkInfo::HomeNetwork == status || QSystemNetworkInfo::Connected == status || QSystemNetworkInfo::Roaming == status)) {
+        if (QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::LteMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)) {
+            QVERIFY(!ni.currentMobileCountryCode().isEmpty());
+            bool ok;
+            ni.currentMobileCountryCode().toInt(&ok);
+            QVERIFY(ok);
+            QVERIFY(ni.currentMobileCountryCode().count() == 3);
+        } else {
+            QVERIFY(ni.currentMobileCountryCode().isEmpty());
+        }
     }
-  }
 }
-
 
 void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 {
@@ -309,49 +288,43 @@ void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
     QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
 
-    if ((mode == QSystemNetworkInfo::GsmMode
-         || mode == QSystemNetworkInfo::CdmaMode
-         || mode == QSystemNetworkInfo::LteMode)
-        && (QSystemNetworkInfo::HomeNetwork == status
-            || QSystemNetworkInfo::Connected == status
-            || QSystemNetworkInfo::Roaming == status)) {
-        if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
-           || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
-           || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::GsmMode)
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)
-            ) {
+    if ((mode == QSystemNetworkInfo::GsmMode || mode == QSystemNetworkInfo::CdmaMode || mode == QSystemNetworkInfo::LteMode)
+        && (QSystemNetworkInfo::HomeNetwork == status || QSystemNetworkInfo::Connected == status || QSystemNetworkInfo::Roaming == status)) {
+        if (QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::LteMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)) {
             QVERIFY(!ni.currentMobileNetworkCode().isEmpty());
             bool ok;
-            ni.currentMobileCountryCode().toInt(&ok);
+            ni.currentMobileNetworkCode().toInt(&ok);
             QVERIFY(ok);
-            QVERIFY((ni.currentMobileCountryCode().count() == 3)
-                    || (ni.currentMobileCountryCode().count() == 2));
+            QVERIFY((ni.currentMobileNetworkCode().count() == 3) || (ni.currentMobileCountryCode().count() == 2));
         } else {
             QVERIFY(ni.currentMobileNetworkCode().isEmpty());
         }
     }
 }
 
-
 void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-    if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+    if (QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
+        || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::LteMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::GsmMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
         || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
-        || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)
-        ) {
+        || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)) {
         QVERIFY(!ni.homeMobileCountryCode().isEmpty());
         bool ok;
-        ni.currentMobileCountryCode().toInt(&ok);
+        ni.homeMobileCountryCode().toInt(&ok);
         QVERIFY(ok);
-        QVERIFY(ni.currentMobileCountryCode().count() == 3);
+        QVERIFY(ni.homeMobileCountryCode().count() == 3);
     } else {
         QVERIFY(ni.homeMobileCountryCode().isEmpty());
     }
@@ -363,84 +336,59 @@ void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
     QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
 
-    if ((mode == QSystemNetworkInfo::GsmMode
-         || mode == QSystemNetworkInfo::CdmaMode
-         || mode == QSystemNetworkInfo::LteMode)
-        && (QSystemNetworkInfo::HomeNetwork == status
-            || QSystemNetworkInfo::Connected == status
-            || QSystemNetworkInfo::Roaming == status)) {
-        if(QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
-           || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
-           || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::GsmMode)
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
-
-           || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)
-            ) {
+    if ((mode == QSystemNetworkInfo::GsmMode || mode == QSystemNetworkInfo::CdmaMode || mode == QSystemNetworkInfo::LteMode)
+        && (QSystemNetworkInfo::HomeNetwork == status || QSystemNetworkInfo::Connected == status || QSystemNetworkInfo::Roaming == status)) {
+        if (QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
+            || QSystemNetworkInfo::HomeNetwork == ni.networkStatus(QSystemNetworkInfo::LteMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)
+            || QSystemNetworkInfo::Roaming == ni.networkStatus(QSystemNetworkInfo::LteMode)) {
             QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
             bool ok;
-            ni.currentMobileCountryCode().toInt(&ok);
+            ni.homeMobileNetworkCode().toInt(&ok);
             QVERIFY(ok);
-            QVERIFY((ni.currentMobileCountryCode().count() == 3)
-                    || (ni.currentMobileCountryCode().count() == 2));
+            QVERIFY((ni.homeMobileNetworkCode().count() == 3) || (ni.homeMobileNetworkCode().count() == 2));
         } else {
             QVERIFY(ni.homeMobileNetworkCode().isEmpty());
         }
     }
 }
 
-void  tst_QSystemNetworkInfo::tst_networkName_data()
+void tst_QSystemNetworkInfo::tst_networkName_data()
 {
     tst_mode_data();
 }
 
 void  tst_QSystemNetworkInfo::tst_networkName()
 {
-    {
-        QFETCH(QSystemNetworkInfo::NetworkMode, mode);
-        QSystemNetworkInfo ni;
-        QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
-        if (QSystemNetworkInfo::HomeNetwork == status
-            || QSystemNetworkInfo::Connected == status
-            || QSystemNetworkInfo::Roaming == status) {
-            QVERIFY(!ni.networkName(mode).isEmpty());
-        } else {
-            ni.networkName(mode).isEmpty();
-        }
-
-        QList<QSystemNetworkInfo::NetworkMode> modeList;
-        modeList << QSystemNetworkInfo::GsmMode;
-        modeList << QSystemNetworkInfo::CdmaMode;
-        modeList << QSystemNetworkInfo::WcdmaMode;
-        modeList << QSystemNetworkInfo::WlanMode;
-        modeList << QSystemNetworkInfo::EthernetMode;
-        modeList << QSystemNetworkInfo::BluetoothMode;
-        modeList << QSystemNetworkInfo::WimaxMode;
-
-        modeList << QSystemNetworkInfo::LteMode;
-
-        foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
-            QVERIFY(!ni.networkName(mode).isEmpty()
-                    ||ni.networkName(mode).isEmpty());
-        }
+    QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+    QSystemNetworkInfo ni;
+    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
+    if (QSystemNetworkInfo::HomeNetwork == status
+        || QSystemNetworkInfo::Connected == status
+        || QSystemNetworkInfo::Roaming == status) {
+        QVERIFY(!ni.networkName(mode).isEmpty());
     }
 }
 
 void tst_QSystemNetworkInfo::tst_macAddress_data()
 {
-   tst_networkSignalStrength_data();
+    tst_networkSignalStrength_data();
 }
 
 void tst_QSystemNetworkInfo::tst_macAddress()
 {
-   QFETCH(QSystemNetworkInfo::NetworkMode, mode);
-   QSystemNetworkInfo ni;
-   QString mac = ni.macAddress(mode);
-   if (!mac.isEmpty()) {
-      QVERIFY(mac.length() == 17);
-      QVERIFY(mac.contains(":"));
-   }
+    QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+
+    QSystemNetworkInfo ni;
+    QString mac = ni.macAddress(mode);
+    if (!mac.isEmpty()) {
+        QVERIFY(mac.length() == 17);
+        QVERIFY(mac.contains(":"));
+    }
 }
 
 void tst_QSystemNetworkInfo::tst_interfaceForMode_data()
@@ -451,27 +399,16 @@ void tst_QSystemNetworkInfo::tst_interfaceForMode_data()
 void tst_QSystemNetworkInfo::tst_interfaceForMode()
 {
     QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+
     QSystemNetworkInfo ni;
-//    QSystemNetworkInfo::NetworkStatus status = ni.networkStatus(mode);
     if ((mode == ni.currentMode()) && (mode == QSystemNetworkInfo::EthernetMode
                                        || mode == QSystemNetworkInfo::WlanMode)) {
         QVERIFY(!ni.interfaceForMode(mode).name().isEmpty());
+        QVERIFY(ni.interfaceForMode(mode).isValid());
     }
 
-    QList<QSystemNetworkInfo::NetworkMode> modeList;
-    modeList << QSystemNetworkInfo::GsmMode;
-    modeList << QSystemNetworkInfo::CdmaMode;
-    modeList << QSystemNetworkInfo::WcdmaMode;
-    modeList << QSystemNetworkInfo::WlanMode;
-    modeList << QSystemNetworkInfo::EthernetMode;
-    modeList << QSystemNetworkInfo::BluetoothMode;
-    modeList << QSystemNetworkInfo::WimaxMode;
-    modeList << QSystemNetworkInfo::LteMode;
-
-    foreach (QSystemNetworkInfo::NetworkMode mode, modeList) {
-        QVERIFY(!ni.interfaceForMode(mode).name().isEmpty()
-                || !ni.interfaceForMode(mode).isValid());
-    }
+    QVERIFY((ni.interfaceForMode(mode).name().isEmpty() && !ni.interfaceForMode(mode).isValid())
+             || (!ni.interfaceForMode(mode).name().isEmpty() && ni.interfaceForMode(mode).isValid()));
 }
 
 void tst_QSystemNetworkInfo::tst_currentMode()
@@ -479,17 +416,15 @@ void tst_QSystemNetworkInfo::tst_currentMode()
     QSystemNetworkInfo ni;
     QSystemNetworkInfo::NetworkMode mode = ni.currentMode();
 
-    QVERIFY( mode == QSystemNetworkInfo::UnknownMode
-             || mode == QSystemNetworkInfo::GsmMode
-             || mode == QSystemNetworkInfo::CdmaMode
-             || mode == QSystemNetworkInfo::WcdmaMode
-             || mode == QSystemNetworkInfo::WlanMode
-             || mode == QSystemNetworkInfo::EthernetMode
-             || mode == QSystemNetworkInfo::BluetoothMode
-             || mode == QSystemNetworkInfo::WimaxMode
-
-             || mode == QSystemNetworkInfo::LteMode
-             );
+    QVERIFY(mode == QSystemNetworkInfo::UnknownMode
+            || mode == QSystemNetworkInfo::GsmMode
+            || mode == QSystemNetworkInfo::CdmaMode
+            || mode == QSystemNetworkInfo::WcdmaMode
+            || mode == QSystemNetworkInfo::WlanMode
+            || mode == QSystemNetworkInfo::EthernetMode
+            || mode == QSystemNetworkInfo::BluetoothMode
+            || mode == QSystemNetworkInfo::WimaxMode
+            || mode == QSystemNetworkInfo::LteMode);
 }
 
 #ifdef TESTR

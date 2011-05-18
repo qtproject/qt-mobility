@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-filter
+    \since 1.1
 
     In order to be a valid filter, the region covered by the proximity filter must not cover one of the poles.
     The landmarks are returned in ascending order of distance.  A proximity filter may
@@ -67,6 +68,7 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
 /*!
     Creates a filter that will select landmarks within a given \a radius around
     a \a center coordinate.
+    \since 1.1
 */
 QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &center, qreal radius)
         : QLandmarkFilter(new QLandmarkProximityFilterPrivate(QGeoBoundingCircle(center, radius)))
@@ -75,6 +77,7 @@ QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &center,
 
 /*!
     Creates a filter that will select landmarks withiin a given bounding \a circle.
+    \since 1.1
  */
 QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoBoundingCircle &circle)
         : QLandmarkFilter(new QLandmarkProximityFilterPrivate(circle))
@@ -84,6 +87,7 @@ QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoBoundingCircle &cir
 /*!
     \fn QLandmarkProximityFilter::QLandmarkProximityFilter(const QLandmarkFilter &other)
     Constructs a copy of \a other if possible, otherwise constructs a new proximity filter.
+    \since 1.1
 */
 
 /*!
@@ -96,6 +100,7 @@ QLandmarkProximityFilter::~QLandmarkProximityFilter()
 
 /*!
     Returns the center coordinate of the filter.
+    \since 1.1
 */
 QGeoCoordinate QLandmarkProximityFilter::center() const
 {
@@ -105,6 +110,7 @@ QGeoCoordinate QLandmarkProximityFilter::center() const
 
 /*!
     Sets the \a center coordinate of the filter.
+    \since 1.1
 */
 void QLandmarkProximityFilter::setCenter(const QGeoCoordinate &center)
 {
@@ -114,6 +120,7 @@ void QLandmarkProximityFilter::setCenter(const QGeoCoordinate &center)
 
 /*!
     Returns the radius of the filter.  The unit of the radius is meters.
+    \since 1.1
 */
 qreal QLandmarkProximityFilter::radius() const
 {
@@ -123,6 +130,7 @@ qreal QLandmarkProximityFilter::radius() const
 
 /*!
     Sets the \a radius of the filter.  The unit of the radius is meters.
+    \since 1.1
 */
 void QLandmarkProximityFilter::setRadius(qreal radius)
 {
@@ -132,6 +140,7 @@ void QLandmarkProximityFilter::setRadius(qreal radius)
 
 /*!
     Sets the bounding circle for the proximity filter.
+    \since 1.1
 */
 QGeoBoundingCircle QLandmarkProximityFilter::boundingCircle()
 {
@@ -141,6 +150,7 @@ QGeoBoundingCircle QLandmarkProximityFilter::boundingCircle()
 
 /*!
     Sets the bounding \a circle for the proximity filter
+    \since 1.1
 */
 void QLandmarkProximityFilter::setBoundingCircle(const QGeoBoundingCircle &circle)
 {
