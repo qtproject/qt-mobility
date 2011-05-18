@@ -870,9 +870,8 @@ void TestSymbianEngine::removeContacts()
         contacts.append(c.localId());
     }
     contacts.insert(3, 1000000);
-    // Invalid ids in the list do not prevent from deleting existing contacts 
-    QVERIFY(m_engine->removeContacts(contacts, &errorMap, &err));
-    QVERIFY(err == QContactManager::NoError); 
+    QVERIFY(!m_engine->removeContacts(contacts, &errorMap, &err));
+    QVERIFY(err == QContactManager::DoesNotExistError); 
 }
 
 void TestSymbianEngine::addOwnCard()

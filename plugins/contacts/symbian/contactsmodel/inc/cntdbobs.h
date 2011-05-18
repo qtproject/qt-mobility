@@ -114,9 +114,7 @@ enum TContactDbObserverEventTypeV2
     /** Group has been updated, contacts were removed from a group. */
     EContactDbObserverEventV2ContactsRemovedFromGroup,
     /** Group has been updated (other change than added or removed contacts). */
-    EContactDbObserverEventV2GroupChanged,
-    /** Contact items or groups were deleted. */
-    EContactDbObserverEventV2ContactsOrGroupsDeleted
+    EContactDbObserverEventV2GroupChanged
     };
 
 struct TContactDbObserverEvent

@@ -846,11 +846,10 @@ TAccept CReqReadCnt::VisitStateL(CState& aState)
  
  @see CCntRequest constructor 
 */ 
-CReqDeleteCnt* CReqDeleteCnt::NewLC(const TUint aSessionId, const RMessage2& aMessage, const TInt aTimeOut, CCntPackager* aPackager)
+CReqDeleteCnt* CReqDeleteCnt::NewLC(const TUint aSessionId, const RMessage2& aMessage, const TInt aTimeOut)
 	{
 	CReqDeleteCnt* self = new (ELeave) CReqDeleteCnt(aSessionId, aMessage, aTimeOut);
 	CleanupStack::PushL(self);
-	self->ConstructL(aPackager);
 	return self;
 	}
 
@@ -861,7 +860,6 @@ CReqDeleteCnt::CReqDeleteCnt(const TUint aSessionId, const RMessage2& aMessage, 
 
 CReqDeleteCnt::~CReqDeleteCnt()
 	{
-    delete iIdArray;
 	}
 
 TAccept CReqDeleteCnt::VisitStateL(CState& aState)
@@ -869,16 +867,6 @@ TAccept CReqDeleteCnt::VisitStateL(CState& aState)
 	return aState.AcceptRequestL(this);
 	}
 	
-void CReqDeleteCnt::ConstructL(CCntPackager* aPackager)
-    {
-    if (aPackager != NULL)
-        {
-        aPackager->SetBufferFromMessageL(iMessage);
-        iIdArray = aPackager->UnpackCntIdArrayLC();
-        CleanupStack::Pop(iIdArray);
-        }
-    }
-
 	
 /** CReqCloseCnt 
  Close a contact Item - Used in conjunction with CReqOpenCnt to remove the lock on the contact item 

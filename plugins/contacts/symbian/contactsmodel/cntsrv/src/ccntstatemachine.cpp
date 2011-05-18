@@ -30,7 +30,6 @@
 #include <cntfldst.h>         // for ccontacttextfield
 #include <cntfield.h>         // for ccontacttextfield
 #include "CNTSTD.H"           // for Panic codes
-#include "ccntipccodes.h"
 
 // Event related headers
 #include <cntdbobs.h>         // for ccontactdbobserver
@@ -1247,50 +1246,24 @@ TAccept CStateWritable::AcceptRequestL( CReqCommitCnt* aRequest )
 */
 TAccept CStateWritable::AcceptRequestL(CReqDeleteCnt* aRequest)
 	{
-	// Check if the contact has been locked (single contact operation) 
-	if (aRequest->RequestCode() == ECntItemDelete && 
-	        iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()))
-  		{
-  		// If the request can not be procesed after the timeout period, it should 
-  		// complete with KErrInUse - the contact is locked 
-		return DeferWithTimeOutError(aRequest);
-		}	
-	
-    // Check if the contacts have been locked (multiple contacts operation) 
-    if (aRequest->RequestCode() == ECntItemsDelete) 
+    // Check if the contact has been locked 
+    if (iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()))
         {
-        if (aRequest->IdArray() == NULL || aRequest->IdArray()->Count() == 0)
-            {
-            User::LeaveIfError(KErrArgument);
-            }
-        for (TInt i = 0; i < aRequest->IdArray()->Count(); i++)
-            {
-            if (iStateMachine.TransactionLockL().IsLocked(aRequest->IdArray()->operator[](i)))
-                {
-                // If the request can not be procesed after the timeout period, it should 
-                // complete with KErrInUse - some contact is locked 
-                return DeferWithTimeOutError(aRequest);
-                }
-            }
+        // If the request can not be procesed after the timeout period, it should 
+        // complete with KErrInUse - the contact is locked 
+        return DeferWithTimeOutError(aRequest);
         }	
 	
-	TRAPD(deleteErr,
-		{
-		TransactionStartLC(aRequest->SessionId());
-	
-		iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
-		if (aRequest->RequestCode() == ECntItemDelete)
-		    {
-		    CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), ESendEvent);
-		    CleanupStack::PopAndDestroy(cntItem);
-		    }
-		else if (aRequest->RequestCode() == ECntItemsDelete)
-            {
-            iPersistenceLayer.PersistenceBroker().DeleteMultipleContactsL(aRequest->IdArray(), aRequest->SessionId(), ESendEvent);
-            }
-		
-		TransactionCommitLP();
-		});
+    TRAPD(deleteErr,
+        {
+        TransactionStartLC(aRequest->SessionId());
+    
+        iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
+        CContactItem* cntItem = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), ESendEvent);
+        CleanupStack::PopAndDestroy(cntItem);
+    
+        TransactionCommitLP();
+        });
 	if (deleteErr == KSqlErrGeneral)
 		{
 		// Write operation failed, probably due to view read activity
@@ -1964,44 +1937,13 @@ TAccept CStateTransaction::AcceptRequestL(CReqDeleteCnt* aRequest)
   		return EProcessed;
   		}	
 	
-	// Check if the contact has been locked by any session - including this session
-	TBool locked = false;
-	if (aRequest->RequestCode() == ECntItemDelete && 
-	            iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()))
-	    {
-	    locked = true;
-	    }
-    if (aRequest->RequestCode() == ECntItemsDelete) 
+    // Check if the contact has been locked by any session - including this session
+    if (iStateMachine.TransactionLockL().IsLocked(aRequest->CntItemId()) == EFalse)
         {
-        if (aRequest->IdArray() == NULL || aRequest->IdArray()->Count() == 0)
+        if (iSessionId == aRequest->SessionId())
             {
-            User::LeaveIfError(KErrArgument);
-            }
-        for (TInt i = 0; i < aRequest->IdArray()->Count(); i++)
-            {
-            if (iStateMachine.TransactionLockL().IsLocked(aRequest->IdArray()->operator[](i)))
-                {
-                locked = true;
-                }
-            }
-        }	
-	
-  	if (!locked)
-  		{
-	 	if (iSessionId == aRequest->SessionId())
-	 		{
-	 		CContactItem* item = NULL; 
-	 		
-	 		TInt deleteErr;
-	        if (aRequest->RequestCode() == ECntItemDelete)
-	            {
-	            TRAP(deleteErr, item = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), aRequest->NotificationEventAction());
-                    CleanupStack::PopAndDestroy(item));
-	            }
-	        else if (aRequest->RequestCode() == ECntItemsDelete)
-	            {
-	            TRAP(deleteErr, iPersistenceLayer.PersistenceBroker().DeleteMultipleContactsL(aRequest->IdArray(), aRequest->SessionId(), ESendEvent));
-	            }	 		
+            CContactItem* item = NULL; 
+            TRAPD(deleteErr, item = iPersistenceLayer.PersistenceBroker().DeleteLC(aRequest->CntItemId(), aRequest->SessionId(), aRequest->NotificationEventAction());CleanupStack::PopAndDestroy(item));
 	 		
 	 		if (deleteErr == KSqlErrGeneral)
 	 			{
