@@ -24,3 +24,5 @@ symbian {
 
 CONFIG += middleware
 include(../../../features/deploy.pri)
+
+maemo*:CONFIG += insignificant_test

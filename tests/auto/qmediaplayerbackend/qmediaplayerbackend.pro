@@ -22,3 +22,4 @@ SOURCES += \
 CONFIG += mobility
 MOBILITY = multimedia
 
+maemo*:CONFIG += insignificant_test

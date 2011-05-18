@@ -30,3 +30,5 @@ symbian {
 
 CONFIG += mobility
 MOBILITY = serviceframework
+
+maemo*:CONFIG += insignificant_test

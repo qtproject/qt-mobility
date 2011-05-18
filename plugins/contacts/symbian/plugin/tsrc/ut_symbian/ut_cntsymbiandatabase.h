@@ -88,7 +88,6 @@ private:
     
 private:
     CntSymbianEngine *m_engine;
-    CntSymbianDatabase *m_db;
     
     QContactLocalId addedContactId;
     QContactLocalId addedOrigContactId;

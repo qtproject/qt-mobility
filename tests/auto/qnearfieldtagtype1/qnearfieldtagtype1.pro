@@ -27,3 +27,4 @@ MOBILITY = connectivity
 
 DEFINES += SRCDIR=\\\"$$PWD/../nfcdata\\\"
 
+maemo*:CONFIG += insignificant_test

@@ -10,3 +10,5 @@ CONFIG += mobility
 MOBILITY = systeminfo
 
 QT += core dbus
+
+maemo*:CONFIG += insignificant_test

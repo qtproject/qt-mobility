@@ -61,7 +61,6 @@ public:
 	CContactItem* ReadLC(TContactItemId aItemId, const CContactItemViewDef& aView, TInt aInfoToRead, TUint aSessionId, TBool aIccOpenCheck = EFalse) const;
 	void UpdateL(CContactItem& aItem, TUint aSessionId, TBool aSpeeDailUpdate = EFalse);
 	CContactItem* DeleteLC(TContactItemId  aItemId, TUint aSessionId, TCntSendEventAction aEventType);
-	void DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType);
 	void ChangeTypeL(TContactItemId aItemId, TUid aNewType);
 	void SetConnectionId(TInt aConnectionId);
 	void CreateTablesL();

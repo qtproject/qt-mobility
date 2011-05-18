@@ -1,3 +1,4 @@
+include(../../../staticconfig.pri)
 TEMPLATE=subdirs
 SUBDIRS += testplugin \
            unittest \

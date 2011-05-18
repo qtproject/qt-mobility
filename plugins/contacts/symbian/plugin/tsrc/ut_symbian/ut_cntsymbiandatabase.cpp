@@ -60,18 +60,12 @@ void TestCntSymbianDatabase::initTestCase()
     connect(m_engine, SIGNAL(selfContactIdChanged(const QContactLocalId&, const QContactLocalId&)), this, SLOT(handleMyCardChangedOrig(const QContactLocalId&, const QContactLocalId&)));    
     connect(m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SLOT(handleRelationshipsAddedOrig(QList<QContactLocalId>)));
     connect(m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SLOT(handleRelationshipsRemovedOrig(QList<QContactLocalId>)));
-    
-    m_db = new CntSymbianDatabase(m_engine, &error);
-    if (error != QContactManager::NoError)
-        QSKIP("Error creating cntsymbiandatabase", SkipAll);
-
 }
 
 void TestCntSymbianDatabase::cleanupTestCase()
 {
     removeAllContacts();
     delete m_engine;
-    delete m_db;
 }
 
 void TestCntSymbianDatabase::init()
@@ -299,7 +293,6 @@ void TestCntSymbianDatabase::handleChangedOrig(const QList<QContactLocalId>& con
 
 void TestCntSymbianDatabase::handleRemovedOrig(const QList<QContactLocalId>& contactIds)
 {
-    removedOrigContactId.clear();
     removedOrigContactId.append(contactIds);
 }
 
@@ -341,7 +334,6 @@ void TestCntSymbianDatabase::handleChanged(const QList<QContactLocalId>& contact
 
 void TestCntSymbianDatabase::handleRemoved(const QList<QContactLocalId>& contactIds)
 {
-    removedContactId.clear();
     removedContactId.append(contactIds);
 }
 

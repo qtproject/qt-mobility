@@ -9,3 +9,4 @@ SOURCES += tst_qvideowidget.cpp
 CONFIG += mobility
 MOBILITY = multimedia
 
+maemo*:CONFIG += insignificant_test
