@@ -44,7 +44,6 @@
 #include "xqsettingskey_p.h"
 #include "xqpublishandsubscribeutils.h"
 
-
 #if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
     #include "pathmapper_symbian.cpp"
     #include "qcrmlparser.cpp"
@@ -168,13 +167,11 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
         if (target == PathMapper::TargetFeatureManager) {
             if (m_featureManagerConnected) {
                 TFeatureEntry entry = TFeatureEntry(TUid::Uid(key));
-                TInt err = m_featureManagerControl.FeatureSupported(entry);
-                success = (err == KFeatureSupported || err == KFeatureUnsupported );
-                *data = static_cast<bool>(entry.FeatureFlags().IsSet(EFeatureSupported));
-            } else {
-                success = false;
-            }
-            
+                TInt ret = m_featureManagerControl.FeatureSupported(entry);
+                success = (ret == KFeatureSupported || ret == KFeatureUnsupported);
+                *data = (ret==KFeatureSupported);
+            } 
+
         } else {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
             QVariant readValue = m_settingsManager.readItemValue(settingsKey);
@@ -261,23 +258,22 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
         PathMapper::Target target;
         quint32 category;
         quint32 key;
-        if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
-            if (target != PathMapper::TargetFeatureManager) {
-                XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
-                QByteArray hash;
-                hash += qHash(target);
-                hash += qHash((long)category);
-                hash += qHash((unsigned long)key);
-    
-                if (properties & QAbstractValueSpaceLayer::Publish) {
-                    m_settingsManager.startMonitoring(settingsKey);
-                    m_monitoringHandles[hash] = sh;
-                    m_monitoringPaths.insert(fullPath);
-                } else {
-                    m_settingsManager.stopMonitoring(settingsKey);
-                    m_monitoringHandles.remove(hash);
-                    m_monitoringPaths.remove(fullPath);
-                }
+        if (m_pathMapper.resolvePath(fullPath, target, category, key) && 
+            (target != PathMapper::TargetFeatureManager)) {
+            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+            QByteArray hash;
+            hash += qHash(target);
+            hash += qHash((long)category);
+            hash += qHash((unsigned long)key);
+
+            if (properties & QAbstractValueSpaceLayer::Publish) {
+                m_settingsManager.startMonitoring(settingsKey);
+                m_monitoringHandles[hash] = sh;
+                m_monitoringPaths.insert(fullPath);
+            } else {
+                m_settingsManager.stopMonitoring(settingsKey);
+                m_monitoringHandles.remove(hash);
+                m_monitoringPaths.remove(fullPath);
             }
         }
     }

@@ -110,8 +110,8 @@ QList<KeyData> QCrmlParser::parseRepository()
         m_target = KeyData::FeatureManager;
     } else {
         setError(ParseError, QObject::tr("repository element has unrecognised target attribute "
-                                        "on line %1, attribute must be CRepository, RProperty or "
-                                        "be left undefined").arg(QString::number(lineNumber())));
+                                        "on line %1, attribute must be CRepository, RProperty, "
+										"FeatureManager or be left undefined").arg(QString::number(lineNumber())));
         return rv;
     }
 
@@ -130,7 +130,6 @@ QList<KeyData> QCrmlParser::parseRepository()
             return rv;
         }
     }
-    
     while (!atEnd())
     {
         readNext();
