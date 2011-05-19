@@ -143,7 +143,8 @@ The Shared Memory layer has an order of 0x10000000.
     \row
         \o \l{Symbian Settings Layer}
         \o The Symbian Settings layer provides a permanent Value Space backing store using the
-           Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository).
+           Symbian OS' Properties (RProperty), Central Repository files (CRepository) and Feature
+           Manager flags.
            The Symbian Settings layer has an order of 0.
     \row
         \o \l{GConf Layer}
@@ -185,18 +186,43 @@ exactly what has changed without the need for a bulkier change notification prot
 
 \section2 Symbian Settings Layer
 
-Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as
-Central Repository files (CRepository).
+Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty), Central
+Repository files (CRepository) and Feature Manager flags.
+
+Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need
+to somehow specify how particular paths are turned into RProperty, CRepository and Feature Manager
+key definitions. There are two ways to accomplish this. The keys can be accessed using numeric
+uids, or the paths can be mapped to textual paths using QCRML files.
+
+\section3 \bold{Accessing Properties, Central Repository and Feature Manager Using UIDs}
+
+Accessing Symbian OS Properties, Central Repository keys and Feature Manager flags using numeric
+UIDs is done with reserved paths where the first part of the path is either \c /ps/, \c /cr/ or
+\c /fm/. These denote access to Symbian OS Properties, Central Repository files and Feature Manager
+flags, respectively. The format of the path is as follows:
+
+\code
+/ps/<uid>/<key>
+/cr/<uid>/<key>
+/fm/<key>
+\endcode
+
+\c <uid> and \c <key> values are either decimal numbers, or hexadecimal numbers prefixed with \c 0x.
+For example following two paths point to the same Property:
+
+\code
+/ps/268440235/12
+/ps/0x100012ab/0xc
+\endcode
+
+When using numeric paths, it is possible to get change notifications only using full path to a specific
+key. I.e. key \c /ps/<uid> is not considered changed when any of the keys under that UID change.
 
 \section3 \bold{Declaring Value Space Paths Using QCRML}
 
-Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need
-to somehow specify how particular paths are turned into RPropery or CRepository key definitions.
-Here the QCRML files come for help.
-
 QCRML files are XML files that can be used to declare available Value Space paths that are visible
-to the clients.  Each path defines whether the actual value is stored in CRepository or RPropery as
-well as needed Category/Repository/Key UIDs.
+to the clients.  Each path defines whether the actual value is stored in CRepository, RPropery or
+Feature Manager as well as needed Category/Repository/Key UIDs.
 
 The following QCRML file defines Value Space paths for power state properties stored in Symbian OS
 Properties:
@@ -215,6 +241,16 @@ Repository:
 <?xml version="1.0" encoding="UTF-8"?>
 <repository target="CRepository" uidValue="0x101f8798">
     <key ref="/profile/id" int="0x7e000001"/>
+</repository>
+\endcode
+
+The following QCRML file defines a Value Space paths for camera and camera lens cover feature
+flags:
+\code
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="FeatureManager">
+    <key ref="/KFeatureIdCamera" int="0x2"/>
+    <key ref="/KFeatureIdCameraLensCover" int="0xd1"/>
 </repository>
 \endcode
 
@@ -237,13 +273,61 @@ symbian {
 }
 \endcode
 
-\section3 \bold{Limitations of Symbian Settings Layer}
+\section3 \bold{Usage and limitations of Symbian Settings Layer}
 
-The underlying Symbian APIs limit the data types that can be stored natively in available backing stores.
-In practice this is not a problem since the unsupported data types are automatically serialized in
-QByteArray and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization
-is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes
-that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.
+The capabilities needed for reading and writing Symbian OS Properties and Central Repository files
+are defined when the keys are created. Thus, the capability requirements to access existing keys
+vary from key to key.
+
+When defining new Symbian OS Properties through QValueSpacePublisher, the category UID of the key
+must be same as the Secure ID (SID) of the process where the code is running.  New properties
+defined through QValueSpacePublisher won't have any platform security restrictions on reading and
+writing the values.
+
+The native types of the Symbian OS Properties and Central Repository keys are defined at the time
+of the key creation, and cannot be changed afterwards. Trying to write a value of a wrong type 
+will fail. Only integer and bytearray native types are supported through SymbianSettingsLayer.
+All non-integer types are automaticallye serialized in QByteArray and stored as 8-bit byte form.
+The serialization/deserialization is transparent operation to the API user but may cause
+interoperatibility issues with native Symbian codes that access the same data directly. The maximum
+size of the bytearray is 65535 for RProperty backing store.
+
+There is no way to define new Central Repository files at runtime. Generally the creation new
+Central Repository files is limited to device manufacturer. An application can bring its own
+Central Repository file at installation time, if the file is installed as an embedded upgrade SIS
+package. As the embedded upgrade SIS needs to install the file to Central Repository's private data
+cage, it needs to be separately Symbian Signed with permission from Symbian or device manufacturer.
+
+For more information about Symbian OS Properties, Central Repository and Feature Manager refer to
+Symbian Developer's Library at \l {http://forum.nokia.com/}{Forum Nokia}.
+
+\section3 \bold{Interoperability with native Symbian code}
+
+If interoperability between native Symbian code is needed for non-integer types, the values have
+to be converted to bytearray before writing it to Property or Central Repository. When data stored
+by native Symbian code is read, it should be read as raw bytearray.
+
+Example of reading 16-bit descriptor stored by native Symbian code:
+
+\code
+QValueSpaceSubscriber subscriber("/cr/0x100012ab/0x1");
+QByteArray readRawData = subscriber.value().toByteArray();
+QString readString;
+QTextCodec *codec = QTextCodec::codecForName("UTF-16");
+if (codec)
+    readString = codec->toUnicode(readRawData);
+\endcode
+
+Example of writing string into Central Repository as 16-bit descriptor:
+\code
+QString writeString("string");
+QValueSpacePublisher publisher("/cr/0x100012ab/0x1");
+QTextCodec *codec = QTextCodec::codecForName("UTF-16");
+if (codec) {
+    QByteArray writeValue = codec->fromUnicode(writeString);
+    publisher.setValue(QString(), writeValue);
+}
+\endcode
 
 \section2 GConf Layer
 
