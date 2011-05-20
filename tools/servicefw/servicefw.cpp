@@ -301,7 +301,7 @@ void CommandProcessor::dbusservice(const QStringList &args)
     names.removeDuplicates();
 
     for (int i = 0; i < names.size(); i++) {
-        const QString &file = path + names.at(i) + ".service";
+        const QString &file = path + names.at(i) + "." + results.name + ".service";
         QFile data(file);
         if (data.open(QFile::WriteOnly)) {
             QTextStream out(&data);
