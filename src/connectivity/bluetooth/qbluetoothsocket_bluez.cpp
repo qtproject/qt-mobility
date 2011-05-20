@@ -114,8 +114,11 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
     Q_Q(QBluetoothSocket);
     readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
     QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
-    connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);
+    connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);    
     QObject::connect(connectWriteNotifier, SIGNAL(activated(int)), q, SLOT(_q_writeNotify()));
+
+    connectWriteNotifier->setEnabled(false);
+    readNotifier->setEnabled(false);
 
 
     return true;
@@ -136,6 +139,9 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
 
         convertAddress(address.toUInt64(), addr.rc_bdaddr.b);
 
+        connectWriteNotifier->setEnabled(true);
+        readNotifier->setEnabled(true);QString();
+
         result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
     } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
@@ -145,6 +151,9 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
         addr.l2_psm = port;
 
         convertAddress(address.toUInt64(), addr.l2_bdaddr.b);
+
+        connectWriteNotifier->setEnabled(true);
+        readNotifier->setEnabled(true);
 
         result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
     }
@@ -453,9 +462,10 @@ qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
         if(!connectWriteNotifier)
             return 0;
 
-        if(txBuffer.size() == 0)
-            connectWriteNotifier->setEnabled(true);
-        //            QMetaObject::invokeMethod(q, "_q_transmitData", Qt::QueuedConnection);
+        if(txBuffer.size() == 0) {
+            connectWriteNotifier->setEnabled(true);        
+            QMetaObject::invokeMethod(q, "_q_writeNotify", Qt::QueuedConnection);
+        }
 
         char *txbuf = txBuffer.reserve(maxSize);
         memcpy(txbuf, data, maxSize);
