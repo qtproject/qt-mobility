@@ -1,4 +1,4 @@
-****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -892,10 +892,8 @@ http://www.google.com/      1. return to search results
           }
       },
 
-
-
  
-*/
+/*
     New tests proposed
       bluewheelMessaging_Search_Messages_By_Type
       bluewheelMessaging_Search_Messages_By_Priority
