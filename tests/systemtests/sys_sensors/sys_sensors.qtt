@@ -1,4 +1,4 @@
-****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -175,7 +175,7 @@ Note:
     | Invert device on y axis to vertical | Verify that device recognizes that it is *Right Up*, y slider should be in left position and y = -90 |
     | Turn device upside down (face down) | Verify that device recognizes that it is *Face Down*, y slider should be changing from extreme right to extreme left, and y = -180/+ 180  |
     | Return device to the starting position | Verify that device recognizes that it is *Face Up*, all sliders should be in middle position |
-    | On Harmattan/Meggo devices, z will not change during this test given there is hardware support, this doesn't apply to Symbian devices and N900. |  |
+    | On Harmattan/Meggo devices, z will not change during this test given there is hardware support, this does not apply to Symbian devices and N900. |  |
         '));
     },
 
@@ -191,7 +191,7 @@ Note:
     | Position device flat on its x axis | Verify the values displayed are close to: x=9.8, y=0, z=0 |
     | Position device flat on its z axis | Verify the values displayed are close to: x=0, y=0, z=9.8 |
             '));
-     }
+     },
 
     Sym_Tap : function()
     {
@@ -205,7 +205,7 @@ Note:
     | select *reading properties* tab ||
     | double tap on the device | Verify the values displayed are changed |
             '));
-     }
+     },
 
     Sym_Orientation : function()
     {
@@ -219,7 +219,7 @@ Note:
     | select *reading properties* tab ||
     | slowly rotate the device | Verify the values displayed are changed accordingly |
             '));
-     }
+     },
 
     Sym_MagnetoMeter : function()
     {
@@ -233,7 +233,7 @@ Note:
     | select *reading properties* tab ||
     | put the device closer to a iron or steel object | Verify the values displayed are changed accordingly |
             '));
-     }
+     },
 
     Sym_Compass : function()
     {
@@ -247,7 +247,7 @@ Note:
     | select *reading properties* tab ||
     | slowly turn the device around | Verify the values displayed are changed accordingly |
             '));
-     }
+     },
 
     Sym_Lux : function()
     {
@@ -261,7 +261,7 @@ Note:
     | select *reading properties* tab ||
     | change the luminance value around the device | verify the values displayed are changed accordingly |
             '));
-     }
+     },
 
     Sym_Dynamic : function()
     {
@@ -275,7 +275,7 @@ Note:
     | select *reading properties* tab ||
     | change the sensor value depends on the sensor type | verify the values displayed are changed accordingly |
             '));
-     }
+     },
 
     Sym_Gyroscope : function()
     {

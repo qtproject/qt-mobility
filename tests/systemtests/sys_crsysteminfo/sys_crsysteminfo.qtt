@@ -1,4 +1,4 @@
-****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -63,7 +63,7 @@ testcase = {
     1 Verify that the storage disappears or marked unavailable
     1 *Note:* On S60 platforms removing a media might cause qsysinfo to be closed, which is usual
         '));
-    }
+    },
 
     Query_OS_Qt_firmware_versions: function()
     {
@@ -80,7 +80,7 @@ testcase = {
     1 From the *Version* pulldown menu select *QtMobility*
     1 Verify the QtMobility version is what is expected
         '));
-    }
+    },
 
     Query_device_hardware_features: function()
     {
