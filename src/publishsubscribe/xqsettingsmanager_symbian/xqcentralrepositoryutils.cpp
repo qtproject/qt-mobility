@@ -48,9 +48,9 @@
     \brief The XQCentralRepositoryUtils implements Central Repository related special
     features in SettingsManager. This class is just a Qt-like wrapper to
     Symbian OS' CRepository class.
-    
+
     See Symbian documentation for more detailed information about e.g. the use of transactions.
-    
+
     This class co-operates with XQSettingsManager so central repositories accessed via this class
     share the same CRepository instances.
 */

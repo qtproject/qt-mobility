@@ -111,7 +111,7 @@ QList<KeyData> QCrmlParser::parseRepository()
     } else {
         setError(ParseError, QObject::tr("repository element has unrecognised target attribute "
                                         "on line %1, attribute must be CRepository, RProperty, "
-										"FeatureManager or be left undefined").arg(QString::number(lineNumber())));
+                                        "FeatureManager or be left undefined").arg(QString::number(lineNumber())));
         return rv;
     }
 

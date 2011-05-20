@@ -45,9 +45,9 @@
 #include "ccentralrepositoryhandler_p.h"
 #include "cpublishandsubscribehandler_p.h"
 
-XQSettingsManagerPrivate::XQSettingsManagerPrivate(XQSettingsManager* settingsManager) 
+XQSettingsManagerPrivate::XQSettingsManagerPrivate(XQSettingsManager* settingsManager)
     : q(settingsManager)
-{   
+{
 }
 
 XQSettingsManagerPrivate::~XQSettingsManagerPrivate()
@@ -119,7 +119,7 @@ bool XQSettingsManagerPrivate::stopMonitoring(const XQSettingsKey& key)
 
 XQSettingsManager::Error XQSettingsManagerPrivate::error() const
 {
-    switch (iError) 
+    switch (iError)
     {
         case KErrNone:
             return XQSettingsManager::NoError;
@@ -138,7 +138,7 @@ XQSettingsManager::Error XQSettingsManagerPrivate::error() const
         default:
             qDebug("XQSettingsManagerPrivate::error() iError = %d", iError);
             return XQSettingsManager::UnknownError;
-    }    
+    }
 }
 
 CCentralRepositoryHandler* XQSettingsManagerPrivate::cenRepHandlerInstance(long int repositoryUid)
