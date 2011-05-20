@@ -46,7 +46,7 @@
 
 CPublishAndSubscribeHandler* CPublishAndSubscribeHandler::NewL(TUid aUid)
 {
-    CPublishAndSubscribeHandler* self = new (ELeave) CPublishAndSubscribeHandler(aUid); 
+    CPublishAndSubscribeHandler* self = new (ELeave) CPublishAndSubscribeHandler(aUid);
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop(self);
@@ -201,7 +201,7 @@ TSecurityPolicy CPublishAndSubscribeHandler::symbianPolicy(const XQPublishAndSub
             break;
         }
     }
-    
+
     TCapability capability1 = ECapability_None;
     TCapability capability2 = ECapability_None;
     TCapability capability3 = ECapability_None;
@@ -209,9 +209,9 @@ TSecurityPolicy CPublishAndSubscribeHandler::symbianPolicy(const XQPublishAndSub
     TCapability capability5 = ECapability_None;
     TCapability capability6 = ECapability_None;
     TCapability capability7 = ECapability_None;
-    
+
     const QList<XQPublishAndSubscribeSecurityPolicy::Capability>& capabilities = policy.capabilities();
-    
+
     if (capabilities.count() > 0) capability1 = symbianCapability(capabilities[0]);
     if (capabilities.count() > 1) capability2 = symbianCapability(capabilities[1]);
     if (capabilities.count() > 2) capability3 = symbianCapability(capabilities[2]);
@@ -219,21 +219,21 @@ TSecurityPolicy CPublishAndSubscribeHandler::symbianPolicy(const XQPublishAndSub
     if (capabilities.count() > 4) capability5 = symbianCapability(capabilities[4]);
     if (capabilities.count() > 5) capability6 = symbianCapability(capabilities[5]);
     if (capabilities.count() > 6) capability7 = symbianCapability(capabilities[6]);
-    
+
     long int secureId = policy.secureId().uid();
     if (secureId != -1)
     {
         //Use constructor for TSecureId + max 3 capabilities
         return TSecurityPolicy(TSecureId(secureId), capability1, capability2, capability3);
     }
-    
+
     long int vendorId = policy.vendorId().uid();
     if (vendorId != -1)
     {
         //Use constructor for TVendorId + max 3 capabilities
         return TSecurityPolicy(TVendorId(vendorId), capability1, capability2, capability3);
     }
-    
+
     if (capabilities.count() < 4)
     {
         //Use constructor for max 3 capabilities
@@ -312,6 +312,6 @@ bool CPublishAndSubscribeHandler::handleStopMonitoring(const XQSettingsKey& key,
     CPubSubMonitor* monitor = m_monitors[itemKey];
     m_monitors.remove(itemKey);
     delete monitor;
-    
+
     return error == KErrNone;
 }

@@ -193,7 +193,7 @@ struct QMallocPtr
   Shared pool type.
 
   The malloc pool bookkeeping data contains absolute pointers.  As such, if
-  multiple processes intend to allocate into the malloc pool, is is essential 
+  multiple processes intend to allocate into the malloc pool, is is essential
   that they map the memory region to the same virtual address location.
   \value Shared
   The bookkeeping data is stored in the managed region, and has previously been
@@ -201,7 +201,7 @@ struct QMallocPtr
   pool type.
 
   The malloc pool bookkeeping data contains absolute pointers.  As such, if
-  multiple processes intend to allocate into the malloc pool, is is essential 
+  multiple processes intend to allocate into the malloc pool, is is essential
   that they map the memory region to the same virtual address location.
   */
 

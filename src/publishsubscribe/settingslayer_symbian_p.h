@@ -138,7 +138,7 @@ private:    //data
     XQSettingsManager m_settingsManager;
     QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
     QSet<QString> m_monitoringPaths;
-    
+
     RFeatureControl m_featureManagerControl;
     bool m_featureManagerConnected;
 };

@@ -64,16 +64,16 @@ SymbianSettingsLayer::SymbianSettingsLayer()
             this, SLOT(notifyChange(const XQSettingsKey&)));
     connect(&m_settingsManager, SIGNAL(itemDeleted(const XQSettingsKey&)),
             this, SLOT(notifyChange(const XQSettingsKey&)));
-    
+
     m_featureManagerConnected = (m_featureManagerControl.Open() == KErrNone);
-    
+
 }
 
 SymbianSettingsLayer::~SymbianSettingsLayer()
 {
     m_featureManagerControl.Close();
     m_featureManagerConnected = false;
-    
+
     QMutableHashIterator<QString, SymbianSettingsHandle *> i(m_handles);
     while (i.hasNext()) {
         i.next();
@@ -170,7 +170,7 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
                 TInt ret = m_featureManagerControl.FeatureSupported(entry);
                 success = (ret == KFeatureSupported || ret == KFeatureUnsupported);
                 *data = (ret==KFeatureSupported);
-            } 
+            }
 
         } else {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
@@ -258,7 +258,7 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
         PathMapper::Target target;
         quint32 category;
         quint32 key;
-        if (m_pathMapper.resolvePath(fullPath, target, category, key) && 
+        if (m_pathMapper.resolvePath(fullPath, target, category, key) &&
             (target != PathMapper::TargetFeatureManager)) {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
             QByteArray hash;
@@ -344,10 +344,10 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
             } else {
                 success = false;
             }
-        } else {  
+        } else {
             if (target == PathMapper::TargetRPropery) {
                 XQPublishAndSubscribeUtils utils(m_settingsManager);
-    
+
                 XQSettingsManager::Type type = XQSettingsManager::TypeVariant;
                 if (data.type() == QVariant::Int) {
                     type = XQSettingsManager::TypeInt;
@@ -357,13 +357,13 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
                 utils.defineProperty(
                     XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key), type);
             }
-    
+
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
-    
+
             if (m_monitoringPaths.contains(fullPath)) {
                 m_settingsManager.startMonitoring(settingsKey);
             }
-    
+
             if (data.type() == QVariant::Int || data.type() == QVariant::ByteArray) {
                 //Write integers and bytearrays as such
                 success = m_settingsManager.writeItemValue(settingsKey, data);
@@ -422,7 +422,7 @@ bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
 
         sh = symbianSettingsHandle(item(Handle(sh), path));
         if (!sh)
-        	return false;
+            return false;
         createdHandle = true;
     }
 
