@@ -61,7 +61,19 @@ private slots:
 
     void invalidPath_data();
     void invalidPath();
+    
+    void featManagerSimpleSubscriber_data();
+    void featManagerSimpleSubscriber();
 
+#ifdef Q_OS_SYMBIAN
+    void featManagerAdvSubscriber_data();
+    void featManagerAdvSubscriber();
+#endif /* Q_OS_SYMBIAN */
+    
+    void featManagerMapperCase_data();
+    void featManagerMapperCase();
+    
+public slots: 
     void dummy();
 };
 
