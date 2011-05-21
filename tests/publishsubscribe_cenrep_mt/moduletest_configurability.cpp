@@ -84,7 +84,7 @@ void ModuletestConfigurability::init()
     // set own cr key to default value
     QtMobility::QValueSpacePublisher publisher(ownCrPath, this);
     publisher.setValue(ownCrKey, QVariant(0));
-    
+
     // remove own ps key
     QtMobility::QValueSpacePublisher publisher2(ownPsFullPath, this);
     publisher2.resetValue(QString());
@@ -102,17 +102,17 @@ void ModuletestConfigurability::readAndSetCenrep()
 {
     QtMobility::QValueSpaceSubscriber subscriber(ownCrFullPath, this);
     QtMobility::QValueSpacePublisher publisher(ownCrFullPath, this);
-    
+
     QVariant value = subscriber.value();
     QCOMPARE(value.type(), QVariant::Int);
     QCOMPARE(value.toInt(), 0);
-    
+
     // using just signalspy doesn't emit connectNotify signal, so QValueSpaceSubscriber
     // doesn't start listening to change event.
     //   ==> connect the signal to dummy slot
     connect(&subscriber, SIGNAL(contentsChanged()), this, SLOT(dummy()));
     QSignalSpy spy(&subscriber, SIGNAL(contentsChanged()));
-    
+
     publisher.setValue(QString(), QVariant(1234));
 
     // wait for the change notification (timout: 5 seconds)
@@ -126,33 +126,33 @@ void ModuletestConfigurability::partialCenrepPath()
 {
     QtMobility::QValueSpaceSubscriber subscriber(ownCrPath, this);
     QtMobility::QValueSpacePublisher publisher(ownCrPath, this);
-    
+
     QCOMPARE(subscriber.value(ownCrKey).toInt(), 0);
-    
+
     // It is not possible to get change notifications for partial numeric path.
-    
+
     publisher.setValue(ownCrKey, QVariant(1234));
 
-    QCOMPARE(subscriber.value(ownCrKey).toInt(), 1234);    
+    QCOMPARE(subscriber.value(ownCrKey).toInt(), 1234);
 }
 
 void ModuletestConfigurability::readAndSetPubsub()
 {
     QtMobility::QValueSpaceSubscriber subscriber(ownPsFullPath, this);
     QtMobility::QValueSpacePublisher publisher(ownPsFullPath, this);
-    
+
     QVariant value = subscriber.value();
     QCOMPARE(value.type(), QVariant::Invalid);
-    
+
     publisher.setValue(QString(), QVariant(1));
 
     QCOMPARE(subscriber.value().toInt(), 1);
-    
+
     // we can start listening to change notifications only after the pubsub
     // key has some value (Qt Mobility restriction).
     connect(&subscriber, SIGNAL(contentsChanged()), this, SLOT(dummy()));
     QSignalSpy spy(&subscriber, SIGNAL(contentsChanged()));
-    
+
     publisher.setValue(QString(), QVariant(1234));
 
     // wait for the change notification (timout: 5 seconds)
@@ -175,16 +175,16 @@ void ModuletestConfigurability::invalidPath_data()
 }
 
 void ModuletestConfigurability::invalidPath()
-{    
+{
     // basically this tests that the code doesn't crash with malformed paths.
     // if the path is illegal QValueSpaceSubscriber::value returns the default value.
     // (same as valid but undefined path)
-    
+
     const QVariant KDefaultValue(-9999);
     QFETCH(QString, path);
     QFETCH(bool, valid);
     QtMobility::QValueSpaceSubscriber subscriber(path, this);
-    
+
     QCOMPARE((subscriber.value(QString(), KDefaultValue) != KDefaultValue), valid);
 }
 
@@ -199,14 +199,14 @@ void ModuletestConfigurability::featManagerSimpleSubscriber_data()
 {
     QTest::addColumn<QString>("feature");
     QTest::addColumn<int>("expectedResult");
-    
+
     QTest::newRow("valid 1.") << "/fm/0x6b8" << static_cast<int>(QVariant::Bool);
     QTest::newRow("valid 2.") << "/fm/0x6B8" << static_cast<int>(QVariant::Bool);
     QTest::newRow("valid 3.") << "fm/0x6b8" << static_cast<int>(QVariant::Bool);
     QTest::newRow("valid 4.") << "fm/0x6B8" << static_cast<int>(QVariant::Bool);
     QTest::newRow("valid 5.") << "/fm/1720" << static_cast<int>(QVariant::Bool);
     QTest::newRow("invalid 4.") << "/fm//0x6b8" << static_cast<int>(QVariant::Bool);
-    
+
     // invalid
     QTest::newRow("invalid 1.") << "/fm/0/1" << static_cast<int>(QVariant::Invalid);
     QTest::newRow("invalid 2.") << "/fm/0/2/5" << static_cast<int>(QVariant::Invalid);
@@ -219,7 +219,7 @@ void ModuletestConfigurability::featManagerSimpleSubscriber_data()
 void ModuletestConfigurability::featManagerSimpleSubscriber()
 {
     QFETCH(QString, feature);
-    
+
     QtMobility::QValueSpaceSubscriber subscriber1("");
 
     subscriber1.setPath(feature);
@@ -229,9 +229,9 @@ void ModuletestConfigurability::featManagerSimpleSubscriber()
 
     QtMobility::QValueSpaceSubscriber subscriber2(feature);
     QVariant result2 = subscriber2.value();
-    
+
     QTEST(static_cast<int>(result2.type()), "expectedResult");
-    
+
 }
 
 #ifdef Q_OS_SYMBIAN
@@ -240,12 +240,12 @@ void ModuletestConfigurability::featManagerAdvSubscriber_data()
 {
     QTest::addColumn<QString>("feature");
     QTest::addColumn<int>("featureNum");
-    
+
     QList<int> featList;
     QList<QString> formatStrings;
-    
+
     // list of tested features
-    featList 
+    featList
     << 0x6b8 // KFeatureId3DRingingTones
     << 0xfc // KFeatureIdFfAbcAgressiveUi
     << 0x8c // KFeatureIdFfAdaptiveWlanScanningSupport
@@ -348,9 +348,9 @@ void ModuletestConfigurability::featManagerAdvSubscriber_data()
     << 0xd8 // KFeatureIdFfIntelligentTextInput
     << 0x198 // FfIsimGbaAuthentication
     ;
-    
+
     // format strings for features
-    formatStrings 
+    formatStrings
         << "/fm/%#x"
         << "/fm/%#X"
         << "/fm/%d"
@@ -368,20 +368,20 @@ void ModuletestConfigurability::featManagerAdvSubscriber_data()
     foreach (int featureNum, featList) {
         foreach (QString formatString, formatStrings) {
             QString featureString = QString().sprintf(formatString.toLatin1(), featureNum);
-            
-            QTest::newRow(QString("%1:%2").arg(featureNum).arg(formatString).toLatin1().data()) 
+
+            QTest::newRow(QString("%1:%2").arg(featureNum).arg(formatString).toLatin1().data())
                         << featureString
                         << featureNum;
         }
     }
-    
+
 }
 
 void ModuletestConfigurability::featManagerAdvSubscriber()
 {
     QFETCH(QString, feature);
     QFETCH(int, featureNum);
-    
+
     CFeatureDiscovery *featDiscovery = 0;
     try {
         QT_TRAP_THROWING(featDiscovery = CFeatureDiscovery::NewL());
@@ -389,13 +389,13 @@ void ModuletestConfigurability::featManagerAdvSubscriber()
         delete featDiscovery;
         QFAIL(e.what());
     }
-    
+
     QtMobility::QValueSpaceSubscriber subscriber("");
-    
+
     TUid uid = TUid::Uid(featureNum);
-    
+
     TBool isSupportedOrig = featDiscovery->IsSupported(uid);
-    
+
     subscriber.setPath(feature);
     QVERIFY2(subscriber.value() == isSupportedOrig, QString("Feature manager: wrong result for feature: %1").arg(feature).toLatin1().data());
 
@@ -409,12 +409,12 @@ void ModuletestConfigurability::featManagerMapperCase_data()
     QTest::addColumn<QString>("feature");
     QTest::addColumn<QString>("featureReference");
     QTest::addColumn<bool>("expectedResult");
-    
+
     QTest::newRow("c") << "/featuremanager/c" << "0x6b8" << true;
     QTest::newRow("d") << "/featuremanager/d" << "0xfc" << true;
     QTest::newRow("e") << "/featuremanager/e" << "0x8c" << true;
     QTest::newRow("i") << "/featuremanager/invalid" << "invalid" << false;
-    
+
 }
 
 void ModuletestConfigurability::featManagerMapperCase()
@@ -424,9 +424,9 @@ void ModuletestConfigurability::featManagerMapperCase()
 
     QtMobility::QValueSpaceSubscriber subscriber(feature);
     QtMobility::QValueSpaceSubscriber referenceSubscriber("/fm/" + featureReference);
-    
+
     QTEST(subscriber.value().type() == QVariant::Bool, "expectedResult");
-    
+
     QCOMPARE(subscriber.value(), referenceSubscriber.value());
 }
 

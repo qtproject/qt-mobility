@@ -48,20 +48,20 @@ class ModuletestConfigurability : public QObject
 {
     Q_OBJECT
 public:
-    
+
 private slots:
     void initTestCase();     //before first
     void init();             //before each
     void cleanup();          //after each
     void cleanupTestCase();  //after last
-    
+
     void readAndSetCenrep();
     void partialCenrepPath();
     void readAndSetPubsub();
 
     void invalidPath_data();
     void invalidPath();
-    
+
     void featManagerSimpleSubscriber_data();
     void featManagerSimpleSubscriber();
 
@@ -69,11 +69,11 @@ private slots:
     void featManagerAdvSubscriber_data();
     void featManagerAdvSubscriber();
 #endif /* Q_OS_SYMBIAN */
-    
+
     void featManagerMapperCase_data();
     void featManagerMapperCase();
-    
-public slots: 
+
+public slots:
     void dummy();
 };
 
