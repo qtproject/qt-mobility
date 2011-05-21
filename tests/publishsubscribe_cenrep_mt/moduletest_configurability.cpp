@@ -47,6 +47,10 @@
 #include <QValueSpaceSubscriber>
 #include <QValueSpacePublisher>
 
+#ifdef Q_OS_SYMBIAN
+#include <featdiscovery.h>
+#endif
+
 const QString ownCrFullPath("/cr/0xE056F50B/1");
 const QString ownCrPath("/cr/0xE056F50B");
 const QString ownCrKey("1");
@@ -190,5 +194,241 @@ void ModuletestConfigurability::invalidPath()
 void ModuletestConfigurability::dummy()
 {
 }
+
+void ModuletestConfigurability::featManagerSimpleSubscriber_data()
+{
+    QTest::addColumn<QString>("feature");
+    QTest::addColumn<int>("expectedResult");
+    
+    QTest::newRow("valid 1.") << "/fm/0x6b8" << static_cast<int>(QVariant::Bool);
+    QTest::newRow("valid 2.") << "/fm/0x6B8" << static_cast<int>(QVariant::Bool);
+    QTest::newRow("valid 3.") << "fm/0x6b8" << static_cast<int>(QVariant::Bool);
+    QTest::newRow("valid 4.") << "fm/0x6B8" << static_cast<int>(QVariant::Bool);
+    QTest::newRow("valid 5.") << "/fm/1720" << static_cast<int>(QVariant::Bool);
+    QTest::newRow("invalid 4.") << "/fm//0x6b8" << static_cast<int>(QVariant::Bool);
+    
+    // invalid
+    QTest::newRow("invalid 1.") << "/fm/0/1" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 2.") << "/fm/0/2/5" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 3.") << "/fm/0/1" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 5.") << "/fm/a" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 6.") << "/fm/-1" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 7.") << "/fm/zzz" << static_cast<int>(QVariant::Invalid);
+}
+
+void ModuletestConfigurability::featManagerSimpleSubscriber()
+{
+    QFETCH(QString, feature);
+    
+    QtMobility::QValueSpaceSubscriber subscriber1("");
+
+    subscriber1.setPath(feature);
+    QVariant result1 = subscriber1.value();
+
+    QTEST(static_cast<int>(result1.type()), "expectedResult");
+
+    QtMobility::QValueSpaceSubscriber subscriber2(feature);
+    QVariant result2 = subscriber2.value();
+    
+    QTEST(static_cast<int>(result2.type()), "expectedResult");
+    
+}
+
+#ifdef Q_OS_SYMBIAN
+
+void ModuletestConfigurability::featManagerAdvSubscriber_data()
+{
+    QTest::addColumn<QString>("feature");
+    QTest::addColumn<int>("featureNum");
+    
+    QList<int> featList;
+    QList<QString> formatStrings;
+    
+    // list of tested features
+    featList 
+    << 0x6b8 // KFeatureId3DRingingTones
+    << 0xfc // KFeatureIdFfAbcAgressiveUi
+    << 0x8c // KFeatureIdFfAdaptiveWlanScanningSupport
+    << 0xf1 // KFeatureIdFfAdditionalFonts
+    << 0xac // KFeatureIdFfAiWlansnifferWidget
+    << 0x13b // KFeatureIdFfAlternativeCallWaitingTone
+    << 0x152 // KFeatureIdArabicHandwritingRecognitionInput
+    << 0x6a7 // KFeatureIdAsynchFileSaveQueue
+    << 0x3f // KFeatureIdFfAudt
+    << 0x14a // KFeatureIdFfAutomotivestack
+    << 0x6bb // KFeatureIdAutoRedialForVideoCall
+    << 0xd3 // KFeatureIdFfAvkonEmotionIconEnabled
+    << 0x16c // KFeatureIdFfBigclockScreensaver
+    << 0xbd // KFeatureIdFfBirthdayImprovement
+    << 0x10f // KFeatureIdFfBluetoothDataProfilesDisabled
+    << 0x10e // KFeatureIdFfBluetoothDisabled
+    << 0x162 // KFeatureIdFfBoxHwrInput
+    << 0x169 // KFeatureIdBrowserGracefulSocketShutdown
+    << 0x6bc // KFeatureIdBrowserProgressiveDownload
+    << 0x132 // KFeatureIdFfCalDayView
+    << 0x133 // KFeatureIdFfCalScrollablePreview
+    << 0x1490 // KFeatureIdFfCalendarWidget
+    << 0x128 // KFeatureIdFfCalMeetingRequestUi
+    << 0x17e // KFeatureIdFfCameraLongKeyPress
+    << 0xb7 // KFeatureIdFfCapacitiveDisplay
+    << 0x16d // KFeatureIdFfChineseEngineImprove
+    << 0x8a // KFeatureIdChineseFontsHires
+    << 0xe9 // KFeatureIdFfChineseSelectionKey
+    << 0xbe // KFeatureIdFfClockMultiprocolSupport
+    << 0xf7 // KFeatureIdFfCmailIntegration
+    << 0x43 // KFeatureIdCommsDatCreationFromXml
+    << 0x17d // KFeatureIdFfConferenceBridgePinDialing
+    << 0xb3 // KFeatureIdFfConnectionOverride
+    << 0xec // KFeatureIdFfContactsCompanyNames
+    << 0x10c // KFeatureIdFfContactsMerge
+    << 0x10b // KFeatureIdffContactsMycard
+    << 0x183 // KFeatureIdFfContactsNewContact
+    << 0xb6 // KFeatureIdFfContactsNickname
+    << 0x176 // KFeatureIdFfContactsNonEditableMycardNumber
+    << 0xeb // KFeatureIdFfContactsPredictiveSearch
+    << 0xea // KFeatureIdFfContactsRemoteLookup
+    << 0x111 // KFeatureIdFfContactsSocial
+    << 0x186 // KFeatureIdFfContactsStatusesInNamesList
+    << 0x165 // KFeatureIdFfContactsVcardSyncGroup
+    << 0xfe // KFeatureIdFfContextProfiles
+    << 0xfa // KFeatureIdFfDeviceEncryptionFeature
+    << 0x134 // KFeatureIdFfDisableOmaSuplV2
+    << 0x1461 // KFeatureIdFfDisplayNetworkNameAfterCsRegistration
+    << 0x115 // KFeatureIdFfDmConnmoAdapter
+    << 0x16f // KFeatureIdFfDmIapOverWrite
+    << 0x13c9 // KFeatureIdDmInstallSecurity
+    << 0x19d // FfDolbyHeadphone
+    << 0xc2 // KFeatureIdFfDualLanguageSupport
+    << 0xe6 // KFeatureIdDualModem
+    << 0x1a4 // KFeatureIdFfEePnnSpn
+    << 0x158 // KFeatureIdFfEmailConversationView
+    << 0x87 // KFeatureIdFfEmailFramework
+    << 0x145 // KFeatureIdFfEmailFullscreenviewer
+    << 0x89 // KFeatureIdFfEmailIpsServices
+    << 0x7e // KFeatureIdEmailMceIntegration
+    << 0x144 // KFeatureIdFfEmailPredictivesearch
+    << 0xd7 // KFeatureIdFfEmailProtocolPlugins
+    << 0x88 // KFeatureIdFfEmailUi
+    << 0x143 // KFeatureIdFfEmailUiSplitscreen
+    << 0x157 // KFeatureIdFfEmergencyCbs
+    << 0x135 // KFeatureIdEnableIsiCommunicationInUsbChargingMode
+    << 0x127 // KFeatureIdFfEnhancedCalendarEventUi
+    << 0x1499 // KFeatureIdFfEnhUplinkNoiceCancel
+    << 0x1469 // KFeatureIdFfEntryPointForVideoShare
+    << 0xd5 // KFeatureIdFfFarsiCalendar
+    << 0x161 // KFeatureIdFfFingerHwrInput
+    << 0x6a9 // KFeatureIdFmtx
+    << 0x170 // KFeatureIdFfFmtxAutoTune
+    << 0xdc // KFeatureIdFfFmtxRdsText
+    << 0x181 // FfFontTable
+    << 0x146 // KFeatureIdFfFotaCheckLimitation
+    << 0x16b // KFeatureIdFfFotaDecryptMemBeforeUpdate
+    << 0x42 // KFeatureIdFullscrHwrInput
+    << 0x175 // KFeatureIdFfFuzzyPinyinSettingAndContactsImportingForChineseInput
+    << 0x101 // KFeatureIdFfGenericAccessNetwork
+    << 0xbc // KFeatureIdFfGenericFontsAssets
+    << 0x17f // KFeatureIdFfGstreamerIadUpdatable
+    << 0x149a // KFeatureIdFfGstreamerPlaybackEnablerPlugins
+    << 0xa9 // KFeatureIdFfHdmi
+    << 0xa4 // KFeatureIdFfHelpTutorialMerge
+    << 0xd4 // KFeatureIdFfHijriCalendar
+    << 0x6ac // KFeatureIdHitchcockAppShell
+    << 0x9a // KFeatureIdFfHomescreenSwitchableRoot
+    << 0x13dd // KFeatureIdProductIncludesHomeScreenEasyDialing
+    << 0x13ea // KFeatureIdFfHomeScreenVanityDialing
+    << 0x1e // KFeatureIdIAUpdate
+    << 0xb9 // KFeatureIdFfIaupdatePhase2
+    << 0x180 // KFeatureIdFfIaupdateStartAfterFota
+    << 0x15d // KFeatureIdFfIce
+    << 0xff // KFeatureIdFfImageEditor
+    << 0x146e // KFeatureIdFfImsDeregistrationInOffline
+    << 0x146f // KFeatureIdFfImsDeregistrationInRfs
+    << 0x1459 // KFeatureIdFfImsDeregistrationInVpn
+    << 0xc0 // KFeatureIdFfInputsPerOrientation
+    << 0xd8 // KFeatureIdFfIntelligentTextInput
+    << 0x198 // FfIsimGbaAuthentication
+    ;
+    
+    // format strings for features
+    formatStrings 
+        << "/fm/%#x"
+        << "/fm/%#X"
+        << "/fm/%d"
+        << "fm/%#x"
+        << "fm/%#X"
+        << "fm/%d"
+        << "fm//%#x"
+        << "fm//%#X"
+        << "fm//%d"
+        << "fm//%#x/"
+        << "fm//%#X/"
+        << "fm//%d/"
+        ;
+
+    foreach (int featureNum, featList) {
+        foreach (QString formatString, formatStrings) {
+            QString featureString = QString().sprintf(formatString.toLatin1(), featureNum);
+            
+            QTest::newRow(QString("%1:%2").arg(featureNum).arg(formatString).toLatin1().data()) 
+                        << featureString
+                        << featureNum;
+        }
+    }
+    
+}
+
+void ModuletestConfigurability::featManagerAdvSubscriber()
+{
+    QFETCH(QString, feature);
+    QFETCH(int, featureNum);
+    
+    CFeatureDiscovery *featDiscovery = 0;
+    try {
+        QT_TRAP_THROWING(featDiscovery = CFeatureDiscovery::NewL());
+    } catch (std::exception &e) {
+        delete featDiscovery;
+        QFAIL(e.what());
+    }
+    
+    QtMobility::QValueSpaceSubscriber subscriber("");
+    
+    TUid uid = TUid::Uid(featureNum);
+    
+    TBool isSupportedOrig = featDiscovery->IsSupported(uid);
+    
+    subscriber.setPath(feature);
+    QVERIFY2(subscriber.value() == isSupportedOrig, QString("Feature manager: wrong result for feature: %1").arg(feature).toLatin1().data());
+
+    delete featDiscovery;
+}
+
+#endif
+
+void ModuletestConfigurability::featManagerMapperCase_data()
+{
+    QTest::addColumn<QString>("feature");
+    QTest::addColumn<QString>("featureReference");
+    QTest::addColumn<bool>("expectedResult");
+    
+    QTest::newRow("c") << "/featuremanager/c" << "0x6b8" << true;
+    QTest::newRow("d") << "/featuremanager/d" << "0xfc" << true;
+    QTest::newRow("e") << "/featuremanager/e" << "0x8c" << true;
+    QTest::newRow("i") << "/featuremanager/invalid" << "invalid" << false;
+    
+}
+
+void ModuletestConfigurability::featManagerMapperCase()
+{
+    QFETCH(QString, feature);
+    QFETCH(QString, featureReference);
+
+    QtMobility::QValueSpaceSubscriber subscriber(feature);
+    QtMobility::QValueSpaceSubscriber referenceSubscriber("/fm/" + featureReference);
+    
+    QTEST(subscriber.value().type() == QVariant::Bool, "expectedResult");
+    
+    QCOMPARE(subscriber.value(), referenceSubscriber.value());
+}
+
 
 QTEST_MAIN(ModuletestConfigurability)
