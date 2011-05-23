@@ -852,10 +852,11 @@ bool QVersitContactImporterPrivate::saveDataFromProperty(const QVersitProperty &
                                                             QByteArray *data) const
 {
     bool found = false;
-    const QString valueParam = property.parameters().value(QLatin1String("VALUE"));
+    const QString valueParam = property.parameters().value(QLatin1String("VALUE")).toUpper();
     QVariant variant(property.variantValue());
     if (variant.type() == QVariant::String
-        || valueParam == QLatin1String("URL")) {
+        || valueParam == QLatin1String("URL")
+        || valueParam == QLatin1String("URI")) {
         *location = property.value();
         found |= !location->isEmpty();
     } else if (variant.type() == QVariant::ByteArray) {

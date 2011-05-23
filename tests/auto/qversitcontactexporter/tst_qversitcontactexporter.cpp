@@ -755,7 +755,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(property.parameters().count(), 1);
 
     QVERIFY(property.parameters().contains(
-            QLatin1String("VALUE"), QLatin1String("URL")));
+            QLatin1String("VALUE"), QLatin1String("uri")));
 
     //Check property value
     QCOMPARE(property.value(), url);
