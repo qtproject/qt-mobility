@@ -1,3 +1,5 @@
+include(../../../staticconfig.pri)
+
 TEMPLATE = subdirs
 SUBDIRS += \
     dummynmeapositioninfosource.pro \

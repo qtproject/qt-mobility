@@ -286,18 +286,18 @@ Description: Qt Mobility Messaging development package
  framework and apply them to phones, netbooks and non-mobile personal
  computers.
 
-#Package: libqtm-messaging-tests
-#Architecture: any
-#Section: libs
-#Depends: ci-testing, ${shlibs:Depends},${misc:Depends}
-#XB-Maemo-CI-Packages: libqtm-messaging
-#XB-Maemo-CI-Stage: staging
-#Description: Qt Mobility Messaging autotest package
-# Qt Mobility Project delivers a set of new APIs to Qt with features that are
-# well known from the mobile device world, in particular phones. However,
-# these APIs allow the developer to use these features with ease from one
-# framework and apply them to phones, netbooks and non-mobile personal
-# computers.
+Package: libqtm-messaging-tests
+Architecture: any
+Section: libs
+Depends: ci-testing, ${shlibs:Depends},${misc:Depends}
+XB-Maemo-CI-Packages: libqtm-messaging
+XB-Maemo-CI-Stage: staging
+Description: Qt Mobility Messaging autotest package
+ Qt Mobility Project delivers a set of new APIs to Qt with features that are
+ well known from the mobile device world, in particular phones. However,
+ these APIs allow the developer to use these features with ease from one
+ framework and apply them to phones, netbooks and non-mobile personal
+ computers.
 
 Package: libqtm-contacts
 Architecture: any
@@ -517,23 +517,23 @@ Description: Qt Mobility PublishSubscribe development package
  framework and apply them to phones, netbooks and non-mobile personal
  computers.
 
-#Package: libqtm-publishsubscribe-tests
-#Architecture: any
-#Section: libs
-#Depends: ci-testing, ${shlibs:Depends}, ${misc:Depends}
-#XB-Maemo-CI-Packages: libqtm-publishsubscribe
-#XB-Maemo-CI-Stage: staging
-#Description: Qt Mobility PublishSubscribe autotest package
-# Qt Mobility Project delivers a set of new APIs to Qt with features that are
-# well known from the mobile device world, in particular phones. However,
-# these APIs allow the developer to use these features with ease from one
-# framework and apply them to phones, netbooks and non-mobile personal
-# computers.
+Package: libqtm-publishsubscribe-tests
+Architecture: any
+Section: libs
+Depends: ci-testing, ${shlibs:Depends}, ${misc:Depends}
+XB-Maemo-CI-Packages: libqtm-publishsubscribe
+XB-Maemo-CI-Stage: staging
+Description: Qt Mobility PublishSubscribe autotest package
+ Qt Mobility Project delivers a set of new APIs to Qt with features that are
+ well known from the mobile device world, in particular phones. However,
+ these APIs allow the developer to use these features with ease from one
+ framework and apply them to phones, netbooks and non-mobile personal
+ computers.
 
 Package: libqtm-location
 Architecture: any
 Section: libs
-Depends: ${shlibs:Depends}, ${misc:Depends}, libqtsparql-tracker, tracker (>= 0.9.30)
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqtsparql-tracker, tracker (>= 0.9.35)
 Recommends: positioningd
 Description: Qt Mobility Location module
  Qt Mobility Project delivers a set of new APIs to Qt with features that are

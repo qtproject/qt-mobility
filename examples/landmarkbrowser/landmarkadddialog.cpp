@@ -60,6 +60,7 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
         streetLineEdit->setText(landmark.address().street());
         districtLineEdit->setText(landmark.address().district());
         cityLineEdit->setText(landmark.address().city());
+        countyLineEdit->setText(landmark.address().county());
         stateLineEdit->setText(landmark.address().state());
         countryLineEdit->setText(landmark.address().country());
         descriptionLineEdit->setText(landmark.description());
@@ -131,6 +132,7 @@ void LandmarkAddDialog::accept()
     address.setStreet(streetLineEdit->text());
     address.setDistrict(districtLineEdit->text());
     address.setCity(cityLineEdit->text());
+    address.setCounty(countyLineEdit->text());
     address.setState(stateLineEdit->text());
     address.setCountry(countryLineEdit->text());
     lm.setAddress(address);

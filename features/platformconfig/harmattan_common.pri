@@ -3,6 +3,7 @@
 #for example: bluez_enabled = yes|no
 
 QMAKE_CFLAGS += -g1 -O2
+CONFIG += maemo_tests
 
 # Specify the config test that needs to be enabled/disabled 
 qmf_enabled = yes

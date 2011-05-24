@@ -37,3 +37,4 @@ xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine igno
 INSTALLS += xml
 build_pass:ALL_DEPS+=install_xml
 
+maemo*:CONFIG += insignificant_test

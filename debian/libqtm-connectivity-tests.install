@@ -1,0 +1,8 @@
+usr/tests/qtm/tst_qnearfieldtagtype2
+usr/tests/qtm/tst_qndefrecord
+usr/tests/qtm/tst_qnearfieldtagtype1
+usr/tests/qtm/tst_qndefmessage
+usr/tests/qtm/tst_qnearfieldmanager
+usr/tests/qtm/tst_qllcpserver
+usr/tests/qtm/tst_qllcpsocket
+usr/share/libqtm-connectivity-tests/tests.xml

@@ -36,3 +36,5 @@ symbian: {
     TARGET.EPOCHEAPSIZE = 1048576 67108864
     TARGET.EPOCSTACKSIZE = 0xA000
 }
+
+maemo*:CONFIG += manual_test

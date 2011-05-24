@@ -28,3 +28,5 @@ symbian {
 maemo {
     QT += dbus xml gui
 }
+
+maemo*:CONFIG += insignificant_test

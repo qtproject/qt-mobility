@@ -51,7 +51,6 @@ public:
 	void ItemCreateL(const RMessage2& aMessage);
 	void ItemUpdateL(const RMessage2& aMessage);
 	void ItemDeleteL(const RMessage2& aMessage);
-	void ItemsDeleteL(const RMessage2& aMessage);
 	void ItemReadL(const RMessage2& aMessage);
 	void ItemCommitL(const RMessage2& aMessage);
 	void ItemOpenL(const RMessage2& aMessage);

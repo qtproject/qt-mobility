@@ -24,3 +24,5 @@ symbian: {
                         ReadDeviceData \
                         WriteDeviceData
 }
+
+maemo*:CONFIG += insignificant_test

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -64,6 +64,7 @@ CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoP
         mMinUpdateInterval(100),
         mStartUpdates(FALSE),
         mRegularUpdateTimedOut(FALSE),
+        mUpdateIntervalSet(FALSE),
         mModuleFlags(0)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CPosMethodInfo));
@@ -107,10 +108,12 @@ CQGeoPositionInfoSourceS60* CQGeoPositionInfoSourceS60::NewL(QObject * aParent)
     CleanupStack::Pop();
 
     //check if the second phase construction is successful
-    if (!self->isValid()) {
-        delete self;
-        self = NULL;
-    }
+    // commented to return the pointer and the application can check if it
+    //is valid or not
+    /* if (!self->isValid()) {
+         delete self;
+         self = NULL;
+     }*/
 
     return self;
 }
@@ -823,6 +826,10 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 // starts the regular updates
 void CQGeoPositionInfoSourceS60::startUpdates()
 {
+    //SetUpdateInterval if it is not already set from application
+    if (!mUpdateIntervalSet)
+        setUpdateInterval(1000);
+
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
         emit updateTimeout();
         return;
@@ -931,6 +938,8 @@ void CQGeoPositionInfoSourceS60::setUpdateInterval(int aMilliSec)
         // as the above set value can be minimum value so
         // assigning to the base class data member
         QGeoPositionInfoSource::setUpdateInterval(interval);
+
+        mUpdateIntervalSet = true;
     }
 }
 
