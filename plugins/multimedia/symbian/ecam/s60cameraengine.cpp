@@ -157,8 +157,10 @@ void CCameraEngine::SetViewfinderObserver(MCameraViewfinderObserver* aViewfinder
 
 void CCameraEngine::ReserveAndPowerOn()
 {
-    if (!iCamera || iEngineState > EEngineNotReady)
+    if (!iCamera || iEngineState > EEngineNotReady) {
         iObserver->MceoHandleError(EErrReserve, KErrNotReady);
+        return;
+    }
 
     iCamera->Reserve();
 }
