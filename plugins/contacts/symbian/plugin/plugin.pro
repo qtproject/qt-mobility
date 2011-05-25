@@ -132,15 +132,6 @@ symbian: {
     target.path = /sys/bin
     INSTALLS += target
 
-    contains(DEFINES, SYMBIAN_BACKEND_USE_CNTMODEL_V2) {
-        cntmodelResourceFile = \
-            "START RESOURCE ../../rss/customisedcntmodel.rss" \
-            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
-            "LANGUAGE_IDS" \
-            "END"
-        MMP_RULES += cntmodelResourceFile
-    }
-    
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin

@@ -97,7 +97,8 @@ bool CntTransformAnniversary::supportsDetail(QString detailName) const
 QList<TUid> CntTransformAnniversary::supportedFields() const
 {
     return QList<TUid>()
-        << KUidContactFieldAnniversary;
+        << KUidContactFieldAnniversary
+        << KUidContactFieldAnniversaryEvent;
 }
 
 QList<TUid> CntTransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const
