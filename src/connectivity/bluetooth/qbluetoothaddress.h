@@ -62,11 +62,18 @@ public:
     explicit QBluetoothAddress(const QString &address);
     QBluetoothAddress(const QBluetoothAddress &other);
 
+    /* when compiling with Winscw with VC2008 it still creates 
+     * a symbol for the destructor and all sorts of problems
+     * could then arrise.  For now, in the emulator, we leak
+     * memory, I don't know a better solution
+     */
+#ifndef __WINS__
     inline ~QBluetoothAddress() {
         if(d_ptr) {
             *this = QBluetoothAddress();
         }
     }
+#endif 
 
     QBluetoothAddress &operator=(const QBluetoothAddress &other);
 

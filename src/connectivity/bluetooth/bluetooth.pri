@@ -139,6 +139,6 @@ symbian {
 INCLUDEPATH += $$PWD
 INCLUDEPATH += ..
 
-CONFIG += network
+QT += network
 
 OTHER_FILES +=
