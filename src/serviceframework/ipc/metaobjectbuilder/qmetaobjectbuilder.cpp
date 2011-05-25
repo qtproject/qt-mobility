@@ -593,7 +593,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addConstructor(const QMetaMethod& prototy
     specified \a name and \a type.  Returns an object that can be used
     to adjust the other attributes of the property.  The \a type will
     be normalized before it is added to the class. \a notifierId will
-    be registered as the property's \e notify signal.
+    be registered as the property's \i notify signal.
 
     \sa property(), propertyCount(), removeProperty(), indexOfProperty()
 */
@@ -895,7 +895,7 @@ const QMetaObject *QMetaObjectBuilder::relatedMetaObject(int index) const
 QByteArray QMetaObjectBuilder::classInfoName(int index) const
 {
     if (index >= 0 && index < d->classInfoNames.size())
-        return d->classInfoNames[index]; 
+        return d->classInfoNames[index];
     else
         return QByteArray();
 }
@@ -910,7 +910,7 @@ QByteArray QMetaObjectBuilder::classInfoName(int index) const
 QByteArray QMetaObjectBuilder::classInfoValue(int index) const
 {
     if (index >= 0 && index < d->classInfoValues.size())
-        return d->classInfoValues[index]; 
+        return d->classInfoValues[index];
     else
         return QByteArray();
 }
@@ -1184,9 +1184,9 @@ static QByteArray buildParameterNames
 
 // Build a QMetaObject in "buf" based on the information in "d".
 // If "buf" is null, then return the number of bytes needed to
-// build the QMetaObject.  Returns -1 if the metaobject if 
+// build the QMetaObject.  Returns -1 if the metaobject if
 // relocatable is set, but the metaobject contains extradata.
-static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf, 
+static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf,
                            bool relocatable)
 {
     int size = 0;
@@ -1195,7 +1195,7 @@ static int buildMetaObject(QMetaObjectBuilderPrivate *d, char *buf,
     int index;
     bool hasNotifySignals = false;
 
-    if (relocatable && 
+    if (relocatable &&
         (d->relatedMetaObjects.size() > 0 || d->staticMetacallFunction))
         return -1;
 
@@ -1472,7 +1472,7 @@ QMetaObject *QMetaObjectBuilder::toMetaObject() const
     The data is specific to the architecture on which it was created, but is not
     specific to the process that created it.  Not all meta object builder's can
     be converted to data in this way.  If \a ok is provided, it will be set to
-    true if the conversion succeeds, and false otherwise.  If a 
+    true if the conversion succeeds, and false otherwise.  If a
     staticMetacallFunction() or any relatedMetaObject()'s are specified the
     conversion to relocatable data will fail.
 */
@@ -1495,12 +1495,12 @@ QByteArray QMetaObjectBuilder::toRelocatableData(bool *ok) const
 /*
     \internal
 
-    Sets the \a data returned from toRelocatableData() onto a concrete 
+    Sets the \a data returned from toRelocatableData() onto a concrete
     QMetaObject instance, \a output.  As the meta object's super class is not
     saved in the relocatable data, it must be passed as \a superClass.
 */
-void QMetaObjectBuilder::fromRelocatableData(QMetaObject *output, 
-                                             const QMetaObject *superclass, 
+void QMetaObjectBuilder::fromRelocatableData(QMetaObject *output,
+                                             const QMetaObject *superclass,
                                              const QByteArray &data)
 {
     if (!output)

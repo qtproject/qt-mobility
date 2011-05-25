@@ -111,7 +111,7 @@ QCameraCaptureDestinationControl::~QCameraCaptureDestinationControl()
 */
 
 /*!
-    \fn QCamera::captureDestinationChanged(QCameraImageCapture::CaptureDestinations destination)
+    \fn QCameraCaptureDestinationControl::captureDestinationChanged(QCameraImageCapture::CaptureDestinations destination)
 
     Signals the image capture \a destination changed.
     \since 1.2

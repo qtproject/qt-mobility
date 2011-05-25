@@ -66,7 +66,7 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  Constructs a QOrganizerItemObserver to observe the item in \a manager with the given \a itemId.
+  Constructs a QOrganizerItemObserver to observe the item in \a manager with the given \a itemId and a \a parent object.
   \since 1.2
  */
 QOrganizerItemObserver::QOrganizerItemObserver(QOrganizerManager* manager,

@@ -692,7 +692,7 @@ void QDeclarativeCamera::setExposureCompensation(qreal ev)
     The sensor's ISO sensitivity.
  */
 /*!
-    \property QDeclarativeCamera::isoSensitivity
+    \property QDeclarativeCamera::iso
 
     The sensor's ISO sensitivity.
  */
@@ -989,7 +989,7 @@ void QDeclarativeCamera::setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMod
     \sa whiteBalanceMode
 */
 /*!
-    \property QCamera::manualWhiteBalance
+    \property QDeclarativeCamera::manualWhiteBalance
 
     The color temperature used when in manual white balance mode (WhiteBalanceManual).
 
