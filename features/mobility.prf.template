@@ -5,7 +5,7 @@ defineTest(qtMobilityAddLibrary) {
     # include paths. It can't help since we haven't installed our headers yet,
     # and it may hurt since incompatible headers may be present from an
     # earlier build.
-    !mobility_build {
+    !mobility_build:!isEmpty(MOBILITY_INCLUDE) {
         INCLUDEPATH -= $${MOBILITY_INCLUDE}/$$1
         INCLUDEPATH = $${MOBILITY_INCLUDE}/$$1 $$INCLUDEPATH
     }
@@ -56,7 +56,7 @@ contains(MOBILITY, bearer) {
 }
 
 #for includes from src/global
-!mobility_build:INCLUDEPATH += $${MOBILITY_INCLUDE}/QtMobility
+!mobility_build:!isEmpty(MOBILITY_INCLUDE):INCLUDEPATH += $${MOBILITY_INCLUDE}/QtMobility
 
 contains(MOBILITY, publishsubscribe) {
     qtMobilityAddLibrary(QtPublishSubscribe)

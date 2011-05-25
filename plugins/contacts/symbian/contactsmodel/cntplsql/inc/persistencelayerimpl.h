@@ -181,7 +181,7 @@ public:
     TInt ContactCountL();
     TBool ContactMatchesHintFieldL(TInt aBitWiseFilter, TContactItemId aContactId);
     CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
-    CContactIdArray* FindVoipContactsL();
+    CContactIdArray* FindSpeedDialContactsL();
     CContactIdArray* FindL(const TDesC& aText, const CContactItemFieldDef* aFieldDef, TUint aSessionId);
     void FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef);
     void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef);
@@ -202,7 +202,7 @@ private:
     TBool PerformFindIterationL(CContactIdArray *aIdsFound, const TDesC& aText, RSqlStatement aStatement, TInt aFieldsToSearch, TUint aSessionId);
     TBool PerformIdFindIterationL(CContactIdArray *aIdsFound, RSqlStatement aStatement);
     TBool FindL(CContactIdArray *aIdsFound, const TDesC& aText,const CContactItemFieldDef *aFieldDef, RSqlStatement aStatement, TUint aSessionId);
-    TBool FindL(CContactIdArray *aIdsFound, const CContactItemFieldDef *aFieldDef, RSqlStatement aStatement);
+    void  FindIMPPContactsL(CContactIdArray *aIdsFound, RSqlStatement aStatement);
     CContactIdArray* FilterDatabaseL(CCntFilter& aFilter);
 
     TInt MaximumSizeOfIdentitySearchSyntax();

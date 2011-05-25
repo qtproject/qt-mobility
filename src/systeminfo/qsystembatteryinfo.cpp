@@ -104,73 +104,66 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPri
 */
 
 /*!
-    \fn void QSystemBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus)
+    \fn void QSystemBatteryInfo::batteryStatusChanged(QSystemBatteryInfo::BatteryStatus status)
 
-    This signal is emitted when battery status has changed.
-    \a batteryStatus is the new battery status.
+    This signal is emitted when battery status has changed to \a status.
 
     \sa QSystemBatteryInfo::ChargingState
 */
 
 /*!
-    \fn void QSystemBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState)
+    \fn void QSystemBatteryInfo::chargingStateChanged(QSystemBatteryInfo::ChargingState state)
 
-    This signal is emitted when charging state has changed.
-    \a chargingState is the new chargingState.
+    This signal is emitted when charging state has changed to \a state.
 */
 
 /*!
-    \fn void QSystemBatteryInfo::chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType)
+    \fn void QSystemBatteryInfo::chargerTypeChanged(QSystemBatteryInfo::ChargerType type)
 
-    This signal is emitted when the charger type has changed, such as when a phone gets plugged in to the wall, or usb.
-    \a chargerType is the new charger type.
+    This signal is emitted when the charger type has changed to \a type.
 */
 
 /*!
-    \fn void QSystemBatteryInfo::nominalCapacityChanged(int level)
+    \fn void QSystemBatteryInfo::nominalCapacityChanged(int capacity)
 
-    This signal is emitted when nominal (maximum) battery level has changed.
-    \a level is the new level.
+    This signal is emitted when nominal (maximum) battery level has changed to \a capacity.
 */
 
 /*!
-    \fn void QSystemBatteryInfo::remainingCapacityPercentChanged(int level)
+    \fn void QSystemBatteryInfo::remainingCapacityPercentChanged(int capacity)
 
-    This signal is emitted when battery capacity in percent has changed.
-    \a level is the new level.
+    This signal is emitted when battery capacity in percent has changed to \a capacity.
 */
 
 /*!
-    \fn void QSystemBatteryInfo::remainingCapacityChanged(int level)
+    \fn void QSystemBatteryInfo::remainingCapacityChanged(int capacity)
 
-    This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
-    \a level is the new level.
+    This signal is emitted when battery's remaining capacity has changed to \a capacity, which is
+    reported in QSystemBatteryInfo::EnergyUnit.
+
+    \sa QSystemBatteryInfo::energyMeasurementUnit
 */
 
 /*!
-    \fn void QSystemBatteryInfo::remainingChargingTimeChanged(int level)
+    \fn void QSystemBatteryInfo::remainingChargingTimeChanged(int time)
 
-    This signal is emitted when remianing charge time has changed.
-    \a level is the new level.
+    This signal is emitted when remianing charge time has changed to \a time.
 */
 
 /*!
-    \fn void QSystemBatteryInfo::currentFlowChanged(int level)
+    \fn void QSystemBatteryInfo::currentFlowChanged(int flow)
 
-    This signal is emitted when the short term averge battery current has changed,
-    or on some systems at regular intervals.
+    This signal is emitted when the current battery current has changed to \a flow.
 
-    On some systems where this can lead to a CPU intensive process, you should disconnect
-    from this signal when you are finished.
-
-    \a level is the new level.
+    On some systems, listening to this signal would lead to a CPU intensive process,
+    so you should disconnect from this signal when finished.
 */
 
 /*!
-    \fn void QSystemBatteryInfo::remainingCapacityBarsChanged(int level)
+    \fn void QSystemBatteryInfo::remainingCapacityBarsChanged(int bars)
 
-    This signal is emitted when battery level has changed.
-    \a level is the new level.
+    This signal is emitted when the remaining capacity in the number of bars has changed
+    to \a bars.
 */
 
 /*!
@@ -219,8 +212,8 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfo::chargingState() const
     \property QSystemBatteryInfo::nominalCapacity
     \brief The nominal battery capacity.
 
-    Returns the nominal (maximum) capacity of the battery, in QSystemBatteryInfo::EnergyUnit.
-    If no battery is found, -1.
+    Returns the nominal (maximum) capacity of the battery, measured in QSystemBatteryInfo::EnergyUnit.
+    If no battery is found or on error, -1 is returned.
 */
 int QSystemBatteryInfo::nominalCapacity() const
 {
@@ -232,7 +225,7 @@ int QSystemBatteryInfo::nominalCapacity() const
     \brief The battery level in percent.
 
     Returns the remaining battery level of the battery in percent.
-    If no battery is found, -1.
+    If no battery is found or on error, -1 is returned.
 */
 int QSystemBatteryInfo::remainingCapacityPercent() const
 {
@@ -243,7 +236,8 @@ int QSystemBatteryInfo::remainingCapacityPercent() const
     \property QSystemBatteryInfo::remainingCapacity
     \brief The battery level in QSystemBatteryInfo::EnergyUnit
 
-    Returns the remaining battery level of the battery in QSystemBatteryInfo::EnergyUnit.
+    Returns the remaining battery level of the battery, measured in QSystemBatteryInfo::EnergyUnit.
+    If no battery is found or on error, -1 is returned.
 
     \sa QSystemBatteryInfo::energyMeasurementUnit()
 */
@@ -256,8 +250,8 @@ int QSystemBatteryInfo::remainingCapacity() const
     \property QSystemBatteryInfo::voltage
     \brief The battery voltage.
 
-    Returns the voltage of the battery, in millivolts (mV).
-    If no battery is found, -1.
+    Returns the voltage of the battery, in millivolts (mV). If no battery is found or on error, -1
+    is returned.
 */
 int QSystemBatteryInfo::voltage() const
 {
@@ -268,9 +262,8 @@ int QSystemBatteryInfo::voltage() const
     \property QSystemBatteryInfo::remainingChargingTime
     \brief The remaining time of charging
 
-    Returns the remaining time of charging in seconds if charging,
-    In the case of battery is full and not charging 0 will be returned. In the case where no battery is found
-    or the platform does not provide this information, -1 will be returned.
+    Returns the remaining charging time in seconds. 0 is returned if the battery is full or not
+    charging. If no battery is found or on error, -1 is returned.
 */
 int QSystemBatteryInfo::remainingChargingTime() const
 {
@@ -281,8 +274,9 @@ int QSystemBatteryInfo::remainingChargingTime() const
     \property QSystemBatteryInfo::currentFlow
     \brief The battery current flow.
 
-    Returns the amount of current flowing out from the battery (a short term averge), milliapmeres (mA).
-    Positive current means discharging and negative current means charging.
+    Returns the amount of current flowing out from the battery, in milliapmeres (mA). A positive flow
+    means discharging, a negative flow means charging, and 0 is returned if on error or information is
+    not available.
 */
 int QSystemBatteryInfo::currentFlow() const
 {
@@ -294,7 +288,6 @@ int QSystemBatteryInfo::currentFlow() const
     \brief The remaining capacity in number of bars.
 
     Returns the remaining capacity in number of bars.
-    The bar count will not necessarily always reflect one to one on the remaining capacity percentage.
 */
 int QSystemBatteryInfo::remainingCapacityBars() const
 {
@@ -305,8 +298,8 @@ int QSystemBatteryInfo::remainingCapacityBars() const
     \property QSystemBatteryInfo::maxBars
     \brief The maximum number of bars the system uses.
 
-    Returns the Maximum number of bars the system uses. In the case that the system has no
-    default number of battery bars, 0 is returned.
+    Returns the maximum number of bars the system uses. If this information is not available or on
+    error, -1 is returned.
 */
 int QSystemBatteryInfo::maxBars() const
 {
@@ -396,7 +389,7 @@ void QSystemBatteryInfo::disconnectNotify(const char *signal)
     \property QSystemBatteryInfo::batteryStatus
     \brief The battery status.
 
-    Returns the battery charge status.
+    Returns the status of the battery.
 */
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 {
@@ -406,7 +399,10 @@ QSystemBatteryInfo::BatteryStatus QSystemBatteryInfo::batteryStatus() const
 /*!
     \property QSystemBatteryInfo::energyMeasurementUnit
     \brief The energy unit used by the system.
-    Returns the QSystemBatteryInfo::EnergyUnit that the system uses.
+
+    Returns the energy unit that the system uses.
+
+    \sa QSystemBatteryInfo::EnergyUnit
 */
 QSystemBatteryInfo::EnergyUnit QSystemBatteryInfo::energyMeasurementUnit() const
 {

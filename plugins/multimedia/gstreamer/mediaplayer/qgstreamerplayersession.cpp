@@ -101,7 +101,9 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_seekable(false),
      m_lastPosition(0),
      m_duration(-1),
-     m_durationQueries(0)
+     m_durationQueries(0),
+     m_everPlayed(false) ,
+     m_sourceType(UnknownSrc)
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -714,6 +716,7 @@ bool QGstreamerPlayerSession::isSeekable() const
 
 bool QGstreamerPlayerSession::play()
 {
+    m_everPlayed = false;
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PlayingState;
         if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
@@ -750,6 +753,7 @@ bool QGstreamerPlayerSession::pause()
 
 void QGstreamerPlayerSession::stop()
 {
+    m_everPlayed = false;
     if (m_playbin) {
         if (m_renderer)
             m_renderer->stopRenderer();
@@ -869,6 +873,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             updateDuration();
         }
 
+#ifdef DEBUG_PLAYBIN
+        if (m_sourceType == MMSSrc && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
+            qDebug() << "Message from MMSSrc: " << GST_MESSAGE_TYPE(gm);
+        }
+#endif
+
         if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_BUFFERING) {
             int progress = 0;
             gst_message_parse_buffering(gm, &progress);
@@ -916,6 +926,11 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                         //check for seekable
                         if (oldState == GST_STATE_READY) {
+                            if (m_sourceType == SoupHTTPSrc || m_sourceType == MMSSrc) {
+                                //since udpsrc is a live source, it is not applicable here
+                                m_everPlayed = true;
+                            }
+
                             getStreamsInfo();
                             updateVideoResolutionTag();
 
@@ -953,6 +968,7 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                         break;
                     }
                     case GST_STATE_PLAYING:
+                        m_everPlayed = true;
                         if (m_state != QMediaPlayer::PlayingState)
                             emit stateChanged(m_state = QMediaPlayer::PlayingState);
 
@@ -970,19 +986,16 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             case GST_MESSAGE_UNKNOWN:
                 break;
             case GST_MESSAGE_ERROR: {
-                    emit invalidMedia();
-                    stop();
                     GError *err;
                     gchar *debug;
                     gst_message_parse_error(gm, &err, &debug);
                     if (err->domain == GST_STREAM_ERROR && err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND)
-                        emit error(int(QMediaPlayer::FormatError), tr("Cannot play stream of type: <unknown>"));
+                        processInvalidMedia(QMediaPlayer::FormatError, tr("Cannot play stream of type: <unknown>"));
                     else
-                        emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                        processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
                     qWarning() << "Error:" << QString::fromUtf8(err->message);
                     g_error_free(err);
                     g_free(debug);
-                    stop();
                 }
                 break;
             case GST_MESSAGE_WARNING:
@@ -1071,28 +1084,26 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             gst_message_parse_error(gm, &err, &debug);
             // If the source has given up, so do we.
             if (qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
-                emit invalidMedia();
-                stop();
+                bool everPlayed = m_everPlayed;
                 // Try and differentiate network related resource errors from the others
                 if (!m_request.url().isRelative() && m_request.url().scheme().compare(QLatin1String("file"), Qt::CaseInsensitive) != 0 ) {
-                    if (err->domain == GST_RESOURCE_ERROR && (
-                        err->code == GST_RESOURCE_ERROR_BUSY ||
-                        err->code == GST_RESOURCE_ERROR_OPEN_READ ||
-                        err->code == GST_RESOURCE_ERROR_READ ||
-                        err->code == GST_RESOURCE_ERROR_SEEK ||
-                        err->code == GST_RESOURCE_ERROR_SYNC)) {
-                        emit error(int(QMediaPlayer::NetworkError), QString::fromUtf8(err->message));
+                    if (everPlayed ||
+                        (err->domain == GST_RESOURCE_ERROR && (
+                         err->code == GST_RESOURCE_ERROR_BUSY ||
+                         err->code == GST_RESOURCE_ERROR_OPEN_READ ||
+                         err->code == GST_RESOURCE_ERROR_READ ||
+                         err->code == GST_RESOURCE_ERROR_SEEK ||
+                         err->code == GST_RESOURCE_ERROR_SYNC))) {
+                        processInvalidMedia(QMediaPlayer::NetworkError, QString::fromUtf8(err->message));
                     } else {
-                        emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                        processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
                     }
                 }
                 else
-                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                    processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
             } else if (err->domain == GST_STREAM_ERROR
                        && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
-                emit invalidMedia();
-                stop();
-                emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+                processInvalidMedia(QMediaPlayer::AccessDeniedError, QString::fromUtf8(err->message));
             } else {
                 handlePlaybin2 = m_usePlaybin2;
             }
@@ -1100,6 +1111,14 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 qWarning() << "Error:" << QString::fromUtf8(err->message);
             g_error_free(err);
             g_free(debug);
+        } else if (GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT
+                   && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0
+                   && m_sourceType == UDPSrc
+                   && gst_structure_has_name(gst_message_get_structure(gm), "GstUDPSrcTimeout")) {
+            //since udpsrc will not generate an error for the timeout event,
+            //we need to process its element message here and treat it as an error.
+            processInvalidMedia(m_everPlayed ? QMediaPlayer::NetworkError : QMediaPlayer::ResourceError,
+                                tr("UDP source timeout"));
         } else {
             handlePlaybin2 = m_usePlaybin2;
         }
@@ -1120,14 +1139,10 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 gst_message_parse_error(gm, &err, &debug);
                 if (qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "decodebin2", 10) == 0
                     || qstrncmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "uridecodebin", 12) == 0) {
-                    emit invalidMedia();
-                    stop();
-                    emit error(int(QMediaPlayer::ResourceError), QString::fromUtf8(err->message));
+                    processInvalidMedia(QMediaPlayer::ResourceError, QString::fromUtf8(err->message));
                 } else if (err->domain == GST_STREAM_ERROR
                            && (err->code == GST_STREAM_ERROR_DECRYPT || err->code == GST_STREAM_ERROR_DECRYPT_NOKEY)) {
-                    emit invalidMedia();
-                    stop();
-                    emit error(int(QMediaPlayer::AccessDeniedError), QString::fromUtf8(err->message));
+                    processInvalidMedia(QMediaPlayer::AccessDeniedError, QString::fromUtf8(err->message));
                 }
                 qWarning() << "Error:" << QString::fromUtf8(err->message);
                 g_error_free(err);
@@ -1353,6 +1368,10 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
     if (source == 0)
         return;
 
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Playbin source added:" << G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source));
+#endif
+
     // Turn off icecast metadata request, will be re-set if in QNetworkRequest
     // (souphttpsrc docs say is false by default, but header appears in request
     // @version 0.10.21)
@@ -1398,10 +1417,23 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
         gst_structure_free(extras);
     }
 
-    gst_object_unref(source);
+    //set timeout property to 5 seconds
+    if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstUDPSrc") == 0) {
+        //udpsrc timeout unit = microsecond
+        g_object_set(G_OBJECT(source), "timeout", 5000000, NULL);
+        self->m_sourceType = UDPSrc;
+    } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstSoupHTTPSrc") == 0) {
+        //souphttpsrc timeout unit = second
+        g_object_set(G_OBJECT(source), "timeout", 5, NULL);
+        self->m_sourceType = SoupHTTPSrc;
+    } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstMMSSrc") == 0) {
+        self->m_sourceType = MMSSrc;
+        g_object_set(G_OBJECT(source), "tcp-timeout", 5000000, NULL);
+    } else {
+        self->m_sourceType = UnknownSrc;
+    }
 
-    // NOTE: code assumes souphttpsrc, but written so anything with "extra-headers"
-    // should be functional.
+    gst_object_unref(source);
 }
 
 void QGstreamerPlayerSession::handleVolumeChange(GObject *o, GParamSpec *p, gpointer d)
@@ -1494,4 +1526,12 @@ void QGstreamerPlayerSession::handleElementAdded(GstBin *bin, GstElement *elemen
     }
 
     g_free(elementName);
+}
+
+//doing proper operations when detecting an invalidMedia: change media status before signal the erorr
+void QGstreamerPlayerSession::processInvalidMedia(QMediaPlayer::Error errorCode, const QString& errorString)
+{
+    emit invalidMedia();
+    stop();
+    emit error(int(errorCode), errorString);
 }
