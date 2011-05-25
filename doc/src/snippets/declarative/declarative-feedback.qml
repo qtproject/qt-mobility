@@ -55,7 +55,7 @@ Rectangle {
     }
 
     MouseArea {
-        onClicked: myFileEffect.play();
+        onClicked: myFileEffect.start();
     }
 
     //![File Effect]
