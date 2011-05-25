@@ -205,15 +205,15 @@ void ModuletestConfigurability::featManagerSimpleSubscriber_data()
     QTest::newRow("valid 3.") << "fm/0x6b8" << static_cast<int>(QVariant::Bool);
     QTest::newRow("valid 4.") << "fm/0x6B8" << static_cast<int>(QVariant::Bool);
     QTest::newRow("valid 5.") << "/fm/1720" << static_cast<int>(QVariant::Bool);
-    QTest::newRow("invalid 4.") << "/fm//0x6b8" << static_cast<int>(QVariant::Bool);
-
+    QTest::newRow("valid 6.") << "/fm//0x6b8" << static_cast<int>(QVariant::Bool);
+    
     // invalid
     QTest::newRow("invalid 1.") << "/fm/0/1" << static_cast<int>(QVariant::Invalid);
     QTest::newRow("invalid 2.") << "/fm/0/2/5" << static_cast<int>(QVariant::Invalid);
     QTest::newRow("invalid 3.") << "/fm/0/1" << static_cast<int>(QVariant::Invalid);
-    QTest::newRow("invalid 5.") << "/fm/a" << static_cast<int>(QVariant::Invalid);
-    QTest::newRow("invalid 6.") << "/fm/-1" << static_cast<int>(QVariant::Invalid);
-    QTest::newRow("invalid 7.") << "/fm/zzz" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 4.") << "/fm/a" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 5.") << "/fm/-1" << static_cast<int>(QVariant::Invalid);
+    QTest::newRow("invalid 6.") << "/fm/zzz" << static_cast<int>(QVariant::Invalid);
 }
 
 void ModuletestConfigurability::featManagerSimpleSubscriber()
