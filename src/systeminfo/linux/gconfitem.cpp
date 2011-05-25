@@ -220,8 +220,9 @@ static int convertValue(const QVariant &src, GConfValue **valp)
     return 1;
 }
 
-/*!
-    \brief GConfItem is a simple C++ wrapper for GConf.
+/*
+    \class GConfItem
+    \brief The GConfItem class is a simple C++ wrapper for GConf.
 
     Creating a GConfItem instance gives you access to a single GConf
     key.  You can get and set its value, and connect to its
@@ -254,13 +255,13 @@ static int convertValue(const QVariant &src, GConfValue **valp)
     \warning GConfItem is as thread-safe as GConf.
 */
 
-/*!
+/*
     \fn void GConfItem::valueChanged()
 
     Emitted when the value of this item has changed.
 */
 
-/*!
+/*
     \internal
 */
 void GConfItem::update_value(bool emit_signal)
@@ -290,7 +291,7 @@ void GConfItem::update_value(bool emit_signal)
     }
 }
 
-/*!
+/*
     Returns the current value of this item, as a QVariant.
 */
 QVariant GConfItem::value() const
@@ -298,7 +299,7 @@ QVariant GConfItem::value() const
     return priv->value;
 }
 
-/*!
+/*
     Returns the current value of this item, as a QVariant.  If
     there is no value for this item, return \a def instead.
 */
@@ -310,7 +311,7 @@ QVariant GConfItem::value(const QVariant &def) const
         return priv->value;
 }
 
-/*!
+/*
     Return a list of entries below this item.  The returned
     strings are absolute key names like "/myapp/settings/first".
 
@@ -334,7 +335,7 @@ QList<QString> GConfItem::listEntries() const
     return children;
 }
 
-/*!
+/*
     Initializes a GConfItem to access the GConf key denoted by
     \a key.  Key names should follow the normal GConf conventions
     like "/myapp/settings/first".
@@ -357,7 +358,7 @@ GConfItem::GConfItem(const QString &key, QObject *parent)
     }
 }
 
-/*!
+/*
     Finalizes a GConfItem.
 */
 GConfItem::~GConfItem()

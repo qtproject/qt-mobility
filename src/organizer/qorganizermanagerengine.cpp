@@ -89,7 +89,7 @@ QTM_BEGIN_NAMESPACE
   \list
   \o The items function which takes a \i{maxCount} parameter
   \o The result of the items functions must be sorted by date according to the sort order defined by
-     \l itemLessThan
+     \l itemLessThan()
   \o The corresponding changes to QOrganizerItemFetchRequest
   \endlist
 
@@ -2977,7 +2977,7 @@ void QOrganizerManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDetailD
 }
 
 /*!
-  Updates the given QOrganizerCollectionFetchRequest \a req with the latest results \a result, operation error \a error, and a error map list \a errorMap.
+  Updates the given QOrganizerCollectionFetchRequest \a req with the latest results \a result and an operation error \a error.
   In addition, the state of the request will be changed to \a newState.
 
   It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.

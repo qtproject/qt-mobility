@@ -75,7 +75,6 @@ QTM_BEGIN_NAMESPACE
     This enum describes errors that can occur during service discovery.
 
     \value NoError              No error.
-    \value Canceled             Service discovery was canceled.
     \value DeviceDiscoveryError Error occurred during device discovery.
     \value UnknownError         An unidentified error occurred.
 */
