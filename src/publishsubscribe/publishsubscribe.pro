@@ -39,7 +39,7 @@ symbian {
     HEADERS += pathmapper_symbian_p.h \
         pathmapper_proxy_symbian_p.h
     LIBS += -lefsrv \
-            -lfeatmgr
+            -lfeatdiscovery
 
     DEFINES += QT_BUILD_INTERNAL
     HEADERS += settingslayer_symbian_p.h

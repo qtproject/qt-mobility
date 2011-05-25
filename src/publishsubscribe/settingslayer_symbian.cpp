@@ -65,14 +65,20 @@ SymbianSettingsLayer::SymbianSettingsLayer()
     connect(&m_settingsManager, SIGNAL(itemDeleted(const XQSettingsKey&)),
             this, SLOT(notifyChange(const XQSettingsKey&)));
 
-    m_featureManagerConnected = (m_featureManagerControl.Open() == KErrNone);
+    m_featureManager = 0;
 
+    try {
+        QT_TRAP_THROWING(m_featureManager = CFeatureDiscovery::NewL());
+    } catch (std::exception e) {
+        delete m_featureManager;
+        m_featureManager = 0;
+    }
 }
 
 SymbianSettingsLayer::~SymbianSettingsLayer()
 {
-    m_featureManagerControl.Close();
-    m_featureManagerConnected = false;
+    delete m_featureManager;
+    m_featureManager = 0;
 
     QMutableHashIterator<QString, SymbianSettingsHandle *> i(m_handles);
     while (i.hasNext()) {
@@ -165,13 +171,11 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
     quint32 key;
     if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
         if (target == PathMapper::TargetFeatureManager) {
-            if (m_featureManagerConnected) {
-                TFeatureEntry entry = TFeatureEntry(TUid::Uid(key));
-                TInt ret = m_featureManagerControl.FeatureSupported(entry);
-                success = (ret == KFeatureSupported || ret == KFeatureUnsupported);
-                *data = (ret==KFeatureSupported);
+            if (m_featureManager) {
+                *data = QVariant(static_cast<bool>(
+                    m_featureManager->IsSupported(TUid::Uid(key))));
+                success = true;
             }
-
         } else {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
             QVariant readValue = m_settingsManager.readItemValue(settingsKey);
@@ -337,13 +341,7 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
     quint32 key;
     if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
         if (target == PathMapper::TargetFeatureManager) {
-            if (m_featureManagerConnected) {
-                TBool setFeature = static_cast<TBool>(data.toBool());
-                TInt err = m_featureManagerControl.SetFeature(TUid::Uid(key), setFeature, 0);
-                success = (err == KErrNone);
-            } else {
-                success = false;
-            }
+            success = false;
         } else {
             if (target == PathMapper::TargetRPropery) {
                 XQPublishAndSubscribeUtils utils(m_settingsManager);
@@ -438,12 +436,7 @@ bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
     quint32 key;
     if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
         if (target == PathMapper::TargetFeatureManager) {
-            if (m_featureManagerConnected) {
-                TInt err = m_featureManagerControl.DeleteFeature(TUid::Uid(key));
-                success = (err == KErrNone);
-            } else {
                 success = false;
-            }
         } else if (target == PathMapper::TargetRPropery) {
             XQPublishAndSubscribeUtils utils(m_settingsManager);
             utils.deleteProperty(XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key));
