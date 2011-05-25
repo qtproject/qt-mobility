@@ -46,41 +46,14 @@
 #include "cntmodelextuids.hrh"
 
 //  CONSTANTS  
-
-/**
- * Phonebook custom Field value.
- * Locationing privacy field type.
- */
 const TUid KPbkUidContactFieldLocationPriv={KPbkUidContactFieldLocationPrivValue};
-
-/**
- * Phonebook custom Field value.
- * Top Contact field type.
- */
 const TUid KUidContactFieldTopContact={KUidContactFieldTopContactValue};
-
-/**
- * Phonebook custom Field value.
- * IMPP field type.
- */
 const TUid KUidContactFieldIMPP={KUidContactFieldIMPPValue};
-
-/**
- * Phonebook custom Field value.
- * Video ringtone field type.
- */
+const TUid KUidContactFieldServiceProvider = {KUidContactFieldServiceProviderValue};
+const TUid KUidContactFieldPresence = {KUidContactFieldPresenceValue};
+const TUid KUidContactFieldStatusMsg = {KUidContactFieldStatusMsgValue};
 const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
-
-/**
- * Phonebook custom Field value.
- * Gender field type.
- */
 const TUid KUidContactFieldGender={KUidContactFieldGenderValue};
-
-/**
- * Phonebook custom Field value.
- * Anniversary event field type.
- */
 const TUid KUidContactFieldAnniversaryEvent={KUidContactFieldAnniversaryEventValue};
 
 /* This is a workaround to avoid OS version specific checks.. */
