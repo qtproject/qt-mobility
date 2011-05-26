@@ -173,7 +173,7 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
         if (target == PathMapper::TargetFeatureManager) {
             if (m_featureManager) {
                 *data = QVariant(static_cast<bool>(
-                    m_featureManager->IsSupported(TUid::Uid(key))));
+                    m_featureManager->IsSupported(key)));
                 success = true;
             }
         } else {
