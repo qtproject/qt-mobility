@@ -45,7 +45,7 @@
 /*!
     \qmlclass Feedback
     \brief The Feedback object defines a number of constants
-    \ingroup qml-feedback-api
+    \ingroup qml-feedbackeffect-api
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
@@ -83,7 +83,7 @@
 /*!
     \qmlclass FeedbackEffect QDeclarativeFeedbackEffect
     \brief The FeedbackEffect element is the base class for all feedback effects.
-    \ingroup qml-feedback-api
+    \ingroup qml-feedbackeffect-api
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
@@ -212,6 +212,12 @@ QDeclarativeFeedbackEffect::ErrorType QDeclarativeFeedbackEffect::error() const
 {
     return m_error;
 }
+
+/*!
+    \qmlmethod  Feedback::updateState()
+
+     updates the state of the effect.
+*/
 void QDeclarativeFeedbackEffect::updateState() {
     bool running = m_effect->state() == QFeedbackEffect::Running;
     bool paused = m_effect->state() == QFeedbackEffect::Paused;
@@ -224,6 +230,37 @@ void QDeclarativeFeedbackEffect::updateState() {
         emit pausedChanged();
     }
 }
+
+/*!
+    \qmlmethod  Feedback::start()
+
+    makes sure that the effect associated with the feedback object is started.
+    \sa QFeedbackEffect::start()
+*/
+void QDeclarativeFeedbackEffect::start() {
+    m_effect->start();
+}
+
+/*!
+    \qmlmethod  Feedback::stop()
+
+    makes sure that the effect associated with the feedback object is stoped.
+    \sa QFeedbackEffect::stop()
+*/
+void QDeclarativeFeedbackEffect::stop() {
+    m_effect->stop();
+}
+
+/*!
+    \qmlmethod  Feedback::pause()
+
+    makes sure that the effect associated with the feedback object is paused.
+    \sa QFeedbackEffect::pause()
+*/
+void QDeclarativeFeedbackEffect::pause() {
+    m_effect->pause();
+}
+
 void QDeclarativeFeedbackEffect::_error(QFeedbackEffect::ErrorType err)
 {
     if (static_cast<ErrorType>(err) != m_error) {

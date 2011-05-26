@@ -66,9 +66,6 @@ signals:
 public slots:
     void load();
     void unload();
-    void start();
-    void stop();
-    void pause();
 private:
     QFeedbackFileEffect* d;
 };

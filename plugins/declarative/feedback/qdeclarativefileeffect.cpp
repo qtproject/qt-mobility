@@ -118,39 +118,6 @@ void QDeclarativeFileEffect::load()
 }
 
 /*!
-    \qmlmethod  FileEffect::start()
-
-    Makes sure that the file associated with the feedback object is started.
-    \sa QFeedbackFileEffect::start()
-*/
-void QDeclarativeFileEffect::start()
-{
-    d->start();
-}
-
-/*!
-    \qmlmethod  FileEffect::stop()
-
-    Makes sure that the file associated with the feedback object is stoped.
-    \sa QFeedbackFileEffect::stop()
-*/
-void QDeclarativeFileEffect::stop()
-{
-    d->stop();
-}
-
-/*!
-    \qmlmethod  FileEffect::pause()
-
-    Makes sure that the file associated with the feedback object is paused.
-    \sa QFeedbackFileEffect::pause()
-*/
-void QDeclarativeFileEffect::pause()
-{
-    d->pause();
-}
-
-/*!
     \qmlmethod  FileEffect::unload()
 
     Makes sure that the file associated with the feedback object is unloaded.
