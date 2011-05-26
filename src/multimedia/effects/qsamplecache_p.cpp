@@ -50,6 +50,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QSampleCache
+    \internal
 
     When you want to get a sound sample data, you need to request the QSample reference from QSampleCache.
 
@@ -93,13 +94,13 @@ QT_BEGIN_NAMESPACE
     \endcode
 */
 
-
 QSampleCache::QSampleCache()
     : m_networkAccessManager(0)
     , m_mutex(QMutex::Recursive)
     , m_capacity(0)
     , m_usage(0)
 {
+    m_loadingThread.setObjectName(QLatin1String("QSampleCache::LoadingThread"));
 }
 
 QNetworkAccessManager& QSampleCache::networkAccessManager()
@@ -111,15 +112,21 @@ QNetworkAccessManager& QSampleCache::networkAccessManager()
 
 QSampleCache::~QSampleCache()
 {
-    for (QMap<QUrl, QSample*>::iterator it = m_samples.begin();
-        it != m_samples.end(); ++it)
-    {
-        (*it)->deleteLater();
-    }
-    if (m_networkAccessManager)
-        m_networkAccessManager->deleteLater();
+    QMutexLocker m(&m_mutex);
+
     m_loadingThread.quit();
     m_loadingThread.wait();
+
+    // Killing the loading thread means that no samples can be
+    // deleted using deleteLater.  And some samples that had deleteLater
+    // already called won't have been processed (m_staleSamples)
+    foreach (QSample* sample, m_samples)
+        delete sample;
+
+    foreach (QSample* sample, m_staleSamples)
+        delete sample; // deleting a sample does affect the m_staleSamples list, but foreach copies it
+
+    delete m_networkAccessManager;
 }
 
 QSample* QSampleCache::requestSample(const QUrl& url)
@@ -134,19 +141,16 @@ QSample* QSampleCache::requestSample(const QUrl& url)
     QSample* sample;
     if (it == m_samples.end()) {
         sample = new QSample(url, this);
-        it = m_samples.insert(url, sample);
+        m_samples.insert(url, sample);
         sample->moveToThread(&m_loadingThread);
     } else {
         sample = *it;
     }
 
-    QSample::State state = sample->state();
-    if (state == QSample::Error || state == QSample::Creating) {
-        sample->m_state = QSample::Loading;
-        QMetaObject::invokeMethod(sample, "load", Qt::QueuedConnection);
-    }
-
     sample->addRef();
+    locker.unlock();
+
+    sample->loadIfNecessary();
     return sample;
 }
 
@@ -159,15 +163,13 @@ void QSampleCache::setCapacity(qint64 capacity)
     qDebug() << "QSampleCache: capacity changes from " << m_capacity << "to " << capacity;
 #endif
     if (m_capacity > 0 && capacity <= 0) { //memory management strategy changed
-        for (QMap<QUrl, QSample*>::iterator it = m_samples.begin();
-            it != m_samples.end();)
-        {
+        for (QMap<QUrl, QSample*>::iterator it = m_samples.begin(); it != m_samples.end();) {
             QSample* sample = *it;
             if (sample->m_ref == 0) {
-                m_usage -= sample->m_soundData.size();
-                sample->deleteLater();
+                unloadSample(sample);
                 it = m_samples.erase(it);
-            }
+            } else
+                it++;
         }
     }
 
@@ -175,6 +177,15 @@ void QSampleCache::setCapacity(qint64 capacity)
     refresh(0);
 }
 
+// Called locked
+void QSampleCache::unloadSample(QSample *sample)
+{
+    m_usage -= sample->m_soundData.size();
+    m_staleSamples.insert(sample);
+    sample->deleteLater();
+}
+
+// Called in both threads
 void QSampleCache::refresh(qint64 usageChange)
 {
     QMutexLocker locker(&m_mutex);
@@ -186,10 +197,8 @@ void QSampleCache::refresh(qint64 usageChange)
     qint64 recoveredSize = 0;
 #endif
 
-    //free unsed samples to keep usage under capacity limit.
-    for (QMap<QUrl, QSample*>::iterator it = m_samples.begin();
-        it != m_samples.end();)
-    {
+    //free unused samples to keep usage under capacity limit.
+    for (QMap<QUrl, QSample*>::iterator it = m_samples.begin(); it != m_samples.end();) {
         QSample* sample = *it;
         if (sample->m_ref > 0) {
             ++it;
@@ -198,8 +207,7 @@ void QSampleCache::refresh(qint64 usageChange)
 #ifdef QT_SAMPLECACHE_DEBUG
         recoveredSize += sample->m_soundData.size();
 #endif
-        m_usage -= sample->m_soundData.size();
-        sample->deleteLater();
+        unloadSample(sample);
         it = m_samples.erase(it);
         if (m_usage <= m_capacity)
             return;
@@ -215,50 +223,82 @@ void QSampleCache::refresh(qint64 usageChange)
         qWarning() << "QSampleCache: usage[" << m_usage << " out of limit[" << m_capacity << "]";
 }
 
+// Called in both threads
+void QSampleCache::removeUnreferencedSample(QSample *sample)
+{
+    QMutexLocker m(&m_mutex);
+    m_staleSamples.remove(sample);
+}
+
+// Called in loader thread (since this lives in that thread)
+// Also called from application thread after loader thread dies.
 QSample::~QSample()
 {
+    // Remove ourselves from our parent
+    m_parent->removeUnreferencedSample(this);
+
+    QMutexLocker locker(&m_mutex);
 #ifdef QT_SAMPLECACHE_DEBUG
-    qDebug() << "QSample: deleted [" << m_url << "]";
+    qDebug() << "~QSample" << this << ": deleted [" << m_url << "]" << QThread::currentThread();
 #endif
     cleanup();
 }
 
-bool QSampleCache::tryRemoveUnrefSample(const QUrl& url)
+// Called in application thread
+void QSample::loadIfNecessary()
+{
+    QMutexLocker locker(&m_mutex);
+    if (m_state == QSample::Error || m_state == QSample::Creating) {
+        m_state = QSample::Loading;
+        QMetaObject::invokeMethod(this, "load", Qt::QueuedConnection);
+    }
+}
+
+// Called in both threads
+bool QSampleCache::notifyUnreferencedSample(QSample* sample)
 {
     QMutexLocker locker(&m_mutex);
     if (m_capacity > 0)
         return false;
-    m_samples.remove(url);
+    m_samples.remove(sample->m_url);
+    m_staleSamples.insert(sample);
+    sample->deleteLater();
     return true;
 }
 
+// Called in application threadd
 void QSample::release()
 {
     QMutexLocker locker(&m_mutex);
+#ifdef QT_SAMPLECACHE_DEBUG
+    qDebug() << "Sample:: release" << this << QThread::currentThread() << m_ref;
+#endif
     m_ref--;
-    if (m_ref == 0 && m_parent->tryRemoveUnrefSample(m_url))
-        this->deleteLater();
+    if (m_ref == 0)
+        m_parent->notifyUnreferencedSample(this);
 }
 
+// Called in dtor and when stream is loaded
+// must be called locked.
 void QSample::cleanup()
 {
-    if (m_waveDecoder) {
-        m_waveDecoder->deleteLater();
-        m_waveDecoder = 0;
-    }
-    if (m_stream) {
-        m_stream->deleteLater();
-        m_stream = 0;
-    }
+    delete m_waveDecoder;
+    delete m_stream;
+    m_waveDecoder = 0;
+    m_stream = 0;
 }
 
+// Called in application thread
 void QSample::addRef()
 {
     m_ref++;
 }
 
+// Called in loading thread
 void QSample::readSample()
 {
+    Q_ASSERT(QThread::currentThread()->objectName() == "QSampleCache::LoadingThread");
+    QMutexLocker m(&m_mutex);
 #ifdef  QT_SAMPLECACHE_DEBUG
     qDebug() << "QSample: readSample";
 #endif
@@ -273,8 +313,11 @@ void QSample::readSample()
     onReady();
 }
 
+// Called in loading thread
 void QSample::decoderReady()
 {
+    Q_ASSERT(QThread::currentThread()->objectName() == "QSampleCache::LoadingThread");
+    QMutexLocker m(&m_mutex);
 #ifdef QT_SAMPLECACHE_DEBUG
     qDebug() << "QSample: decoder ready";
 #endif
@@ -289,13 +332,18 @@ void QSample::decoderReady()
         onReady();
 }
 
+// Called in all threads
 QSample::State QSample::state() const
 {
+    QMutexLocker m(&m_mutex);
     return m_state;
 }
 
+// Called in loading thread
+// Essentially a second ctor, doesn't need locks (?)
 void QSample::load()
 {
+    Q_ASSERT(QThread::currentThread()->objectName() == "QSampleCache::LoadingThread");
 #ifdef QT_SAMPLECACHE_DEBUG
     qDebug() << "QSample: load [" << m_url << "]";
 #endif
@@ -307,8 +355,11 @@ void QSample::load()
     connect(m_waveDecoder, SIGNAL(readyRead()), SLOT(readSample()));
 }
 
+// Called in loading thread
 void QSample::decoderError()
 {
+    Q_ASSERT(QThread::currentThread()->objectName() == "QSampleCache::LoadingThread");
+    QMutexLocker m(&m_mutex);
 #ifdef QT_SAMPLECACHE_DEBUG
     qDebug() << "QSample: decoder error";
 #endif
@@ -317,8 +368,10 @@ void QSample::decoderError()
     emit error();
 }
 
+// Called in loading thread from decoder when sample is done. Locked already.
 void QSample::onReady()
 {
+    Q_ASSERT(QThread::currentThread()->objectName() == "QSampleCache::LoadingThread");
 #ifdef QT_SAMPLECACHE_DEBUG
     qDebug() << "QSample: load ready";
 #endif
@@ -328,6 +381,7 @@ void QSample::onReady()
     emit ready();
 }
 
+// Called in application thread, then moved to loader thread
 QSample::QSample(const QUrl& url, QSampleCache *parent)
     : m_parent(parent)
     , m_stream(0)
