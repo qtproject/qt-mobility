@@ -45,7 +45,7 @@
 /*!
     \qmlclass Feedback
     \brief The Feedback object defines a number of constants
-    \ingroup qml-feedback-api
+    \ingroup qml-feedbackeffect-api
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
@@ -83,7 +83,7 @@
 /*!
     \qmlclass FeedbackEffect QDeclarativeFeedbackEffect
     \brief The FeedbackEffect element is the base class for all feedback effects.
-    \ingroup qml-feedback-api
+    \ingroup qml-feedbackeffect-api
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
