@@ -16,7 +16,7 @@
 */
 
 
-target              DBDumper.EXE
+target              dbdumper.exe
 targettype          EXE
 CAPABILITY   ReadUserData WriteUserData
 UID                 0x1000097a
@@ -28,11 +28,11 @@ systeminclude       /EPOC32/INCLUDE
 userinclude         ../src ../../src
 source              dbdbmsdumper.CPP
 
-library             EUSER.LIB  
-library             EFSRV.LIB 
+library             euser.lib  
+library             efsrv.lib 
 library             edbms.lib 
 library             estor.lib 
-library             BAFL.LIB
-library             PIMTestClient.lib
+library             bafl.lib
+library             pimtestclient.lib
 
 SMPSAFE

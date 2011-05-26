@@ -21,21 +21,21 @@
  @released 
 */
 
-#include "CCntStateMachine.h"
-#include "CCntRequest.h"
-#include "CCntDbManager.h"
-#include "CCntBackupRestoreAgent.h"
+#include "ccntstatemachine.h"
+#include "ccntrequest.h"
+#include "ccntdbmanager.h"
+#include "ccntbackuprestoreagent.h"
 #include "persistencelayer.h"
-#include "CntSpeedDials.h"
+#include "cntspeeddials.h"
 #include <cntfldst.h>         // for ccontacttextfield
 #include <cntfield.h>         // for ccontacttextfield
-#include "CNTSTD.H"           // for Panic codes
+#include "cntstd.h"           // for Panic codes
 
 // Event related headers
 #include <cntdbobs.h>         // for ccontactdbobserver
-#include "CCntServer.h"     // for KCntNullConnectionId.
-#include "CCntEventQueue.h" // for KMaxNumberOfEventsInEventQueue, KCntEventGranularity
-#include "CCntLogger.h"  
+#include "ccntserver.h"     // for KCntNullConnectionId.
+#include "ccnteventqueue.h" // for KMaxNumberOfEventsInEventQueue, KCntEventGranularity
+#include "ccntlogger.h"  
 
 // Require SQL header for leave code checking
 #include <sqldb.h>

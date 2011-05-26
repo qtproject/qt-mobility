@@ -22,11 +22,11 @@
 #include <cntviewsortpluginbase.h>
 #endif
 
-#include "CCntServer.h" //for KSlot1 and KSlot2
+#include "ccntserver.h" //for KSlot1 and KSlot2
 #include "rcntmodel.h"
 
 // uncomment define in header to select debug prints for API profiling 
-#include "CntApiProfile.h"
+#include "cntapiprofile.h"
 
 
 //
