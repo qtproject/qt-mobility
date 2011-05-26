@@ -70,7 +70,6 @@ Rectangle {
         fadeTime: 250
         fadeIntensity: 0.0
     }
-    
     MouseArea {
         onClicked: {
         rumbleEffect.start();  // plays a rumble effect
