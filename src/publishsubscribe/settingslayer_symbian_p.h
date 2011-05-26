@@ -50,6 +50,7 @@
 #include <QByteArray>
 #include <QMultiMap>
 
+#include <e32base.h>
 #include <featdiscovery.h>
 
 #if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
