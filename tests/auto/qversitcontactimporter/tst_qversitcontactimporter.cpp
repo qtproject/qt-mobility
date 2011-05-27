@@ -599,8 +599,8 @@ void tst_QVersitContactImporter::testTimeStamp()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     timeStamp = contact.detail<QContactTimestamp>();
-    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),dateAndTimeValue);
-    QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
+    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate), dateAndTimeWithUtcValue);
+    QCOMPARE(timeStamp.lastModified().timeSpec(), Qt::UTC);
 
     // Date and Time : ISO 8601 in basic format without utc offset
     dateAndTimeValue = QLatin1String("19810520T235555");
