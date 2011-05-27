@@ -42,12 +42,16 @@
 
 #include "qdeclarativefeedbackeffect_p.h"
 
+
 /*!
-    \qmlclass Feedback
-    \brief The Feedback object defines a number of constants
-    \ingroup qml-feedbackeffect-api
+    \qmlclass FeedbackEffect QDeclarativeFeedbackEffect
+    \brief The FeedbackEffect element is the base class for all feedback effects.
+    \ingroup qml-feedback-api
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    You can't create one of these elements directly, but several other elements
+    inherit the methods and properties of these elements.
 
     There are several predefined enumerations and constants provided in this class:
 
@@ -61,10 +65,10 @@
     2. State
     This enum describes the state of the effect. An effect will be in one of these states.
     \list
-    \o Feedback.Stopped - The effect is not running. This is the initial state.
-    \o Feedback.Paused - Paused The effect is paused.
-    \o Feedback.Running - The effect is running.
-    \o Feedback.Loading - The effect is loading.
+    \o Feedback.stopped - The effect is not running. This is the initial state.
+    \o Feedback.paused  - The effect is paused.
+    \o Feedback.running - The effect is running.
+    \o Feedback.loading - The effect is loading.
     \endlist
 
     3. ErrorType
@@ -75,20 +79,6 @@
        the device could be busy if a higher-priority client is using the haptics/actuator device.
     \endlist
 
-
-    \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
-*/
-
-
-/*!
-    \qmlclass FeedbackEffect QDeclarativeFeedbackEffect
-    \brief The FeedbackEffect element is the base class for all feedback effects.
-    \ingroup qml-feedbackeffect-api
-
-    This element is part of the \bold{QtMobility.feedback 1.1} module.
-
-    You can't create one of these elements directly, but several other elements
-    inherit the methods and properties of these elements.
 
     \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
 */
