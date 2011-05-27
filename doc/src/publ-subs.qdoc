@@ -298,6 +298,10 @@ Central Repository file at installation time, if the file is installed as an emb
 package. As the embedded upgrade SIS needs to install the file to Central Repository's private data
 cage, it needs to be separately Symbian Signed with permission from Symbian or device manufacturer.
 
+The Symbian OS Feature Manager entries are read-only, and the type returned is QVariant boolean.
+The value of a Feature Manager entry is true when the feature is supported. When the feature is not
+supported or it does not exist, the value is false.
+
 For more information about Symbian OS Properties, Central Repository and Feature Manager refer to
 Symbian Developer's Library at \l {http://forum.nokia.com/}{Forum Nokia}.
 
