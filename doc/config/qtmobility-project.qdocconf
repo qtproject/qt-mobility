@@ -97,7 +97,8 @@ sourcedirs = ../../src/global \
              ../src
 
 excludedirs = ../../src/messaging/win32wce \
-              ../../src/publishsubscribe/symbian
+              ../../src/publishsubscribe/symbian \
+              ../../src/serviceframework/ipc/metaobjectbuilder47
 
 exampledirs = ../../examples \
               ../../demos \
