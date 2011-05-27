@@ -1055,6 +1055,15 @@ TInt RCntModel::CommitDbTransaction() const
 	return SendReceive(EEndDbTransaction);
 	}
 
+/**
+Asychrounous commit of a database transaction.
+
+@param aStatus Request status variable that will contain the completion value
+*/
+void RCntModel::CommitDbTransaction(TRequestStatus*& aStatus) const
+    {
+    SendReceive(EEndDbTransaction, *aStatus);
+    }
 	
 /**
 Rollback a database transaction.

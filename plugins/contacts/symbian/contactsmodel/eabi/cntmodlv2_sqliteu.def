@@ -720,4 +720,5 @@ EXPORTS
 	_ZN21CContactImagesUtilityD0Ev @ 719 NONAME
 	_ZN21CContactImagesUtilityD1Ev @ 720 NONAME
 	_ZN21CContactImagesUtilityD2Ev @ 721 NONAME
+	_ZN16CContactDatabase14DatabaseCommitEiRP14TRequestStatus @ 722 NONAME
 
