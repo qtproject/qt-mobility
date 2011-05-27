@@ -76,6 +76,16 @@
 
 #include <QDebug>
 
+/// CONSTANTS
+// UIDs for preferred (default) fields, used by symbian backend
+const int KCntDefaultFieldForCall = 0x10003E70;
+const int KCntDefaultFieldForVideoCall = 0x101F85A6;
+const int KCntDefaultFieldForEmail = 0x101F85A7;
+const int KCntDefaultFieldForSms = 0x101f4cf1;
+const int KCntDefaultFieldForMms = 0x101f4cf2;
+const int KCntDefaultFieldForOnlineAccount = 0x2002DC81;
+const int KCntDefaultFieldForUrl = 0x20031E4E;
+
 CntTransformContact::CntTransformContact() :
     m_tzConverter(0)
 {
@@ -524,18 +534,21 @@ void CntTransformContact::transformPreferredDetailL(const QContact& contact,
         return;
     }
 
-    if (contact.isPreferredDetail("call", detail)) {
+    if (contact.isPreferredDetail(QContactAction::ActionCall, detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForCall));
     }
-    if (contact.isPreferredDetail("email", detail)) {
+    if (contact.isPreferredDetail(QContactAction::ActionEmail, detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForEmail));
     }
-    if (contact.isPreferredDetail("videocall", detail)) {
+    if (contact.isPreferredDetail(QContactAction::ActionVideoCall, detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForVideoCall));
     }
-    if (contact.isPreferredDetail("message", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForMessage));
+    if (contact.isPreferredDetail(QContactAction::ActionSms, detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForSms));
     }
+    if (contact.isPreferredDetail(QContactAction::ActionMms, detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForMms));
+    }    
     if (contact.isPreferredDetail("OnlineAccountActions", detail)) {
         fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KCntDefaultFieldForOnlineAccount));
     }
@@ -548,17 +561,20 @@ void CntTransformContact::transformPreferredDetail(const CContactItemField& fiel
         const QContactDetail& detail, QContact& contact) const
 {
     if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForCall))) {
-        contact.setPreferredDetail("call", detail);
+        contact.setPreferredDetail(QContactAction::ActionCall, detail);
     }
     if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForEmail))) {
-        contact.setPreferredDetail("email", detail);
+        contact.setPreferredDetail(QContactAction::ActionEmail, detail);
     }
     if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForVideoCall))) {
-        contact.setPreferredDetail("videocall", detail);
+        contact.setPreferredDetail(QContactAction::ActionVideoCall, detail);
     }
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForMessage))) {
-        contact.setPreferredDetail("message", detail);
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForSms))) {
+        contact.setPreferredDetail(QContactAction::ActionSms, detail);
     }
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForMms))) {
+        contact.setPreferredDetail(QContactAction::ActionMms, detail);
+    }    
     if (field.ContentType().ContainsFieldType(TFieldType::Uid(KCntDefaultFieldForOnlineAccount))) {
         contact.setPreferredDetail("OnlineAccountActions", detail);
     }
