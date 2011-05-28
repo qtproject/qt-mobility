@@ -82,15 +82,4 @@ const QString SIM_BACKEND_ON     = "qtcontacts:symbiansim:store=ON";
  */
 const QString MYCARD_DEFINTION = "MyCard";
 
-
-/*!
-* UIDs for preferred (default) fields, used by symbian backend
-*/
-const int KCntDefaultFieldForCall = 0x10003E70;
-const int KCntDefaultFieldForVideoCall = 0x101F85A6;
-const int KCntDefaultFieldForEmail = 0x101F85A7;
-const int KCntDefaultFieldForMessage = 0x101f4cf1;
-const int KCntDefaultFieldForOnlineAccount = 0x2002DC81;
-const int KCntDefaultFieldForUrl = 0x20031E4E;
-
 #endif

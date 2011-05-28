@@ -166,7 +166,8 @@ void tst_QVersitContactImporter::init()
 void tst_QVersitContactImporter::cleanup()
 {
     QVERIFY(mImporter->propertyHandler() == mPropertyHandler);
-    mImporter->setPropertyHandler(static_cast<QVersitContactImporterPropertyHandlerV2*>(0));
+    MyQVersitContactImporterPropertyHandler* nullPtr = NULL;
+    mImporter->setPropertyHandler(nullPtr);
     delete mPropertyHandler;
     QVERIFY(mImporter->resourceHandler() == mResourceHandler);
     mImporter->setResourceHandler(0);

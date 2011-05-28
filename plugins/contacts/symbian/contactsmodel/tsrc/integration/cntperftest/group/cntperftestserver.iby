@@ -20,28 +20,28 @@
 
 #include <testexecute.iby>
 
-file=ABI_DIR\BUILD_DIR\CntPerfTestServer.exe		Sys\Bin\CntPerfTestServer.exe
+file=ABI_DIR\BUILD_DIR\cntperftestserver.exe		Sys\Bin\cntperftestserver.exe
 
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\configs\CntPerfTest.ini 		CntPerfTest\configs\CntPerfTest.ini
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\CntPerfTest.script 		CntPerfTest\scripts\CntPerfTest.script
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\CustomLabelUid.script 		CntPerfTest\scripts\CustomLabelUid.script
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\UnifiedSingular.script 	CntPerfTest\scripts\UnifiedSingular.script
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\ViewDefCustomFieldsTest.script CntPerfTest\scripts\ViewDefCustomFieldsTest.script
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\CustomTemplateTest.script 	CntPerfTest\scripts\CustomTemplateTest.script
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\AcessCountTests.script 	CntPerfTest\scripts\AcessCountTests.script
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\ContactViewTest.script 	CntPerfTest\scripts\ContactViewTest.script
-data=EPOCROOT##Epoc32\data\c\CntPerfTest\scripts\ViewDefAnyFieldsTest.script 	CntPerfTest\scripts\ViewDefAnyFieldsTest.script
-data=EPOCROOT##Epoc32\data\c\cntviewtest\scripts\TestContactViewSuite.script 	cntviewtest\scripts\TestContactViewSuite.script
-data=EPOCROOT##Epoc32\data\c\cntviewtest\configs\TestContactViewSuite.ini 	cntviewtest\configs\TestContactViewSuite.ini
-data=EPOCROOT##Epoc32\data\c\cntviewtest\scripts\TestContactViewUnderBackUpRestoreStep.Script 	cntviewtest\scripts\TestContactViewUnderBackUpRestoreStep.Script
-data=EPOCROOT##Epoc32\data\c\cntviewtest\configs\TestContactViewUnderBackUpRestoreStep.ini	cntviewtest\configs\TestContactViewUnderBackUpRestoreStep.ini	
-data=EPOCROOT##Epoc32\data\c\cntviewtest\scripts\TestContactViewUnderlyingViewUpdateStep.Script 	cntviewtest\scripts\TestContactViewUnderlyingViewUpdateStep.Script 
-data=EPOCROOT##Epoc32\data\c\cntviewtest\configs\TestContactViewUnderlyingViewUpdateStep.ini 	cntviewtest\configs\TestContactViewUnderlyingViewUpdateStep.ini
-data=EPOCROOT##Epoc32\data\c\cntviewtest\scripts\TestContactViewCRUDOperationsStep.Script	cntviewtest\scripts\TestContactViewCRUDOperationsStep.Script 
-data=EPOCROOT##Epoc32\data\c\cntviewtest\configs\TestContactViewCRUDOperationsStep.ini 	cntviewtest\configs\TestContactViewCRUDOperationsStep.ini
-data=EPOCROOT##Epoc32\data\c\cntviewtest\configs\vcf\vcard01.vcf		cntviewtest\configs\vcf\vcard01.vcf
-data=EPOCROOT##Epoc32\data\c\cntviewtest\configs\vcf\vcard02.vcf		cntviewtest\configs\vcf\vcard02.vcf
-data=EPOCROOT##Epoc32\data\c\cntviewtest\configs\vcf\vcard100.vcf		cntviewtest\configs\vcf\vcard100.vcf
+data=EPOCROOT##epoc32\data\c\cntperftest\configs\cntperftest.ini 		cntperftest\configs\cntperftest.ini
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\cntperftest.script 		cntperftest\scripts\cntperftest.script
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\customlabeluid.script 		cntperftest\scripts\customlabeluid.script
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\unifiedsingular.script 	cntperftest\scripts\unifiedsingular.script
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\viewdefcustomfieldstest.script cntperftest\scripts\viewdefcustomfieldstest.script
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\customtemplatetest.script 	cntperftest\scripts\customtemplatetest.script
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\acesscounttests.script 	cntperftest\scripts\acesscounttests.script
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\contactviewtest.script 	cntperftest\scripts\contactviewtest.script
+data=EPOCROOT##epoc32\data\c\cntperftest\scripts\viewdefanyfieldstest.script 	cntperftest\scripts\viewdefanyfieldstest.script
+data=EPOCROOT##epoc32\data\c\cntviewtest\scripts\testcontactviewsuite.script 	cntviewtest\scripts\testcontactviewsuite.script
+data=EPOCROOT##epoc32\data\c\cntviewtest\configs\testcontactviewsuite.ini 	cntviewtest\configs\testcontactviewsuite.ini
+data=EPOCROOT##epoc32\data\c\cntviewtest\scripts\testcontactviewunderbackuprestorestep.script 	cntviewtest\scripts\testcontactviewunderbackuprestorestep.script
+data=EPOCROOT##epoc32\data\c\cntviewtest\configs\testcontactviewunderbackuprestorestep.ini	cntviewtest\configs\testcontactviewunderbackuprestorestep.ini	
+data=EPOCROOT##epoc32\data\c\cntviewtest\scripts\testcontactviewunderlyingviewupdatestep.script 	cntviewtest\scripts\testcontactviewunderlyingviewupdatestep.script 
+data=EPOCROOT##epoc32\data\c\cntviewtest\configs\testcontactviewunderlyingviewupdatestep.ini 	cntviewtest\configs\testcontactviewunderlyingviewupdatestep.ini
+data=EPOCROOT##epoc32\data\c\cntviewtest\scripts\testcontactviewcrudoperationsstep.script	cntviewtest\scripts\testcontactviewcrudoperationsstep.script 
+data=EPOCROOT##epoc32\data\c\cntviewtest\configs\testcontactviewcrudoperationsstep.ini 	cntviewtest\configs\testcontactviewcrudoperationsstep.ini
+data=EPOCROOT##epoc32\data\c\cntviewtest\configs\vcf\vcard01.vcf		cntviewtest\configs\vcf\vcard01.vcf
+data=EPOCROOT##epoc32\data\c\cntviewtest\configs\vcf\vcard02.vcf		cntviewtest\configs\vcf\vcard02.vcf
+data=EPOCROOT##epoc32\data\c\cntviewtest\configs\vcf\vcard100.vcf		cntviewtest\configs\vcf\vcard100.vcf
 
 
 

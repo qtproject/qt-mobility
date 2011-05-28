@@ -21,7 +21,7 @@
 #include <cntmodel.iby>
 
 
-file=ABI_DIR\BUILD_DIR\T_PlPerformance.exe	System\Programs\T_PlPerformance.exe
+file=ABI_DIR\BUILD_DIR\t_plperformance.exe	System\Programs\t_plperformance.exe
 
 
 #endif

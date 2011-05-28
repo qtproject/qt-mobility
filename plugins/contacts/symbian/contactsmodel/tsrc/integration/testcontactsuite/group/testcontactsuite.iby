@@ -23,7 +23,7 @@
 REM Contacts Model TEF testcode
 
 // TEST EXECUTE
-file=ABI_DIR\BUILD_DIR\TestContactSuite.exe		System\bin\TestContactSuite.exe
+file=ABI_DIR\BUILD_DIR\testcontactsuite.exe		System\bin\testcontactsuite.exe
 
 data=EPOCROOT##epoc32\data\c\ContactTestCases.script	ContactTestCases.script
 data=EPOCROOT##epoc32\data\c\ContactTestCases.ini	ContactTestCases.ini

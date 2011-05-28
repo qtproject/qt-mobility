@@ -815,7 +815,7 @@ bool QVersitContactExporterPrivate::encodeContentFromFile(const QString& resourc
     if (isValidRemoteUrl( resourcePath )) {
         encodeContent = true;
         value.setValue(resourcePath);
-        property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("uri"));
     } else if (mResourceHandler
                && mResourceHandler->loadResource(resourcePath, &imageData, &mimeType)) {
         value.setValue(imageData);

@@ -21,11 +21,11 @@
 #include <testexecute.iby>
 #include <cntmodel.iby>
 
-file=ABI_DIR\BUILD_DIR\TestStartUpSuite.exe		                         Sys\Bin\TestStartUpSuite.exe
+file=ABI_DIR\BUILD_DIR\teststartupsuite.exe		                         Sys\Bin\teststartupsuite.exe
 
-data=EPOCROOT##Epoc32\data\c\test\data\StartUpData.ini                           test\data\StartUpData.ini
-data=EPOCROOT##Epoc32\data\c\test\scripts\TestContactsStartUpSuite.script        test\scripts\TestContactsStartUpSuite.script
-data=DATAZ_\private\10202BE9\10003A73.txt	                                 private\10202be9\10003A73.txt
+data=EPOCROOT##Epoc32\data\c\test\data\startupdata.ini                           test\data\startupdata.ini
+data=EPOCROOT##Epoc32\data\c\test\scripts\testcontactsstartupsuite.script        test\scripts\testcontactsstartupsuite.script
+data=DATAZ_\private\10202be9\10003a73.txt	                                 private\10202be9\10003a73.txt
 
 
 

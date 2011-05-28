@@ -107,6 +107,7 @@ public:
     
 	TInt BeginDbTransaction() const;
 	TInt CommitDbTransaction() const;
+	void CommitDbTransaction(TRequestStatus*& aStatus) const;
 	TInt RollbackDbTransaction() const;
 	
 	// Observer methods for database event notifications.

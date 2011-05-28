@@ -42,7 +42,7 @@ iby.sources = cntmodel.iby
 # which doesn't get installed to epoc32/include
 # Try to handle both cases here. (cntplsql needs Qt)
 #
-exists($${EPOCROOT}epoc32/include/mw/QtCore) {
+exists($${EPOCROOT}epoc32/include/mw/qtcore) {
 message(Adding cntplsql)
 BLD_INF_RULES.prj_mmpfiles += "./groupsql/cntplsql.mmp"
 iby.sources += cntplsql.iby
