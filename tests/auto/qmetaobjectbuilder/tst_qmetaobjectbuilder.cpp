@@ -7,29 +7,29 @@
 ** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -149,9 +149,9 @@ void tst_QMetaObjectBuilder::mocVersionCheck()
     // whenenver moc changes.  Once QMetaObjectBuilder has been
     // updated, this test can be changed to check for the next version.
     int version = int(QObject::staticMetaObject.d.data[0]);
-    QVERIFY(version == 4 || version == 5);
+    QVERIFY(version == 4 || version == 5 || version == 6);
     version = int(staticMetaObject.d.data[0]);
-    QVERIFY(version == 4 || version == 5);
+    QVERIFY(version == 4 || version == 5 || version == 6);
 }
 
 void tst_QMetaObjectBuilder::create()
@@ -555,7 +555,8 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(!nullProp.isUser());
     QVERIFY(!nullProp.hasStdCppSet());
     QVERIFY(!nullProp.isEnumOrFlag());
-    QVERIFY(!nullProp.isDynamic());
+    QVERIFY(!nullProp.isConstant());
+    QVERIFY(!nullProp.isFinal());
     QCOMPARE(nullProp.index(), 0);
 
     // Add a property and check its attributes.
@@ -573,7 +574,8 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(!prop1.isUser());
     QVERIFY(!prop1.hasStdCppSet());
     QVERIFY(!prop1.isEnumOrFlag());
-    QVERIFY(!prop1.isDynamic());
+    QVERIFY(!prop1.isConstant());
+    QVERIFY(!prop1.isFinal());
     QCOMPARE(prop1.index(), 0);
     QCOMPARE(builder.propertyCount(), 1);
 
@@ -592,7 +594,8 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(!prop2.isUser());
     QVERIFY(!prop2.hasStdCppSet());
     QVERIFY(!prop2.isEnumOrFlag());
-    QVERIFY(!prop2.isDynamic());
+    QVERIFY(!prop2.isConstant());
+    QVERIFY(!prop2.isFinal());
     QCOMPARE(prop2.index(), 1);
     QCOMPARE(builder.propertyCount(), 2);
 
@@ -614,7 +617,8 @@ void tst_QMetaObjectBuilder::property()
     prop1.setUser(true);
     prop1.setStdCppSet(true);
     prop1.setEnumOrFlag(true);
-    prop1.setDynamic(true);
+    prop1.setConstant(true);
+    prop1.setFinal(true);
 
     // Check that prop1 is changed, but prop2 is not.
     QCOMPARE(prop1.name(), QByteArray("foo"));
@@ -629,7 +633,8 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(prop1.isUser());
     QVERIFY(prop1.hasStdCppSet());
     QVERIFY(prop1.isEnumOrFlag());
-    QVERIFY(prop1.isDynamic());
+    QVERIFY(prop1.isConstant());
+    QVERIFY(prop1.isFinal());
     QVERIFY(prop2.isReadable());
     QVERIFY(prop2.isWritable());
     QCOMPARE(prop2.name(), QByteArray("bar"));
@@ -642,7 +647,8 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(!prop2.isUser());
     QVERIFY(!prop2.hasStdCppSet());
     QVERIFY(!prop2.isEnumOrFlag());
-    QVERIFY(!prop2.isDynamic());
+    QVERIFY(!prop2.isConstant());
+    QVERIFY(!prop2.isFinal());
 
     // Remove prop1 and check that prop2 becomes index 0.
     builder.removeProperty(0);
@@ -658,7 +664,8 @@ void tst_QMetaObjectBuilder::property()
     QVERIFY(!prop2.isUser());
     QVERIFY(!prop2.hasStdCppSet());
     QVERIFY(!prop2.isEnumOrFlag());
-    QVERIFY(!prop2.isDynamic());
+    QVERIFY(!prop2.isConstant());
+    QVERIFY(!prop2.isFinal());
     QCOMPARE(prop2.index(), 0);
 
     // Perform index-based lookup again.
@@ -682,7 +689,8 @@ void tst_QMetaObjectBuilder::property()
             prop2.setUser(false); \
             prop2.setStdCppSet(false); \
             prop2.setEnumOrFlag(false); \
-            prop2.setDynamic(false); \
+            prop2.setConstant(false); \
+            prop2.setFinal(false); \
         } while (0)
 #define COUNT_FLAGS() \
         ((prop2.isReadable() ? 1 : 0) + \
@@ -695,7 +703,8 @@ void tst_QMetaObjectBuilder::property()
          (prop2.isUser() ? 1 : 0) + \
          (prop2.hasStdCppSet() ? 1 : 0) + \
          (prop2.isEnumOrFlag() ? 1 : 0) + \
-         (prop2.isDynamic() ? 1 : 0)) 
+         (prop2.isConstant() ? 1 : 0) + \
+         (prop2.isFinal() ? 1 : 0))
 #define CHECK_FLAG(setFunc,isFunc) \
         do { \
             CLEAR_FLAGS(); \
@@ -714,7 +723,8 @@ void tst_QMetaObjectBuilder::property()
     CHECK_FLAG(setUser, isUser);
     CHECK_FLAG(setStdCppSet, hasStdCppSet);
     CHECK_FLAG(setEnumOrFlag, isEnumOrFlag);
-    CHECK_FLAG(setDynamic, isDynamic);
+    CHECK_FLAG(setConstant, isConstant);
+    CHECK_FLAG(setFinal, isFinal);
 
     // Check that nothing else changed.
     QVERIFY(checkForSideEffects(builder, QMetaObjectBuilder::Properties));
@@ -958,9 +968,9 @@ void tst_QMetaObjectBuilder::relatedMetaObject()
     QVERIFY(checkForSideEffects(builder, QMetaObjectBuilder::RelatedMetaObjects));
 }
 
-static int smetacall(QMetaObject::Call, int, void **)
+static void smetacall(QObject *, QMetaObject::Call, int, void **)
 {
-    return 0;
+    return;
 }
 
 void tst_QMetaObjectBuilder::staticMetacall()
@@ -1263,8 +1273,8 @@ bool tst_QMetaObjectBuilder::sameMetaObject
         if (extra1 && extra2) {
             if (extra1->static_metacall != extra2->static_metacall)
                 return false;
-            //objects1 = extra1->objects;
-            //objects2 = extra1->objects;
+            objects1 = extra1->objects;
+            objects2 = extra1->objects;
         }
     } else if (meta1->d.data[0] == meta2->d.data[0] && meta1->d.data[0] == 1) {
         objects1 = (const QMetaObject **)(meta1->d.extradata);

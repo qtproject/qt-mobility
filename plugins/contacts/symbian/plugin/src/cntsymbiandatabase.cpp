@@ -408,19 +408,6 @@ void CntSymbianDatabase::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent
             }
         }
         break;
-    case EContactDbObserverEventV2ContactsOrGroupsDeleted:
-        if (aEvent.iAdditionalContactIds != NULL) {
-            for (int i = 0; i < aEvent.iAdditionalContactIds->Count(); i++) {
-                int id = aEvent.iAdditionalContactIds->operator[](i);
-                if(m_contactsEmitted.contains(id)) {
-                    m_contactsEmitted.removeOne(id);
-                }
-                else {
-                    changeSet.insertRemovedContact(id);
-                }
-            }
-        }
-        break;
     case EContactDbObserverEventV2GroupChanged:
         if(m_contactsEmitted.contains(aEvent.iContactId)) {
             m_contactsEmitted.removeOne(aEvent.iContactId);

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -94,17 +94,20 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
 /*!
     \fn QCameraImageProcessingControl::whiteBalanceMode() const
     Return the white balance mode being used.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageProcessingControl::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
     Set the white balance mode to \a mode
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageProcessingControl::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
     Returns true if the white balance \a mode is supported.
     The backend should support at least QCameraImageProcessing::WhiteBalanceAuto mode.
+    \since 1.1
 */
 
 /*!
@@ -116,11 +119,13 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
     but some parameter may not be available depending on other
     camera settings, like presets.
     In such case the currently supported parameters should be returned.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageProcessingControl::processingParameter(ProcessingParameter parameter) const
     Returns the image processing \a parameter value.
+    \since 1.1
 */
 
 /*!
@@ -137,6 +142,7 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
     For sharpening and denoising the range is 0..100,
     0 for sharpening or denoising disabled
     and 100 for maximum sharpening/denoising applied.
+    \since 1.1
 */
 
 /*!

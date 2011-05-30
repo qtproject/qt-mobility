@@ -390,30 +390,30 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 
     if ((m_session && m_currentResource == source) && m_session->isStreaming())
         {
-            m_session->load(source.canonicalUrl());
+            m_session->load(source);
             return;
         }
 
     // we don't want to set & load media again when it is already loaded
     if (m_session && m_currentResource == source)
         return;
-    
+
     // store to variable as session is created based on the content type.
     m_currentResource = source;
     S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession();
     m_mediaSettings.setMediaStatus(QMediaPlayer::UnknownMediaStatus);
-    
+
     if (m_session)
         m_session->reset();
     else {
         emit mediaStatusChanged(QMediaPlayer::UnknownMediaStatus);
         emit error(QMediaPlayer::NoError, QString());
     }
-    
+
     m_session = newSession;
-    
+
     if (m_session)
-        m_session->load(source.canonicalUrl());
+        m_session->load(source);
     else {
         QMediaPlayer::MediaStatus status = (source.isNull()) ? QMediaPlayer::NoMedia : QMediaPlayer::InvalidMedia;
         m_mediaSettings.setMediaStatus(status);

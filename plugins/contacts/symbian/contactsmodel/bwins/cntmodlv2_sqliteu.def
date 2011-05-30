@@ -553,4 +553,6 @@ EXPORTS
 	??1CContactImagesUtility@@UAE@XZ @ 552 NONAME ; CContactImagesUtility::~CContactImagesUtility(void)
 	?EnsureImageRemoved@CContactImagesUtility@@QAEXABVTDesC16@@@Z @ 553 NONAME ; void CContactImagesUtility::EnsureImageRemoved(class TDesC16 const &)
 	?NewL@CContactImagesUtility@@SAPAV1@XZ @ 554 NONAME ; class CContactImagesUtility * CContactImagesUtility::NewL(void)
+	?DatabaseCommit@CContactDatabase@@QAEXHAAPAVTRequestStatus@@@Z @ 555  NONAME ; void CContactDatabase::DatabaseCommit(int, class TRequestStatus * &)
+	
 

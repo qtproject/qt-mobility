@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -164,6 +164,7 @@ QServiceFilter::QServiceFilter(const QServiceFilter& other)
     Creates a new filter object that matches all service
     implementations implementing \a interfaceName that match the specified
     \a version using the given \a rule.
+    \since 1.0
 */
 QServiceFilter::QServiceFilter(const QString& interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
 {
@@ -188,6 +189,7 @@ QServiceFilter::~QServiceFilter()
 
     Copies the content of the QServiceFilter object contained in
     \a other into this one.
+    \since 1.0
 */
 QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
 {
@@ -210,6 +212,7 @@ QServiceFilter& QServiceFilter::operator=(const QServiceFilter& other)
     specified by \a serviceName.
 
     If the \a serviceName is empty the filter matches any service.
+    \since 1.0
 */
 void QServiceFilter::setServiceName(const QString& serviceName)
 {
@@ -229,6 +232,7 @@ void QServiceFilter::setServiceName(const QString& serviceName)
 
     A valid version string has the format x.y whereby x and y are positive integer
     numbers.
+    \since 1.0
 */
 void QServiceFilter::setInterface(const QString &interfaceName, const QString& version, QServiceFilter::VersionMatchRule rule)
 {
@@ -287,6 +291,7 @@ void QServiceFilter::setInterface(const QString &interfaceName, const QString& v
     Returns the service name for this filter.
 
     \sa setServiceName()
+    \since 1.0
 */
 QString QServiceFilter::serviceName() const
 {
@@ -299,6 +304,7 @@ QString QServiceFilter::serviceName() const
     Returns the interface name for this filter.
 
     \sa setInterface()
+    \since 1.0
 */
 QString QServiceFilter::interfaceName() const
 {
@@ -311,6 +317,7 @@ QString QServiceFilter::interfaceName() const
     Returns the major interface version for this filter.
 
     \sa setInterface()
+    \since 1.0
 */
 int QServiceFilter::majorVersion() const
 {
@@ -323,6 +330,7 @@ int QServiceFilter::majorVersion() const
     Returns the minor interface version for this filter.
 
     \sa setInterface()
+    \since 1.0
 */
 int QServiceFilter::minorVersion() const
 {
@@ -337,6 +345,7 @@ int QServiceFilter::minorVersion() const
     \i{<customproperty>} tag within the service xml.
 
     \sa customAttribute(), clearCustomAttribute()
+    \since 1.0
 */
 void QServiceFilter::setCustomAttribute(const QString& key, const QString& value)
 {
@@ -350,6 +359,7 @@ void QServiceFilter::setCustomAttribute(const QString& key, const QString& value
     returns a null string.
 
     \sa setCustomAttribute(), clearCustomAttribute()
+    \since 1.0
 */
 QString QServiceFilter::customAttribute(const QString& key) const
 {
@@ -363,6 +373,7 @@ QString QServiceFilter::customAttribute(const QString& key) const
     If \a key is empty all custom attributes are cleared.
 
     \sa setCustomAttribute()
+    \since 1.0
 */
 void QServiceFilter::clearCustomAttribute(const QString &key)
 {
@@ -378,6 +389,7 @@ void QServiceFilter::clearCustomAttribute(const QString &key)
     Returns the version match rule for this filter.
 
     \sa setInterface()
+    \since 1.0
 */
 QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
 {
@@ -388,6 +400,7 @@ QServiceFilter::VersionMatchRule QServiceFilter::versionMatchRule() const
     \fn  QList<QString> QServiceFilter::customAttributes() const
 
     Returns the list of custom keys which have been added to the filter.
+    \since 1.0
 */
 QStringList QServiceFilter::customAttributes() const
 {
@@ -402,6 +415,7 @@ QStringList QServiceFilter::customAttributes() const
     to the given \a rule.
 
     \sa capabilities(), QAbstractSecuritySession
+    \since 1.0
 */
 void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, const QStringList& capabilities )
 {
@@ -419,6 +433,7 @@ void QServiceFilter::setCapabilities(QServiceFilter::CapabilityMatchRule rule, c
     for which they have the required capabilties.
 
     \sa setCapabilities(), capabilityMatchRule(), QAbstractSecuritySession
+    \since 1.0
 */
 QStringList QServiceFilter::capabilities() const
 {
@@ -429,6 +444,7 @@ QStringList QServiceFilter::capabilities() const
     Returns the capability matching rule for this filter.
 
     \sa setCapabilities(), capabilities()
+    \since 1.0
 */
 QServiceFilter::CapabilityMatchRule QServiceFilter::capabilityMatchRule() const
 {
@@ -442,6 +458,7 @@ QServiceFilter::CapabilityMatchRule QServiceFilter::capabilityMatchRule() const
 
     Writes service filter \a sf to the stream \a out and returns a reference
     to the stream.
+    \since 1.0
 */
 
 QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
@@ -474,6 +491,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceFilter &sf)
 
     Reads a service filter into \a sf from the stream \a in and returns a
     reference to the stream.
+    \since 1.0
 */
 QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
 {

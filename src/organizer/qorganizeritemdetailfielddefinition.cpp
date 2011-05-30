@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemDetailFieldDefinition
   \brief The QOrganizerItemDetailFieldDefinition class provides a field in a QOrganizerItemDetail.
+  \since 1.1
 
   \inmodule QtOrganizer
 
@@ -75,6 +76,7 @@ QOrganizerItemDetailFieldDefinition::~QOrganizerItemDetailFieldDefinition()
 
 /*!
  * Constructs a copy of the \a other field
+  \since 1.1
  */
 QOrganizerItemDetailFieldDefinition::QOrganizerItemDetailFieldDefinition(const QOrganizerItemDetailFieldDefinition& other)
         : d(other.d)
@@ -83,6 +85,7 @@ QOrganizerItemDetailFieldDefinition::QOrganizerItemDetailFieldDefinition(const Q
 
 /*!
  * Assigns the field to be equal to the \a other field
+  \since 1.1
  */
 QOrganizerItemDetailFieldDefinition& QOrganizerItemDetailFieldDefinition::operator=(const QOrganizerItemDetailFieldDefinition& other)
 {
@@ -92,6 +95,7 @@ QOrganizerItemDetailFieldDefinition& QOrganizerItemDetailFieldDefinition::operat
 
 /*!
  * Returns the data type of the field
+  \since 1.1
  */
 int QOrganizerItemDetailFieldDefinition::dataType() const
 {
@@ -100,6 +104,7 @@ int QOrganizerItemDetailFieldDefinition::dataType() const
 
 /*!
  * Sets the data type of the field to \a type
+  \since 1.1
  */
 void QOrganizerItemDetailFieldDefinition::setDataType(int type)
 {
@@ -108,6 +113,7 @@ void QOrganizerItemDetailFieldDefinition::setDataType(int type)
 
 /*!
  * Returns the list of allowable values which this field may store
+  \since 1.1
  */
 QVariantList QOrganizerItemDetailFieldDefinition::allowableValues() const
 {
@@ -116,6 +122,7 @@ QVariantList QOrganizerItemDetailFieldDefinition::allowableValues() const
 
 /*!
  * Sets the list of allowable values which this field may store to \a values
+  \since 1.1
  */
 void QOrganizerItemDetailFieldDefinition::setAllowableValues(const QVariantList values)
 {
@@ -124,6 +131,7 @@ void QOrganizerItemDetailFieldDefinition::setAllowableValues(const QVariantList 
 
 /*!
  * Returns true if the allowable values and data type of the \a other field are equal to those of this field
+  \since 1.1
  */
 bool QOrganizerItemDetailFieldDefinition::operator==(const QOrganizerItemDetailFieldDefinition& other) const
 {
@@ -136,6 +144,7 @@ bool QOrganizerItemDetailFieldDefinition::operator==(const QOrganizerItemDetailF
 
 /*!
  * Returns true if the allowable values or data type of the \a other field differ from those of this field
+  \since 1.1
  */
 bool QOrganizerItemDetailFieldDefinition::operator!=(const QOrganizerItemDetailFieldDefinition& other) const
 {
@@ -145,6 +154,7 @@ bool QOrganizerItemDetailFieldDefinition::operator!=(const QOrganizerItemDetailF
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes the detail field definition \a definition to the stream \a out.
+  \since 1.1
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailFieldDefinition& definition)
 {
@@ -154,6 +164,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetailFieldDefinit
 
 /*!
  * Reads a detail field definition from stream \a in into \a definition.
+  \since 1.1
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& definition)
 {
@@ -175,6 +186,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetailFieldDefinition& de
 #ifndef QT_NO_DEBUG_STREAM
 /*!
   Outputs \a definition to the debug stream \a dbg
+  \since 1.2
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItemDetailFieldDefinition& definition)
 {

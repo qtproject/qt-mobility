@@ -13,3 +13,6 @@ CONFIG += mobility
 MOBILITY = connectivity
 
 symbian:TARGET.CAPABILITY = LocalServices
+
+# Prevent this test from being autorun on Maemo
+maemo*:CONFIG += manual_test

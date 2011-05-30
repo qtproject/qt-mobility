@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -124,6 +124,7 @@ QTM_BEGIN_NAMESPACE
     -2G to +2G (with an accuracy value of 0.015G) or -8G to +8G (with an accuracy value of 0.06G).
 
     \sa qoutputrangelist, QSensor::outputRanges
+    \since 1.0
 */
 
 /*!
@@ -188,10 +189,12 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     The sensor data is delivered via QSensorData and its sub-classes.
 
     \sa QSensorReading
+    \since 1.0
 */
 
 /*!
     Construct the \a type sensor as a child of \a parent.
+    \since 1.0
 */
 QSensor::QSensor(const QByteArray &type, QObject *parent)
     : QObject(parent)
@@ -203,6 +206,7 @@ QSensor::QSensor(const QByteArray &type, QObject *parent)
 
 /*!
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 QSensor::~QSensor()
 {
@@ -227,6 +231,7 @@ QSensor::~QSensor()
     immediately. This is automatically called if you call start() so you only need
     to do this if you need access to sensor properties (ie. to poll the sensor's
     meta-data before you use it).
+    \since 1.0
 */
 
 bool QSensor::isConnectedToBackend() const
@@ -242,6 +247,7 @@ bool QSensor::isConnectedToBackend() const
     when the sensor is connected to a backend. If you want
     to connect a specific backend, you should call
     setIdentifier() before connectToBackend().
+    \since 1.0
 */
 
 QByteArray QSensor::identifier() const
@@ -261,6 +267,7 @@ void QSensor::setIdentifier(const QByteArray &identifier)
 /*!
     \property QSensor::type
     \brief the type of the sensor.
+    \since 1.0
 */
 
 QByteArray QSensor::type() const
@@ -276,6 +283,7 @@ QByteArray QSensor::type() const
     The type must be set before calling this method if you are using QSensor directly.
 
     \sa isConnectedToBackend()
+    \since 1.0
 */
 bool QSensor::connectToBackend()
 {
@@ -313,6 +321,7 @@ bool QSensor::connectToBackend()
     the sensor.
 
     \sa busyChanged()
+    \since 1.0
 */
 
 bool QSensor::isBusy() const
@@ -332,6 +341,7 @@ bool QSensor::isBusy() const
         // need to wait for busyChanged signal and try again
     }
     \endcode
+    \since 1.0
 */
 
 /*!
@@ -342,6 +352,7 @@ bool QSensor::isBusy() const
 
     Note that setting this value to true will not have an immediate effect. Instead,
     the sensor will be started once the event loop has been reached.
+    \since 1.1
 */
 void QSensor::setActive(bool active)
 {
@@ -377,6 +388,7 @@ bool QSensor::isActive() const
     they run. In such cases, the list will be empty.
 
     \sa QSensor::dataRate, qrangelist
+    \since 1.0
 */
 
 qrangelist QSensor::availableDataRates() const
@@ -408,6 +420,7 @@ qrangelist QSensor::availableDataRates() const
     platform.
 
     \sa QSensor::availableDataRates
+    \since 1.0
 */
 
 int QSensor::dataRate() const
@@ -464,6 +477,7 @@ void QSensor::setDataRate(int rate)
     \endcode
 
     \sa QSensor::busy
+    \since 1.0
 */
 bool QSensor::start()
 {
@@ -486,6 +500,7 @@ bool QSensor::start()
     This releases the sensor so that other processes can use it.
 
     \sa QSensor::busy
+    \since 1.0
 */
 void QSensor::stop()
 {
@@ -511,6 +526,7 @@ void QSensor::stop()
     Applications must wait for the readingChanged() signal to be emitted.
 
     \sa isConnectedToBackend(), start()
+    \since 1.0
 */
 
 QSensorReading *QSensor::reading() const
@@ -525,6 +541,7 @@ QSensorReading *QSensor::reading() const
     QSensorFilter will inform the sensor if it is destroyed.
 
     \sa QSensorFilter
+    \since 1.0
 */
 void QSensor::addFilter(QSensorFilter *filter)
 {
@@ -540,6 +557,7 @@ void QSensor::addFilter(QSensorFilter *filter)
     Remove \a filter from the sensor.
 
     \sa QSensorFilter
+    \since 1.0
 */
 void QSensor::removeFilter(QSensorFilter *filter)
 {
@@ -555,6 +573,7 @@ void QSensor::removeFilter(QSensorFilter *filter)
     Returns the filters currently attached to the sensor.
 
     \sa QSensorFilter
+    \since 1.2
 */
 QList<QSensorFilter*> QSensor::filters() const
 {
@@ -564,6 +583,7 @@ QList<QSensorFilter*> QSensor::filters() const
 /*!
     \fn QSensor::d_func() const
     \internal
+    \since 1.0
 */
 
 /*!
@@ -580,6 +600,7 @@ QList<QSensorFilter*> QSensor::filters() const
     have uninitialized data.
 
     \sa start()
+    \since 1.0
 */
 
 /*!
@@ -588,6 +609,7 @@ QList<QSensorFilter*> QSensor::filters() const
     This signal is emitted when the QSensor::active property has changed.
 
     \sa QSensor::active
+    \since 1.1
 */
 
 /*!
@@ -602,6 +624,7 @@ QList<QSensorFilter*> QSensor::filters() const
     accelerometers).
 
     \sa QSensor::outputRange, qoutputrangelist
+    \since 1.0
 */
 
 qoutputrangelist QSensor::outputRanges() const
@@ -625,6 +648,7 @@ qoutputrangelist QSensor::outputRanges() const
     platform.
 
     \sa QSensor::outputRanges
+    \since 1.0
 */
 
 int QSensor::outputRange() const
@@ -651,6 +675,7 @@ void QSensor::setOutputRange(int index)
 /*!
     \property QSensor::description
     \brief a descriptive string for the sensor.
+    \since 1.0
 */
 
 QString QSensor::description() const
@@ -663,6 +688,7 @@ QString QSensor::description() const
     \brief the last error code set on the sensor.
 
     Note that error codes are sensor-specific.
+    \since 1.0
 */
 
 int QSensor::error() const
@@ -676,6 +702,7 @@ int QSensor::error() const
     This signal is emitted when an \a error code is set on the sensor.
     Note that some errors will cause the sensor to stop working.
     You should call isActive() to determine if the sensor is still running.
+    \since 1.0
 */
 
 /*!
@@ -689,6 +716,7 @@ int QSensor::error() const
     unavailable when it was off.
 
     \sa QSensor::sensorTypes(), QSensor::sensorsForType()
+    \since 1.2
 */
 
 /*!
@@ -763,10 +791,12 @@ int QSensor::error() const
     not be updated until after the filters have been run.
 
     \sa filter()
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 QSensorFilter::QSensorFilter()
     : m_sensor(0)
@@ -775,6 +805,7 @@ QSensorFilter::QSensorFilter()
 
 /*!
     Notifies the attached sensor (if any) that the filter is being destroyed.
+    \since 1.0
 */
 QSensorFilter::~QSensorFilter()
 {
@@ -794,10 +825,12 @@ QSensorFilter::~QSensorFilter()
     to be emitted and the value is stored in the sensor.
 
     Returns false to drop the reading.
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 void QSensorFilter::setSensor(QSensor *sensor)
 {
@@ -815,10 +848,12 @@ void QSensorFilter::setSensor(QSensor *sensor)
 
     Note that QSensorReading is not particularly useful by itself. The interesting
     data for each sensor is defined in a sub-class of QSensorReading.
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 QSensorReading::QSensorReading(QObject *parent, QSensorReadingPrivate *_d)
     : QObject(parent)
@@ -828,6 +863,7 @@ QSensorReading::QSensorReading(QObject *parent, QSensorReadingPrivate *_d)
 
 /*!
     \internal
+    \since 1.0
 */
 QSensorReading::~QSensorReading()
 {
@@ -838,10 +874,12 @@ QSensorReading::~QSensorReading()
     \brief the timestamp of the reading.
 
     \sa qtimestamp
+    \since 1.0
 */
 
 /*!
     Returns the timestamp of the reading.
+    \since 1.0
 */
 qtimestamp QSensorReading::timestamp() const
 {
@@ -850,6 +888,7 @@ qtimestamp QSensorReading::timestamp() const
 
 /*!
     Sets the \a timestamp of the reading.
+    \since 1.0
 */
 void QSensorReading::setTimestamp(qtimestamp timestamp)
 {
@@ -863,6 +902,7 @@ void QSensorReading::setTimestamp(qtimestamp timestamp)
 
     As an example, this returns 3 for QAccelerometerReading because
     there are 3 properties defined in that class.
+    \since 1.0
 */
 int QSensorReading::valueCount() const
 {
@@ -901,6 +941,7 @@ int QSensorReading::valueCount() const
     of QSensorReading.
 
     \sa valueCount(), QObject::property()
+    \since 1.0
 */
 QVariant QSensorReading::value(int index) const
 {
@@ -925,6 +966,7 @@ QVariant QSensorReading::value(int index) const
     using the DECLARE_READING() and IMPLEMENT_READING() macros.
 
     Note that this method should only be called by QSensorBackend.
+    \since 1.0
 */
 void QSensorReading::copyValuesFrom(QSensorReading *other)
 {
@@ -938,6 +980,7 @@ void QSensorReading::copyValuesFrom(QSensorReading *other)
     \fn QSensorReading::d_ptr()
     \internal
     No longer used. Exists to keep the winscw build happy.
+    \since 1.0
 */
 
 /*!

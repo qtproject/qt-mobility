@@ -1,0 +1,10 @@
+usr/tests/qtm/tst_qfeedbackmmk
+usr/tests/qtm/tst_qdeclarativefeedback
+usr/tests/qtm/tst_qfeedbackhapticseffect
+usr/tests/qtm/tst_qfeedbackactuator
+usr/tests/qtm/tst_qfeedbackplugin
+usr/tests/qtm/tst_qfeedbacknoplugins
+usr/share/libqtm-feedback-tests/tests.xml
+usr/tests/qtm/plugins/feedback/libqtfeedback_testplugin3.so
+usr/tests/qtm/plugins/feedback/libqtfeedback_testplugin.so
+usr/tests/qtm/plugins/feedback/libqtfeedback_atestplugin.so

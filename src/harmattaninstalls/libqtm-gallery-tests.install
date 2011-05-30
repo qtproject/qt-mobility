@@ -1,0 +1,15 @@
+usr/tests/qtm/tst_qgallerytyperequest
+usr/tests/qtm/tst_qgalleryresource
+usr/tests/qtm/tst_qgalleryquerymodel
+usr/tests/qtm/tst_qgallerytrackerschema
+usr/tests/qtm/tst_qdeclarativedocumentgallerytype
+usr/tests/qtm/tst_qgalleryitemrequest
+usr/tests/qtm/tst_qdocumentgallery
+usr/tests/qtm/tst_qgalleryfilter
+usr/tests/qtm/tst_qgalleryabstractrequest
+usr/tests/qtm/tst_qgallerytrackerresultset
+usr/tests/qtm/tst_qgalleryqueryrequest
+usr/tests/qtm/tst_qdeclarativedocumentgalleryitem
+usr/tests/qtm/tst_qdeclarativedocumentgallerymodel
+usr/tests/qtm/tst_qgalleryabstractresponse
+usr/share/libqtm-gallery-tests/tests.xml

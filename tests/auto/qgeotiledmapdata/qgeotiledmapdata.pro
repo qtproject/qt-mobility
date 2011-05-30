@@ -23,3 +23,4 @@ symbian {
   TARGET.CAPABILITY = ALL -TCB
 }
       
+maemo*:CONFIG += insignificant_test

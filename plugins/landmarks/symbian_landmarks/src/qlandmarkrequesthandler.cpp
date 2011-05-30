@@ -43,7 +43,7 @@
 #include "qlandmarkmanagerengine_symbian_p.h"
 #include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
-#include <qDebug.h>
+#include <qdebug.h>
 #include <qdatetime.h>
 
 // constant data

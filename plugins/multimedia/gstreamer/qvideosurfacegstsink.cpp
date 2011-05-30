@@ -644,13 +644,16 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
     Q_UNUSED(offset);
     Q_UNUSED(size);
 
+    if (!buffer)
+        return GST_FLOW_ERROR;
+
+    *buffer = NULL;
+
     if (!sink->delegate->pool())
         return GST_FLOW_OK;
 
     QMutexLocker poolLock(sink->delegate->poolMutex());
     QAbstractGstBufferPool *pool = sink->delegate->pool();
-
-    *buffer = 0;
 
     if (!pool)
         return GST_FLOW_OK;

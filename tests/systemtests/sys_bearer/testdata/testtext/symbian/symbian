@@ -1,0 +1,91 @@
+---+++ Symbian Platforms
+
+---++++ Enumeration of connections
+
+   1. On an S60 device, use Menu->Settings->Connectivity settings application to list visible networks
+   1. Run the bearermonitor example application
+   1. Press 'Scan'
+   1. Verify all previously listed networks are shown in the application view
+
+---++++ Adding and removing networks
+
+---+++++ Added network interfaces
+
+   1. Pre: no network access points are defined on the device; a WLAN is available
+   1. Run the bearercloud application
+   1. Verify the cloud space is clear of networks
+   1. Press the Menu key to background the application
+   1. Open Settings -> Connectivity -> Wireless networks
+   1. Select the WLAN from the list
+   1. Press Connect
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is displayed in the circle
+
+---+++++ Removed network interfaces
+
+   1. Pre: Added network interfaces has been executed successfully
+   1. Run the bearercloud application
+   1. Verify the cloud space shows a network in the green circle
+   1. Press the Menu key to background the application
+   1. Open Settings -> Connectivity -> Destinations -> Uncategorised
+   1. Select the WLAN from the list
+   1. Press Options -> Delete, and then Yes in the confirm dialog
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is not displayed in the circle
+
+---++++ Changing the status of a network
+
+   1. Pre: no network access points are defined on the device; a WLAN is available
+   1. Run the bearercloud application
+   1. Verify the cloud space is clear of networks
+   1. Press the Menu key to background the application
+   1. Open Settings -> Connectivity -> Wireless networks
+   1. Select the WLAN from the list
+   1. Press Connect
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is displayed in the green circle (connected)
+   1. Press the Menu key to background the application
+   1. Open Settings -> Connectivity -> Connection Mgr
+   1. Select the WLAN from the list
+   1. Press Options -> Disconnect
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is now displayed in the blue circle (disconnected)
+   1. Disable the network device (eg. unplug the access point)
+   1. Verify that bearercloud shows the network moves to the grey circle (unavailable)
+
+---++++ Interfaces are used in order of priority
+
+   1. Pre: GPRS is available to the device
+   1. Pre: WLAN is available to the device
+
+   1. Press the Menu key
+   1. Select Settings->Connectivity->Destinations
+   1. Select Option->New Destination, enter a name
+   1. Select a picture
+   1. Select the destination
+   1. Select Option->New access point
+   1. Select Yes
+   1. Verify that the WLAN "x networks avail." is greater than 0
+   1. Select Wireless LAN
+   1. Select the test WLAN (and enter a key if necessary)
+   1. Select Option->New access point
+   1. Select Yes
+   1. Select Packet data
+   1. Enter a name and commit
+   1. Press Back
+   1. Select Options->Default connection
+   1. Select the new Destination
+   1. Verify the Destination has a check mark
+   1. Start the bearermonitor example application
+   1. In the list, select the new Destination
+   1. Verify 'Roaming' is shown as 'Available'
+   1. Move the device into an area not covered by the WLAN (or simulate an uncovered environment)
+   1. Verify the application indicates loss of WLAN network (may take 1 - 2 minutes)
+   1. Verify the application indicates a change of bearer to the GPRS network (may take 1 - 2 minutes)
+   1. Move the device into (or simulate) the area covered by both networks
+   1. Verify the device connects to the network using the WLAN bearer
+

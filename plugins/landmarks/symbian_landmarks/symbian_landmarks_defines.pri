@@ -1,7 +1,7 @@
 symbian: {
     
 	IS_SYMBIAN_3 = no
-	exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
+	exists($${EPOCROOT}epoc32/data/z/system/install/series60v5.2.sis) {
 	    message(Building Symbian Plugin on S^3 or later Symbian Platform)
 	    IS_SYMBIAN_3 = yes
 	

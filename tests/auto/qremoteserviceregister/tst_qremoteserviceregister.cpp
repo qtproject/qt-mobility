@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -87,6 +87,7 @@ private:
     QRemoteServiceRegister::Entry uniqueEntry2;
 
     QObject *connectToService(const QString &serviceName);
+    bool servicePublished;
 };
 
 bool mySecurityFilterFunction(const void *p)
@@ -159,6 +160,8 @@ void tst_QRemoteServiceRegister::initTestCase()
 
     valid = uniqueEntry2.isValid();
     QVERIFY(valid == true);
+
+    servicePublished = false;
 }
 
 void tst_QRemoteServiceRegister::cleanupTestCase()
@@ -221,6 +224,7 @@ void tst_QRemoteServiceRegister::checkPublish()
 {
     //publish the registered services
     serviceRegister->publishEntries("qt_sfw_example_rsr_unittest");
+    servicePublished = true;
 
     //check instantiation type
     //- default value
@@ -239,6 +243,8 @@ Q_DECLARE_METATYPE(QRemoteServiceRegister::Entry);
 void tst_QRemoteServiceRegister::tst_instanceClosed()
 {
     qRegisterMetaType<QRemoteServiceRegister::Entry>("QRemoteServiceRegister::Entry");
+    if(!servicePublished)
+        serviceRegister->publishEntries("qt_sfw_example_rsr_unittest");
 
     serviceRegister->setSecurityFilter(alwaysPass);
     QSignalSpy spy(serviceRegister,SIGNAL(instanceClosed(QRemoteServiceRegister::Entry)));
@@ -259,8 +265,8 @@ QObject *tst_QRemoteServiceRegister::connectToService(const QString &serviceName
     QServiceManager manager;
 
     QList<QServiceInterfaceDescriptor> list = manager.findInterfaces(serviceName);
-    if (list.isEmpty()) {
-        qWarning() << "Couldn't find service" << serviceName;
+    if (list.isEmpty()) {        
+        qWarning() << "Couldn't find service" << serviceName << manager.findServices("qt_sfw_example_rsr_unittest");
         return 0;
     }
 

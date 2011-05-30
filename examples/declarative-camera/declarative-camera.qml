@@ -79,7 +79,7 @@ Rectangle {
 
         Keys.onPressed : {
             //return to capture mode if the shutter button is touched
-            if (event.key == Qt.Key_CameraFocus) {
+            if (event.key == Qt.Key_CameraFocus && !event.isAutoRepeat) {
                 cameraUI.state = "PhotoCapture"
                 event.accepted = true;
             }

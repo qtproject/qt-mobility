@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -48,6 +48,52 @@
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
+
+const QString CrPathPrefix("cr");
+const QString PsPathPrefix("ps");
+const QString FmPathPrefix("fm");
+
+// check if the path is for numeric access to central repository, publish&subscribe or featuremanager
+// (i.e. the path starts with "/cr/", "/ps/" or "/fm/")
+static bool isNumericPath(const QString &path)
+{
+    QStringList pathParts = path.split('/', QString::SkipEmptyParts);
+    if (pathParts.size() == 0)
+        return false;
+
+    if (pathParts[0] == CrPathPrefix || pathParts[0] == PsPathPrefix || pathParts[0] == FmPathPrefix)
+        return true;
+    else
+        return false;
+}
+
+// parse following cases:
+//  - numerical access to central repository:
+//      * "/cr/<category>/<key>" (f.ex: "/cr/0x100000ab/0x0000000d")
+//  - numerical access to publish&subscribe
+//      * "/ps/<category>/<key>" (f.ex: "/ps/0x00000edc/0xab000005")
+//  - numerical access to featuremanager flags
+//      * "/fm/<flag>" (f.ex: "/fm/0x0000001f")
+
+static bool parseNumericPath(const QString &path, PathMapper::Target &target, quint32 &category, quint32 &key)
+{
+    QStringList pathParts = path.split('/', QString::SkipEmptyParts);
+    bool success = false;
+
+    if (pathParts.size() == 3 && (pathParts[0] == CrPathPrefix || pathParts[0] == PsPathPrefix)) {
+        target = (pathParts[0] == CrPathPrefix) ? PathMapper::TargetCRepository : PathMapper::TargetRPropery;
+        category = pathParts[1].toUInt(&success, 0);
+        if (success) {
+            key = pathParts[2].toUInt(&success, 0);
+        }
+    } else if (pathParts.size() == 2 && pathParts[0] == FmPathPrefix) {
+        target = PathMapper::TargetFeatureManager;
+        category = 0;
+        key = pathParts[1].toUInt(&success, 0);
+    }
+
+    return success;
+}
 
 CCRMLDirectoryMonitor::CCRMLDirectoryMonitor() : CActive(EPriorityStandard)
 {
@@ -144,8 +190,25 @@ QStringList PathMapper::childPaths(const QString &path) const
 {
     QString basePath = path;
     QStringList children;
-    QHashIterator<QString, PathData> i(m_paths);
     XQSettingsManager settingsManager;
+
+    // In case of numeric cenrep, pubsub and featuremanager access, there can be no childpaths.
+    // Just return the original path, if it is valid.
+    if (isNumericPath(path)) {
+        Target target;
+        quint32 category;
+        quint32 key;
+        if (parseNumericPath(path, target, category, key)) {
+            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+            settingsManager.readItemValue(settingsKey);
+            if (settingsManager.error() != XQSettingsManager::NotFoundError) {
+                children << path;
+            }
+        }
+        return children;
+    }
+
+    QHashIterator<QString, PathData> i(m_paths);
     while (i.hasNext()) {
         i.next();
         if (i.key().startsWith(basePath)) {
@@ -165,6 +228,9 @@ QStringList PathMapper::childPaths(const QString &path) const
 
 bool PathMapper::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
 {
+    if (isNumericPath(path))
+        return parseNumericPath(path, target, category, key);
+
     if (m_paths.contains(path)) {
         const PathData &data = m_paths.value(path);
         target = data.m_target;

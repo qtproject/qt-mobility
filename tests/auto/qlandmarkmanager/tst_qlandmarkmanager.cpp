@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -1907,9 +1907,9 @@ void tst_QLandmarkManager::retrieveLandmark() {
     address.setCity("LM2 city");
     address.setCountry("LM2 Country");
     address.setPostcode("LM2 post code");
-#if (!defined(SPARQL_BACKEND))
     address.setDistrict("LM2 district");
     address.setState("LM2 State");
+#if (!defined(SPARQL_BACKEND))
     address.setCountryCode("LM2CountryCode");
 #endif
     lm2.setAddress(address);
@@ -2068,9 +2068,9 @@ void tst_QLandmarkManager::retrieveLandmark() {
     address.setCity("LMA city");
     address.setCountry("LMA Country");
     address.setPostcode("LMA post code");
-#if (!defined(SPARQL_BACKEND))
     address.setDistrict("LMA district");
     address.setState("LMA State");
+#if (!defined(SPARQL_BACKEND))
     address.setCountryCode("LMACountryCode");
 #endif
     lmA.setAddress(address);
@@ -2090,9 +2090,9 @@ void tst_QLandmarkManager::retrieveLandmark() {
     address.setCity("LMB city");
     address.setCountry("LMB Country");
     address.setPostcode("LMB post code");
-#if (!defined(SPARQL_BACKEND))
     address.setDistrict("LMB district");
     address.setState("LMB State");
+#if (!defined(SPARQL_BACKEND))
     address.setCountryCode("LMBCountryCode");
 #endif
     lmB.setAddress(address);
@@ -2598,9 +2598,9 @@ void tst_QLandmarkManager::saveLandmark() {
     address.setStreet("LM1 street");
     address.setCity("LM1 city");
     address.setCountry("LM1 Country");
-#if (!defined(SPARQL_BACKEND))
     address.setDistrict("LM1 district");
     address.setState("LM1 State");
+#if (!defined(SPARQL_BACKEND))
     address.setCountryCode("LM1CountryCode");
 #endif
     address.setPostcode("LM1 post code");
@@ -2659,9 +2659,9 @@ void tst_QLandmarkManager::saveLandmark() {
     address.setCity("LM1Changed city");
     address.setCountry("LM1Changed Country");
     address.setPostcode("LM1Changed Post code");
-#if (!defined(SPARQL_BACKEND))
     address.setDistrict("LM1Changed district");
     address.setState("LM1Changed State");
+#if (!defined(SPARQL_BACKEND))
     address.setCountryCode("LM1Changed CountryCode");
 #endif
     lm1Changed.setAddress(address);
@@ -4449,7 +4449,7 @@ void tst_QLandmarkManager::filterLandmarksName() {
 
     //TODO: symbia matching landmarks with no name
     QVERIFY(doFetch(type,nameFilter, &lms, QLandmarkManager::NoError));
-#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6))
+#if (defined(Q_OS_SYMBIAN) || defined(SPARQL_BACKEND))
     QCOMPARE(lms.count(), 11); //backend specific behaviour of returning all results if
                                //empty name is used
 #else
@@ -6436,9 +6436,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm1.setPhoneNumber("aaabbbccc");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("aaabbbccc");
+#endif
     address.setState("aaabbbccc");
     address.setDistrict("aaabbbccc");
-#endif
     address.setCountry("aaabbbccc");
     address.setCity("aaabbbccc");
     address.setStreet("aaabbbccc");
@@ -6454,9 +6454,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm2.setPhoneNumber("bbbaaaccc");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("bbbaaaccc");
+#endif
     address.setState("bbbaaaccc");
     address.setDistrict("bbbaaaccc");
-#endif
     address.setCountry("bbbaaaccc");
     address.setCity("bbbaaaccc");
     address.setStreet("bbbaaaccc");
@@ -6472,9 +6472,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm3.setPhoneNumber("bbbcccaaa");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("bbbcccaaa");
+#endif
     address.setState("bbbcccaaa");
     address.setDistrict("bbbcccaaa");
-#endif
     address.setCity("bbbcccaaa");
     address.setCountry("bbbcccaaa");
     address.setStreet("bbbcccaaa");
@@ -6490,9 +6490,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm4.setPhoneNumber("aaaabbbbcccc");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("aaaabbbbcccc");
+#endif
     address.setState("aaaabbbbcccc");
     address.setDistrict("aaaabbbbcccc");
-#endif
     address.setCity("aaaabbbbcccc");
     address.setCountry("aaaabbbbcccc");
     address.setStreet("aaaabbbbcccc");
@@ -6508,10 +6508,10 @@ void tst_QLandmarkManager::filterAttribute2()
     lm5.setPhoneNumber("ccccaaaabbbb");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("ccccaaaabbbb");
+#endif
     address.setState("ccccaaaabbbb");
     address.setDistrict("ccccaaaabbbb");
-#endif
-     address.setCity("ccccaaaabbbb");
+    address.setCity("ccccaaaabbbb");
     address.setCountry("ccccaaaabbbb");
     address.setStreet("ccccaaaabbbb");
     address.setPostcode("ccccaaaabbbb");
@@ -6526,9 +6526,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm6.setPhoneNumber("ccccbbbbaaaa");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("ccccbbbbaaaa");
+#endif
     address.setState("ccccbbbbaaaa");
     address.setDistrict("ccccbbbbaaaa");
-#endif
     address.setCountry("ccccbbbbaaaa");
     address.setCity("ccccbbbbaaaa");
     address.setStreet("ccccbbbbaaaa");
@@ -6544,9 +6544,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm7.setPhoneNumber("AAABBBCCC");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("AAABBBCCC");
+#endif
     address.setState("AAABBBCCC");
     address.setDistrict("AAABBBCCC");
-#endif
     address.setCity("AAABBBCCC");
     address.setCountry("AAABBBCCC");
     address.setStreet("AAABBBCCC");
@@ -6562,9 +6562,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm8.setPhoneNumber("BBBAAACCC");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("BBBAAACCC");
+#endif
     address.setState("BBBAAACCC");
     address.setDistrict("BBBAAACCC");
-#endif
     address.setCountry("BBBAAACCC");
     address.setCity("BBBAAACCC");
     address.setStreet("BBBAAACCC");
@@ -6580,9 +6580,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm9.setPhoneNumber("BBBCCCAAA");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("BBBCCCAAA");
+#endif
     address.setState("BBBCCCAAA");
     address.setDistrict("BBBCCCAAA");
-#endif
     address.setCity("BBBCCCAAA");
     address.setCountry("BBBCCCAAA");
     address.setStreet("BBBCCCAAA");
@@ -6598,9 +6598,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm10.setPhoneNumber("AAAABBBBCCCC");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("AAAABBBBCCCC");
+#endif
     address.setState("AAAABBBBCCCC");
     address.setDistrict("AAAABBBBCCCC");
-#endif
     address.setCity("AAAABBBBCCCC");
     address.setCountry("AAAABBBBCCCC");
     address.setStreet("AAAABBBBCCCC");
@@ -6616,9 +6616,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm11.setPhoneNumber("CCCCAAAABBBB");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("CCCCAAAABBBB");
+#endif
     address.setState("CCCCAAAABBBB");
     address.setDistrict("CCCCAAAABBBB");
-#endif
     address.setCity("CCCCAAAABBBB");
     address.setCountry("CCCCAAAABBBB");
     address.setStreet("CCCCAAAABBBB");
@@ -6634,9 +6634,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm12.setPhoneNumber("CCCCBBBBAAAA");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("CCCCBBBBAAAA");
+#endif
     address.setState("CCCCBBBBAAAA");
     address.setDistrict("CCCCBBBBAAAA");
-#endif
     address.setCity("CCCCBBBBAAAA");
     address.setCountry("CCCCBBBBAAAA");
     address.setStreet("CCCCBBBBAAAA");
@@ -6652,9 +6652,9 @@ void tst_QLandmarkManager::filterAttribute2()
     lm13.setPhoneNumber("xxxyyyzzz");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("xxxyyyzzz");
+#endif
     address.setState("xxxyyyzzz");
     address.setDistrict("xxxyyyzzz");
-#endif
     address.setCity("xxxyyyzzz");
     address.setCountry("xxxyyyzzz");
     address.setStreet("xxxyyyzzz");
@@ -6741,11 +6741,11 @@ void tst_QLandmarkManager::filterAttribute2_data()
 #ifndef SPARQL_BACKEND
     QTest::newRow("countryCode sync") << "countryCode" << "sync";
     QTest::newRow("countryCode async") << "countryCode" << "async";
+#endif
     QTest::newRow("state sync") << "state" << "sync";
     QTest::newRow("state sync") << "state" << "async";
     QTest::newRow("district sync") << "district" << "sync";
     QTest::newRow("district async") << "district" << "async";
-#endif
 }
 
 void tst_QLandmarkManager::filterAttribute3()
@@ -6759,9 +6759,9 @@ void tst_QLandmarkManager::filterAttribute3()
     lm1.setPhoneNumber("555-5555");
 #ifndef SPARQL_BACKEND
     address.setCountryCode("AUS");
+#endif
     address.setState("QLD");
     address.setDistrict("Eight Mile Plains");
-#endif
     address.setCity("Brisbane");
     address.setCountry("Australia");
     address.setStreet("32 Kent St");
@@ -6776,9 +6776,9 @@ void tst_QLandmarkManager::filterAttribute3()
     address.clear();
 #ifndef SPARQL_BACKEND
     address.setCountryCode("AUS");
+#endif
     address.setState("QLD");
     address.setDistrict("Mt Gravatt");
-#endif
     address.setCity("Brisbane");
     address.setCountry("Australia");
     address.setStreet("14 Orderly Road");
@@ -6793,9 +6793,9 @@ void tst_QLandmarkManager::filterAttribute3()
     address.clear();
 #ifndef SPARQL_BACKEND
     address.setCountryCode("AUS");
+#endif
     address.setState("QLD");
     address.setDistrict("Mt Gravatt");
-#endif
     address.setCity("Kent");
     address.setCountry("Australia");
     address.setStreet("18 Brandl Street");
@@ -7588,7 +7588,7 @@ void tst_QLandmarkManager::importGpx() {
 #ifdef Q_OS_SYMBIAN
     if (type == "asyncAttachSingleCategory") {
         //attaching a category asynchronously on symbian results in 2 dataChanged signals
-        QCOMPARE(dataChanged.count() ==2);
+        QCOMPARE(dataChanged.count(),2);
     }
     else {
         QCOMPARE(dataChanged.count(),1);
@@ -7762,7 +7762,7 @@ void tst_QLandmarkManager::importGpx() {
         QCOMPARE(spyRemove.count(), 0);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.count(), 0);
-        QCOMPARE(dataChanged.count(), 1);
+        QVERIFY(dataChanged.count() > 0);
     }
 #endif
 }
@@ -8208,11 +8208,9 @@ void tst_QLandmarkManager::exportLmx() {
     lm1Address.setCity("lm1 city");
     lm1Address.setStreet("lm1 street");
     lm1Address.setPostcode("lm1 postCode");
-#ifndef SPARQL_BACKEND
     lm1Address.setState("lm1 state");
     lm1Address.setCounty("lm1 county");
     lm1Address.setDistrict("lm1 district");
-#endif
     QLandmark lm1;
     lm1.setName(lm1Name);
     lm1.setDescription(lm1Description);
@@ -8233,11 +8231,9 @@ void tst_QLandmarkManager::exportLmx() {
     lm2Address.setCity("lm2 city");
     lm2Address.setStreet("lm2 street");
     lm2Address.setPostcode("lm2 postCode");
-#ifndef SPARQL_BACKEND
     lm2Address.setState("lm2 state");
     lm2Address.setCounty("lm2 county");
     lm2Address.setDistrict("lm2 district");
-#endif
     QLandmark lm2;
     lm2.setName(lm2Name);
     lm2.setDescription(lm2Description);
@@ -8258,11 +8254,9 @@ void tst_QLandmarkManager::exportLmx() {
     lm3Address.setCity("lm3 city");
     lm3Address.setStreet("lm3 street");
     lm3Address.setPostcode("lm3 postCode");
-#ifndef SPARQL_BACKEND
     lm3Address.setState("lm3 state");
     lm3Address.setCounty("lm3 county");
     lm3Address.setDistrict("lm3 district");
-#endif
     QLandmark lm3;
     lm3.setName(lm3Name);
     lm3.setDescription(lm3Description);
@@ -8485,11 +8479,9 @@ void tst_QLandmarkManager::exportLmx() {
     QCOMPARE(lm1New.address().city(), lm1Address.city());
     QCOMPARE(lm1New.address().street(), lm1Address.street());
     QCOMPARE(lm1New.address().postcode(), lm1Address.postcode());
-#if (!defined(SPARQL_BACKEND))
     QCOMPARE(lm1New.address().state(),lm1Address.state());
     QCOMPARE(lm1New.address().county(), lm1Address.county());
     QCOMPARE(lm1New.address().district(), lm1Address.district());
-#endif
     if (includeCategoryData) {
         QCOMPARE(lm1.categoryIds().count(),3);
         QList<QLandmarkCategory> cats = m_manager->categories(lm1.categoryIds());
