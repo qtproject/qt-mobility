@@ -1568,10 +1568,9 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
 QString QSystemDeviceInfoPrivate::model()
 {
 #if !defined(QT_NO_DBUS)
-    QString product = sysinfodValueForKey("/component/product");
-    if (!product.isEmpty()) {
-        return product;
-    }
+    QString productName = sysinfodValueForKey("/component/product-name");
+    if (!productName.isEmpty())
+        return productName;
 #endif
     return QString();
 }
@@ -1579,10 +1578,9 @@ QString QSystemDeviceInfoPrivate::model()
 QString QSystemDeviceInfoPrivate::productName()
 {
 #if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName;
-    }
+    QString product = sysinfodValueForKey("/component/product");
+    if (!product.isEmpty())
+        return product;
 #endif
     return QString();
 }
