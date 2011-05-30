@@ -104,7 +104,7 @@ LOCAL_C TInt StrToInt( const TDesC& aDesc )
     TInt ret;
     TInt err = lex.Val( ret );
 
-    if( err != KErrNone )
+    if ( err != KErrNone )
         {
         ret = KErrNotFound;
         }
@@ -195,12 +195,12 @@ void CNetworkOperatorNameListener::HandleNetworkMessage(
     if ( iNWSesssionstatus == false ) return;
     TRAPD( leaveErr, iMessageCache->InsertIsqL( aMessage, iKeyProperties ) );
     TRACES ( qDebug() << "MessageCache check:" << leaveErr );
-    if( leaveErr == KErrAlreadyExists )
+    if ( leaveErr == KErrAlreadyExists )
         {
         leaveErr = KErrNone;
         }
 
-    if( leaveErr != KErrNone )
+    if ( leaveErr != KErrNone )
         {
         TRACES ( qDebug() << "CNetworkOperatorNameListener::HandleNetworkMessage - Error:" << leaveErr );
         return;
@@ -289,7 +289,7 @@ void CNetworkOperatorNameListener::HandleNetworkMessage(
         {
         if ( showPLMN )
             {
-            /*if( isKeyLockEnabled )
+            /*if ( isKeyLockEnabled )
                 {
                 //only plmn
                 TRAP_IGNORE( ShowNetworkIdentityNameL( ETrue ) );
@@ -315,7 +315,7 @@ void CNetworkOperatorNameListener::HandleNetworkMessage(
         {
         if ( showSPN && serviceProviderName.Length() )
             {
-            /*if( isKeyLockEnabled )
+            /*if ( isKeyLockEnabled )
                 {
                 //only plmn
                 TRAP_IGNORE( ShowNetworkIdentityNameL( ETrue ) );
@@ -353,7 +353,7 @@ void CNetworkOperatorNameListener::ShowNetworkIdentityNameL( TBool aTryToPublish
     TInt priority( EAiInvalidPriority );
 
     // *** Network operator name (CPHS-ONS) ***
-    if( iNWInfo.iNPName.Length() > 0 &&
+    if ( iNWInfo.iNPName.Length() > 0 &&
         iNWInfo.iOperatorNameInfo.iType != RMmCustomAPI::EOperatorNameFlexiblePlmn &&
         iNWInfo.iRegistrationStatus == ENWRegisteredOnHomeNetwork )
         {
@@ -362,7 +362,7 @@ void CNetworkOperatorNameListener::ShowNetworkIdentityNameL( TBool aTryToPublish
         //name
         iNetworkIdentityName.Set( iNWInfo.iNPName );
         //publish network identity name
-        if( aTryToPublish )
+        if ( aTryToPublish )
             {
             SetOperatorName( iNetworkIdentityName, priority );
             }
@@ -371,7 +371,7 @@ void CNetworkOperatorNameListener::ShowNetworkIdentityNameL( TBool aTryToPublish
         }
 
     // *** Operator name ***
-    if( iNWInfo.iOperatorNameInfo.iName.Length() > 0 )
+    if ( iNWInfo.iOperatorNameInfo.iName.Length() > 0 )
         {
         //priority
         OperatorNamePriority( priority );
@@ -409,10 +409,10 @@ void CNetworkOperatorNameListener::ShowNetworkIdentityNameL( TBool aTryToPublish
             iNetworkIdentityName.Set( *convertedOperatorName );
             }
 
-        if( priority != EAiInvalidPriority )
+        if ( priority != EAiInvalidPriority )
             {
             // Publish network identity name
-            if( aTryToPublish )
+            if ( aTryToPublish )
                 {
                 SetOperatorName( iNetworkIdentityName, priority );
                 }
@@ -424,14 +424,14 @@ void CNetworkOperatorNameListener::ShowNetworkIdentityNameL( TBool aTryToPublish
             convertedOperatorName = NULL;
             }
 
-        if( priority != EAiInvalidPriority )
+        if ( priority != EAiInvalidPriority )
             {
             return;
             }
         }
 
     // *** Network info name ***
-    if( priority == EAiInvalidPriority )
+    if ( priority == EAiInvalidPriority )
         {
         //priority
         priority = EAiOperatorNetInfoName;
@@ -454,7 +454,7 @@ void CNetworkOperatorNameListener::ShowNetworkIdentityNameL( TBool aTryToPublish
             }
 
         //Publish network identity name
-        if( aTryToPublish )
+        if ( aTryToPublish )
             {
             SetOperatorName( iNetworkIdentityName, priority );
             }
@@ -516,7 +516,7 @@ void CNetworkOperatorNameListener::CheckServiceProviderDisplayListStatus(
 
     const TUint numberOfPairs = length;      // each pair has 3 octets
 
-    for( TUint pair = 0; pair < numberOfPairs; pair++ )
+    for ( TUint pair = 0; pair < numberOfPairs; pair++ )
         {
         // 1st octet
         AppendDigit( mcc, field[ octetIndex ] & 0x0F );
@@ -653,7 +653,7 @@ TBool CNetworkOperatorNameListener::OperatorNamePriority( TInt& aPriority )
         {
         return EFalse;
         }
-    switch( value )
+    switch ( value )
         {
         case EKeyguardLocked:
         case EKeyguardAutolockEmulation:
@@ -801,7 +801,7 @@ TBool CNetworkOperatorNameListener::NotAllowedToDisplayOperatorIndicator(
             /*TRAPD(fmerr, FeatureManager::InitializeLibL());
             if ( fmerr == KErrNone )
                 {
-                if( FeatureManager::FeatureSupported(
+                if ( FeatureManager::FeatureSupported(
                     KFeatureIdFfDisplayNetworkNameAfterCsRegistration ) )
                     {
                     // CS flag is EFalse, alpha tag should not be shown.
