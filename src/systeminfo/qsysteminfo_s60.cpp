@@ -431,6 +431,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
         this, SLOT(wlanNetworkStatusChanged()));*/
     DeviceInfo::instance()->subscriberInfo();
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+    DeviceInfo::instance()->networkInfoListener()->addObserver(this);
+#endif
  TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate--->");
 }
 
@@ -445,6 +448,9 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     DeviceInfo::instance()->networkInfo()->removeObserver(this);
 #endif
     DeviceInfo::instance()->wlanInfo()->removeObserver(this);
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+    DeviceInfo::instance()->networkInfoListener()->removeObserver(this);
+#endif
   TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate-->");
 }
 
@@ -608,7 +614,11 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
                 return QString();
 
+#ifndef NETWORKHANDLER_SYMBIAN_SUPPORTED
             return DeviceInfo::instance()->cellNetworkInfo()->networkName();
+#else
+            return DeviceInfo::instance()->networkInfoListener()->networkName();
+#endif
         }
         case QSystemNetworkInfo::WlanMode:
             return DeviceInfo::instance()->wlanInfo()->wlanNetworkName();
@@ -680,7 +690,11 @@ void QSystemNetworkInfoPrivate::networkCodeChanged()
 
 void QSystemNetworkInfoPrivate::networkNameChanged()
 {
+#ifndef NETWORKHANDLER_SYMBIAN_SUPPORTED
     emit networkNameChanged(currentMode(), DeviceInfo::instance()->cellNetworkInfo()->networkName());
+#else
+    emit networkNameChanged(currentMode(), DeviceInfo::instance()->networkInfoListener()->networkName());
+#endif
 }
 
 void QSystemNetworkInfoPrivate::networkModeChanged()
@@ -745,6 +759,16 @@ void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
     else
         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
 }
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+void QSystemNetworkInfoPrivate::OperatorNameChanged()
+ {
+  TRACES(qDebug() << "QSystemNetworkInfoPrivate::OperatorNameChanged++");
+  TRACES(qDebug() << "Operator name change notification received");
+  networkNameChanged();
+  TRACES(qDebug() << "QSystemNetworkInfoPrivate::OperatorNameChanged--");
+ }
+#endif
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
