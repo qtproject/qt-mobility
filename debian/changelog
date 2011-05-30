@@ -1,5 +1,6 @@
 qt-mobility (1.2.0+375) unstable; urgency=low
 
+  * Applied Versit autotest fix patch
   * Fixes: NB#221126
 
  -- Simo Fält <simo.falt@nokia.com>  Tue, 24 May 2011 11:49:48 +1000
