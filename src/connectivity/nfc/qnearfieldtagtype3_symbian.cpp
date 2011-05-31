@@ -184,7 +184,12 @@ bool QNearFieldTagType3Symbian::hasNdefMessage()
             const QByteArray& lens = result.value(serviceCode);
             if (!lens.isEmpty())
             {
-                hasNdef = (lens.at(0) > 0);
+                quint32 len = lens.at(11);
+                len<<=8;
+                len |= lens.at(12);
+                len<<=8;
+                len |= lens.at(13);
+                hasNdef = (len > 0);
             }
         }
     }

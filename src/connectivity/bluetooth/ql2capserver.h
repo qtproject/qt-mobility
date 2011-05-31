@@ -97,7 +97,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_disconnected())
 #endif //QTM_SYMBIAN_BLUETOOTH
     
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     Q_PRIVATE_SLOT(d_func(), void _q_newConnection())
 #endif
 

@@ -142,7 +142,7 @@ void NearFieldTagNdefRequest::ProcessEmitSignal(TInt aError)
         else if (EWriteRequest == iType)
         {
             iOperator.EmitNdefMessagesWritten();
-            iOperator.EmitRequestCompleted(iId);
+            //iOperator.EmitRequestCompleted(iId);
         }
     }
     END

@@ -437,14 +437,17 @@ void tst_qnearfieldtagtype1::_testRawAccessAndNdefAccess(const QList<QNdefMessag
     int errCount = 0;
     int ndefReadCount = 0;
     int ndefWriteCount = 0;
+    qDebug()<<"okSpy.count()"<<okSpy.count();
 
     // write ndef first
     tester.target->writeNdefMessages(messages);
     ++ndefWriteCount;
     QTRY_COMPARE(ndefMessageWriteSpy.count(), ndefWriteCount);
+    qDebug()<<"okSpy.count()"<<okSpy.count();
 
     // has Ndef message check
     QVERIFY(tester.target->hasNdefMessage());
+    qDebug()<<"okSpy.count()"<<okSpy.count();
 
     QNearFieldTarget::RequestId id = tester.target->readAll();
     QVERIFY(tester.target->waitForRequestCompleted(id));

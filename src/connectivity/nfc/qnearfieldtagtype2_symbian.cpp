@@ -46,9 +46,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-#define SYMBIAN_NEED_CRC
-#define SYMBIAN_RETURN_CRC
-#define SYMBIAN_RETURN_NO_ACK
+//#define SYMBIAN_NEED_CRC
+//#define SYMBIAN_RETURN_CRC
+//#define SYMBIAN_RETURN_NO_ACK
 
 static void OutputByteArray(const QByteArray& data)
 {

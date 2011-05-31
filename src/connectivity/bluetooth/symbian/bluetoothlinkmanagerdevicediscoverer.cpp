@@ -231,7 +231,7 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     if (bufferlength > 0) {
         TBool nameComplete;
         HBufC *deviceNameBuffer = 0;
-        TRAP(err,deviceNameBuffer = HBufC::NewLC(bufferlength));
+        TRAP(err,deviceNameBuffer = HBufC::NewL(bufferlength));
         if(err)
             deviceName = QString();
         else
@@ -247,7 +247,7 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
                 }
             else
                 deviceName = QString();
-            CleanupStack::PopAndDestroy(deviceNameBuffer);
+            delete deviceNameBuffer;
             }
     }
 
@@ -293,7 +293,7 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 
     if (bufferlength > 0) {
         HBufC8 *msd = 0;
-        TRAP(err,HBufC8::NewLC(bufferlength));
+        TRAP(err,msd = HBufC8::NewLC(bufferlength));
         if(err)
             manufacturerData = QByteArray();
         else
@@ -303,7 +303,7 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
                 manufacturerData = s60Desc8ToQByteArray(temp);
             else
                 manufacturerData = QByteArray();
-            CleanupStack::PopAndDestroy(msd);
+            delete msd;
             }
     }
 

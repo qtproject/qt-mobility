@@ -45,7 +45,7 @@
 #include "qnearfieldtagtype1_symbian_p.h"
 #include "debug.h"
 
-#define SYMBIAN_BUG_NOT_FIX
+//#define SYMBIAN_BUG_NOT_FIX
 
 QTM_BEGIN_NAMESPACE
 static void OutputByteArray(const QByteArray& data)

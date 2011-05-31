@@ -233,7 +233,7 @@ void tst_QBluetoothLocalDevice::tst_construction()
     QBluetoothLocalDevice localDevice;
     QVERIFY(localDevice.isValid());
 
-    QBluetoothLocalDevice anotherDevice = new QBluetoothLocalDevice(QBluetoothAddress(000000000000));
+    QBluetoothLocalDevice anotherDevice(QBluetoothAddress(000000000000));
     QVERIFY(anotherDevice.isValid());
     QVERIFY(anotherDevice.address().toUInt64() != 0);
 
