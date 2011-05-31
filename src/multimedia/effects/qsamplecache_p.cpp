@@ -48,7 +48,7 @@
 QT_BEGIN_NAMESPACE
 
 
-/*!
+/*
     \class QSampleCache
 
     When you want to get a sound sample data, you need to request the QSample reference from QSampleCache.
