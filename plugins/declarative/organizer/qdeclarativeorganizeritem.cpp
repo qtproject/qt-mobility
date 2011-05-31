@@ -184,7 +184,7 @@ bool QDeclarativeOrganizerItem::isFloatingTime() const
    For differrent organizer item type, the return value is differrent, too.
 
    \since organizer 1.1.1
-   \sa OrganizerItemType
+   \sa QDeclarativeOrganizerItem::OrganizerItemType
   */
 QDateTime QDeclarativeOrganizerItem::itemStartTime() const
 {
@@ -210,10 +210,10 @@ QDateTime QDeclarativeOrganizerItem::itemStartTime() const
   \qmlproperty date OrganizerItem::itemEndTime
 
    This property holds the end date time of the OrganizerItem object.
-   For differrent organizer item type, the return value is differrent, too.
+   For different organizer item type, the return value is different, too.
 
    \since organizer 1.1.1
-   \sa OrganizerItemType
+   \sa QDeclarativeOrganizerItem::OrganizerItemType
   */
 
 QDateTime QDeclarativeOrganizerItem::itemEndTime() const
@@ -247,7 +247,7 @@ void QDeclarativeOrganizerItem::setModified()
 /*!
   \qmlmethod Detail OrganizerItem::detail(name)
 
-    This method returns an ItemDetail object which detail name is \a name.
+    This method returns an \l Detail object which detail name is \a name.
   */
 QVariant QDeclarativeOrganizerItem::detail(const QString& name)
 {
@@ -257,7 +257,7 @@ QVariant QDeclarativeOrganizerItem::detail(const QString& name)
 /*!
     \qmlproperty list<Detail> OrganizerItem::details
 
-    This property holds the list of \l ItemDetail elements that the organizer item has.
+    This property holds the list of \l Detail elements that the organizer item has.
 */
 QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> QDeclarativeOrganizerItem::details()
 {
@@ -305,7 +305,7 @@ void QDeclarativeOrganizerItem::clearComments()
 
     Removes given \a detail from the organizer item. If the detail is not removable, returns false.
 
-    \sa ItemDetail::removable
+    \sa Detail::removable
 */
 bool QDeclarativeOrganizerItem::removeDetail(QDeclarativeOrganizerItemDetail* detail)
 {

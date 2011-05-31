@@ -122,7 +122,7 @@ QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
 
     \ingroup qml-gallery
     \ingroup qml-gallery-filters
-    
+
     This element is part of the \bold {QtMobility.gallery 1.0} module.
 
     \qml
@@ -167,7 +167,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 /*!
     \qmlclass GalleryLessThanFilter QDeclarativeGalleryLessThanFilter
 
-    \brief The GalleryLessThanEqualsFilter element provides a filter which tests
+    \brief The GalleryLessThanFilter element provides a filter which tests
     if a meta-data property is less than a value.
 
     \ingroup qml-gallery

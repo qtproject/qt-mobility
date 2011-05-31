@@ -325,7 +325,7 @@ QDeclarativeCamera::~QDeclarativeCamera()
 
 /*!
     Returns any camera error.
-    \sa QDeclarativeError::Error
+    \sa QDeclarativeCamera::Error
 */
 QDeclarativeCamera::Error QDeclarativeCamera::error() const
 {
@@ -605,8 +605,9 @@ void QDeclarativeCamera::unlock()
     \qmlmethod Camera::captureImage()
     \fn QDeclarativeCamera::captureImage()
 
-    Start image capture.  The \l onImageCaptured() and \l onImageSaved() signals will
-    be emitted when the capture is complete.
+    Start image capture.  The \l {imageCaptured()}{onImageCaptured()}
+    and \l {imageSaved()}{onImageSaved()} signals will be emitted when
+    the capture is complete.
 */
 void QDeclarativeCamera::captureImage()
 {
@@ -640,8 +641,9 @@ QString QDeclarativeCamera::capturedImagePath() const
 
 /*!
     Paint method.
+    Takes a \a painter object, a graphics \a style option and a \a widget
 */
-void QDeclarativeCamera::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
+void QDeclarativeCamera::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWidget *widget)
 {
 }
 
@@ -656,6 +658,10 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
     QDeclarativeItem::geometryChanged(newGeometry, oldGeometry);
 }
 
+/*!
+    \fn void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
+    Handler for keypress events. The \a event is compared to a small set of events.
+*/
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
     if (!m_isValid || event->isAutoRepeat())
@@ -1126,6 +1132,22 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 }
 
 /*!
+    \fn void QDeclarativeCamera::error(QDeclarativeCamera::Error , const QString &)
+    This handler is called when an error occurs.  The enumeration value \a error is one of the
+    values defined below, and a descriptive string value is available in \a errorString.
+
+    \table
+    \header \o Value \o Description
+    \row \o NoError \o No errors have occurred.
+    \row \o CameraError \o An error has occurred.
+    \row \o InvalidRequestError \o System resource doesn't support requested functionality.
+    \row \o ServiceMissingError \o No camera service available.
+    \row \o NotSupportedFeatureError \o The feature is not supported.
+    \endtable
+
+    \sa QDeclarativeCamera::Error
+*/
+/*!
     \qmlsignal Camera::onError(error, errorString)
 
 
@@ -1204,7 +1226,8 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
 /*!
     \fn void QDeclarativeCamera::lockStatusChanged()
-
+*/
+/*!
     \qmlsignal Camera::lockStatusChanged()
 */
 
@@ -1226,11 +1249,6 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
     \qmlsignal Camera::imageSaved(string)
 */
 
-/*!
-    \fn void QDeclarativeCamera::error(QDeclarativeCamera::Error , const QString &)
-
-    \qmlsignal Camera::error(Camera::Error, string)
-*/
 
 /*!
     \fn void QDeclarativeCamera::errorChanged()
@@ -1241,20 +1259,26 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 
 /*!
-    \fn void QDeclarativeCamera::isoSensitivityChanged(int)
+    \fn void QDeclarativeCamera::isoSensitivityChanged(int isoValue)
+
+    The iso value has changed to \a isoValue.
 */
 /*!
     \qmlsignal Camera::isoSensitivityChanged(int)
 */
 
 /*!
-    \fn void QDeclarativeCamera::apertureChanged(qreal)
-
+    \fn void QDeclarativeCamera::apertureChanged(qreal aperture)
+    Signals the change to a new \a aperture value.
+*/
+/*!
     \qmlsignal Camera::apertureChanged(real)
 */
 
 /*!
-    \fn void QDeclarativeCamera::shutterSpeedChanged(qreal)
+    \fn void QDeclarativeCamera::shutterSpeedChanged(qreal speed)
+
+    The shutter speed has been changed to \a speed.
 
 */
 /*!
@@ -1262,15 +1286,16 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 
 /*!
-    \fn void QDeclarativeCamera::exposureCompensationChanged(qreal)
+    \fn void QDeclarativeCamera::exposureCompensationChanged(qreal expComp)
 
+    Compensation has changed to the new value \a expComp.
 */
 /*!
     \qmlsignal Camera::exposureCompensationChanged(real)
 */
 
 /*!
-    \fn void QDeclarativeCamera:opticalZoomChanged(qreal zoom)
+    \fn void QDeclarativeCamera::opticalZoomChanged(qreal zoom)
 
     Optical zoom changed to \a zoom.
 */
@@ -1281,6 +1306,8 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 /*!
     \fn void QDeclarativeCamera::digitalZoomChanged(qreal)
 
+*/
+/*!
     \qmlsignal Camera::digitalZoomChanged(real)
 */
 
@@ -1291,14 +1318,20 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 
 /*!
-    \fn void QDeclarativeCamera::maximumDigitalZoomChanged(qreal)
-
+    \fn void QDeclarativeCamera::maximumDigitalZoomChanged(qreal zoom)
+    The maximum digital zoom is now \a zoom.
+*/
+/*!
     \qmlsignal Camera::maximumDigitalZoomChanged(real)
 */
 
 
 /*!
-    \fn void QDeclarativeCamera::exposureModeChanged(QDeclarativeCamera::ExposureMode)
+    \fn void QDeclarativeCamera::exposureModeChanged(QDeclarativeCamera::ExposureMode mode)
+
+    Signals that the exposure mode is now \a mode.
+*/
+/*!
 
     \qmlsignal Camera::exposureModeChanged(Camera::ExposureMode)
 */
@@ -1307,7 +1340,10 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
     \fn void QDeclarativeCamera::flashModeChanged(int)
 */
 /*!
-    \qmlsignal Camera::flashModeChanged(int)
+    \qmlsignal Camera::flashModeChanged(int mode)
+
+    The flash mode is now \a mode.
+    \sa QDeclarativeCamera::FlashMode
 */
 
 /*!
@@ -1319,20 +1355,31 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 
 /*!
-    \fn void QDeclarativeCamera::manualWhiteBalanceChanged(int) const
+    \fn void QDeclarativeCamera::manualWhiteBalanceChanged(int newWhiteBal) const
+    Indicates that the white balance has been manually changed to \a newWhiteBal.
 */
 /*!
     \qmlsignal Camera::manualWhiteBalanceChanged(int)
 */
 
 /*!
-    \fn void QDeclarativeCamera::captureResolutionChanged(const QSize &)
+    \fn void QDeclarativeCamera::captureResolutionChanged(const QSize &resolution)
+
+    Signal that the resolution has changed to \a resolution.
+ */
+/*!
 
     \qmlsignal Camera::captureResolutionChanged(Item)
 */
 
 /*!
-    \fn QDeclarativeCamera::cameraStateChanged(QDeclarativeCamera::State)
+    \fn QDeclarativeCamera::cameraStateChanged(QDeclarativeCamera::State state)
+
+    The camera state has changed to value \a state.
+
+*/
+/*!
+    \qmlsignal Camera::cameraStateChanged(Camera::State)
 
 */
 
