@@ -34,3 +34,5 @@ symbian: {
                         WriteDeviceData \
                         AllFiles \
 }
+
+maemo*:CONFIG += insignificant_test

@@ -42,7 +42,6 @@
 
 #include "cnttransformonlineaccount.h"
 #include "cntmodelextuids.h"
-#include "qcontactpresence.h"
 
 const int KMaxDetailCounterLength = 16;
 
@@ -215,9 +214,7 @@ QList<TUid> CntTransformOnlineAccount::supportedFields() const
     return QList<TUid>()
         << KUidContactFieldSIPID
         << KUidContactFieldIMPP
-        << KUidContactFieldServiceProvider
-        << KUidContactFieldPresence
-        << KUidContactFieldStatusMsg;
+        << KUidContactFieldServiceProvider;
 }
 
 QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -129,6 +129,7 @@ QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor()
 
 /*!
     Creates a copy of QServiceInterfaceDescriptor contained in \a other.
+    \since 1.0
 */
 QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(const QServiceInterfaceDescriptor& other)
     : d(0)
@@ -141,6 +142,7 @@ QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(const QServiceInterface
 
     Copies the content of the QServiceInterfaceDescriptor object contained
     in \a other into this one.
+    \since 1.0
 */
 QServiceInterfaceDescriptor& QServiceInterfaceDescriptor::operator=(const QServiceInterfaceDescriptor& other)
 {
@@ -163,6 +165,7 @@ QServiceInterfaceDescriptor& QServiceInterfaceDescriptor::operator=(const QServi
 
     Compares a QServiceInterfaceDescriptor to \a other. Returns true if they
     are equal and false otherwise.
+    \since 1.0
 */
 bool QServiceInterfaceDescriptor::operator==(const QServiceInterfaceDescriptor& other) const
 {
@@ -182,12 +185,14 @@ bool QServiceInterfaceDescriptor::operator==(const QServiceInterfaceDescriptor& 
 
     Compares a QServiceInterfaceDescriptor to \a other. Returns true
     if they are not equal and false otherwise.
+    \since 1.0
 */
 
 /*!
     \fn bool QServiceInterfaceDescriptor::isValid() const
 
     Returns true if this descriptor is valid; otherwise returns false.
+    \since 1.0
 */
 bool QServiceInterfaceDescriptor::isValid() const
 {
@@ -200,6 +205,7 @@ bool QServiceInterfaceDescriptor::isValid() const
     Returns true if this implementation is provided for all users on the system.
 
     \sa QService::Scope
+    \since 1.0
 */
 QService::Scope QServiceInterfaceDescriptor::scope() const
 {
@@ -210,6 +216,7 @@ QService::Scope QServiceInterfaceDescriptor::scope() const
     \fn  QString QServiceInterfaceDescriptor::serviceName() const
 
     Returns the name of service that provides this implementation.
+    \since 1.0
 */
 QString QServiceInterfaceDescriptor::serviceName() const
 {
@@ -220,6 +227,7 @@ QString QServiceInterfaceDescriptor::serviceName() const
     \fn  QString QServiceInterfaceDescriptor::interfaceName() const
 
     Returns the name of the interface that is implemented.
+    \since 1.0
 */
 QString QServiceInterfaceDescriptor::interfaceName() const
 {
@@ -234,6 +242,7 @@ QString QServiceInterfaceDescriptor::interfaceName() const
     Subsequent versions of an interface are binary compatible
     to previous versions of the same interface. If an interface
     is broken it must use a new interface name.
+    \since 1.0
 */
 int QServiceInterfaceDescriptor::majorVersion() const
 {
@@ -244,6 +253,7 @@ int QServiceInterfaceDescriptor::majorVersion() const
     \fn  int QServiceInterfaceDescriptor::minorVersion() const
 
     Returns the version of the implementation.
+    \since 1.0
 */
 int QServiceInterfaceDescriptor::minorVersion() const
 {
@@ -255,6 +265,7 @@ int QServiceInterfaceDescriptor::minorVersion() const
 
     Returns the value for the attribute \a which; otherwise returns
     an invalid QVariant.
+    \since 1.0
 */
 QVariant QServiceInterfaceDescriptor::attribute(QServiceInterfaceDescriptor::Attribute which) const
 {
@@ -268,6 +279,7 @@ QVariant QServiceInterfaceDescriptor::attribute(QServiceInterfaceDescriptor::Att
 
     Returns the value for the custom attribute \a which; otherwise
     returns a null string.
+    \since 1.0
 */
 QString QServiceInterfaceDescriptor::customAttribute(const QString& which) const
 {
@@ -278,6 +290,7 @@ QString QServiceInterfaceDescriptor::customAttribute(const QString& which) const
 
 /*!
   Returns a list of custom attributes attached to the service.
+  \since 1.0
  */
 QStringList QServiceInterfaceDescriptor::customAttributes() const
 {
@@ -325,6 +338,7 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor::Attribute 
 
     Writes service interface descriptor \a dc to the stream \a out and returns a reference
     to the stream.
+    \since 1.0
 */
 
 QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
@@ -353,6 +367,7 @@ QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
 
     Reads a service interface descriptor into \a dc from the stream \a in and returns a
     reference to the stream.
+    \since 1.0
 */
 QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
 {

@@ -52,6 +52,12 @@
 #include <qcontactonlineaccount.h>
 #include <qcontacturl.h>
 #include <qcontactfavorite.h>
+#include <qcontactanniversary.h>
+#include <qcontactnickname.h>
+#include <qcontactgender.h>
+#include <qcontactgeolocation.h>
+#include <qcontactringtone.h>
+#include <qcontactpresence.h>
 #include <QtTest/QtTest>
 
 void TestSymbianEngine::initTestCase()
@@ -186,6 +192,64 @@ void TestSymbianEngine::saveContact()
     QVERIFY(g.id() != empty);
     QVERIFY(g.localId() != 0);
     QVERIFY(g.id().managerUri().contains(uri, Qt::CaseInsensitive));
+}
+
+void TestSymbianEngine::saveContactWithSpecialDetails()
+{
+    QContactManager::Error err;
+    
+    QContact special;
+    special.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setMiddleName("middle name");
+    QVERIFY(special.saveDetail(&name));
+    QContactNickname nickname;
+    nickname.setNickname("nickname");
+    QVERIFY(special.saveDetail(&nickname));
+    QContactAnniversary ann;
+    ann.setEvent("event");
+    ann.setOriginalDate(QDate(2011,1,1));
+    QVERIFY(special.saveDetail(&ann));
+    QContactGender gender;
+    gender.setGender(QContactGender::GenderUnspecified);
+    QVERIFY(special.saveDetail(&gender));
+    QContactGeoLocation geo;
+    geo.setLatitude(1.0);
+    QVERIFY(special.saveDetail(&geo));
+    QContactRingtone ringtone;
+    ringtone.setVideoRingtoneUrl(QUrl("video.avi"));
+    QVERIFY(special.saveDetail(&ringtone));
+    QContactOnlineAccount acc;
+    acc.setServiceProvider("sp");
+    acc.setAccountUri("uri");
+    acc.setSubTypes(QContactOnlineAccount::SubTypeImpp);
+    QVERIFY(special.saveDetail(&acc));
+    QContactPresence presence;
+    presence.setPresenceState(QContactPresence::PresenceAvailable);
+    presence.setPresenceStateText("presence text");
+    QVERIFY(special.saveDetail(&presence));
+    QVERIFY(m_engine->saveContact(&special, &err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    QContact savedSpecial = m_engine->contact(special.localId(), QContactFetchHint(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactAnniversary annSpecial = savedSpecial.detail<QContactAnniversary>();
+    QVERIFY(annSpecial.event() == "event");
+    QContactName nameSpecial = savedSpecial.detail<QContactName>();
+    QVERIFY(nameSpecial.middleName() == "middle name");
+    QContactNickname nickSpecial = savedSpecial.detail<QContactNickname>();
+    QVERIFY(nickSpecial.nickname() == "nickname");
+    QContactGender genderSpecial = savedSpecial.detail<QContactGender>();
+    QVERIFY(genderSpecial.gender() == QContactGender::GenderUnspecified);
+    QContactGeoLocation geoSpecial = savedSpecial.detail<QContactGeoLocation>();
+    QVERIFY(geoSpecial.latitude() == 1.0);
+    QContactRingtone ringtoneSpecial = savedSpecial.detail<QContactRingtone>();
+    QVERIFY(ringtone.videoRingtoneUrl().toString().contains("video.avi"));
+    QContactOnlineAccount accSpecial = savedSpecial.detail<QContactOnlineAccount>();
+    QVERIFY(acc.serviceProvider() == "sp");
+    QContactPresence presenceSpecial = savedSpecial.detail<QContactPresence>();
+    QVERIFY(presence.presenceState() == QContactPresence::PresenceAvailable);
+    QVERIFY(presence.presenceStateText() == "presence text");
 }
 
 void TestSymbianEngine::saveContactWithPreferredDetails()
@@ -870,9 +934,8 @@ void TestSymbianEngine::removeContacts()
         contacts.append(c.localId());
     }
     contacts.insert(3, 1000000);
-    // Invalid ids in the list do not prevent from deleting existing contacts 
-    QVERIFY(m_engine->removeContacts(contacts, &errorMap, &err));
-    QVERIFY(err == QContactManager::NoError); 
+    QVERIFY(!m_engine->removeContacts(contacts, &errorMap, &err));
+    QVERIFY(err == QContactManager::DoesNotExistError); 
 }
 
 void TestSymbianEngine::addOwnCard()

@@ -720,7 +720,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
         emit accessPointChanged(m_accessPointId);
         }
     if (KErrCouldNotConnect == aError && !(m_networkAccessControl->isLastAccessPoint())) {
-        load(m_UrlPath);
+        load(m_source);
     return;
     }
     TInt error = aError;

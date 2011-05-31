@@ -16,7 +16,7 @@
 */
 
 
-target          T_CProgressNotification.exe
+target          t_cprogressnotification.exe
 targettype      EXE
 CAPABILITY   	ReadUserData WriteUserData
 UID				0x102744D4
@@ -33,8 +33,8 @@ source		T_CProgressNotification.cpp
 source		T_CProgressNotificationMain.cpp 
 
 
-library         EUSER.LIB 
-library         ESTOR.LIB 
-library         BAFL.LIB 
+library         euser.lib 
+library         estor.lib 
+library         bafl.lib 
 library		cntmodel.lib
-library         NbCntTestLib.LIB
+library         nbcnttestlib.lib

@@ -794,22 +794,6 @@ void RCntModel::DeleteContactL(TContactItemId aCntId, TCntSendEventAction aCntEv
 	User::LeaveIfError(SendReceive(ECntItemDelete, args));
 	}
 
-/**
-Delete contacts from the database.
-
-@param aContactIds The contacts to be deleted.
-
-@capability WriteUserData
-*/
-void RCntModel::DeleteContactsL(const CContactIdArray& aContactIds) const
-    {
-    // Pack the contact ids into the first IPC argument.
-    TIpcArgs args;
-    TPtr8 ptr(iPackager->PackL(aContactIds));
-    args.Set(0,&ptr);
-    User::LeaveIfError(SendReceive(ECntItemsDelete, args));
-    }
-
 /** 
 Open the database tables.
 
@@ -1071,6 +1055,15 @@ TInt RCntModel::CommitDbTransaction() const
 	return SendReceive(EEndDbTransaction);
 	}
 
+/**
+Asychrounous commit of a database transaction.
+
+@param aStatus Request status variable that will contain the completion value
+*/
+void RCntModel::CommitDbTransaction(TRequestStatus*& aStatus) const
+    {
+    SendReceive(EEndDbTransaction, *aStatus);
+    }
 	
 /**
 Rollback a database transaction.

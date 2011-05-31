@@ -849,8 +849,10 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
             scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
 
         TFrameInfo *info = imageDecoder->frameInfo();
-        if (!info)
+        if (!info) {
             setError(KErrGeneral, tr("Preview image creation failed."));
+            return;
+        }
 
         CFbsBitmap *previewBitmap = new (ELeave) CFbsBitmap;
         CleanupStack::PushL(previewBitmap);
@@ -1840,8 +1842,10 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
 
     TFrameInfo *info = m_imageDecoder->frameInfo();
-    if (!info)
+    if (!info) {
         setError(KErrGeneral, tr("Preview image creation failed."));
+        return;
+    }
 
     m_previewBitmap = new CFbsBitmap;
     if (!m_previewBitmap) {

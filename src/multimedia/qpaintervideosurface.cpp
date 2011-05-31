@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -1338,6 +1338,7 @@ QPainterVideoSurface::~QPainterVideoSurface()
 }
 
 /*!
+    \since 1.0
 */
 QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
@@ -1349,6 +1350,7 @@ QList<QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::isFormatSupported(
         const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const
@@ -1360,6 +1362,7 @@ bool QPainterVideoSurface::isFormatSupported(
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 {
@@ -1393,6 +1396,7 @@ bool QPainterVideoSurface::start(const QVideoSurfaceFormat &format)
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::stop()
 {
@@ -1405,6 +1409,7 @@ void QPainterVideoSurface::stop()
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::present(const QVideoFrame &frame)
 {
@@ -1435,6 +1440,7 @@ bool QPainterVideoSurface::present(const QVideoFrame &frame)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::brightness() const
 {
@@ -1442,6 +1448,7 @@ int QPainterVideoSurface::brightness() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setBrightness(int brightness)
 {
@@ -1451,6 +1458,7 @@ void QPainterVideoSurface::setBrightness(int brightness)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::contrast() const
 {
@@ -1458,6 +1466,7 @@ int QPainterVideoSurface::contrast() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setContrast(int contrast)
 {
@@ -1467,6 +1476,7 @@ void QPainterVideoSurface::setContrast(int contrast)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::hue() const
 {
@@ -1474,6 +1484,7 @@ int QPainterVideoSurface::hue() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setHue(int hue)
 {
@@ -1483,6 +1494,7 @@ void QPainterVideoSurface::setHue(int hue)
 }
 
 /*!
+    \since 1.0
 */
 int QPainterVideoSurface::saturation() const
 {
@@ -1490,6 +1502,7 @@ int QPainterVideoSurface::saturation() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setSaturation(int saturation)
 {
@@ -1499,6 +1512,7 @@ void QPainterVideoSurface::setSaturation(int saturation)
 }
 
 /*!
+    \since 1.0
 */
 bool QPainterVideoSurface::isReady() const
 {
@@ -1506,6 +1520,7 @@ bool QPainterVideoSurface::isReady() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setReady(bool ready)
 {
@@ -1513,6 +1528,7 @@ void QPainterVideoSurface::setReady(bool ready)
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const QRectF &source)
 {
@@ -1542,6 +1558,7 @@ void QPainterVideoSurface::paint(QPainter *painter, const QRectF &target, const 
 
 /*!
     \fn QPainterVideoSurface::frameChanged()
+    \since 1.0
 */
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
@@ -1614,6 +1631,7 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
 */
 
 /*!
+    \since 1.0
 */
 QPainterVideoSurface::ShaderTypes QPainterVideoSurface::supportedShaderTypes() const
 {
@@ -1621,6 +1639,7 @@ QPainterVideoSurface::ShaderTypes QPainterVideoSurface::supportedShaderTypes() c
 }
 
 /*!
+    \since 1.0
 */
 QPainterVideoSurface::ShaderType QPainterVideoSurface::shaderType() const
 {
@@ -1628,6 +1647,7 @@ QPainterVideoSurface::ShaderType QPainterVideoSurface::shaderType() const
 }
 
 /*!
+    \since 1.0
 */
 void QPainterVideoSurface::setShaderType(ShaderType type)
 {

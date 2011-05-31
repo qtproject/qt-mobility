@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -136,7 +136,7 @@ public:
     \class QVideoSurfaceFormat
     \brief The QVideoSurfaceFormat class specifies the stream format of a video presentation
     surface.
-    \since 4.6
+    \since 1.0
     \inmodule QtMultimediaKit
 
     A video surface presents a stream of video frames.  The surface's format describes the type of
@@ -168,11 +168,11 @@ public:
     \value BottomToTop Scan lines are arranged from the bottom of the frame to the top.
 */
 
-/*! 
+/*!
     \enum QVideoSurfaceFormat::YCbCrColorSpace
- 
+
     Enumerates the Y'CbCr color space of video frames.
- 
+
     \value YCbCr_Undefined
     No color space is specified.
 
@@ -180,19 +180,19 @@ public:
     A Y'CbCr color space defined by ITU-R recommendation BT.601
     with Y value range from 16 to 235, and Cb/Cr range from 16 to 240.
     Used in standard definition video.
- 
+
     \value YCbCr_BT709
     A Y'CbCr color space defined by ITU-R BT.709 with the same values range as YCbCr_BT601.  Used
     for HDTV.
- 
+
     \value YCbCr_xvYCC601
     The BT.601 color space with the value range extended to 0 to 255.
     It is backward compatibile with BT.601 and uses values outside BT.601 range to represent
     wider colors range.
- 
+
     \value YCbCr_xvYCC709
     The BT.709 color space with the value range extended to 0 to 255.
- 
+
     \value YCbCr_JPEG
     The full range Y'CbCr color space used in JPEG files.
 */
@@ -209,6 +209,7 @@ QVideoSurfaceFormat::QVideoSurfaceFormat()
 /*!
     Contructs a description of stream which receives stream of \a type buffers with given frame
     \a size and pixel \a format.
+    \since 1.0
 */
 
 QVideoSurfaceFormat::QVideoSurfaceFormat(
@@ -219,6 +220,7 @@ QVideoSurfaceFormat::QVideoSurfaceFormat(
 
 /*!
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 QVideoSurfaceFormat::QVideoSurfaceFormat(const QVideoSurfaceFormat &other)
@@ -228,6 +230,7 @@ QVideoSurfaceFormat::QVideoSurfaceFormat(const QVideoSurfaceFormat &other)
 
 /*!
     Assigns the values of \a other to a video stream description.
+    \since 1.0
 */
 
 QVideoSurfaceFormat &QVideoSurfaceFormat::operator =(const QVideoSurfaceFormat &other)
@@ -249,6 +252,7 @@ QVideoSurfaceFormat::~QVideoSurfaceFormat()
     Identifies if a video surface format has a valid pixel format and frame size.
 
     Returns true if the format is valid, and false otherwise.
+    \since 1.0
 */
 
 bool QVideoSurfaceFormat::isValid() const
@@ -258,6 +262,7 @@ bool QVideoSurfaceFormat::isValid() const
 
 /*!
     Returns true if \a other is the same as a video format, and false if they are the different.
+    \since 1.0
 */
 
 bool QVideoSurfaceFormat::operator ==(const QVideoSurfaceFormat &other) const
@@ -267,6 +272,7 @@ bool QVideoSurfaceFormat::operator ==(const QVideoSurfaceFormat &other) const
 
 /*!
     Returns true if \a other is different to a video format, and false if they are the same.
+    \since 1.0
 */
 
 bool QVideoSurfaceFormat::operator !=(const QVideoSurfaceFormat &other) const
@@ -276,6 +282,7 @@ bool QVideoSurfaceFormat::operator !=(const QVideoSurfaceFormat &other) const
 
 /*!
     Returns the pixel format of frames in a video stream.
+    \since 1.0
 */
 
 QVideoFrame::PixelFormat QVideoSurfaceFormat::pixelFormat() const
@@ -290,6 +297,7 @@ QVideoFrame::PixelFormat QVideoSurfaceFormat::pixelFormat() const
     provided they can be \l {QAbstractVideoBuffer::map()}{mapped} with the
     QAbstractVideoBuffer::ReadOnly flag.  If the handleType() is not QAbstractVideoBuffer::NoHandle
     then the handle type of the buffer be the same as that of the surface format.
+    \since 1.0
 */
 
 QAbstractVideoBuffer::HandleType QVideoSurfaceFormat::handleType() const
@@ -301,6 +309,7 @@ QAbstractVideoBuffer::HandleType QVideoSurfaceFormat::handleType() const
     Returns the size of frames in a video stream.
 
     \sa frameWidth(), frameHeight()
+    \since 1.0
 */
 
 QSize QVideoSurfaceFormat::frameSize() const
@@ -312,6 +321,7 @@ QSize QVideoSurfaceFormat::frameSize() const
     Returns the width of frames in a video stream.
 
     \sa frameSize(), frameHeight()
+    \since 1.0
 */
 
 int QVideoSurfaceFormat::frameWidth() const
@@ -321,6 +331,7 @@ int QVideoSurfaceFormat::frameWidth() const
 
 /*!
     Returns the height of frame in a video stream.
+    \since 1.0
 */
 
 int QVideoSurfaceFormat::frameHeight() const
@@ -332,6 +343,7 @@ int QVideoSurfaceFormat::frameHeight() const
     Sets the size of frames in a video stream to \a size.
 
     This will reset the viewport() to fill the entire frame.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setFrameSize(const QSize &size)
@@ -346,6 +358,7 @@ void QVideoSurfaceFormat::setFrameSize(const QSize &size)
     Sets the \a width and \a height of frames in a video stream.
 
     This will reset the viewport() to fill the entire frame.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setFrameSize(int width, int height)
@@ -360,6 +373,7 @@ void QVideoSurfaceFormat::setFrameSize(int width, int height)
     The viewport is the region of a video frame that is actually displayed.
 
     By default the viewport covers an entire frame.
+    \since 1.0
 */
 
 QRect QVideoSurfaceFormat::viewport() const
@@ -369,6 +383,7 @@ QRect QVideoSurfaceFormat::viewport() const
 
 /*!
     Sets the viewport of a video stream to \a viewport.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setViewport(const QRect &viewport)
@@ -378,6 +393,7 @@ void QVideoSurfaceFormat::setViewport(const QRect &viewport)
 
 /*!
     Returns the direction of scan lines.
+    \since 1.0
 */
 
 QVideoSurfaceFormat::Direction QVideoSurfaceFormat::scanLineDirection() const
@@ -387,6 +403,7 @@ QVideoSurfaceFormat::Direction QVideoSurfaceFormat::scanLineDirection() const
 
 /*!
     Sets the \a direction of scan lines.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setScanLineDirection(Direction direction)
@@ -396,6 +413,7 @@ void QVideoSurfaceFormat::setScanLineDirection(Direction direction)
 
 /*!
     Returns the frame rate of a video stream in frames per second.
+    \since 1.0
 */
 
 qreal QVideoSurfaceFormat::frameRate() const
@@ -405,6 +423,7 @@ qreal QVideoSurfaceFormat::frameRate() const
 
 /*!
     Sets the frame \a rate of a video stream in frames per second.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setFrameRate(qreal rate)
@@ -414,6 +433,7 @@ void QVideoSurfaceFormat::setFrameRate(qreal rate)
 
 /*!
     Returns a video stream's pixel aspect ratio.
+    \since 1.0
 */
 
 QSize QVideoSurfaceFormat::pixelAspectRatio() const
@@ -423,6 +443,7 @@ QSize QVideoSurfaceFormat::pixelAspectRatio() const
 
 /*!
     Sets a video stream's pixel aspect \a ratio.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setPixelAspectRatio(const QSize &ratio)
@@ -434,6 +455,7 @@ void QVideoSurfaceFormat::setPixelAspectRatio(const QSize &ratio)
     \overload
 
     Sets the \a horizontal and \a vertical elements of a video stream's pixel aspect ratio.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setPixelAspectRatio(int horizontal, int vertical)
@@ -443,6 +465,7 @@ void QVideoSurfaceFormat::setPixelAspectRatio(int horizontal, int vertical)
 
 /*!
     Returns the Y'CbCr color space of a video stream.
+    \since 1.0
 */
 
 QVideoSurfaceFormat::YCbCrColorSpace QVideoSurfaceFormat::yCbCrColorSpace() const
@@ -453,6 +476,7 @@ QVideoSurfaceFormat::YCbCrColorSpace QVideoSurfaceFormat::yCbCrColorSpace() cons
 /*!
     Sets the Y'CbCr color \a space of a video stream.
     It is only used with raw YUV frame types.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setYCbCrColorSpace(QVideoSurfaceFormat::YCbCrColorSpace space)
@@ -464,6 +488,7 @@ void QVideoSurfaceFormat::setYCbCrColorSpace(QVideoSurfaceFormat::YCbCrColorSpac
     Returns a suggested size in pixels for the video stream.
 
     This is the size of the viewport scaled according to the pixel aspect ratio.
+    \since 1.0
 */
 
 QSize QVideoSurfaceFormat::sizeHint() const
@@ -478,6 +503,7 @@ QSize QVideoSurfaceFormat::sizeHint() const
 
 /*!
     Returns a list of video format dynamic property names.
+    \since 1.0
 */
 
 QList<QByteArray> QVideoSurfaceFormat::propertyNames() const
@@ -498,6 +524,7 @@ QList<QByteArray> QVideoSurfaceFormat::propertyNames() const
 
 /*!
     Returns the value of the video format's \a name property.
+    \since 1.0
 */
 
 QVariant QVideoSurfaceFormat::property(const char *name) const
@@ -538,6 +565,7 @@ QVariant QVideoSurfaceFormat::property(const char *name) const
 
 /*!
     Sets the video format's \a name property to \a value.
+    \since 1.0
 */
 
 void QVideoSurfaceFormat::setProperty(const char *name, const QVariant &value)

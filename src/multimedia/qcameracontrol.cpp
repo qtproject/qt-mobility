@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -99,6 +99,7 @@ QCameraControl::~QCameraControl()
 
     Returns the state of the camera service.
 
+    \since 1.1
     \sa QCamera::state
 */
 
@@ -111,6 +112,7 @@ QCameraControl::~QCameraControl()
     while camera status is used as a feedback mechanism to inform application about backend status.
     Status changes are reported asynchronously with QCameraControl::statusChanged() signal.
 
+    \since 1.1
     \sa QCamera::State
 */
 
@@ -121,6 +123,7 @@ QCameraControl::~QCameraControl()
 
     In most cases the state chage is caused by QCameraControl::setState(),
     but if critical error has occurred the state changes to QCamera::UnloadedState.
+    \since 1.1
 */
 
 /*!
@@ -128,6 +131,7 @@ QCameraControl::~QCameraControl()
 
     Returns the status of the camera service.
 
+    \since 1.1
     \sa QCamera::state
 */
 
@@ -135,6 +139,7 @@ QCameraControl::~QCameraControl()
     \fn void QCameraControl::statusChanged(QCamera::Status status)
 
     Signal emitted when the camera \a status changes.
+    \since 1.1
 */
 
 
@@ -143,12 +148,14 @@ QCameraControl::~QCameraControl()
 
     Signal emitted when an error occurs with error code \a error and
     a description of the error \a errorString.
+    \since 1.1
 */
 
 /*!
     \fn Camera::CaptureMode QCameraControl::captureMode() const = 0
 
     Returns the current capture mode.
+    \since 1.1
 */
 
 /*!
@@ -164,18 +171,21 @@ QCameraControl::~QCameraControl()
     with the status changed to QCamera::StartingStatus.
     This allows the capture settings to be applied before camera is started.
     Than change the status to QCamera::StartedStatus when the capture mode change is done.
+    \since 1.1
 */
 
 /*!
     \fn bool QCameraControl::isCaptureModeSupported(QCamera::CaptureMode mode) const = 0;
 
     Returns true if the capture \a mode is suported.
+    \since 1.1
 */
 
 /*!
     \fn QCameraControl::captureModeChanged(QCamera::CaptureMode mode)
 
     Signal emitted when the camera capture \a mode changes.
+    \since 1.1
  */
 
 /*!
@@ -188,6 +198,7 @@ QCameraControl::~QCameraControl()
     before the settings are changed and restarted after.
     Otherwise the backend should apply the change in the current state,
     with the camera status indicating the progress, if necessary.
+    \since 1.1
 */
 
 /*!

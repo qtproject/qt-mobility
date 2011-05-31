@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -89,6 +89,7 @@ public:
 /*!
     Create a new signal intercepter which traps \a signal on \a sender.
     The object will be attached to \a parent, if present.
+    \since 1.1
 */
 QSignalIntercepter::QSignalIntercepter
             ( QObject *sender, const QByteArray& signal, QObject *parent )
@@ -160,6 +161,7 @@ QSignalIntercepter::~QSignalIntercepter()
 
 /*!
     Returns the sender that this signal interceptor is attached to.
+    \since 1.1
 */
 QObject *QSignalIntercepter::sender() const
 {
@@ -168,6 +170,7 @@ QObject *QSignalIntercepter::sender() const
 
 /*!
     Returns the name of the signal that this signal interceptor is attached to.
+    \since 1.1
 */
 QByteArray QSignalIntercepter::signal() const
 {
@@ -178,6 +181,7 @@ QByteArray QSignalIntercepter::signal() const
     Returns true if this signal intercepter is valid; that is, there was
     a signal present with the specified parameters when this object
     was constructed.
+    \since 1.1
 */
 bool QSignalIntercepter::isValid() const
 {
@@ -186,6 +190,7 @@ bool QSignalIntercepter::isValid() const
 
 /*!
     \internal
+    \since 1.1
 */
 int QSignalIntercepter::qt_metacall(QMetaObject::Call c, int id, void **a)
 {
@@ -230,6 +235,7 @@ int QSignalIntercepter::qt_metacall(QMetaObject::Call c, int id, void **a)
 
     Called when the signal that is being intercepted is activated.
     The arguments to the signal are passed in the list \a args.
+    \since 1.1
 */
 
 // Get the QVariant type number for a type name.
@@ -253,6 +259,7 @@ int QSignalIntercepter::typeFromName( const QByteArray& type )
     specification.  The array of types is returned from this function,
     and the number of arguments is returned in \a nargs.  Returns null
     if \a member is invalid.  The return value must be freed with qFree().
+    \since 1.1
 */
 int *QSignalIntercepter::connectionTypes( const QByteArray& member, int& nargs )
 {

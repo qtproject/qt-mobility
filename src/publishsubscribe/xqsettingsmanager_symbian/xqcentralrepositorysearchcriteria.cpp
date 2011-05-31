@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,7 +50,7 @@
 */
 
 
-/* 
+/*
     Constructs an XQCentralRepositorySearchCriteria object.
     \param repositoryUid Central repository where the key is searched
     \param partialKey Partial Central repository key
@@ -63,14 +63,14 @@ XQCentralRepositorySearchCriteria::XQCentralRepositorySearchCriteria(long int re
 {
 }
 
-/* 
+/*
     Destructs an XQCentralRepositorySearchCriteria object.
 */
 XQCentralRepositorySearchCriteria::~XQCentralRepositorySearchCriteria()
 {
 }
 
-/* 
+/*
     Sets the value criteria. If this function is not called or value is NULL object
     every key in the repository is returned in XQCentralRepositoryUtils::findKeys().
     \param value Value to be searched. The type is determined with
@@ -85,7 +85,7 @@ void XQCentralRepositorySearchCriteria::setValueCriteria(const QVariant& value, 
     m_negativeCriteria = negativeCriteria;
 }
 
-/* 
+/*
     \return Repository UID
 */
 long int XQCentralRepositorySearchCriteria::repositoryUid() const
@@ -93,7 +93,7 @@ long int XQCentralRepositorySearchCriteria::repositoryUid() const
     return m_repositoryUid;
 }
 
-/* 
+/*
     \return Partial key
 */
 unsigned long int XQCentralRepositorySearchCriteria::partialKey() const
@@ -101,7 +101,7 @@ unsigned long int XQCentralRepositorySearchCriteria::partialKey() const
     return m_partialKey;
 }
 
-/* 
+/*
     \return Bit mask for the partial key
 */
 unsigned long int XQCentralRepositorySearchCriteria::bitMask() const
@@ -109,7 +109,7 @@ unsigned long int XQCentralRepositorySearchCriteria::bitMask() const
     return m_bitMask;
 }
 
-/* 
+/*
     \return Value criteria
 */
 const QVariant& XQCentralRepositorySearchCriteria::value() const
@@ -117,7 +117,7 @@ const QVariant& XQCentralRepositorySearchCriteria::value() const
     return m_value;
 }
 
-/* 
+/*
     \return True if value criteria is negative
 */
 bool XQCentralRepositorySearchCriteria::negativeCriteria() const

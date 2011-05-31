@@ -1,3 +1,4 @@
+include(../../staticconfig.pri)
 TARGET = btclient
 CONFIG += link_pkgconfig
 PKGCONFIG += dbus-1

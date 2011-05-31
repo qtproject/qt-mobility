@@ -324,8 +324,8 @@ void MapBox::testDateline()
 
     addFakeRoute(route, 3);
 
-    QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem(QRectF(-48.0, 24.0, 96.0, 48.0));
+    QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem(QRectF(0.0, 0.0, 96.0, 48.0));
     ellipseItem->setBrush(Qt::red);
 
-    addCustom(QGeoCoordinate(11.0, 180.0), QPoint(), ellipseItem);
+    addCustom(QGeoCoordinate(10.0, 180.0), QPoint(-48, -24), ellipseItem);
 }

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -47,14 +47,14 @@
  *
  ****************************************************/
 
-/* 
+/*
     \class XQSettingsKey
     \internal
 
     \brief The XQSettingsKey defines the target for XQSettingsManager operations.
 */
 
-/* 
+/*
     \enum XQSettingsKey::Target
 
     This enum defines the possible item target for an XQSettingsKey object.
@@ -66,9 +66,9 @@
     The settings key targets to Symbian OS's Publish and Subscribe property.
 */
 
-/* 
+/*
     Constructs an XQSettingsKey object.
-    \param target This is either XQSettingsKey::TargetCentralRepository or 
+    \param target This is either XQSettingsKey::TargetCentralRepository or
     XQSettingsKey::TargetPublishAndSubscribe.
     \param uid In case of Central Repository a CenRep Uid. In case of
     Publish and Subscribe an RProperty category Uid.
@@ -77,7 +77,7 @@
 XQSettingsKey::XQSettingsKey(
     XQSettingsKey::Target target, long int uid, unsigned long int key) :
     m_target(target), m_uid(uid), m_key(key)
-{   
+{
 }
 
 /*!
@@ -87,10 +87,10 @@ XQSettingsKey::~XQSettingsKey()
 {
 }
 
-/* 
+/*
     Gets a target of the item.
 
-    \return target Either XQSettingsKey::TargetCentralRepository or 
+    \return target Either XQSettingsKey::TargetCentralRepository or
     XQSettingsKey::TargetPublishAndSubscribe.
 */
 XQSettingsKey::Target XQSettingsKey::target() const
@@ -98,18 +98,18 @@ XQSettingsKey::Target XQSettingsKey::target() const
     return m_target;
 }
 
-/* 
+/*
     Gets a uid of the item
 
     \return uid. In case of Central Repository a CenRep Uid. In case of
     Publish and Subscribe an RProperty category Uid.
 */
 long int XQSettingsKey::uid() const
-{    
+{
     return m_uid;
 }
 
-/* 
+/*
     Gets a key of the item
 
     \return Key
@@ -119,7 +119,7 @@ unsigned long int XQSettingsKey::key() const
     return m_key;
 }
 
-/* 
+/*
     \class XQCentralRepositorySettingsKey
     \internal
 
@@ -127,7 +127,7 @@ unsigned long int XQSettingsKey::key() const
     target for XQSettingsManager operations.
 */
 
-/* 
+/*
     Constructs an XQCentralRepositorySettingsKey object.
     \param repositoryUid CenRep Uid
     \param key Settings Key
@@ -137,14 +137,14 @@ XQCentralRepositorySettingsKey::XQCentralRepositorySettingsKey(long int reposito
 {
 }
 
-/* 
+/*
     Destructs an XQCentralRepositorySettingsKey object.
 */
 XQCentralRepositorySettingsKey::~XQCentralRepositorySettingsKey()
 {
 }
 
-/* 
+/*
     \class XQPublishAndSubscribeSettingsKey
     \internal
 
@@ -152,7 +152,7 @@ XQCentralRepositorySettingsKey::~XQCentralRepositorySettingsKey()
     Subscribe target for XQSettingsManager operations.
 */
 
-/* 
+/*
     Constructs an XQPublishAndSubscribeSettingsKey object.
     \param categoryUid RProperty category Uid.
     \param key Settings Key
@@ -162,7 +162,7 @@ XQPublishAndSubscribeSettingsKey::XQPublishAndSubscribeSettingsKey(long int cate
 {
 }
 
-/* 
+/*
     Destructs an XQPublishAndSubscribeSettingsKey object.
 */
 XQPublishAndSubscribeSettingsKey::~XQPublishAndSubscribeSettingsKey()

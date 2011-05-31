@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -60,6 +60,7 @@ QAbstractVideoBuffer::HandleType(QAbstractVideoBuffer::UserHandle+3434);
 /*!
     \class QOmapFbVideoSurface
     \internal
+    \since 1.2
 */
 
 /*!
@@ -86,6 +87,7 @@ QEglImageTextureSurface::~QEglImageTextureSurface()
 }
 
 /*!
+    \since 1.2
 */
 QList<QVideoFrame::PixelFormat> QEglImageTextureSurface::supportedPixelFormats(
     QAbstractVideoBuffer::HandleType handleType) const
@@ -127,6 +129,7 @@ static const char* qt_glsl_eglTextureShaderProgram =
 
 
 /*!
+    \since 1.2
 */
 bool QEglImageTextureSurface::start(const QVideoSurfaceFormat &format)
 {
@@ -225,6 +228,7 @@ bool QEglImageTextureSurface::start(const QVideoSurfaceFormat &format)
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::stop()
 {
@@ -266,6 +270,7 @@ void QEglImageTextureSurface::stop()
 }
 
 /*!
+    \since 1.2
 */
 bool QEglImageTextureSurface::present(const QVideoFrame &frame)
 {
@@ -302,6 +307,7 @@ bool QEglImageTextureSurface::present(const QVideoFrame &frame)
 }
 
 /*!
+    \since 1.2
 */
 int QEglImageTextureSurface::brightness() const
 {
@@ -309,6 +315,7 @@ int QEglImageTextureSurface::brightness() const
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::setBrightness(int brightness)
 {
@@ -316,6 +323,7 @@ void QEglImageTextureSurface::setBrightness(int brightness)
 }
 
 /*!
+    \since 1.2
 */
 int QEglImageTextureSurface::contrast() const
 {
@@ -323,6 +331,7 @@ int QEglImageTextureSurface::contrast() const
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::setContrast(int contrast)
 {
@@ -330,6 +339,7 @@ void QEglImageTextureSurface::setContrast(int contrast)
 }
 
 /*!
+    \since 1.2
 */
 int QEglImageTextureSurface::hue() const
 {
@@ -337,6 +347,7 @@ int QEglImageTextureSurface::hue() const
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::setHue(int hue)
 {
@@ -344,6 +355,7 @@ void QEglImageTextureSurface::setHue(int hue)
 }
 
 /*!
+    \since 1.2
 */
 int QEglImageTextureSurface::saturation() const
 {
@@ -351,6 +363,7 @@ int QEglImageTextureSurface::saturation() const
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::setSaturation(int saturation)
 {
@@ -358,6 +371,7 @@ void QEglImageTextureSurface::setSaturation(int saturation)
 }
 
 /*!
+    \since 1.2
 */
 bool QEglImageTextureSurface::isReady() const
 {
@@ -365,6 +379,7 @@ bool QEglImageTextureSurface::isReady() const
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::setReady(bool ready)
 {
@@ -374,6 +389,7 @@ void QEglImageTextureSurface::setReady(bool ready)
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::paint(QPainter *painter, const QRectF &target, const QRectF &sourceRect)
 {
@@ -492,9 +508,11 @@ void QEglImageTextureSurface::paint(QPainter *painter, const QRectF &target, con
 
 /*!
     \fn QOmapFbVideoSurface::frameChanged()
+    \since 1.2
 */
 
 /*!
+    \since 1.2
 */
 const QGLContext *QEglImageTextureSurface::glContext() const
 {
@@ -502,6 +520,7 @@ const QGLContext *QEglImageTextureSurface::glContext() const
 }
 
 /*!
+    \since 1.2
 */
 void QEglImageTextureSurface::setGLContext(QGLContext *context)
 {

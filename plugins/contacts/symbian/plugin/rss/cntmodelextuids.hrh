@@ -54,38 +54,62 @@
 /**
  * Phonebook custom Field value.
  * Locationing privacy field type.
+ * 
+ * Defined in app/contacts/phonebookengines/VirtualPhonebook/VPbkCntModel/inc/VPbkCntModelUid.h
  */
 #define KPbkUidContactFieldLocationPrivValue    0x101F4FF2
 
 /**
  * Phonebook custom Field value.
  * Top Contact field type.
+ * 
+ * Defined in app/contacts/phonebookengines/VirtualPhonebook/VPbkCntModel/inc/VPbkCntModelUid.h
  */
 #define KUidContactFieldTopContactValue 	0x200100E3
 
 /**
  * Phonebook custom Field value.
  * IMPP field type.
+ * 
+ * Defined in app/contacts/phonebookengines/VirtualPhonebook/VPbkCntModel/inc/VPbkCntModelUid.h
  */
 #define KUidContactFieldIMPPValue        	0x200100E4
 
 /**
- * Phonebook custom Field value.
+ * Qt Mobility custom Field value.
+ * Identifies an IM or SIP Service Provider field.
+ */
+#define KUidContactFieldServiceProviderValue    0x2003DF7A
+
+/**
+ * Qt Mobility custom Field value.
+ * Identifies an presence information about contact.
+ */
+#define KUidContactFieldPresenceValue           0x2003DF7B
+
+/**
+ * Qt Mobility custom Field value.
+ * Identifies status message field.
+ */
+#define KUidContactFieldStatusMsgValue          0x2003DF7C
+
+/**
+ * Qt Mobility custom Field value.
  * Video ringtone field type.
  */
-#define KUidContactFieldVideoRingToneValue	0x200100E6
+#define KUidContactFieldVideoRingToneValue	0x2003DF7D
 
 /**
- * Phonebook custom Field value.
+ * Qt Mobility custom Field value.
  * Gender field type.
  */
-#define KUidContactFieldGenderValue		0x200100E7
+#define KUidContactFieldGenderValue		0x2003DF7E
 
 /**
- * Phonebook custom Field value.
+ * Qt Mobility custom Field value.
  * Anniversary event field type.
  */
-#define KUidContactFieldAnniversaryEventValue     0x200100E8
+#define KUidContactFieldAnniversaryEventValue     0x2003DF7F
 
 // !! In case this is undefined on earlier platforms
 #ifndef KUidContactFieldGEOValue

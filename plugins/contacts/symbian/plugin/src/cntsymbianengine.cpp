@@ -682,31 +682,6 @@ bool CntSymbianEngine::removeContacts(const QList<QContactLocalId>& contactIds, 
     QContactManager::Error selfContactError;
     QContactLocalId selfCntId = selfContactId(&selfContactError); // selfContactError ignored
 
-#ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
-    // try to batch remove all contacts
-    TRAPD(err,
-        CContactIdArray* idList = CContactIdArray::NewLC();
-        foreach (QContactLocalId contactId, contactIds) {
-            idList->AddL(TContactItemId(contactId));
-        }
-        m_dataBase->contactDatabase()->DeleteContactsV2L(*idList);
-        CleanupStack::PopAndDestroy(idList);
-    );
-
-    if (err == KErrNone) {
-        foreach (QContactLocalId contactId, contactIds) {
-            changeSet.insertRemovedContact(contactId);
-            m_dataBase->appendContactEmitted(contactId);
-        }
-        if (contactIds.contains(selfCntId)) {
-            QOwnCardPair ownCard(selfCntId, QContactLocalId(0));
-            changeSet.setOldAndNewSelfContactId(ownCard);
-        }
-    }
-    else {
-        CntSymbianTransformError::transformError(err, error);
-    }
-#else
     for (int i = 0; i < contactIds.count(); i++) {
         QContactLocalId current = contactIds.at(i);
         QContactManager::Error functionError = QContactManager::NoError;
@@ -717,10 +692,8 @@ bool CntSymbianEngine::removeContacts(const QList<QContactLocalId>& contactIds, 
             }
         }
     }
-#endif
 
     changeSet.emitSignals(this);
-
     return (*error == QContactManager::NoError);
 }
 

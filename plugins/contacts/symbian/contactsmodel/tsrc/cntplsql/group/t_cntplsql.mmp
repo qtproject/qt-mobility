@@ -78,8 +78,8 @@ LIBRARY         euser.lib
 LIBRARY         bafl.lib	 // CDes16Array
 LIBRARY         sqldb.lib	 // RSql*
 LIBRARY         cntmodel.lib // CContactItem
-LIBRARY			qtcore.lib
-LIBRARY			HbCore.lib	 // Orbit keymap
+LIBRARY			QtCore.lib
+LIBRARY			hbcore.lib	 // Orbit keymap
 LIBRARY     	libstdcppv5.lib
 LIBRARY     	libc.lib
 LIBRARY     	libm.lib

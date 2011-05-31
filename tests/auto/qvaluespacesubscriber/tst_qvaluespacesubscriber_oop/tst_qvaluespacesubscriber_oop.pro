@@ -33,3 +33,5 @@ wince* {
     DEPLOYLACKEY.path = .
     DEPLOYMENT += DEPLOYLACKEY
 }
+
+maemo*:CONFIG += insignificant_test
