@@ -45,8 +45,6 @@
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
 
-#include <QDebug>
-
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -756,8 +754,6 @@ QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
     if ((wrap1 && wrap2) || (!wrap1 && !wrap2)) {
 
         double w = qAbs((left1 + right1 - left2 - right2) / 2.0);
-
-        qWarning() << left1 << right1 << left2 << right2 << w;
 
         if (w < 180.0) {
             left = qMin(left1, left2);
