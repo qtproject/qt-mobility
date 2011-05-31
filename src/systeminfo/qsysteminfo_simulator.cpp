@@ -275,7 +275,7 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     QMetaEnum featureMeta = QSystemInfo::staticMetaObject.enumerator(QSystemInfo::staticMetaObject.indexOfEnumerator("Feature"));
     data.features.fill(false, featureMeta.keyCount());
     QMetaEnum versionMeta = QSystemInfo::staticMetaObject.enumerator(QSystemInfo::staticMetaObject.indexOfEnumerator("Version"));
-    data.versions.fill("unknown", versionMeta.keyCount() + 1);
+    data.versions.fill("", versionMeta.keyCount() + 1);
 #ifdef TESTR
     setInitialData();
 #endif
@@ -289,8 +289,9 @@ void QSystemInfoPrivate::setInitialData()
     addAvailableLanguage("de");
     setFeature(QSystemInfo::LocationFeature, true);
     setFeature(QSystemInfo::UsbFeature, true);
-    setVersion(QSystemInfo::QtCore, "4.6 probably");
-    setVersion(QSystemInfo::Firmware, "1.9-alpha-rc7");
+    setVersion(QSystemInfo::QtCore, qVersion());
+    setVersion(QSystemInfo::Os, "1.0-simulator-os");
+    setVersion(QSystemInfo::Firmware, "1.0-simulator-firmware");
 }
 
 void QSystemInfoPrivate::setCurrentLanguage(const QString &v)
