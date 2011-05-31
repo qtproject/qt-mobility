@@ -175,10 +175,15 @@ void CFSEngine::cleanupFSBackend()
     }
     m_attachments.Reset();
 
-    foreach (CFSContentFetchOperation* operation, m_fetchOperations) {
+    foreach (CFSContentFetchOperation* operation, m_contentFetchOperations) {
         delete operation;
     }
-    m_fetchOperations.clear();
+    m_contentFetchOperations.clear();
+
+    foreach (CFSContentStructureFetchOperation* operation, m_contentStructurefetchOperations) {
+        delete operation;
+    }
+    m_contentStructurefetchOperations.clear();
 
 #ifdef FREESTYLEMAILMAPI12USED
     m_moveRequests.clear();
@@ -1086,7 +1091,7 @@ bool CFSEngine::retrieve(QMessageServicePrivate& privateService, const QMessageI
         if (attachment->TotalSize() != attachment->AvailableSize()) {
             CFSContentFetchOperation* op = new CFSContentFetchOperation(*this, privateService, attachment);
             if (op->fetch()) {
-                m_fetchOperations.insert(&privateService, op);
+                m_contentFetchOperations.insert(&privateService, op);
                 retVal = true;
             } else {
                 delete op;
@@ -1105,45 +1110,61 @@ bool CFSEngine::retrieveBody(QMessageServicePrivate& privateService, const QMess
 {
     bool retVal = false;
 
+    TMessageId fsMessageId = fsMessageIdFromQMessageId(id);
+    if (fsMessageId.iId <= 0)
+        return retVal;
+
+    MEmailMailbox* mailbox = NULL;
+    TRAPD(err, mailbox = m_clientApi->MailboxL(fsMessageId.iFolderId.iMailboxId));
+    if (err != KErrNone)
+        return retVal;
+
+    MEmailMessage* emailMessage = NULL;
+    TRAP(err, emailMessage = mailbox->MessageL(fsMessageId));
+    if (err != KErrNone) {
+        mailbox->Release();
+        return retVal;
+    }
+
     QMessage msg = message(id);
-    QMessageContentContainer cont = msg.find(msg.bodyId());
-    QMessageContentContainerPrivate *contPrivate = QMessageContentContainerPrivate::implementation(cont);
-    TMessageContentId contentId = contPrivate->_fsContentId;
-    if (contentId.iId > 0) {
-        MEmailMailbox* mailbox = NULL;
-        TRAPD(err, mailbox = m_clientApi->MailboxL(contentId.iMessageId.iFolderId.iMailboxId));
-        if (err == KErrNone) {
-            MEmailMessage* pEmailMessage = NULL;
-            TRAP(err, pEmailMessage = mailbox->MessageL(contentId.iMessageId));
-            if (err == KErrNone) {
-                MEmailMessageContent* emailContent = NULL;
-                TRAP(err, emailContent = pEmailMessage->ContentL());
-                if ((err == KErrNone) && emailContent) {
-                    MEmailTextContent* bodyContent = textContentById(contentId, emailContent);
-                    if (bodyContent) {
-                        if (bodyContent->TotalSize() != bodyContent->AvailableSize()) {
-                            CFSContentFetchOperation* op = new CFSContentFetchOperation(*this, privateService, bodyContent, pEmailMessage);
-                            pEmailMessage = NULL; // CFSContentFetchOperation took pEmailMessage ownership
-                            bodyContent = NULL; // CFSContentFetchOperation took bodyContent ownership
-                            if (op->fetch()) {
-                                m_fetchOperations.insert(&privateService, op);
-                                retVal = true;
-                            } else {
-                                delete op;
-                            }
-                        }
-                        if (bodyContent) {
-                            bodyContent->Release();
-                        }
+    if (msg.bodyId().isValid()) {
+        MEmailMessageContent* emailContent = NULL;
+        TRAP(err, emailContent = emailMessage->ContentL());
+        if (err == KErrNone && emailContent) {
+            QMessageContentContainer cont = msg.find(msg.bodyId());
+            QMessageContentContainerPrivate *contPrivate = QMessageContentContainerPrivate::implementation(cont);
+            TMessageContentId contentId = contPrivate->_fsContentId;
+            MEmailTextContent* bodyContent = textContentById(contentId, emailContent);
+            if (bodyContent) {
+                if (bodyContent->TotalSize() != bodyContent->AvailableSize()) {
+                    CFSContentFetchOperation* op = new CFSContentFetchOperation(*this, privateService, bodyContent, emailMessage);
+                    emailMessage = NULL; // CFSContentFetchOperation took emailMessage ownership
+                    bodyContent = NULL; // CFSContentFetchOperation took bodyContent ownership
+                    if (op->fetch()) {
+                        m_contentFetchOperations.insert(&privateService, op);
+                        retVal = true;
+                    } else {
+                        delete op;
                     }
                 }
-                if (pEmailMessage) {
-                    pEmailMessage->Release();
-                }
+                if (bodyContent)
+                    bodyContent->Release();
             }
-            mailbox->Release();
+        }
+    } else {
+        CFSContentStructureFetchOperation* op = new CFSContentStructureFetchOperation(*this, privateService, emailMessage);
+        emailMessage = NULL; // CFSContentStructureFetchOperation took emailMessage ownership
+        if (op->fetch()) {
+            m_contentStructurefetchOperations.insert(&privateService, op);
+            retVal = true;
+        } else {
+            delete op;
         }
     }
+
+    if (emailMessage)
+        emailMessage->Release();
+    mailbox->Release();
 
     return retVal;
 }
@@ -1721,12 +1742,18 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
         }
     }
 
-    CFSContentFetchOperation* op = m_fetchOperations.take(&privateService);
-    if (op) {
-        op->cancelFetch();
-        delete op;
+    CFSContentFetchOperation* cfOp = m_contentFetchOperations.take(&privateService);
+    if (cfOp) {
+        cfOp->cancelFetch();
+        delete cfOp;
     }
-    
+
+    CFSContentStructureFetchOperation* csfOp = m_contentStructurefetchOperations.take(&privateService);
+    if (csfOp) {
+        csfOp->cancelFetch();
+        delete csfOp;
+    }
+
 #ifdef FREESTYLEMAILMAPI12USED
     foreach (EMailSyncRequest* req, m_syncRequests) {
         if (&req->m_observer == &privateService) {
@@ -3083,10 +3110,27 @@ QMessageAccountId CFSEngine::qMessageAccountIdFromFsMailboxId(TMailboxId mailbox
     return QMessageAccountId(addIdPrefix(QString::number(mailboxId.iId), SymbianHelpers::EngineTypeFreestyle));
 }
 
+void CFSEngine::contentStructureFetched(void* service, bool success)
+{
+    QMessageServicePrivate* pService = reinterpret_cast<QMessageServicePrivate*>(service);
+    CFSContentStructureFetchOperation* op = m_contentStructurefetchOperations.take(pService);
+    if (op) {
+        if (success) {
+            QMessageId id = qMessageIdFromFsMessageId(op->m_message->MessageId());
+            // Make sure that new message contents will be updated to cache
+            MessageCache::instance()->remove(id);
+            pService->setFinished(true);
+        } else {
+            pService->setFinished(false);
+        }
+        delete op;
+    }
+}
+
 void CFSEngine::contentFetched(void* service, bool success)
 {
     QMessageServicePrivate* pService = reinterpret_cast<QMessageServicePrivate*>(service);
-    CFSContentFetchOperation* op = m_fetchOperations.take(pService);
+    CFSContentFetchOperation* op = m_contentFetchOperations.take(pService);
     if (op) {
         if (success) {
             QMessageId messageId = qMessageIdFromFsMessageId(op->m_content->Id().iMessageId);
@@ -3152,6 +3196,50 @@ void CFSContentFetchOperation::DataFetchedL(const TInt aResult)
         result = true;
     }
     QMetaObject::invokeMethod(&m_parentEngine, "contentFetched", Qt::QueuedConnection,
+                              Q_ARG(void*, reinterpret_cast<void*>(&m_service)),
+                              Q_ARG(bool, result));
+}
+
+CFSContentStructureFetchOperation::CFSContentStructureFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
+                                                   MEmailMessage* message)
+    : m_parentEngine(parentEngine),
+      m_service(service),
+      m_message(message)
+{
+}
+
+CFSContentStructureFetchOperation::~CFSContentStructureFetchOperation()
+{
+    cancelFetch();
+}
+
+void CFSContentStructureFetchOperation::cancelFetch()
+{
+    if (m_message) {
+        m_message->Release();
+        m_message = NULL;
+    }
+}
+
+bool CFSContentStructureFetchOperation::fetch()
+{
+    if (!m_message)
+        return false;
+
+    TRAPD(err, m_message->FetchContentStructureL(*this));
+    if (err != KErrNone)
+        return false;
+
+    return true;
+}
+
+void CFSContentStructureFetchOperation::DataFetchedL(const TInt aResult)
+{
+    bool result = false;
+    if (aResult == KErrNone) {
+        result = true;
+    }
+    QMetaObject::invokeMethod(&m_parentEngine, "contentStructureFetched", Qt::QueuedConnection,
                               Q_ARG(void*, reinterpret_cast<void*>(&m_service)),
                               Q_ARG(bool, result));
 }
