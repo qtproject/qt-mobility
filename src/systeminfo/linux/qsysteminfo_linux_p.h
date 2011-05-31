@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QSYSTEMINFO_LINUX_P_H
 #define QSYSTEMINFO_LINUX_P_H
-
 
 //
 //  W A R N I N G
@@ -53,51 +53,25 @@
 // We mean it.
 //
 
-
-#include <QObject>
-#include <QSize>
-#include <QHash>
-
+#include "qmobilityglobal.h"
 #include "qsysteminfo_linux_common_p.h"
-#include "qsysteminfo.h"
-#include <qmobilityglobal.h>
 
-#ifndef QT_NO_NETWORKMANAGER
-#include "linux/qnetworkmanagerservice_linux_p.h"
-#endif
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-class QStringList;
-class QTimer;
-QT_END_NAMESPACE
+#if !defined(QT_NO_NETWORKMANAGER)
+#include "qnetworkmanagerservice_linux_p.h"
+#endif // QT_NO_NETWORKMANAGER
 
 QTM_BEGIN_NAMESPACE
 
-class QSystemNetworkInfo;
 class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
-
     QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
+
     QStringList availableLanguages() const;
-
-private:
-#if !defined(QT_NO_DBUS)
-    bool hasHalDeviceFeature(const QString &param);
-    bool hasHalUsbFeature(qint32 usbClass);
-    QHalInterface halIface;
-#endif
 };
-
-class QNetworkManagerInterface;
-class QNetworkManagerInterfaceDeviceWired;
-class QNetworkManagerInterfaceDeviceWireless;
-class QNetworkManagerInterfaceAccessPoint;
 
 class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
 {
@@ -107,11 +81,10 @@ public:
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QSystemNetworkInfo::NetworkMode currentMode();
-
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
 
 #if !defined(QT_NO_NETWORKMANAGER)
 private Q_SLOTS:
@@ -139,10 +112,6 @@ class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
 public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-
-    float contrast(int screen);
-
-    QSystemDisplayInfo::BacklightState backlightStatus(int screen); //1.2
 };
 
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
@@ -150,38 +119,25 @@ class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
     Q_OBJECT
 
 public:
-
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
+    bool isDeviceLocked();
+    bool isKeyboardFlippedOpen(); //1.2
+    bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+    bool vibrationActive(); //1.2
+    int messageRingtoneVolume(); //1.2
+    int voiceRingtoneVolume(); //1.2
     QString imei();
     QString imsi();
-    bool isDeviceLocked();
-    QSystemDeviceInfo::Profile currentProfile();
-    void setConnection();
     QString model();
     QString productName();
 
-    int messageRingtoneVolume();//1.2
-    int voiceRingtoneVolume();//1.2
-    bool vibrationActive();//1.2
-    QSystemDeviceInfo::SimStatus simStatus();
-//    QSystemDeviceInfo::KeyboardTypeFlags keyboardTypes(); //1.2
-//    bool isWirelessKeyboardConnected(); //1.2
-//    bool isKeyboardFlippedOpen();//1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
-
-
-private:
-#if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-    void setupBluetooth();
-
-private Q_SLOTS:
-#endif
+    QSystemDeviceInfo::Profile currentProfile();
+    QSystemDeviceInfo::SimStatus simStatus();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 };
-
 
 class QSystemScreenSaverPrivate : public QObject
 {
@@ -198,19 +154,19 @@ public:
     void setScreenSaverInhibited(bool on);
 
 private:
-    QString screenPath;
-    QString settingsPath;
-    bool screenSaverSecure;
-
-    uint currentPid;
+    bool gnomeIsRunning;
     bool kdeIsRunning;
     bool meegoIsRunning;
-    bool gnomeIsRunning;
-    void whichWMRunning();
     bool screenSaverIsInhibited;
-#ifdef Q_WS_X11
+    bool screenSaverSecure;
+    uint currentPid;
+    QString screenPath;
+    QString settingsPath;
+
+    void whichWMRunning();
+#if defined(Q_WS_X11)
      int changeTimeout(int timeout);
-#endif
+#endif // Q_WS_X11
 };
 
 class QSystemBatteryInfoPrivate : public QSystemBatteryInfoLinuxCommonPrivate
@@ -223,9 +179,4 @@ public:
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif /*QSYSTEMSINFO_LINUX_P_H*/
-
-// End of file
-
+#endif // QSYSTEMSINFO_LINUX_P_H

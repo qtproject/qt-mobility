@@ -21,6 +21,7 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
+maemo*:PLUGIN_TYPE=serviceframework
 xml.path = $$DESTDIR/xmldata
 xml.files = xml/sampleservice2.xml
 xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean

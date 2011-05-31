@@ -55,7 +55,7 @@ and mapping and navigation.
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
 to facilitate the future migration of QtMobility APIs into Qt. See the
-\l {Quickstart Example}{Quickstart guide} for an example on how the
+\l {Quickstart guide} for an example on how the
 namespace impacts on application development.
 
 \section1 Location Positioning
@@ -109,6 +109,7 @@ QGeoSatelliteInfoSource class. Call QGeoSatelliteInfoSource::createDefaultSource
 create an instance of the default satellite data source for the platform,
 if one is available. Alternatively, clients can subclass it to provide a
 custom satellite data source.
+
 
 \section2 Requesting location data from data sources
 
@@ -365,10 +366,10 @@ The behaviour of some parts of the Landmarks API varies between platforms.  A fe
 \o The symbian manager does not support the MatchContains flag in the attribute filters.  The symbian manager also does not
 support multiple attributes with an AND operation type in an attribute filter.  Some versions of s60 do not support the
 MatchContains flag in name filters. See the documentation on the attribute and name filters for more details.
-\o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
-fields are ignored when a landmark is saved.
+\o The sparql manager does not support the countryCode field of QGeoAddress.  This
+field is ignored when a landmark is saved.  As of QtMobility 1.2.1 support for district and county fields were added to
+the sparql manager, note that a tracker version of 0.9.35 or greater is required.
 \endlist
-
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
@@ -483,6 +484,13 @@ is part of QtMobility.  See the section \l{The Nokia plugin} for more details.
         searchManager = serviceProvider.searchManager();
     }
 \endcode
+
+\bold {Important notice:} \i {The map data provided by the offline plug-in is
+place-shifted for the area of the People’s Republic of China. To provide
+un-shifted maps of China in an application, the application developer must
+first obtain permission from Chinese officials. The Qt Mobility Location
+API cannot offer this on the API level.}
+
 
 \section2 Common classes
 

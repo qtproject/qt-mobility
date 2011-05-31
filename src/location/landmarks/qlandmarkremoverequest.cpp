@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -61,6 +61,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-request
+    \since 1.1
 */
 
 /*!
@@ -80,6 +81,7 @@ QLandmarkRemoveRequest::~QLandmarkRemoveRequest()
 
 /*!
     Returns the list of identifiers of landmarks which will be removed.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 {
@@ -91,6 +93,7 @@ QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 /*!
     Sets the list of \a landmarkIds of landmarks which will be removed.
 
+    \since 1.1
     \sa setLandmarkId()
 */
 void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
@@ -105,6 +108,7 @@ void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkId
     It is the equivalent of calling setLandmarkIds() with a single \a landmarkId
     in the ID list.
 
+    \since 1.1
     \sa setLandmarkIds()
 */
 void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
@@ -120,6 +124,7 @@ void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
     This function is the equivalent of calling setLandmarkIds() with the IDs of
     the \a landmarks.
 
+    \since 1.1
     \sa setLandmarkIds()
 */
 void QLandmarkRemoveRequest::setLandmarks(const QList<QLandmark> &landmarks)
@@ -135,6 +140,7 @@ void QLandmarkRemoveRequest::setLandmarks(const QList<QLandmark> &landmarks)
     Convenience function that sets a single \a landmark to be removed.
     This function is the equivalent of calling setLandmarkIds()
     with the ID of \a landmark.
+    \since 1.1
 */
 void QLandmarkRemoveRequest::setLandmark(const QLandmark &landmark)
 {
@@ -147,6 +153,7 @@ void QLandmarkRemoveRequest::setLandmark(const QLandmark &landmark)
 /*!
     Returns the mapping of input landmark ID list indices
     to the errors which occurred.
+    \since 1.1
 */
 QMap<int, QLandmarkManager::Error> QLandmarkRemoveRequest::errorMap() const
 {

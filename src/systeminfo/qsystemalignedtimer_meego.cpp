@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 
 #include "qsystemalignedtimer.h"
 #include "qsystemalignedtimer_meego_p.h"
@@ -49,15 +48,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
-    QObject(parent),
-    m_lastError(QSystemAlignedTimer::NoError),
-    m_minimumInterval(0),
-    m_maximumInterval(0),
-    m_running(false),
-    m_singleShot(false),
-    m_iphbdHandler(0),
-    m_notifier(0)
+QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
+    : QObject(parent)
+    , m_lastError(QSystemAlignedTimer::NoError)
+    , m_minimumInterval(0)
+    , m_maximumInterval(0)
+    , m_running(false)
+    , m_singleShot(false)
+    , m_iphbdHandler(0)
+    , m_notifier(0)
 {
     m_iphbdHandler = iphb_open(0);
 
@@ -66,7 +65,6 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
         qDebug() << "iphb_open error" << m_iphbdHandler<< errno <<strerror(errno);
         return;
     }
-
 
     int sockfd = iphb_get_fd(m_iphbdHandler);
     if (!(sockfd > -1)) {
@@ -87,13 +85,11 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
 
 QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate()
 {
-    if (m_iphbdHandler) {
-        (void)iphb_close(m_iphbdHandler), m_iphbdHandler = 0;
-    }
+    if (m_iphbdHandler)
+        (void)iphb_close(m_iphbdHandler);
 
-    if (m_notifier) {
-        delete m_notifier, m_notifier = 0;
-    }
+    if (m_notifier)
+        delete m_notifier;
 }
 
 void QSystemAlignedTimerPrivate::wokeUp()
@@ -143,22 +139,13 @@ bool QSystemAlignedTimerPrivate::isSingleShot() const
 
 void QSystemAlignedTimerPrivate::singleShot(int minimumTime, int maximumTime, QObject *receiver, const char *member)
 {
-    QSystemAlignedTimerPrivate *alignedTimer = new QSystemAlignedTimerPrivate();
+    if (receiver && member) {
+        QSystemAlignedTimerPrivate *alignedTimer = new QSystemAlignedTimerPrivate(receiver);
 
-    if (QObject::connect(alignedTimer, SIGNAL(timeout()), alignedTimer, SLOT(singleShot()))) {
-        alignedTimer->m_singleShotReceiver = receiver;
+        alignedTimer->m_singleShot = true;
 
-        //from QTimer
-        const char* bracketPosition = strchr(member, '(');
-        if (!bracketPosition || !(member[0] >= '0' && member[0] <= '3')) {
-            qWarning("QTimer::singleShot: Invalid slot specification");
-            return;
-        }
-        QByteArray methodName(member+1, bracketPosition - 1 - member); // extract method name
-        alignedTimer->m_singleShotMember = methodName;
+        connect(alignedTimer, SIGNAL(timeout()), receiver, member);
         alignedTimer->start(minimumTime, maximumTime);
-    } else {
-        delete alignedTimer;
     }
 }
 
@@ -166,8 +153,6 @@ QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimerPrivate::lastError() c
 {
     return m_lastError;
 }
-
-// public slots
 
 void QSystemAlignedTimerPrivate::start(int minimumTime, int maximumTime)
 {
@@ -179,9 +164,8 @@ void QSystemAlignedTimerPrivate::start(int minimumTime, int maximumTime)
 
 void QSystemAlignedTimerPrivate::start()
 {
-    if (m_running) {
+    if (m_running)
         return;
-    }
 
     if (!(m_iphbdHandler && m_notifier)) {
         m_lastError = QSystemAlignedTimer::InternalError;
@@ -205,9 +189,8 @@ void QSystemAlignedTimerPrivate::start()
 
 void QSystemAlignedTimerPrivate::stop()
 {
-    if (!m_running) {
+    if (!m_running)
         return;
-    }
 
     if (!(m_iphbdHandler && m_notifier)) {
         m_lastError = QSystemAlignedTimer::InternalError;
@@ -222,26 +205,17 @@ void QSystemAlignedTimerPrivate::stop()
     m_lastError = QSystemAlignedTimer::NoError;
 }
 
-// private slots
-
 void QSystemAlignedTimerPrivate::heartbeatReceived(int sock) {
     Q_UNUSED(sock);
 
     stop();
     emit timeout();
 
-    if (!m_singleShot) {
+    if (!m_singleShot)
         start();
-    }
 }
 
-void QSystemAlignedTimerPrivate::singleShot()
-{
-   QMetaObject::invokeMethod(m_singleShotReceiver, m_singleShotMember.constData());
-   this->deleteLater();
-}
-
-bool QSystemAlignedTimerPrivate::isActive () const
+bool QSystemAlignedTimerPrivate::isActive() const
 {
     return m_running;
 }

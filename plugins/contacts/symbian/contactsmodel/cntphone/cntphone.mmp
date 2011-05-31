@@ -24,7 +24,7 @@ TARGET cntphone.dll
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
   UID			0x10009D8D 0x102035FB
 
-  start resource 102035fb.RSS
+  start resource 102035fb.rss
 	TARGET cntphone.rsc
   end
   LIBRARY       cntmodel.lib

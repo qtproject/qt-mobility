@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,12 +49,13 @@ QTM_BEGIN_NAMESPACE
   \class QContactRelationshipFilter
   \brief The QContactRelationshipFilter class provides a filter based
   around relationship criteria.
-  
-  
+
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-filters
- 
+
   It may be used to select contacts which are involved in relationships
   which are of a certain type, or which involve certain contacts.
 
@@ -85,6 +86,7 @@ Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
 /*!
   \fn QContactRelationshipFilter::QContactRelationshipFilter(const QContactFilter& other)
   Constructs a copy of \a other if possible, else constructs a new QContactRelationshipFilter.
+ * \since 1.0
  */
 
 /*!
@@ -97,6 +99,7 @@ QContactRelationshipFilter::QContactRelationshipFilter()
 
 /*!
   Sets the type of relationship which a contact must have in order to match this filter to \a relationshipType
+  \since 1.0
  */
 void QContactRelationshipFilter::setRelationshipType(const QString& relationshipType)
 {
@@ -106,6 +109,7 @@ void QContactRelationshipFilter::setRelationshipType(const QString& relationship
 
 /*!
   Returns the type of relationship that a contact must have in order to match the filter
+  \since 1.0
  */
 QString QContactRelationshipFilter::relationshipType() const
 {
@@ -115,6 +119,7 @@ QString QContactRelationshipFilter::relationshipType() const
 
 /*!
   Sets the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter to be \a relatedContactId
+  \since 1.0
  */
 void QContactRelationshipFilter::setRelatedContactId(const QContactId &relatedContactId)
 {
@@ -124,6 +129,7 @@ void QContactRelationshipFilter::setRelatedContactId(const QContactId &relatedCo
 
 /*!
   Returns the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter
+  \since 1.0
  */
 QContactId QContactRelationshipFilter::relatedContactId() const
 {
@@ -133,6 +139,7 @@ QContactId QContactRelationshipFilter::relatedContactId() const
 
 /*!
   Sets the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter to be \a relatedContactRole
+  \since 1.0
  */
 void QContactRelationshipFilter::setRelatedContactRole(QContactRelationship::Role relatedContactRole)
 {
@@ -142,6 +149,7 @@ void QContactRelationshipFilter::setRelatedContactRole(QContactRelationship::Rol
 
 /*!
   Returns the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter
+  \since 1.0
  */
 QContactRelationship::Role QContactRelationshipFilter::relatedContactRole() const
 {

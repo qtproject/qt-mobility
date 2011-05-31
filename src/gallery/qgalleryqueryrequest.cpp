@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -83,6 +83,7 @@ public:
     \ingroup gallery-requests
 
     \inmodule QtGallery
+    \since 1.1
 
     \brief The QGalleryQueryRequest class provides a request for a set of
     items from a gallery.
@@ -186,6 +187,7 @@ QGalleryQueryRequest::~QGalleryQueryRequest()
     \property QGalleryQueryRequest::propertyNames
 
     \brief A list of names of meta-data properties a request should return values for.
+    \since 1.1
 */
 
 
@@ -207,6 +209,7 @@ void QGalleryQueryRequest::setPropertyNames(const QStringList &names)
     \fn QGalleryQueryRequest::propertyNamesChanged();
 
     Signals that the value of \l propertyNames has changed.
+    \since 1.1
 */
 
 /*!
@@ -218,6 +221,7 @@ void QGalleryQueryRequest::setPropertyNames(const QStringList &names)
     Prefixing a property name with the '+' character indicates it should be sorted
     in ascending order, and a '-' character prefix indicates a descending order.
     If there is no prefix ascending order is assumed.
+    \since 1.1
 */
 
 QStringList QGalleryQueryRequest::sortPropertyNames() const
@@ -238,6 +242,7 @@ void QGalleryQueryRequest::setSortPropertyNames(const QStringList &names)
     \fn QGalleryQueryRequest::sortPropertyNamesChanged()
 
     Signals that the value of \l sortPropertyNames has changed.
+    \since 1.1
 */
 
 /*!
@@ -248,6 +253,7 @@ void QGalleryQueryRequest::setSortPropertyNames(const QStringList &names)
 
     If this is true the request will go into the Idle state when the request has
     finished rather than returning to Inactive.
+    \since 1.1
 */
 
 
@@ -269,12 +275,14 @@ void QGalleryQueryRequest::setAutoUpdate(bool enabled)
     \fn QGalleryQueryRequest::autoUpdateChanged()
 
     Signals that the value of \l autoUpdate has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryRequest::offset
 
     \brief the offset of the first item a query should return.
+    \since 1.1
 */
 
 int QGalleryQueryRequest::offset() const
@@ -296,12 +304,14 @@ void QGalleryQueryRequest::setOffset(int offset)
     \fn QGalleryQueryRequest::offsetChanged()
 
     Signals that the value of offset has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryRequest::limit
 
     \brief the maximum number of items a query should return.
+    \since 1.1
 */
 
 int QGalleryQueryRequest::limit() const
@@ -323,6 +333,7 @@ void QGalleryQueryRequest::setLimit(int limit)
     \fn QGalleryQueryRequest::limitChanged()
 
     Signals that the value of \l limit has changed.
+    \since 1.1
 */
 
 /*!
@@ -330,6 +341,7 @@ void QGalleryQueryRequest::setLimit(int limit)
 
     \brief the root item type the results of a query should be restricted to.
 
+    \since 1.1
 */
 
 QString QGalleryQueryRequest::rootType() const
@@ -350,12 +362,14 @@ void QGalleryQueryRequest::setRootType(const QString &itemType)
     \fn QGalleryQueryRequest::rootTypeChanged()
 
     Signals that the value of \l rootType has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryQueryRequest::rootItem
 
     \brief the ID of an item the query should return the descendents of.
+    \since 1.1
 */
 
 QVariant QGalleryQueryRequest::rootItem() const
@@ -376,6 +390,7 @@ void QGalleryQueryRequest::setRootItem(const QVariant &itemId)
     \fn QGalleryQueryRequest::rootItemChanged()
 
     Signals that the value of \l rootItem has changed.
+    \since 1.1
 */
 
 /*!
@@ -383,6 +398,7 @@ void QGalleryQueryRequest::setRootItem(const QVariant &itemId)
 
     \brief whether all descendants of the \l rootItem should be returned by
     a request or just the direct descendants.
+    \since 1.1
 */
 
 QGalleryQueryRequest::Scope QGalleryQueryRequest::scope() const
@@ -403,6 +419,7 @@ void QGalleryQueryRequest::setScope(QGalleryQueryRequest::Scope scope)
     \fn QGalleryQueryRequest::scopeChanged()
 
     Signals that the value of \l scope has changed.
+    \since 1.1
 */
 
 /*!
@@ -412,6 +429,7 @@ void QGalleryQueryRequest::setScope(QGalleryQueryRequest::Scope scope)
 
     If no filter is set the results of the request will be determined
     by the \l rootType and \l rootItem properties.
+    \since 1.1
 */
 
 QGalleryFilter QGalleryQueryRequest::filter() const
@@ -432,11 +450,13 @@ void QGalleryQueryRequest::setFilter(const QGalleryFilter &filter)
     \fn QGalleryQueryRequest::filterChanged()
 
     Signals that the value of \l filter has changed.
+    \since 1.1
 */
 
 
 /*!
     Returns the result set containing the results of a query.
+    \since 1.1
 */
 
 QGalleryResultSet *QGalleryQueryRequest::resultSet() const
@@ -449,10 +469,12 @@ QGalleryResultSet *QGalleryQueryRequest::resultSet() const
 
     Signals that the \a resultSet containing the results of a query have
     changed.
+    \since 1.1
 */
 
 /*!
     Returns the key of \a property.
+    \since 1.1
 */
 
 int QGalleryQueryRequest::propertyKey(const QString &property) const
@@ -462,6 +484,7 @@ int QGalleryQueryRequest::propertyKey(const QString &property) const
 
 /*!
     Returns the attributes of the property identified by \a key.
+    \since 1.1
 */
 
 QGalleryProperty::Attributes QGalleryQueryRequest::propertyAttributes(int key) const
@@ -471,6 +494,7 @@ QGalleryProperty::Attributes QGalleryQueryRequest::propertyAttributes(int key) c
 
 /*!
     Returns the type of the property identified by \a key.
+    \since 1.1
 */
 
 QVariant::Type QGalleryQueryRequest::propertyType(int key) const
@@ -480,6 +504,7 @@ QVariant::Type QGalleryQueryRequest::propertyType(int key) const
 
 /*!
     Returns the number of items returned by a query.
+    \since 1.1
 */
 
 int QGalleryQueryRequest::itemCount() const
@@ -491,6 +516,7 @@ int QGalleryQueryRequest::itemCount() const
     \property QGalleryQueryRequest::itemId
 
     \brief The ID of the current item.
+    \since 1.1
 */
 
 QVariant QGalleryQueryRequest::itemId() const
@@ -502,6 +528,7 @@ QVariant QGalleryQueryRequest::itemId() const
     \property QGalleryQueryRequest::itemUrl
 
     \brief The URL of the current item.
+    \since 1.1
 */
 
 QUrl QGalleryQueryRequest::itemUrl() const
@@ -513,6 +540,7 @@ QUrl QGalleryQueryRequest::itemUrl() const
     \property QGalleryQueryRequest::itemType
 
     \brief he type of the current item.
+    \since 1.1
 */
 
 QString QGalleryQueryRequest::itemType() const
@@ -524,6 +552,7 @@ QString QGalleryQueryRequest::itemType() const
     \property QGalleryQueryRequest::resources
 
     \brief The resources of the current item.
+    \since 1.1
 */
 
 QList<QGalleryResource> QGalleryQueryRequest::resources() const
@@ -534,6 +563,7 @@ QList<QGalleryResource> QGalleryQueryRequest::resources() const
 /*!
     Returns the value of a meta-data property identified by \a key for the
     current item.
+    \since 1.1
 */
 
 
@@ -547,6 +577,7 @@ QVariant QGalleryQueryRequest::metaData(int key) const
     current item.
 
     Returns true if the value was changed; otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::setMetaData(int key, const QVariant &value)
@@ -556,6 +587,7 @@ bool QGalleryQueryRequest::setMetaData(int key, const QVariant &value)
 
 /*!
     Returns the value of a meta-data \a property for the current item.
+    \since 1.1
 */
 
 
@@ -569,6 +601,7 @@ QVariant QGalleryQueryRequest::metaData(const QString &property) const
     Sets the \value of a meta-data \a property for the current item.
 
     Returns true if the value was changed; otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::setMetaData(const QString &property, const QVariant &value)
@@ -581,6 +614,7 @@ bool QGalleryQueryRequest::setMetaData(const QString &property, const QVariant &
     \property QGalleryQueryRequest::currentIndex
 
     \brief The index of current item.
+    \since 1.1
 */
 
 int QGalleryQueryRequest::currentIndex() const
@@ -592,6 +626,7 @@ int QGalleryQueryRequest::currentIndex() const
     \fn QGalleryQueryRequest::currentItemChanged()
 
     Signals that the item the result set is positioned on has changed.
+    \since 1.1
 */
 
 /*!
@@ -601,6 +636,7 @@ int QGalleryQueryRequest::currentIndex() const
 
     Returns true if the position of the result set is valid after the seek; and
     false otherwise.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::seek(int index, bool relative)
@@ -615,6 +651,7 @@ bool QGalleryQueryRequest::seek(int index, bool relative)
 
     Returns true if the position of the result set is valid after the seek; and
     false otherwise.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::next()
@@ -627,6 +664,7 @@ bool QGalleryQueryRequest::next()
 
     Returns true if the position of the result set is valid after the seek; and
     false otherwise.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::previous()
@@ -639,6 +677,7 @@ bool QGalleryQueryRequest::previous()
 
     Returns true if the position of the result set is valid after the seek; and
     false otherwise.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::first()
@@ -651,6 +690,7 @@ bool QGalleryQueryRequest::first()
 
     Returns true if the position of the result set is valid after the seek; and
     false otherwise.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::last()
@@ -662,6 +702,7 @@ bool QGalleryQueryRequest::last()
     \property QGalleryQueryRequest::valid
 
     \brief Whether the result set is currently positioned on a valid item.
+    \since 1.1
 */
 
 bool QGalleryQueryRequest::isValid() const
@@ -671,6 +712,7 @@ bool QGalleryQueryRequest::isValid() const
 
 /*!
     \reimp
+    \since 1.1
 */
 
 void QGalleryQueryRequest::setResponse(QGalleryAbstractResponse *response)

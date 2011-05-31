@@ -81,22 +81,11 @@
     there is the possibility of easy transfer of user experience from PC to
     phone or vice versa.
 
-    \section1 Namespace
-
-    The QtMobility project APIs are placed into the \i{QtMobility} namespace, with
-    the important exception of Multimedia. This is done to facilitate the
-    future migration of Mobility APIs into Qt.
-
-    \section2 Quickstart Guide
-
-    See the \l {Quickstart Example}{Quickstart guide} for an example on how
-    the  namespace impacts on application development.
-
     \section1 Getting Started
     To get started with QtMobility see the
     \list
         \o \l {Installation Guide}
-        \o \l {Quickstart Example}
+        \o \l {Quickstart guide}{Quickstart Guide}
         \o \l {QtMobility Examples}{List of all examples.}
     \endlist
 
@@ -293,7 +282,7 @@
 
     The QtMobility APIs are placed into the QtMobility namespace. This is
     done to facilitate the future migration of QtMobility APIs into Qt. See
-    the \l {Quickstart Example}{Quickstart guide} for an example on how
+    the \l {Quickstart guide} for an example on how
     the namespace impacts on application development.
 
 

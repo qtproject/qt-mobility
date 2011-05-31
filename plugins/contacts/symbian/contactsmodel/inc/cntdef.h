@@ -428,18 +428,6 @@ const TUid KUidContactFieldJobTitle={KUidContactFieldJobTitleValue};
 */
 const TUid KUidContactFieldIMAddress = { KUidContactFieldIMAddressValue };
 
-/** Identifies an IM or SIP Service Provider field.
-*/
-const TUid KUidContactFieldServiceProvider = { KUidContactFieldServiceProviderValue };
-
-/** Identifies an presence information about contact.
-*/
-const TUid KUidContactFieldPresence = { KUidContactFieldPresenceValue };
-
-/** Identifies status message field.
-*/
-const TUid KUidContactFieldStatusMsg = { KUidContactFieldStatusMsgValue };
-
 
 /** Identifies a USIM second name field. This field is provided to
 store an additional representation of the contact's name, such as a

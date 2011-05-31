@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -1975,6 +1975,150 @@ void tst_QGeoBoundingBox::unite_data()
                                QGeoCoordinate(-30.0, 150.0))
             << QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
                                QGeoCoordinate(-30.0, 180.0));
+
+    QTest::newRow("small gap over zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, -10.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 20.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, 20.0));
+
+    QTest::newRow("small gap before zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -40.0),
+                                QGeoCoordinate(-30.0, -30.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, -10.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -40.0),
+                                QGeoCoordinate(-30.0, -10.0));
+
+    QTest::newRow("small gap after zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 20.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 30.0),
+                                QGeoCoordinate(-30.0, 40.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 40.0));
+
+    QTest::newRow("small gap over dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, 170.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -160.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, -160.0));
+
+    QTest::newRow("small gap before dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 140.0),
+                                QGeoCoordinate(-30.0, 150.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, 170.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 140.0),
+                                QGeoCoordinate(-30.0, 170.0));
+
+    QTest::newRow("small gap after dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -160.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -150.0),
+                                QGeoCoordinate(-30.0, -140.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -140.0));
+
+    QTest::newRow("90-degree inner gap over zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -55.0),
+                                QGeoCoordinate(-30.0, -45.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 45.0),
+                                QGeoCoordinate(-30.0, 55.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -55.0),
+                                QGeoCoordinate(-30.0, 55.0));
+
+    QTest::newRow("90-degree inner gap before zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -20.0),
+                                QGeoCoordinate(-30.0, -10.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -65.0),
+                                QGeoCoordinate(-30.0, -55.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -65.0),
+                                QGeoCoordinate(-30.0, -10.0));
+
+    QTest::newRow("90-degree inner gap after zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 65.0),
+                                QGeoCoordinate(-30.0, 75.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 20.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 10.0),
+                                QGeoCoordinate(-30.0, 75.0));
+
+    QTest::newRow("90-degree inner gap over dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 125.0),
+                                QGeoCoordinate(-30.0, 135.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -135.0),
+                                QGeoCoordinate(-30.0, -125.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 125.0),
+                                QGeoCoordinate(-30.0, -125.0));
+
+    QTest::newRow("90-degree inner gap before dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 160.0),
+                                QGeoCoordinate(-30.0, 170.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+                                QGeoCoordinate(-30.0, 60.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 50.0),
+                                QGeoCoordinate(-30.0, 170.0));
+
+    QTest::newRow("90-degree inner gap after dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -160.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -60.0),
+                                QGeoCoordinate(-30.0, -50.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -170.0),
+                                QGeoCoordinate(-30.0, -50.0));
+
+    QTest::newRow("180-degree inner gap centered on zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, -90.0));
+
+    QTest::newRow("180-degree outer gap cenetered on zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+                                QGeoCoordinate(-30.0, 90.0));
+
+    QTest::newRow("180-degree shift centered on zero line")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -180.0),
+                                QGeoCoordinate(-30.0, 180.0));
+
+    QTest::newRow("180-degree inner gap centered on dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -90.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0,  -90.0),
+                                QGeoCoordinate(-30.0, 90.0));
+
+    QTest::newRow("180-degree outer gap centered on dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -90.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 90.0),
+                                QGeoCoordinate(-30.0, -90.0));
+
+    QTest::newRow("180-degree shift centered on dateline")
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, 80.0),
+                                QGeoCoordinate(-30.0, 100.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0, -100.0),
+                                QGeoCoordinate(-30.0, -80.0))
+            <<  QGeoBoundingBox(QGeoCoordinate(30.0,  -180.0),
+                                QGeoCoordinate(-30.0, 180.0));
 }
 
 QTEST_MAIN(tst_QGeoBoundingBox)

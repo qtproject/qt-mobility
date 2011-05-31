@@ -6,7 +6,6 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_sym)
 
-include(version.pri)
 include(../../../common.pri)
 
 SOURCES +=  \

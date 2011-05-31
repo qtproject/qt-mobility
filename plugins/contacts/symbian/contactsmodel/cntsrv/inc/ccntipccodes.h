@@ -157,7 +157,6 @@ enum TCntClientIpcCodes
 	EEndDbTransaction,
 	ERollbackDbTransaction,
 	ECntCloseDbTables,
-	ECntItemsDelete,
 	ELockSrvNotSupported
 	// Not supported
 	};

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -74,6 +74,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItem class represents an event, todo, note, or journal entry
 
   \inmodule QtOrganizer
+  \since 1.1
 
   \ingroup organizer-main
 
@@ -108,23 +109,27 @@ QTM_BEGIN_NAMESPACE
  * \fn QList<T> QOrganizerItem::details() const
  * Returns a list of details of the template parameter type.  The type must be
  * a subclass of QOrganizerItemDetail.
+   \since 1.1
  */
 
 /*!
  * \fn QList<T> QOrganizerItem::details(const QString& fieldName, const QString& value) const
  * Returns a list of details of the template parameter type which have field called \a fieldName, with matching \a value.
  * The type must be a subclass of QOrganizerItemDetail.
+   \since 1.1
  */
 
 /*!
  * \fn T QOrganizerItem::detail() const
  * Returns the first detail of the template parameter type, as returned by the template details() function.
  * The type must be a subclass of QOrganizerItemDetail.
+   \since 1.1
  */
 
 /*!
  * \fn QOrganizerItem::operator!=(const QOrganizerItem &other) const
  * Returns true if this organizer item's id or details are different to those of the \a other organizer item.
+   \since 1.1
  */
 
 /*!
@@ -133,6 +138,7 @@ QTM_BEGIN_NAMESPACE
     The organizer item will have an empty display label, an empty id, and an empty description
     and have type \l QOrganizerItemType::TypeNote.
     The isEmpty() function will return true.
+   \since 1.1
 */
 QOrganizerItem::QOrganizerItem()
     : d(new QOrganizerItemData)
@@ -140,7 +146,9 @@ QOrganizerItem::QOrganizerItem()
     clearDetails();
 }
 
-/*! Initializes this QOrganizerItem from \a other */
+/*! Initializes this QOrganizerItem from \a other
+   \since 1.1
+*/
 QOrganizerItem::QOrganizerItem(const QOrganizerItem& other)
     : d(other.d)
 {
@@ -150,6 +158,7 @@ QOrganizerItem::QOrganizerItem(const QOrganizerItem& other)
     \internal
 
     Constructs a new, empty item of the given type \a type.
+   \since 1.1
 */
 QOrganizerItem::QOrganizerItem(const char* type)
 {
@@ -166,6 +175,7 @@ QOrganizerItem::QOrganizerItem(const char* type)
     type identified by the \a expectedType.
 
     The \a expectedType pointer must be valid for the lifetime of the program.
+    \since 1.1
 */
 QOrganizerItem::QOrganizerItem(const QOrganizerItem& other, const char* expectedType)
 {
@@ -183,6 +193,7 @@ QOrganizerItem::QOrganizerItem(const QOrganizerItem& other, const char* expected
     Assigns this item to \a other if the type of \a other is that identified
     by the given \a expectedType, else assigns this item to be a new, empty
     item of the type identified by the given \a expectedType
+    \since 1.1
 */
 QOrganizerItem& QOrganizerItem::assign(const QOrganizerItem& other, const char* expectedType)
 {
@@ -203,6 +214,7 @@ QOrganizerItem& QOrganizerItem::assign(const QOrganizerItem& other, const char* 
  *
  * An empty QOrganizerItem has an empty label and no extra details.
  * The type of the organizer item is irrelevant.
+    \since 1.1
  */
 bool QOrganizerItem::isEmpty() const
 {
@@ -227,6 +239,7 @@ bool QOrganizerItem::isEmpty() const
  * This function does not modify the id or type of the organizer item.
  * Calling isEmpty() after calling this function will return true.
  * The empty item becomes a \l QOrganizerNote.
+    \since 1.1
  */
 void QOrganizerItem::clearDetails()
 {
@@ -239,7 +252,9 @@ void QOrganizerItem::clearDetails()
     d->m_details.insert(0, organizeritemType);
 }
 
-/*! Replace the contents of this QOrganizerItem with \a other */
+/*! Replace the contents of this QOrganizerItem with \a other
+    \since 1.1
+*/
 QOrganizerItem& QOrganizerItem::operator=(const QOrganizerItem& other)
 {
     d = other.d;
@@ -259,6 +274,7 @@ QOrganizerItem::~QOrganizerItem()
     in a manager.  The QOrganizerItemId is only valid within a specific
     manager.  See \l QOrganizerManager::saveItem() for more
     information.
+    \since 1.1
  */
 QOrganizerItemId QOrganizerItem::id() const
 {
@@ -281,6 +297,7 @@ QOrganizerItemId QOrganizerItem::id() const
   if the move operation is supported by the manager; otherwise, the
   \l QOrganizerManager::saveItem() operation will fail and calling
   \l QOrganizerManager::error() will return \c QOrganizerManager::NotSupportedError.
+  \since 1.1
  */
 QOrganizerCollectionId QOrganizerItem::collectionId() const
 {
@@ -304,6 +321,7 @@ QOrganizerCollectionId QOrganizerItem::collectionId() const
   \l QOrganizerManager::saveItem() will move the item from its original
   collection to the collection whose id is \a collectionId, if \a collectionId
   identifies a valid collection and the operation is supported by the manager.
+  \since 1.1
  */
 void QOrganizerItem::setCollectionId(const QOrganizerCollectionId& collectionId)
 {
@@ -322,6 +340,7 @@ void QOrganizerItem::setCollectionId(const QOrganizerCollectionId& collectionId)
  * of an existing organizer item, or to save a organizer item in a different manager.
  *
  * \sa QOrganizerManager::saveItem()
+   \since 1.1
  */
 void QOrganizerItem::setId(const QOrganizerItemId& id)
 {
@@ -337,6 +356,7 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
 
     It would usually be more convenient to use the template version of this function.
 
+    \since 1.1
 */
 
 /*!
@@ -347,11 +367,13 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     specific subclass of QOrganizerItemDetail.
 
     It would usually be more convenient to use the template version of this function.
+    \since 1.1
 */
 
 /*!
     \fn QList<QOrganizerItemDetail> QOrganizerItem::details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value)
     Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
+    \since 1.1
 */
 
 /*!
@@ -359,10 +381,12 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     \internal
 
     Returns a list of details of the template type which match the \a fieldName and \a value criteria
+    \since 1.1
 */
 
 /*!
     Returns the first detail stored in the organizer item with the given \a definitionName
+    \since 1.1
 */
 QOrganizerItemDetail QOrganizerItem::detail(const QString& definitionName) const
 {
@@ -386,7 +410,9 @@ QOrganizerItemDetail QOrganizerItem::detail(const QString& definitionName) const
     requesting a list of all the definition names using
     \l {QOrganizerManager::detailDefinitions()}{detailDefinitions()} or the
     asynchronous \l
-    {QOrganizerItemDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    {QOrganizerItemDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.
+    \since 1.1
+*/
 QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -414,7 +440,9 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionNam
     requesting a list of all the definition names using
     \l {QOrganizerManager::detailDefinitions()}{detailDefinitions()} or the
     asynchronous \l
-    {QOrganizerItemDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    {QOrganizerItemDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.
+    \since 1.1
+*/
 QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
@@ -439,6 +467,7 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionNam
 /*!
     \internal
     Returns the first detail stored in the organizer item which with the given \a definitionName
+    \since 1.1
 */
 QOrganizerItemDetail QOrganizerItem::detail(const char* definitionName) const
 {
@@ -459,6 +488,7 @@ QOrganizerItemDetail QOrganizerItem::detail(const char* definitionName) const
 /*!
     \internal
     Returns a list of details with the given \a definitionName
+    \since 1.1
 */
 QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionName) const
 {
@@ -483,6 +513,7 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionName) 
 /*!
     \internal
     Returns a list of details with the given \a definitionName, \a fieldName and field \a value
+    \since 1.1
 */
 QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionName, const char* fieldName, const QString& value) const
 {
@@ -527,6 +558,7 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionName, 
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
+   \since 1.1
  */
 bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
 {
@@ -612,6 +644,7 @@ bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
  * Returns true if the detail was removed successfully, false if an error occurred.
  *
  * Note that the caller retains ownership of the detail.
+   \since 1.1
  */
 bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
 {
@@ -642,7 +675,9 @@ bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
     return true;
 }
 
-/*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id, collection id or stored details are not the same */
+/*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id, collection id or stored details are not the same
+   \since 1.1
+*/
 bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 {
     // work around, as this function is "const" that we can't sort m_details
@@ -659,6 +694,7 @@ bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 /*!
     \relates QOrganizerItem
     Returns the hash value for \a key.
+   \since 1.1
 */
 uint qHash(const QOrganizerItem &key)
 {
@@ -673,6 +709,7 @@ uint qHash(const QOrganizerItem &key)
 #ifndef QT_NO_DEBUG_STREAM
 /*!
   Streams the \a organizeritem to the given debug stream \a dbg, and returns the stream.
+   \since 1.1
  */
 QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 {
@@ -687,6 +724,7 @@ QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a item to the stream \a out.
+   \since 1.1
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
 {
@@ -700,6 +738,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
 
 /*!
  * Reads an item from stream \a in into \a item.
+   \since 1.1
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
 {
@@ -727,6 +766,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
  * in the organizer item, or by calling \l setType()) or synthesized automatically.
  *
  * \sa QOrganizerItemType
+   \since 1.1
  */
 QString QOrganizerItem::type() const
 {
@@ -738,6 +778,7 @@ QString QOrganizerItem::type() const
  * Sets the type of the organizer item to the given \a type.
  *
  * \sa QOrganizerItemType
+   \since 1.1
  */
 void QOrganizerItem::setType(const QString& type)
 {
@@ -749,6 +790,7 @@ void QOrganizerItem::setType(const QString& type)
 
 /*!
  * Sets the type of the organizer item to the given \a type detail.
+   \since 1.1
  */
 void QOrganizerItem::setType(const QOrganizerItemType& type)
 {
@@ -761,6 +803,7 @@ void QOrganizerItem::setType(const QOrganizerItemType& type)
 
 /*!
  * Returns the display label of the item
+   \since 1.1
  */
 QString QOrganizerItem::displayLabel() const
 {
@@ -772,6 +815,7 @@ QString QOrganizerItem::displayLabel() const
  * Sets the display label of the item to \a label
  *
  * \sa QOrganizerItemDisplayLabel
+   \since 1.1
  */
 void QOrganizerItem::setDisplayLabel(const QString& label)
 {
@@ -782,6 +826,7 @@ void QOrganizerItem::setDisplayLabel(const QString& label)
 
 /*!
  * Sets the display label of the item to \a label
+   \since 1.1
  */
 void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
 {
@@ -794,6 +839,7 @@ void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
  * Returns the human-readable description of the item
  *
  * \sa QOrganizerItemDescription
+   \since 1.1
  */
 QString QOrganizerItem::description() const
 {
@@ -805,6 +851,7 @@ QString QOrganizerItem::description() const
  * Sets the human-readable description of the item to \a description
  *
  * \sa QOrganizerItemDescription
+   \since 1.1
  */
 void QOrganizerItem::setDescription(const QString& description)
 {
@@ -815,6 +862,7 @@ void QOrganizerItem::setDescription(const QString& description)
 
 /*!
  * Sets the human-readable description of the item to \a description
+   \since 1.1
  */
 void QOrganizerItem::setDescription(const QOrganizerItemDescription& description)
 {
@@ -828,6 +876,7 @@ void QOrganizerItem::setDescription(const QOrganizerItemDescription& description
  * which pertain to this item.
  *
  * \sa QOrganizerItemComment
+   \since 1.1
  */
 QStringList QOrganizerItem::comments() const
 {
@@ -843,6 +892,7 @@ QStringList QOrganizerItem::comments() const
  * Removes all comments (arbitrary notes) about this item
  *
  * \sa QOrganizerItemComment
+   \since 1.1
  */
 void QOrganizerItem::clearComments()
 {
@@ -856,6 +906,7 @@ void QOrganizerItem::clearComments()
  * Sets the list of comments associated with the item to \a comments.
  *
  * \sa QOrganizerItemTag
+   \since 1.2
  */
 void QOrganizerItem::setComments(const QStringList& comments)
 {
@@ -869,6 +920,7 @@ void QOrganizerItem::setComments(const QStringList& comments)
  * Adds the comment \a comment to this item
  *
  * \sa QOrganizerItemComment
+   \since 1.1
  */
 void QOrganizerItem::addComment(const QString& comment)
 {
@@ -881,6 +933,7 @@ void QOrganizerItem::addComment(const QString& comment)
  * Returns the list of tags for this item.  Tags are used for non-exclusive categorization.
  *
  * \sa QOrganizerItemTag
+   \since 1.2
  */
 QStringList QOrganizerItem::tags() const
 {
@@ -895,6 +948,7 @@ QStringList QOrganizerItem::tags() const
  * Removes all tags associated with the item.
  *
  * \sa QOrganizerItemTag
+   \since 1.1
  */
 void QOrganizerItem::clearTags()
 {
@@ -905,6 +959,7 @@ void QOrganizerItem::clearTags()
  * Adds the \a tag to this item.
  *
  * \sa QOrganizerItemTag
+   \since 1.2
  */
 void QOrganizerItem::addTag(const QString& tag)
 {
@@ -917,6 +972,7 @@ void QOrganizerItem::addTag(const QString& tag)
  * Sets the list of tags associated with the item to \a tags.
  *
  * \sa QOrganizerItemTag
+   \since 1.2
  */
 void QOrganizerItem::setTags(const QStringList& tags)
 {
@@ -929,6 +985,7 @@ void QOrganizerItem::setTags(const QStringList& tags)
 /*!
  * Returns the globally unique identifier which identifies this item,
  * which is used for synchronization purposes.
+   \since 1.1
  */
 QString QOrganizerItem::guid() const
 {
@@ -938,6 +995,7 @@ QString QOrganizerItem::guid() const
 
 /*!
  * Sets the item's globally unique identifier to \a guid
+   \since 1.1
  */
 void QOrganizerItem::setGuid(const QString& guid)
 {

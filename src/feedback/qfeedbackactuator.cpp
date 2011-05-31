@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
     \class QFeedbackActuator
     \brief The QFeedbackActuator class describes actuators for tactile feedback.
     \inmodule QtFeedback
+    \since 1.1
 
     An actuator knows how to play a \l{QFeedbackEffect}{tactile
     effect}. The class gives access to a specified actuator.
@@ -133,6 +134,7 @@ QFeedbackActuator::QFeedbackActuator(QObject *parent, int id) : QObject(parent),
 
 /*!
     Returns the id of the actuator.
+    \since 1.1
 */
 int QFeedbackActuator::id() const
 {
@@ -146,6 +148,7 @@ int QFeedbackActuator::id() const
 
 /*!
     Returns true if the actuator is valid.
+    \since 1.1
 */
 bool QFeedbackActuator::isValid() const
 {
@@ -159,6 +162,7 @@ bool QFeedbackActuator::isValid() const
 
 /*!
     Returns the name of the actuator.
+    \since 1.1
 */
 QString QFeedbackActuator::name() const
 {
@@ -172,6 +176,7 @@ QString QFeedbackActuator::name() const
 
 /*!
     Returns the state of the actuator.
+    \since 1.1
 */
 QFeedbackActuator::State QFeedbackActuator::state() const
 {
@@ -180,6 +185,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 
 /*!
     Returns if the actuator supports the supplied \a capability.
+    \since 1.1
 */
 bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 {
@@ -193,6 +199,7 @@ bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 
 /*!
     Returns true if you can use this actuator to start effects.
+    \since 1.1
 */
 bool QFeedbackActuator::isEnabled() const
 {
@@ -200,10 +207,11 @@ bool QFeedbackActuator::isEnabled() const
 }
 
 /*!
-    Allows you to enable or disable a actuator.  If \a enabled is true, the actuator will be enabled,
+    Allows you to enable or disable an actuator.  If \a enabled is true, the actuator will be enabled,
     and otherwise it will be disabled.
 
     \note Some systems may not allow you to change whether an actuator is enabled.
+    \since 1.1
 */
 void QFeedbackActuator::setEnabled(bool enabled)
 {
@@ -219,6 +227,7 @@ void QFeedbackActuator::setEnabled(bool enabled)
     This signal is emitted when the actuator is requested to enable or disable itself.
 
     \sa isEnabled()
+    \since 1.1
 */
 
 /*!
@@ -235,6 +244,7 @@ QList<QFeedbackActuator*> QFeedbackActuator::actuators()
     \fn QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 
     Returns true if this actuator is equal to \a other.
+    \since 1.1
 */
 bool QFeedbackActuator::operator==(const QFeedbackActuator &other) const
 {

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -42,7 +42,7 @@
 #include "xqsettingsmanager_p.h"
 #include <QVariant>
 
-/* 
+/*
     \class XQSettingsManager
     \internal
 
@@ -50,15 +50,15 @@
     The settings items can be targetted in Central Repository or Publish And Subscribe.
 */
 
-/* 
+/*
     Constructs an XQSettingsManager object with the given parent.
 */
-XQSettingsManager::XQSettingsManager(QObject* parent) 
+XQSettingsManager::XQSettingsManager(QObject* parent)
     : QObject(parent), d(new XQSettingsManagerPrivate(this))
 {
 }
 
-/* 
+/*
     Destroys the XQSettingsManager object.
 */
 XQSettingsManager::~XQSettingsManager()
@@ -66,7 +66,7 @@ XQSettingsManager::~XQSettingsManager()
     delete d;
 }
 
-/* 
+/*
     \enum XQSettingsManager::Type
 
     This enum defines the possible item types for an XQSettingsKey object.
@@ -117,7 +117,7 @@ XQSettingsManager::~XQSettingsManager()
 */
 
 
-/* 
+/*
     Reads an item value.
     \param key XQSettingsKey where the value is read from
     \param type Value type. Default is TypeVariant which means that the type is
@@ -130,7 +130,7 @@ QVariant XQSettingsManager::readItemValue(const XQSettingsKey& key, XQSettingsMa
     return d->readItemValue(key, type);
 }
 
-/* 
+/*
     Writes an item value.
     \param key XQSettingsKey where the value is written to
     \param value Value to be written into the settings item. The type is determined with
@@ -144,7 +144,7 @@ bool XQSettingsManager::writeItemValue(const XQSettingsKey& key, const QVariant&
     return d->writeItemValue(key, value);
 }
 
-/* 
+/*
     Starts monitoring a settings item.
     \param key XQSettingsKey of which changes are monitored.
     \param type Value type. Default is TypeVariant which means that the type is
@@ -157,7 +157,7 @@ bool XQSettingsManager::startMonitoring(const XQSettingsKey& key, XQSettingsMana
     return d->startMonitoring(key, type);
 }
 
-/* 
+/*
     Stops monitoring a settings item.
     \param key XQSettingsKey of which changes are not monitored any more.
     \return True if monitoring was stopped successfully, otherwise return false.
@@ -168,8 +168,8 @@ bool XQSettingsManager::stopMonitoring(const XQSettingsKey& key)
     return d->stopMonitoring(key);
 }
 
-/* 
-    Returns the type of error that occurred if the latest function call failed. 
+/*
+    Returns the type of error that occurred if the latest function call failed.
     Otherwise it returns NoError
     \return Error code
 */

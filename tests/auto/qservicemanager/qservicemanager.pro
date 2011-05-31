@@ -41,3 +41,5 @@ symbian|wince* {
     addFiles.path = plugins/xmldata
     DEPLOYMENT += addFiles
 }
+
+maemo*:CONFIG += insignificant_test

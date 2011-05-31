@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -82,7 +82,8 @@ QGeoCoordinatePrivate::QGeoCoordinatePrivate() {
     \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.
@@ -136,6 +137,7 @@ QGeoCoordinate::QGeoCoordinate()
     the type() will be QGeoCoordinate::InvalidCoordinate.
 
     \sa isValid()
+    \since 1.0
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
         : d(new QGeoCoordinatePrivate)
@@ -157,6 +159,7 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
     Note that \a altitude specifies the metres above sea level.
 
     \sa isValid()
+    \since 1.0
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitude)
         : d(new QGeoCoordinatePrivate)
@@ -170,6 +173,7 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitud
 
 /*!
     Constructs a coordinate from the contents of \a other.
+    \since 1.0
 */
 QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
         : d(new QGeoCoordinatePrivate)
@@ -188,6 +192,7 @@ QGeoCoordinate::~QGeoCoordinate()
 /*!
     Assigns \a other to this coordinate and returns a reference to this
     coordinate.
+    \since 1.0
 */
 QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate & other)
 {
@@ -206,6 +211,7 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate & other)
     coordinate are the same as those of \a other.
 
     The longitude will be ignored if the latitude is +/- 90 degrees.
+    \since 1.0
 */
 bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 {
@@ -227,10 +233,12 @@ bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 
     Returns true if the latitude, longitude or altitude of this
     coordinate are not the same as those of \a other.
+    \since 1.0
 */
 
 /*!
     Returns true if the type() is Coordinate2D or Coordinate3D.
+    \since 1.0
 */
 bool QGeoCoordinate::isValid() const
 {
@@ -240,6 +248,7 @@ bool QGeoCoordinate::isValid() const
 
 /*!
     Returns the type of this coordinate.
+    \since 1.0
 */
 QGeoCoordinate::CoordinateType QGeoCoordinate::type() const
 {
@@ -261,6 +270,7 @@ QGeoCoordinate::CoordinateType QGeoCoordinate::type() const
     latitude indicates the Southern Hemisphere.
 
     \sa setLatitude(), type()
+    \since 1.0
 */
 double QGeoCoordinate::latitude() const
 {
@@ -274,6 +284,7 @@ double QGeoCoordinate::latitude() const
     To be valid, the latitude must be between -90 to 90 inclusive.
 
     \sa latitude()
+    \since 1.0
 */
 void QGeoCoordinate::setLatitude(double latitude)
 {
@@ -288,6 +299,7 @@ void QGeoCoordinate::setLatitude(double latitude)
     longitude indicates the Western Hemisphere.
 
     \sa setLongitude(), type()
+    \since 1.0
 */
 double QGeoCoordinate::longitude() const
 {
@@ -301,6 +313,7 @@ double QGeoCoordinate::longitude() const
     To be valid, the longitude must be between -180 to 180 inclusive.
 
     \sa longitude()
+    \since 1.0
 */
 void QGeoCoordinate::setLongitude(double longitude)
 {
@@ -312,6 +325,7 @@ void QGeoCoordinate::setLongitude(double longitude)
 
     The return value is undefined if the altitude has not been set.
 
+    \since 1.0
     \sa setAltitude(), type()
 */
 double QGeoCoordinate::altitude() const
@@ -322,6 +336,7 @@ double QGeoCoordinate::altitude() const
 /*!
     Sets the altitude (meters above sea level) to \a altitude.
 
+    \since 1.0
     \sa altitude()
 */
 void QGeoCoordinate::setAltitude(double altitude)
@@ -339,6 +354,7 @@ void QGeoCoordinate::setAltitude(double altitude)
 
     Returns 0 if the type of this coordinate or the type of \a other is
     QGeoCoordinate::InvalidCoordinate.
+    \since 1.0
 */
 qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
 {
@@ -372,6 +388,7 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
 
     Returns 0 if the type of this coordinate or the type of \a other is
     QGeoCoordinate::InvalidCoordinate.
+    \since 1.0
 */
 qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
 {
@@ -418,16 +435,16 @@ void QGeoCoordinatePrivate::atDistanceAndAzimuth(const QGeoCoordinate &coord,
 }
 
 /*!
-    Returns the coordinate that is reached by traveling \a distance metres 
+    Returns the coordinate that is reached by traveling \a distance metres
     from the current coordinate at \a azimuth (or bearing) along a great-circle.
     There is an assumption that the Earth is spherical for the purpose of this
     calculation.
-    
+
     The altitude will have \a distanceUp added to it.
 
     Returns an invalid coordinate if this coordinate is invalid.
 */
-QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp) const 
+QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimuth, qreal distanceUp) const
 {
     if (!isValid())
         return QGeoCoordinate();
@@ -479,6 +496,7 @@ QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimut
     The altitude field is omitted if no altitude is set.
 
     If the coordinate is invalid, an empty string is returned.
+    \since 1.0
 */
 QString QGeoCoordinate::toString(CoordinateFormat format) const
 {
@@ -598,6 +616,7 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 
     Writes the given \a coordinate to the specified \a stream.
 
+    \since 1.0
     \sa {Serializing Qt Data Types}
 */
 
@@ -618,6 +637,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
     Reads a coordinate from the specified \a stream into the given
     \a coordinate.
 
+    \since 1.0
     \sa {Serializing Qt Data Types}
 */
 

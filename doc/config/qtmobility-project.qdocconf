@@ -97,7 +97,8 @@ sourcedirs = ../../src/global \
              ../src
 
 excludedirs = ../../src/messaging/win32wce \
-              ../../src/publishsubscribe/symbian
+              ../../src/publishsubscribe/symbian \
+              ../../src/serviceframework/ipc/metaobjectbuilder47
 
 exampledirs = ../../examples \
               ../../demos \
@@ -114,7 +115,7 @@ base                    = file:../html
 qhp.projects            = QtMobility
 
 qhp.QtMobility.file               = qtmobility.qhp
-qhp.QtMobility.namespace          = com.nokia.qtmobility.120
+qhp.QtMobility.namespace          = com.nokia.qtmobility.114
 qhp.QtMobility.virtualFolder      = mobility
 qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.QtMobility.indexRoot          =

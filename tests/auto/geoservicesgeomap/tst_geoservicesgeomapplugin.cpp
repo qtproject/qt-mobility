@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -616,30 +616,27 @@ void tst_GeoServicesGeoMapPlugin::mapType()
 void tst_GeoServicesGeoMapPlugin::supportedConnectivityModes_data()
 {
     QTest::addColumn<QList<QGraphicsGeoMap::ConnectivityMode> >("supportedConnectivityModes");
-    QTest::addColumn<bool>("expecttofail");
+    QTest::addColumn<bool>("comparisonResult");
     QTest::newRow("Supported connectivity modes") << (QList<QGraphicsGeoMap::ConnectivityMode> ()
         << QGraphicsGeoMap::OfflineMode << QGraphicsGeoMap::OnlineMode
-        << QGraphicsGeoMap::HybridMode) << false;
+        << QGraphicsGeoMap::HybridMode) << true;
     QTest::newRow("Not supported connectivity modes")
         << (QList<QGraphicsGeoMap::ConnectivityMode> () << QGraphicsGeoMap::OfflineMode
-            << QGraphicsGeoMap::NoConnectivity) << true;
+            << QGraphicsGeoMap::NoConnectivity) << false;
 }
 
 // public QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const
 void tst_GeoServicesGeoMapPlugin::supportedConnectivityModes()
 {
     QFETCH(QList<QGraphicsGeoMap::ConnectivityMode> , supportedConnectivityModes);
-    QFETCH(bool, expecttofail);
+    QFETCH(bool, comparisonResult);
 
     QSignalSpy spy0(m_map, SIGNAL( centerChanged(QGeoCoordinate const&)));
     QSignalSpy spy1(m_map, SIGNAL(connectivityModeChanged( QGraphicsGeoMap::ConnectivityMode)));
     QSignalSpy spy2(m_map, SIGNAL(mapTypeChanged( QGraphicsGeoMap::MapType)));
     QSignalSpy spy3(m_map, SIGNAL(zoomLevelChanged(qreal)));
 
-    if (expecttofail)
-        QEXPECT_FAIL("", "Expecting the compare to fail", Continue);
-
-    QCOMPARE(m_map->supportedConnectivityModes(), supportedConnectivityModes);
+    QCOMPARE((m_map->supportedConnectivityModes() == supportedConnectivityModes), comparisonResult);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);
@@ -650,29 +647,26 @@ void tst_GeoServicesGeoMapPlugin::supportedConnectivityModes()
 void tst_GeoServicesGeoMapPlugin::supportedMapTypes_data()
 {
     QTest::addColumn<QList<QGraphicsGeoMap::MapType> >("supportedMapTypes");
-    QTest::addColumn<bool>("expecttofail");
+    QTest::addColumn<bool>("comparisonResult");
     QTest::newRow("Supported map types") << (QList<QGraphicsGeoMap::MapType> ()
         << QGraphicsGeoMap::StreetMap << QGraphicsGeoMap::SatelliteMapDay
-        << QGraphicsGeoMap::TerrainMap) << false;
+        << QGraphicsGeoMap::TerrainMap) << true;
     QTest::newRow("Not supported map types") << (QList<QGraphicsGeoMap::MapType> ()
-        << QGraphicsGeoMap::StreetMap << QGraphicsGeoMap::SatelliteMapNight) << true;
+        << QGraphicsGeoMap::StreetMap << QGraphicsGeoMap::SatelliteMapNight) << false;
 }
 
 // public QList<QGraphicsGeoMap::MapType> supportedMapTypes() const
 void tst_GeoServicesGeoMapPlugin::supportedMapTypes()
 {
     QFETCH(QList<QGraphicsGeoMap::MapType> , supportedMapTypes);
-    QFETCH(bool, expecttofail);
+    QFETCH(bool, comparisonResult);
 
     QSignalSpy spy0(m_map, SIGNAL( centerChanged(QGeoCoordinate const&)));
     QSignalSpy spy1(m_map, SIGNAL(connectivityModeChanged( QGraphicsGeoMap::ConnectivityMode)));
     QSignalSpy spy2(m_map, SIGNAL(mapTypeChanged( QGraphicsGeoMap::MapType)));
     QSignalSpy spy3(m_map, SIGNAL(zoomLevelChanged(qreal)));
 
-    if (expecttofail)
-        QEXPECT_FAIL("", "Expecting the compare to fail", Continue);
-
-    QCOMPARE(m_map->supportedMapTypes(), supportedMapTypes);
+    QCOMPARE((m_map->supportedMapTypes() == supportedMapTypes), comparisonResult);
 
     QCOMPARE(spy0.count(), 0);
     QCOMPARE(spy1.count(), 0);

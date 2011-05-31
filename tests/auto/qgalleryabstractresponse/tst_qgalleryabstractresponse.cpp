@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -68,6 +68,7 @@ private Q_SLOTS:
     void waitForCanceledNoTimeout();
     void waitForErrorImmediate();
     void waitForErrorNoTimeout();
+    void progressChangedSignal();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
@@ -77,6 +78,7 @@ public:
     using QGalleryAbstractResponse::error;
     using QGalleryAbstractResponse::finish;
     using QGalleryAbstractResponse::resume;
+    using QGalleryAbstractResponse::progressChanged;
 
 public Q_SLOTS:
     void doFinish() { finish(); }
@@ -483,7 +485,6 @@ void tst_QGalleryAbstractResponse::waitForCanceledNoTimeout()
 void tst_QGalleryAbstractResponse::waitForErrorImmediate()
 {
     QtGalleryTestResponse response;
-
     QMetaObject::invokeMethod(&response, "doError", Qt::QueuedConnection, Q_ARG(int, 1));
     QCOMPARE(response.isActive(), true);
     QCOMPARE(response.waitForFinished(0), true);
@@ -493,11 +494,32 @@ void tst_QGalleryAbstractResponse::waitForErrorImmediate()
 void tst_QGalleryAbstractResponse::waitForErrorNoTimeout()
 {
     QtGalleryTestResponse response;
-
     QMetaObject::invokeMethod(&response, "doError", Qt::QueuedConnection, Q_ARG(int, 1));
     QCOMPARE(response.isActive(), true);
     QCOMPARE(response.waitForFinished(-1), true);
     QCOMPARE(response.isActive(), false);
+}
+
+void tst_QGalleryAbstractResponse::progressChangedSignal()
+{
+    QtGalleryTestResponse response;
+
+    QSignalSpy progressChangedSpy(&response, SIGNAL(progressChanged(int,int)));
+    QVERIFY(progressChangedSpy.count() == 0);
+    QCOMPARE(response.isActive(), true);
+    QCOMPARE(response.isIdle(), false);
+
+    response.progressChanged(10, 100);
+    QVERIFY(progressChangedSpy.count() == 1);
+
+    response.cancel();
+    QVERIFY(progressChangedSpy.count() == 1);
+
+    response.progressChanged(20, 200);
+    QVERIFY(progressChangedSpy.count() == 2);
+
+    response.progressChanged(20, 200);
+    QVERIFY(progressChangedSpy.count() == 3);
 }
 
 #include "tst_qgalleryabstractresponse.moc"

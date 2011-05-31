@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -60,7 +60,7 @@ MailId::MailId()
 MailId::MailId(quint64 value)
 {
     d = new MailIdPrivate();
-    d->id = value;  
+    d->id = value;
 }
 
 MailId::MailId(const MailId& other)
@@ -72,7 +72,7 @@ MailId::~MailId()
 {
 }
 
-MailId& MailId::operator=(const MailId& other) 
+MailId& MailId::operator=(const MailId& other)
 {
     d = other.d;
     return *this;
@@ -127,6 +127,7 @@ QTextStream& operator<< (QTextStream& s, const MailId &id)
 /*!
     \class QMailAccountId
     \ingroup messaginglibrary
+    \since 1.1
 
     \brief The QMailAccountId class is used to identify accounts stored by QMailStore.
 
@@ -134,9 +135,9 @@ QTextStream& operator<< (QTextStream& s, const MailId &id)
     by their unique numeric internal indentifer.
 
     A QMailAccountId instance can be tested for validity, and compared to other instances
-    for equality.  The numeric value of the identifier is not intrinsically meaningful 
+    for equality.  The numeric value of the identifier is not intrinsically meaningful
     and cannot be modified.
-    
+
     \sa QMailAccount, QMailStore::account()
 */
 
@@ -147,7 +148,7 @@ QTextStream& operator<< (QTextStream& s, const MailId &id)
 
 Q_IMPLEMENT_USER_METATYPE(QMailAccountId);
 
-/*! 
+/*!
     Construct an uninitialized QMailAccountId, for which isValid() returns false.
 */
 QMailAccountId::QMailAccountId()
@@ -155,7 +156,7 @@ QMailAccountId::QMailAccountId()
 {
 }
 
-/*! 
+/*!
     Construct a QMailAccountId with the supplied numeric identifier \a value.
 */
 QMailAccountId::QMailAccountId(quint64 value)
@@ -175,7 +176,7 @@ QMailAccountId::~QMailAccountId()
 }
 
 /*! \internal */
-QMailAccountId& QMailAccountId::operator=(const QMailAccountId& other) 
+QMailAccountId& QMailAccountId::operator=(const QMailAccountId& other)
 {
     MailId::operator=(other);
     return *this;
@@ -228,18 +229,18 @@ bool QMailAccountId::operator< (const QMailAccountId& other) const
     return MailId::operator<(other);
 }
 
-/*! 
+/*!
     \fn QMailAccountId::serialize(Stream&) const
-    \internal 
+    \internal
 */
 template <typename Stream> void QMailAccountId::serialize(Stream &stream) const
 {
     MailId::serialize(stream);
 }
 
-/*! 
+/*!
     \fn QMailAccountId::deserialize(Stream&)
-    \internal 
+    \internal
 */
 template <typename Stream> void QMailAccountId::deserialize(Stream &stream)
 {
@@ -271,9 +272,9 @@ Q_IMPLEMENT_USER_METATYPE_TYPEDEF(QMailAccountIdList, QMailAccountIdList)
     by their unique numeric internal indentifer.
 
     A QMailFolderId instance can be tested for validity, and compared to other instances
-    for equality.  The numeric value of the identifier is not intrinsically meaningful 
+    for equality.  The numeric value of the identifier is not intrinsically meaningful
     and cannot be modified.
-    
+
     \sa QMailFolder, QMailStore::folder()
 */
 
@@ -284,7 +285,7 @@ Q_IMPLEMENT_USER_METATYPE_TYPEDEF(QMailAccountIdList, QMailAccountIdList)
 
 Q_IMPLEMENT_USER_METATYPE(QMailFolderId);
 
-/*! 
+/*!
     Construct an uninitialized QMailFolderId, for which isValid() returns false.
 */
 QMailFolderId::QMailFolderId()
@@ -292,7 +293,7 @@ QMailFolderId::QMailFolderId()
 {
 }
 
-/*! 
+/*!
     Construct a QMailFolderId corresponding to the predefined folder identifier \a id.
 */
 QMailFolderId::QMailFolderId(QMailFolderFwd::PredefinedFolderId id)
@@ -300,7 +301,7 @@ QMailFolderId::QMailFolderId(QMailFolderFwd::PredefinedFolderId id)
 {
 }
 
-/*! 
+/*!
     Construct a QMailFolderId with the supplied numeric identifier \a value.
 */
 QMailFolderId::QMailFolderId(quint64 value)
@@ -320,7 +321,7 @@ QMailFolderId::~QMailFolderId()
 }
 
 /*! \internal */
-QMailFolderId& QMailFolderId::operator=(const QMailFolderId& other) 
+QMailFolderId& QMailFolderId::operator=(const QMailFolderId& other)
 {
     MailId::operator=(other);
     return *this;
@@ -373,18 +374,18 @@ bool QMailFolderId::operator< (const QMailFolderId& other) const
     return MailId::operator<(other);
 }
 
-/*! 
+/*!
     \fn QMailFolderId::serialize(Stream&) const
-    \internal 
+    \internal
 */
 template <typename Stream> void QMailFolderId::serialize(Stream &stream) const
 {
     MailId::serialize(stream);
 }
 
-/*! 
+/*!
     \fn QMailFolderId::deserialize(Stream&)
-    \internal 
+    \internal
 */
 template <typename Stream> void QMailFolderId::deserialize(Stream &stream)
 {
@@ -416,9 +417,9 @@ Q_IMPLEMENT_USER_METATYPE_TYPEDEF(QMailFolderIdList, QMailFolderIdList)
     by their unique numeric internal indentifer.
 
     A QMailMessageId instance can be tested for validity, and compared to other instances
-    for equality.  The numeric value of the identifier is not intrinsically meaningful 
+    for equality.  The numeric value of the identifier is not intrinsically meaningful
     and cannot be modified.
-    
+
     \sa QMailMessage, QMailStore::message()
 */
 
@@ -429,7 +430,7 @@ Q_IMPLEMENT_USER_METATYPE_TYPEDEF(QMailFolderIdList, QMailFolderIdList)
 
 Q_IMPLEMENT_USER_METATYPE(QMailMessageId);
 
-/*! 
+/*!
     Construct an uninitialized QMailMessageId, for which isValid() returns false.
 */
 QMailMessageId::QMailMessageId()
@@ -437,7 +438,7 @@ QMailMessageId::QMailMessageId()
 {
 }
 
-/*! 
+/*!
     Construct a QMailMessageId with the supplied numeric identifier \a value.
 */
 QMailMessageId::QMailMessageId(quint64 value)
@@ -457,7 +458,7 @@ QMailMessageId::~QMailMessageId()
 }
 
 /*! \internal */
-QMailMessageId& QMailMessageId::operator=(const QMailMessageId& other) 
+QMailMessageId& QMailMessageId::operator=(const QMailMessageId& other)
 {
     MailId::operator=(other);
     return *this;
@@ -510,18 +511,18 @@ bool QMailMessageId::operator< (const QMailMessageId& other) const
     return MailId::operator<(other);
 }
 
-/*! 
+/*!
     \fn QMailMessageId::serialize(Stream&) const
-    \internal 
+    \internal
 */
 template <typename Stream> void QMailMessageId::serialize(Stream &stream) const
 {
     MailId::serialize(stream);
 }
 
-/*! 
+/*!
     \fn QMailMessageId::deserialize(Stream&)
-    \internal 
+    \internal
 */
 template <typename Stream> void QMailMessageId::deserialize(Stream &stream)
 {

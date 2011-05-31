@@ -22,11 +22,11 @@
 #include <cntviewsortpluginbase.h>
 #endif
 
-#include "CCntServer.h" //for KSlot1 and KSlot2
+#include "ccntserver.h" //for KSlot1 and KSlot2
 #include "rcntmodel.h"
 
 // uncomment define in header to select debug prints for API profiling 
-#include "CntApiProfile.h"
+#include "cntapiprofile.h"
 
 
 //
@@ -40,13 +40,20 @@ const TInt KCachedItemCountInvalid = -1;
 */
 void RContactRemoteView::OpenL(const CContactDatabase& aDb,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes,const TUid& aSortPluginImplUid,const TDesC8& aSortPluginName) 
     {
-    HBufC8* pckgBuf = PackageSortOrderAndPluginDetailsLC(aSortOrder,aContactTypes,aSortPluginImplUid,aSortPluginName);
-    TIpcArgs args(pckgBuf->Length());
-    args.Set(KSlot1,pckgBuf);
-    TInt err = CreateSubSession(*aDb.iCntSvr, ECntCreateView, args );
+    delete iViewParams;
+    iViewParams = NULL;
+    delete iViewName;
+    iViewName = NULL;
 
-    CleanupStack::PopAndDestroy(pckgBuf);
+    iViewParams = PackageSortOrderAndPluginDetailsLC(aSortOrder,aContactTypes,aSortPluginImplUid,aSortPluginName);
+    CleanupStack::Pop(iViewParams);
+    TIpcArgs args(iViewParams->Length());
+    args.Set(KSlot1,iViewParams);
+    TInt err = CreateSubSession(*aDb.iCntSvr, ECntCreateView, args );
     User::LeaveIfError(err);
+    
+    // keep info needed to reopen the view if cnt server dies
+    iRCntModel = aDb.iCntSvr;
     }
 
 /**
@@ -54,13 +61,43 @@ void RContactRemoteView::OpenL(const CContactDatabase& aDb,const RContactViewSor
 */
 void RContactRemoteView::OpenL(const CContactDatabase& aDb,const TDesC& aName,const RContactViewSortOrder& aSortOrder,TContactViewPreferences aContactTypes,const TUid& aSortPluginImplUid,const TDesC8& aSortPluginName)
     {
-    HBufC8* pckgBuf = PackageSortOrderAndPluginDetailsLC(aSortOrder,aContactTypes,aSortPluginImplUid,aSortPluginName);
-    TIpcArgs args(pckgBuf->Length());
-    args.Set(KSlot1,pckgBuf);
+    delete iViewParams;
+    iViewParams = NULL;
+    delete iViewName;
+    iViewName = NULL;
+    
+    iViewParams = PackageSortOrderAndPluginDetailsLC(aSortOrder,aContactTypes,aSortPluginImplUid,aSortPluginName);
+    CleanupStack::Pop(iViewParams);
+    TIpcArgs args(iViewParams->Length());
+    args.Set(KSlot1,iViewParams);
     args.Set(KSlot2,&aName);
     TInt err = CreateSubSession(*aDb.iCntSvr, ECntCreateNamedView, args );
+    User::LeaveIfError(err);
+    
+    // keep info needed to reopen the view if cnt server dies
+    iRCntModel = aDb.iCntSvr;
+    iViewName = aName.AllocL();
+    }
 
-    CleanupStack::PopAndDestroy(pckgBuf);
+/**
+Reopens contacts view (used when cnt server was terminated)
+@capability ReadUserData
+@param aDb Reference to contact database used to create views 
+*/
+void RContactRemoteView::ReOpenL(const CContactDatabase& aDb)
+    {
+    TIpcArgs args(iViewParams->Length());
+    args.Set(KSlot1,iViewParams);
+    TInt err;
+    if (iViewName != NULL)
+        {
+        args.Set(KSlot2,iViewName);
+        err = CreateSubSession(*aDb.iCntSvr, ECntCreateNamedView, args);
+        }
+    else
+        {
+        err = CreateSubSession(*aDb.iCntSvr, ECntCreateView, args);
+        }
     User::LeaveIfError(err);
     }
 
@@ -76,6 +113,24 @@ void RContactRemoteView::Close( )
         iContact = NULL;
         }
     iSortOrder.Close( );
+    
+    delete iViewParams;
+    iViewParams = NULL;
+    delete iViewName;
+    iViewName = NULL;
+    }
+
+/**
+RContactRemoteView constructor.
+
+Member variables must be initialised (zero'd) in the constructor since
+RContactRemoteView does not derive from CBase.
+*/
+RContactRemoteView::RContactRemoteView()
+    {
+    iContact = NULL;
+    iViewParams = NULL;
+    iViewName = NULL;
     }
 
 /**
@@ -447,8 +502,21 @@ const TContactViewEvent& CContactRemoteViewNotifier::Event() const
 
 void CContactRemoteViewNotifier::RunL()
     {
+    // update iEvent to notify CContactRemoteViewBase that cnt server died 
+    if (iStatus.Int() == KErrServerTerminated || iStatus.Int() == KErrDied)
+        {
+        iEvent().iEventType = TContactViewEvent::EServerError;
+        iEvent().iInt = iStatus.Int();
+        }
+    
+    // this will try to start server and create the view, if server died
     iCallBack.CallBack();
-    Start();
+    
+    // listen to view events if server is running
+    if (iEvent().iInt != KErrServerTerminated && iEvent().iInt != KErrDied)
+        {
+        Start();
+        }
     }
 
 void CContactRemoteViewNotifier::DoCancel()
@@ -638,6 +706,27 @@ TInt CContactRemoteViewBase::NotifierCallBack(TAny* aSelf)
 
 void CContactRemoteViewBase::HandleContactViewEvent(const TContactViewEvent& aEvent)
     {
+    TContactViewEvent& event = const_cast<TContactViewEvent&>(aEvent);
+    if (event.iInt == KErrServerTerminated || event.iInt == KErrDied)
+        {
+        // handle the case if server was terminated 
+        TRAPD(restartErr,
+            if (!iView.iRCntModel->DatabaseReadyL())
+                {
+                // restart server
+                iView.iRCntModel->HandlePrematureServerTerminationL();
+                }
+            // recreate view
+            iView.ReOpenL(iDb);
+        );
+        if (restartErr == KErrNone)
+            {
+            // update error so listener will subscribe to view events again
+            event.iInt = KErrNone;
+            return;
+            }
+        }
+    
     const TInt KInvalidValueForRemoteView = -1;
     
     iCount = KCachedItemCountInvalid;

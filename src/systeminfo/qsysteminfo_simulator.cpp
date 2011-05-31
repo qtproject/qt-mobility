@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -68,6 +68,41 @@
 #ifndef QT_BUILD_SYSINFO_LIB
 QTM_BEGIN_NAMESPACE
 #endif
+
+#ifdef TESTR
+SystemInfoConnection::SystemInfoConnection(QObject *parent)
+    : QObject(parent)
+{
+}
+
+QSystemInfoPrivate *SystemInfoConnection::systeminfoPrivate()
+{
+    return getSystemInfoPrivate();
+}
+
+QSystemNetworkInfoPrivate *SystemInfoConnection::networkInfoPrivate()
+{
+    return getSystemNetworkInfoPrivate();
+}
+
+QSystemDeviceInfoPrivate *SystemInfoConnection::deviceInfoPrivate()
+{
+    return getSystemDeviceInfoPrivate();
+}
+
+QSystemStorageInfoPrivate *SystemInfoConnection::storageInfoPrivate()
+{
+    return getSystemStorageInfoPrivate();
+}
+
+QSystemBatteryInfoPrivate *SystemInfoConnection::batteryInfoPrivate()
+{
+    return getSystemBatteryInfoPrivate();
+}
+
+#include "qsysteminfo_simulator.moc"
+#endif
+
 
 #ifdef QT_BUILD_SYSINFO_LIB
 #include <mobilityconnection_p.h>
@@ -241,6 +276,9 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     data.features.fill(false, featureMeta.keyCount());
     QMetaEnum versionMeta = QSystemInfo::staticMetaObject.enumerator(QSystemInfo::staticMetaObject.indexOfEnumerator("Version"));
     data.versions.fill("unknown", versionMeta.keyCount() + 1);
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemInfoPrivate::setInitialData()
@@ -336,6 +374,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     QMetaEnum modeMeta = QSystemNetworkInfo::staticMetaObject.enumerator(QSystemNetworkInfo::staticMetaObject.indexOfEnumerator("NetworkMode"));
     data.networkInfo.fill(init, modeMeta.keyCount());
 
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -482,6 +523,9 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDisplayInfoPrivate::setInitialData()
@@ -533,6 +577,9 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDeviceInfoPrivate::setInitialData()
@@ -772,6 +819,9 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemStorageInfoPrivate::setInitialData()
@@ -1004,6 +1054,9 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
@@ -1112,6 +1165,14 @@ void QSystemBatteryInfoPrivate::setMaxBars(int v)
         data.maxBars = v;
     }
 }
+
+//QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+//{
+//    if (data.energyMeasurementUnit != v) {
+//        data.energyMeasurementUnit = v;
+//    }
+
+//}
 
 int QtMobility::QSystemDisplayInfoPrivate::getDPIHeight(int screen) const
 {

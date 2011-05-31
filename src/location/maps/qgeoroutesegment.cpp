@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRouteSegment class represents a segment of a route.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -76,6 +77,7 @@ QGeoRouteSegment::QGeoRouteSegment()
 
 /*!
     Constructs a route segment object from the contents of \a other.
+    \since 1.1
 */
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
     : d_ptr(other.d_ptr) {}
@@ -95,6 +97,7 @@ QGeoRouteSegment::~QGeoRouteSegment() {}
 /*!
     Assigns \a other to this route segment object and then returns a
     reference to this route segment object.
+    \since 1.1
 */
 QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 {
@@ -106,6 +109,7 @@ QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
     Returns whether this route segment and \a other are equal.
 
     The value of nextRouteSegment() is not considered in the comparison.
+    \since 1.1
 */
 bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
 {
@@ -116,6 +120,7 @@ bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
     Returns whether this route segment and \a other are not equal.
 
     The value of nextRouteSegment() is not considered in the comparison.
+    \since 1.1
 */
 bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
 {
@@ -127,6 +132,7 @@ bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
 
     If nextRouteSegment() is called on the last route segment of a route, the
     returned value will be an invalid route segment.
+    \since 1.1
 */
 bool QGeoRouteSegment::isValid() const
 {
@@ -135,6 +141,7 @@ bool QGeoRouteSegment::isValid() const
 
 /*!
     Sets the next route segment in the route to \a routeSegment.
+    \since 1.1
 */
 void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
 {
@@ -147,6 +154,7 @@ void QGeoRouteSegment::setNextRouteSegment(const QGeoRouteSegment &routeSegment)
 
     Will return an invalid route segment if this is the last route
     segment in the route.
+    \since 1.1
 */
 QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 {
@@ -161,6 +169,7 @@ QGeoRouteSegment QGeoRouteSegment::nextRouteSegment() const
 /*!
     Sets the estimated amount of time it will take to traverse this segment of
     the route, in seconds, to \a secs.
+    \since 1.1
 */
 void QGeoRouteSegment::setTravelTime(int secs)
 {
@@ -171,6 +180,7 @@ void QGeoRouteSegment::setTravelTime(int secs)
 /*!
     Returns the estimated amount of time it will take to traverse this segment
     of the route, in seconds.
+    \since 1.1
 */
 int QGeoRouteSegment::travelTime() const
 {
@@ -179,6 +189,7 @@ int QGeoRouteSegment::travelTime() const
 
 /*!
     Sets the distance covered by this segment of the route, in metres, to \a distance.
+    \since 1.1
 */
 void QGeoRouteSegment::setDistance(qreal distance)
 {
@@ -188,6 +199,7 @@ void QGeoRouteSegment::setDistance(qreal distance)
 
 /*!
     Returns the distance covered by this segment of the route, in metres.
+    \since 1.1
 */
 qreal QGeoRouteSegment::distance() const
 {
@@ -199,6 +211,7 @@ qreal QGeoRouteSegment::distance() const
 
     The coordinates in \a path should be listed in the order in which they
     would be traversed by someone traveling along this segment of the route.
+    \since 1.1
 */
 void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -211,6 +224,7 @@ void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 
     The coordinates should be listed in the order in which they
     would be traversed by someone traveling along this segment of the route.
+    \since 1.1
 */
 
 QList<QGeoCoordinate> QGeoRouteSegment::path() const
@@ -219,7 +233,8 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
 }
 
 /*!
-    Sets the maneuver for this route segement to \a maneuver.
+    Sets the maneuver for this route segment to \a maneuver.
+    \since 1.1
 */
 void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 {
@@ -230,8 +245,9 @@ void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 /*!
     Returns the manevuer for this route segment.
 
-    Will return an invalid QGeoManeuver if no information has been attached 
+    Will return an invalid QGeoManeuver if no information has been attached
     to the endpoint of this route segment.
+    \since 1.1
 */
 QGeoManeuver QGeoRouteSegment::maneuver() const
 {

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -54,6 +54,7 @@ QTM_USE_NAMESPACE
   \class QVersitContactExporterDetailHandler
   \brief The QVersitContactExporterDetailHandler class is the legacy interface for clients wishing
   to implement custom export behaviour for certain contact details.
+    \since 1.1
 
   This interface is replaced by QVersitContactExporterDetailHandlerV2.  For general information on
   extending Qt Versit, see the document on \l{Versit Plugins}.
@@ -114,7 +115,7 @@ QTM_USE_NAMESPACE
   \fn void QVersitContactExporterDetailHandlerV2::detailProcessed(const QContact& contact, const QContactDetail& detail, const QVersitDocument& document, QSet<QString>* processedFields, QList<QVersitProperty>* toBeRemoved, QList<QVersitProperty>* toBeAdded)
 
   Process \a detail and provide a list of updated \l{QVersitProperty}{QVersitProperties} by
-  modifying the \a toBeRemoved and \a toBeAdded lists.  
+  modifying the \a toBeRemoved and \a toBeAdded lists.
 
   This function is called on every QContactDetail encountered during an export, after the detail has
   been processed by the QVersitContactExporter.  An implementation of this function can be made to
@@ -124,7 +125,7 @@ QTM_USE_NAMESPACE
   fields in the \a detail that were considered by the QVersitContactExporter or another handler in
   processing the detail.  \a document holds the state of the document before the detail was
   processed by the exporter.
-  
+
   \a toBeRemoved and \a toBeAdded are initially filled with a list of properties that the exporter
   will remove from and add to the document.  These lists can be modified (by removing, modifying or
   adding properties) by the handler to control the changes that will actually be made to the
@@ -280,6 +281,12 @@ bool QVersitContactExporter::exportContacts(
     d->mErrors.clear();
     bool ok = true;
     foreach (const QContact& contact, contacts) {
+        if (contact.isEmpty()) {
+            d->mErrors[contactIndex] = EmptyContactError;
+            ok = false;
+            continue;
+        }
+
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
         versitDocument.setComponentType(QLatin1String("VCARD"));

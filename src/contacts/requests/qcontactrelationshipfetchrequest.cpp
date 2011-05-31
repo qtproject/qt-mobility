@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
   \brief The QContactRelationshipFetchRequest class allows a client to
   asynchronously request relationships from a contacts store manager.
+  \since 1.0
 
   For a QContactRelationshipFetchRequest, the resultsAvailable() signal will be emitted when the resultant
   relationships (which may be retrieved by calling relationships()), are updated, as well as if
@@ -59,9 +60,10 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -81,6 +83,7 @@ QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
 /*! Sets the source contact criterion of the fetch request to \a firstId.
     If \a firstId is the default-constructed id, or the first contact id is not set,
     the request will fetch relationships involving any first contact.
+    \since 1.0
 */
 void QContactRelationshipFetchRequest::setFirst(const QContactId& firstId)
 {
@@ -90,6 +93,7 @@ void QContactRelationshipFetchRequest::setFirst(const QContactId& firstId)
 }
 
 /*! Returns the source contact criterion of the fetch request
+    \since 1.0
  */
 QContactId QContactRelationshipFetchRequest::first() const
 {
@@ -101,6 +105,7 @@ QContactId QContactRelationshipFetchRequest::first() const
 /*! Sets the relationship type criterion of the fetch request to \a relationshipType.
     If \a relationshipType is empty, or the relationship type is not set,
     the request will fetch relationships of any type.
+    \since 1.0
 */
 void QContactRelationshipFetchRequest::setRelationshipType(const QString& relationshipType)
 {
@@ -110,6 +115,7 @@ void QContactRelationshipFetchRequest::setRelationshipType(const QString& relati
 }
 
 /*! Returns the relationship type criterion of the fetch request
+    \since 1.0
  */
 QString QContactRelationshipFetchRequest::relationshipType() const
 {
@@ -121,6 +127,7 @@ QString QContactRelationshipFetchRequest::relationshipType() const
 /*! Sets the destination contact criterion of the fetch request to \a secondId.
     If \a secondId is the default-constructed id, or the second contact id is not set,
     the request will fetch relationships involving any second contact.
+    \since 1.0
 */
 void QContactRelationshipFetchRequest::setSecond(const QContactId& secondId)
 {
@@ -130,6 +137,7 @@ void QContactRelationshipFetchRequest::setSecond(const QContactId& secondId)
 }
 
 /*! Returns the destination contact criterion of the fetch request
+    \since 1.0
  */
 QContactId QContactRelationshipFetchRequest::second() const
 {
@@ -140,6 +148,7 @@ QContactId QContactRelationshipFetchRequest::second() const
 
 
 /*! Returns the list of relationships that was the result of the request
+    \since 1.0
  */
 QList<QContactRelationship> QContactRelationshipFetchRequest::relationships() const
 {

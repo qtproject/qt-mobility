@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -75,6 +75,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
   \brief The QOrganizerItemDetail class represents a single, complete detail about an organizer item.
   \inmodule QtOrganizer
   \ingroup organizer-main
+  \since 1.1
 
   All of the information for an organizer item is stored in one or more QOrganizerItemDetail objects.
 
@@ -169,6 +170,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
 /*!
   \fn QOrganizerItemDetail::operator!=(const QOrganizerItemDetail& other) const
   Returns true if the values or id of this detail is different to those of the \a other detail
+  \since 1.1
  */
 
 /*!
@@ -182,6 +184,7 @@ QOrganizerItemDetail::QOrganizerItemDetail()
 /*!
     Constructs a new, empty detail of the definition identified by \a thisDefinitionId.
     The definitionId must be restricted to the Latin 1 character set.
+    \since 1.1
  */
 QOrganizerItemDetail::QOrganizerItemDetail(const QString& thisDefinitionId)
     : d(new QOrganizerItemDetailPrivate)
@@ -195,6 +198,7 @@ QOrganizerItemDetail::QOrganizerItemDetail(const QString& thisDefinitionId)
     The supplied pointer must be valid for the lifetime of the program.  In general
     this means it should be a constant, and not allocated on the stack.  If you cannot
     meet this requirement, use the alternative constructor that takes a QString instead.
+    \since 1.1
 */
 QOrganizerItemDetail::QOrganizerItemDetail(const char* thisDefinitionId)
     : d(new QOrganizerItemDetailPrivate)
@@ -216,6 +220,7 @@ QOrganizerItemDetail::QOrganizerItemDetail(const QOrganizerItemDetail& other)
     definition identified by the \a expectedDefinitionId.
 
     The \a expectedDefinitionId pointer must be valid for the lifetime of the program.
+    \since 1.1
 */
 QOrganizerItemDetail::QOrganizerItemDetail(const QOrganizerItemDetail& other, const char* expectedDefinitionId)
 {
@@ -233,6 +238,7 @@ QOrganizerItemDetail::QOrganizerItemDetail(const QOrganizerItemDetail& other, co
     Constructs a detail that is a copy of \a other if \a other is of the expected definition
     identified by \a expectedDefinitionId, else constructs a new, empty detail of the
     definition identified by the \a expectedDefinitionId
+    \since 1.1
 */
 QOrganizerItemDetail::QOrganizerItemDetail(const QOrganizerItemDetail& other, const QString& expectedDefinitionId)
 {
@@ -244,7 +250,9 @@ QOrganizerItemDetail::QOrganizerItemDetail(const QOrganizerItemDetail& other, co
     }
 }
 
-/*! Assigns this detail to \a other */
+/*! Assigns this detail to \a other
+    \since 1.1
+*/
 QOrganizerItemDetail& QOrganizerItemDetail::operator=(const QOrganizerItemDetail& other)
 {
     if (this != &other)
@@ -258,6 +266,7 @@ QOrganizerItemDetail& QOrganizerItemDetail::operator=(const QOrganizerItemDetail
     Assigns this detail to \a other if the definition of \a other is that identified
     by the given \a expectedDefinitionId, else assigns this detail to be a new, empty
     detail of the definition identified by the given \a expectedDefinitionId
+    \since 1.1
 */
 QOrganizerItemDetail& QOrganizerItemDetail::assign(const QOrganizerItemDetail& other, const char* expectedDefinitionId)
 {
@@ -278,6 +287,7 @@ QOrganizerItemDetail& QOrganizerItemDetail::assign(const QOrganizerItemDetail& o
     Assigns this detail to \a other if the definition of \a other is that identified
     by the given \a expectedDefinitionId, else assigns this detail to be a new, empty
     detail of the definition identified by the given \a expectedDefinitionId
+    \since 1.1
 */
 QOrganizerItemDetail& QOrganizerItemDetail::assign(const QOrganizerItemDetail& other, const QString& expectedDefinitionId)
 {
@@ -300,6 +310,7 @@ QOrganizerItemDetail::~QOrganizerItemDetail()
 /*!
     Returns the (unique) name of the definition which defines the semantics and structure of this detail.
     The actual QOrganizerItemDetailDefinition should be retrieved from the relevant QOrganizerManager using this name.
+    \since 1.1
  */
 QString QOrganizerItemDetail::definitionName() const
 {
@@ -310,6 +321,7 @@ QString QOrganizerItemDetail::definitionName() const
     Compares this detail to \a other.  Returns true if the definition, access constraints and values of \a other are equal to those of this detail.
     The keys of each detail are not considered during the comparison, in order to allow details from different organizer items to
     be compared according to their values.
+    \since 1.1
  */
 bool QOrganizerItemDetail::operator==(const QOrganizerItemDetail& other) const
 {
@@ -352,7 +364,9 @@ uint qHash(const QOrganizerItemStringHolder& key)
     return h;
 }
 
-/*! Returns the hash value for \a key. */
+/*! Returns the hash value for \a key.
+    \since 1.1
+*/
 uint qHash(const QOrganizerItemDetail &key)
 {
     const QOrganizerItemDetailPrivate* dptr= QOrganizerItemDetailPrivate::detailPrivate(key);
@@ -384,6 +398,7 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemDetail& detail)
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a detail to the stream \a out.
+    \since 1.1
  */
 QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetail& detail)
 {
@@ -396,6 +411,7 @@ QDataStream& operator<<(QDataStream& out, const QOrganizerItemDetail& detail)
 
 /*!
  * Reads aan organizer item detail from stream \a in into \a detail.
+    \since 1.1
  */
 QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail)
 {
@@ -425,6 +441,7 @@ QDataStream& operator>>(QDataStream& in, QOrganizerItemDetail& detail)
 
 /*!
     Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false.
+    \since 1.1
  */
 bool QOrganizerItemDetail::isEmpty() const
 {
@@ -433,7 +450,9 @@ bool QOrganizerItemDetail::isEmpty() const
     return false;
 }
 
-/*! Returns the key of this detail. */
+/*! Returns the key of this detail.
+    \since 1.1
+*/
 int QOrganizerItemDetail::key() const
 {
     return d->m_id;
@@ -441,7 +460,9 @@ int QOrganizerItemDetail::key() const
 
 /*! Causes the implicitly-shared detail to be detached from any other copies, and generates a new key for it.
     This ensures that calling QOrganizerItem::saveDetail() will result in a new detail being saved, rather than
-    another detail being updated. */
+    another detail being updated.
+    \since 1.1
+*/
 void QOrganizerItemDetail::resetKey()
 {
     d->m_id = QOrganizerItemDetailPrivate::lastDetailKey.fetchAndAddOrdered(1);
@@ -449,7 +470,9 @@ void QOrganizerItemDetail::resetKey()
 
 /*! \overload
   Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
-  no value for the given \a key exists */
+  no value for the given \a key exists
+  \since 1.1
+*/
 QString QOrganizerItemDetail::value(const QString& key) const
 {
     return d.constData()->m_values.value(QOrganizerItemStringHolder(key)).toString();
@@ -460,6 +483,7 @@ QString QOrganizerItemDetail::value(const QString& key) const
     \overload
     Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
     no value for the given \a key exists
+    \since 1.1
 */
 QString QOrganizerItemDetail::value(const char* key) const
 {
@@ -470,9 +494,12 @@ QString QOrganizerItemDetail::value(const char* key) const
     \fn T QOrganizerItemDetail::value(const char* key) const
     \internal
     \overload
+    \since 1.1
 */
 
-/*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
+/*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists
+    \since 1.1
+*/
 QVariant QOrganizerItemDetail::variantValue(const QString& key) const
 {
     return d.constData()->m_values.value(QOrganizerItemStringHolder(key));
@@ -481,6 +508,7 @@ QVariant QOrganizerItemDetail::variantValue(const QString& key) const
 /*!
     \internal
     Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists
+    \since 1.1
  */
 QVariant QOrganizerItemDetail::variantValue(const char* key) const
 {
@@ -489,6 +517,7 @@ QVariant QOrganizerItemDetail::variantValue(const char* key) const
 
 /*!
   Returns true if this detail has a field with the given \a key, or false otherwise.
+  \since 1.1
  */
 bool QOrganizerItemDetail::hasValue(const QString& key) const
 {
@@ -498,6 +527,7 @@ bool QOrganizerItemDetail::hasValue(const QString& key) const
 /*!
   \internal
   Returns true if this detail has a field with the given \a key, or false otherwise.
+  \since 1.1
  */
 bool QOrganizerItemDetail::hasValue(const char * key) const
 {
@@ -507,7 +537,9 @@ bool QOrganizerItemDetail::hasValue(const char * key) const
 /*! Inserts \a value into the detail for the given \a key if \a value is valid.  If \a value is invalid,
     removes the field with the given \a key from the detail.  Returns true if the given \a value was set
     for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
-    \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid) */
+    \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid)
+    \since 1.1
+*/
 bool QOrganizerItemDetail::setValue(const QString& key, const QVariant& value)
 {
     if (!value.isValid())
@@ -524,6 +556,7 @@ bool QOrganizerItemDetail::setValue(const QString& key, const QVariant& value)
     removes the field with the given \a key from the detail.  Returns true if the given \a value was set
     for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
     \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid)
+    \since 1.1
 */
 bool QOrganizerItemDetail::setValue(const char* key, const QVariant& value)
 {
@@ -537,6 +570,7 @@ bool QOrganizerItemDetail::setValue(const char* key, const QVariant& value)
 /*!
     Removes the value stored in this detail for the given \a key.  Returns true if a value was stored
     for the given \a key and the operation succeeded, and false otherwise.
+    \since 1.1
 */
 bool QOrganizerItemDetail::removeValue(const QString& key)
 {
@@ -549,6 +583,7 @@ bool QOrganizerItemDetail::removeValue(const QString& key)
     \internal
     Removes the value stored in this detail for the given \a key.  Returns true if a value was stored
     for the given \a key and the operation succeeded, and false otherwise.
+    \since 1.1
 */
 bool QOrganizerItemDetail::removeValue(const char * key)
 {
@@ -559,6 +594,7 @@ bool QOrganizerItemDetail::removeValue(const char * key)
 
 /*!
   Returns the values stored in this detail as a map from value key to value
+    \since 1.1
  */
 QVariantMap QOrganizerItemDetail::variantValues() const
 {
@@ -580,37 +616,44 @@ QVariantMap QOrganizerItemDetail::variantValues() const
     removes the field with the given \a key from the detail.  Returns true if the given \a value was set
     for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
     \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid)
+    \since 1.1
 */
 /*!
     \fn bool QOrganizerItemDetail::removeValue(const QLatin1Constant& key)
 
     Removes the value stored in this detail for the given \a key.  Returns true if a value was stored
     for the given \a key and the operation succeeded, and false otherwise.
+    \since 1.1
 */
 
 /*!
     \fn bool QOrganizerItemDetail::hasValue(const QLatin1Constant& key) const
     Returns true if this detail has a field with the given \a key, or false otherwise.
+    \since 1.1
  */
 
 /*!
     \fn QVariant QOrganizerItemDetail::variantValue(const QLatin1Constant& key) const
     Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists
+    \since 1.1
  */
 
 /*!
     \fn T QOrganizerItemDetail::value(const QLatin1Constant& key) const
     \overload
     Returns the value of the template type associated with the given \a key
+    \since 1.1
  */
 /*!
     \fn QString QOrganizerItemDetail::value(const QLatin1Constant& key) const
     Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
     no value for the given \a key exists
+    \since 1.1
 */
 /*!
     \fn T QOrganizerItemDetail::value(const QString& key) const
     Returns the value of the template type associated with the given \a key
+    \since 1.1
  */
 
 /*!
@@ -631,6 +674,7 @@ QVariantMap QOrganizerItemDetail::variantValues() const
   Some details may not be written to, while other details may
   not be removed from an organizer item.
 
+    \since 1.1
   \sa QOrganizerItemDetail::AccessConstraints
  */
 QOrganizerItemDetail::AccessConstraints QOrganizerItemDetail::accessConstraints() const

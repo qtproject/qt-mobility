@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -219,7 +219,8 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
     \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     The static function QGeoSatelliteInfoSource::createDefaultSource() creates a default
@@ -254,9 +255,10 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 
     Returns 0 if the system has no default source and no valid plugins
     could be found.
-    
-    Note: Symbian applications will need to have the Location capability 
+
+    Note: Symbian applications will need to have the Location capability
     otherwise this will return 0.
+    \since 1.0
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
@@ -353,6 +355,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     currently in view.
 
     The \a satellites parameter holds the satellites currently in view.
+    \since 1.0
 */
 
 /*!
@@ -366,6 +369,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     is, those used to determine the current position.
 
     The \a satellites parameter holds the satellites currently in use.
+    \since 1.0
 */
 
 /*!
@@ -374,6 +378,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     Starts emitting updates at regular intervals. The updates will be
     provided whenever new satellite information becomes available.
 
+    \since 1.0
     \sa satellitesInViewUpdated(), satellitesInUseUpdated()
 */
 
@@ -381,6 +386,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     \fn virtual void QGeoSatelliteInfoSource::stopUpdates() = 0;
 
     Stops emitting updates at regular intervals.
+    \since 1.0
 */
 
 /*!
@@ -398,6 +404,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     This does nothing if another update request is in progress. However
     it can be called even if startUpdates() has already been called and
     regular updates are in progress.
+    \since 1.0
 */
 
 /*!
@@ -405,6 +412,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     Emitted if requestUpdate() was called and the current satellite
     information could not be retrieved within the specified timeout.
+    \since 1.0
 */
 
 #include "moc_qgeosatelliteinfosource.cpp"

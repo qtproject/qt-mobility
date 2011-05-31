@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -54,6 +54,7 @@ QTM_USE_NAMESPACE
 
   \ingroup versit
   \inmodule QtVersit
+  \since 1.1
 
   This class is used to convert a \l QVersitDocument (which may be produced by a
   QVersitReader) to lists of \l{QOrganizerItem}{QOrganizerItems} (which may be saved into a
@@ -107,7 +108,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \enum QVersitOrganizerImporter::Error
-  This enum specifies an error that occurred during the most recent call to importDocuments()
+  This enum specifies an error that occurred during the most recent call to importDocument()
   \value NoError The most recent operation was successful
   \value InvalidDocumentError One of the documents is not an iCalendar file
   \value EmptyDocumentError One of the documents is empty
@@ -185,7 +186,7 @@ bool QVersitOrganizerImporter::importDocument(const QVersitDocument& document)
 }
 
 /*!
- * Returns the organizer items imported in the most recent call to importDocuments().
+ * Returns the organizer items imported in the most recent call to importDocument().
  *
  * \sa importDocument()
  */
@@ -195,9 +196,10 @@ QList<QOrganizerItem> QVersitOrganizerImporter::items() const
 }
 
 /*!
- * Returns the map of errors encountered in the most recent call to importDocuments().  The key is
- * the index into the input list of documents and the value is the error that occurred on that
- * document.
+ * Returns the map of errors encountered in the most recent call to importDocument().
+ *
+ * The key is the zero based index of the sub document within the container document, or -1 for an error
+ * with the container document itself.  The value is the error that occurred on that document.
  *
  * \sa importDocument()
  */

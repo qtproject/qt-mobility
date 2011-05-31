@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -46,6 +46,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <QFile>
+#include <QSignalSpy>
 
 #include "qsensor.h"
 #include "test_sensor.h"
@@ -466,16 +467,34 @@ private slots:
         delete filter2;
     }
 
+    void testFilter3()
+    {
+        TestSensor sensor;
+        sensor.setProperty("doThis", "setOne");
+        QSignalSpy spy(&sensor, SIGNAL(readingChanged()));
+        sensor.start();
+        QCOMPARE(spy.count(), 1); // reading changes
+        sensor.stop();
+
+        TestSensorFilter *filter2 = new MyFilter;
+        sensor.addFilter(filter2);
+        sensor.start();
+        QCOMPARE(spy.count(), 1); // filter suppresses reading so it does not change
+        sensor.stop();
+        delete filter2;
+
+        TestSensorFilter *filter1 = new ModFilter;
+        sensor.addFilter(filter1);
+        sensor.start();
+        QCOMPARE(spy.count(), 2); // filter does not suppress reading
+        sensor.stop();
+        delete filter1;
+    }
+
     void testStart2()
     {
         TestSensor sensor;
         sensor.connectToBackend();
-
-        sensor.setProperty("doThis", "busy");
-        sensor.start();
-        QVERIFY(sensor.isBusy());
-        QVERIFY(!sensor.isActive());
-        sensor.stop();
 
         sensor.setProperty("doThis", "stop");
         sensor.start();
@@ -883,6 +902,31 @@ private slots:
         QCOMPARE(sensor.reading()->timestamp(), qtimestamp(2));
         QCOMPARE(sensor.reading()->test(), 2);
         sensor.stop();
+    }
+
+    void testBusyChanged()
+    {
+        // Start an exclusive sensor
+        TestSensor sensor1;
+        sensor1.setProperty("exclusive", true);
+        sensor1.start();
+        QVERIFY(sensor1.isActive());
+
+        // Try to start another one, sensor reports busy
+        TestSensor sensor2;
+        sensor2.setProperty("exclusive", true);
+        sensor2.start();
+        QVERIFY(sensor2.isBusy());
+        QVERIFY(!sensor2.isActive());
+
+        // Stopping the first instance causes the busyChanged signal to be emitted from the second instance
+        QSignalSpy spy(&sensor2, SIGNAL(busyChanged()));
+        sensor1.stop();
+        QCOMPARE(spy.count(), 1);
+
+        // Now we can start the second instance
+        sensor2.start();
+        QVERIFY(sensor2.isActive());
     }
 
     // This test must be LAST or it will interfere with the other tests

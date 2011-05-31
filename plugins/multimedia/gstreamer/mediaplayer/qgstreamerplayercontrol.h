@@ -43,6 +43,7 @@
 #define QGSTREAMERPLAYERCONTROL_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qstack.h>
 
 #include <qmediaplayercontrol.h>
 #include <qmediaplayer.h>
@@ -64,6 +65,7 @@ class PlayerResourcePolicy;
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
+    Q_PROPERTY(bool mediaDownloadEnabled READ isMediaDownloadEnabled WRITE setMediaDownloadEnabled)
 
 public:
     QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent = 0);
@@ -94,6 +96,9 @@ public:
     const QIODevice *mediaStream() const;
     void setMedia(const QMediaContent&, QIODevice *);
 
+    bool isMediaDownloadEnabled() const;
+    void setMediaDownloadEnabled(bool enabled);
+
 public Q_SLOTS:
     void setPosition(qint64 pos);
 
@@ -108,7 +113,8 @@ private Q_SLOTS:
     void writeFifo();
     void fifoReadyWrite(int socket);
 
-    void updateState(QMediaPlayer::State);
+    void updateSessionState(QMediaPlayer::State state);
+    void updateMediaStatus();
     void processEOS();
     void setBufferProgress(int progress);
     void applyPendingSeek(bool isSeekable);
@@ -123,11 +129,16 @@ private:
     void closeFifo();
     void playOrPause(QMediaPlayer::State state);
 
+    void pushState();
+    void popAndNotifyState();
+
     bool m_ownStream;
     QGstreamerPlayerSession *m_session;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
-    bool m_blockStatusChangedSignal;
+    QStack<QMediaPlayer::State> m_stateStack;
+    QStack<QMediaPlayer::MediaStatus> m_mediaStatusStack;
+
     int m_bufferProgress;
     bool m_seekToStartPending;
     qint64 m_pendingSeekPosition;

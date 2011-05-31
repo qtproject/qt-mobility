@@ -2638,30 +2638,13 @@ EXPORT_C void CContactDatabase::DeleteContactsL(const CContactIdArray& aContactI
 	}
 
 /**
-Deletes an array of contacts, version 2. If some contact item IDs contained in the array
-are not present in the db, this method doesn't leave and only existing contacts
-are deleted.  
+Not supporte anymore.
 
-@capability WriteUserData 
-@capability ReadUserData 
-
-@param aContactIds An array of contacts to delete.
-
-@leave KErrInUse One or more of the contact items is open. 
-@leave KErrDiskFull The disk does not have enough free space to perform the operation.
+@leave KErrInNotSupported Always. 
 */
-EXPORT_C void CContactDatabase::DeleteContactsV2L(const CContactIdArray& aContactIds)
+EXPORT_C void CContactDatabase::DeleteContactsV2L(const CContactIdArray& /*aContactIds*/)
     {
-    iCntSvr->DeleteContactsL(aContactIds);
-    if (iSortedItems != NULL || iCardTemplateIds != NULL || iGroupIds != NULL)
-        {
-        for (TInt i = 0; i < aContactIds.Count(); i++) 
-            {
-            RemoveFromSortArray(aContactIds[i]);
-            RemoveFromTemplateList(aContactIds[i]);
-            RemoveFromGroupIds(aContactIds[i]);
-            }
-        }
+    User::LeaveIfError(KErrNotSupported);
     }
 
 /**
@@ -3640,6 +3623,23 @@ EXPORT_C void CContactDatabase::DatabaseCommitL(TBool aIsInTransaction)
 		}
 	}
 	
+/**
+Asynchronous commit of an existing transaction, without popping a cleanup item.
+
+@publishedPartner
+@released
+@capability WriteUserData
+
+@param aIsInTransaction ETrue if transaction already started
+@param aStatus Valid status to that will contain the completion value
+*/
+EXPORT_C void CContactDatabase::DatabaseCommit(TBool aIsInTransaction, TRequestStatus*& aStatus)
+    {
+    if (!aIsInTransaction)
+        {
+        iCntSvr->CommitDbTransaction(aStatus);
+        }
+    }
 
 /**
 Force a rollback of the database.

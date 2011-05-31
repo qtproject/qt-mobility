@@ -651,12 +651,12 @@ void S60ImageCaptureSession::processFileName(const QString &fileName)
             fullFileName = KDefaultImagePath;
             if (fileName.at(0) != '\\')
                 fullFileName.append("\\");
-            fullFileName.append(QDir::toNativeSeparators(fileName));
+            fullFileName.append(QDir::toNativeSeparators(QDir::cleanPath(fileName)));
 
         // Absolute FileName
         } else {
             // Extract file name and path from the given location
-            fullFileName = QDir::toNativeSeparators(fileName);
+            fullFileName = QDir::toNativeSeparators(QDir::cleanPath(fileName));
         }
 
         QString fileNameOnly = fullFileName.right(fullFileName.length() - fullFileName.lastIndexOf("\\") - 1);
@@ -849,8 +849,10 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
             scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
 
         TFrameInfo *info = imageDecoder->frameInfo();
-        if (!info)
+        if (!info) {
             setError(KErrGeneral, tr("Preview image creation failed."));
+            return;
+        }
 
         CFbsBitmap *previewBitmap = new (ELeave) CFbsBitmap;
         CleanupStack::PushL(previewBitmap);
@@ -1462,10 +1464,7 @@ bool S60ImageCaptureSession::isExposureModeSupported(QCameraExposure::ExposureMo
             else
                 return false;
         case QCameraExposure::ExposureAuto:
-            if(supportedModes & CCamera::EExposureAuto)
-                return true;
-            else
-                return false;
+            return true; // Always supported
         case QCameraExposure::ExposureNight:
             if(supportedModes & CCamera::EExposureNight)
                 return true;
@@ -1843,8 +1842,10 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
 
     TFrameInfo *info = m_imageDecoder->frameInfo();
-    if (!info)
+    if (!info) {
         setError(KErrGeneral, tr("Preview image creation failed."));
+        return;
+    }
 
     m_previewBitmap = new CFbsBitmap;
     if (!m_previewBitmap) {

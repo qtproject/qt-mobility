@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -58,13 +58,14 @@ public:
     \class QServiceContext
     \inmodule QtServiceFramework
     \ingroup servicefw
-    \brief The QServiceContext class provides context information to 
+    \brief The QServiceContext class provides context information to
     services.
+    \since 1.0
 
     A service context is created by clients and passed on to the service.
-    It enables the opportunity to pass additional context information 
+    It enables the opportunity to pass additional context information
     and errors between services, clients and the service framework.
-    
+
     Clients must implement this abstract class to receive context information.
 
     \sa QServiceManager
@@ -76,9 +77,9 @@ public:
 
     This enum describes the type of context information.
 
-    \value  DisplayContext              The service provides user visible display 
+    \value  DisplayContext              The service provides user visible display
                                         text such as an error message.
-    \value  ScriptContext               The service provides a script which may 
+    \value  ScriptContext               The service provides a script which may
                                         be executed by the client.
     \value  UserDefined                 The first context type that can be used for service
                                         specific context information.
@@ -88,12 +89,13 @@ public:
     \fn void QServiceContext::notify(ContextType type, const QVariant& data) = 0
 
     Services may call this function to notify the service client about service related
-    context information of the given \a type. The contextual information is stored in \a data.  
+    context information of the given \a type. The contextual information is stored in \a data.
+    \since 1.0
 */
 
 
 /*!
-    Constrcuts a service context with the given \a parent.
+    Constructs a service context with the given \a parent.
 */
 QServiceContext::QServiceContext(QObject* parent)
     : QObject(parent)
@@ -110,7 +112,7 @@ QServiceContext::QServiceContext(QObject* parent)
 /*!
     Destroys the service context object.
 */
-QServiceContext::~QServiceContext() 
+QServiceContext::~QServiceContext()
 {
     //ServiceContextUserData deleted by QObject
 }
@@ -121,6 +123,7 @@ QServiceContext::~QServiceContext()
 
     By default, this value is empty but you can change this by calling
     setClientId().
+    \since 1.0
 */
 QString QServiceContext::clientId() const
 {
@@ -129,6 +132,7 @@ QString QServiceContext::clientId() const
 
 /*!
     Sets the \a id of the client using the service.
+    \since 1.0
 */
 void QServiceContext::setClientId(const QString& id)
 {
@@ -141,6 +145,7 @@ void QServiceContext::setClientId(const QString& id)
 
     By default, this value is empty but you can change this by calling
     setClientName(). This string is translated and can be shown to the user.
+    \since 1.0
 */
 QString QServiceContext::clientName() const
 {
@@ -156,6 +161,7 @@ void QServiceContext::setClientName(const QString& name)
     Returns the client data associated to \a key.
 
     \sa setClientData(), resetClientData()
+    \since 1.1
 */
 QVariant QServiceContext::clientData(const QString& key) const
 {
@@ -173,6 +179,7 @@ QVariant QServiceContext::clientData(const QString& key) const
     can be retrieved via \a key.
 
     \sa clientData(), resetClientData()
+    \since 1.1
 */
 void QServiceContext::setClientData(const QString& key, const QVariant& value)
 {
@@ -187,6 +194,7 @@ void QServiceContext::setClientData(const QString& key, const QVariant& value)
     Deletes all client data associated to the service context.
 
     \sa clientData(), setClientData()
+    \since 1.1
 */
 void QServiceContext::resetClientData()
 {

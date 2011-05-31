@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -57,21 +57,22 @@ QTM_BEGIN_NAMESPACE
   \class QContactRelationship
   \brief The QContactRelationship class describes a one-to-one relationship
   between a locally-stored contact and another (possibly remote) contact.
-  
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   \ingroup contacts-main
- 
+
   Each relationship is uniquely identified by the combination of the first
   contact id, second contact id, and the relationship type.
- 
+
   A relationship should not contain a second contact which is the same as
   the first contact.
   Any local contacts which are referenced in the relationship (that is, any
   source contact, or any second contact whose manager URI is left empty or
   whose manager URI references the manager that stores the source contact,
   and in which the relationship will be saved) should exist.
- 
+
   If any of these requirements are not met, validation of the relationship
   may fail when attempting to save the relationship in a QContactManager.
 
@@ -139,6 +140,7 @@ QContactRelationship::~QContactRelationship()
 
 /*!
  * Creates a copy of the \a other relationship
+ * \since 1.0
  */
 QContactRelationship::QContactRelationship(const QContactRelationship& other)
         : d(other.d)
@@ -147,6 +149,7 @@ QContactRelationship::QContactRelationship(const QContactRelationship& other)
 
 /*!
  * Assigns this relationship to be equal to \a other
+ * \since 1.0
  */
 QContactRelationship& QContactRelationship::operator=(const QContactRelationship& other)
 {
@@ -156,6 +159,7 @@ QContactRelationship& QContactRelationship::operator=(const QContactRelationship
 
 /*!
  * Returns true if this relationship is equal to the \a other relationship, otherwise returns false.
+ * \since 1.0
  */
 bool QContactRelationship::operator==(const QContactRelationship &other) const
 {
@@ -170,6 +174,7 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
 
 /*!
  * Returns the hash value for \a key.
+ * \since 1.0
  */
 uint qHash(const QContactRelationship &key)
 {
@@ -189,6 +194,7 @@ QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a rel to the stream \a out.
+ * \since 1.0
  */
 QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
 {
@@ -198,6 +204,7 @@ QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
 
 /*!
  * Reads a contact relationship from stream \a in into \a rel.
+ * \since 1.0
  */
 QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
 {
@@ -222,11 +229,13 @@ QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
 /*!
  * \fn QContactRelationship::operator!=(const QContactRelationship& other) const
  * Returns true if this relationship is not equal to \a other, otherwise returns false.
+ * \since 1.0
  */
 
 /*!
  * Returns the id of the locally-stored contact which has a relationship of the given type with the second contact
  * \sa relationshipType(), second(), setFirst()
+ * \since 1.0
  */
 QContactId QContactRelationship::first() const
 {
@@ -236,6 +245,7 @@ QContactId QContactRelationship::first() const
 /*!
  * Returns the id of the contact with which the first contact has a relationship of the given type
  * \sa relationshipType(), first()
+ * \since 1.0
  */
 QContactId QContactRelationship::second() const
 {
@@ -245,6 +255,7 @@ QContactId QContactRelationship::second() const
 /*!
  * Returns the type of relationship which the source contact has with the destination contacts
  * \sa setRelationshipType()
+ * \since 1.0
  */
 QString QContactRelationship::relationshipType() const
 {
@@ -255,6 +266,7 @@ QString QContactRelationship::relationshipType() const
  * Sets the id of the first contact in the relationship to \a firstId.  This contact
  * must be stored in the manager in which the relationship is stored, and has
  * a relationship of the specified type with the second contact.
+ * \since 1.0
  * \sa first()
  */
 void QContactRelationship::setFirst(const QContactId& firstId)
@@ -265,6 +277,7 @@ void QContactRelationship::setFirst(const QContactId& firstId)
 /*!
  * Sets the second contact in the relationship to \a secondId.  The first contact
  * has a relationship of the specified type with this contact.
+ * \since 1.0
  * \sa second()
  */
 void QContactRelationship::setSecond(const QContactId& secondId)
@@ -275,6 +288,7 @@ void QContactRelationship::setSecond(const QContactId& secondId)
 /*!
  * Sets the type of relationship that the source contact has with the destination contacts
  * to \a relationshipType.
+ * \since 1.0
  * \sa relationshipType()
  */
 void QContactRelationship::setRelationshipType(const QString& relationshipType)

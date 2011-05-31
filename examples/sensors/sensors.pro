@@ -22,5 +22,6 @@ SUBDIRS +=\
     show_rotation\
     show_tap\
     show_light\
-    show_gyroscope
+    show_gyroscope\
+    show_reflectance
 

@@ -450,7 +450,7 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
 
         if (m_viewfinderNativeType == EDirectScreenViewFinder) {
 
-            if (RWindow *window = m_viewfinderDisplay->windowHandle()) {
+            if (RWindow *window = m_viewfinderDisplay ? m_viewfinderDisplay->windowHandle() : 0) {
                 m_window = window;
             } else {
                 emit error(QCamera::CameraError, tr("Requesting window for viewfinder failed."));

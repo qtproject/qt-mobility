@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -55,6 +55,7 @@ QTM_USE_NAMESPACE
 
   \ingroup versit
   \inmodule QtVersit
+  \since 1.1
 
   This class is used to convert a list of \l {QOrganizerItem}{QOrganizerItems} (which may be stored
   in a QOrganizerManager) into a QVersitDocument (which may be written to an I/O device using
@@ -95,7 +96,7 @@ QTM_USE_NAMESPACE
   fields in the \a detail that were considered by the QVersitOrganizerExporter or another handler in
   processing the detail.  \a document holds the state of the document before the detail was
   processed by the exporter.
-  
+
   \a toBeRemoved and \a toBeAdded are initially filled with a list of properties that the exporter
   will remove from and add to the document.  These lists can be modified (by removing, modifying or
   adding properties) by the handler to control the changes that will actually be made to the
@@ -197,9 +198,10 @@ QVersitDocument QVersitOrganizerExporter::document() const
 }
 
 /*!
- * Returns the map of errors encountered in the most recent call to exportItems().  The key is
+ * Returns the map of errors encountered in the most recent call to exportItems(). The key is
  * the index into the input list of organizer items and the value is the error that occurred on that
- * item.
+ * item. If errors occur, export does not generate EmptyContactError or NoNameError errors but
+ * just succeeds in creating the empty, albeit invalid, vCard. QVersitContactExporter never fails.
  *
  * \sa exportItems()
  */

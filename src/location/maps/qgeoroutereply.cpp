@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     of QGeoRoutingManager.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -106,6 +107,7 @@ QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
 
 /*!
     Constructs a route reply with a given \a error and \a errorString and the specified \a parent.
+    \since 1.1
 */
 QGeoRouteReply::QGeoRouteReply(Error error, const QString &errorString, QObject *parent)
     : QObject(parent),
@@ -128,6 +130,7 @@ QGeoRouteReply::~QGeoRouteReply()
     If the operation completed successfully, QGeoRouteReply::setRoutes() should
     be called before this function. If an error occurred,
     QGeoRouteReply::setError() should be used instead.
+    \since 1.1
 */
 void QGeoRouteReply::setFinished(bool finished)
 {
@@ -139,6 +142,7 @@ void QGeoRouteReply::setFinished(bool finished)
 /*!
     Return true if the operation completed successfully or encountered an
     error which cause the operation to come to a halt.
+    \since 1.1
 */
 bool QGeoRouteReply::isFinished() const
 {
@@ -151,6 +155,7 @@ bool QGeoRouteReply::isFinished() const
 
     This wil also cause error() and finished() signals to be emitted, in that
     order.
+    \since 1.1
 */
 void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorString)
 {
@@ -164,6 +169,7 @@ void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorS
     Returns the error state of this reply.
 
     If the result is QGeoRouteReply::NoError then no error has occurred.
+    \since 1.1
 */
 QGeoRouteReply::Error QGeoRouteReply::error() const
 {
@@ -179,6 +185,7 @@ QGeoRouteReply::Error QGeoRouteReply::error() const
 
     To determine whether an error has occurred, check to see if
     QGeoRouteReply::error() is equal to QGeoRouteReply::NoError.
+    \since 1.1
 */
 QString QGeoRouteReply::errorString() const
 {
@@ -187,6 +194,7 @@ QString QGeoRouteReply::errorString() const
 
 /*!
     Returns the route request which specified the route.
+    \since 1.1
 */
 QGeoRouteRequest QGeoRouteReply::request() const
 {
@@ -195,6 +203,7 @@ QGeoRouteRequest QGeoRouteReply::request() const
 
 /*!
     Returns the list of routes which were requested.
+    \since 1.1
 */
 QList<QGeoRoute> QGeoRouteReply::routes() const
 {
@@ -203,6 +212,7 @@ QList<QGeoRoute> QGeoRouteReply::routes() const
 
 /*!
     Sets the list of routes in the reply to \a routes.
+    \since 1.1
 */
 void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 {
@@ -213,6 +223,7 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
     Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
+    \since 1.1
 */
 void QGeoRouteReply::abort()
 {
@@ -233,6 +244,7 @@ void QGeoRouteReply::abort()
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 /*!
     \fn void QGeoRouteReply::error(QGeoRouteReply::Error error, const QString &errorString)
@@ -247,6 +259,7 @@ void QGeoRouteReply::abort()
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 
 /*******************************************************************************

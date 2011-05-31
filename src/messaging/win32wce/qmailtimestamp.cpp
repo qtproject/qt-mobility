@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -153,7 +153,7 @@ QMailTimeStampPrivate::QMailTimeStampPrivate(const QString& timeText)
             year = value;
             if ( year < 100 ) {
                 year += ( year <= 49 ? 2000 : 1900 );
-            } 
+            }
             else if ( year < 1000 ) {
                 year += 1900;
             }
@@ -172,10 +172,10 @@ QMailTimeStampPrivate::QMailTimeStampPrivate(const QString& timeText)
         QTime timeComponent;
 
         QTime parsedTime;
-        if ( timeStr.length() == 8 ) { 
+        if ( timeStr.length() == 8 ) {
             parsedTime = QTime::fromString( timeStr, "hh:mm:ss" );
         }
-        else if ( timeStr.length() == 5 ) { 
+        else if ( timeStr.length() == 5 ) {
             // Is this legal?  Either way, it seems desirable for robustness...
             parsedTime = QTime::fromString( timeStr, "hh:mm" );
         }
@@ -228,7 +228,7 @@ QMailTimeStampPrivate::QMailTimeStampPrivate(const QDateTime& dateTime)
 }
 
 QMailTimeStampPrivate::QMailTimeStampPrivate(const QMailTimeStampPrivate& other)
-    : QSharedData(other) 
+    : QSharedData(other)
 {
     this->operator=(other);
 }
@@ -339,10 +339,12 @@ bool QMailTimeStampPrivate::operator>= (const QMailTimeStampPrivate& other) cons
 
     \brief The QMailTimeStamp class manages message time stamps.
     \ingroup messaginglibrary
+    \since 1.1
+
 
     QMailTimeStamp provides functions for creating and manipulating the time stamps of messages.
-    QMailTimeStamp can be created from time stamp strings, or from QDateTime objects.  The 
-    time stamp information can be extracted in UTC time, local time, or as a formatted 
+    QMailTimeStamp can be created from time stamp strings, or from QDateTime objects.  The
+    time stamp information can be extracted in UTC time, local time, or as a formatted
     string.
 
     QMailTimeStamp maintains the timezone information of a time stamp, so it can be used to
@@ -353,7 +355,7 @@ bool QMailTimeStampPrivate::operator>= (const QMailTimeStampPrivate& other) cons
 
 /*!
     \enum QMailTimeStamp::OutputFormat
-    
+
     This enum type is used to select a format for timestamp output.
 
     \value Rfc2822  The format used in SMTP message format; example: "Wed, 17 May 2006 20:45:00 +0100".

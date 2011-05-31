@@ -1,0 +1,407 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/contacts
+
+function startTestApp()
+{
+    startApplication("samplephonebook");
+}
+
+function selectContactList()
+{
+    if (!runAsManualTest()){
+        var contactList = findWidget( { className: "QListWidget" } );
+        mouseClick(contactList[0]);
+    }else{
+        prompt("Select the contact list");
+    }
+}
+
+function createFilter(contactName)
+{
+
+    if (!runAsManualTest()){
+         if (checkOS("maemo")){
+             skip("Maemo menus not supported yet", SkipAll);
+             /* mouseClick(400,10); // raise menu manually
+                 var maemoMenuBar = findByProperty({ className : "QMaemo5ApplicationMenu" });
+                 print("Maemo menu = " + maemoMenuBar);
+                 print("filterCheck:" + activeWidgetInfo());
+                 */
+         }
+    }
+
+    if (!runAsManualTest()){
+      //print("Labels are" + getLabels());
+      //print("filterCheck widgetInfo:" + activeWidgetInfo());
+      var menuItemName = "Apply &Filter...";
+      var menuItem = contactsMenuItem(menuItemName);
+      verify(menuItem != undefined, "No such \"" + menuItemName + "\" menu");
+      select(menuItem, menuBar());
+    }else{
+      prompt("Select menu entry \'Apply Filter\'");
+    }
+
+    enter(contactName, "Name");
+    select("&Filter");
+}
+
+
+function clearFilter()
+{
+    if (!runAsManualTest()){
+       if (checkOS("maemo")){
+           skip("Maemo menus not supported yet", SkipAll);
+       }else{
+           select(contactsMenuItem("&Clear Filter"), menuBar());
+       }
+   }else {
+       prompt('Select \'Clear Filter\' menu entry');
+    }
+}
+
+// helper function re :contact actions may be in a separate "Contacts menu"
+function contactsMenuItem(menuText)
+{
+    var menuEntries = getValue(menuBar()).toString().split("\n");
+    var index = 0;
+    var separateMenu = false; // optimize number of calls to indexOf
+
+    for (index = 0; index < menuEntries.length; index++){
+        if (!separateMenu && menuEntries[index].indexOf("&Contacts") >= 0){
+            separateMenu = true;
+            menuText = "&Contacts/" + menuText;
+        }
+        if (menuEntries[index] == menuText)
+            return menuText;
+    }
+
+    return undefined;
+}
+
+// if were are adding a new contact the oldName is empty
+// otherwise find the oldName then edit contact details
+function updateContact(name, phone, email, address, avatar, oldName) {
+    if ((oldName == undefined)  || (oldName == "")){
+        select("Add");        
+    }else{
+        if (!runAsManualTest()){
+            var contactList = findWidget( { className: "QListWidget" } );
+            select(oldName, contactList);
+        }else{
+            prompt("Select contact named:\'" + oldName + "\'");
+        }
+        select("Edit");
+    }
+
+    enter(name, "Name");
+    // add/set all extra details if value for phone is specified
+    if ((phone != undefined) && (phone != "")){
+        enter(phone, "Phone");
+        enter(email, "Email");
+        enter(address, "Address");
+        /* TODO support setting the avatar
+        if (!runAsManualTest()){
+            var selectPictureBtn = findByProperty( { className: "QPushButton", text : "Set picture" });
+            select(selectPictureBtn[0]);
+        }else {
+            select("Set picture");
+        }
+
+        if (!runAsManualTest()){
+            // try and find the "Name:" label
+            var labels = getLabels();
+            for (var index=0; index < labels.length; index++){
+                if (labels[index].indexOf("ame")){
+                    enter(avatar,labels[index]);
+                    // need to accept entry due to autocompletion
+                    keyClick(Qt.Key_Enter);
+                    break;
+                }
+            }
+            // try and find the "Open:" button
+            for (var index=0; index < labels.length; index++){
+                if (labels[index].indexOf("pen")){
+                    select(labels[index]);
+                    break;
+                }
+            }
+        }else{
+            enter(avatar, "File name:");
+        }
+        */
+    }
+
+    select("Save");
+    if (!runAsManualTest())
+        waitForSave();
+}
+
+function deleteContact(name)
+{
+    selectContactList();
+    select(name);
+    select("Delete");
+}
+
+function checkContactExists(name, exists)
+{
+    if (!runAsManualTest()){
+        var contactWidget = findWidget( { className: "QListWidget" } );
+        var contactList = getValue(contactWidget);
+        if (exists)
+            verify(contactList.indexOf(name) != -1, "Contact was missing:" + name);
+        else
+            verify(contactList.indexOf(name) == -1, "Contact was found expectedly:" + name);
+    }else{
+        if (exists)
+            prompt("Verify that Contact exists:\'" + name + "\'");
+        else
+            prompt("Verify that Contact is missing:\'" + name + "\'");
+    }
+}
+
+// Returns true if contact named,name, can be found in contact list
+function checkContactDetails(name, phone, email, address, avatar){
+    if (!runAsManualTest()){
+        var contactList = findWidget( { className: "QListWidget" } );
+        select(name, contactList);
+    }else{
+        prompt("Select in list Contact named:\'" + name + "\'");
+    }
+    select("Edit");
+    // check all values if a phone value is provided
+    if ((phone != undefined) && (phone != "")){
+        // make verify and prompt messages as clear as possible
+        var phonePrompt = "";
+        var emailPrompt = "";
+        var addressPrompt = "";
+        if (!runAsManualTest()){
+            phonePrompt = " instead has Phone of:" + getText("Phone");
+            emailPrompt = " instead has Email of:" + getText("Email");
+            addressPrompt = " instead has Address of:" + getText("Phone");
+        }
+
+        verify(getText("Phone") == phone, "Contact " + name + " is expected to have Phone of:\'" + phone + "\'" + phonePrompt);
+        verify(getText("Email") == email, "Contact " + name + " is expected to have Email of:\'" + email + "\'" +emailPrompt);
+        verify(getText("Address")== address, "Contact " + name + " is expected to have Address of:\'" + address + "\'" + addressPrompt);
+    }
+
+    select("Cancel");
+}
+
+
+// not ideal, there is need to programaticly check that 
+//  the contact details dialog is not longer showing, ie no "Save" button
+function waitForSave(){
+    for (var loop=0; loop < 5; loop++){
+        if (getLabels().contains("&Save"))
+            wait(1000); // wait to try again
+        else
+            break;
+    }
+    
+    // should not happen
+    verify(!getLabels().contains("&Save"));
+}
+
+testcase = {
+
+
+    initTestCase: function()
+    {
+/*
+        startTestApp();
+
+        if (!runAsManualTest()){
+            var contactList = findWidget( { className: "QListWidget" } );
+            verify(getValue(contactList).length == 0, "There must be zero contacts prior to running test, there are the following contacts:" + getValue(contactList));
+        }else{
+            prompt("Verify that no contacts are present");
+        }
+*/
+    },
+
+    cleanup: function()
+    {
+        // While there are names, delete the names from the list
+        if (!runAsManualTest()){
+            /* TODO delete contact added by test cases
+            // make use we remove all contacts that has been added
+            startTestApp();
+
+            var contactWidget = findWidget( { className: "QListWidget" } );
+            var contactList = getValue(contactWidget);
+            // delete all contact that contain "Name"
+            for (var index = 0; index < contactList.length; index){
+                if (contactList[index].indexOf("Name") != -1)
+                    deleteContact(contactList[index]);
+            }
+            */
+        }else{
+            prompt("Delete all Contacts whos name contains: \'Name\'");
+        }
+    },
+
+    addContact_data :  {
+        ContactSet1: [ [
+                {name:"Name1", phone:"111111", email:"Email1@com", address:"Address1", avatar:"testdata/avatar1.png"},
+                {name:"Name2", phone:"222222", email:"Email2@com", address:"Address2", avatar:"testdata/avatar2.png"},
+                {name:"Name3", phone:"333333", email:"Email3@com", address:"Address3", avatar:"testdata/avatar3.png"}
+        ] ]
+    },
+
+    /* Requirement: Add some contacts */
+    addContact: function(contactSet)
+    {
+        startTestApp();
+        for (var index = 0; index < contactSet.length; index++){
+            var contact = contactSet[index];
+            // create new contact
+            updateContact(contact.name, contact.phone,contact.email, contact.avatar, "");
+            checkContactDetails(contact.name, contact.phone,contact.email, contact.avatar);
+        }
+    },
+
+    updateContactDetails_data :  {
+        ContactSet1: [ [
+                {name:"Name1", phone:"111111", email:"Email1@com", address:"Address1", avatar:"testdata/avatar1.png"},
+                {name:"Name2", phone:"222222", email:"Email2@com", address:"Address2", avatar:"testdata/avatar2.png"},
+                {name:"Name3", phone:"333333", email:"Email3@com", address:"Address3", avatar:"testdata/avatar3.png"}
+        ] ]
+    },
+
+    /* Requirement: Verify the contact details and confirm that it can be updated */
+    /* verify added contact details and update contact name */
+    updateContactDetails : function(contactSet)
+    {
+        startTestApp();
+        for (var index = 0; index < contactSet.length; index++){
+            var contact = contactSet[index];
+            var newname = contact.name + '9';
+            var newphone = contact.phone + '9';
+            var newaddress = contact.address + '9';
+            var newemail = contact.email + '9';
+            // create new contact
+            updateContact(contact.name, contact.phone, contact.email, contact.address, contact.avatar, "");
+            // edit its values and verify correctness
+            updateContact(newname, newphone, newemail, newaddress, contact.avatar, contact.name);
+            checkContactDetails(newname, newphone, newemail, newaddress, contact.avatar);
+        }
+    },
+
+    filterCheck_data : {
+        Name1 : ["NameA", true, "Full contact name match"],
+        Name2 : ["NonExistant", false, "Non-existant contact name"]
+
+    },
+
+    filterCheck_extraData: {
+        Names: ["NameA", "NameB"]
+    },
+
+    /* Requirement : Verify the correct match of contacts against a simple filter */
+    /* Test the "Apply &Filter" function */
+    filterCheck : function(name, exists, message) {
+        startTestApp();
+        // add some contacts for this tests use
+        var extraNames = testcase.filterCheck_extraData['Names'];
+        updateContact(extraNames[0]);
+        updateContact(extraNames[1]);
+        createFilter(name);
+        checkContactExists(name, exists);
+    },
+
+
+    clearFilterCheck_data : {
+        Name1: ["NameA"]
+    },
+
+    clearFilterCheck_extraData: {
+        Names: ["NameC", "NameD"]
+    },
+
+    /* Test the "Clear Filter" function */
+    clearFilterCheck : function(nameFilter){
+        startTestApp();
+        // add some contacts for this tests use
+        var extraNames = testcase.clearFilterCheck_extraData['Names'];
+        updateContact(extraNames[0]);
+        updateContact(extraNames[1]);
+        // Note that the filter will not match any of these contacts
+        createFilter(nameFilter);
+        checkContactExists(extraNames[0], false);
+        checkContactExists(extraNames[1], false);
+        // Remove filter and now the contacts should be seen
+        clearFilter();
+        checkContactExists(extraNames[0], true);
+        checkContactExists(extraNames[1], true);
+    },
+
+
+    deleteContact_data: {
+        Name1 : ["NameE", "NameG", "NameH"]
+    },
+
+    /* Requirement: Verify that a contact can be deleted */
+    deleteContact : function(name1, name2, name3){
+        startTestApp();
+        // add some contacts for this tests use
+        updateContact(name1);
+        updateContact(name2);
+        updateContact(name3);
+        // delete contacts in different order to creation
+        deleteContact(name2);
+        deleteContact(name1);
+        deleteContact(name3);
+
+        if (!runAsManualTest()){
+            wait(5000); // wait long enough for contact to be deleted
+            checkContactExists(name1, false);
+            checkContactExists(name2, false);
+            checkContactExists(name3, false);
+        }else{
+            prompt("Verify that Contacts have been deleted:" + name1 + ", " + name2 + ", " + name3);
+        }
+    }
+
+}

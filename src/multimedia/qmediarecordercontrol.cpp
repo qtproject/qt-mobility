@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -48,8 +48,9 @@ QT_BEGIN_NAMESPACE
     \class QMediaRecorderControl
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
-    
+
     \brief The QMediaRecorderControl class provides access to the recording
     functionality of a QMediaService.
 
@@ -100,6 +101,7 @@ QMediaRecorderControl::~QMediaRecorderControl()
     \fn QUrl QMediaRecorderControl::outputLocation() const
 
     Returns the current output location being used.
+    \since 1.0
 */
 
 /*!
@@ -111,36 +113,42 @@ QMediaRecorderControl::~QMediaRecorderControl()
     The \a location can be relative or empty;
     in this case the service should use the system specific place and file naming scheme.
     After recording has stated, QMediaRecorderControl::outputLocation() should return the actual output location.
+    \since 1.0
 */
 
 /*!
     \fn int QMediaRecorderControl::state() const
 
     Return the current recording state.
+    \since 1.0
 */
 
 /*!
     \fn qint64 QMediaRecorderControl::duration() const
 
     Return the current duration in milliseconds.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaRecorderControl::record()
 
     Start recording.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaRecorderControl::pause()
 
     Pause recording.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaRecorderControl::stop()
 
     Stop recording.
+    \since 1.0
 */
 
 /*!
@@ -148,18 +156,21 @@ QMediaRecorderControl::~QMediaRecorderControl()
 
     Commits the encoder settings and performs pre-initialization to reduce delays when recording
     is started.
+    \since 1.0
 */
 
 /*!
     \fn bool QMediaRecorderControl::isMuted() const
 
     Returns true if the recorder is muted, and false if it is not.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaRecorderControl::setMuted(bool muted)
 
     Sets the \a muted state of a media recorder.
+    \since 1.0
 */
 
 
@@ -167,6 +178,7 @@ QMediaRecorderControl::~QMediaRecorderControl()
     \fn void QMediaRecorderControl::stateChanged(QMediaRecorder::State state)
 
     Signals that the \a state of a media recorder has changed.
+    \since 1.0
 */
 
 /*!
@@ -175,18 +187,21 @@ QMediaRecorderControl::~QMediaRecorderControl()
     Signals that the \a duration of the recorded media has changed.
 
     This only emitted when there is a discontinuous change in the duration such as being reset to 0.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaRecorderControl::mutedChanged(bool muted)
 
     Signals that the \a muted state of a media recorder has changed.
+    \since 1.0
 */
 
 /*!
     \fn void QMediaRecorderControl::error(int error, const QString &errorString)
 
     Signals that an \a error has occurred.  The \a errorString describes the error.
+    \since 1.0
 */
 
 #include "moc_qmediarecordercontrol.cpp"

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 
 #ifndef QSYSTEMBATTERYINFO_H
 #define QSYSTEMBATTERYINFO_H
@@ -60,11 +59,9 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
     Q_PROPERTY(int remainingCapacity READ remainingCapacity NOTIFY remainingCapacityChanged)
     Q_PROPERTY(int voltage READ voltage CONSTANT)
     Q_PROPERTY(int remainingChargingTime READ remainingChargingTime NOTIFY remainingChargingTimeChanged)
-
     Q_PROPERTY(int currentFlow READ currentFlow  NOTIFY currentFlowChanged)
     Q_PROPERTY(int remainingCapacityBars READ remainingCapacityBars NOTIFY remainingCapacityBarsChanged)
     Q_PROPERTY(int maxBars READ maxBars CONSTANT)
-
     Q_PROPERTY(ChargerType chargerType READ chargerType NOTIFY chargerTypeChanged)
     Q_PROPERTY(ChargingState chargingState READ chargingState NOTIFY chargingStateChanged)
     Q_PROPERTY(EnergyUnit energyMeasurementUnit READ energyMeasurementUnit CONSTANT)
@@ -74,7 +71,6 @@ class Q_SYSINFO_EXPORT QSystemBatteryInfo : public QObject
     Q_ENUMS(ChargerType)
     Q_ENUMS(ChargingState)
     Q_ENUMS(EnergyUnit)
-
 
 public:
     explicit QSystemBatteryInfo(QObject *parent = 0);
@@ -109,12 +105,11 @@ public:
     enum EnergyUnit {
         UnitUnknown = -1,
         UnitmAh,
-        UnitmWh,
+        UnitmWh
     };
 
     QSystemBatteryInfo::ChargerType chargerType() const;
     QSystemBatteryInfo::ChargingState chargingState() const;
-
 
     int nominalCapacity() const;
     int remainingCapacityPercent() const;
@@ -130,16 +125,16 @@ public:
     QSystemBatteryInfo::EnergyUnit energyMeasurementUnit() const;
 
 Q_SIGNALS:
-    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus batteryStatus);
+    void batteryStatusChanged(QSystemBatteryInfo::BatteryStatus status);
 
-    void chargingStateChanged(QSystemBatteryInfo::ChargingState chargingState);
-    void chargerTypeChanged(QSystemBatteryInfo::ChargerType chargerType);
+    void chargingStateChanged(QSystemBatteryInfo::ChargingState state);
+    void chargerTypeChanged(QSystemBatteryInfo::ChargerType type);
 
-    void nominalCapacityChanged(int cap);
-    void remainingCapacityPercentChanged(int level);
-    void remainingCapacityChanged(int level);
+    void nominalCapacityChanged(int capacity);
+    void remainingCapacityPercentChanged(int capacity);
+    void remainingCapacityChanged(int capacity);
 
-    void currentFlowChanged(int level);
+    void currentFlowChanged(int flow);
     void remainingCapacityBarsChanged(int bars);
     void remainingChargingTimeChanged(int time);
 
@@ -149,9 +144,9 @@ private:
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
-
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
+
 #endif // QSYSTEMBATTERYINFO_H

@@ -51,3 +51,4 @@ symbian {
                         WriteDeviceData
 }
 
+maemo*:CONFIG += insignificant_test

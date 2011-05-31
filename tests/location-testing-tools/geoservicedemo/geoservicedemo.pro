@@ -46,3 +46,5 @@ symbian: {
                         ReadDeviceData \
                         WriteDeviceData
 }
+
+maemo*:CONFIG += manual_test

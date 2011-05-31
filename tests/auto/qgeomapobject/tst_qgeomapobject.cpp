@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -47,6 +47,7 @@
 #include "qgeomapcustomobject.h"
 #include "qgraphicsgeomap.h"
 #include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QPointer>
@@ -83,6 +84,9 @@ private slots:
     void drawsExactEllipse();
     void pixelChildren();
     void bilinearChildren();
+    void offset_data();
+    void offset();
+    void boundingBox();
 
     void autoUpdate();
 
@@ -226,7 +230,7 @@ void tst_QGeoMapObject::findsPixelEllipse()
     }
 
     testPoints.clear();
-    testPoints << QPointF(150, 161) << QPointF(139, 150) << QPointF(158, 158);
+    testPoints << QPointF(150, 161) << QPointF(139, 150) << QPointF(159, 159);
 
     foreach (QPointF tp, testPoints) {
         list = m_helper->map()->mapObjectsAtScreenPosition(tp);
@@ -554,6 +558,157 @@ static struct Cross findCross(QGraphicsGeoMap *map)
     }
 
     return result;
+}
+
+void tst_QGeoMapObject::offset_data()
+{
+    QTest::addColumn<int>("width");
+    QTest::addColumn<int>("height");
+    QTest::addColumn<int>("offsetX");
+    QTest::addColumn<int>("offsetY");
+
+    QTest::newRow("100x100 + -50,-50") << 100 << 100 << -50 << -50;
+    QTest::newRow("100x100 + -50,0") << 100 << 100 << -50 << 0;
+    QTest::newRow("100x100 + -50,50") << 100 << 100 << -50 << 50;
+    QTest::newRow("100x100 + 0,-50") << 100 << 100 << 0 << -50;
+    QTest::newRow("100x100 + 0,0") << 100 << 100 << 0 << 0;
+    QTest::newRow("100x100 + 0,50") << 100 << 100 << 0 << 50;
+    QTest::newRow("100x100 + 50,-50") << 100 << 100 << 50 << -50;
+    QTest::newRow("100x100 + 50,0") << 100 << 100 << 50 << 0;
+    QTest::newRow("100x100 + 50,50") << 100 << 100 << 50 << 50;
+
+    QTest::newRow("200x200 + -50,-50") << 200 << 200 << -50 << -50;
+    QTest::newRow("200x200 + -50,0") << 200 << 200 << -50 << 0;
+    QTest::newRow("200x200 + -50,50") << 200 << 200 << -50 << 50;
+    QTest::newRow("200x200 + 0,-50") << 200 << 200 << 0 << -50;
+    QTest::newRow("200x200 + 0,0") << 200 << 200 << 0 << 0;
+    QTest::newRow("200x200 + 0,50") << 200 << 200 << 0 << 50;
+    QTest::newRow("200x200 + 50,-50") << 200 << 200 << 50 << -50;
+    QTest::newRow("200x200 + 50,0") << 200 << 200 << 50 << 0;
+    QTest::newRow("200x200 + 50,50") << 200 << 200 << 50 << 50;
+}
+
+void tst_QGeoMapObject::offset()
+{
+    QFETCH(int, width);
+    QFETCH(int, height);
+    QFETCH(int, offsetX);
+    QFETCH(int, offsetY);
+
+    QGeoCoordinate center(10.0, 10.0, 0.0);
+    QPoint offset(offsetX, offsetY);
+
+    QGeoMapCustomObject *object = new QGeoMapCustomObject;
+
+    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+    el->setRect(0, 0, width, height);
+    el->setBrush(QBrush(Qt::black));
+
+    object->setGraphicsItem(el);
+    object->setOrigin(center);
+    object->setOffset(offset);
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(center);
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QPointF point = map->coordinateToScreenPosition(center);
+
+    QPointF centerPoint = point;
+    centerPoint += QPointF(offsetX + width / 2.0, offsetY + height / 2.0);
+
+    QList<QPointF> inner;
+    QList<QPointF> outer;
+
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, -3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, 0.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, 0.0);
+
+    inner << centerPoint + QPointF(-1.0 * width / 4.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(-3.0 * width / 4.0, 3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(0.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(0.0, -3.0 * height / 4.0);
+
+    inner << centerPoint;
+
+    inner << centerPoint + QPointF(0.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(0.0, 3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, -1.0 * height / 4.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, -3.0 * height / 4.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, 0.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, 0.0);
+
+    inner << centerPoint + QPointF(1.0 * width / 4.0, 1.0 * height / 4.0);
+    outer << centerPoint + QPointF(3.0 * width / 4.0, 3.0 * height / 4.0);
+
+    for (int i = 0; i < inner.size(); ++i)
+        QCOMPARE(map->mapObjectsAtScreenPosition(inner.at(i)).size(), 1);
+
+    for (int i = 0; i < outer.size(); ++i)
+        QCOMPARE(map->mapObjectsAtScreenPosition(outer.at(i)).size(), 0);
+}
+
+void tst_QGeoMapObject::boundingBox()
+{
+    int objectWidth = 50;
+    int objectHeight = 20;
+    int offsetX = -1 * objectWidth / 2;
+    int offsetY = -1 * objectHeight / 2;
+
+    QGeoCoordinate center(0.0, 0.0, 0.0);
+
+    QGeoMapCustomObject *object = new QGeoMapCustomObject;
+
+    QGraphicsEllipseItem *el = new QGraphicsEllipseItem;
+    el->setRect(0, 0, objectWidth, objectHeight);
+    el->setBrush(QBrush(Qt::black));
+
+    object->setGraphicsItem(el);
+    object->setOrigin(center);
+    object->setOffset(QPoint(offsetX, offsetY));
+
+    QGraphicsGeoMap *map = m_helper->map();
+    map->setCenter(center);
+    map->addMapObject(object);
+
+    QList<QGeoMapObject *> list = map->mapObjects();
+
+    QVERIFY(list.at(0)==object);
+
+    QVERIFY2(object->boundingBox().width()>0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()>0,"no bounding box");
+
+    double width = object->boundingBox().width();
+    double height = object->boundingBox().height();
+
+    double top = object->boundingBox().topLeft().latitude();
+    double bottom = object->boundingBox().bottomRight().latitude();
+
+    QVERIFY(object->boundingBox().topLeft().longitude() < object->boundingBox().bottomRight().longitude());
+
+    QGeoCoordinate dateline(0.0, 180.0, 0.0);
+
+    object->setOrigin(dateline);
+
+    QVERIFY2(object->boundingBox().width()!=0,"no bounding box");
+    QVERIFY2(object->boundingBox().height()!=0,"no bounding box");
+
+    QCOMPARE(object->boundingBox().width(), width);
+    QCOMPARE(object->boundingBox().height(), height);
+
+    QVERIFY(object->boundingBox().topLeft().latitude() == top);
+    QVERIFY(object->boundingBox().bottomRight().latitude() == bottom);
+
+    QVERIFY(object->boundingBox().topLeft().longitude() > object->boundingBox().bottomRight().longitude());
 }
 
 #define EXF_NO_AUTOUPDATE   QEXPECT_FAIL("", "Auto-update not implemented yet", Continue)

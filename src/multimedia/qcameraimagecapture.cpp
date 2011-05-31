@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -60,8 +60,9 @@ QT_BEGIN_NAMESPACE
     \class QCameraImageCapture
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.1
 
-    
+
     \brief The QCameraImageCapture class is used for the recording of media content.
 
     The QCameraImageCapture class is a high level images recording class.
@@ -172,6 +173,7 @@ QCameraImageCapture::~QCameraImageCapture()
 
 /*!
   \reimp
+  \since 1.1
 */
 QMediaObject *QCameraImageCapture::mediaObject() const
 {
@@ -180,6 +182,7 @@ QMediaObject *QCameraImageCapture::mediaObject() const
 
 /*!
   \reimp
+  \since 1.1
 */
 bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
 {
@@ -283,6 +286,7 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
 
 /*!
     Returns true if the images capture service ready to use.
+    \since 1.1
 */
 bool QCameraImageCapture::isAvailable() const
 {
@@ -294,6 +298,7 @@ bool QCameraImageCapture::isAvailable() const
 
 /*!
     Returns the availability error code.
+    \since 1.1
 */
 QtMultimediaKit::AvailabilityError QCameraImageCapture::availabilityError() const
 {
@@ -306,6 +311,7 @@ QtMultimediaKit::AvailabilityError QCameraImageCapture::availabilityError() cons
 /*!
     Returns the current error state.
 
+    \since 1.1
     \sa errorString()
 */
 
@@ -317,6 +323,7 @@ QCameraImageCapture::Error QCameraImageCapture::error() const
 /*!
     Returns a string describing the current error state.
 
+    \since 1.1
     \sa error()
 */
 
@@ -328,6 +335,7 @@ QString QCameraImageCapture::errorString() const
 
 /*!
     Returns a list of supported image codecs.
+    \since 1.1
 */
 QStringList QCameraImageCapture::supportedImageCodecs() const
 {
@@ -337,6 +345,7 @@ QStringList QCameraImageCapture::supportedImageCodecs() const
 
 /*!
     Returns a description of an image \a codec.
+    \since 1.1
 */
 QString QCameraImageCapture::imageCodecDescription(const QString &codec) const
 {
@@ -353,6 +362,7 @@ QString QCameraImageCapture::imageCodecDescription(const QString &codec) const
     If the encoder supports arbitrary resolutions within the supported range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.
 
+    \since 1.1
     \sa QImageEncoderSettings::resolution()
 */
 QList<QSize> QCameraImageCapture::supportedResolutions(const QImageEncoderSettings &settings, bool *continuous) const
@@ -367,6 +377,7 @@ QList<QSize> QCameraImageCapture::supportedResolutions(const QImageEncoderSettin
 /*!
     Returns the image encoder settings being used.
 
+    \since 1.1
     \sa setEncodingSettings()
 */
 
@@ -377,11 +388,12 @@ QImageEncoderSettings QCameraImageCapture::encodingSettings() const
 }
 
 /*!
-    Sets the image encodeing \a settings.
+    Sets the image encoding \a settings.
 
     If some parameters are not specified, or null settings are passed,
     the encoder choose the default encoding parameters.
 
+    \since 1.1
     \sa encodingSettings()
 */
 
@@ -405,6 +417,7 @@ void QCameraImageCapture::setEncodingSettings(const QImageEncoderSettings &setti
 /*!
     Returns the list of supported buffer image capture formats.
 
+    \since 1.1
     \sa bufferFormat() setBufferFormat()
 */
 QList<QVideoFrame::PixelFormat> QCameraImageCapture::supportedBufferFormats() const
@@ -418,6 +431,7 @@ QList<QVideoFrame::PixelFormat> QCameraImageCapture::supportedBufferFormats() co
 /*!
     Returns the buffer image capture format being used.
 
+    \since 1.2
     \sa supportedBufferCaptureFormats() setBufferCaptureFormat()
 */
 QVideoFrame::PixelFormat QCameraImageCapture::bufferFormat() const
@@ -431,6 +445,7 @@ QVideoFrame::PixelFormat QCameraImageCapture::bufferFormat() const
 /*!
     Sets the buffer image capture format to be used.
 
+    \since 1.2
     \sa bufferCaptureFormat() supportedBufferCaptureFormats() captureDestination()
 */
 void QCameraImageCapture::setBufferFormat(const QVideoFrame::PixelFormat format)
@@ -442,6 +457,7 @@ void QCameraImageCapture::setBufferFormat(const QVideoFrame::PixelFormat format)
 /*!
     Returns true if the image capture \a destination is supported; otherwise returns false.
 
+    \since 1.2
     \sa captureDestination() setCaptureDestination()
 */
 bool QCameraImageCapture::isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const
@@ -455,6 +471,7 @@ bool QCameraImageCapture::isCaptureDestinationSupported(QCameraImageCapture::Cap
 /*!
     Returns the image capture destination being used.
 
+    \since 1.2
     \sa isCaptureDestinationSupported() setCaptureDestination()
 */
 QCameraImageCapture::CaptureDestinations QCameraImageCapture::captureDestination() const
@@ -468,6 +485,7 @@ QCameraImageCapture::CaptureDestinations QCameraImageCapture::captureDestination
 /*!
     Sets the capture \a destination to be used.
 
+    \since 1.2
     \sa isCaptureDestinationSupported() captureDestination()
 */
 void QCameraImageCapture::setCaptureDestination(QCameraImageCapture::CaptureDestinations destination)
@@ -481,6 +499,7 @@ void QCameraImageCapture::setCaptureDestination(QCameraImageCapture::CaptureDest
 /*!
   \property QCameraImageCapture::readyForCapture
    Indicates the service is ready to capture a an image immediately.
+  \since 1.1
 */
 
 bool QCameraImageCapture::isReadyForCapture() const
@@ -495,6 +514,7 @@ bool QCameraImageCapture::isReadyForCapture() const
     \fn QCameraImageCapture::readyForCaptureChanged(bool ready)
 
     Signals that a camera's \a ready for capture state has changed.
+    \since 1.1
 */
 
 
@@ -511,6 +531,7 @@ bool QCameraImageCapture::isReadyForCapture() const
 
     QCameraImageCapture::capture returns the capture Id parameter, used with
     imageExposed(), imageCaptured() and imageSaved() signals.
+    \since 1.1
 */
 int QCameraImageCapture::capture(const QString &file)
 {
@@ -533,6 +554,7 @@ int QCameraImageCapture::capture(const QString &file)
 /*!
     Cancel incomplete capture requests.
     Already captured and queused for proicessing images may be discarded.
+    \since 1.1
 */
 void QCameraImageCapture::cancelCapture()
 {
@@ -573,24 +595,28 @@ void QCameraImageCapture::cancelCapture()
 
     Signals that the capture request \a id has failed with an \a error
     and \a errorString description.
+    \since 1.1
 */
 
 /*!
     \fn QCameraImageCapture::bufferFormatChanged(QVideoFrame::PixelFormat format)
 
     Signal emitted when the buffer \a format for the buffer image capture has changed.
+    \since 1.2
 */
 
 /*!
     \fn QCameraImageCapture::captureDestinationChanged(CaptureDestinations destination)
 
     Signal emitted when the capture \a destination has changed.
+    \since 1.2
 */
 
 /*!
     \fn QCameraImageCapture::imageExposed(int id)
 
     Signal emitted when the frame with request \a id was exposed.
+    \since 1.1
 */
 
 /*!
@@ -598,6 +624,7 @@ void QCameraImageCapture::cancelCapture()
 
     Signal emitted when the frame with request \a id was captured, but not processed and saved yet.
     Frame \a preview can be displayed to user.
+    \since 1.1
 */
 
 /*!
@@ -607,6 +634,7 @@ void QCameraImageCapture::cancelCapture()
     This signal is emitted for metadata \a value with a \a key listed in QtMultimediaKit::MetaData enum.
 
     This signal is emitted between imageExposed and imageSaved signals.
+    \since 1.2
 */
 
 /*!
@@ -616,6 +644,7 @@ void QCameraImageCapture::cancelCapture()
     This signal is emitted for extended metadata \a value with a \a key not listed in QtMultimediaKit::MetaData enum.
 
     This signal is emitted between imageExposed and imageSaved signals.
+    \since 1.2
 */
 
 
@@ -623,12 +652,14 @@ void QCameraImageCapture::cancelCapture()
     \fn QCameraImageCapture::imageAvailable(int id, const QVideoFrame &buffer)
 
     Signal emitted when the frame with request \a id is available as \a buffer.
+    \since 1.2
 */
 
 /*!
     \fn QCameraImageCapture::imageSaved(int id, const QString &fileName)
 
     Signal emitted when the frame with request \a id was saved to \a fileName.
+    \since 1.1
 */
 
 

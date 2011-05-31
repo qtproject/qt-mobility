@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -100,6 +100,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.1
+
     This class assumes that at a zoom level of z the world is represented as a
     2^z by 2^z grid of tiles, and that the Mercator projection is used to map
     back and forth between coordinate and positions on the map.
@@ -116,7 +118,7 @@ QTM_BEGIN_NAMESPACE
     worldReferenceViewportRect().
 
     NOTE: QGeoTiledMapData blocks property change signals from QGeoMapData by calling
-    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in 
+    QGeoMapData::setBlockPropertyChangeSignals() with true. Changing this in
     QGeoTiledMapData subclasses will cause the signals being emitted at wrong time.
 */
 
@@ -173,6 +175,7 @@ QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double l
 
 /*!
     \reimp
+    \since 1.1
 */
 QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coordwgs) const
 {
@@ -182,6 +185,7 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &screenPosition) const
 {
@@ -234,6 +238,7 @@ QPoint QGeoTiledMapDataPrivate::coordinateToWorldReferencePosition(double lng, d
     map at the maximum zoom level.
 
     The default implementation is based on the Mercator projection.
+    \since 1.1
 */
 QPoint QGeoTiledMapData::coordinateToWorldReferencePosition(const QGeoCoordinate &coordinate) const
 {
@@ -254,6 +259,7 @@ qreal rmod(const qreal a, const qreal b)
     The pixel position is relative the entire map at the maximum zoom level.
 
     The default implementation is based on the Mercator projection.
+    \since 1.1
 */
 QGeoCoordinate QGeoTiledMapData::worldReferencePositionToCoordinate(const QPoint &pixel) const
 {
@@ -290,6 +296,7 @@ QGeoCoordinate QGeoTiledMapData::worldReferencePositionToCoordinate(const QPoint
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 {
@@ -315,6 +322,7 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setMapType(QGraphicsGeoMap::MapType mapType)
 {
@@ -357,6 +365,7 @@ void QGeoTiledMapData::setConnectivityMode(QGraphicsGeoMap::ConnectivityMode con
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoCoordinate QGeoTiledMapData::center() const
 {
@@ -366,6 +375,7 @@ QGeoCoordinate QGeoTiledMapData::center() const
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
 {
@@ -486,6 +496,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevelf)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::setWindowSize(const QSizeF &size)
 {
@@ -510,6 +521,7 @@ void QGeoTiledMapData::setWindowSize(const QSizeF &size)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::pan(int dx, int dy)
 {
@@ -547,6 +559,7 @@ void QGeoTiledMapData::pan(int dx, int dy)
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoBoundingBox QGeoTiledMapData::viewport() const
 {
@@ -562,6 +575,7 @@ QGeoBoundingBox QGeoTiledMapData::viewport() const
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserveViewportCenter)
 {
@@ -597,6 +611,7 @@ void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserv
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -606,6 +621,7 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
@@ -615,6 +631,7 @@ void QGeoTiledMapData::paintObjects(QPainter *painter, const QStyleOptionGraphic
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObjectInfo *QGeoTiledMapData::createMapObjectInfo(QGeoMapObject *mapObject)
 {
@@ -800,83 +817,87 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
 
 /*!
     \reimp
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
-    if (screenPosition.isNull())
-        return QList<QGeoMapObject*>();
+    return mapObjectsInScreenRect(QRectF(screenPosition - QPointF(1,1),
+                                         screenPosition + QPointF(1,1)));
+//    if (screenPosition.isNull())
+//        return QList<QGeoMapObject*>();
 
-    Q_D(const QGeoTiledMapData);
+//    Q_D(const QGeoTiledMapData);
 
-    QList<QGeoMapObject*> results;
-    QSet<QGeoMapObject*> considered;
+//    QList<QGeoMapObject*> results;
+//    QSet<QGeoMapObject*> considered;
 
-    d->oe->updateTransforms();
+//    d->oe->updateTransforms();
 
-    QList<QGraphicsItem*> pixelItems;
-    pixelItems = d->oe->pixelScene->items(QRectF(screenPosition - QPointF(1,1),
-                                             screenPosition + QPointF(1,1)),
-                                      Qt::IntersectsItemShape,
-                                      Qt::AscendingOrder);
+//    QList<QGraphicsItem*> pixelItems;
+//    pixelItems = d->oe->pixelScene->items(QRectF(screenPosition - QPointF(1,1),
+//                                             screenPosition + QPointF(1,1)),
+//                                      Qt::IntersectsItemShape,
+//                                      Qt::AscendingOrder);
 
-    foreach (QGraphicsItem *item, pixelItems) {
-        QGeoMapObject *object = d->oe->pixelItems.value(item);
-        Q_ASSERT(object);
+//    foreach (QGraphicsItem *item, pixelItems) {
+//        QGeoMapObject *object = d->oe->pixelItems.value(item);
+//        Q_ASSERT(object);
 
-        if (object->isVisible() && !considered.contains(object)) {
-            bool contains = false;
+//        if (object->isVisible() && !considered.contains(object)) {
+//            bool contains = false;
 
-            if (d->oe->pixelExact.contains(object)) {
-                foreach (QGraphicsItem *item, d->oe->pixelExact.values(object)) {
-                    if (item->shape().contains(screenPosition)) {
-                        contains = true;
-                        break;
-                    }
-                }
-            } else {
-                QGraphicsItem *item
-                        = d->oe->graphicsItemFromMapObject(object);
+//            if (d->oe->pixelExact.contains(object)) {
+//                foreach (QGraphicsItem *item, d->oe->pixelExact.values(object)) {
+//                    if (item->shape().contains(screenPosition)) {
+//                        contains = true;
+//                        break;
+//                    }
+//                }
+//            } else {
+//                QGraphicsItem *item
+//                        = d->oe->graphicsItemFromMapObject(object);
 
-                if (item) {
-                    QList<QTransform> trans = d->oe->pixelTrans.values(object);
+//                if (item) {
+//                    QList<QTransform> trans = d->oe->pixelTrans.values(object);
 
-                    foreach (QTransform t, trans) {
-                        bool ok;
-                        QTransform inv = t.inverted(&ok);
-                        if (ok) {
-                            QPointF testPt = screenPosition * inv;
+//                    foreach (QTransform t, trans) {
+//                        bool ok;
+//                        QTransform inv = t.inverted(&ok);
+//                        if (ok) {
+//                            QPointF testPt = screenPosition * inv;
 
-                            // we have to special case text objects here
-                            // in order to maintain their old (1.1) behaviour
-                            QGeoMapTextObject *tobj = qobject_cast<QGeoMapTextObject*>(object);
-                            if (tobj) {
-                                if (item->boundingRect().contains(testPt)) {
-                                    contains = true;
-                                    break;
-                                }
-                            } else {
-                                if (item->shape().contains(testPt)) {
-                                    contains = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+//                            // we have to special case text objects here
+//                            // in order to maintain their old (1.1) behaviour
+//                            QGeoMapTextObject *tobj = qobject_cast<QGeoMapTextObject*>(object);
+//                            if (tobj) {
+//                                if (item->boundingRect().contains(testPt)) {
+//                                    contains = true;
+//                                    break;
+//                                }
+//                            } else {
+//                                if (item->shape().contains(testPt)) {
+//                                    contains = true;
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
 
-            if (contains)
-                results << object;
+//            if (contains)
+//                results << object;
 
-            considered.insert(object);
-        }
-    }
+//            considered.insert(object);
+//        }
+//    }
 
-    return results;
+//    return results;
 }
 
 /*!
     \reimp
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect) const
 {
@@ -942,6 +963,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 /*!
     Returns the center of the viewport, in pixels on the entire
     map as a pixmap at the maximum zoom level.
+    \since 1.1
 */
 QPoint QGeoTiledMapData::worldReferenceViewportCenter() const
 {
@@ -952,6 +974,7 @@ QPoint QGeoTiledMapData::worldReferenceViewportCenter() const
 /*!
     Returns the size, in pixels, of the entire map as a pixmap at the maximum
     zoom level.
+    \since 1.1
 */
 QSize QGeoTiledMapData::worldReferenceSize() const
 {
@@ -962,6 +985,7 @@ QSize QGeoTiledMapData::worldReferenceSize() const
 /*!
     Returns the visible screen rectangle, in pixels on the entire map
     as a pixmap at the maximum zoom level.
+    \since 1.1
 */
 QRect QGeoTiledMapData::worldReferenceViewportRect() const
 {
@@ -972,6 +996,7 @@ QRect QGeoTiledMapData::worldReferenceViewportRect() const
 /*!
     Returns the ratio between a single pixel on the screen and a pixel on
     the entire map as a pixmap at the maximum zoom level.
+    \since 1.1
 */
 int QGeoTiledMapData::zoomFactor() const
 {
@@ -983,6 +1008,7 @@ int QGeoTiledMapData::zoomFactor() const
     Forces the map display to update in the region specified by \a target.
 
     If \a target is empty the entire map display will be updated.
+    \since 1.1
 */
 void QGeoTiledMapData::triggerUpdateMapDisplay(const QRectF &target)
 {

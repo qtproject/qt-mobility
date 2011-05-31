@@ -53,19 +53,22 @@
     The code extract below shows the creation and use of an audio element.
 
     \qml
+
     import Qt 4.7
     import QtMultimediaKit 1.1
     // ...
 
-        Audio {
-            id: playMusic
-            source: "music.wav"
-        }
-        MouseArea {
-            id: playArea
-            anchors.fill: parent
-            onPressed:  { playMusic.play() }
-        }
+    Audio {
+        id: playMusic
+        source: "music.wav"
+    }
+
+    MouseArea {
+        id: playArea
+        anchors.fill: parent
+        onPressed:  { playMusic.play() }
+    }
+
     \endqml
 
     The snippet above shows how the inclusion of \i playMusic enables audio features on the element that contains it. So that when the parent's MouseArea is clicked the \l {Audio::play()}{play()} method of the audio element is run. Other typical audio control methods are available such as \l {Audio::pause}{pause()} and \l {Audio::stop()}{stop()}.
@@ -232,11 +235,25 @@
     The \l SoundEffect element provides a way to play short sound effects, like in video games. Multiple sound effect instances can be played simultaneously.
     You should use the \l Audio element for music playback.
 
-    \code
+    \qml
+
     import Qt 4.7
     import QtMultimediaKit 1.1
-    ...
-    
+
+
+        SoundEffect {
+            id: effect
+            source: "test.wav"
+        }
+        MouseArea {
+            id: playArea
+            anchors.fill: parent
+            onPressed:  { effect.play() }
+        }
+
+    \endqml
+
+
     In the above sample the sound effect will be played when the MouseArea is clicked.
 
     For a complete description of this element, see \l SoundEffect

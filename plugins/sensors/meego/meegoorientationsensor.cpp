@@ -71,14 +71,11 @@ void meegoorientationsensor::slotDataAvailable(const Unsigned& data)
 }
 
 bool meegoorientationsensor::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
-    }
-    return true;
+    return QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
+                            this, SLOT(slotDataAvailable(const Unsigned&)));
 }
 
-const QString meegoorientationsensor::sensorName(){
+QString meegoorientationsensor::sensorName() const{
     return "orientationsensor";
 }
 

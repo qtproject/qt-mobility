@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -51,9 +51,10 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactDetailFieldDefinition
   \brief The QContactDetailFieldDefinition class provides a field in a QContactDetail.
- 
+
   \inmodule QtContacts
-  
+   \since 1.0
+
   Encapsulates information about a particular datum which may be part of a
   QContactDetail, including the type and allowable values.
  */
@@ -76,6 +77,7 @@ QContactDetailFieldDefinition::~QContactDetailFieldDefinition()
 
 /*!
  * Constructs a copy of the \a other field
+ * \since 1.0
  */
 QContactDetailFieldDefinition::QContactDetailFieldDefinition(const QContactDetailFieldDefinition& other)
         : d(other.d)
@@ -84,6 +86,7 @@ QContactDetailFieldDefinition::QContactDetailFieldDefinition(const QContactDetai
 
 /*!
  * Assigns the field to be equal to the \a other field
+ * \since 1.0
  */
 QContactDetailFieldDefinition& QContactDetailFieldDefinition::operator=(const QContactDetailFieldDefinition& other)
 {
@@ -93,6 +96,7 @@ QContactDetailFieldDefinition& QContactDetailFieldDefinition::operator=(const QC
 
 /*!
  * Returns the data type of the field
+ * \since 1.0
  */
 QVariant::Type QContactDetailFieldDefinition::dataType() const
 {
@@ -101,6 +105,7 @@ QVariant::Type QContactDetailFieldDefinition::dataType() const
 
 /*!
  * Sets the data type of the field to \a type
+ * \since 1.0
  */
 void QContactDetailFieldDefinition::setDataType(QVariant::Type type)
 {
@@ -109,6 +114,7 @@ void QContactDetailFieldDefinition::setDataType(QVariant::Type type)
 
 /*!
  * Returns the list of allowable values which this field may store
+ * \since 1.0
  */
 QVariantList QContactDetailFieldDefinition::allowableValues() const
 {
@@ -117,6 +123,7 @@ QVariantList QContactDetailFieldDefinition::allowableValues() const
 
 /*!
  * Sets the list of allowable values which this field may store to \a values
+ * \since 1.0
  */
 void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values)
 {
@@ -126,6 +133,7 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
 
 /*!
  * Returns true if the allowable values and data type of the \a other field are equal to those of this field
+ * \since 1.0
  */
 bool QContactDetailFieldDefinition::operator==(const QContactDetailFieldDefinition& other) const
 {
@@ -138,6 +146,7 @@ bool QContactDetailFieldDefinition::operator==(const QContactDetailFieldDefiniti
 
 /*!
  * Returns true if the allowable values or data type of the \a other field differ from those of this field
+ * \since 1.0
  */
 bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefinition& other) const
 {
@@ -147,6 +156,7 @@ bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefiniti
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a definition to the stream \a out.
+ * \since 1.0
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition)
 {
@@ -156,6 +166,7 @@ QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& d
 
 /*!
  * Reads a detail field definition from stream \a in into \a definition.
+ * \since 1.0
  */
 QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition)
 {

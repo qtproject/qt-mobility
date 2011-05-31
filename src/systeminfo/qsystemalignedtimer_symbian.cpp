@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -54,27 +54,19 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent) :
     m_singleShot(false), m_singleShotReceiver(0),m_singleShotMember(0),m_heartbeattimer(0)
 {
     TRACES(qDebug() << "QSystemAlignedTimerPrivate--Constructor Start");
-    m_heartbeattimer = CHeartbeatTimer::NewL();
-    m_heartbeattimer->addObserver(this);
     TRACES(qDebug() << "QSystemAlignedTimerPrivate--Constructor End");
 }
 
 QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate()
 {
- TRACES(qDebug() << "QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate-Start");
-
- if (m_heartbeattimer ) {
-    m_heartbeattimer->removeObserver(this);
-    delete m_heartbeattimer;
-    m_heartbeattimer = 0;
-   }
-
- TRACES(qDebug() << "QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate-End");
+  TRACES(qDebug() << "QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate-Start");
+  TRACES(qDebug() << "QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate-End");
 }
 
 void QSystemAlignedTimerPrivate::wokeUp()
 {
  TRACES(qDebug() << "QSystemAlignedTimerPrivate::wokeUp-Start");
+ if ( !m_heartbeattimer ) return;
 
     if (m_singleShot) {
      //if singleshot stop the timer
@@ -105,12 +97,12 @@ int QSystemAlignedTimerPrivate::maximumInterval() const
 void QSystemAlignedTimerPrivate::setMaximumInterval(int seconds)
 {
     m_maximumInterval = seconds;
+    TRACES(qDebug() << "SetMaxInterval:" << m_maximumInterval);
 }
 
 void QSystemAlignedTimerPrivate::setSingleShot(bool singleShot)
 {
     m_singleShot = singleShot;
-    m_heartbeattimer->setsingleShot(singleShot);
 }
 
 bool QSystemAlignedTimerPrivate::isSingleShot() const
@@ -134,6 +126,7 @@ void QSystemAlignedTimerPrivate::singleShot(int minimumTime, int maximumTime, QO
 
 QSystemAlignedTimer::AlignedTimerError QSystemAlignedTimerPrivate::lastError() const
 {
+ TRACES(qDebug() << "QSystemAlignedTimerPrivate::lastError:" << m_lastError);
     return m_lastError;
 }
 
@@ -149,16 +142,27 @@ void QSystemAlignedTimerPrivate::start(int minimumTime, int maximumTime)
 
 void QSystemAlignedTimerPrivate::start()
 {
+ TRACES(qDebug() << "QSystemAlignedTimerPrivate::start+");
     if (m_running) {
         TRACES(qDebug() << "QSystemAlignedTimerPrivate::start()-Already Started, return");
         return;
     }
 
+    TRACES(qDebug() << "minimum interval:" << m_minimumInterval);
+    TRACES(qDebug() << "minimum interval:" << m_maximumInterval);
+
     if ( m_minimumInterval < 0 || m_maximumInterval < 0 ) {
+      TRACES(qDebug() << "m_minimumInterval < 0 || m_maximumInterval < 0 , return");
       m_lastError = QSystemAlignedTimer::InvalidArgument;
       emit error(m_lastError);
       return;
      }
+
+    if ( !m_heartbeattimer ) {
+     m_heartbeattimer = CHeartbeatTimer::NewL();
+     m_heartbeattimer->setsingleShot(m_singleShot);
+     m_heartbeattimer->addObserver(this);
+    }
 
     //Arguments are valid, Go ahead to start the timer
     TTimeIntervalMicroSeconds window   = (m_maximumInterval - m_minimumInterval)* 1000 * 1000;
@@ -170,6 +174,7 @@ void QSystemAlignedTimerPrivate::start()
 
     m_running = true;
     m_lastError = QSystemAlignedTimer::NoError;
+ TRACES(qDebug() << "QSystemAlignedTimerPrivate::start-");
 }
 
 void QSystemAlignedTimerPrivate::stop()
@@ -177,9 +182,15 @@ void QSystemAlignedTimerPrivate::stop()
     if (!m_running) {
         return;
     }
-    TRACES(qDebug() << "QSystemAlignedTimerPrivate::stop()-Issuing stop request");
-    //Do heartbeattimer here
-    m_heartbeattimer->StopTimer();
+
+    if ( m_heartbeattimer ) {
+       TRACES(qDebug() << "QSystemAlignedTimerPrivate::stop()-Issuing stop request");
+       //Do heartbeattimer here
+       m_heartbeattimer->StopTimer();
+       m_heartbeattimer->removeObserver(this);
+       delete m_heartbeattimer;
+       m_heartbeattimer = 0;
+    }
 
     m_running = false;
     m_lastError = QSystemAlignedTimer::NoError;
@@ -190,6 +201,7 @@ void QSystemAlignedTimerPrivate::NotifyheartbeatReceived()
   TRACES(qDebug() << "QSystemAlignedTimerPrivate::NotiftyheartbeatReceived()");
    //Check if there are any single shot members.
    //Issuing or (Not to issue) of timer is taken care by CHeartbeatTimer
+   if (m_singleShot) m_running = false;
      if (m_singleShotMember != NULL && m_singleShotMember !=NULL )
       {
        TRACES(qDebug() << "Single shot members exist");
@@ -204,6 +216,8 @@ void QSystemAlignedTimerPrivate::NotifyheartbeatReceived()
 
 bool QSystemAlignedTimerPrivate::isActive () const
 {
+ TRACES(qDebug() << "QSystemAlignedTimerPrivate::isActive+");
+ TRACES(qDebug() << "State :" << m_running);
     return m_running;
 }
 

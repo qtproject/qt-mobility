@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     a segmented line on a map.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -80,6 +81,7 @@ QGeoMapPolylineObject::~QGeoMapPolylineObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapPolylineObject::type() const
 {
@@ -99,12 +101,16 @@ QGeoMapObject::Type QGeoMapPolylineObject::type() const
     Invalid coordinates in the list will be ignored, and if the list of
     coordinates contains less than 2 valid coordinates then the polyline object
     will not be displayed.
+    \since 1.1
 */
 void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
-        setOrigin(path.at(0));
+        if (path.size() != 0)
+            setOrigin(path.at(0));
+        else
+            setOrigin(QGeoCoordinate());
         emit pathChanged(d_ptr->path);
     }
 }
@@ -122,6 +128,7 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 
     The pen will be treated as a cosmetic pen, which means that the width
     of the pen will be independent of the zoom level of the map.
+    \since 1.1
 */
 void QGeoMapPolylineObject::setPen(const QPen &pen)
 {
@@ -143,19 +150,21 @@ QPen QGeoMapPolylineObject::pen() const
 /*!
 \fn void QGeoMapPolylineObject::pathChanged(const QList<QGeoCoordinate> &path)
 
-    This signal is emitted when the ordered list of coordinates that define 
+    This signal is emitted when the ordered list of coordinates that define
     the polyline to be drawn by this polyline object has changed.
 
     The new value is \a path.
+    \since 1.1
 */
 
 /*!
 \fn void QGeoMapPolylineObject::penChanged(const QPen &pen)
 
-    This signal is emitted when the pen used to draw the edge of this 
+    This signal is emitted when the pen used to draw the edge of this
     polyline object has changed.
 
     The new value is \a pen.
+    \since 1.1
 */
 
 /*******************************************************************************

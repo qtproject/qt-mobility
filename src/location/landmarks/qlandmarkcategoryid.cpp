@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,8 +49,9 @@ QTM_USE_NAMESPACE
     \class QLandmarkCategoryId
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-main
+    \since 1.1
 
     \brief The QLandmarkCategoryId class provides a unique identifier for
     a category.
@@ -88,6 +89,7 @@ QLandmarkCategoryId::~QLandmarkCategoryId()
 /*!
     Returns true if the identifier is valid, meaning that both
     a manager URI and local id have been set
+    \since 1.1
 */
 bool QLandmarkCategoryId::isValid() const
 {
@@ -98,6 +100,7 @@ bool QLandmarkCategoryId::isValid() const
     Returns the local id of the category identifier.
 
     This id is specific to a particular landmark manager.
+    \since 1.1
 */
 QString QLandmarkCategoryId::localId() const
 {
@@ -106,6 +109,7 @@ QString QLandmarkCategoryId::localId() const
 
 /*!
     Sets the local \a id of the category identifier.
+    \since 1.1
 */
 void QLandmarkCategoryId::setLocalId(const QString &id)
 {
@@ -115,6 +119,7 @@ void QLandmarkCategoryId::setLocalId(const QString &id)
 /*!
     Returns the URI of the manager which this category identifer
     belongs to.
+    \since 1.1
 */
 QString QLandmarkCategoryId::managerUri() const
 {
@@ -124,6 +129,7 @@ QString QLandmarkCategoryId::managerUri() const
 /*!
     Sets the manager \a uri which this category identifier
     belongs to.
+    \since 1.1
 */
 void QLandmarkCategoryId::setManagerUri(const QString &uri)
 {
@@ -133,6 +139,7 @@ void QLandmarkCategoryId::setManagerUri(const QString &uri)
 /*!
     Assigns \a other to this category identifier and returns a reference
     to this category identifier.
+    \since 1.1
 */
 QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId & other)
 {
@@ -147,6 +154,7 @@ QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId & 
     Two QLandmarkCategoryIds are considered equal if both have the same
     manager URI and local id.
 
+    \since 1.1
     \sa operator!=()
 */
 bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
@@ -162,6 +170,7 @@ bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
     If either the manager URIs or local ids differ, then the
     QLandmarkCategoryIds are not considered equal.
 
+    \since 1.1
     \sa operator==()
 */
 bool QLandmarkCategoryId::operator!=(const QLandmarkCategoryId &other) const

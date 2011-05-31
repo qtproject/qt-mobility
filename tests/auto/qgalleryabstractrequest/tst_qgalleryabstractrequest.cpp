@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -192,6 +192,11 @@ void tst_QGalleryAbstractRequest::type()
 
     QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::ItemRequest).type(),
              QGalleryAbstractRequest::ItemRequest);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::QueryRequest).type(),
+             QGalleryAbstractRequest::QueryRequest);
+    //Added Enum
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::TypeRequest).type(),
+             QGalleryAbstractRequest::TypeRequest);
 }
 
 void tst_QGalleryAbstractRequest::initTestCase()
@@ -240,7 +245,7 @@ void tst_QGalleryAbstractRequest::executeUnsupported()
     QSignalSpy canceledSpy(&request, SIGNAL(canceled()));
     QSignalSpy errorSpy(&request, SIGNAL(error(int,QString)));
     QSignalSpy stateSpy(&request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
-
+    QSignalSpy errorchangedspy(&request,SIGNAL(errorChanged()));//Added Signal
     request.execute();
     QCOMPARE(request.state(), QGalleryAbstractRequest::Error);
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NotSupported));
@@ -251,6 +256,7 @@ void tst_QGalleryAbstractRequest::executeUnsupported()
     QCOMPARE(stateSpy.count(), 1);
     QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
     QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(errorchangedspy.count(),1);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 }
 
@@ -308,6 +314,21 @@ void tst_QGalleryAbstractRequest::executeSync()
     QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 
+    //Added enum gallery error
+    gallery.setError(100, QLatin1String("gallery Corrupted"));
+    request.execute();
+    QVERIFY(request.response() == 0);
+    QCOMPARE(request.error(), int(QGalleryAbstractRequest::GalleryError));
+    QCOMPARE(request.error(), 100);
+    QCOMPARE(request.errorString(), QLatin1String("gallery Corrupted"));
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(canceledSpy.count(), 0);
+    QCOMPARE(errorSpy.count(), 3);
+    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
+    QCOMPARE(errorSpy.last().value(1).toString(), request.errorString());
+    QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
+
     // Successful execution, to idle.
     gallery.setError(QGalleryAbstractRequest::NoError, QString());
     gallery.setState(QGalleryAbstractRequest::Idle);
@@ -317,8 +338,8 @@ void tst_QGalleryAbstractRequest::executeSync()
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NoError));
     QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(canceledSpy.count(), 0);
-    QCOMPARE(errorSpy.count(), 2);
-    QCOMPARE(stateSpy.count(), 4);
+    QCOMPARE(errorSpy.count(), 3);
+    QCOMPARE(stateSpy.count(), 5);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 
     // Execute unsupported.
@@ -329,8 +350,8 @@ void tst_QGalleryAbstractRequest::executeSync()
     QCOMPARE(request.error(), int(QGalleryAbstractRequest::NotSupported));
     QCOMPARE(finishedSpy.count(), 2);
     QCOMPARE(canceledSpy.count(), 0);
-    QCOMPARE(errorSpy.count(), 3);
-    QCOMPARE(stateSpy.count(), 5);
+    QCOMPARE(errorSpy.count(), 4);
+    QCOMPARE(stateSpy.count(), 6);
     QCOMPARE(errorSpy.last().value(0).toInt(), request.error());
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(), request.state());
 }

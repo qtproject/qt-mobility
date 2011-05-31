@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
     manager a group of other map objects.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-mapping-objects
 
@@ -92,6 +93,7 @@ QGeoMapGroupObject::~QGeoMapGroupObject()
 
 /*!
     \reimp
+    \since 1.1
 */
 QGeoMapObject::Type QGeoMapGroupObject::type() const
 {
@@ -103,6 +105,7 @@ QGeoMapObject::Type QGeoMapGroupObject::type() const
 
     If this map object has children, the bounding box will be large
     enough to contain both this map object and all of its children.
+    \since 1.1
 */
 QGeoBoundingBox QGeoMapGroupObject::boundingBox() const
 {
@@ -126,6 +129,7 @@ QGeoBoundingBox QGeoMapGroupObject::boundingBox() const
     If this map object has children, this function will return whether
     \a coordinate is contained within the boundary of this map object or
     within the boundary of any of its children.
+    \since 1.1
 */
 bool QGeoMapGroupObject::contains(const QGeoCoordinate &coordinate) const
 {
@@ -149,6 +153,7 @@ bool mapObjectLessThan(const QGeoMapObject* op1, const QGeoMapObject* op2)
     in the order they were added.
 
     The map object will take ownership of \a childObject.
+    \since 1.1
 */
 void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
 {
@@ -175,6 +180,7 @@ void QGeoMapGroupObject::addChildObject(QGeoMapObject *childObject)
     Removes \a childObject from the list of children of this map object.
 
     The map object will release ownership of \a childObject.
+    \since 1.1
 */
 void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
 {
@@ -201,6 +207,7 @@ void QGeoMapGroupObject::removeChildObject(QGeoMapObject *childObject)
 
 /*!
     Returns the children of this object.
+    \since 1.1
 */
 QList<QGeoMapObject*> QGeoMapGroupObject::childObjects() const
 {
@@ -211,6 +218,7 @@ QList<QGeoMapObject*> QGeoMapGroupObject::childObjects() const
     Clears the children of this object.
 
     The child objects will be deleted.
+    \since 1.1
 */
 void QGeoMapGroupObject::clearChildObjects()
 {
@@ -225,6 +233,7 @@ void QGeoMapGroupObject::clearChildObjects()
 
 /*!
     Sets whether this group of objects is visible to \a visible.
+    \since 1.2
 */
 void QGeoMapGroupObject::setVisible(bool visible)
 {
@@ -236,6 +245,7 @@ void QGeoMapGroupObject::setVisible(bool visible)
 
 /*!
     \reimp
+    \since 1.1
 */
 void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 {
@@ -254,13 +264,22 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 
     This signal will be emitted when the map object \a childObject
     is added to the group.
+    \since 1.1
 */
 
 /*!
 \fn void QGeoMapGroupObject::childUpdated(QGeoMapObject *childObject)
 
-    This signal will be emitted when the map object \a childObject
-    belonging to the group is updated.
+    This signal will be emitted if the map object \a childObject has
+    changed such that the corresponding QGeoMapObjectInfo class that handles
+    the map-specific behaviours of the object needs to be informed of
+    the change.
+
+    The map object \a childObject must belong to this group.
+
+    At the moment this is only emitted when the z-value of the
+    child-objects are changed.
+    \since 1.2
 */
 
 /*!
@@ -268,6 +287,7 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 
     This signal will be emitted when the map object \a childObject
     is removed from the group.
+    \since 1.1
 */
 
 /*******************************************************************************

@@ -20,20 +20,20 @@
 
 #include <testexecute.iby>
 
-file=ABI_DIR\BUILD_DIR\Te_PerformanceFunctionalitySuite.exe													System\bin\Te_PerformanceFunctionalitySuite.exe
+file=ABI_DIR\BUILD_DIR\te_performancefunctionalitysuite.exe													System\bin\te_performancefunctionalitysuite.exe
 
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini 					PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\te_PerformanceFunctionalitySuite.script 				PerformanceFunc\Scripts\te_PerformanceFunctionalitySuite.Script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\te_PerformanceFunctionalityConcurrent.script			PerformanceFunc\Scripts\te_PerformanceFunctionalityConcurrent.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\te_PerformanceFunctionalityTimeoutConcurrent.script	PerformanceFunc\Scripts\te_PerformanceFunctionalityTimeoutConcurrent.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\RequestMixStep.script									PerformanceFunc\Scripts\RequestMixStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\TransactionsStep.script								PerformanceFunc\Scripts\TransactionsStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\CRUDOOMStep.script										PerformanceFunc\Scripts\CRUDOOMStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\TimeoutStep.script										PerformanceFunc\Scripts\TimeoutStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\RandomBlobStep.script									PerformanceFunc\Scripts\RandomBlobStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\NotificationStep.script								PerformanceFunc\Scripts\NotificationStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\LowDiskSpaceStep.script								PerformanceFunc\Scripts\LowDiskSpaceStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\CompactAndRecoverStep.script							PerformanceFunc\Scripts\CompactAndRecoverStep.script
-data=EPOCROOT##epoc32\data\C\PerformanceFunc\scripts\StateMachineStep.script								PerformanceFunc\Scripts\StateMachineStep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\configs\te_performancefunctionalitysuite.ini 					performancefunc\configs\te_performancefunctionalitysuite.ini
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\te_performancefunctionalitysuite.script 				performancefunc\scripts\te_performancefunctionalitysuite.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\te_performancefunctionalityconcurrent.script			performancefunc\scripts\te_performancefunctionalityconcurrent.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\te_performancefunctionalitytimeoutconcurrent.script	performancefunc\scripts\te_performancefunctionalitytimeoutconcurrent.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\requestmixstep.script									performancefunc\scripts\requestmixstep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\transactionsstep.script								performancefunc\scripts\transactionsstep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\crudoomstep.script										performancefunc\scripts\crudoomstep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\timeoutstep.script										performancefunc\scripts\timeoutstep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\randomblobstep.script									performancefunc\scripts\randomblobstep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\notificationstep.script								performancefunc\scripts\notificationstep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\lowdiskspacestep.script								performancefunc\scripts\lowdiskspacestep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\compactandrecoverstep.script							performancefunc\scripts\compactandrecoverstep.script
+data=EPOCROOT##epoc32\data\c\performancefunc\scripts\statemachinestep.script								performancefunc\scripts\statemachinestep.script
 
 #endif

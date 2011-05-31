@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl-tiled
 
+    \since 1.1
+
     The tile is specified by a map type, a zoom level, a row and a column.
 
     At a zoom level of z the world is represented as a 2^z by 2^z grid
@@ -76,13 +78,14 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
 
     This tiled map request represents a request for the tile at row \a row and
     column \a column at zoom level \a zoomLevel and type
-    \a mapType. 
-    
-    The request will use connectivity mode \a connectivityMode when 
+    \a mapType.
+
+    The request will use connectivity mode \a connectivityMode when
     accessing the map data.
 
     The rectangle that the tile occupies on the map at the maximum zoom level
     is also given as \a tileRect.
+    \since 1.1
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode connectivityMode,
         QGraphicsGeoMap::MapType mapType,
@@ -104,6 +107,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest(QGraphicsGeoMap::ConnectivityMode conne
 
 /*!
     Constructs a tiled map request from the contents of \a other.
+    \since 1.1
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(const QGeoTiledMapRequest &other)
     : d_ptr(other.d_ptr) {}
@@ -116,6 +120,7 @@ QGeoTiledMapRequest::~QGeoTiledMapRequest() {}
 /*!
     Assigns \a other to this tiled map request and then returns a reference to
     this tiled map request.
+    \since 1.1
 */
 QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest & other)
 {
@@ -126,6 +131,7 @@ QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest &
 
 /*!
     Returns with this tiled map request is equal to \a other.
+    \since 1.1
 */
 bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
 {
@@ -146,6 +152,7 @@ bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
 
 /*!
     Returns the connectivity mode of the tile request.
+    \since 1.1
 */
 QGraphicsGeoMap::ConnectivityMode QGeoTiledMapRequest::connectivityMode() const
 {
@@ -154,6 +161,7 @@ QGraphicsGeoMap::ConnectivityMode QGeoTiledMapRequest::connectivityMode() const
 
 /*!
     Returns the map type of the requested tile.
+    \since 1.1
 */
 QGraphicsGeoMap::MapType QGeoTiledMapRequest::mapType() const
 {
@@ -165,6 +173,7 @@ QGraphicsGeoMap::MapType QGeoTiledMapRequest::mapType() const
 
     The lower and upper bounds of the zoom level are set by
     the QGeoMappingManager that created this request.
+    \since 1.1
 */
 int QGeoTiledMapRequest::zoomLevel() const
 {
@@ -176,6 +185,7 @@ int QGeoTiledMapRequest::zoomLevel() const
 
     At a zoom level of z the world is represented as a 2^z by 2^z grid
     of tiles, and so the row will be between 0 and 2^z - 1.
+    \since 1.1
 */
 int QGeoTiledMapRequest::row() const
 {
@@ -187,6 +197,7 @@ int QGeoTiledMapRequest::row() const
 
     At a zoom level of z the world is represented as a 2^z by 2^z grid
     of tiles, and so the column will be between 0 and 2^z - 1.
+    \since 1.1
 */
 int QGeoTiledMapRequest::column() const
 {
@@ -204,6 +215,7 @@ int QGeoTiledMapRequest::column() const
 
     The rectangle returned is specified relative to the pixel coordinates of
     the map at the maximum zoom level.
+    \since 1.1
 */
 QRect QGeoTiledMapRequest::tileRect() const
 {
@@ -212,6 +224,7 @@ QRect QGeoTiledMapRequest::tileRect() const
 
 /*!
     Returns a hash of the tiled map request \a key.
+    \since 1.1
 */
 uint qHash(const QGeoTiledMapRequest &key)
 {

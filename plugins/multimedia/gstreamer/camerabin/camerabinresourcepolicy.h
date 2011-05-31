@@ -43,7 +43,6 @@
 #define CAMERARESOURCEPOLICY_H
 
 #include <QtCore/qobject.h>
-#include <QtCore/qlist.h>
 
 namespace ResourcePolicy {
 class ResourceSet;
@@ -74,28 +73,12 @@ Q_SIGNALS:
     void resourcesLost();
 
 private Q_SLOTS:
-    void handleResourcesGranted();
-    void handleResourcesDenied();
-    void handleResourcesLost();
+    void handleResourcesReleased();
 
 private:
     ResourceSet m_resourceSet;
-
-    enum ResourceStatus {
-        Initial = 0,
-        RequestedResource,
-        GrantedResource
-    };
-
-    enum {
-        LoadedResourcesSet = 0,
-        ImageResourcesSet,
-        VideoResouresSet
-    };
-
-    QList<ResourcePolicy::ResourceSet *> m_resources;
-    QList<ResourceStatus> m_resourceStatuses;
-    QList<int> m_requestedSets;
+    ResourcePolicy::ResourceSet *m_resource;
+    bool m_releasingResources;
 };
 
 #endif

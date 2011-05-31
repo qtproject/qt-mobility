@@ -611,7 +611,7 @@ LOCAL_C void Test11DigitMatchingL()
 	CheckPhoneMatchL(K11DigitMatch5,KMatch13Digits,1);
 
 	CheckPhoneMatchL(K11DigitMatch6,KMatch10Digits,3);
-	CheckPhoneMatchL(K11DigitMatch6,KMatch11Digits,3);
+	CheckPhoneMatchL(K11DigitMatch6,KMatch11Digits,1);
 	}
 
 /**

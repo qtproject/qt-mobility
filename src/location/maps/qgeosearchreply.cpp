@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-places
 
@@ -106,6 +107,7 @@ QGeoSearchReply::QGeoSearchReply(QObject *parent)
 
 /*!
     Constructs a search reply with a given \a error and \a errorString and the specified \a parent.
+    \since 1.1
 */
 QGeoSearchReply::QGeoSearchReply(Error error, const QString &errorString, QObject *parent)
     : QObject(parent),
@@ -128,6 +130,7 @@ QGeoSearchReply::~QGeoSearchReply()
     If the operation completed successfully, QGeoSearchReply::setPlaces()
     should be called before this function. If an error occurred,
     QGeoSearchReply::setError() should be used instead.
+    \since 1.1
 */
 void QGeoSearchReply::setFinished(bool finished)
 {
@@ -139,6 +142,7 @@ void QGeoSearchReply::setFinished(bool finished)
 /*!
     Return true if the operation completed successfully or encountered an
     error which cause the operation to come to a halt.
+    \since 1.1
 */
 bool QGeoSearchReply::isFinished() const
 {
@@ -151,6 +155,7 @@ bool QGeoSearchReply::isFinished() const
 
     This wil also cause error() and finished() signals to be emitted, in that
     order.
+    \since 1.1
 */
 void QGeoSearchReply::setError(QGeoSearchReply::Error error, const QString &errorString)
 {
@@ -164,6 +169,7 @@ void QGeoSearchReply::setError(QGeoSearchReply::Error error, const QString &erro
     Returns the error state of this reply.
 
     If the result is QGeoSearchReply::NoError then no error has occurred.
+    \since 1.1
 */
 QGeoSearchReply::Error QGeoSearchReply::error() const
 {
@@ -179,6 +185,7 @@ QGeoSearchReply::Error QGeoSearchReply::error() const
 
     To determine whether an error has occurred, check to see if
     QGeoSearchReply::error() is equal to QGeoSearchReply::NoError.
+    \since 1.1
 */
 QString QGeoSearchReply::errorString() const
 {
@@ -187,6 +194,7 @@ QString QGeoSearchReply::errorString() const
 
 /*!
     Sets the viewport which contains the results to \a viewport.
+    \since 1.1
 */
 void QGeoSearchReply::setViewport(QGeoBoundingArea *viewport)
 {
@@ -198,6 +206,7 @@ void QGeoSearchReply::setViewport(QGeoBoundingArea *viewport)
 
     This function will return 0 if no viewport bias
     was specified in the QGeoSearchManager function which created this reply.
+    \since 1.1
 */
 QGeoBoundingArea* QGeoSearchReply::viewport() const
 {
@@ -209,6 +218,7 @@ QGeoBoundingArea* QGeoSearchReply::viewport() const
 
     The places are the results of the operation corresponding to the
     QGeoSearchManager function which created this reply.
+    \since 1.1
 */
 QList<QGeoPlace> QGeoSearchReply::places() const
 {
@@ -217,6 +227,7 @@ QList<QGeoPlace> QGeoSearchReply::places() const
 
 /*!
     Adds \a place to the list of places in this reply.
+    \since 1.1
 */
 void QGeoSearchReply::addPlace(const QGeoPlace &place)
 {
@@ -225,6 +236,7 @@ void QGeoSearchReply::addPlace(const QGeoPlace &place)
 
 /*!
     Sets the list of \a places in the reply.
+    \since 1.1
 */
 void QGeoSearchReply::setPlaces(const QList<QGeoPlace> &places)
 {
@@ -235,6 +247,7 @@ void QGeoSearchReply::setPlaces(const QList<QGeoPlace> &places)
     Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
+    \since 1.1
 */
 void QGeoSearchReply::abort()
 {
@@ -253,6 +266,7 @@ void QGeoSearchReply::abort()
     If QGeoSearchManager::search() is used along with
     QGeoSearchManager::setAdditionalLandmarkManagers the number of results can
     be as high as limit * (1 + number of additional landmark managers).
+    \since 1.1
 */
 int QGeoSearchReply::limit() const
 {
@@ -260,8 +274,9 @@ int QGeoSearchReply::limit() const
 }
 
 /*!
-    Returns the offset into the entire result set at which to start 
+    Returns the offset into the entire result set at which to start
     fetching results.
+    \since 1.1
 */
 int QGeoSearchReply::offset() const
 {
@@ -272,6 +287,7 @@ int QGeoSearchReply::offset() const
     Sets the limit on the number of responses from each data source to \a limit.
 
     If \a limit is -1 then all available responses will be returned.
+    \since 1.1
 */
 void QGeoSearchReply::setLimit(int limit)
 {
@@ -279,8 +295,9 @@ void QGeoSearchReply::setLimit(int limit)
 }
 
 /*!
-    Sets the offset in the entire result set at which to start 
+    Sets the offset in the entire result set at which to start
     fetching result to \a offset.
+    \since 1.1
 */
 void QGeoSearchReply::setOffset(int offset)
 {
@@ -300,6 +317,7 @@ void QGeoSearchReply::setOffset(int offset)
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 /*!
     \fn void QGeoSearchReply::error(QGeoSearchReply::Error error, const QString &errorString)
@@ -314,6 +332,7 @@ void QGeoSearchReply::setOffset(int offset)
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 
 /*******************************************************************************

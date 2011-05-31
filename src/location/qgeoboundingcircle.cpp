@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoBoundingCircle class defines a circular geographic area.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps
 
@@ -74,12 +75,14 @@ QGeoBoundingCircle::QGeoBoundingCircle()
 /*!
     Constructs a new bounding circle centered at \a center and with a radius of \a
     radius metres.
+    \since 1.1
 */
 QGeoBoundingCircle::QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius)
         : d_ptr(new QGeoBoundingCirclePrivate(center, radius)) {}
 
 /*!
     Constructs a new bounding circle from the contents of \a other.
+    \since 1.1
 */
 QGeoBoundingCircle::QGeoBoundingCircle(const QGeoBoundingCircle &other)
         : QGeoBoundingArea(other),
@@ -93,6 +96,7 @@ QGeoBoundingCircle::~QGeoBoundingCircle() {}
 /*!
     Assigns \a other to this bounding circle and returns a reference to this
     bounding circle.
+    \since 1.1
 */
 QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & other)
 {
@@ -103,6 +107,7 @@ QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & o
 
 /*!
     Returns whether this bounding circle is equal to \a other.
+    \since 1.1
 */
 bool QGeoBoundingCircle::operator == (const QGeoBoundingCircle &other) const
 {
@@ -111,6 +116,7 @@ bool QGeoBoundingCircle::operator == (const QGeoBoundingCircle &other) const
 
 /*!
     Returns whether this bounding circle is not equal to \a other.
+    \since 1.1
 */
 bool QGeoBoundingCircle::operator != (const QGeoBoundingCircle &other) const
 {
@@ -123,6 +129,7 @@ bool QGeoBoundingCircle::operator != (const QGeoBoundingCircle &other) const
 
     This function is provided to help find the specific type of
     aQGeoBoundingArea instance.
+    \since 1.1
 */
 QGeoBoundingArea::AreaType QGeoBoundingCircle::type() const
 {
@@ -134,6 +141,7 @@ QGeoBoundingArea::AreaType QGeoBoundingCircle::type() const
 
     A valid bounding circle has a valid center coordinate and a radius
     greater than or equal to zero.
+    \since 1.1
 */
 bool QGeoBoundingCircle::isValid() const
 {
@@ -146,6 +154,7 @@ bool QGeoBoundingCircle::isValid() const
     Returns whether this bounding circle has a geometrical area of zero.
 
     Returns true if this bounding circle is invalid.
+    \since 1.1
 */
 bool QGeoBoundingCircle::isEmpty() const
 {
@@ -154,6 +163,7 @@ bool QGeoBoundingCircle::isEmpty() const
 
 /*!
     Sets the center coordinate of this bounding circle to \a center.
+    \since 1.1
 */
 void QGeoBoundingCircle::setCenter(const QGeoCoordinate &center)
 {
@@ -162,6 +172,7 @@ void QGeoBoundingCircle::setCenter(const QGeoCoordinate &center)
 
 /*!
     Returns the center coordinate of this bounding circle.
+    \since 1.1
 */
 QGeoCoordinate QGeoBoundingCircle::center() const
 {
@@ -169,7 +180,8 @@ QGeoCoordinate QGeoBoundingCircle::center() const
 }
 
 /*!
-    Sets the radius in metres of this bounding circle to \a radius.
+    Sets the radius in meters of this bounding circle to \a radius.
+    \since 1.1
 */
 void QGeoBoundingCircle::setRadius(qreal radius)
 {
@@ -178,6 +190,7 @@ void QGeoBoundingCircle::setRadius(qreal radius)
 
 /*!
     Returns the radius in meters of this bounding circle.
+    \since 1.1
 */
 qreal QGeoBoundingCircle::radius() const
 {
@@ -187,6 +200,7 @@ qreal QGeoBoundingCircle::radius() const
 /*!
     Returns whether the coordinate \a coordinate is contained within this
     bounding circle.
+    \since 1.1
 */
 bool QGeoBoundingCircle::contains(const QGeoCoordinate &coordinate) const
 {
@@ -206,6 +220,7 @@ bool QGeoBoundingCircle::contains(const QGeoCoordinate &coordinate) const
 
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
     southward and westward translation respectively.
+    \since 1.1
 */
 void QGeoBoundingCircle::translate(double degreesLatitude, double degreesLongitude)
 {
@@ -248,6 +263,7 @@ void QGeoBoundingCircle::translate(double degreesLatitude, double degreesLongitu
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
     southward and westward translation respectively.
 
+    \since 1.1
     \sa translate()
 */
 QGeoBoundingCircle QGeoBoundingCircle::translated(double degreesLatitude, double degreesLongitude) const

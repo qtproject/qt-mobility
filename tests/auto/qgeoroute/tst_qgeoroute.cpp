@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -75,7 +75,7 @@ void tst_QGeoRoute::constructor()
     QGeoBoundingBox *boundingbox = new QGeoBoundingBox();
 
     QCOMPARE(qgeoroute->bounds(),*boundingbox);
-    QCOMPARE(qgeoroute->distance(),0.0);
+    QCOMPARE(qgeoroute->distance(), qreal(0.0));
     QCOMPARE(qgeoroute->path().size(),0);
     QCOMPARE(qgeoroute->routeId(),empty);
     QCOMPARE(qgeoroute->travelTime(),0);
@@ -118,8 +118,7 @@ void tst_QGeoRoute::bounds()
 
     qgeoboundingbox->setWidth(23.1);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->bounds().width(),qgeoboundingbox->width());
+    QVERIFY(qgeoroute->bounds().width() != qgeoboundingbox->width());
 
     delete qgeoboundingbox;
 
@@ -128,14 +127,13 @@ void tst_QGeoRoute::bounds()
 
 void tst_QGeoRoute::distance()
 {
-    double distance = 0.0;
+    qreal distance = 0.0;
 
     qgeoroute->setDistance(distance);
     QCOMPARE(qgeoroute->distance(),distance);
 
     distance = 34.4324;
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->distance(),distance);
+    QVERIFY(qgeoroute->distance() != distance);
 
     qgeoroute->setDistance(distance);
     QCOMPARE(qgeoroute->distance(),distance);
@@ -207,8 +205,7 @@ void tst_QGeoRoute::request()
 
     QGeoRouteRequest *qgeorouterequestcopy = new QGeoRouteRequest(path);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->request(),*qgeorouterequestcopy);
+    QVERIFY(qgeoroute->request() != *qgeorouterequestcopy);
 
     delete qgeocoordinatecopy;
     delete qgeocoordinatecopy2;
@@ -225,8 +222,7 @@ void tst_QGeoRoute::routeId()
     QCOMPARE (qgeoroute->routeId(),text);
 
     text="routeId 1111";
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE (qgeoroute->routeId(),text);
+    QVERIFY (qgeoroute->routeId() != text);
 
 }
 
@@ -244,9 +240,7 @@ void tst_QGeoRoute::firstrouteSegments()
     qgeoroutesegmentcopy->setDistance(435.432);
     qgeoroutesegmentcopy->setTravelTime(786);
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE(qgeoroute->firstRouteSegment(),*qgeoroutesegmentcopy);
-
+    QVERIFY(qgeoroute->firstRouteSegment() != *qgeoroutesegmentcopy);
 
     delete qgeoroutesegment;
     delete qgeoroutesegmentcopy;
@@ -280,8 +274,7 @@ void tst_QGeoRoute::travelTime()
 
     time = 35;
 
-    QEXPECT_FAIL("", "Expected Fail", Continue);
-    QCOMPARE (qgeoroute->travelTime(),time);
+    QVERIFY (qgeoroute->travelTime() != time);
 
     qgeoroute->setTravelTime(time);
     QCOMPARE (qgeoroute->travelTime(),time);

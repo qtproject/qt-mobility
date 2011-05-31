@@ -450,8 +450,19 @@ beginning of a field.
 @param aFindWords A descriptor array containing one or more search strings.
 @param aMatchedContacts On return, an array of matching contact items. */
 	{
-	iView.ContactsMatchingPrefixL(aFindWords, aMatchedContacts);
-	FilterResultsArray(aMatchedContacts);
+    if (iFilter == CContactDatabase::ECustomFilter2)
+        {
+        // This filtered view is for top contacts. There are not so many top contacts usually,
+        // so it's faster to fetch these contacts from the server side and do matching here,
+        // rather than matching among all contacts in the remote view and checking results
+        // whether they belong to the filtered view or not. 
+        CContactViewBase::ContactsMatchingPrefixL(aFindWords,aMatchedContacts);
+	    }
+    else
+        {
+	    iView.ContactsMatchingPrefixL(aFindWords, aMatchedContacts);
+	    FilterResultsArray(aMatchedContacts);
+        }
 	}
 
 /* 

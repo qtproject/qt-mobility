@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -116,7 +116,7 @@ void QOrganizerManagerData::createEngine(const QString& managerName, const QMap<
 
         /* See if we got a fast hit */
         QList<QOrganizerManagerEngineFactory*> factories = m_engines.values(builtManagerName);
-        m_error = QOrganizerManager::NoError;
+        m_lastError = QOrganizerManager::NoError;
 
         while(!found) {
             foreach (QOrganizerManagerEngineFactory* f, factories) {
@@ -124,7 +124,7 @@ void QOrganizerManagerData::createEngine(const QString& managerName, const QMap<
                 if (implementationVersion == -1 ||//no given implementation version required
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
-                    QOrganizerManagerEngine* engine = f->engine(parameters, &m_error);
+                    QOrganizerManagerEngine* engine = f->engine(parameters, &m_lastError);
                     // if it's a V2, use it
                     m_engine = qobject_cast<QOrganizerManagerEngineV2*>(engine);
                     if (!m_engine && engine) {
@@ -149,13 +149,13 @@ void QOrganizerManagerData::createEngine(const QString& managerName, const QMap<
         // XXX remove this
         // the engine factory could lie to us, so check the real implementation version
         if (m_engine && (implementationVersion != -1 && m_engine->managerVersion() != implementationVersion)) {
-            m_error = QOrganizerManager::VersionMismatchError;
+            m_lastError = QOrganizerManager::VersionMismatchError;
             m_engine = 0;
         }
 
         if (!m_engine) {
-            if (m_error == QOrganizerManager::NoError)
-                m_error = QOrganizerManager::DoesNotExistError;
+            if (m_lastError == QOrganizerManager::NoError)
+                m_lastError = QOrganizerManager::DoesNotExistError;
             m_engine = new QOrganizerItemInvalidEngine();
         }
     }

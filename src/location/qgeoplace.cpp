@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -61,6 +61,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoPlace class represents basic information about a place.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup location
 
@@ -99,6 +100,7 @@ QGeoPlace::QGeoPlace(QGeoPlacePrivate *dd)
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QGeoPlace::QGeoPlace(const QGeoPlace &other)
         : d_ptr(other.d_ptr)
@@ -115,6 +117,7 @@ QGeoPlace::~QGeoPlace()
 /*!
     Assigns \a other to this place and returns a reference
     to this place.
+    \since 1.1
 */
 QGeoPlace &QGeoPlace::operator= (const QGeoPlace & other)
 {
@@ -135,6 +138,7 @@ inline const QGeoPlacePrivate* QGeoPlace::d_func() const
 /*!
     Returns true if \a other is equal to this place,
     otherwise returns false.
+    \since 1.1
 */
 bool QGeoPlace::operator== (const QGeoPlace &other) const
 {
@@ -144,6 +148,7 @@ bool QGeoPlace::operator== (const QGeoPlace &other) const
 /*!
     Returns true if \a other is not equal to this place,
     otherwise returns false.
+    \since 1.1
 */
 bool QGeoPlace::operator!= (const QGeoPlace &other) const
 {
@@ -156,6 +161,7 @@ bool QGeoPlace::operator!= (const QGeoPlace &other) const
 
     If so, the QLandmark(const QGeoPlace &place) constructor can be used to
     restore access to the landmark data.
+    \since 1.1
 */
 bool QGeoPlace::isLandmark() const
 {
@@ -167,6 +173,7 @@ bool QGeoPlace::isLandmark() const
 
     The viewport is a suggestion for a size and position of a map window
     which aims to view this palce.
+    \since 1.1
 */
 QGeoBoundingBox QGeoPlace::viewport() const
 {
@@ -179,6 +186,7 @@ QGeoBoundingBox QGeoPlace::viewport() const
 
     The viewport is a suggestion for a size and position of a map window
     which aims to view this palce.
+    \since 1.1
 */
 void QGeoPlace::setViewport(const QGeoBoundingBox &viewport)
 {
@@ -188,6 +196,7 @@ void QGeoPlace::setViewport(const QGeoBoundingBox &viewport)
 
 /*!
     Returns the coordinate that this place is located at.
+    \since 1.1
 */
 QGeoCoordinate QGeoPlace::coordinate() const
 {
@@ -197,6 +206,7 @@ QGeoCoordinate QGeoPlace::coordinate() const
 
 /*!
     Sets the \a coordinate that this place is located at.
+    \since 1.1
 */
 void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
 {
@@ -206,6 +216,7 @@ void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
 
 /*!
     Returns the address of this place.
+    \since 1.1
 */
 QGeoAddress QGeoPlace::address() const
 {
@@ -215,6 +226,7 @@ QGeoAddress QGeoPlace::address() const
 
 /*!
     Sets the \a address of this place.
+    \since 1.1
 */
 void QGeoPlace::setAddress(const QGeoAddress &address)
 {

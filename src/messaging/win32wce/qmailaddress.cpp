@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -176,10 +176,10 @@ void AddressSeparator::process(QChar character, bool quoted, bool escaped, int c
     }
 
     // RFC 2822 requires comma as the separator, but we'll allow the semi-colon as well.
-    if ( ( character == ',' || character == ';' || character.isSpace()) && 
+    if ( ( character == ',' || character == ';' || character.isSpace()) &&
          !_inGroup && !quoted && !escaped && commentDepth == 0 ) {
         if (character.isSpace()) {
-            // We'll also attempt to separate on whitespace, but we need to append it to 
+            // We'll also attempt to separate on whitespace, but we need to append it to
             // the token to preserve the input data
             accept(character);
             _tokenCompleted = true;
@@ -281,7 +281,7 @@ void AddressListGenerator::complete(TokenType type, bool hardSeparator)
             QRegExp suffixPattern("\\s*/TYPE=.*");
             if (suffixPattern.exactMatch(_partial)) {
                 type = Suffix;
-            } 
+            }
             else {
                 // See if the token is a bare email address; otherwise it must be a name element
                 QRegExp emailPattern(QMailAddress::emailAddressPattern());
@@ -350,7 +350,7 @@ void AddressListGenerator::processPending()
             if ((_pending.value(i - 1).first == Name) && ((type == Name) || (type == Group))) {
                 _pending.replace(i - 1, qMakePair(type, _pending.value(i - 1).second + _pending.value(i).second));
                 _pending.removeAt(i);
-            } 
+            }
             else {
                 ++i;
             }
@@ -514,7 +514,7 @@ void parseMailbox(QString& input, QString& name, QString& address, QString& suff
     {
         name = address = input.trimmed();
     }
-    else 
+    else
     {
         if (delimiters.first == -1)
         {
@@ -531,9 +531,9 @@ void parseMailbox(QString& input, QString& name, QString& address, QString& suff
                 address = input.mid(delimiters.first + 1, (delimiters.second - delimiters.first - 1)).trimmed();
         }
 
-        if ( name.isEmpty() ) 
+        if ( name.isEmpty() )
             name = address;
-    } 
+    }
 }
 
 }
@@ -587,7 +587,7 @@ QMailAddressPrivate::QMailAddressPrivate()
 {
 }
 
-QMailAddressPrivate::QMailAddressPrivate(const QString& addressText) 
+QMailAddressPrivate::QMailAddressPrivate(const QString& addressText)
     : _group(false),
       _searchCompleted(false)
 {
@@ -614,7 +614,7 @@ QMailAddressPrivate::QMailAddressPrivate(const QString& addressText)
     }
 }
 
-QMailAddressPrivate::QMailAddressPrivate(const QString& name, const QString& address) 
+QMailAddressPrivate::QMailAddressPrivate(const QString& name, const QString& address)
     : _group(false),
       _searchCompleted(false)
 {
@@ -648,7 +648,7 @@ void QMailAddressPrivate::setComponents(const QString& nameText, const QString& 
         _address.remove( charIndex, 1 );
 }
 
-QMailAddressPrivate::QMailAddressPrivate(const QMailAddressPrivate& other) 
+QMailAddressPrivate::QMailAddressPrivate(const QMailAddressPrivate& other)
     : QSharedData(other),
       _searchCompleted(false)
 {
@@ -783,13 +783,13 @@ QString QMailAddressPrivate::toString(bool forceDelimited) const
     return result;
 }
 
-template <typename Stream> 
+template <typename Stream>
 void QMailAddressPrivate::serialize(Stream &stream) const
 {
     stream << _name << _address << _suffix << _group;
 }
 
-template <typename Stream> 
+template <typename Stream>
 void QMailAddressPrivate::deserialize(Stream &stream)
 {
     _searchCompleted = false;
@@ -802,15 +802,16 @@ void QMailAddressPrivate::deserialize(Stream &stream)
 
     \brief The QMailAddress class provides an interface for manipulating message address strings.
     \ingroup messaginglibrary
+    \since 1.1
 
     QMailAddress provides functions for splitting the address strings of messages into name and
     address components, and for combining the individual components into correctly formatted
-    address strings.  QMailAddress can be used to manipulate the address elements exposed by the 
+    address strings.  QMailAddress can be used to manipulate the address elements exposed by the
     QMailMessage class.
 
-    Address strings are expected to use the format "name_part '<'address_part'>'", where 
-    \i name_part describes a message sender or recipient and \i address_part defines the address 
-    at which they can be contacted.  The address component is not validated, so it can contain an 
+    Address strings are expected to use the format "name_part '<'address_part'>'", where
+    \i name_part describes a message sender or recipient and \i address_part defines the address
+    at which they can be contacted.  The address component is not validated, so it can contain an
     email address, phone number, or any other type of textual address representation.
 
     \sa QMailMessage
@@ -827,7 +828,7 @@ QMailAddress::QMailAddress()
 /*!
     Constructs a QMailAddress object, extracting the name and address components from \a addressText.
 
-    If \a addressText cannot be separated into name and address components, both name() and address() 
+    If \a addressText cannot be separated into name and address components, both name() and address()
     will return the entirety of \a addressText.
 
     \sa name(), address()
@@ -910,7 +911,7 @@ bool QMailAddress::isGroup() const
 }
 
 /*!
-    Returns a list containing the individual addresses that comprise the address group.  
+    Returns a list containing the individual addresses that comprise the address group.
     If the address is not a group address, an empty list is returned.
 
     \sa isGroup()
@@ -972,7 +973,7 @@ QStringList QMailAddress::toStringList(const QList<QMailAddress>& list, bool for
 }
 
 /*!
-    Returns a list containing a QMailAddress object constructed from each 
+    Returns a list containing a QMailAddress object constructed from each
     comma-separated address in \a list.
 */
 QList<QMailAddress> QMailAddress::fromStringList(const QString& list)
@@ -981,7 +982,7 @@ QList<QMailAddress> QMailAddress::fromStringList(const QString& list)
 }
 
 /*!
-    Returns a list containing a QMailAddress object constructed from each 
+    Returns a list containing a QMailAddress object constructed from each
     address string in \a list.
 */
 QList<QMailAddress> QMailAddress::fromStringList(const QStringList& list)
@@ -1018,7 +1019,7 @@ QString QMailAddress::phoneNumberPattern()
     static const QString pattern("\"?"                              // zero-or-one:'"'
                                  "("                                // start capture
                                  "(?:\\+ ?)?"                       // zero-or-one:('+', zero-or-one:space)
-                                 "(?:\\(\\d+\\)[ -]?)?"             // zero-or-one:'(', one-or-more:digits, ')', zero-or-one:separator 
+                                 "(?:\\(\\d+\\)[ -]?)?"             // zero-or-one:'(', one-or-more:digits, ')', zero-or-one:separator
                                  "(?:\\d{1,14})"                    // one:(one-to-fourteen):digits
                                  "(?:[ -]?[\\d#\\*]{1,10}){0,4}"    // zero-to-four:(zero-or-one:separator), one-to-ten:(digits | '#' | '*')
                                  "(?:"                              // zero-or-one:
@@ -1036,12 +1037,12 @@ QString QMailAddress::phoneNumberPattern()
 /*! \internal */
 QString QMailAddress::emailAddressPattern()
 {
-    // Taken from: http://www.regular-expressions.info/email.html, but 
+    // Taken from: http://www.regular-expressions.info/email.html, but
     // modified to accept uppercase characters as well as lower-case
     // Also - RFC 1034 seems to prohibit domain name elements beginning
     // with digits, but they exist in practise...
     static const QString pattern("[A-Za-z\\d!#$%&'*+/=?^_`{|}~-]+"      // one-or-more: legal chars (some punctuation permissible)
-                                 "(?:"                                  // zero-or-more: 
+                                 "(?:"                                  // zero-or-more:
                                      "\\."                                  // '.',
                                      "[A-Za-z\\d!#$%&'*+/=?^_`{|}~-]+"      // one-or-more: legal chars
                                  ")*"                                   // end of optional group
@@ -1049,8 +1050,8 @@ QString QMailAddress::emailAddressPattern()
                                  "(?:"                                  // either:
                                      "localhost"                            // 'localhost'
                                  "|"                                    // or:
-                                     "(?:"                                  // one-or-more: 
-                                         "[A-Za-z\\d]"                          // one: legal char, 
+                                     "(?:"                                  // one-or-more:
+                                         "[A-Za-z\\d]"                          // one: legal char,
                                          "(?:"                                  // zero-or-one:
                                              "[A-Za-z\\d-]*[A-Za-z\\d]"             // (zero-or-more: (legal char or '-'), one: legal char)
                                          ")?"                                   // end of optional group
@@ -1065,21 +1066,21 @@ QString QMailAddress::emailAddressPattern()
     return pattern;
 }
 
-/*! 
+/*!
     \fn QMailAddress::serialize(Stream&) const
-    \internal 
+    \internal
 */
-template <typename Stream> 
+template <typename Stream>
 void QMailAddress::serialize(Stream &stream) const
 {
     d->serialize(stream);
 }
 
-/*! 
+/*!
     \fn QMailAddress::deserialize(Stream&)
-    \internal 
+    \internal
 */
-template <typename Stream> 
+template <typename Stream>
 void QMailAddress::deserialize(Stream &stream)
 {
     d->deserialize(stream);

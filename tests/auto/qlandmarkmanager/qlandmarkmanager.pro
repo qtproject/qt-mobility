@@ -52,3 +52,4 @@ symbian {
         DEPLOYMENT += addFiles
 }
 
+maemo*:CONFIG += insignificant_test

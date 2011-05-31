@@ -25,9 +25,14 @@ else {
     }
 }
 
+include(metaobjectbuilder.pri)
+INCLUDEPATH += $$OBJECTBUILDER_INCLUDEPATH
+DEPENDPATH += $$OBJECTBUILDER_DEPENDPATH
+PRIVATE_HEADERS += $$OBJECTBUILDER_HEADERS
+SOURCES += $$OBJECTBUILDER_SOURCES
+
 PRIVATE_HEADERS += ipc/qslotinvoker_p.h \
     ipc/qsignalintercepter_p.h \
-    ipc/qmetaobjectbuilder_p.h \
     ipc/instancemanager_p.h \
     ipc/qservicepackage_p.h \
     ipc/proxyobject_p.h \
@@ -37,7 +42,6 @@ PRIVATE_HEADERS += ipc/qslotinvoker_p.h \
 
 SOURCES += ipc/qslotinvoker.cpp \
     ipc/qsignalintercepter.cpp \
-    ipc/qmetaobjectbuilder.cpp \
     ipc/instancemanager.cpp \
     ipc/qservicepackage.cpp \
     ipc/proxyobject.cpp \

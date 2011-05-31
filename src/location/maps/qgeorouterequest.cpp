@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     which define a request for routing information.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -124,8 +125,8 @@ QTM_BEGIN_NAMESPACE
     not be part of the route.
 
     \value NoFeature
-        Used by QGeoRoutingManager::supportedFeatureTypes() to indicate that 
-        no features will be taken into account when planning the route.    
+        Used by QGeoRoutingManager::supportedFeatureTypes() to indicate that
+        no features will be taken into account when planning the route.
     \value TollFeature
         Consdier tollways when planning the route.
     \value HighwayFeature
@@ -222,6 +223,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a request to calculate a route through the coordinates \a waypoints.
 
     The route will traverse the elements of \a waypoints in order.
+    \since 1.1
 */
 QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
     : d_ptr(new QGeoRouteRequestPrivate())
@@ -232,6 +234,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
 /*!
     Constructs a request to calculate a route between \a origin and
     \a destination.
+    \since 1.1
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoordinate &destination)
     : d_ptr(new QGeoRouteRequestPrivate())
@@ -242,6 +245,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoord
 
 /*!
     Constructs a route request object from the contents of \a other.
+    \since 1.1
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
     : d_ptr(other.d_ptr) {}
@@ -254,6 +258,7 @@ QGeoRouteRequest::~QGeoRouteRequest() {}
 /*!
     Assigns \a other to this route request object and then returns a reference
     to this route request object.
+    \since 1.1
 */
 QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 {
@@ -263,6 +268,7 @@ QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 
 /*!
     Returns whether this route request and \a other are equal.
+    \since 1.1
 */
 bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
 {
@@ -271,6 +277,7 @@ bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
 
 /*!
     Returns whether this route request and \a other are equal.
+    \since 1.1
 */
 bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
 {
@@ -284,6 +291,7 @@ bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
 
     This request will be invalid until the waypoints have been set to a
     list containing two or more coordinates.
+    \since 1.1
 */
 void QGeoRouteRequest::setWaypoints(const QList<QGeoCoordinate> &waypoints)
 {
@@ -292,6 +300,7 @@ void QGeoRouteRequest::setWaypoints(const QList<QGeoCoordinate> &waypoints)
 
 /*!
     Returns the waypoints that the route will pass through.
+    \since 1.1
 */
 QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 {
@@ -300,6 +309,7 @@ QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 
 /*!
     Sets \a areas as excluded areas that the route must not cross.
+    \since 1.1
 */
 void QGeoRouteRequest::setExcludeAreas(const QList<QGeoBoundingBox> &areas)
 {
@@ -308,6 +318,7 @@ void QGeoRouteRequest::setExcludeAreas(const QList<QGeoBoundingBox> &areas)
 
 /*!
     Returns areas the route must not cross.
+    \since 1.1
 */
 QList<QGeoBoundingBox> QGeoRouteRequest::excludeAreas() const
 {
@@ -318,6 +329,7 @@ QList<QGeoBoundingBox> QGeoRouteRequest::excludeAreas() const
     Sets the number of alternative routes to request to \a alternatives.
 
     The default value is 0.
+    \since 1.1
 */
 void QGeoRouteRequest::setNumberAlternativeRoutes(int alternatives)
 {
@@ -326,6 +338,7 @@ void QGeoRouteRequest::setNumberAlternativeRoutes(int alternatives)
 
 /*!
     Returns the number of alternative routes which will be requested.
+    \since 1.1
 */
 int QGeoRouteRequest::numberAlternativeRoutes() const
 {
@@ -337,6 +350,7 @@ int QGeoRouteRequest::numberAlternativeRoutes() const
     route to \a travelModes.
 
     The default value is QGeoRouteRequest::CarTravel.
+    \since 1.1
 */
 void QGeoRouteRequest::setTravelModes(QGeoRouteRequest::TravelModes travelModes)
 {
@@ -346,6 +360,7 @@ void QGeoRouteRequest::setTravelModes(QGeoRouteRequest::TravelModes travelModes)
 /*!
     Returns the travel modes which this request specifies should be considered
     during the planning of the route.
+    \since 1.1
 */
 QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
 {
@@ -359,6 +374,7 @@ QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
     By default all features are assigned a weight of NeutralFeatureWeight.
 
     It is impossible to assign a weight to QGeoRouteRequest::NoFeature.
+    \since 1.1
 */
 void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureType, QGeoRouteRequest::FeatureWeight featureWeight)
 {
@@ -375,6 +391,7 @@ void QGeoRouteRequest::setFeatureWeight(QGeoRouteRequest::FeatureType featureTyp
 
     If no feature weight has been specified for \a featureType then
     NeutralFeatureWeight will be returned.
+    \since 1.1
 */
 QGeoRouteRequest::FeatureWeight QGeoRouteRequest::featureWeight(QGeoRouteRequest::FeatureType featureType) const
 {
@@ -384,6 +401,7 @@ QGeoRouteRequest::FeatureWeight QGeoRouteRequest::featureWeight(QGeoRouteRequest
 /*!
     Returns the list of features that will be considered when planning the
     route.  Features with a weight of NeutralFeatureWeight will not be returned.
+    \since 1.1
 */
 QList<QGeoRouteRequest::FeatureType> QGeoRouteRequest::featureTypes() const
 {
@@ -395,6 +413,7 @@ QList<QGeoRouteRequest::FeatureType> QGeoRouteRequest::featureTypes() const
     \a optimization.
 
     The default value is QGeoRouteRequest::FastestRoute.
+    \since 1.1
 */
 void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimizations optimization)
 {
@@ -404,6 +423,7 @@ void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimizations
 /*!
     Returns the optimization criteria which this request specifies should be
     used while planning the route.
+    \since 1.1
 */
 QGeoRouteRequest::RouteOptimizations QGeoRouteRequest::routeOptimization() const
 {
@@ -413,6 +433,7 @@ QGeoRouteRequest::RouteOptimizations QGeoRouteRequest::routeOptimization() const
 /*!
     Sets the level of detail to use when representing routing segments to
     \a segmentDetail.
+    \since 1.1
 */
 void QGeoRouteRequest::setSegmentDetail(QGeoRouteRequest::SegmentDetail segmentDetail)
 {
@@ -422,6 +443,7 @@ void QGeoRouteRequest::setSegmentDetail(QGeoRouteRequest::SegmentDetail segmentD
 /*!
     Returns the level of detail which will be used in the representation of
     routing segments.
+    \since 1.1
 */
 QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
 {
@@ -433,6 +455,7 @@ QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
     \a maneuverDetail.
 
     The default value is QGeoRouteRequest::BasicManeuvers.
+    \since 1.1
 */
 void QGeoRouteRequest::setManeuverDetail(QGeoRouteRequest::ManeuverDetail maneuverDetail)
 {
@@ -442,6 +465,7 @@ void QGeoRouteRequest::setManeuverDetail(QGeoRouteRequest::ManeuverDetail maneuv
 /*!
     Returns the level of detail which will be used in the representation of
     routing maneuvers.
+    \since 1.1
 */
 QGeoRouteRequest::ManeuverDetail QGeoRouteRequest::maneuverDetail() const
 {

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,6 +50,7 @@ IMPLEMENT_READING(QRotationReading)
     \class QRotationReading
     \ingroup sensors_reading
     \inmodule QtSensors
+    \since 1.0
 
     \brief The QRotationReading class represents one reading from the
            rotation sensor.
@@ -74,7 +75,7 @@ IMPLEMENT_READING(QRotationReading)
      (twice-rotated) z-axis and incrementing towards the x-axis.
     \endlist
 
-    Here is a visualisation showing the order in which angles are applied.
+    Here is a visualization showing the order in which angles are applied.
 
     \image sensors-rotation-anim.gif
 
@@ -108,6 +109,7 @@ IMPLEMENT_READING(QRotationReading)
 
     Measured as degrees.
     \sa {QRotationReading Units}
+    \since 1.0
 */
 
 qreal QRotationReading::x() const
@@ -117,6 +119,7 @@ qreal QRotationReading::x() const
 
 /*!
     Sets the rotation around the x axis to \a x.
+    \since 1.0
 */
 void QRotationReading::setX(qreal x)
 {
@@ -129,6 +132,7 @@ void QRotationReading::setX(qreal x)
 
     Measured as degrees.
     \sa {QRotationReading Units}
+    \since 1.0
 */
 
 qreal QRotationReading::y() const
@@ -138,6 +142,7 @@ qreal QRotationReading::y() const
 
 /*!
     Sets the rotation around the y axis to \a y.
+    \since 1.0
 */
 void QRotationReading::setY(qreal y)
 {
@@ -150,6 +155,7 @@ void QRotationReading::setY(qreal y)
 
     Measured as degrees.
     \sa {QRotationReading Units}
+    \since 1.0
 */
 
 qreal QRotationReading::z() const
@@ -159,6 +165,7 @@ qreal QRotationReading::z() const
 
 /*!
     Sets the rotation around the z axis to \a z.
+    \since 1.0
 */
 void QRotationReading::setZ(qreal z)
 {
@@ -176,6 +183,7 @@ void QRotationReading::setZ(qreal z)
 
     The only difference is that the filter() method features a pointer to QRotationReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -184,6 +192,7 @@ void QRotationReading::setZ(qreal z)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QRotationSensor::type("QRotationSensor");
@@ -202,18 +211,21 @@ char const * const QRotationSensor::type("QRotationSensor");
     For details about how the sensor works, see \l QRotationReading.
 
     \sa QRotationReading
+    \since 1.0
 */
 
 /*!
     \fn QRotationSensor::QRotationSensor(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QRotationSensor::~QRotationSensor()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -222,6 +234,7 @@ char const * const QRotationSensor::type("QRotationSensor");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 /*!
@@ -230,6 +243,7 @@ char const * const QRotationSensor::type("QRotationSensor");
 
     Returns true if z is available.
     Returns false if z is not available.
+    \since 1.0
 */
 
 #include "moc_qrotationsensor.cpp"

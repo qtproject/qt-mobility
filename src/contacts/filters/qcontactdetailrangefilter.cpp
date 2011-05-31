@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,11 +50,12 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailRangeFilter
   \brief The QContactDetailRangeFilter class provides a filter based around
   a detail value range criterion.
-  
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-filters
- 
+
   It may be used to select contacts which contain a detail of a particular definition with a particular value that lies in
   a range (either open or closed).
  */
@@ -64,6 +65,7 @@ Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactDetailRangeFilter);
 /*!
  * \fn QContactDetailRangeFilter::QContactDetailRangeFilter(const QContactFilter& other)
  * Constructs a copy of \a other if possible, otherwise constructs a new detail range filter
+ * \since 1.0
  */
 
 /*!
@@ -91,6 +93,7 @@ QContactDetailRangeFilter::QContactDetailRangeFilter()
  * filter.setRange(7, QVariant(), QContactDetailRangeFilter::ExcludeLower);
  * \endcode
  * \sa minValue(), maxValue()
+ * \since 1.0
  */
 void QContactDetailRangeFilter::setRange(const QVariant& min, const QVariant& max, RangeFlags flags)
 {
@@ -114,6 +117,7 @@ void QContactDetailRangeFilter::setRange(const QVariant& min, const QVariant& ma
  * Unsupported flags will be ignored.
  *
  * \sa matchFlags()
+ * \since 1.0
  */
 void QContactDetailRangeFilter::setMatchFlags(QContactFilter::MatchFlags flags)
 {
@@ -126,6 +130,7 @@ void QContactDetailRangeFilter::setMatchFlags(QContactFilter::MatchFlags flags)
  * Sets the name of the detail definition of which type details will be inspected for matching values to \a definitionName,
  * and the name of the field which will be inspected in details of that definition to \a fieldName.
  * \sa detailDefinitionName(), detailFieldName()
+ * \since 1.0
  */
 void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
 {
@@ -137,6 +142,7 @@ void QContactDetailRangeFilter::setDetailDefinitionName(const QString& definitio
 /*!
  * Returns the match flags of the criterion, which define semantics such as case sensitivity, and exact matching.
  * \sa setMatchFlags()
+ * \since 1.0
  */
 QContactFilter::MatchFlags QContactDetailRangeFilter::matchFlags() const
 {
@@ -147,6 +153,7 @@ QContactFilter::MatchFlags QContactDetailRangeFilter::matchFlags() const
 /*!
  * Returns the definition name of the details which will be inspected for matching values
  * \sa setDetailDefinitionName()
+ * \since 1.0
  */
 QString QContactDetailRangeFilter::detailDefinitionName() const
 {
@@ -157,6 +164,7 @@ QString QContactDetailRangeFilter::detailDefinitionName() const
 /*!
  * Returns the name of the field which contains the value which will be matched against the value criterion
  * \sa setDetailDefinitionName()
+ * \since 1.0
  */
 QString QContactDetailRangeFilter::detailFieldName() const
 {
@@ -169,6 +177,7 @@ QString QContactDetailRangeFilter::detailFieldName() const
  * If this value is null, there is no lower bound.
  * If it is valid, the \l rangeFlags() determines whether this value is included in the valid values.
  * \sa setRange()
+ * \since 1.0
  */
 QVariant QContactDetailRangeFilter::minValue() const
 {
@@ -181,6 +190,7 @@ QVariant QContactDetailRangeFilter::minValue() const
  * If this value is null, there is no upper bound.
  * If it is valid, the \l rangeFlags() determines whether this value is included in the valid values.
  * \sa setRange()
+ * \since 1.0
  */
 QVariant QContactDetailRangeFilter::maxValue() const
 {
@@ -191,6 +201,7 @@ QVariant QContactDetailRangeFilter::maxValue() const
 /*!
  * Returns a set of flags which defines the boundary condition semantics of the value range criterion
  * \sa setRange()
+ * \since 1.0
  */
 QContactDetailRangeFilter::RangeFlags QContactDetailRangeFilter::rangeFlags() const
 {
