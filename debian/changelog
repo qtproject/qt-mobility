@@ -1,5 +1,6 @@
 qt-mobility (1.2.0+375) unstable; urgency=low
 
+  * Temporaly disable screensaver test due to harmattan changes in harmattan
   * Applied Versit autotest fix patch
   * Fixes: NB#221126
 
