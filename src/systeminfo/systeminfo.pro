@@ -331,6 +331,14 @@ unix:!simulator {
             message("Thermalstatus enabled")
         }
 
+        contains(networkhandlingengine_symbian_enabled, yes) {
+            DEFINES += NETWORKHANDLER_SYMBIAN_SUPPORTED
+            SOURCES += networkoperatornamelistener_s60.cpp
+            HEADERS += networkoperatornamelistener_s60.h
+            LIBS    += -lnetworkhandling
+            message("Network Handling engine enabled")
+        }
+
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 

@@ -2216,6 +2216,16 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
  */
 
 /*!
+    \fn QContactOnlineAccount::protocol() const
+    Returns the protocol value.
+ */
+
+/*!
+    \fn QContactOnlineAccount::setProtocol(const QString &protocol)
+    Set the protocol to \a protocol.
+ */
+
+/*!
    \fn QContactOnlineAccount::setSubTypes(const QStringList& subTypes)
 
    Sets the subtypes which this detail implements to be those

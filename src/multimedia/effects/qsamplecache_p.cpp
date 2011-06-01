@@ -48,7 +48,7 @@
 QT_BEGIN_NAMESPACE
 
 
-/*!
+/*
     \class QSampleCache
     \internal
 

@@ -76,6 +76,7 @@ QT_USE_NAMESPACE
 - (void) processLoadStateChange:(NSNotification *)notification;
 - (void) processVolumeChange:(NSNotification *)notification;
 - (void) processNaturalSizeChange :(NSNotification *)notification;
+- (void) processPositionChange :(NSNotification *)notification;
 @end
 
 @implementation QTMovieObserver
@@ -115,6 +116,11 @@ QT_USE_NAMESPACE
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(processVolumeChange:)
                                                      name:QTMovieVolumeDidChangeNotification
+                                                   object:m_movie];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(processPositionChange:)
+                                                     name:QTMovieTimeDidChangeNotification
                                                    object:m_movie];
 
         if (QSysInfo::MacintoshVersion >= QSysInfo::MV_10_6) {
@@ -157,6 +163,12 @@ QT_USE_NAMESPACE
 {
     Q_UNUSED(notification);
     QMetaObject::invokeMethod(m_session, "processNaturalSizeChange", Qt::AutoConnection);
+}
+
+- (void) processPositionChange :(NSNotification *)notification
+{
+    Q_UNUSED(notification);
+    QMetaObject::invokeMethod(m_session, "processPositionChange", Qt::AutoConnection);
 }
 
 @end
@@ -729,6 +741,11 @@ void QT7PlayerSession::processNaturalSizeChange()
 
     if (m_videoOutput)
         m_videoOutput->updateNaturalSize(QSize(size.width, size.height));
+}
+
+void QT7PlayerSession::processPositionChange()
+{
+    emit positionChanged(position());
 }
 
 #include "moc_qt7playersession.cpp"
