@@ -54,7 +54,7 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
     \qmlclass GeneralInfo QDeclarativeGeneralInfo
     \brief The GeneralInfo element allows you access to general system information and to receive notifications from the device.
 
-\inherits QSystemInfo
+    \inherits QSystemInfo
 
     \ingroup qml-systeminfo
 
@@ -70,7 +70,7 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
             generalInfo.startCurrentLanguageChanged()
         }
 
-\endqml
+    \endqml
 
 \sa QSystemInfo
 */

@@ -62,7 +62,7 @@ QTM_BEGIN_NAMESPACE
 
 class KeyData{
 public:
-    enum Target{CRepository, RProperty};
+    enum Target{CRepository, RProperty, FeatureManager};
 
     KeyData():m_UID(0), m_bitIndex(0), m_target(RProperty){}
     KeyData(const QString &path, quint64 UID,

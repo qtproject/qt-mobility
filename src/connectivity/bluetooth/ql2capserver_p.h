@@ -50,7 +50,7 @@
 #include <bt_sock.h>
 #endif //QTM_SYMBIAN_BLUETOOTH
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 #endif
 
@@ -82,7 +82,7 @@ public:
     void _q_disconnected();
 #endif //QTM_SYMBIAN_BLUETOOTH
     
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     void _q_newConnection();
 #endif
 
@@ -103,7 +103,7 @@ protected:
     QL2capServer *q_ptr;
 
 private:
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     QSocketNotifier *socketNotifier;
 #endif
 };

@@ -42,7 +42,7 @@
 #include "pubsubmonitor_p.h"
 #include "settingshandlerbase_p.h"
 
-CPubSubMonitor::CPubSubMonitor(const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver) 
+CPubSubMonitor::CPubSubMonitor(const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver)
     : CActive(EPriorityStandard), iKey(aKey), m_type(type), iObserver(aObserver)
     {
     CActiveScheduler::Add(this);

@@ -69,7 +69,7 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
 void QBluetoothDeviceDiscoveryAgentPrivate::stop()
 {
 }
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 void QBluetoothDeviceDiscoveryAgentPrivate::_q_deviceFound(const QString &address,
                                                            const QVariantMap &dict)
 {

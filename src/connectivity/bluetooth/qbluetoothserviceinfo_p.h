@@ -72,7 +72,7 @@ public:
 
     bool ensureSdpConnection() const;
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     bool registerService() const;
 #endif
 
@@ -89,7 +89,7 @@ public:
     mutable TSdpServRecordHandle serviceRecord;
 #endif
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     mutable OrgBluezServiceInterface *service;
     mutable quint32 serviceRecord;
     mutable bool registered;

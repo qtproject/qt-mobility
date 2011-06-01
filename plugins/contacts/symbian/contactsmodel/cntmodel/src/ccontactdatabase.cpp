@@ -3623,6 +3623,23 @@ EXPORT_C void CContactDatabase::DatabaseCommitL(TBool aIsInTransaction)
 		}
 	}
 	
+/**
+Asynchronous commit of an existing transaction, without popping a cleanup item.
+
+@publishedPartner
+@released
+@capability WriteUserData
+
+@param aIsInTransaction ETrue if transaction already started
+@param aStatus Valid status to that will contain the completion value
+*/
+EXPORT_C void CContactDatabase::DatabaseCommit(TBool aIsInTransaction, TRequestStatus*& aStatus)
+    {
+    if (!aIsInTransaction)
+        {
+        iCntSvr->CommitDbTransaction(aStatus);
+        }
+    }
 
 /**
 Force a rollback of the database.

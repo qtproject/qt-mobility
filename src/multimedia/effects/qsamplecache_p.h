@@ -58,6 +58,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qmutex.h>
 #include <QtCore/qmap.h>
+#include <QtCore/qset.h>
 #include <qaudioformat.h>
 
 
@@ -69,6 +70,7 @@ class QNetworkAccessManager;
 class QSampleCache;
 class QWaveDecoder;
 
+// Lives in application thread
 class QSample : public QObject
 {
     Q_OBJECT
@@ -83,6 +85,8 @@ public:
     };
 
     State state() const;
+    // These are not (currently) locked because they are only meant to be called after these
+    // variables are updated to their final states
     const QByteArray& data() const { Q_ASSERT(state() == Ready); return m_soundData; }
     const QAudioFormat& format() const { Q_ASSERT(state() == Ready); return m_audioFormat; }
     void release();
@@ -91,19 +95,21 @@ Q_SIGNALS:
     void error();
     void ready();
 
-public Q_SLOTS:
+protected:
+    QSample(const QUrl& url, QSampleCache *parent);
+
+private Q_SLOTS:
     void load();
     void decoderError();
     void readSample();
     void decoderReady();
 
-protected:
-    QSample(const QUrl& url, QSampleCache *parent);
-
 private:
     void onReady();
     void cleanup();
     void addRef();
+    void loadIfNecessary();
+    QSample();
     ~QSample();
 
     mutable QMutex m_mutex;
@@ -118,21 +124,20 @@ private:
     int          m_ref;
 };
 
-class QSampleCache : QObject
+class QSampleCache
 {
-    Q_OBJECT
 public:
     friend class QSample;
-    QSampleCache();
 
+    QSampleCache();
     ~QSampleCache();
 
     QSample* requestSample(const QUrl& url);
-
     void setCapacity(qint64 capacity);
 
 private:
     QMap<QUrl, QSample*> m_samples;
+    QSet<QSample*> m_staleSamples;
     QNetworkAccessManager *m_networkAccessManager;
     QMutex m_mutex;
     qint64 m_capacity;
@@ -141,7 +146,9 @@ private:
 
     QNetworkAccessManager& networkAccessManager();
     void refresh(qint64 usageChange);
-    bool tryRemoveUnrefSample(const QUrl& url);
+    bool notifyUnreferencedSample(QSample* sample);
+    void removeUnreferencedSample(QSample* sample);
+    void unloadSample(QSample* sample);
 };
 
 QT_END_NAMESPACE

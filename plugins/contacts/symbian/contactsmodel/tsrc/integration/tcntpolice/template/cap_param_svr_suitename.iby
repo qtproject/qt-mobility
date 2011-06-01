@@ -18,6 +18,6 @@
 #ifndef __Cap_PARAM_SVR_SUITENAME_IBY__
 #define __Cap_PARAM_SVR_SUITENAME_IBY__
 
-file=ABI_DIR\DEBUG_DIR\Cap_PARAM_SVR_SUITENAME.DLL System\bin\Cap_PARAM_SVR_SUITENAME.DLL
+file=ABI_DIR\DEBUG_DIR\cap_param_svr_suitename.dll System\bin\cap_param_svr_suitename.dll
 
 #endif

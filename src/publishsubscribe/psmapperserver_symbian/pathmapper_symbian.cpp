@@ -49,6 +49,52 @@
 
 QTM_BEGIN_NAMESPACE
 
+const QString CrPathPrefix("cr");
+const QString PsPathPrefix("ps");
+const QString FmPathPrefix("fm");
+
+// check if the path is for numeric access to central repository, publish&subscribe or featuremanager
+// (i.e. the path starts with "/cr/", "/ps/" or "/fm/")
+static bool isNumericPath(const QString &path)
+{
+    QStringList pathParts = path.split('/', QString::SkipEmptyParts);
+    if (pathParts.size() == 0)
+        return false;
+
+    if (pathParts[0] == CrPathPrefix || pathParts[0] == PsPathPrefix || pathParts[0] == FmPathPrefix)
+        return true;
+    else
+        return false;
+}
+
+// parse following cases:
+//  - numerical access to central repository:
+//      * "/cr/<category>/<key>" (f.ex: "/cr/0x100000ab/0x0000000d")
+//  - numerical access to publish&subscribe
+//      * "/ps/<category>/<key>" (f.ex: "/ps/0x00000edc/0xab000005")
+//  - numerical access to featuremanager flags
+//      * "/fm/<flag>" (f.ex: "/fm/0x0000001f")
+
+static bool parseNumericPath(const QString &path, PathMapper::Target &target, quint32 &category, quint32 &key)
+{
+    QStringList pathParts = path.split('/', QString::SkipEmptyParts);
+    bool success = false;
+
+    if (pathParts.size() == 3 && (pathParts[0] == CrPathPrefix || pathParts[0] == PsPathPrefix)) {
+        target = (pathParts[0] == CrPathPrefix) ? PathMapper::TargetCRepository : PathMapper::TargetRPropery;
+        category = pathParts[1].toUInt(&success, 0);
+        if (success) {
+            key = pathParts[2].toUInt(&success, 0);
+        }
+    } else if (pathParts.size() == 2 && pathParts[0] == FmPathPrefix) {
+        target = PathMapper::TargetFeatureManager;
+        category = 0;
+        key = pathParts[1].toUInt(&success, 0);
+    }
+
+    return success;
+}
+
 CCRMLDirectoryMonitor::CCRMLDirectoryMonitor() : CActive(EPriorityStandard)
 {
     if (m_fs.Connect() == KErrNone) {
@@ -144,8 +190,25 @@ QStringList PathMapper::childPaths(const QString &path) const
 {
     QString basePath = path;
     QStringList children;
-    QHashIterator<QString, PathData> i(m_paths);
     XQSettingsManager settingsManager;
+
+    // In case of numeric cenrep, pubsub and featuremanager access, there can be no childpaths.
+    // Just return the original path, if it is valid.
+    if (isNumericPath(path)) {
+        Target target;
+        quint32 category;
+        quint32 key;
+        if (parseNumericPath(path, target, category, key)) {
+            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+            settingsManager.readItemValue(settingsKey);
+            if (settingsManager.error() != XQSettingsManager::NotFoundError) {
+                children << path;
+            }
+        }
+        return children;
+    }
+
+    QHashIterator<QString, PathData> i(m_paths);
     while (i.hasNext()) {
         i.next();
         if (i.key().startsWith(basePath)) {
@@ -165,6 +228,9 @@ QStringList PathMapper::childPaths(const QString &path) const
 
 bool PathMapper::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
 {
+    if (isNumericPath(path))
+        return parseNumericPath(path, target, category, key);
+
     if (m_paths.contains(path)) {
         const PathData &data = m_paths.value(path);
         target = data.m_target;

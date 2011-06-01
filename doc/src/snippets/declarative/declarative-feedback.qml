@@ -55,7 +55,7 @@ Rectangle {
     }
 
     MouseArea {
-        onClicked: myFileEffect.play();
+        onClicked: myFileEffect.start();
     }
 
     //![File Effect]
@@ -69,8 +69,12 @@ Rectangle {
         duration: 100
         fadeTime: 250
         fadeIntensity: 0.0
-        running: myBoat.keelDepth < 0; // play a rumble when we crash the boat
     }
+    MouseArea {
+        onClicked: {
+        rumbleEffect.start();  // plays a rumble effect
+    }
+
     //![Haptics Effect]
 
     //![Theme]

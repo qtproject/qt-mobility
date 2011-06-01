@@ -1,0 +1,13 @@
+%RED% Instructions for Windows CE Platform %ENDCOLOR%
+
+---++++ Added network interfaces
+
+   1. Pre: no network access points are defined on the device; a WLAN is available
+   1. Run the bearercloud application
+   1. Verify the cloud space is clear of networks
+   1. Open StartMenu -> All Settings -> Connections tab -> Connections icon -> Wireless networks
+   1. Select the WLAN from the list
+   1. Press Connect
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is displayed in the circle

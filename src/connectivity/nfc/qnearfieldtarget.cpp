@@ -115,6 +115,7 @@ QTM_BEGIN_NAMESPACE
     This enum describes the error codes that that a near field target reports.
 
     \value NoError                  No error has occurred.
+    \value UnknownError             An unidentified error occurred.
     \value UnsupportedError         The requested operation is unsupported by this near field
                                     target.
     \value TargetOutOfRangeError    The target is no longer within range.

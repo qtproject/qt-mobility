@@ -75,7 +75,6 @@ QTM_BEGIN_NAMESPACE
     This enum describes errors that can occur during service discovery.
 
     \value NoError              No error.
-    \value Canceled             Service discovery was canceled.
     \value DeviceDiscoveryError Error occurred during device discovery.
     \value UnknownError         An unidentified error occurred.
 */
@@ -287,6 +286,13 @@ QString QBluetoothServiceDiscoveryAgent::errorString() const
     return d->errorString;
 }
 
+
+/*!
+    \fn QBluetoothServiceDiscoveryAgent::canceled()
+    Signals the cancellation of the service discovery.
+ */
+
+
 /*!
     Starts device discovery.
 */
@@ -403,6 +409,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished()
 
     startServiceDiscovery();
 }
+
 
 #include "moc_qbluetoothservicediscoveryagent.cpp"
 

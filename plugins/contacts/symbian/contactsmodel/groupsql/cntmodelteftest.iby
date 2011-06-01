@@ -20,11 +20,11 @@
 
 #include <testexecute.iby>
 
-#include <CntPerfTestServer.iby>
-#include <te_PerformanceFunctionalitySuite.iby>
+#include <cntperftestserver.iby>
+#include <te_performancefunctionalitysuite.iby>
 #include <TE_Cntsrv_API_Policing.IBY>
 #include <TestContactSuite.iby>
-#include <TEF_CntModelCIT.iby>
+#include <tef_cntmodelcit.iby>
 
 
 #endif

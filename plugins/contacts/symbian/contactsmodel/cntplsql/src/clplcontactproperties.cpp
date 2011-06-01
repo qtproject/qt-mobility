@@ -421,9 +421,16 @@ void CSystemTemplateManager::RecreateSystemTemplateL()
 		RDebug::Print(_L("[CNTMODEL] MTD: CSystemTemplateManager::RecreateSystemTemplateL"));
 	#endif 
 	
-	_LIT(KCntSystemTemplate,"z:\\resource\\cntmodel\\customisedcntmodel.rsc");
-
-	CContactTemplate* systemTemplate = SystemTemplateFromResourceL(KCntSystemTemplate);
+	_LIT(KCntS60SystemTemplate,"z:\\resource\\cntmodel\\pbkcntmodel.rsc");
+	CContactTemplate* systemTemplate = NULL;
+	//try first S60 contacts template
+	TRAPD(err, systemTemplate = SystemTemplateFromResourceL(KCntS60SystemTemplate););
+	if (err != KErrNone)
+	    {
+	    //try default template
+	    _LIT(KCntDefaultSystemTemplate,"z:\\resource\\cntmodel\\cntmodel.rsc");
+	    systemTemplate = SystemTemplateFromResourceL(KCntDefaultSystemTemplate);
+	    }
 	CleanupStack::PushL(systemTemplate);
 
 	if (iContactItemManager.IsDatabaseEmptyL())

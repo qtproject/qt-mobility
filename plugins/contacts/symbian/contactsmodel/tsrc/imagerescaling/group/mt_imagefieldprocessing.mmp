@@ -16,7 +16,7 @@
 */
 
 
-target          MT_CntImageField.exe
+target          mt_cntimagefield.exe
 targettype      EXE
 CAPABILITY   	ALL -TCB
 

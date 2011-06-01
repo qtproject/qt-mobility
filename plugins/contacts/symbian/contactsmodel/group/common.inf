@@ -278,5 +278,5 @@ PRJ_TESTEXPORTS
 ../tsrc/vcardwithlargephoto.vcf  z:/t_cntvcard/vcardwithlargephoto.vcf
 
 // Integration test suites that have not been configured for PREQ1187
-#include "../tsrc/Integration/TestStartUp/group/bld.inf"
-#include "../tsrc/Integration/TestContactSuite/group/bld.inf"
+#include "../tsrc/integration/teststartup/group/bld.inf"
+#include "../tsrc/integration/testcontactsuite/group/bld.inf"

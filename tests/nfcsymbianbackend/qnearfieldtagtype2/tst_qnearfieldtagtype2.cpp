@@ -239,6 +239,7 @@ void tst_qnearfieldtagtype2::testRawAccessAndNdefAccess(const QList<QNdefMessage
         {
             // find ndef tlv
             NdefLen = blocks.at(i+1);
+            qDebug()<<"NDefLen is "<<NdefLen;
             ndefContent = blocks.mid(i+2, NdefLen);
             break;
         }
@@ -253,6 +254,7 @@ void tst_qnearfieldtagtype2::testRawAccessAndNdefAccess(const QList<QNdefMessage
 
     QByteArray newNdefMessage = message.toByteArray();
     NdefLen = newNdefMessage.count();
+    qDebug()<<"NDefLen is "<<NdefLen;
     qDebug()<<"new Ndef len is "<<NdefLen;
     newNdefMessage.push_front((char)NdefLen);
     newNdefMessage.push_front((char)0x03);
@@ -288,7 +290,7 @@ void tst_qnearfieldtagtype2::testRawAndNdefAccess()
     tester.touchTarget();
     QNdefMessage message;
     QNdefNfcUriRecord uriRecord;
-    uriRecord.setUri(QUrl("http://qt.nokia.com"));
+    uriRecord.setUri(QUrl("http://qt"));
     message.append(uriRecord);
 
     QList<QNdefMessage> messages;

@@ -48,7 +48,7 @@
 #include <qbluetoothuuid.h>
 
 #include <QIODevice>
-#include <QAbstractSocket>
+#include <QtNetwork/QAbstractSocket>
 
 QT_BEGIN_HEADER
 
