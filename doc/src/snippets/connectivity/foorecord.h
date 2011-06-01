@@ -39,61 +39,31 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativendefurirecord_p.h"
+#ifndef FOORECORD_H
+#define FOORECORD_H
 
-#include <QtCore/QUrl>
+#include <qdeclarativendefrecord.h>
 
-/*!
-    \qmlclass NdefUriRecord QDeclarativeNdefUriRecord
-    \brief The NdefUriRecord element represents an NFC RTD-URI NDEF record.
+QTM_USE_NAMESPACE
 
-    \ingroup connectivity-qml
-    \inmodule QtConnectivity
-
-    \inherits NdefRecord
-
-    \sa QNdefNfcUriRecord
-
-    The NdefUriRecord element is part of the \bold {QtMobility.connectivity 1.2} module.
-*/
-
-/*!
-    \qmlproperty string NdefUriRecord::uri
-
-    This property hold the URI stored in this URI record.
-*/
-
-Q_DECLARE_NDEFRECORD(QDeclarativeNdefUriRecord, QNdefRecord::NfcRtd, "U")
-
-QDeclarativeNdefUriRecord::QDeclarativeNdefUriRecord(QObject *parent)
-:   QDeclarativeNdefRecord(QNdefNfcUriRecord(), parent)
+//! [Foo declaration]
+class QDeclarativeNdefFooRecord : public QDeclarativeNdefRecord
 {
-}
+    Q_OBJECT
 
-QDeclarativeNdefUriRecord::QDeclarativeNdefUriRecord(const QNdefRecord &record, QObject *parent)
-:   QDeclarativeNdefRecord(QNdefNfcUriRecord(record), parent)
-{
-}
+    Q_PROPERTY(int foo READ foo WRITE setFoo NOTIFY fooChanged)
 
-QDeclarativeNdefUriRecord::~QDeclarativeNdefUriRecord()
-{
-}
+public:
+    explicit QDeclarativeNdefFooRecord(QObject *parent = 0);
+    Q_INVOKABLE QDeclarativeNdefFooRecord(const QNdefRecord &record, QObject *parent = 0);
+    ~QDeclarativeNdefFooRecord();
 
-QString QDeclarativeNdefUriRecord::uri() const
-{
-    QNdefNfcUriRecord uriRecord(record());
+    int foo() const;
+    void setFoo(int value);
 
-    return uriRecord.uri().toString();
-}
+signals:
+    void fooChanged();
+};
+//! [Foo declaration]
 
-void QDeclarativeNdefUriRecord::setUri(const QString &uri)
-{
-    QNdefNfcUriRecord uriRecord(record());
-
-    if (uriRecord.uri() == uri)
-        return;
-
-    uriRecord.setUri(uri);
-    setRecord(uriRecord);
-    emit uriChanged();
-}
+#endif // FOORECORD_H
