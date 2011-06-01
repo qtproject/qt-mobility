@@ -292,8 +292,6 @@ QMessageAccount TelepathyEngine::account(const QMessageAccountId &id)
 
 QMessageAccountId TelepathyEngine::defaultAccount(QMessage::Type type)
 {
-    QDEBUG_FUNCTION_BEGIN
-
     QMessageAccountId result;	
     
     foreach (const AccountPair &pair, m_accounts) {
@@ -304,8 +302,6 @@ QMessageAccountId TelepathyEngine::defaultAccount(QMessage::Type type)
     }
 
     m_error = QMessageManager::NoError;
-
-    QDEBUG_FUNCTION_END
 	
     return result;
 }
