@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -55,7 +55,7 @@ Q_DECLARE_METATYPE(QAbstractVideoSurface::Error)
 /*!
     \class QAbstractVideoSurface
     \brief The QAbstractVideoSurface class is a base class for video presentation surfaces.
-    \since 4.6
+    \since 1.0
     \inmodule QtMultimediaKit
 
     The QAbstractVideoSurface class defines the standard interface that video producers use to
@@ -135,12 +135,14 @@ QAbstractVideoSurface::~QAbstractVideoSurface()
     that can be mapped in read-only mode.
 
     Types that are first in the list can be assumed to be faster to render.
+    \since 1.0
 */
 
 /*!
     Tests a video surface \a format to determine if a surface can accept it.
 
     Returns true if the format is supported by the surface, and false otherwise.
+    \since 1.0
 */
 
 bool QAbstractVideoSurface::isFormatSupported(const QVideoSurfaceFormat &format) const
@@ -159,6 +161,7 @@ bool QAbstractVideoSurface::isFormatSupported(const QVideoSurfaceFormat &format)
 
     If the format is already supported it will be returned unchanged, or if there is no similar
     supported format an invalid format will be returned.
+    \since 1.0
 */
 
 QVideoSurfaceFormat QAbstractVideoSurface::nearestFormat(const QVideoSurfaceFormat &format) const
@@ -173,11 +176,13 @@ QVideoSurfaceFormat QAbstractVideoSurface::nearestFormat(const QVideoSurfaceForm
 
     Signals that the set of formats supported by a video surface has changed.
 
+    \since 1.0
     \sa supportedPixelFormats(), isFormatSupported()
 */
 
 /*!
     Returns the format of a video surface.
+    \since 1.0
 */
 
 QVideoSurfaceFormat QAbstractVideoSurface::surfaceFormat() const
@@ -190,6 +195,7 @@ QVideoSurfaceFormat QAbstractVideoSurface::surfaceFormat() const
 
     Signals that the configured \a format of a video surface has changed.
 
+    \since 1.0
     \sa surfaceFormat(), start()
 */
 
@@ -198,6 +204,7 @@ QVideoSurfaceFormat QAbstractVideoSurface::surfaceFormat() const
 
     Returns true if the surface was started, and false if an error occurred.
 
+    \since 1.0
     \sa isActive(), stop()
 */
 
@@ -220,6 +227,7 @@ bool QAbstractVideoSurface::start(const QVideoSurfaceFormat &format)
 /*!
     Stops a video surface presenting frames and releases any resources acquired in start().
 
+    \since 1.0
     \sa isActive(), start()
 */
 
@@ -238,6 +246,7 @@ void QAbstractVideoSurface::stop()
     Indicates whether a video surface has been started.
 
     Returns true if the surface has been started, and false otherwise.
+    \since 1.0
 */
 
 bool QAbstractVideoSurface::isActive() const
@@ -250,6 +259,7 @@ bool QAbstractVideoSurface::isActive() const
 
     Signals that the \a active state of a video surface has changed.
 
+    \since 1.0
     \sa isActive(), start(), stop()
 */
 
@@ -271,6 +281,7 @@ bool QAbstractVideoSurface::isActive() const
     A video surface must be in the started state for present() to succeed, and the format of the
     video frame must be compatible with the current video surface format.
 
+    \since 1.0
     \sa error()
 */
 
@@ -279,6 +290,7 @@ bool QAbstractVideoSurface::isActive() const
 
     If a surface fails to start(), or stops unexpectedly this function can be called to discover
     what error occurred.
+    \since 1.0
 */
 
 QAbstractVideoSurface::Error QAbstractVideoSurface::error() const
@@ -288,6 +300,7 @@ QAbstractVideoSurface::Error QAbstractVideoSurface::error() const
 
 /*!
     Sets the value of error() to \a error.
+    \since 1.0
 */
 
 void QAbstractVideoSurface::setError(Error error)
@@ -303,6 +316,7 @@ void QAbstractVideoSurface::setError(Error error)
    can render with optimal quality and/or performance.
 
    The native resolution is not always known and can be changed during playback.
+    \since 1.1
  */
 
 QSize QAbstractVideoSurface::nativeResolution() const
@@ -312,6 +326,7 @@ QSize QAbstractVideoSurface::nativeResolution() const
 
 /*!
     Set the video surface native \a resolution.
+    \since 1.1
  */
 void QAbstractVideoSurface::setNativeResolution(const QSize &resolution)
 {
@@ -327,6 +342,7 @@ void QAbstractVideoSurface::setNativeResolution(const QSize &resolution)
     \fn QAbstractVideoSurface::nativeResolutionChanged(const QSize &resolution);
 
     Signals the native \a resolution of video surface has changed.
+    \since 1.1
 */
 
 QT_END_NAMESPACE

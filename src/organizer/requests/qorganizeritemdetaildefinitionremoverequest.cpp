@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,21 +50,26 @@ QTM_BEGIN_NAMESPACE
   asynchronously request that certain detail definitions be removed from
   an organizer item manager.
   \inmodule QtOrganizer
+  \since 1.1
 
   For a QOrganizerItemDetailDefinitionRemoveRequest, the resultsUpdated() signal will be emitted when
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
-  
+
   \ingroup organizer-requests
  */
 
-/*! Constructs a new detail definition remove request whose parent is the specified \a parent */
+/*! Constructs a new detail definition remove request whose parent is the specified \a parent
+  \since 1.1
+*/
 QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemoveRequest(QObject* parent)
     : QOrganizerAbstractRequest(new QOrganizerItemDetailDefinitionRemoveRequestPrivate, parent)
 {
 }
 
-/*! Frees memory in use by this request */
+/*! Frees memory in use by this request
+    \since 1.2
+*/
 QOrganizerItemDetailDefinitionRemoveRequest::~QOrganizerItemDetailDefinitionRemoveRequest()
 {
     QOrganizerAbstractRequestPrivate::notifyEngine(this);
@@ -80,6 +85,7 @@ QOrganizerItemDetailDefinitionRemoveRequest::~QOrganizerItemDetailDefinitionRemo
   \endcode
 
   \sa setItemType()
+  \since 1.1
  */
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
@@ -94,6 +100,7 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QStrin
   Managers may store different definitions which are valid for different organizer item types, and so attempting to remove definitions with certain names may fail if no such
   definitions exist for organizer items of the given organizer item type, specified via setItemType().
   \sa setItemType()
+  \since 1.1
  */
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {
@@ -102,7 +109,9 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStri
     d->m_names = names;
 }
 
-/*! Returns the list of names of the detail definitions that will be removed from the manager */
+/*! Returns the list of names of the detail definitions that will be removed from the manager
+    \since 1.1
+*/
 QStringList QOrganizerItemDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
@@ -112,6 +121,7 @@ QStringList QOrganizerItemDetailDefinitionRemoveRequest::definitionNames() const
 
 /*!
   Sets the type of organizer item for which detail definitions should be removed to \a organizeritemType
+  \since 1.1
  */
 void QOrganizerItemDetailDefinitionRemoveRequest::setItemType(const QString& organizeritemType)
 {
@@ -120,7 +130,9 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setItemType(const QString& org
     d->m_organizeritemType = organizeritemType;
 }
 
-/*! Returns the type of organizer item for which detail definitions will be removed */
+/*! Returns the type of organizer item for which detail definitions will be removed
+    \since 1.1
+*/
 QString QOrganizerItemDetailDefinitionRemoveRequest::itemType() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
@@ -128,7 +140,9 @@ QString QOrganizerItemDetailDefinitionRemoveRequest::itemType() const
     return d->m_organizeritemType;
 }
 
-/*! Returns the map of input name list indices to errors which occurred */
+/*! Returns the map of input name list indices to errors which occurred
+  \since 1.1
+*/
 QMap<int, QOrganizerManager::Error> QOrganizerItemDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);

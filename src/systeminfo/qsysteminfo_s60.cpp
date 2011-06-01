@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -431,6 +431,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
         this, SLOT(wlanNetworkStatusChanged()));*/
     DeviceInfo::instance()->subscriberInfo();
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+    DeviceInfo::instance()->networkInfoListener()->addObserver(this);
+#endif
  TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate--->");
 }
 
@@ -445,6 +448,9 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     DeviceInfo::instance()->networkInfo()->removeObserver(this);
 #endif
     DeviceInfo::instance()->wlanInfo()->removeObserver(this);
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+    DeviceInfo::instance()->networkInfoListener()->removeObserver(this);
+#endif
   TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate-->");
 }
 
@@ -608,7 +614,11 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
                 return QString();
 
+#ifndef NETWORKHANDLER_SYMBIAN_SUPPORTED
             return DeviceInfo::instance()->cellNetworkInfo()->networkName();
+#else
+            return DeviceInfo::instance()->networkInfoListener()->networkName();
+#endif
         }
         case QSystemNetworkInfo::WlanMode:
             return DeviceInfo::instance()->wlanInfo()->wlanNetworkName();
@@ -680,7 +690,11 @@ void QSystemNetworkInfoPrivate::networkCodeChanged()
 
 void QSystemNetworkInfoPrivate::networkNameChanged()
 {
+#ifndef NETWORKHANDLER_SYMBIAN_SUPPORTED
     emit networkNameChanged(currentMode(), DeviceInfo::instance()->cellNetworkInfo()->networkName());
+#else
+    emit networkNameChanged(currentMode(), DeviceInfo::instance()->networkInfoListener()->networkName());
+#endif
 }
 
 void QSystemNetworkInfoPrivate::networkModeChanged()
@@ -745,6 +759,16 @@ void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
     else
         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
 }
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+void QSystemNetworkInfoPrivate::OperatorNameChanged()
+ {
+  TRACES(qDebug() << "QSystemNetworkInfoPrivate::OperatorNameChanged++");
+  TRACES(qDebug() << "Operator name change notification received");
+  networkNameChanged();
+  TRACES(qDebug() << "QSystemNetworkInfoPrivate::OperatorNameChanged--");
+ }
+#endif
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
@@ -1476,23 +1500,17 @@ QString QSystemDeviceInfoPrivate::manufacturer()
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    // The model() function should return something like RM-XXX
-    // However, CTelephony::TPhoneIdV1.iModel returns something like N8
-    // The productName() function should return something like N8
-    // However, SysUtil::GetSWVersion returns something like RM-XXX
-    // This is done as a fix for MOBILITY-2804
+    return DeviceInfo::instance()->phoneInfo()->model();
+}
+
+QString QSystemDeviceInfoPrivate::productName()
+{
     QString productname;
     TBuf<KSysUtilVersionTextLength> versionBuf;
     if (SysUtil::GetSWVersion(versionBuf) == KErrNone) {
         productname = QString::fromUtf16(versionBuf.Ptr(), versionBuf.Length());
     }
     return productname.split("\n").at(2);
-}
-
-QString QSystemDeviceInfoPrivate::productName()
-{
-    // Read the docs in QSystemDeviceInfoPrivate::model() for this
-    return DeviceInfo::instance()->phoneInfo()->model();
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel() const

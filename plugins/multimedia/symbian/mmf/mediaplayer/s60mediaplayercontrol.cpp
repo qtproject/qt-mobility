@@ -390,7 +390,7 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 
     if ((m_session && m_currentResource == source) && m_session->isStreaming())
         {
-            m_session->load(source.canonicalUrl());
+            m_session->load(source);
             return;
         }
 
@@ -413,7 +413,7 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     m_session = newSession;
 
     if (m_session)
-        m_session->load(source.canonicalUrl());
+        m_session->load(source);
     else {
         QMediaPlayer::MediaStatus status = (source.isNull()) ? QMediaPlayer::NoMedia : QMediaPlayer::InvalidMedia;
         m_mediaSettings.setMediaStatus(status);

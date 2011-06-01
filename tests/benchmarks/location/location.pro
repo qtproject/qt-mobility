@@ -20,6 +20,6 @@ MOBILITY = location
 symbian {
     TARGET.CAPABILITY = All -TCB
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions
-    INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
-    INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
+    INCLUDEPATH += /epoc32/include/app
+    INCLUDEPATH += /epoc32/include/platform/app
 }

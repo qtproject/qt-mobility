@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="FeatureManager" version="">
+    <key ref="/featuremanager/c" int="0x6b8"/>
+    <key ref="/featuremanager/d" int="0xfc"/>
+    <key ref="/featuremanager/e" int="0x8c"/>
+</repository>

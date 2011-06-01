@@ -1420,15 +1420,15 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
     //set timeout property to 5 seconds
     if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstUDPSrc") == 0) {
         //udpsrc timeout unit = microsecond
-        g_object_set(G_OBJECT(source), "timeout", 5000000, NULL);
+        g_object_set(G_OBJECT(source), "timeout", G_GUINT64_CONSTANT(5000000), NULL);
         self->m_sourceType = UDPSrc;
     } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstSoupHTTPSrc") == 0) {
         //souphttpsrc timeout unit = second
-        g_object_set(G_OBJECT(source), "timeout", 5, NULL);
+        g_object_set(G_OBJECT(source), "timeout", guint(5), NULL);
         self->m_sourceType = SoupHTTPSrc;
     } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstMMSSrc") == 0) {
         self->m_sourceType = MMSSrc;
-        g_object_set(G_OBJECT(source), "tcp-timeout", 5000000, NULL);
+        g_object_set(G_OBJECT(source), "tcp-timeout", G_GUINT64_CONSTANT(5000000), NULL);
     } else {
         self->m_sourceType = UnknownSrc;
     }

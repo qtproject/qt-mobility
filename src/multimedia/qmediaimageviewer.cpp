@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -216,6 +216,7 @@ QMediaImageViewer::~QMediaImageViewer()
 /*!
     \property QMediaImageViewer::state
     \brief the playlist control state of a slide show.
+    \since 1.0
 */
 
 QMediaImageViewer::State QMediaImageViewer::state() const
@@ -227,11 +228,13 @@ QMediaImageViewer::State QMediaImageViewer::state() const
     \fn QMediaImageViewer::stateChanged(QMediaImageViewer::State state)
 
     Signals that the playlist control \a state of an image viewer has changed.
+    \since 1.0
 */
 
 /*!
     \property QMediaImageViewer::mediaStatus
     \brief the status of the current media.
+    \since 1.0
 */
 
 QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
@@ -243,11 +246,13 @@ QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
     \fn QMediaImageViewer::mediaStatusChanged(QMediaImageViewer::MediaStatus status)
 
     Signals the the \a status of the current media has changed.
+    \since 1.0
 */
 
 /*!
     \property QMediaImageViewer::media
     \brief the media an image viewer is presenting.
+    \since 1.0
 */
 
 QMediaContent QMediaImageViewer::media() const
@@ -288,6 +293,7 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
 
 /*!
   Use \a playlist as the source of images to be displayed in the viewer.
+  \since 1.0
 */
 void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
 {
@@ -318,6 +324,7 @@ void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
 
 /*!
   Returns the current playlist, or 0 if none.
+  \since 1.0
 */
 QMediaPlaylist *QMediaImageViewer::playlist() const
 {
@@ -328,6 +335,7 @@ QMediaPlaylist *QMediaImageViewer::playlist() const
     \fn QMediaImageViewer::mediaChanged(const QMediaContent &media)
 
     Signals that the \a media an image viewer is presenting has changed.
+    \since 1.0
 */
 
 /*!
@@ -336,6 +344,7 @@ QMediaPlaylist *QMediaImageViewer::playlist() const
     image.
 
     The timeout only applies if the image viewer has a playlist attached and is in the PlayingState.
+    \since 1.0
 */
 
 int QMediaImageViewer::timeout() const
@@ -359,6 +368,7 @@ void QMediaImageViewer::setTimeout(int timeout)
 
     The elapsed time only increases while the image viewer is in the PlayingState.  If stopped the
     elapsed time will be reset to 0.
+    \since 1.0
 */
 
 int QMediaImageViewer::elapsedTime() const
@@ -383,6 +393,7 @@ int QMediaImageViewer::elapsedTime() const
     in the PlayingState and an image is loaded.  The notification interval
     is controlled by the QMediaObject::notifyInterval property.
 
+    \since 1.0
     \sa timeout, QMediaObject::notifyInterval
 */
 
@@ -390,6 +401,7 @@ int QMediaImageViewer::elapsedTime() const
     Sets a video \a widget as the current video output.
 
     This will unbind any previous video output bound with setVideoOutput().
+    \since 1.1
 */
 
 void QMediaImageViewer::setVideoOutput(QVideoWidget *widget)
@@ -406,6 +418,7 @@ void QMediaImageViewer::setVideoOutput(QVideoWidget *widget)
     Sets a video \a item as the current video output.
 
     This will unbind any previous video output bound with setVideoOutput().
+    \since 1.1
 */
 
 void QMediaImageViewer::setVideoOutput(QGraphicsVideoItem *item)
@@ -423,6 +436,7 @@ void QMediaImageViewer::setVideoOutput(QGraphicsVideoItem *item)
 
     If a video output has already been set on the image viewer the new surface
     will replace it.
+    \since 1.2
 */
 
 void QMediaImageViewer::setVideoOutput(QAbstractVideoSurface *surface)
@@ -441,6 +455,7 @@ void QMediaImageViewer::setVideoOutput(QAbstractVideoSurface *surface)
 
 /*!
     \internal
+    \since 1.0
 */
 bool QMediaImageViewer::bind(QObject *object)
 {
@@ -455,6 +470,7 @@ bool QMediaImageViewer::bind(QObject *object)
 
 /*!
      \internal
+     \since 1.0
  */
 void QMediaImageViewer::unbind(QObject *object)
 {
@@ -471,6 +487,7 @@ void QMediaImageViewer::unbind(QObject *object)
     it will resume from the current media.
 
     If no playlist is attached to an image viewer this will do nothing.
+    \since 1.0
 */
 void QMediaImageViewer::play()
 {
@@ -504,6 +521,7 @@ void QMediaImageViewer::play()
 
     The current media and elapsed time are retained.  If resumed, the current image will be
     displayed for the remainder of the time out period before the next image is loaded.
+    \since 1.0
 */
 void QMediaImageViewer::pause()
 {
@@ -526,6 +544,7 @@ void QMediaImageViewer::pause()
 
     The current media is retained, but the elapsed time is discarded.  If resumed, the current
     image will be displayed for the full time out period before the next image is loaded.
+    \since 1.0
 */
 void QMediaImageViewer::stop()
 {
@@ -552,6 +571,7 @@ void QMediaImageViewer::stop()
     \reimp
 
     \internal
+    \since 1.0
 */
 void QMediaImageViewer::timerEvent(QTimerEvent *event)
 {

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QAudioSystemPlugin
     \brief The QAudioSystemPlugin class provides an abstract base for audio plugins.
+    \since 1.0
 
     \ingroup multimedia
     \inmodule QtMultimediaKit
@@ -107,28 +108,33 @@ QAudioSystemPlugin::~QAudioSystemPlugin()
 /*!
     \fn QStringList QAudioSystemPlugin::keys() const
     Returns the list of device identifiers this plugin supports.
+    \since 1.0
 */
 
 /*!
     \fn QList<QByteArray> QAudioSystemPlugin::availableDevices(QAudio::Mode mode) const
     Returns a list of available audio devices for \a mode
+    \since 1.0
 */
 
 /*!
     \fn QAbstractAudioInput* QAudioSystemPlugin::createInput(const QByteArray& device)
     Returns a pointer to a QAbstractAudioInput created using \a device identifier
+    \since 1.0
 */
 
 /*!
     \fn QAbstractAudioOutput* QAudioSystemPlugin::createOutput(const QByteArray& device)
     Returns a pointer to a QAbstractAudioOutput created using \a device identifier
 
+    \since 1.0
 */
 
 /*!
     \fn QAbstractAudioDeviceInfo* QAudioSystemPlugin::createDeviceInfo(const QByteArray& device, QAudio::Mode mode)
     Returns a pointer to a QAbstractAudioDeviceInfo created using \a device and \a mode
 
+    \since 1.0
 */
 
 

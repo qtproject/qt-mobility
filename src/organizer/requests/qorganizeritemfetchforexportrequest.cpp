@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemFetchForExportRequest class allows a client to asynchronously
     request organizer items from an organizer item store manager.
   \inmodule QtOrganizer
+  \since 1.1
 
 
   For a QOrganizerItemFetchForExportRequest, the resultsAvailable() signal will be emitted when the resultant
@@ -58,19 +59,25 @@ QTM_BEGIN_NAMESPACE
   \ingroup organizer-requests
  */
 
-/*! Constructs a new organizer item fetch request whose parent is the specified \a parent */
+/*! Constructs a new organizer item fetch request whose parent is the specified \a parent
+  \since 1.1
+*/
 QOrganizerItemFetchForExportRequest::QOrganizerItemFetchForExportRequest(QObject* parent)
     : QOrganizerAbstractRequest(new QOrganizerItemFetchForExportRequestPrivate, parent)
 {
 }
 
-/*! Frees memory in use by this request */
+/*! Frees memory in use by this request
+  \since 1.2
+*/
 QOrganizerItemFetchForExportRequest::~QOrganizerItemFetchForExportRequest()
 {
     QOrganizerAbstractRequestPrivate::notifyEngine(this);
 }
 
-/*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter */
+/*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter
+  \since 1.1
+*/
 void QOrganizerItemFetchForExportRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
@@ -78,7 +85,9 @@ void QOrganizerItemFetchForExportRequest::setFilter(const QOrganizerItemFilter& 
     d->m_filter = filter;
 }
 
-/*! Sets the sort order of the result to \a sorting.  Only has an effect if called prior to calling \c start() */
+/*! Sets the sort order of the result to \a sorting.  Only has an effect if called prior to calling \c start()
+  \since 1.1
+*/
 void QOrganizerItemFetchForExportRequest::setSorting(const QList<QOrganizerItemSortOrder>& sorting)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
@@ -93,6 +102,7 @@ void QOrganizerItemFetchForExportRequest::setSorting(const QList<QOrganizerItemS
   loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
   replace the previously saved organizer item in the backend).
   \sa QOrganizerItemFetchHint
+  \since 1.1
  */
 void QOrganizerItemFetchForExportRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
 {
@@ -101,7 +111,9 @@ void QOrganizerItemFetchForExportRequest::setFetchHint(const QOrganizerItemFetch
     d->m_fetchHint = fetchHint;
 }
 
-/*! Sets the start period of the request to \a date. Only has an effect if called prior to calling \c start() */
+/*! Sets the start period of the request to \a date. Only has an effect if called prior to calling \c start()
+  \since 1.1
+*/
 void QOrganizerItemFetchForExportRequest::setStartDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
@@ -109,7 +121,9 @@ void QOrganizerItemFetchForExportRequest::setStartDate(const QDateTime &date)
     d->m_startDate = date;
 }
 
-/*! Sets the end period of the request to \a date. Only has an effect if called prior to calling \c start() */
+/*! Sets the end period of the request to \a date. Only has an effect if called prior to calling \c start()
+  \since 1.1
+*/
 void QOrganizerItemFetchForExportRequest::setEndDate(const QDateTime &date)
 {
     Q_D(QOrganizerItemFetchForExportRequest);
@@ -117,7 +131,9 @@ void QOrganizerItemFetchForExportRequest::setEndDate(const QDateTime &date)
     d->m_endDate = date;
 }
 
-/*! Returns the filter that will be used to select organizer items to be returned */
+/*! Returns the filter that will be used to select organizer items to be returned
+  \since 1.1
+*/
 QOrganizerItemFilter QOrganizerItemFetchForExportRequest::filter() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
@@ -125,7 +141,9 @@ QOrganizerItemFilter QOrganizerItemFetchForExportRequest::filter() const
     return d->m_filter;
 }
 
-/*! Returns the sort ordering that will be used sort the results of this request */
+/*! Returns the sort ordering that will be used sort the results of this request
+    \since 1.1
+*/
 QList<QOrganizerItemSortOrder> QOrganizerItemFetchForExportRequest::sorting() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);
@@ -140,6 +158,7 @@ QList<QOrganizerItemSortOrder> QOrganizerItemFetchForExportRequest::sorting() co
   loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
   replace the previously saved organizer item in the backend).
   \sa QOrganizerItemFetchHint
+  \since 1.1
  */
 QOrganizerItemFetchHint QOrganizerItemFetchForExportRequest::fetchHint() const
 {
@@ -153,6 +172,7 @@ QOrganizerItemFetchHint QOrganizerItemFetchForExportRequest::fetchHint() const
    An invalid (default-constructed) date-time signifies that no lower bound is given (matches everything
    up to the end date).
    Note that an item matches if either it or any of its occurrences occur within the defined range.
+  \since 1.1
  */
 QDateTime QOrganizerItemFetchForExportRequest::startDate() const
 {
@@ -166,6 +186,7 @@ QDateTime QOrganizerItemFetchForExportRequest::startDate() const
    An invalid (default-constructed) date-time signifies that no upper bound is given (matches everything
    after the start date).
    Note that an item matches if either it or any of its occurrences occur within the defined range.
+  \since 1.1
  */
 QDateTime QOrganizerItemFetchForExportRequest::endDate() const
 {
@@ -174,7 +195,9 @@ QDateTime QOrganizerItemFetchForExportRequest::endDate() const
     return d->m_endDate;
 }
 
-/*! Returns the list of organizer items retrieved by this request */
+/*! Returns the list of organizer items retrieved by this request
+  \since 1.1
+*/
 QList<QOrganizerItem> QOrganizerItemFetchForExportRequest::items() const
 {
     Q_D(const QOrganizerItemFetchForExportRequest);

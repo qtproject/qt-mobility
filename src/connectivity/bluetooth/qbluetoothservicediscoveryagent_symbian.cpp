@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -75,7 +75,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
 {
     Q_Q(QBluetoothServiceDiscoveryAgent);
     TRAPD(err, startL(address));
-    if (err != KErrNone) {
+    if (err != KErrNone && singleDevice) {
         qDebug() << "Service discovery start failed" << err;
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
@@ -149,7 +149,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::NextRecordRequestComplete(TInt aErr
     if (aError == KErrNone && aTotalRecordsCount > 0 && m_sdpAgent && m_attributes) {
         // request attributes
         TRAPD(err, m_sdpAgent->AttributeRequestL(aHandle, *m_attributes));
-        if (err) {
+        if (err && singleDevice) {
             error = QBluetoothServiceDiscoveryAgent::UnknownError;
             emit q->error(error);
         }
@@ -167,15 +167,18 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestResult(TSdpServReco
     m_currentAttributeId = aAttrID;
     TRAPD(err, aAttrValue->AcceptVisitorL(*this));
     if (m_stack.size() != 1) {
-        error = QBluetoothServiceDiscoveryAgent::UnknownError;
-        emit q->error(error);                            
+        if(singleDevice)
+            {
+            error = QBluetoothServiceDiscoveryAgent::UnknownError;
+            emit q->error(error);
+            }
         delete aAttrValue;
         return;
     }
 
     m_serviceInfo.setAttribute(aAttrID, m_stack.pop());
 
-    if (err != KErrNone) {
+    if (err != KErrNone && singleDevice) {
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
     }
@@ -196,11 +199,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRe
             emit q->serviceDiscovered(discoveredServices.last());
             }
         TRAPD(err, m_sdpAgent->NextRecordRequestL());
-        if (err != KErrNone) {
+        if (err != KErrNone && singleDevice) {
             error = QBluetoothServiceDiscoveryAgent::UnknownError;
             emit q->error(error);
         }
-    } else if (aError != KErrEof) {
+    } else if (aError != KErrEof && singleDevice) {
         error = QBluetoothServiceDiscoveryAgent::UnknownError;
         emit q->error(error);
     }

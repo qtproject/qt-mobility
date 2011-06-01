@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -77,11 +77,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
 /*!
    \fn QOrganizerItemDescription::setDescription(const QString& description)
    Sets a description associated with an organizer item to \a description.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemDescription::description() const
    Returns a string for a description associated with an organizer item.
+   \since 1.1
  */
 
 
@@ -102,6 +104,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
 /*!
     Returns a filter suitable for finding items with a display label containing the specified
     \a substring.
+   \since 1.1
 */
 QOrganizerItemFilter QOrganizerItemDisplayLabel::match(const QString &substring)
 {
@@ -117,11 +120,13 @@ QOrganizerItemFilter QOrganizerItemDisplayLabel::match(const QString &substring)
 /*!
    \fn void QOrganizerItemDisplayLabel::setLabel(const QString& label)
    Sets the display label of the organizer item to \a label.
+   \since 1.1
  */
 
 /*!
    \fn QString QOrganizerItemDisplayLabel::label() const
    Returns the display label of the organizer item.
+   \since 1.1
  */
 
 /*!
@@ -194,6 +199,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     Returns the event time's start date and time as QDateTime.
     For all-day events, the time part is meaningless.
     \sa QOrganizerEvent::startDateTime()
+    \since 1.1
  */
 
 /*!
@@ -201,6 +207,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     Sets the event time's start date and time to \a startDateTime.
     For all-day events, the time part can be set to any valid value.
     \sa QOrganizerEvent::setStartDateTime()
+    \since 1.1
  */
 
 /*!
@@ -217,6 +224,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     Sets the event time's due date and time to \a dueDateTime.
     For all-day events, the time part can be set to any valid value, and the date is to be
     interpreted as the inclusive end date.
+    \since 1.1
     \sa QOrganizerEvent::setEndDateTime()
  */
 
@@ -226,12 +234,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTime::FieldAllDay, "AllDay");
     If the event is an all-day event, no time is considered to be
     specified for the event, even if a start or end date time set
     for the event has a time component.
+    \since 1.1
  */
 
 /*!
     \fn QOrganizerEventTime::isAllDay() const
     Returns true if a specific time was specified for the event.
     Returns false if the event is an all-day event.
+    \since 1.1
  */
 
 /* ==================== QOrganizerItemGuid ======================= */
@@ -262,11 +272,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
    \fn QOrganizerItemGuid::guid() const
 
    Returns the globally unique identifier which is stored in this detail.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemGuid::setGuid(const QString& guid)
    Sets the globally unique identifier which is stored in this detail to \a guid.
+   \since 1.1
  */
 
 
@@ -310,21 +322,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParent::FieldOriginalDate, "OriginalDate"
 /*!
    \fn QOrganizerItemParent::parentId() const
     Returns the id of the item instance origin's parent item.
+    \since 1.1
  */
 
 /*!
    \fn QOrganizerItemParent::setParentId(const QOrganizerItemId& parentId)
     Sets the parent id of this instance origin item to \a parentId.
+    \since 1.1
  */
 
 /*!
    \fn QOrganizerItemParent::originalDate() const
     Returns the original date of this instance origin item.
+    \since 1.1
  */
 
 /*!
    \fn QOrganizerItemParent::setOriginalDate(const QDate& date)
     Sets the origin date to \a date.
+    \since 1.1
  */
 
 
@@ -359,11 +375,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTime::FieldEntryDateTime, "EntryDateTi
 /*!
    \fn QOrganizerJournalTime::entryDateTime() const
    Returns the journal entry date and time as QDateTime.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerJournalTime::setEntryDateTime(const QDateTime& entryDateTime)
    Sets the journal entry date and time to \a entryDateTime.
+   \since 1.1
  */
 
 /* ==================== QOrganizerItemLocation ======================= */
@@ -381,6 +399,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTime::FieldEntryDateTime, "EntryDateTi
     Returns a filter suitable for finding items whose location matches the specified \a substring.
     This filter matches location labels only.  If you wish to match against latitude or longitude
     co-ordinates, use a QContactDetailFilter instead.
+   \since 1.1
 */
 QOrganizerItemFilter QOrganizerItemLocation::match(const QString &substring)
 {
@@ -428,31 +447,37 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLabel, "Label");
 /*!
     \fn QOrganizerItemLocation::latitude() const
     Returns the latitude value of the location's geocoordinates
+   \since 1.1
  */
 
 /*!
     \fn QOrganizerItemLocation::setLatitude(double latitude)
     Sets the latitude value of the location's geocoordinates to \a latitude
+   \since 1.1
  */
 
 /*!
     \fn QOrganizerItemLocation::longitude() const
     Returns the longitude value of the location's geocoordinates
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemLocation::setLongitude(double longitude)
    Sets the longitude value of the location's geocoordinates to \a longitude
+   \since 1.1
  */
 
 /*!
     \fn QOrganizerItemLocation::label() const
     Returns the human-readable label of the location
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemLocation::setLabel(const QString& label)
    Sets the human-readable label of the location to \a label
+   \since 1.1
  */
 
 /* ==================== QOrganizerItemComment ======================= */
@@ -467,6 +492,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLabel, "Label");
 /*!
     Returns a filter suitable for finding items with a comment containing the specified
     \a substring.
+    \since 1.1
 */
 QOrganizerItemFilter QOrganizerItemComment::match(const QString &substring)
 {
@@ -496,11 +522,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
 /*!
    \fn QOrganizerItemComment::setComment(const QString& comment)
    Sets a comment associated with an organizer item to \a comment.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemComment::comment() const
    Returns a string for a comment associated with an organizer item.
+   \since 1.1
  */
 
 
@@ -560,12 +588,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
    \fn QOrganizerItemPriority::setPriority(Priority priority)
 
    Sets the priority associated with an organizer item to \a priority.
+   \since 1.1
  */
 
 /*!
    \fn Priority QOrganizerItemPriority::priority() const
 
    Returns the priority associated with an organizer item.
+   \since 1.1
  */
 
 
@@ -579,6 +609,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
           and a list of rules and dates on which exceptions occur.
    \inmodule QtOrganizer
    \ingroup organizer-details
+   \since 1.1
  */
 
 /*!
@@ -595,6 +626,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence")
   However, it means that if (in the future) a backend were to extend the detail with
   more fields, this operator== would no longer work; it'd have to be updated to compare
   the other fields also.
+  \since 1.1
  */
 bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other) const
 {
@@ -610,6 +642,7 @@ bool QOrganizerItemRecurrence::operator==(const QOrganizerItemRecurrence& other)
   \internal
   Returns true if the \a other recurrence detail is equal to this detail; otherwise, false.
   Implemented in terms of operator==() for QOrganizerItemRecurrence detail.
+  \since 1.1
  */
 
 /*!
@@ -661,6 +694,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
 
 /*!
    Returns the set of recurrence dates.
+   \since 1.1
  */
 QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 {
@@ -669,6 +703,7 @@ QSet<QDate> QOrganizerItemRecurrence::recurrenceDates() const
 
 /*!
    Sets the set of recurrence dates to \a rdates.
+   \since 1.1
  */
 void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 {
@@ -677,6 +712,7 @@ void QOrganizerItemRecurrence::setRecurrenceDates(const QSet<QDate>& rdates)
 
 /*!
    Returns the set of exception rules.
+   \since 1.1
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
 {
@@ -684,6 +720,7 @@ QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::exceptionRules() const
 }
 /*!
    Sets the set of exception rules to \a xrules.
+   \since 1.1
  */
 void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& xrules)
 {
@@ -691,6 +728,7 @@ void QOrganizerItemRecurrence::setExceptionRules(const QSet<QOrganizerRecurrence
 }
 /*!
    Returns the set of recurrence rules.
+   \since 1.1
  */
 QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 {
@@ -700,6 +738,7 @@ QSet<QOrganizerRecurrenceRule> QOrganizerItemRecurrence::recurrenceRules() const
 
 /*!
    Sets the set of recurrence rules to \a rrules.
+   \since 1.1
  */
 void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
@@ -707,6 +746,7 @@ void QOrganizerItemRecurrence::setRecurrenceRules(const QSet<QOrganizerRecurrenc
 }
 /*!
    Returns the set of exception dates.
+   \since 1.1
  */
 QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 {
@@ -715,6 +755,7 @@ QSet<QDate> QOrganizerItemRecurrence::exceptionDates() const
 
 /*!
    Sets the set of exception dates to \a xdates.
+   \since 1.1
  */
 void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
 {
@@ -747,12 +788,14 @@ void QOrganizerItemRecurrence::setExceptionDates(const QSet<QDate>& xdates)
    \fn QOrganizerItemReminder::QOrganizerItemReminder(const char* definitionName)
 
     Constructor of a QOrganizerItemReminder object by defining the \a definitionName.
+   \since 1.1
 */
 
 /*!
     \fn QOrganizerItemReminder::QOrganizerItemReminder(const QOrganizerItemDetail& detail, const char* definitionName)
 
     Constructor of a QOrganizerItemReminder object by defining the \a detail, and \a definitionName.
+   \since 1.1
 */
 
 /*!
@@ -787,6 +830,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 
 /*!
    Returns the reminder type of this reminder for an organizer item.
+   \since 1.1
  */
 QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() const
 {
@@ -812,6 +856,7 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
    it is the start date time.
 
    Calling this function will clear the absolute date time, if set.
+   \since 1.1
  */
 
 /*!
@@ -823,6 +868,7 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
    item: for a QOrganizerTodo or QOrganizerTodoOccurrence it is the
    due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
    it is the start date time.
+   \since 1.1
  */
 
 /*!
@@ -830,6 +876,7 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
 
    Returns the number of times the user should be reminded of the item.
 
+   \since 1.1
    \sa repetitionDelay()
 */
 
@@ -839,6 +886,7 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
    Returns the delay (in seconds) between each repetition of the reminder.
 
    \sa repetitionCount()
+   \since 1.1
 */
 
 /*!
@@ -848,6 +896,7 @@ QOrganizerItemReminder::ReminderType QOrganizerItemReminder::reminderType() cons
    between each repetition of the reminder to \a delaySeconds.
 
    \sa repetitionCount(), repetitionDelay()
+   \since 1.1
 */
 
 /*!
@@ -898,12 +947,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl")
    \fn QOrganizerItemAudibleReminder::setDataUrl(const QUrl& dataUrl)
 
    Sets the url of the audible data which should be played to \a dataUrl.
+   \since 1.1
 */
 
 /*!
    \fn QUrl QOrganizerItemAudibleReminder::dataUrl() const
 
    Returns the url of the audible data which should be played.
+   \since 1.1
 */
 
 
@@ -958,24 +1009,28 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
    \fn QOrganizerItemEmailReminder::setContents(const QString& subject, const QString& body, const QVariantList& attachments)
 
    Sets the contents of the email reminder to be the given \a subject, \a body and \a attachments.
+   \since 1.1
 */
 
 /*!
    \fn QString QOrganizerItemEmailReminder::subject() const
 
    Returns the subject of the email.
+   \since 1.1
 */
 
 /*!
    \fn QString QOrganizerItemEmailReminder::body() const
 
    Returns the body of the email.
+   \since 1.1
 */
 
 /*!
    \fn QVariantList QOrganizerItemEmailReminder::attachments() const
 
    Returns the attachments of the email.
+   \since 1.1
 */
 
 /*!
@@ -983,12 +1038,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipien
 
    Sets the list of recipients that the user wishes to be sent an email as part of the reminder
    to \a recipients.
+   \since 1.1
 */
 
 /*!
    \fn QStringList QOrganizerItemEmailReminder::recipients() const
 
    Returns the list of recipients that the user wishes to be sent an email as part of the reminder.
+   \since 1.1
 */
 
 /* ==================== QOrganizerItemVisualReminder ======================= */
@@ -1029,24 +1086,28 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
    \fn QOrganizerItemVisualReminder::setMessage(const QString& message)
 
    Sets the message which the user wishes to be displayed as part of the reminder to \a message.
+   \since 1.1
 */
 
 /*!
    \fn QString QOrganizerItemVisualReminder::message() const
 
    Returns the message which the user wishes to be displayed as part of the reminder.
+   \since 1.1
 */
 
 /*!
    \fn QOrganizerItemVisualReminder::setDataUrl(const QUrl& dataUrl)
 
    Sets the url of the visual data which the user wishes to be displayed as part of the reminder to \a dataUrl.
+   \since 1.1
 */
 
 /*!
    \fn QUrl QOrganizerItemVisualReminder::dataUrl() const
 
    Returns the url of the visual data which the user wishes to be displayed as part of the reminder.
+   \since 1.1
 */
 
 
@@ -1062,6 +1123,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
 /*!
     Returns a filter suitable for finding items with a tag containing the specified
     \a substring.
+    \since 1.1
 */
 QOrganizerItemFilter QOrganizerItemTag::match(const QString &substring)
 {
@@ -1091,18 +1153,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTag::FieldTag, "Tag");
 /*!
    \fn QOrganizerItemTag::setTag(const QString& tag)
    Sets a tag associated with an organizer item to \a tag.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemTag::tag() const
    Returns the tag associated with an organizer item which is stored in this detail.
+   \since 1.1
  */
 
 
 /* ==================== QOrganizerItemTimestamp ======================= */
 /*!
    \class QOrganizerItemTimestamp
-   \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  
+   \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.
    XXX TODO: what about last accessed?
    \inmodule QtOrganizer
    \ingroup organizer-details
@@ -1136,21 +1200,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldCreationTimestamp, "Creat
 /*!
    \fn QOrganizerItemTimestamp::created() const
    Returns the creation timestamp saved in this detail.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemTimestamp::lastModified() const
    Returns the last-modified timestamp saved in this detail.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemTimestamp::setCreated(const QDateTime& dateTime)
    Sets the creation timestamp saved in this detail to \a dateTime.
+   \since 1.1
  */
 
 /*!
    \fn QOrganizerItemTimestamp::setLastModified(const QDateTime& dateTime)
    Sets the last-modified timestamp saved in this detail to \a dateTime.
+   \since 1.1
  */
 
 
@@ -1207,31 +1275,37 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldFinishedDateTime, "Finishe
 /*!
   \fn QOrganizerTodoProgress::status() const
   Returns the todo progress item's current status as QOrganizerTodoProgress::Status.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerTodoProgress::setStatus(Status status)
   Sets the todo progress item's current status to \a status.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerTodoProgress::finishedDateTime() const
   Returns the todo progress item's finished date and timeas QDateTime.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerTodoProgress::setFinishedDateTime(const QDateTime& finishedDateTime)
   Sets the todo progress item's finished date and time to \a finishedDateTime.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerTodoProgress::percentageComplete() const
   Returns the todo progress item's completion percentage.
+  \since 1.1
  */
 
 /*!
   \fn QOrganizerTodoProgress::setPercentageComplete(int percentage)
   Sets the todo progress item's completion percentage to \a percentage.
+  \since 1.1
  */
 /* ==================== QOrganizerTodoTime ======================= */
 /*!
@@ -1276,24 +1350,28 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
     \fn QOrganizerTodoTime::startDateTime() const
     Returns the todo time's start date and time as QDateTime.
     For all-day tasks, the time part is meaningless.
+   \since 1.1
  */
 
 /*!
     \fn QOrganizerTodoTime::setStartDateTime(const QDateTime& startDateTime)
     Sets the todo time's start date and time to \a startDateTime.
     For all-day tasks, the time part can be set to any valid value.
+    \since 1.1
  */
 
 /*!
     \fn QOrganizerTodoTime::dueDateTime() const
     Returns the todo time's due date and time as QDateTime.
     For all-day tasks, the time part is meaningless.
+    \since 1.1
  */
 
 /*!
     \fn QOrganizerTodoTime::setDueDateTime(const QDateTime& dueDateTime)
     Sets the todo time's due date and time to \a dueDateTime.
     For all-day tasks, the time part can be set to any valid value.
+    \since 1.1
  */
 
 /*!
@@ -1302,12 +1380,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTime::FieldAllDay, "AllDay");
     If the tasks is an all-day todo, no time is considered to be
     specified for the todo, even if the start date time set
     for the todo has a time component.
+    \since 1.1
  */
 
 /*!
     \fn QOrganizerTodoTime::isAllDay() const
     Returns true if a specific time was specified for the todo.
     Returns false if the todo is an all-day todo.
+    \since 1.1
  */
 
 /* ==================== QOrganizerItemType ======================= */
@@ -1378,11 +1458,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodoOccurrence, "TodoOccurrence
 /*!
    \fn QOrganizerItemType::type() const
    Returns the organizer item type value stored in this detail.
+    \since 1.1
  */
 
 /*!
    \fn QOrganizerItemType::setType(const QString& type)
    Sets the type of the organizer item to be the give \a type.
+    \since 1.1
  */
 
 QTM_END_NAMESPACE

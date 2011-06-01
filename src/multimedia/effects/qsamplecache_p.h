@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -58,6 +58,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qmutex.h>
 #include <QtCore/qmap.h>
+#include <QtCore/qset.h>
 #include <qaudioformat.h>
 
 
@@ -69,6 +70,7 @@ class QNetworkAccessManager;
 class QSampleCache;
 class QWaveDecoder;
 
+// Lives in application thread
 class QSample : public QObject
 {
     Q_OBJECT
@@ -83,6 +85,8 @@ public:
     };
 
     State state() const;
+    // These are not (currently) locked because they are only meant to be called after these
+    // variables are updated to their final states
     const QByteArray& data() const { Q_ASSERT(state() == Ready); return m_soundData; }
     const QAudioFormat& format() const { Q_ASSERT(state() == Ready); return m_audioFormat; }
     void release();
@@ -91,19 +95,21 @@ Q_SIGNALS:
     void error();
     void ready();
 
-public Q_SLOTS:
+protected:
+    QSample(const QUrl& url, QSampleCache *parent);
+
+private Q_SLOTS:
     void load();
     void decoderError();
     void readSample();
     void decoderReady();
 
-protected:
-    QSample(const QUrl& url, QSampleCache *parent);
-
 private:
     void onReady();
     void cleanup();
     void addRef();
+    void loadIfNecessary();
+    QSample();
     ~QSample();
 
     mutable QMutex m_mutex;
@@ -118,21 +124,20 @@ private:
     int          m_ref;
 };
 
-class QSampleCache : QObject
+class QSampleCache
 {
-    Q_OBJECT
 public:
     friend class QSample;
-    QSampleCache();
 
+    QSampleCache();
     ~QSampleCache();
 
     QSample* requestSample(const QUrl& url);
-
     void setCapacity(qint64 capacity);
 
 private:
     QMap<QUrl, QSample*> m_samples;
+    QSet<QSample*> m_staleSamples;
     QNetworkAccessManager *m_networkAccessManager;
     QMutex m_mutex;
     qint64 m_capacity;
@@ -141,7 +146,9 @@ private:
 
     QNetworkAccessManager& networkAccessManager();
     void refresh(qint64 usageChange);
-    bool tryRemoveUnrefSample(const QUrl& url);
+    bool notifyUnreferencedSample(QSample* sample);
+    void removeUnreferencedSample(QSample* sample);
+    void unloadSample(QSample* sample);
 };
 
 QT_END_NAMESPACE

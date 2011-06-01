@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -98,6 +98,7 @@ QMediaObject::~QMediaObject()
 
 /*!
     Returns the service availability error state.
+    \since 1.0
 */
 
 QtMultimediaKit::AvailabilityError QMediaObject::availabilityError() const
@@ -107,6 +108,7 @@ QtMultimediaKit::AvailabilityError QMediaObject::availabilityError() const
 
 /*!
     Returns true if the service is available for use.
+    \since 1.0
 */
 
 bool QMediaObject::isAvailable() const
@@ -116,6 +118,7 @@ bool QMediaObject::isAvailable() const
 
 /*!
     Returns the media service that provides the functionality of a multimedia object.
+    \since 1.0
 */
 
 QMediaService* QMediaObject::service() const
@@ -148,6 +151,7 @@ void QMediaObject::setNotifyInterval(int milliSeconds)
 
     The object passed must implement the QMediaBindableInterface interface.
 
+    \since 1.0
     \sa QMediaBindableInterface
 */
 bool QMediaObject::bind(QObject *object)
@@ -172,6 +176,7 @@ bool QMediaObject::bind(QObject *object)
 
     Disconnect the help object from the media object.
 
+    \since 1.0
     \sa QMediaBindableInterface
 */
 void QMediaObject::unbind(QObject *object)
@@ -192,6 +197,7 @@ void QMediaObject::unbind(QObject *object)
 
     This class is meant as a base class for Multimedia objects so this
     constructor is protected.
+    \since 1.0
 */
 
 QMediaObject::QMediaObject(QObject *parent, QMediaService *service):
@@ -237,6 +243,7 @@ QMediaObject::QMediaObject(QMediaObjectPrivate &dd, QObject *parent,
     Watch the property \a name. The property's notify signal will be emitted
     once every notifyInterval milliseconds.
 
+    \since 1.0
     \sa notifyInterval
 */
 
@@ -260,6 +267,7 @@ void QMediaObject::addPropertyWatch(QByteArray const &name)
     Remove property \a name from the list of properties whose changes are
     regularly signaled.
 
+    \since 1.0
     \sa notifyInterval
 */
 
@@ -284,6 +292,7 @@ void QMediaObject::removePropertyWatch(QByteArray const &name)
 
     The interval is expressed in milliseconds, the default value is 1000.
 
+    \since 1.0
     \sa addPropertyWatch(), removePropertyWatch()
 */
 
@@ -291,10 +300,12 @@ void QMediaObject::removePropertyWatch(QByteArray const &name)
     \fn void QMediaObject::notifyIntervalChanged(int milliseconds)
 
     Signal a change in the notify interval period to \a milliseconds.
+    \since 1.0
 */
 
 /*!
     Returns true if there is meta-data associated with this media object, else false.
+    \since 1.0
 */
 
 bool QMediaObject::isMetaDataAvailable() const
@@ -310,10 +321,12 @@ bool QMediaObject::isMetaDataAvailable() const
     \fn QMediaObject::metaDataAvailableChanged(bool available)
 
     Signals that the \a available state of a media object's meta-data has changed.
+    \since 1.0
 */
 
 /*!
     Returns the value associated with a meta-data \a key.
+    \since 1.0
 */
 QVariant QMediaObject::metaData(QtMultimediaKit::MetaData key) const
 {
@@ -326,6 +339,7 @@ QVariant QMediaObject::metaData(QtMultimediaKit::MetaData key) const
 
 /*!
     Returns a list of keys there is meta-data available for.
+    \since 1.0
 */
 QList<QtMultimediaKit::MetaData> QMediaObject::availableMetaData() const
 {
@@ -340,6 +354,7 @@ QList<QtMultimediaKit::MetaData> QMediaObject::availableMetaData() const
     \fn QMediaObject::metaDataChanged()
 
     Signals that a media object's meta-data has changed.
+    \since 1.0
 */
 
 /*!
@@ -347,6 +362,7 @@ QList<QtMultimediaKit::MetaData> QMediaObject::availableMetaData() const
 
     The naming and type of extended meta-data is not standardized, so the values and meaning
     of keys may vary between backends.
+    \since 1.0
 */
 QVariant QMediaObject::extendedMetaData(const QString &key) const
 {
@@ -359,6 +375,7 @@ QVariant QMediaObject::extendedMetaData(const QString &key) const
 
 /*!
     Returns a list of keys there is extended meta-data available for.
+    \since 1.0
 */
 QStringList QMediaObject::availableExtendedMetaData() const
 {
@@ -391,6 +408,7 @@ void QMediaObject::setupMetaData()
     \fn QMediaObject::availabilityChanged(bool available)
 
     Signal emitted when the availability state has changed to \a available
+    \since 1.0
 */
 
 

@@ -1,0 +1,11 @@
+%RED% Instructions for Windows Platform %ENDCOLOR%
+
+---++++ Enumeration of connections
+
+   1. On a desktop machine, use command line tool ipconfig /a to list visible networks
+   1. To list what WIFI networks are present, Start Menu -> Control Panel -> Network Connections  -> Wireless Connection. 
+   1. Run the bearermonitor example application
+   1. Press 'Scan'
+   1. Verify all previously listed networks are shown in the application view
+
+*Note*: The Windows Wireless tool is known to be buggy, eg showing WIFI points as connected when they are not.

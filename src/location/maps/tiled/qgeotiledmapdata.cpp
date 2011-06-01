@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -821,76 +821,78 @@ void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorSt
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition) const
 {
-    if (screenPosition.isNull())
-        return QList<QGeoMapObject*>();
+    return mapObjectsInScreenRect(QRectF(screenPosition - QPointF(1,1),
+                                         screenPosition + QPointF(1,1)));
+//    if (screenPosition.isNull())
+//        return QList<QGeoMapObject*>();
 
-    Q_D(const QGeoTiledMapData);
+//    Q_D(const QGeoTiledMapData);
 
-    QList<QGeoMapObject*> results;
-    QSet<QGeoMapObject*> considered;
+//    QList<QGeoMapObject*> results;
+//    QSet<QGeoMapObject*> considered;
 
-    d->oe->updateTransforms();
+//    d->oe->updateTransforms();
 
-    QList<QGraphicsItem*> pixelItems;
-    pixelItems = d->oe->pixelScene->items(QRectF(screenPosition - QPointF(1,1),
-                                             screenPosition + QPointF(1,1)),
-                                      Qt::IntersectsItemShape,
-                                      Qt::AscendingOrder);
+//    QList<QGraphicsItem*> pixelItems;
+//    pixelItems = d->oe->pixelScene->items(QRectF(screenPosition - QPointF(1,1),
+//                                             screenPosition + QPointF(1,1)),
+//                                      Qt::IntersectsItemShape,
+//                                      Qt::AscendingOrder);
 
-    foreach (QGraphicsItem *item, pixelItems) {
-        QGeoMapObject *object = d->oe->pixelItems.value(item);
-        Q_ASSERT(object);
+//    foreach (QGraphicsItem *item, pixelItems) {
+//        QGeoMapObject *object = d->oe->pixelItems.value(item);
+//        Q_ASSERT(object);
 
-        if (object->isVisible() && !considered.contains(object)) {
-            bool contains = false;
+//        if (object->isVisible() && !considered.contains(object)) {
+//            bool contains = false;
 
-            if (d->oe->pixelExact.contains(object)) {
-                foreach (QGraphicsItem *item, d->oe->pixelExact.values(object)) {
-                    if (item->shape().contains(screenPosition)) {
-                        contains = true;
-                        break;
-                    }
-                }
-            } else {
-                QGraphicsItem *item
-                        = d->oe->graphicsItemFromMapObject(object);
+//            if (d->oe->pixelExact.contains(object)) {
+//                foreach (QGraphicsItem *item, d->oe->pixelExact.values(object)) {
+//                    if (item->shape().contains(screenPosition)) {
+//                        contains = true;
+//                        break;
+//                    }
+//                }
+//            } else {
+//                QGraphicsItem *item
+//                        = d->oe->graphicsItemFromMapObject(object);
 
-                if (item) {
-                    QList<QTransform> trans = d->oe->pixelTrans.values(object);
+//                if (item) {
+//                    QList<QTransform> trans = d->oe->pixelTrans.values(object);
 
-                    foreach (QTransform t, trans) {
-                        bool ok;
-                        QTransform inv = t.inverted(&ok);
-                        if (ok) {
-                            QPointF testPt = screenPosition * inv;
+//                    foreach (QTransform t, trans) {
+//                        bool ok;
+//                        QTransform inv = t.inverted(&ok);
+//                        if (ok) {
+//                            QPointF testPt = screenPosition * inv;
 
-                            // we have to special case text objects here
-                            // in order to maintain their old (1.1) behaviour
-                            QGeoMapTextObject *tobj = qobject_cast<QGeoMapTextObject*>(object);
-                            if (tobj) {
-                                if (item->boundingRect().contains(testPt)) {
-                                    contains = true;
-                                    break;
-                                }
-                            } else {
-                                if (item->shape().contains(testPt)) {
-                                    contains = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+//                            // we have to special case text objects here
+//                            // in order to maintain their old (1.1) behaviour
+//                            QGeoMapTextObject *tobj = qobject_cast<QGeoMapTextObject*>(object);
+//                            if (tobj) {
+//                                if (item->boundingRect().contains(testPt)) {
+//                                    contains = true;
+//                                    break;
+//                                }
+//                            } else {
+//                                if (item->shape().contains(testPt)) {
+//                                    contains = true;
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
 
-            if (contains)
-                results << object;
+//            if (contains)
+//                results << object;
 
-            considered.insert(object);
-        }
-    }
+//            considered.insert(object);
+//        }
+//    }
 
-    return results;
+//    return results;
 }
 
 /*!

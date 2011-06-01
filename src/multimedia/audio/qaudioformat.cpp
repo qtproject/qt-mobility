@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -94,7 +94,7 @@ public:
 
     \inmodule QtMultimediaKit
     \ingroup  multimedia
-    \since 4.6
+    \since 1.0
 
     An audio format specifies how data in an audio stream is arranged,
     i.e, how the stream is to be interpreted. The encoding itself is
@@ -159,6 +159,7 @@ QAudioFormat::QAudioFormat():
 
 /*!
     Construct a new audio format using \a other.
+    \since 1.0
 */
 
 QAudioFormat::QAudioFormat(const QAudioFormat &other):
@@ -176,6 +177,7 @@ QAudioFormat::~QAudioFormat()
 
 /*!
     Assigns \a other to this QAudioFormat implementation.
+    \since 1.0
 */
 
 QAudioFormat& QAudioFormat::operator=(const QAudioFormat &other)
@@ -189,6 +191,7 @@ QAudioFormat& QAudioFormat::operator=(const QAudioFormat &other)
   QAudioFormat; otherwise returns false.
 
   All elements of QAudioFormat are used for the comparison.
+  \since 1.0
 */
 
 bool QAudioFormat::operator==(const QAudioFormat &other) const
@@ -206,6 +209,7 @@ bool QAudioFormat::operator==(const QAudioFormat &other) const
   QAudioFormat; otherwise returns false.
 
   All elements of QAudioFormat are used for the comparison.
+  \since 1.0
 */
 
 bool QAudioFormat::operator!=(const QAudioFormat& other) const
@@ -215,6 +219,7 @@ bool QAudioFormat::operator!=(const QAudioFormat& other) const
 
 /*!
     Returns true if all of the parameters are valid.
+    \since 1.0
 */
 
 bool QAudioFormat::isValid() const
@@ -226,7 +231,7 @@ bool QAudioFormat::isValid() const
 /*!
    Sets the sample rate to \a samplerate Hertz.
 
-   \since 4.7
+   \since 1.0
 */
 
 void QAudioFormat::setSampleRate(int samplerate)
@@ -248,7 +253,7 @@ void QAudioFormat::setFrequency(int frequency)
 /*!
     Returns the current sample rate in Hertz.
 
-    \since 4.7
+    \since 1.0
 */
 
 int QAudioFormat::sampleRate() const
@@ -270,7 +275,7 @@ int QAudioFormat::frequency() const
 /*!
    Sets the channel count to \a channels.
 
-   \since 4.7
+   \since 1.0
 */
 
 void QAudioFormat::setChannelCount(int channels)
@@ -292,7 +297,7 @@ void QAudioFormat::setChannels(int channels)
 /*!
     Returns the current channel count value.
 
-    \since 4.7
+    \since 1.0
 */
 
 int QAudioFormat::channelCount() const
@@ -313,6 +318,7 @@ int QAudioFormat::channels() const
 
 /*!
    Sets the sample size to the \a sampleSize specified.
+   \since 1.0
 */
 
 void QAudioFormat::setSampleSize(int sampleSize)
@@ -322,6 +328,7 @@ void QAudioFormat::setSampleSize(int sampleSize)
 
 /*!
     Returns the current sample size value.
+    \since 1.0
 */
 
 int QAudioFormat::sampleSize() const
@@ -332,6 +339,7 @@ int QAudioFormat::sampleSize() const
 /*!
    Sets the codec to \a codec.
 
+   \since 1.0
    \sa QAudioDeviceInfo::supportedCodecs()
 */
 
@@ -343,6 +351,7 @@ void QAudioFormat::setCodec(const QString &codec)
 /*!
     Returns the current codec value.
 
+   \since 1.0
    \sa QAudioDeviceInfo::supportedCodecs()
 */
 
@@ -353,6 +362,7 @@ QString QAudioFormat::codec() const
 
 /*!
    Sets the byteOrder to \a byteOrder.
+   \since 1.0
 */
 
 void QAudioFormat::setByteOrder(QAudioFormat::Endian byteOrder)
@@ -362,6 +372,7 @@ void QAudioFormat::setByteOrder(QAudioFormat::Endian byteOrder)
 
 /*!
     Returns the current byteOrder value.
+    \since 1.0
 */
 
 QAudioFormat::Endian QAudioFormat::byteOrder() const
@@ -371,6 +382,7 @@ QAudioFormat::Endian QAudioFormat::byteOrder() const
 
 /*!
    Sets the sampleType to \a sampleType.
+   \since 1.0
 */
 
 void QAudioFormat::setSampleType(QAudioFormat::SampleType sampleType)
@@ -380,6 +392,7 @@ void QAudioFormat::setSampleType(QAudioFormat::SampleType sampleType)
 
 /*!
     Returns the current SampleType value.
+    \since 1.0
 */
 
 QAudioFormat::SampleType QAudioFormat::sampleType() const

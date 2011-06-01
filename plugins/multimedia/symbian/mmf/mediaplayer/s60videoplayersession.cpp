@@ -720,7 +720,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
         emit accessPointChanged(m_accessPointId);
         }
     if (KErrCouldNotConnect == aError && !(m_networkAccessControl->isLastAccessPoint())) {
-        load(m_UrlPath);
+        load(m_source);
     return;
     }
     TInt error = aError;
@@ -782,8 +782,12 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
     if (m_stream)
     m_networkAccessControl->resetIndex();
 
-    endOfMedia();
-    setError(aError);
+    if (aError != KErrNone) {
+        setError(aError);
+        doClose();
+    } else {
+        endOfMedia();
+    }
 
     DP0("S60VideoPlayerSession::MvpuoPlayComplete ---");
 }

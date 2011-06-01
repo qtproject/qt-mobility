@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -44,8 +44,6 @@
 
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
-
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -692,6 +690,12 @@ QGeoBoundingBox QGeoBoundingBox::translated(double degreesLatitude, double degre
 
 /*!
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the 
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is 
+    independent of the order of the operands.
+
     \since 1.1
 */
 QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) const
@@ -705,11 +709,23 @@ QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) cons
     \fn QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
 
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+    
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the 
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is 
+    independent of the order of the operands.
+
     \since 1.1
 */
 
 /*!
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+    
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the 
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is 
+    independent of the order of the operands.
+
     \since 1.1
 */
 QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingBox)
@@ -736,8 +752,20 @@ QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
     bool wrap2 = (left2 > right2);
 
     if ((wrap1 && wrap2) || (!wrap1 && !wrap2)) {
-        left = qMin(left1, left2);
-        right = qMax(right1, right2);
+
+        double w = qAbs((left1 + right1 - left2 - right2) / 2.0);
+
+        if (w < 180.0) {
+            left = qMin(left1, left2);
+            right = qMax(right1, right2);
+        } else if (w > 180.0) {
+            left = qMax(left1, left2);
+            right = qMin(right1, right2);
+        } else {
+            left = -180.0;
+            right = 180.0;
+        }
+
     } else {
         double wrapLeft = 0.0;
         double wrapRight = 0.0;

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -114,8 +114,11 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
     Q_Q(QBluetoothSocket);
     readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
     QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
-    connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);
+    connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);    
     QObject::connect(connectWriteNotifier, SIGNAL(activated(int)), q, SLOT(_q_writeNotify()));
+
+    connectWriteNotifier->setEnabled(false);
+    readNotifier->setEnabled(false);
 
 
     return true;
@@ -136,6 +139,9 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
 
         convertAddress(address.toUInt64(), addr.rc_bdaddr.b);
 
+        connectWriteNotifier->setEnabled(true);
+        readNotifier->setEnabled(true);QString();
+
         result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
     } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
@@ -145,6 +151,9 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
         addr.l2_psm = port;
 
         convertAddress(address.toUInt64(), addr.l2_bdaddr.b);
+
+        connectWriteNotifier->setEnabled(true);
+        readNotifier->setEnabled(true);
 
         result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
     }
@@ -453,9 +462,10 @@ qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
         if(!connectWriteNotifier)
             return 0;
 
-        if(txBuffer.size() == 0)
-            connectWriteNotifier->setEnabled(true);
-        //            QMetaObject::invokeMethod(q, "_q_transmitData", Qt::QueuedConnection);
+        if(txBuffer.size() == 0) {
+            connectWriteNotifier->setEnabled(true);        
+            QMetaObject::invokeMethod(q, "_q_writeNotify", Qt::QueuedConnection);
+        }
 
         char *txbuf = txBuffer.reserve(maxSize);
         memcpy(txbuf, data, maxSize);

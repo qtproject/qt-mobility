@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,10 +39,48 @@
 **
 ****************************************************************************/
 
-/*
-This header gets used in a number of different QML plugins
-and also in the source tree of Mobility itself.
+#include <e32base.h>
+#include <e32property.h>
+#include <nwhandlingengine.h>
+#include <AknUtils.h>
+#include <cnwsession.h>
+#include <networkhandlingproxy.h>
 
-So this header is just a wrapper to grab it from there.
-*/
-#include "../../../../src/serviceframework/ipc/qmetaobjectbuilder_p.h"
+class CtestNetworkOperatorNameListener : public CBase, public MNWMessageObserver
+ {
+  // from base class MNWMessageObserver
+
+    /**
+     * From MNWMessageObserver.
+     * Offers message interface to the client.
+     *
+     * @param aMessage
+     * This methods execute time must be short,since code
+     * starting to run from RunL.
+     */
+    virtual void HandleNetworkMessage( const TNWMessages aMessage );
+
+    /**
+     * From MNWMessageObserver.
+     * Offers error message interface to the client.
+     *
+     * @param aOperation operation which failed
+     * @param aErrorCode returned Symbian OS error code
+     */
+    virtual void HandleNetworkError( const TNWOperation aOperation,
+        TInt aErrorCode );
+ };
+
+ void CtestNetworkOperatorNameListener::HandleNetworkMessage( const TNWMessages /*aMessage*/ )
+  {
+  }
+
+void CtestNetworkOperatorNameListener::HandleNetworkError( const TNWOperation /*aOperation*/, TInt /*aErrorCode*/ )
+  {
+  }
+
+int main(int, char**)
+{
+    CtestNetworkOperatorNameListener test;
+}
+

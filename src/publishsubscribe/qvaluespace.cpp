@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -127,6 +127,7 @@ QTM_BEGIN_NAMESPACE
     \fn QString QAbstractValueSpaceLayer::name()
 
     Returns the name of the Value Space layer.  This name is only used for diagnostics purposes.
+    \since 1.0
 */
 
 /*!
@@ -137,12 +138,14 @@ QTM_BEGIN_NAMESPACE
     desired.
 
     Returns true upon success; otherwise returns false.
+    \since 1.0
 */
 
 /*!
     \fn QUuid QAbstractValueSpaceLayer::id()
 
     Returns a globally unique identifier for the layer.  This id is used to break ordering ties.
+    \since 1.0
 */
 
 /*!
@@ -151,6 +154,7 @@ QTM_BEGIN_NAMESPACE
     Return the position in the Value Space layer stack that this layer should reside.  Higher
     numbers mean the layer has a higher precedence and its values will "shadow" those below it.
     If two layers specify the same ordering, the id() value is used to break the tie.
+    \since 1.0
 */
 
 /*!
@@ -161,18 +165,21 @@ QTM_BEGIN_NAMESPACE
 
     The caller should call removeHandle() to free resources used by the handle when it is no longer
     required.
+    \since 1.0
 */
 
 /*!
     \fn void QAbstractValueSpaceLayer::removeHandle(Handle handle)
 
     Releases a \a handle previously returned from QAbstractValueSpaceLayer::item().
+    \since 1.0
 */
 
 /*!
     \fn void QAbstractValueSpaceLayer::setProperty(Handle handle, Properties property)
 
     Apply the specified \a property mask to \a handle.
+    \since 1.0
 */
 
 /*!
@@ -180,6 +187,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns the value for a particular \a handle.  If a value is available, the layer will set
     \a data and return true.  If no value is available, false is returned.
+    \since 1.0
 */
 
 /*!
@@ -187,6 +195,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns the value for a particular \a subPath of \a handle.  If a value is available, the
     layer will set \a data and return true.  If no value is available, false is returned.
+    \since 1.0
 */
 
 /*!
@@ -203,6 +212,7 @@ QTM_BEGIN_NAMESPACE
 
     a request for children of "/Device/Configuration" will return
     { "Applications", "Buttons", "Name" }.
+    \since 1.0
 */
 
 /*!
@@ -211,12 +221,14 @@ QTM_BEGIN_NAMESPACE
     Returns the QValueSpace::LayerOptions describing this layer.
 
     \sa QValueSpace::LayerOption
+    \since 1.0
 */
 
 /*!
     \fn bool QAbstractValueSpaceLayer::supportsInterestNotification() const
 
     Returns true if the layer supports interest notifications; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -229,6 +241,7 @@ QTM_BEGIN_NAMESPACE
     matching call with \a interested set to false.
 
     Returns true if the notification was successfully sent; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -240,6 +253,7 @@ QTM_BEGIN_NAMESPACE
     \a creator.
 
     Returns true on success; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -250,6 +264,7 @@ QTM_BEGIN_NAMESPACE
     identified by \a handle and \a subPath and created by \a creator.
 
     Returns true on success; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -259,6 +274,7 @@ QTM_BEGIN_NAMESPACE
     created by \a creator under \a handle.
 
     Returns true on success; otherwise returns false.
+    \since 1.0
 */
 
 /*!
@@ -267,6 +283,7 @@ QTM_BEGIN_NAMESPACE
     Registers \a creator for change notifications to values under \a handle.
 
     \sa removeWatches()
+    \since 1.0
 */
 
 /*!
@@ -275,17 +292,20 @@ QTM_BEGIN_NAMESPACE
     Removes all registered change notifications for \a creator under \a parent.
 
     \sa addWatch()
+    \since 1.0
 */
 
 /*!
     \fn void QAbstractValueSpaceLayer::sync()
 
     Flushes all pending changes made by calls to setValue(), removeValue() and removeSubTree().
+    \since 1.0
 */
 
 /*!
     Emits the QValueSpacePublisher::interestChanged() signal on \a publisher with \a path
     and \a interested.
+    \since 1.0
 */
 void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publisher,
                                                    const QString &path,
@@ -298,6 +318,7 @@ void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publish
     \fn void QAbstractValueSpaceLayer::handleChanged(quintptr handle)
 
     Emitted whenever the \a handle's value, or any sub value, changes.
+    \since 1.0
 */
 
 
@@ -362,6 +383,7 @@ void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publish
     \internal
 
     Support class used by the QVALUESPACE_AUTO_INSTALL_LAYER() macro.
+    \since 1.0
 */
 
 /*!
@@ -369,12 +391,14 @@ void QAbstractValueSpaceLayer::emitInterestChanged(QValueSpacePublisher *publish
 
     Installs the Value Space layer at static construction time by calling the layer creation
     function \a func.
+    \since 1.0
 */
 
 /*!
     Initialize the Value Space manager as the server.  This method only needs to be called by the
     process acting as the server and should be called before any process in the system uses a value
     space class.
+    \since 1.0
 */
 void QValueSpace::initValueSpaceServer()
 {
@@ -388,6 +412,7 @@ void QValueSpace::initValueSpaceServer()
     should be a pointer to the layer to install.
 
     \sa QVALUESPACE_AUTO_INSTALL_LAYER()
+    \since 1.0
 */
 void QValueSpace::installLayer(QAbstractValueSpaceLayer *layer)
 {
@@ -399,6 +424,7 @@ void QValueSpace::installLayer(QAbstractValueSpaceLayer *layer)
 
     Called by the QVALUESPACE_AUTO_INSTALL_LAYER() macro to install the layer at static
     initialization time.
+    \since 1.0
 */
 void QValueSpace::installLayer(LayerCreateFunc func)
 {
@@ -417,6 +443,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 
     You can test if the Shared Memory layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
+    \since 1.0
 */
 
 /*!
@@ -432,6 +459,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     You can test if the Volatile Registry layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.  The Volatile Registry layer is only
     available on Windows platforms.
+    \since 1.0
 */
 
 /*!
@@ -447,6 +475,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
     You can test if the Non-Volatile Registry layer is available by checking if the list returned
     by QValueSpace::availableLayers() contains this value.  The Non-Volatile Registry layer is only
     available on Windows platforms.
+    \since 1.0
 */
 
 /*!
@@ -461,6 +490,7 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 
     You can test if the ContextKit layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
+    \since 1.0
 */
 
 /*!
@@ -475,10 +505,12 @@ void QValueSpace::installLayer(LayerCreateFunc func)
 
     You can test if the Symbian Settings layer is available by checking if the list returned by
     QValueSpace::availableLayers() contains this value.
+    \since 1.0
 */
 
 /*!
     Returns a list of QUuids of all of the available layers.
+    \since 1.0
 */
 QList<QUuid> QValueSpace::availableLayers()
 {
@@ -497,6 +529,7 @@ QList<QUuid> QValueSpace::availableLayers()
     \ingroup publishsubscribe
 
     Returns \a path with all duplicate '/' characters removed.
+    \since 1.0
 */
 QString qCanonicalPath(const QString &path)
 {

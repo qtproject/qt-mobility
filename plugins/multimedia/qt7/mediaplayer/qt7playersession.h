@@ -115,6 +115,7 @@ public slots:
     void processLoadStateChange();
     void processVolumeChange();
     void processNaturalSizeChange();
+    void processPositionChange();
 
 signals:
     void positionChanged(qint64 position);
