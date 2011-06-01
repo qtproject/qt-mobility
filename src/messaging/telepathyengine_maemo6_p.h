@@ -12,7 +12,7 @@
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
-**
+** 
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
@@ -115,12 +115,13 @@ public:
     int requestCount() const;
 
 public slots:
-    void finished(Tp::PendingOperation *operation, bool processLater = false);
+    void finished(Tp::PendingOperation *operation);
     void onServiceDestroyed(QObject*);
 
 private slots:
     friend class QTimer;
     void down();
+    void messageReceived(const Tp::ReceivedMessage &, const Tp::TextChannelPtr &);
 
 private:
     QMessageService *_service;
@@ -128,6 +129,7 @@ private:
     int _pendingRequestCount;
     int _failCount;
     QList<Tp::ContactMessengerPtr> _messengerList;
+    QStringList _tokenList;
 };
 
 #endif // TELEPATHYENGINE_MAEMO_P_H
