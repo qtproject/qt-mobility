@@ -1,4 +1,4 @@
-qt-mobility (v1.2.0+555) unstable; urgency=low
+qt-mobility (1.2.0+555) unstable; urgency=low
 
   * Fixes: NB#251525
   * Fixes: NB#254170
