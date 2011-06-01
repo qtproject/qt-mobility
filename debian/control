@@ -8,7 +8,7 @@ Build-Depends: libqt4-dev (>= 4.7.0), cdbs, debhelper (>= 5), quilt, aegis-build
  libx11-dev, libsensord-dev (>= 0.6.4), libqt4-declarative-dev (>= 4.7.0),
  libxrandr-dev,  gstreamer0.10-plugins-bad-dev, icd2-dev, libasound2-dev,
  libconnsettings0-dev, libgstreamer-plugins-base0.10-dev, libgstreamer0.10-dev, libtelepathy-qt4-1-dev,
- libxrandr-dev, libxv-dev, osso-wlan-dev, x11proto-video-dev, libqmf-dev, libqttracker-dev,
+ libxrandr-dev, libxv-dev, osso-wlan-dev, x11proto-video-dev, libqmf-dev, 
  libmessagingif-dev, libcommhistory-dev, libblkid-dev, pulseaudio-dev, libimmvibe-dev[armel], libqtsparql-dev,
  libmkcal-dev, libkcalcoren-dev, libresourceqt-dev, libqmsystem2-dev, libqtsparql-tracker-extensions-dev,
  libudev-dev, libiphb-dev, meego-gstreamer0.10-interfaces-dev[armel], libbmeipc-dev, libiphb-dev
