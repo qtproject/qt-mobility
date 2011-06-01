@@ -331,7 +331,7 @@ unix:!simulator {
             message("Thermalstatus enabled")
         }
 
-        contains(networkhandlingengine_symbian_enabled, yes) {
+        contains(networkhandlingenginet_symbian_enabled, yes) {
             DEFINES += NETWORKHANDLER_SYMBIAN_SUPPORTED
             SOURCES += networkoperatornamelistener_s60.cpp
             HEADERS += networkoperatornamelistener_s60.h
