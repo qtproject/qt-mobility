@@ -14,8 +14,10 @@ MOBILITY = connectivity
 SOURCES = main.cpp \
     nfc.cpp \
     devicediscovery.cpp \
-    servicediscovery.cpp
+    servicediscovery.cpp \
+    foorecord.cpp
 
-HEADERS =
+HEADERS = \
+    foorecord.h
 
 CONFIG += strict_flags
