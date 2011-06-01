@@ -649,7 +649,9 @@ void S60CameraControl::MceoCameraReady()
                     m_changeCaptureModeWhenReady = false; // Reset
                 }
 
-                m_inactivityTimer->start(KInactivityTimerTimeout);
+                if (m_requestedState == QCamera::LoadedStatus &&
+                    m_internalState == QCamera::LoadedStatus)
+                    m_inactivityTimer->start(KInactivityTimerTimeout);
                 break;
 
             case QCamera::ActiveState:

@@ -400,8 +400,9 @@ void CCameraEngine::DisablePreviewProvider()
     iCameraSnapshot->StopSnapshot();
 
     delete iCameraSnapshot;
+    iCameraSnapshot = 0;
 
-    iPreviewObserver = NULL;
+    iPreviewObserver = 0;
 }
 #endif // ECAM_PREVIEW_API
 
