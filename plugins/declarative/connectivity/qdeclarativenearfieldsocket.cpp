@@ -75,7 +75,7 @@
 /*!
     \qmlproperty string NearFieldSocket::error
 
-    This property holds the last error that occured.
+    This property holds the last error that occurred.
 */
 
 /*!
