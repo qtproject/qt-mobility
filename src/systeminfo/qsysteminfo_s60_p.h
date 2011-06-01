@@ -85,6 +85,10 @@
 #include "thermalstatus_s60.h"
 #endif
 
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+#include "networkoperatornamelistener_s60.h"
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -118,6 +122,9 @@ private:
 
 //////// QSystemNetworkInfo
 class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+, public MNetworkOperatorNameObserver
+#endif
 {
     Q_OBJECT
 
@@ -175,6 +182,11 @@ protected:  //from MTelephonyInfoObserver
     void wlanNetworkNameChanged();
     void wlanNetworkSignalStrengthChanged();
     void wlanNetworkStatusChanged();
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+    //from MNetworkOperatorNameObserver
+    void OperatorNameChanged();
+#endif
 
 //public slots:
     //void wlanNetworkNameChanged();
@@ -527,6 +539,17 @@ public:
         }
 #endif
 
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+     CNetworkOperatorNameListener *networkInfoListener()
+        {
+         if (!m_networkinfolistener)
+          {
+           m_networkinfolistener = CNetworkOperatorNameListener::NewL();
+          }
+          return m_networkinfolistener;
+        }
+#endif
+
     CBatteryCommonInfo *batteryCommonInfo ()
     {
         if (!m_batteryCommonInfo) {
@@ -555,6 +578,9 @@ private:
 #endif
 #ifdef THERMALSTATUS_SUPPORTED
         ,m_thermalStatus(NULL)
+#endif
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+        ,m_networkinfolistener(NULL)
 #endif
     {
         TRACES(qDebug() << "DeviceInfo():Constructor");
@@ -587,6 +613,10 @@ private:
 #ifdef THERMALSTATUS_SUPPORTED
         delete m_thermalStatus;
 #endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+        delete m_networkinfolistener;
+#endif
     }
 
     DeviceInfo(const DeviceInfo &);
@@ -616,6 +646,11 @@ private:
 #ifdef THERMALSTATUS_SUPPORTED
     CThermalStatus* m_thermalStatus;
 #endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+   CNetworkOperatorNameListener* m_networkinfolistener;
+#endif
+
 };
 
 class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver

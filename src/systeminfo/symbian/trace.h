@@ -45,9 +45,12 @@
 
 #ifdef SYSTEMINFO_DEBUG
 #include <qDebug>
+#include <e32debug.h>
+#define TRACERD( args... ) RDebug::Print (args)
 #define TRACES(x) x
 #else
 #define TRACES(x)
+#define TRACERD( args... )
 #endif
 
 #endif

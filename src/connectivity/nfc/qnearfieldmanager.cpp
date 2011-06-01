@@ -311,20 +311,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
-
-    Registers \a object to receive notifications on \a method when a tag has been detected and has
-    an NDEF record that matches template argument.  The \a method on \a object should have the
-    prototype 'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
-
-    Returns an identifier, which can be used to unregister the handler, on success; otherwise
-    returns -1.
-
-    \note The \i target parameter of \a method may not be available on all platforms, in which case
-    \i target will be 0.
-*/
-
-/*!
     Constructs a new near field manager with \a parent.
 */
 QNearFieldManager::QNearFieldManager(QObject *parent)
@@ -477,6 +463,8 @@ int QNearFieldManager::registerNdefMessageHandler(QNdefRecord::TypeNameFormat ty
 }
 
 /*!
+    \fn int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
+
     Registers \a object to receive notifications on \a method when a tag has been detected and has
     an NDEF message that matches a pre-registered message format. The \a method on \a object should
     have the prototype

@@ -286,6 +286,13 @@ QString QBluetoothServiceDiscoveryAgent::errorString() const
     return d->errorString;
 }
 
+
+/*!
+    \fn QBluetoothServiceDiscoveryAgent::canceled()
+    Signals the cancellation of the service discovery.
+ */
+
+
 /*!
     Starts device discovery.
 */
@@ -402,6 +409,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished()
 
     startServiceDiscovery();
 }
+
 
 #include "moc_qbluetoothservicediscoveryagent.cpp"
 

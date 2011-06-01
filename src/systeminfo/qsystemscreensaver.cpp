@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
-    d = new QSystemScreenSaverPrivate(parent);
+    d = new QSystemScreenSaverPrivate();
 }
 
 /*!

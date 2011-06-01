@@ -73,7 +73,7 @@ QSystemAlignedTimerPrivate::QSystemAlignedTimerPrivate(QObject *parent)
         return;
     }
 
-    m_notifier = new QSocketNotifier(sockfd, QSocketNotifier::Read, this);
+    m_notifier = new QSocketNotifier(sockfd, QSocketNotifier::Read);
     if (!QObject::connect(m_notifier, SIGNAL(activated(int)), this, SLOT(heartbeatReceived(int)))) {
         delete m_notifier, m_notifier = 0;
         m_lastError = QSystemAlignedTimer::TimerFailed;
