@@ -1,3 +1,12 @@
+qt-mobility (v1.2.0+555) unstable; urgency=low
+
+
+
+
+
+
+ -- Simo Fält <simo.falt@nokia.com>  Wed, 1 Jun 2011 11:49:48 +1000
+
 qt-mobility (1.2.0+375) unstable; urgency=low
 
   * Temporaly disable screensaver test due to harmattan changes in harmattan
