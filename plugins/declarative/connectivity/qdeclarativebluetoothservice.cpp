@@ -52,7 +52,7 @@
 /* ==================== QDeclarativeBluetoothService ======================= */
 
 /*!
-   \qmlclass BluetoothSocket QDeclarativeBluetoothService
+   \qmlclass BluetoothService QDeclarativeBluetoothService
    \brief The BluetoothService element contains all the information available for a single bluetooth service.\.
 
    \ingroup connectivity-qml
