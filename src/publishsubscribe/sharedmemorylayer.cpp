@@ -623,7 +623,7 @@ unsigned int FixedMemoryTree::locateInNode(Node * node, const char * name,
 {
     Q_ASSERT(node && name && match);
 
-    // This is a linear search.  It would be possible to replace this with a
+    // This is a linear search.  It would be possible to replace this with a 
     // binary search, which may or may not improve performance depending on the
     // number of sub nodes.
     unsigned short counter = 0;
@@ -2445,7 +2445,7 @@ bool SharedMemoryLayer::value(Handle handle, const QString &subPath,
     bool rv = false;
     if(0xFFFFFFFF == rhandle->currentPath) {
         QByteArray abs_path = rhandle->path + subPath.toUtf8();
-        if (rhandle->path.length() == 1)
+        if (rhandle->path.length() == 1) 
             abs_path = subPath.toUtf8();
         ReadHandle vhandle(abs_path);
         clearHandle(&vhandle);

@@ -57,7 +57,7 @@ XQPublishAndSubscribeUtilsPrivate::~XQPublishAndSubscribeUtilsPrivate()
 bool XQPublishAndSubscribeUtilsPrivate::defineProperty(const XQPublishAndSubscribeSettingsKey& key, XQSettingsManager::Type type)
 {
     CPublishAndSubscribeHandler* handler = m_settingsManagerPrivate.pubSubHandlerInstance(key.uid());
-
+    
     if (handler)
     {
         m_settingsManagerPrivate.iError = handler->defineProperty(key.key(), type);
@@ -74,7 +74,7 @@ bool XQPublishAndSubscribeUtilsPrivate::defineProperty(const XQPublishAndSubscri
     const XQPublishAndSubscribeSecurityPolicy& readPolicy, const XQPublishAndSubscribeSecurityPolicy& writePolicy)
 {
     CPublishAndSubscribeHandler* handler = m_settingsManagerPrivate.pubSubHandlerInstance(key.uid());
-
+    
     if (handler)
     {
         m_settingsManagerPrivate.iError = handler->defineProperty(key.key(), type, readPolicy, writePolicy);
@@ -83,13 +83,13 @@ bool XQPublishAndSubscribeUtilsPrivate::defineProperty(const XQPublishAndSubscri
     {
         m_settingsManagerPrivate.iError = XQSettingsManager::UnknownError;
     }
-    return m_settingsManagerPrivate.iError == KErrNone;
+    return m_settingsManagerPrivate.iError == KErrNone;    
 }
 
 bool XQPublishAndSubscribeUtilsPrivate::deleteProperty(const XQPublishAndSubscribeSettingsKey& key)
 {
     CPublishAndSubscribeHandler* handler = m_settingsManagerPrivate.pubSubHandlerInstance(key.uid());
-
+    
     if (handler)
     {
         m_settingsManagerPrivate.iError = handler->deleteProperty(key.key());

@@ -193,7 +193,7 @@ bool CCentralRepositoryHandler::handleStopMonitoring(const XQSettingsKey& key, T
     CCenRepMonitor* monitor = m_monitors[itemKey];
     m_monitors.remove(itemKey);
     delete monitor;
-
+    
     return error == KErrNone;
 }
 
@@ -241,21 +241,21 @@ TInt CCentralRepositoryHandler::commitTransaction()
         return iRepository->CommitTransaction(keyInfo);
     #else
         return KErrNotSupported;
-    #endif
+    #endif        
 }
 
 void CCentralRepositoryHandler::cancelTransaction()
 {
     #ifndef XQSETTINGSMANAGER_NO_TRANSACTIONS
         iRepository->CancelTransaction();
-    #endif
+    #endif        
 }
 
 void CCentralRepositoryHandler::failTransaction()
 {
     #ifndef XQSETTINGSMANAGER_NO_TRANSACTIONS
         iRepository->FailTransaction();
-    #endif
+    #endif        
 }
 
 TInt CCentralRepositoryHandler::transactionState() const
@@ -264,5 +264,5 @@ TInt CCentralRepositoryHandler::transactionState() const
         return iRepository->TransactionState();
     #else
         return KErrNotSupported;
-    #endif
+    #endif        
 }

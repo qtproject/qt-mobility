@@ -60,11 +60,11 @@ bool XQCentralRepositoryUtilsPrivate::createKey(const XQCentralRepositorySetting
     m_settingsManagerPrivate.iError = KErrNotSupported;
     return false;
 }
-#else
+#else    
 bool XQCentralRepositoryUtilsPrivate::createKey(const XQCentralRepositorySettingsKey& key, const QVariant& value)
 {
     CCentralRepositoryHandler* handler = m_settingsManagerPrivate.cenRepHandlerInstance(key.uid());
-
+    
     if (handler)
     {
         switch (value.type())
@@ -114,7 +114,7 @@ bool XQCentralRepositoryUtilsPrivate::deleteKey(const XQCentralRepositorySetting
 bool XQCentralRepositoryUtilsPrivate::deleteKey(const XQCentralRepositorySettingsKey& key)
 {
     CCentralRepositoryHandler* handler = m_settingsManagerPrivate.cenRepHandlerInstance(key.uid());
-
+    
     if (handler)
     {
         m_settingsManagerPrivate.iError = handler->deleteKey(key.key());
@@ -130,7 +130,7 @@ bool XQCentralRepositoryUtilsPrivate::deleteKey(const XQCentralRepositorySetting
 bool XQCentralRepositoryUtilsPrivate::resetKey(const XQCentralRepositorySettingsKey& key)
 {
     CCentralRepositoryHandler* handler = m_settingsManagerPrivate.cenRepHandlerInstance(key.uid());
-
+    
     if (handler)
     {
         m_settingsManagerPrivate.iError = handler->resetKey(key.key());
@@ -145,7 +145,7 @@ bool XQCentralRepositoryUtilsPrivate::resetKey(const XQCentralRepositorySettings
 bool XQCentralRepositoryUtilsPrivate::resetRepository(long int repositoryUid)
 {
     CCentralRepositoryHandler* handler = m_settingsManagerPrivate.cenRepHandlerInstance(repositoryUid);
-
+    
     if (handler)
     {
         m_settingsManagerPrivate.iError = handler->resetRepository();
@@ -228,7 +228,7 @@ QList<XQCentralRepositorySettingsKey> XQCentralRepositoryUtilsPrivate::findKeys(
 bool XQCentralRepositoryUtilsPrivate::startTransaction(long int repositoryUid, XQCentralRepositoryUtils::TransactionMode transactionMode)
 {
     CCentralRepositoryHandler* handler = m_settingsManagerPrivate.cenRepHandlerInstance(repositoryUid);
-
+    
     if (handler)
     {
         CRepository::TTransactionMode mode = CRepository::EConcurrentReadWriteTransaction;
@@ -267,7 +267,7 @@ bool XQCentralRepositoryUtilsPrivate::startTransaction(long int repositoryUid, X
 bool XQCentralRepositoryUtilsPrivate::commitTransaction(long int repositoryUid)
 {
     CCentralRepositoryHandler* handler = m_settingsManagerPrivate.cenRepHandlerInstance(repositoryUid);
-
+    
     if (handler)
     {
         m_settingsManagerPrivate.iError = handler->commitTransaction();

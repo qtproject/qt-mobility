@@ -233,7 +233,7 @@ bool QSystemReadWriteLock::lockForWrite()
     }
 
 #if defined QSYSTEMREADWRITELOCK_DEBUG
-    qDebug() << "QSystemReadWriteLock::lockForWrite() <start>\naccessCount ="
+    qDebug() << "QSystemReadWriteLock::lockForWrite() <start>\naccessCount =" 
         << d->accessCount() << "\twaitingWriters=" << d->waitingWriters() << "\twaitingReaders=" << d->waitingReaders();
 #endif
     while(d->accessCount() != 0) {
@@ -245,7 +245,7 @@ bool QSystemReadWriteLock::lockForWrite()
     }
     --d->accessCount();
 #if defined QSYSTEMREADWRITELOCK_DEBUG
-    qDebug() << "QSystemReadWriteLock::lockForWrite() <end>\naccessCount ="
+    qDebug() << "QSystemReadWriteLock::lockForWrite() <end>\naccessCount =" 
         << d->accessCount() << "\twaitingWriters=" << d->waitingWriters() << "\twaitingReaders=" << d->waitingReaders();
 #endif
 
@@ -288,7 +288,7 @@ void QSystemReadWriteLock::unlock()
         }
     }
 #if defined QSYSTEMREADWRITELOCK_DEBUG
-    qDebug() << "QSystemReadWriteLock::unlock() <end>\naccessCount ="
+    qDebug() << "QSystemReadWriteLock::unlock() <end>\naccessCount =" 
         << d->accessCount() << "\twaitingWriters=" << d->waitingWriters() << "\twaitingReaders=" << d->waitingReaders();
 #endif
     d->m_error = QSystemReadWriteLock::NoError;

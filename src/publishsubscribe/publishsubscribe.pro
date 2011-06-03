@@ -38,8 +38,7 @@ symbian {
 
     HEADERS += pathmapper_symbian_p.h \
         pathmapper_proxy_symbian_p.h
-    LIBS += -lefsrv \
-            -lfeatdiscovery
+    LIBS += -lefsrv
 
     DEFINES += QT_BUILD_INTERNAL
     HEADERS += settingslayer_symbian_p.h
@@ -63,7 +62,7 @@ unix:!symbian {
     } else {
         QT += network
 
-        !mac:maemo5 {
+        !mac:maemo5 { 
             HEADERS += gconflayer_linux_p.h
             SOURCES += gconflayer_linux.cpp
 
