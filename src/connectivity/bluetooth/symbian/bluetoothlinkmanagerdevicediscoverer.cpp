@@ -293,7 +293,7 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 
     if (bufferlength > 0) {
         HBufC8 *msd = 0;
-        TRAP(err,msd = HBufC8::NewLC(bufferlength));
+        TRAP(err,msd = HBufC8::NewL(bufferlength));
         if(err)
             manufacturerData = QByteArray();
         else

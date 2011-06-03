@@ -97,7 +97,7 @@ public:
 
         while (m_textStream && !m_textStream->atEnd()) {
             QString line = m_textStream->readLine().trimmed();
-            if (line.isEmpty() || line[0] == '#')
+            if (line.isEmpty() || line[0] == '#' || line.size() > 4096)
                 continue;
 
             QUrl fileUrl = QUrl::fromLocalFile(line);
