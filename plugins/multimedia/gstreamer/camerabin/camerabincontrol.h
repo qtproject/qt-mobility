@@ -54,6 +54,7 @@ class CamerabinResourcePolicy;
 class CameraBinControl : public QCameraControl
 {
     Q_OBJECT
+    Q_PROPERTY(bool viewfinderColorSpaceConversion READ viewfinderColorSpaceConversion WRITE setViewfinderColorSpaceConversion)
 public:
     CameraBinControl( CameraBinSession *session );
     virtual ~CameraBinControl();
@@ -70,9 +71,11 @@ public:
 
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
     bool canChangeProperty(PropertyChangeType changeType, QCamera::Status status) const;
+    bool viewfinderColorSpaceConversion() const;
 
 public slots:
     void reloadLater();
+    void setViewfinderColorSpaceConversion(bool enabled);
 
 private slots:
     void updateStatus();
