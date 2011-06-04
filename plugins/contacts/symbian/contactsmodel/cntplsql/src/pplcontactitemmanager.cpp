@@ -605,17 +605,11 @@ TBool CPplContactItemManager::IsDatabaseEmptyL()
 	return static_cast<CPplContactTable*>(iContactTable)->IsTableEmptyL();
 	}
 
+
 CContactIdArray* CPplContactItemManager::MatchPhoneNumberL(const TDesC& aNumber, TInt aMatchLengthFromRight)
 	{
 	// Call comm address table
-	if (aMatchLengthFromRight == KBestMatchingPhoneNumbers)
-        {
-        return  static_cast<CPplCommAddrTable*>(iCommAddrTable)->BestMatchingPhoneNumberL(aNumber);
-        }
-    else
-        {
-        return  static_cast<CPplCommAddrTable*>(iCommAddrTable)->MatchPhoneNumberL(aNumber, aMatchLengthFromRight);
-        }
+    return  static_cast<CPplCommAddrTable*>(iCommAddrTable)->MatchPhoneNumberL(aNumber, aMatchLengthFromRight);
 	}
 
 /**
