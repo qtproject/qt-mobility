@@ -592,13 +592,22 @@ void tst_QCameraBackend::testExposureMode()
 #endif
     QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
 
-    exposure->setExposureMode(QCameraExposure::ExposurePortrait);
-    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
-
+    // Night
+    exposure->setExposureMode(QCameraExposure::ExposureNight);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureNight);
     camera.start();
     QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureNight);
 
-    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
+    camera.unload();
+    QTRY_COMPARE(camera.status(), QCamera::UnloadedStatus);
+
+    // Auto
+    exposure->setExposureMode(QCameraExposure::ExposureAuto);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
 }
 
 QTEST_MAIN(tst_QCameraBackend)
