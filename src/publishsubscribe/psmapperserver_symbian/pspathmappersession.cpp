@@ -67,7 +67,7 @@ void CPSPathMapperServerSession::ServiceL(const RMessage2 &aMessage)
     TRAPD(err, DispatchMessageL(aMessage));
     aMessage.Complete(err);
 }
-
+	        
 void CPSPathMapperServerSession::DispatchMessageL(const RMessage2 &aMessage)
 {
     switch (aMessage.Function()) {
@@ -180,7 +180,7 @@ void CPSPathMapperServerSession::ResolvePathLengthL(const RMessage2 &aMessage)
     } else {
         iResultByteArray.clear();
     }
-
+    
     TPckgBuf<TInt> lengthPckg(iResultByteArray.size());
     aMessage.Write(1, lengthPckg);
 }
