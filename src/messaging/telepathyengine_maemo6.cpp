@@ -377,7 +377,6 @@ void SendRequest::setFinished(const QString &address, bool success)
 void SendRequest::finished(Tp::PendingOperation *operation)
 {
     QDEBUG_FUNCTION_BEGIN
-    qWarning() << "++++++++++++++ ALPO +++++++++++++++++++";
 
     Tp::PendingSendMessage *msg = qobject_cast<Tp::PendingSendMessage *>(operation);
 
@@ -434,7 +433,7 @@ void SendRequest::messageReceived(const Tp::ReceivedMessage &message, const Tp::
 	return;
     if (details.isError()) {
 	_failCount++;
-	qWarning() << "Failed to send message" << token << ":" << details.debugMessage();
+        qWarning() << __PRETTY_FUNCTION__ << "Failed to send message" << token << ":" << details.debugMessage();
     }
     down();
 }
