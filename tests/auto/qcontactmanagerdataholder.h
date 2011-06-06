@@ -73,7 +73,7 @@ public:
 
         foreach(const QString& mgr, managerNames) {
             // Don't bother with these
-            if (mgr == "memory" || mgr == "invalid" || mgr == "testdummy" || mgr == "maliciousplugin")
+            if (mgr == "memory" || mgr == "invalid" || mgr == "testdummy" || mgr == "maliciousplugin" || mgr == "testlazy")
                 continue;
             QMap<QString, QString> params;
             QString mgrUri = QContactManager::buildUri(mgr, params);

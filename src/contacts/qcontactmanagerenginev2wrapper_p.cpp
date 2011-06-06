@@ -52,20 +52,6 @@ QContactManagerEngineV2Wrapper::QContactManagerEngineV2Wrapper(QContactManagerEn
     : m_engine(wrappee)
 {
     Q_ASSERT(wrappee);
-    // Connect all the signals
-    connect(wrappee, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
-    connect(wrappee, SIGNAL(contactsAdded(QList<QContactLocalId>)),
-            this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
-    connect(wrappee, SIGNAL(contactsChanged(QList<QContactLocalId>)),
-            this, SIGNAL(contactsChanged(QList<QContactLocalId>)));
-    connect(wrappee, SIGNAL(contactsRemoved(QList<QContactLocalId>)),
-            this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
-    connect(wrappee, SIGNAL(relationshipsAdded(QList<QContactLocalId>)),
-            this, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
-    connect(wrappee, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)),
-            this, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
-    connect(wrappee, SIGNAL(selfContactIdChanged(QContactLocalId, QContactLocalId)),
-            this, SIGNAL(selfContactIdChanged(QContactLocalId, QContactLocalId)));
 }
 
 QContactManagerEngineV2Wrapper::~QContactManagerEngineV2Wrapper()

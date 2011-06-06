@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#define QT_STATICPLUGIN
+
 #include <QtTest/QtTest>
 #include <QtGlobal>
 
@@ -206,6 +208,7 @@ private slots:
     void fetchHint();
     void engineDefaultSchema();
     void errorSemantics();
+    void lazyConnections();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -253,6 +256,101 @@ private:
     QObject *mObject;
     const char * const mSignal;
 };
+
+
+/* Two backends for testing lazy signal connections */
+class QContactLazyEngine2 : public QContactManagerEngineV2
+{
+public:
+    QContactLazyEngine2() {}
+    QString managerName() const {return "lazy2";}
+
+    /*! \reimp */
+    int managerVersion() const {return 0;}
+
+    /*! \reimp */
+    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QString();
+    }
+
+    /*! \reimp */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
+    void connectNotify(const char *signal)
+    {
+        connectionCounts[signal]++;
+    }
+    void disconnectNotify(const char *signal)
+    {
+        connectionCounts[signal]--;
+    }
+
+    static QMap<QString, int> connectionCounts; // signal name to count
+};
+QMap<QString, int> QContactLazyEngine2::connectionCounts;
+
+class QContactLazyEngine : public QContactManagerEngine
+{
+public:
+    QContactLazyEngine() {}
+    QString managerName() const {return "lazy";}
+
+    /*! \reimp */
+    int managerVersion() const {return 0;}
+
+    /*! \reimp */
+    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QString();
+    }
+
+    /*! \reimp */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
+    void connectNotify(const char *signal)
+    {
+        connectionCounts[signal]++;
+    }
+    void disconnectNotify(const char *signal)
+    {
+        connectionCounts[signal]--;
+    }
+    static QMap<QString, int> connectionCounts; // signal name to count
+};
+QMap<QString, int> QContactLazyEngine::connectionCounts;
+
+/* Static lazy engine factory */
+class LazyEngineFactory : public QObject, public QContactManagerEngineFactory
+{
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
+    public:
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
+        QString managerName() const {return "testlazy";}
+};
+
+QContactManagerEngine* LazyEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
+{
+    // Return one or the other
+    if (parameters.value("version") == QString("1"))
+        return new QContactLazyEngine();
+    else
+        return new QContactLazyEngine2();
+}
+
+Q_EXPORT_PLUGIN2(contacts_testlazy, LazyEngineFactory)
+Q_IMPORT_PLUGIN(contacts_testlazy)
 
 tst_QContactManager::tst_QContactManager()
 {
@@ -481,6 +579,7 @@ void tst_QContactManager::addManagers()
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
+    managers.removeAll("testlazy");
 
     // "internal" engines
     managers.removeAll("social");
@@ -3859,6 +3958,106 @@ void tst_QContactManager::errorSemantics()
     QVERIFY(t.slotErrorWasBadArgument);
     QVERIFY(m.error() == QContactManager::NoError);
 }
+
+void tst_QContactManager::lazyConnections()
+{
+    QMap<QString, QString> parameters;
+    parameters["version"] = QString("1");
+    QContactManager lazy1("testlazy", parameters);
+    QContactManager lazy2("testlazy");
+
+    QCOMPARE(lazy1.managerName(), QString("lazy"));
+    QCOMPARE(lazy2.managerName(), QString("lazy2"));
+
+    // Make sure the initial connection counts are empty
+    QCOMPARE(QContactLazyEngine::connectionCounts.count(), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 0);
+
+    // Lazy 1 first
+    {
+        QTestSignalSink casink(&lazy1, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+
+        // See if we got one connection
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.count(), 1);
+
+        // Go out of scope, and see if disconnect is called
+    }
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.count(), 1);
+
+    // Lazy2 second
+    {
+        QTestSignalSink casink(&lazy2, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+
+        // See if we got one connection
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 1);
+
+        // Go out of scope, and see if disconnect is called
+    }
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 1);
+
+    // Just make sure all the signals get connected correctly
+    {
+        QTestSignalSink casink(&lazy1, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+        QTestSignalSink crsink(&lazy1, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink cmsink(&lazy1, SIGNAL(contactsChanged(QList<QContactLocalId>)));
+        QTestSignalSink dcsink(&lazy1, SIGNAL(dataChanged()));
+        QTestSignalSink rasink(&lazy1, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
+        QTestSignalSink rrsink(&lazy1, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink scsink(&lazy1, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+
+        // See if we got all the connections
+        QCOMPARE(QContactLazyEngine::connectionCounts.count(), 7);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(dataChanged())), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 1);
+    }
+    QCOMPARE(QContactLazyEngine::connectionCounts.count(), 7);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(dataChanged())), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 0);
+
+    // and for lazy2
+    {
+        QTestSignalSink casink(&lazy2, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+        QTestSignalSink crsink(&lazy2, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink cmsink(&lazy2, SIGNAL(contactsChanged(QList<QContactLocalId>)));
+        QTestSignalSink dcsink(&lazy2, SIGNAL(dataChanged()));
+        QTestSignalSink rasink(&lazy2, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
+        QTestSignalSink rrsink(&lazy2, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink scsink(&lazy2, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+
+        // See if we got all the connections
+        QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 7);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(dataChanged())), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 1);
+    }
+    QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 7);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(dataChanged())), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 0);
+}
+
 
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"

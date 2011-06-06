@@ -121,10 +121,14 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory")) {
-        m_engine = new QContactManagerEngineV2Wrapper(QContactMemoryEngine::createMemoryEngine(parameters));
+        QContactManagerEngine* engine = QContactMemoryEngine::createMemoryEngine(parameters);
+        m_engine = new QContactManagerEngineV2Wrapper(engine);
+        m_signalSource = engine;
 #ifdef QT_SIMULATOR
     } else if (builtManagerName == QLatin1String("simulator")) {
-        m_engine = new QContactManagerEngineV2Wrapper(QContactSimulatorEngine::createSimulatorEngine(parameters));
+        QContactManagerEngine* engine = QContactSimulatorEngine::createSimulatorEngine(parameters);
+        m_engine = new QContactManagerEngineV2Wrapper(engine);
+        m_signalSource = engine;
 #endif
     } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
@@ -151,6 +155,9 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                     if (!m_engine && engine) {
                         // Nope, v1, so wrap it
                         m_engine = new QContactManagerEngineV2Wrapper(engine);
+                        m_signalSource = engine;
+                    } else {
+                        m_signalSource = m_engine; // use the v2 engine directly
                     }
                     found = true;
                     break;
@@ -171,13 +178,13 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         // the engine factory could lie to us, so check the real implementation version
         if (m_engine && (implementationVersion != -1 && m_engine->managerVersion() != implementationVersion)) {
             m_lastError = QContactManager::VersionMismatchError;
-            m_engine = 0;
+            m_signalSource = m_engine = 0;
         }
 
         if (!m_engine) {
             if (m_lastError == QContactManager::NoError)
                 m_lastError = QContactManager::DoesNotExistError;
-            m_engine = new QContactInvalidEngine();
+            m_signalSource = m_engine = new QContactInvalidEngine();
         }
     }
 }

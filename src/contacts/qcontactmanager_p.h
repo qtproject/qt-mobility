@@ -75,7 +75,8 @@ class QContactManagerData
 public:
     QContactManagerData()
         : m_engine(0),
-        m_lastError(QContactManager::NoError)
+        m_lastError(QContactManager::NoError),
+        m_signalSource(0)
     {
     }
 
@@ -114,6 +115,10 @@ public:
 
     // Lazy connection stuff - reference counted set
     QHash<QByteArray, int> m_connectedSignals;
+
+    // If this is a wrapperv2, connect to the wrappee signals directly rather
+    // than bouncing them twice
+    QObject* m_signalSource; // where the signals we proxy come from - either m_engine or a v1engine that is wrapped
 
 private:
     Q_DISABLE_COPY(QContactManagerData)
