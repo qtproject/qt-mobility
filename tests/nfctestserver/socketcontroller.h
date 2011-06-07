@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,46 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QSYSTEMREADWRITELOCK_H
-#define QSYSTEMREADWRITELOCK_H
+#ifndef SOCKETCONTROLLER_H
+#define SOCKETCONTROLLER_H
 
-#include "qmobilityglobal.h"
-#include <QString>
+#include <QtCore/QObject>
 
-QTM_BEGIN_NAMESPACE
+#include <qnearfieldmanager.h>
+#include <qllcpsocket.h>
 
-class QSystemReadWriteLockPrivate;
-class QM_AUTOTEST_EXPORT QSystemReadWriteLock
+QTM_USE_NAMESPACE
+
+class SocketController : public QObject
 {
+    Q_OBJECT
+
 public:
-    enum AccessMode{Create, Open};
-    enum SystemReadWriteLockError{
-        NoError,
-        PermissionDenied,
-        KeyError,//TODO:remove this enum
-        NotFound,
-        LockError,//TODO: remove this enum
-        OutOfResources, 
-        FailedToInitialize,//TODO: remove this enum
-        UnknownError
+    enum ConnectionType {
+        StreamConnection,
+        DatagramConnection,
+        BoundSocket,
+        ConnectionlessSocket
     };
 
-    explicit QSystemReadWriteLock(const QString &key, AccessMode mode = Open);
-    ~QSystemReadWriteLock();
+    SocketController(ConnectionType type, QObject *parent = 0);
+    ~SocketController();
 
-    bool lockForRead();
-    bool lockForWrite();
-    void unlock();
+public slots:
+    void connected();
+    void disconnected();
+    void error(QLlcpSocket::SocketError socketError);
+    void stateChanged(QLlcpSocket::SocketState socketState);
+    void readyRead();
+    void targetDetected(QNearFieldTarget *target);
+    void targetLost(QNearFieldTarget *target);
 
-    SystemReadWriteLockError error() const;
-    QString errorString() const;
-
-    QString key() const;
+protected:
+    void timerEvent(QTimerEvent *event);
 
 private:
-    QSystemReadWriteLockPrivate *d;
+    QNearFieldManager *m_manager;
+    QLlcpSocket *m_socket;
+    ConnectionType m_connectionType;
+    QString m_service;
+    quint8 m_port;
+    int m_timerId;
 };
 
-QTM_END_NAMESPACE
-
-#endif
+#endif // SOCKETCONTROLLER_H

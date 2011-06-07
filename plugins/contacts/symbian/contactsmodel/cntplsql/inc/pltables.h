@@ -241,7 +241,6 @@ public:
 	void CreateTableL();
 
 	CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
-	CContactIdArray* BestMatchingPhoneNumberL(const TDesC& aNumber);
 	CContactIdArray* MatchEmailAddressL(const TDesC& aEmailAddr);
 	CContactIdArray* MatchSipAddressL(const TDesC& aSipAddr);
 

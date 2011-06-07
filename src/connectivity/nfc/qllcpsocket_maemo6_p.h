@@ -90,7 +90,7 @@ public:
     QLlcpSocket::SocketError error() const;
     QLlcpSocket::SocketState state() const;
 
-    qint64 readData(char *data, qint64 maxlen);
+    qint64 readData(char *data, qint64 maxlex, quint8 *port = 0);
     qint64 writeData(const char *data, qint64 len);
 
     qint64 bytesAvailable() const;
@@ -100,6 +100,7 @@ public:
     bool waitForBytesWritten(int msecs);
     bool waitForConnected(int msecs);
     bool waitForDisconnected(int msecs);
+    bool waitForBound(int msecs);
 
 private slots:
     // com.nokia.nfc.AccessRequestor
@@ -108,29 +109,34 @@ private slots:
     void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
 
     // com.nokia.nfc.LLCPRequestor
-    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
-    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
-    void Socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int readFd, const QVariantMap &properties);
+    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
+    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
+    void Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties);
 
     void _q_readNotify();
+    void _q_bytesWritten();
 
 private:
     void setSocketError(QLlcpSocket::SocketError socketError);
+    void initializeRequestor();
 
     QLlcpSocket *q_ptr;
     QVariantMap m_properties;
-    QList<QByteArray> m_datagrams;
+    QList<QByteArray> m_receivedDatagrams;
 
     QDBusConnection m_connection;
 
     QString m_serviceUri;
+    quint8 m_port;
 
     QString m_requestorPath;
 
     SocketRequestor *m_socketRequestor;
 
-    int m_readFd;
+    int m_fd;
     QSocketNotifier *m_readNotifier;
+    QSocketNotifier *m_writeNotifier;
+    qint64 m_pendingBytes;
 
     QLlcpSocket::SocketState m_state;
     QLlcpSocket::SocketError m_error;

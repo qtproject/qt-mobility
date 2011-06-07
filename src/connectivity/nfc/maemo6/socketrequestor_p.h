@@ -81,7 +81,7 @@ signals:
 
     void accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
     void connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
-    void socket(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd, const QVariantMap &properties);
+    void socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties);
 
 private:
     const QString m_adaptor;
