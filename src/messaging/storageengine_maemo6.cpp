@@ -301,8 +301,7 @@ Event StorageEngine::eventFromMessage(const QMessage &message)
  *
  */
 QMessage StorageEngine::messageFromEvent(const Event &ev)
-{
-    QDEBUG_FUNCTION_BEGIN
+{    
     QMessage message;
 
     if (!ev.isValid())
@@ -374,7 +373,6 @@ QMessage StorageEngine::messageFromEvent(const Event &ev)
     privateMessage->_id = QMessageId(prefixForEvent(ev) + QString::number(ev.id()));
     privateMessage->_modified = false;   
 
-    QDEBUG_FUNCTION_END
     return message;
 }
 
