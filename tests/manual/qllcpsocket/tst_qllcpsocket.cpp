@@ -176,6 +176,8 @@ void tst_QLlcpSocket::tst_clientConnection()
     if (stream) {
         socket->write("URI\n");
 
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+
         QCOMPARE(bytesWrittenSpy.count(), 1);
         QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(4));
 
@@ -186,6 +188,8 @@ void tst_QLlcpSocket::tst_clientConnection()
         QCOMPARE(line, service.toLatin1());
     } else {
         socket->writeDatagram("URI");
+
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
 
         QCOMPARE(bytesWrittenSpy.count(), 1);
         QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(3));
@@ -206,10 +210,15 @@ void tst_QLlcpSocket::tst_clientConnection()
     /* Read / Write */
     if (stream) {
         QByteArray data("ECHO Test data\n");
-        socket->write(data);
+
+        // fill up the local outgoing buffer
+        int count = 0;
+        while (socket->write(data) == data.size()) { ++count; }
+
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
 
         QCOMPARE(bytesWrittenSpy.count(), 1);
-        QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(data.size()));
+        QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), count * qint64(data.size()));
 
         QTRY_VERIFY(!readyReadSpy.isEmpty());
 
@@ -218,6 +227,8 @@ void tst_QLlcpSocket::tst_clientConnection()
         QCOMPARE(line.constData(), "Test data");
     } else {
         socket->writeDatagram("ECHO Test data");
+
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
 
         QCOMPARE(bytesWrittenSpy.count(), 1);
         QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(14));

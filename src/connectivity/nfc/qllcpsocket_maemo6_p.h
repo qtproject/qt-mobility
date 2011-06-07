@@ -114,6 +114,7 @@ private slots:
     void Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties);
 
     void _q_readNotify();
+    void _q_bytesWritten();
 
 private:
     void setSocketError(QLlcpSocket::SocketError socketError);
@@ -134,6 +135,8 @@ private:
 
     int m_fd;
     QSocketNotifier *m_readNotifier;
+    QSocketNotifier *m_writeNotifier;
+    qint64 m_pendingBytes;
 
     QLlcpSocket::SocketState m_state;
     QLlcpSocket::SocketError m_error;

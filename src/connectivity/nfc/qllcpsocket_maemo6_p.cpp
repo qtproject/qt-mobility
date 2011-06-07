@@ -61,22 +61,27 @@ static const char * const requestorBasePath = "/com/nokia/nfc/llcpclient/";
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
 :   q_ptr(q),
     m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid())),
-    m_port(0), m_socketRequestor(0), m_fd(-1), m_readNotifier(0),
-    m_state(QLlcpSocket::UnconnectedState), m_error(QLlcpSocket::UnknownSocketError)
+    m_port(0), m_socketRequestor(0), m_fd(-1), m_readNotifier(0), m_writeNotifier(0),
+    m_pendingBytes(0), m_state(QLlcpSocket::UnconnectedState),
+    m_error(QLlcpSocket::UnknownSocketError)
 {
 }
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd)
 :   q_ptr(0), m_connection(connection), m_port(0), m_socketRequestor(0), m_fd(readFd),
+    m_pendingBytes(0),
     m_state(QLlcpSocket::ConnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
     m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
     connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+    m_writeNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Write, this);
+    connect(m_writeNotifier, SIGNAL(activated(int)), this, SLOT(_q_bytesWritten()));
 }
 
 QLlcpSocketPrivate::~QLlcpSocketPrivate()
 {
     delete m_readNotifier;
+    delete m_writeNotifier;
 }
 
 void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QString &serviceUri)
@@ -114,6 +119,9 @@ void QLlcpSocketPrivate::disconnectFromService()
 
     delete m_readNotifier;
     m_readNotifier = 0;
+    delete m_writeNotifier;
+    m_writeNotifier = 0;
+    m_pendingBytes = 0;
     ::close(m_fd);
     m_fd = -1;
 
@@ -216,6 +224,9 @@ qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
     datagram.append(port);
     datagram.append(data, size);
 
+    m_pendingBytes += datagram.size() - 1;
+    m_writeNotifier->setEnabled(true);
+
     return ::write(m_fd, datagram.constData(), datagram.size()) - 1;
 }
 
@@ -236,6 +247,9 @@ qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
     QByteArray d;
     d.append(port);
     d.append(datagram);
+
+    m_pendingBytes += datagram.size() - 1;
+    m_writeNotifier->setEnabled(true);
 
     return ::write(m_fd, d.constData(), d.size()) - 1;
 }
@@ -281,21 +295,21 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
     qint64 miu = m_properties.value(QLatin1String("RemoteMIU"), 128).toUInt();
     qint64 current = 0;
 
+    m_writeNotifier->setEnabled(true);
+
     while (current < len) {
         ssize_t wrote = ::write(m_fd, data + current, qMin(miu, len - current));
         if (wrote == -1) {
-            if (current)
-                emit q->bytesWritten(current);
+            if (errno == EAGAIN)
+                break;
 
             setSocketError(QLlcpSocket::RemoteHostClosedError);
             q->disconnectFromService();
             return -1;
         }
         current += wrote;
+        m_pendingBytes += wrote;
     }
-
-    if (current)
-        emit q->bytesWritten(current);
 
     return current;
 }
@@ -507,6 +521,8 @@ void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
 
     m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
     connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+    m_writeNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Write, this);
+    connect(m_writeNotifier, SIGNAL(activated(int)), this, SLOT(_q_bytesWritten()));
 
     m_properties = properties;
 
@@ -526,6 +542,8 @@ void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, int fd, const QVariant
 
     m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
     connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+    m_writeNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Write, this);
+    connect(m_writeNotifier, SIGNAL(activated(int)), this, SLOT(_q_bytesWritten()));
 
     m_properties = properties;
 
@@ -554,6 +572,16 @@ void QLlcpSocketPrivate::_q_readNotify()
         m_receivedDatagrams.append(datagram.left(readFromDevice));
         emit q->readyRead();
     }
+}
+
+void QLlcpSocketPrivate::_q_bytesWritten()
+{
+    Q_Q(QLlcpSocket);
+
+    m_writeNotifier->setEnabled(false);
+
+    emit q->bytesWritten(m_pendingBytes);
+    m_pendingBytes = 0;
 }
 
 void QLlcpSocketPrivate::setSocketError(QLlcpSocket::SocketError socketError)
