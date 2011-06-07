@@ -39,75 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_MAEMO6_P_H
-#define QLLCPSERVER_MAEMO6_P_H
+#ifndef SERVERCONTROLLER_H
+#define SERVERCONTROLLER_H
 
-#include <qmobilityglobal.h>
+#include <QtCore/QObject>
 
-#include "qllcpserver.h"
+#include <qllcpserver.h>
 
-#include <QtDBus/QDBusConnection>
+QTM_USE_NAMESPACE
 
-QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
-QT_FORWARD_DECLARE_CLASS(QDBusVariant)
-
-class AccessRequestorAdaptor;
-class LLCPRequestorAdaptor;
-
-QTM_BEGIN_NAMESPACE
-
-class SocketRequestor;
-
-class QLlcpServerPrivate : public QObject
+class ServerController : public QObject
 {
     Q_OBJECT
 
-    Q_DECLARE_PUBLIC(QLlcpServer)
-
 public:
-    QLlcpServerPrivate(QLlcpServer *q);
+    enum ConnectionType {
+        StreamConnection,
+        DatagramConnection
+    };
 
-    bool listen(const QString &serviceUri);
-    bool isListening() const;
-
-    void close();
-
-    QString serviceUri() const;
-    quint8 serverPort() const;
-
-    bool hasPendingConnections() const;
-    QLlcpSocket *nextPendingConnection();
-
-    QLlcpSocket::SocketError serverError() const;
+    ServerController(ConnectionType type, QObject *parent = 0);
+    ~ServerController();
 
 private slots:
-    // com.nokia.nfc.AccessRequestor
-    void AccessFailed(const QDBusObjectPath &targetPath, const QString &kind,
-                      const QString &error);
-    void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
+    void newConnection();
 
-    // com.nokia.nfc.LLCPRequestor
-    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd,
-                const QVariantMap &properties);
-    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd,
-                 const QVariantMap &properties);
-    void Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties);
+    void socketReadyRead();
+    void socketBytesWritten(qint64 bytes);
+    void socketDisconnected();
 
 private:
-    QLlcpServer *q_ptr;
-
-    QDBusConnection m_connection;
-
-    QString m_serviceUri;
-
-    QString m_requestorPath;
-    SocketRequestor *m_socketRequestor;
-
-    QList<int> m_pendingSockets;
-
-    QLlcpSocket::SocketError m_error;
+    QLlcpServer *m_server;
+    QLlcpSocket *m_socket;
+    ConnectionType m_connectionType;
+    QString m_service;
 };
 
-QTM_END_NAMESPACE
-
-#endif // QLLCPSERVER_MAEMO6_P_H
+#endif // SERVERCONTROLLER_H

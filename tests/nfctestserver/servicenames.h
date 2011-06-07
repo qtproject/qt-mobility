@@ -39,75 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QLLCPSERVER_MAEMO6_P_H
-#define QLLCPSERVER_MAEMO6_P_H
+#ifndef SERVICENAMES_H
+#define SERVICENAMES_H
 
-#include <qmobilityglobal.h>
+static const QLatin1String commandServer("urn:nfc:sn:com.nokia.qtmobility.commandserver");
+static const QLatin1String helloServer("urn:nfc:sn:com.nokia.qtmobility.helloserver");
+static const QLatin1String streamSuffix(".stream");
+static const QLatin1String datagramSuffix(".datagram");
 
-#include "qllcpserver.h"
+static const quint8 boundSocketPort = 63;
 
-#include <QtDBus/QDBusConnection>
-
-QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
-QT_FORWARD_DECLARE_CLASS(QDBusVariant)
-
-class AccessRequestorAdaptor;
-class LLCPRequestorAdaptor;
-
-QTM_BEGIN_NAMESPACE
-
-class SocketRequestor;
-
-class QLlcpServerPrivate : public QObject
-{
-    Q_OBJECT
-
-    Q_DECLARE_PUBLIC(QLlcpServer)
-
-public:
-    QLlcpServerPrivate(QLlcpServer *q);
-
-    bool listen(const QString &serviceUri);
-    bool isListening() const;
-
-    void close();
-
-    QString serviceUri() const;
-    quint8 serverPort() const;
-
-    bool hasPendingConnections() const;
-    QLlcpSocket *nextPendingConnection();
-
-    QLlcpSocket::SocketError serverError() const;
-
-private slots:
-    // com.nokia.nfc.AccessRequestor
-    void AccessFailed(const QDBusObjectPath &targetPath, const QString &kind,
-                      const QString &error);
-    void AccessGranted(const QDBusObjectPath &targetPath, const QString &accessKind);
-
-    // com.nokia.nfc.LLCPRequestor
-    void Accept(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd,
-                const QVariantMap &properties);
-    void Connect(const QDBusVariant &lsap, const QDBusVariant &rsap, int fd,
-                 const QVariantMap &properties);
-    void Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties);
-
-private:
-    QLlcpServer *q_ptr;
-
-    QDBusConnection m_connection;
-
-    QString m_serviceUri;
-
-    QString m_requestorPath;
-    SocketRequestor *m_socketRequestor;
-
-    QList<int> m_pendingSockets;
-
-    QLlcpSocket::SocketError m_error;
-};
-
-QTM_END_NAMESPACE
-
-#endif // QLLCPSERVER_MAEMO6_P_H
+#endif // SERVICENAMES_H

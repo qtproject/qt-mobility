@@ -54,13 +54,8 @@ Item {
         connected: true
 
         function parse(s) {
-            console.log(s);
-
             var args = s.split(" ");
-
             if (args.length == 2) {
-                console.log("Split: " + args[0] + " " + args[1]);
-
                 bluetoothService.deviceAddress = args[0];
                 bluetoothService.servicePort = args[1];
                 root.bluetoothServiceChanged();
