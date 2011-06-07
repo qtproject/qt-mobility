@@ -333,6 +333,25 @@ if (codec) {
 }
 \endcode
 
+\section3 \bold{Discovering Symbian key ids}
+
+Symbian Value Space keys are closely tied with the related Symbian C++ APIs. 
+The information about available keys is usually found from the native
+Symbian SDK documentation, or from Symbian C++ headers in the SDK
+(directory \c {/epoc32/include}).
+
+Following general conventions used in Symbian OS can help in discovering
+the keys, in addition to above:
+   \list
+   \o Publicly available feature flags are listed in Symbian SDK file
+      \c {epoc32/include/publicruntimeids.hrh}. The feature flag key constants typically
+      begin with "\c {KFeature}".
+   \o Central Repository keys are described on the headers of the specific  API.
+      Central Repository key constants typically begin with "\c {KCR}".
+   \o RProperty keys are described on the headers of the specific API. 
+      RProperty key constants typically begin with "\c {KPS}".
+   \endlist
+
 \section2 GConf Layer
 
 Publish and Subscribe API can be used to access the GConf configuration system.
