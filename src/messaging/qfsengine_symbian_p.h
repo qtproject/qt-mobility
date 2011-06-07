@@ -81,6 +81,7 @@ QTM_BEGIN_NAMESPACE
 
 class CFSMessagesFindOperation;
 class CFSContentFetchOperation;
+class CFSContentStructureFetchOperation;
 class QMessageId;
 class QMessageAccount;
 
@@ -237,6 +238,7 @@ public:
 public slots:
     void cleanupFSBackend();
     void contentFetched(void* service, bool success);
+    void contentStructureFetched(void* service, bool success);
 
 private:
 
@@ -318,7 +320,8 @@ private:
     mutable QHash<TEntryId, QMessage::StandardFolder> m_folderTypes;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
-    mutable QMap<QMessageServicePrivate*, CFSContentFetchOperation*> m_fetchOperations;
+    mutable QMap<QMessageServicePrivate*, CFSContentFetchOperation*> m_contentFetchOperations;
+    mutable QMap<QMessageServicePrivate*, CFSContentStructureFetchOperation*> m_contentStructurefetchOperations;
     mutable bool m_messageQueryActive;
     TMailboxId m_mailboxId;
     QMessageStorePrivate* ipMessageStorePrivate;
@@ -364,6 +367,29 @@ private:
     CFSEngine& m_parentEngine;
     QMessageServicePrivate& m_service;
     MEmailMessageContent* m_content;
+    MEmailMessage* m_message;
+
+    friend class CFSEngine;
+};
+
+class CFSContentStructureFetchOperation : public QObject, MEmailMessageObserver
+{
+    Q_OBJECT
+
+public:
+    CFSContentStructureFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
+                             MEmailMessage* message = NULL);
+    ~CFSContentStructureFetchOperation();
+
+    bool fetch();
+    void cancelFetch();
+
+protected: // From MEmailMessageObserver
+    void DataFetchedL(const TInt aResult);
+
+private:
+    CFSEngine& m_parentEngine;
+    QMessageServicePrivate& m_service;
     MEmailMessage* m_message;
 
     friend class CFSEngine;
