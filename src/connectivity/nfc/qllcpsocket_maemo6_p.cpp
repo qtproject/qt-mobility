@@ -61,17 +61,16 @@ static const char * const requestorBasePath = "/com/nokia/nfc/llcpclient/";
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
 :   q_ptr(q),
     m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid())),
-    m_socketRequestor(0), m_readNotifier(0),
+    m_socketRequestor(0), m_fd(-1), m_readNotifier(0),
     m_state(QLlcpSocket::UnconnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
 }
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd)
-:   q_ptr(0), m_connection(connection), m_socketRequestor(0),
-    m_readFd(readFd),
+:   q_ptr(0), m_connection(connection), m_socketRequestor(0), m_fd(readFd),
     m_state(QLlcpSocket::ConnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
-    m_readNotifier = new QSocketNotifier(m_readFd, QSocketNotifier::Read, this);
+    m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
     connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
 }
 
@@ -89,28 +88,7 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
     m_state = QLlcpSocket::ConnectingState;
     emit q->stateChanged(m_state);
 
-    if (m_requestorPath.isEmpty()) {
-        m_requestorPath = QLatin1String(requestorBasePath) +
-                          QString::number(requestorId.fetchAndAddOrdered(1));
-    }
-
-    Manager manager(QLatin1String("com.nokia.nfc"), QLatin1String("/"), m_connection);
-    QDBusObjectPath defaultAdapterPath = manager.DefaultAdapter();
-
-    if (!m_socketRequestor) {
-        m_socketRequestor = new SocketRequestor(defaultAdapterPath.path(), this);
-
-        connect(m_socketRequestor, SIGNAL(accessFailed(QDBusObjectPath,QString,QString)),
-                this, SLOT(AccessFailed(QDBusObjectPath,QString,QString)));
-        connect(m_socketRequestor, SIGNAL(accessGranted(QDBusObjectPath,QString)),
-                this, SLOT(AccessGranted(QDBusObjectPath,QString)));
-        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,QVariantMap)),
-                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,QVariantMap)));
-        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,QVariantMap)),
-                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,QVariantMap)));
-        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,QVariantMap)),
-                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,QVariantMap)));
-    }
+    initializeRequestor();
 
     if (m_socketRequestor) {
         m_serviceUri = serviceUri;
@@ -135,8 +113,8 @@ void QLlcpSocketPrivate::disconnectFromService()
 
     delete m_readNotifier;
     m_readNotifier = 0;
-    ::close(m_readFd);
-    m_readFd = -1;
+    ::close(m_fd);
+    m_fd = -1;
 
     if (m_socketRequestor) {
         QString accessKind(QLatin1String("device.llcp.co.client:") + m_serviceUri);
@@ -164,24 +142,30 @@ bool QLlcpSocketPrivate::bind(quint8 port)
 
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
 {
-    return !m_datagrams.isEmpty();
+    return !m_receivedDatagrams.isEmpty();
 }
 
 qint64 QLlcpSocketPrivate::pendingDatagramSize() const
 {
-    if (m_datagrams.isEmpty())
+    if (m_receivedDatagrams.isEmpty())
         return -1;
 
-    return m_datagrams.first().length();
+    return m_receivedDatagrams.first().length();
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
 {
+    if (m_state != QLlcpSocket::ConnectedState)
+        return -1;
+
     return writeData(data, size);
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram)
 {
+    if (m_state != QLlcpSocket::ConnectedState)
+        return -1;
+
     if (uint(datagram.length()) > m_properties.value(QLatin1String("RemoteMIU"), 128).toUInt())
         return -1;
 
@@ -234,10 +218,10 @@ QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
 
 qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
 {
-    if (m_datagrams.isEmpty())
+    if (m_receivedDatagrams.isEmpty())
         return 0;
 
-    const QByteArray datagram = m_datagrams.takeFirst();
+    const QByteArray datagram = m_receivedDatagrams.takeFirst();
     qint64 size = qMin(maxlen, qint64(datagram.length()));
     memcpy(data, datagram.constData(), size);
     return size;
@@ -251,7 +235,7 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
     qint64 current = 0;
 
     while (current < len) {
-        ssize_t wrote = ::write(m_readFd, data + current, qMin(miu, len - current));
+        ssize_t wrote = ::write(m_fd, data + current, qMin(miu, len - current));
         if (wrote == -1) {
             if (current)
                 emit q->bytesWritten(current);
@@ -272,14 +256,14 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 qint64 QLlcpSocketPrivate::bytesAvailable() const
 {
     qint64 available = 0;
-    foreach (const QByteArray &datagram, m_datagrams)
+    foreach (const QByteArray &datagram, m_receivedDatagrams)
         available += datagram.length();
     return available;
 }
 
 bool QLlcpSocketPrivate::canReadLine() const
 {
-    foreach (const QByteArray &datagram, m_datagrams) {
+    foreach (const QByteArray &datagram, m_receivedDatagrams) {
         if (datagram.contains('\n'))
             return true;
     }
@@ -294,7 +278,7 @@ bool QLlcpSocketPrivate::waitForReadyRead(int msec)
 
     fd_set fds;
     FD_ZERO(&fds);
-    FD_SET(m_readFd, &fds);
+    FD_SET(m_fd, &fds);
 
     timeval timeout;
     timeout.tv_sec = msec / 1000;
@@ -309,7 +293,7 @@ bool QLlcpSocketPrivate::waitForReadyRead(int msec)
     QElapsedTimer timer;
     timer.start();
     while (!bytesAvailable() && (-1 == msec || timer.elapsed() < msec)) {
-        result = ::select(m_readFd + 1, &fds, 0, 0, &timeout);
+        result = ::select(m_fd + 1, &fds, 0, 0, &timeout);
         if (result > 0)
             _q_readNotify();
 
@@ -326,7 +310,7 @@ bool QLlcpSocketPrivate::waitForBytesWritten(int msec)
 {
     fd_set fds;
     FD_ZERO(&fds);
-    FD_SET(m_readFd, &fds);
+    FD_SET(m_fd, &fds);
 
     timeval timeout;
     timeout.tv_sec = msec / 1000;
@@ -341,7 +325,7 @@ bool QLlcpSocketPrivate::waitForBytesWritten(int msec)
     QElapsedTimer timer;
     timer.start();
     while (-1 == msec || timer.elapsed() < msec) {
-        result = ::select(m_readFd + 1, 0, &fds, 0, &timeout);
+        result = ::select(m_fd + 1, 0, &fds, 0, &timeout);
         if (result > 0)
             return true;
         if (-1 == result && errno != EINTR) {
@@ -381,7 +365,7 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msec)
 
     fd_set fds;
     FD_ZERO(&fds);
-    FD_SET(m_readFd, &fds);
+    FD_SET(m_fd, &fds);
 
     timeval timeout;
     timeout.tv_sec = msec / 1000;
@@ -396,7 +380,7 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msec)
     QElapsedTimer timer;
     timer.start();
     while (m_state != QLlcpSocket::UnconnectedState && (-1 == msec || timer.elapsed() < msec)) {
-        result = ::select(m_readFd + 1, &fds, 0, 0, &timeout);
+        result = ::select(m_fd + 1, &fds, 0, 0, &timeout);
         if (result > 0)
             _q_readNotify();
 
@@ -432,23 +416,23 @@ void QLlcpSocketPrivate::AccessGranted(const QDBusObjectPath &targetPath,
 }
 
 void QLlcpSocketPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+                                int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
-    Q_UNUSED(readFd);
+    Q_UNUSED(fd);
     Q_UNUSED(properties);
 }
 
 void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                 int readFd, const QVariantMap &properties)
+                                 int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
 
-    m_readFd = readFd;
+    m_fd = fd;
 
-    m_readNotifier = new QSocketNotifier(m_readFd, QSocketNotifier::Read, this);
+    m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
     connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
 
     m_properties = properties;
@@ -462,12 +446,10 @@ void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     emit q->connected();
 }
 
-void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
-    Q_UNUSED(rsap);
-    Q_UNUSED(readFd);
+    Q_UNUSED(fd);
     Q_UNUSED(properties);
 }
 
@@ -478,7 +460,7 @@ void QLlcpSocketPrivate::_q_readNotify()
     QByteArray datagram;
     datagram.resize(m_properties.value(QLatin1String("LocalMIU"), 128).toUInt());
 
-    int readFromDevice = ::read(m_readFd, datagram.data(), datagram.size());
+    int readFromDevice = ::read(m_fd, datagram.data(), datagram.size());
     if (readFromDevice <= 0) {
         m_readNotifier->setEnabled(false);
 
@@ -487,7 +469,7 @@ void QLlcpSocketPrivate::_q_readNotify()
         q->disconnectFromService();
         q->setOpenMode(QIODevice::NotOpen);
     } else {
-        m_datagrams.append(datagram.left(readFromDevice));
+        m_receivedDatagrams.append(datagram.left(readFromDevice));
         emit q->readyRead();
     }
 }
@@ -515,6 +497,35 @@ void QLlcpSocketPrivate::setSocketError(QLlcpSocket::SocketError socketError)
     }
 
     emit q->error(m_error);
+}
+
+void QLlcpSocketPrivate::initializeRequestor()
+{
+    if (m_socketRequestor)
+        return;
+
+    if (m_requestorPath.isEmpty()) {
+        m_requestorPath = QLatin1String(requestorBasePath) +
+                          QString::number(requestorId.fetchAndAddOrdered(1));
+    }
+
+    Manager manager(QLatin1String("com.nokia.nfc"), QLatin1String("/"), m_connection);
+    QDBusObjectPath defaultAdapterPath = manager.DefaultAdapter();
+
+    if (!m_socketRequestor) {
+        m_socketRequestor = new SocketRequestor(defaultAdapterPath.path(), this);
+
+        connect(m_socketRequestor, SIGNAL(accessFailed(QDBusObjectPath,QString,QString)),
+                this, SLOT(AccessFailed(QDBusObjectPath,QString,QString)));
+        connect(m_socketRequestor, SIGNAL(accessGranted(QDBusObjectPath,QString)),
+                this, SLOT(AccessGranted(QDBusObjectPath,QString)));
+        connect(m_socketRequestor, SIGNAL(accept(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Accept(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,QVariantMap)),
+                this, SLOT(Connect(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,int,QVariantMap)),
+                this, SLOT(Socket(QDBusVariant,int,QVariantMap)));
+    }
 }
 
 #include "moc_qllcpsocket_maemo6_p.cpp"

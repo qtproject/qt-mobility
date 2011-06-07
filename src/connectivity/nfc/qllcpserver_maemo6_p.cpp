@@ -81,8 +81,8 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
                 this, SLOT(Accept(QDBusVariant,QDBusVariant,int,QVariantMap)));
         connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,QVariantMap)),
                 this, SLOT(Connect(QDBusVariant,QDBusVariant,int,QVariantMap)));
-        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,QVariantMap)),
-                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,int,QVariantMap)),
+                this, SLOT(Socket(QDBusVariant,int,QVariantMap)));
     }
 
     if (m_socketRequestor) {
@@ -190,12 +190,10 @@ void QLlcpServerPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     Q_UNUSED(properties);
 }
 
-void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
-    Q_UNUSED(rsap);
-    Q_UNUSED(readFd);
+    Q_UNUSED(fd);
     Q_UNUSED(properties);
 }
 

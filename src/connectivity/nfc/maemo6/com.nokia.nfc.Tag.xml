@@ -22,7 +22,6 @@
             <arg type="v"/>
         </signal>
         <property name="UID" type="s" access="read"/>
-        <property name="Size" type="u" access="read"/>
         <property name="Technology" type="s" access="read"/>
     </interface>
 </node>
