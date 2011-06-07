@@ -39,24 +39,40 @@
 **
 ****************************************************************************/
 
-#include <QtCore/QCoreApplication>
+#ifndef SERVERCONTROLLER_H
+#define SERVERCONTROLLER_H
 
-#include "socketcontroller.h"
-#include "servercontroller.h"
+#include <QtCore/QObject>
 
-int main(int argc, char *argv[])
+#include <qllcpserver.h>
+
+QTM_USE_NAMESPACE
+
+class ServerController : public QObject
 {
-    QCoreApplication app(argc, argv);
+    Q_OBJECT
 
-    // Connection oriented sockets
-    new ServerController(ServerController::StreamConnection, &app);
-    new ServerController(ServerController::DatagramConnection, &app);
-    new SocketController(SocketController::StreamConnection, &app);
-    new SocketController(SocketController::DatagramConnection, &app);
+public:
+    enum ConnectionType {
+        StreamConnection,
+        DatagramConnection
+    };
 
-    // Connectionless sockets
-    new SocketController(SocketController::BoundSocket, &app);
-    new SocketController(SocketController::ConnectionlessSocket, &app);
+    ServerController(ConnectionType type, QObject *parent = 0);
+    ~ServerController();
 
-    return app.exec();
-}
+private slots:
+    void newConnection();
+
+    void socketReadyRead();
+    void socketBytesWritten(qint64 bytes);
+    void socketDisconnected();
+
+private:
+    QLlcpServer *m_server;
+    QLlcpSocket *m_socket;
+    ConnectionType m_connectionType;
+    QString m_service;
+};
+
+#endif // SERVERCONTROLLER_H

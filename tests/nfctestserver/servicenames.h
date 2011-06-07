@@ -39,24 +39,14 @@
 **
 ****************************************************************************/
 
-#include <QtCore/QCoreApplication>
+#ifndef SERVICENAMES_H
+#define SERVICENAMES_H
 
-#include "socketcontroller.h"
-#include "servercontroller.h"
+static const QLatin1String commandServer("urn:nfc:sn:com.nokia.qtmobility.commandserver");
+static const QLatin1String helloServer("urn:nfc:sn:com.nokia.qtmobility.helloserver");
+static const QLatin1String streamSuffix(".stream");
+static const QLatin1String datagramSuffix(".datagram");
 
-int main(int argc, char *argv[])
-{
-    QCoreApplication app(argc, argv);
+static const quint8 boundSocketPort = 63;
 
-    // Connection oriented sockets
-    new ServerController(ServerController::StreamConnection, &app);
-    new ServerController(ServerController::DatagramConnection, &app);
-    new SocketController(SocketController::StreamConnection, &app);
-    new SocketController(SocketController::DatagramConnection, &app);
-
-    // Connectionless sockets
-    new SocketController(SocketController::BoundSocket, &app);
-    new SocketController(SocketController::ConnectionlessSocket, &app);
-
-    return app.exec();
-}
+#endif // SERVICENAMES_H

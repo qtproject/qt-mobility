@@ -39,24 +39,50 @@
 **
 ****************************************************************************/
 
-#include <QtCore/QCoreApplication>
+#ifndef SOCKETCONTROLLER_H
+#define SOCKETCONTROLLER_H
 
-#include "socketcontroller.h"
-#include "servercontroller.h"
+#include <QtCore/QObject>
 
-int main(int argc, char *argv[])
+#include <qnearfieldmanager.h>
+#include <qllcpsocket.h>
+
+QTM_USE_NAMESPACE
+
+class SocketController : public QObject
 {
-    QCoreApplication app(argc, argv);
+    Q_OBJECT
 
-    // Connection oriented sockets
-    new ServerController(ServerController::StreamConnection, &app);
-    new ServerController(ServerController::DatagramConnection, &app);
-    new SocketController(SocketController::StreamConnection, &app);
-    new SocketController(SocketController::DatagramConnection, &app);
+public:
+    enum ConnectionType {
+        StreamConnection,
+        DatagramConnection,
+        BoundSocket,
+        ConnectionlessSocket
+    };
 
-    // Connectionless sockets
-    new SocketController(SocketController::BoundSocket, &app);
-    new SocketController(SocketController::ConnectionlessSocket, &app);
+    SocketController(ConnectionType type, QObject *parent = 0);
+    ~SocketController();
 
-    return app.exec();
-}
+public slots:
+    void connected();
+    void disconnected();
+    void error(QLlcpSocket::SocketError socketError);
+    void stateChanged(QLlcpSocket::SocketState socketState);
+    void readyRead();
+    void targetDetected(QNearFieldTarget *target);
+    void targetLost(QNearFieldTarget *target);
+
+protected:
+    void timerEvent(QTimerEvent *event);
+
+private:
+    QNearFieldManager *m_manager;
+    QLlcpSocket *m_socket;
+    ConnectionType m_connectionType;
+    QString m_service;
+    quint8 m_port;
+    int m_timerId;
+};
+
+#endif // SOCKETCONTROLLER_H
