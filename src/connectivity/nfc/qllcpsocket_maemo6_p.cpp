@@ -61,13 +61,13 @@ static const char * const requestorBasePath = "/com/nokia/nfc/llcpclient/";
 QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
 :   q_ptr(q),
     m_connection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, QUuid::createUuid())),
-    m_socketRequestor(0), m_fd(-1), m_readNotifier(0),
+    m_port(0), m_socketRequestor(0), m_fd(-1), m_readNotifier(0),
     m_state(QLlcpSocket::UnconnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
 }
 
 QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd)
-:   q_ptr(0), m_connection(connection), m_socketRequestor(0), m_fd(readFd),
+:   q_ptr(0), m_connection(connection), m_port(0), m_socketRequestor(0), m_fd(readFd),
     m_state(QLlcpSocket::ConnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
     m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
@@ -92,6 +92,7 @@ void QLlcpSocketPrivate::connectToService(QNearFieldTarget *target, const QStrin
 
     if (m_socketRequestor) {
         m_serviceUri = serviceUri;
+        m_port = 0;
 
         QString accessKind(QLatin1String("device.llcp.co.client:") + serviceUri);
 
@@ -133,11 +134,19 @@ void QLlcpSocketPrivate::disconnectFromService()
 
 bool QLlcpSocketPrivate::bind(quint8 port)
 {
-    Q_UNUSED(port);
+    initializeRequestor();
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    if (!m_socketRequestor)
+        return false;
 
-    return false;
+    m_serviceUri.clear();
+    m_port = port;
+
+    const QString accessKind(QLatin1String("device.llcp.cl:") + QString::number(port));
+
+    m_socketRequestor->requestAccess(m_requestorPath, accessKind);
+
+    return waitForBound(30000);
 }
 
 bool QLlcpSocketPrivate::hasPendingDatagrams() const
@@ -150,7 +159,10 @@ qint64 QLlcpSocketPrivate::pendingDatagramSize() const
     if (m_receivedDatagrams.isEmpty())
         return -1;
 
-    return m_receivedDatagrams.first().length();
+    if (m_state == QLlcpSocket::BoundState)
+        return m_receivedDatagrams.first().length() - 1;
+    else
+        return m_receivedDatagrams.first().length();
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size)
@@ -176,34 +188,56 @@ qint64 QLlcpSocketPrivate::readDatagram(char *data, qint64 maxSize,
                                         QNearFieldTarget **target, quint8 *port)
 {
     Q_UNUSED(target);
-    Q_UNUSED(port);
 
-    return readData(data, maxSize);
+    if (m_state == QLlcpSocket::ConnectedState) {
+        return readData(data, maxSize);
+    } else if (m_state == QLlcpSocket::BoundState) {
+        return readData(data, maxSize, port);
+    }
+
+    return -1;
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const char *data, qint64 size,
                                          QNearFieldTarget *target, quint8 port)
 {
-    Q_UNUSED(data);
-    Q_UNUSED(size);
     Q_UNUSED(target);
-    Q_UNUSED(port);
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    if (m_state != QLlcpSocket::BoundState)
+        return -1;
 
-    return -1;
+    if (m_properties.value(QLatin1String("RemoteMIU"), 128).toUInt() < size)
+        return -1;
+
+    if (m_properties.value(QLatin1String("LocalMIU"), 128).toUInt() < size)
+        return -1;
+
+    QByteArray datagram;
+    datagram.append(port);
+    datagram.append(data, size);
+
+    return ::write(m_fd, datagram.constData(), datagram.size()) - 1;
 }
 
 qint64 QLlcpSocketPrivate::writeDatagram(const QByteArray &datagram,
                                          QNearFieldTarget *target, quint8 port)
 {
-    Q_UNUSED(datagram);
     Q_UNUSED(target);
-    Q_UNUSED(port);
 
-    qDebug() << Q_FUNC_INFO << "is unimplemented";
+    if (m_state != QLlcpSocket::BoundState)
+        return -1;
 
-    return -1;
+    if (m_properties.value(QLatin1String("RemoteMIU"), 128).toInt() < datagram.size())
+        return -1;
+
+    if (m_properties.value(QLatin1String("LocalMIU"), 128).toInt() < datagram.size())
+        return -1;
+
+    QByteArray d;
+    d.append(port);
+    d.append(datagram);
+
+    return ::write(m_fd, d.constData(), d.size()) - 1;
 }
 
 QLlcpSocket::SocketError QLlcpSocketPrivate::error() const
@@ -216,15 +250,28 @@ QLlcpSocket::SocketState QLlcpSocketPrivate::state() const
     return m_state;
 }
 
-qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen)
+qint64 QLlcpSocketPrivate::readData(char *data, qint64 maxlen, quint8 *port)
 {
     if (m_receivedDatagrams.isEmpty())
         return 0;
 
     const QByteArray datagram = m_receivedDatagrams.takeFirst();
-    qint64 size = qMin(maxlen, qint64(datagram.length()));
-    memcpy(data, datagram.constData(), size);
-    return size;
+
+    if (m_state == QLlcpSocket::BoundState) {
+        if (port)
+            *port = datagram.at(0);
+
+        qint64 size = qMin(maxlen, qint64(datagram.length() - 1));
+        memcpy(data, datagram.constData() + 1, size);
+        return size;
+    } else {
+        if (port)
+            *port = 0;
+
+        qint64 size = qMin(maxlen, qint64(datagram.length()));
+        memcpy(data, datagram.constData(), size);
+        return size;
+    }
 }
 
 qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
@@ -258,11 +305,19 @@ qint64 QLlcpSocketPrivate::bytesAvailable() const
     qint64 available = 0;
     foreach (const QByteArray &datagram, m_receivedDatagrams)
         available += datagram.length();
+
+    // less source port
+    if (m_state == QLlcpSocket::BoundState)
+        available -= m_receivedDatagrams.count();
+
     return available;
 }
 
 bool QLlcpSocketPrivate::canReadLine() const
 {
+    if (m_state == QLlcpSocket::BoundState)
+        return false;
+
     foreach (const QByteArray &datagram, m_receivedDatagrams) {
         if (datagram.contains('\n'))
             return true;
@@ -393,6 +448,24 @@ bool QLlcpSocketPrivate::waitForDisconnected(int msec)
     return m_state == QLlcpSocket::UnconnectedState;
 }
 
+bool QLlcpSocketPrivate::waitForBound(int msecs)
+{
+    if (m_state == QLlcpSocket::BoundState)
+        return true;
+
+    QElapsedTimer timer;
+    timer.start();
+    while (m_state != QLlcpSocket::BoundState && (msecs == -1 || timer.elapsed() < msecs)) {
+        if (!m_socketRequestor->waitForDBusSignal(qMax(msecs - timer.elapsed(), qint64(0))))
+            return false;
+    }
+
+    // Possibly not needed.
+    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+
+    return m_state == QLlcpSocket::BoundState;
+}
+
 void QLlcpSocketPrivate::AccessFailed(const QDBusObjectPath &targetPath, const QString &kind,
                                       const QString &error)
 {
@@ -448,9 +521,18 @@ void QLlcpSocketPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
 
 void QLlcpSocketPrivate::Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties)
 {
-    Q_UNUSED(lsap);
-    Q_UNUSED(fd);
-    Q_UNUSED(properties);
+    m_fd = fd;
+    m_port = lsap.variant().toUInt();
+
+    m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);
+    connect(m_readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+
+    m_properties = properties;
+
+    Q_Q(QLlcpSocket);
+
+    m_state = QLlcpSocket::BoundState;
+    emit q->stateChanged(m_state);
 }
 
 void QLlcpSocketPrivate::_q_readNotify()

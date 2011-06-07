@@ -90,7 +90,7 @@ public:
     QLlcpSocket::SocketError error() const;
     QLlcpSocket::SocketState state() const;
 
-    qint64 readData(char *data, qint64 maxlen);
+    qint64 readData(char *data, qint64 maxlex, quint8 *port = 0);
     qint64 writeData(const char *data, qint64 len);
 
     qint64 bytesAvailable() const;
@@ -100,6 +100,7 @@ public:
     bool waitForBytesWritten(int msecs);
     bool waitForConnected(int msecs);
     bool waitForDisconnected(int msecs);
+    bool waitForBound(int msecs);
 
 private slots:
     // com.nokia.nfc.AccessRequestor
@@ -125,6 +126,7 @@ private:
     QDBusConnection m_connection;
 
     QString m_serviceUri;
+    quint8 m_port;
 
     QString m_requestorPath;
 
