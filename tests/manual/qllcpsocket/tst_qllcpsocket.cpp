@@ -77,6 +77,9 @@ private slots:
     void tst_waitFor();
 
     void tst_invalidServiceUri();
+
+    void tst_serverConnectionless();
+    void tst_clientConnectionless();
 };
 
 Q_DECLARE_METATYPE(tst_QLlcpSocket::ClientConnectionShutdown)
@@ -374,6 +377,68 @@ void tst_QLlcpSocket::tst_invalidServiceUri()
     QVERIFY(!socket->errorString().isEmpty());
 
     delete socket;
+}
+
+void tst_QLlcpSocket::tst_serverConnectionless()
+{
+    QLlcpSocket *socket = new QLlcpSocket;
+
+    QSignalSpy stateSpy(socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
+
+    QVERIFY2(socket->bind(63), "Failed to bind to port 63");
+
+    QVERIFY(errorSpy.isEmpty());
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::BoundState);
+    QCOMPARE(socket->state(), QLlcpSocket::BoundState);
+
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    QTRY_VERIFY(!readyReadSpy.isEmpty());
+
+    QVERIFY(socket->hasPendingDatagrams());
+
+    while (socket->hasPendingDatagrams()) {
+        qint64 size = socket->pendingDatagramSize();
+        QVERIFY2(size > 0, "Invalid datagram size");
+
+        QByteArray data;
+        data.resize(size);
+        QNearFieldTarget *target = 0;
+        quint8 port = 0;
+
+        qint64 readSize = socket->readDatagram(data.data(), size, &target, &port);
+
+        QCOMPARE(size, readSize);
+    }
+}
+
+void tst_QLlcpSocket::tst_clientConnectionless()
+{
+    QLlcpSocket *socket = new QLlcpSocket;
+
+    QSignalSpy stateSpy(socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
+
+    QVERIFY2(socket->bind(0), "Failed to bind to port 0");
+
+    QVERIFY(errorSpy.isEmpty());
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::BoundState);
+    QCOMPARE(socket->state(), QLlcpSocket::BoundState);
+
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+
+    for (int i = 0; i < 60; ++i) {
+        QString string = QString("Test message %1").arg(i);
+        const QByteArray data = string.toUtf8();
+        qint64 writeData = socket->writeDatagram(data, 0, 63);
+        QCOMPARE(writeData, qint64(data.length()));
+
+        QTest::qWait(500);
+    }
 }
 
 QTEST_MAIN(tst_QLlcpSocket)
