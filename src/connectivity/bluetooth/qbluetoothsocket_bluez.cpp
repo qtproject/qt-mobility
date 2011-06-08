@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -75,6 +75,8 @@ QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
 {
     delete readNotifier;
     readNotifier = 0;
+    delete connectWriteNotifier;
+    connectWriteNotifier = 0;
 }
 
 bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
@@ -85,6 +87,8 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
 
         delete readNotifier;
         readNotifier = 0;
+        delete connectWriteNotifier;
+        connectWriteNotifier = 0;
         QT_CLOSE(socket);
     }
 
@@ -110,6 +114,12 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
     Q_Q(QBluetoothSocket);
     readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
     QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
+    connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);    
+    QObject::connect(connectWriteNotifier, SIGNAL(activated(int)), q, SLOT(_q_writeNotify()));
+
+    connectWriteNotifier->setEnabled(false);
+    readNotifier->setEnabled(false);
+
 
     return true;
 }
@@ -129,6 +139,9 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
 
         convertAddress(address.toUInt64(), addr.rc_bdaddr.b);
 
+        connectWriteNotifier->setEnabled(true);
+        readNotifier->setEnabled(true);QString();
+
         result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
     } else if (socketType == QBluetoothSocket::L2capSocket) {
         sockaddr_l2 addr;
@@ -139,14 +152,15 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
 
         convertAddress(address.toUInt64(), addr.l2_bdaddr.b);
 
+        connectWriteNotifier->setEnabled(true);
+        readNotifier->setEnabled(true);
+
         result = ::connect(socket, (sockaddr *)&addr, sizeof(addr));
     }
 
     if (result >= 0 || (result == -1 && errno == EINPROGRESS)) {
         connecting = true;
         q->setSocketState(QBluetoothSocket::ConnectingState);
-        connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);
-        QObject::connect(connectWriteNotifier, SIGNAL(activated(int)), q, SLOT(_q_writeNotify()));
     } else {
         errorString = QString::fromLocal8Bit(strerror(errno));
         q->setSocketError(QBluetoothSocket::UnknownSocketError);
@@ -156,8 +170,7 @@ void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address,
 void QBluetoothSocketPrivate::_q_writeNotify()
 {
     Q_Q(QBluetoothSocket);
-    qDebug() << Q_FUNC_INFO << "woke up!";
-    if(connecting && q->state() == QBluetoothSocket::ConnectingState){
+    if(connecting && state == QBluetoothSocket::ConnectingState){
         int errorno, len;
         len = sizeof(errorno);
         ::getsockopt(socket, SOL_SOCKET, SO_ERROR, &errorno, (socklen_t*)&len);
@@ -166,23 +179,40 @@ void QBluetoothSocketPrivate::_q_writeNotify()
             emit q->error(QBluetoothSocket::UnknownSocketError);
             return;
         }
-        // TODO: is this right? set socket state, then emit connected?
+
         q->setSocketState(QBluetoothSocket::ConnectedState);
         emit q->connected();
 
-        // TODO: implement write buffering and enable this
-        // this CAN NOT BE DELETE.  NON BLOCKING SOCKET
-        // means writes silently will fail without this!!!!!!!!
-        delete connectWriteNotifier;
-        connectWriteNotifier = 0;
-
+        connectWriteNotifier->setEnabled(false);
+        connecting = false;
     }
     else {
-        // error at this time
-        delete connectWriteNotifier;
-        connectWriteNotifier = 0;
-    }
-    connecting = false;
+        if (txBuffer.size() == 0) {
+            connectWriteNotifier->setEnabled(false);
+            return;
+        }
+
+        char buf[1024];
+        Q_Q(QBluetoothSocket);
+
+        int size = txBuffer.read(buf, 1024);
+
+        if (::write(socket, buf, size) != size) {
+            socketError = QBluetoothSocket::NetworkError;
+            emit q->error(socketError);
+        }
+        else {
+            emit q->bytesWritten(size);
+        }
+
+        if (txBuffer.size()) {
+            connectWriteNotifier->setEnabled(true);
+        }
+        else if (state == QBluetoothSocket::ClosingState) {
+            connectWriteNotifier->setEnabled(false);
+            this->close();
+        }
+    }    
 }
 
 // TODO: move to private backend?
@@ -195,19 +225,17 @@ void QBluetoothSocketPrivate::_q_readNotify()
     int readFromDevice = ::read(socket, writePointer, QPRIVATELINEARBUFFER_BUFFERSIZE);
     if(readFromDevice <= 0){
         int errsv = errno;
-        // TODO: Something seems wrong here
-        // Will return constant errors is enabled
-        // where should (if it can be?) we enable it again
         readNotifier->setEnabled(false);
+        connectWriteNotifier->setEnabled(false);
         errorString = QString::fromLocal8Bit(strerror(errsv));
-        qDebug() << Q_FUNC_INFO << "error:" << readFromDevice << errorString;
+        qDebug() << Q_FUNC_INFO << socket << "error:" << readFromDevice << errorString;
         if(errsv == EHOSTDOWN)
             emit q->error(QBluetoothSocket::HostNotFoundError);
         else
             emit q->error(QBluetoothSocket::UnknownSocketError);
 
-        q->setSocketState(QBluetoothSocket::UnconnectedState);
         q->disconnectFromService();
+        q->setSocketState(QBluetoothSocket::UnconnectedState);        
     }
     else {
         buffer.chop(QPRIVATELINEARBUFFER_BUFFERSIZE - (readFromDevice < 0 ? 0 : readFromDevice));
@@ -218,16 +246,16 @@ void QBluetoothSocketPrivate::_q_readNotify()
 
 void QBluetoothSocketPrivate::abort()
 {
-    // TODO: what else?
-    // We don't transition through Closing for abort, so
-    // we don't call disconnectFromService or
-    // QBluetoothSocket::close
-    ::close(socket);
-
     delete readNotifier;
     readNotifier = 0;
     delete connectWriteNotifier;
     connectWriteNotifier = 0;
+
+    // We don't transition through Closing for abort, so
+    // we don't call disconnectFromService or
+    // QBluetoothSocket::close
+    QT_CLOSE(socket);
+
     Q_Q(QBluetoothSocket);
     emit q->disconnected();
 }
@@ -419,14 +447,31 @@ quint16 QBluetoothSocketPrivate::peerPort() const
 qint64 QBluetoothSocketPrivate::writeData(const char *data, qint64 maxSize)
 {
     Q_Q(QBluetoothSocket);
-    if (::write(socket, data, maxSize) != maxSize) {
-        socketError = QBluetoothSocket::NetworkError;
-        emit q->error(socketError);
+    if (q->openMode() & QIODevice::Unbuffered) {
+        if (::write(socket, data, maxSize) != maxSize) {
+            socketError = QBluetoothSocket::NetworkError;
+            emit q->error(socketError);
+        }
+
+        emit q->bytesWritten(maxSize);
+
+        return maxSize;
     }
+    else {
 
-    emit q->bytesWritten(maxSize);
+        if(!connectWriteNotifier)
+            return 0;
 
-    return maxSize;
+        if(txBuffer.size() == 0) {
+            connectWriteNotifier->setEnabled(true);        
+            QMetaObject::invokeMethod(q, "_q_writeNotify", Qt::QueuedConnection);
+        }
+
+        char *txbuf = txBuffer.reserve(maxSize);
+        memcpy(txbuf, data, maxSize);
+
+        return maxSize;
+    }
 }
 
 qint64 QBluetoothSocketPrivate::readData(char *data, qint64 maxSize)
@@ -441,14 +486,29 @@ qint64 QBluetoothSocketPrivate::readData(char *data, qint64 maxSize)
 
 void QBluetoothSocketPrivate::close()
 {
-    ::close(socket);
-
-    delete readNotifier;
-    readNotifier = 0;
-    delete connectWriteNotifier;
-    connectWriteNotifier = 0;
     Q_Q(QBluetoothSocket);
-    emit q->disconnected();
+
+    // Only go through closing if the socket was fully opened
+    if(state == QBluetoothSocket::ConnectedState)
+        q->setSocketState(QBluetoothSocket::ClosingState);
+
+    if(txBuffer.size() > 0 &&
+       state == QBluetoothSocket::ClosingState){
+        connectWriteNotifier->setEnabled(true);
+    }
+    else {
+
+        delete readNotifier;
+        readNotifier = 0;
+        delete connectWriteNotifier;
+        connectWriteNotifier = 0;
+
+        // We are disconnected now, so go to unconnected.
+        q->setSocketState(QBluetoothSocket::UnconnectedState);
+        emit q->disconnected();
+        ::close(socket);
+    }
+
 }
 
 bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoothSocket::SocketType socketType_,
@@ -457,6 +517,8 @@ bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoo
     Q_Q(QBluetoothSocket);
     delete readNotifier;
     readNotifier = 0;
+    delete connectWriteNotifier;
+    connectWriteNotifier = 0;
 
     socketType = socketType_;
     socket = socketDescriptor;
@@ -468,6 +530,8 @@ bool QBluetoothSocketPrivate::setSocketDescriptor(int socketDescriptor, QBluetoo
 
     readNotifier = new QSocketNotifier(socket, QSocketNotifier::Read);
     QObject::connect(readNotifier, SIGNAL(activated(int)), q, SLOT(_q_readNotify()));
+    connectWriteNotifier = new QSocketNotifier(socket, QSocketNotifier::Write, q);
+    QObject::connect(connectWriteNotifier, SIGNAL(activated(int)), q, SLOT(_q_writeNotify()));
 
     q->setSocketState(socketState);
     q->setOpenMode(openMode);

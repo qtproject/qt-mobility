@@ -20,3 +20,5 @@ INCLUDEPATH += . \
 # Input
 HEADERS += mainwindow.h
 SOURCES += main.cpp mainwindow.cpp
+
+maemo*:CONFIG += manual_test

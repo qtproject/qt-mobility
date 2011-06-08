@@ -45,10 +45,11 @@ HTML.postheader = \
     "          </div>\n" \
     "        </div>\n" \
     "        <div class=\"box bottombar\" id=\"topics\">\n" \
-    "          <h2 title=\"Qt Topics\"><span></span>\n" \
+    "          <h2 title=\"QtMobility Topics\"><span></span>\n" \
     "            Qt Topics</h2>\n" \
     "          <div id=\"list002\" class=\"list\">\n" \
     "            <ul id=\"ul002\" >\n" \
+    "               <li class=\"defaultLink\"><a href=\"quickstart.html\">Quickstart Guide</a></li> \n" \
     "               <li class=\"defaultLink\"><a href=\"index.html#platform-compatibility\">Platform-specific info</a></li> \n" \
     "            </ul>  \n" \
     "          </div>\n" \

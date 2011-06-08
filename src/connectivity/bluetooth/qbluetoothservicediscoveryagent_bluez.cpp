@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -58,7 +58,8 @@ QTM_BEGIN_NAMESPACE
 
 QBluetoothServiceDiscoveryAgentPrivate::QBluetoothServiceDiscoveryAgentPrivate(const QBluetoothAddress &address)
 :   error(QBluetoothServiceDiscoveryAgent::NoError), state(Inactive), deviceAddress(address),
-    deviceDiscoveryAgent(0), mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery), manager(0), device(0)
+    deviceDiscoveryAgent(0), mode(QBluetoothServiceDiscoveryAgent::MinimalDiscovery),
+    singleDevice(false), manager(0), device(0)
 {
     qRegisterMetaType<ServiceMap>("ServiceMap");
     qDBusRegisterMetaType<ServiceMap>();
@@ -84,9 +85,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::start(const QBluetoothAddress &addr
     QDBusPendingReply<QDBusObjectPath> reply = manager->DefaultAdapter();
     reply.waitForFinished();
     if (reply.isError()) {
-        error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
-        errorString = QBluetoothServiceDiscoveryAgent::tr("Unable to find default adapter");
-        emit q->error(error);
+        if (singleDevice) {
+            error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
+            errorString = QBluetoothServiceDiscoveryAgent::tr("Unable to find default adapter");
+            emit q->error(error);
+        }
         _q_serviceDiscoveryFinished();
         return;
     }
@@ -113,8 +116,10 @@ void QBluetoothServiceDiscoveryAgentPrivate::stop()
         reply.waitForFinished();
 
         discoveredDevices.clear();
-        // with no more device this will stop discovery
-        startServiceDiscovery();
+        setDiscoveryState(Inactive);
+        Q_Q(QBluetoothServiceDiscoveryAgent);
+        emit q->canceled();
+
 //        qDebug() << "Stop done";
     }
 }
@@ -132,10 +137,6 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWa
     QDBusPendingReply<QDBusObjectPath> deviceObjectPath = *watcher;
     if (deviceObjectPath.isError()) {
         if (deviceObjectPath.error().name() != QLatin1String("org.bluez.Error.AlreadyExists")) {
-            // Can't create device, maybe not present, not a fault to report
-            // since this is normal, devices aren't always present
-//            error = QBluetoothServiceDiscoveryAgent::UnknownError;
-//            emit q->error(error);
             _q_serviceDiscoveryFinished();
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
             qDebug() << "Create device failed Error: " << error << deviceObjectPath.error().name();
@@ -146,8 +147,11 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_createdDevice(QDBusPendingCallWa
         deviceObjectPath = adapter->FindDevice(address.toString());
         deviceObjectPath.waitForFinished();
         if (deviceObjectPath.isError()) {
-            error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
-            emit q->error(error);
+            if (singleDevice) {
+                error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
+                errorString = QBluetoothServiceDiscoveryAgent::tr("Unable to access device");
+                emit q->error(error);
+            }
             _q_serviceDiscoveryFinished();
 #ifdef QTM_SERVICEDISCOVERY_DEBUG
             qDebug() << "Can't find device after creation Error: " << error << deviceObjectPath.error().name();
@@ -193,8 +197,12 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_discoveredServices(QDBusPendingC
         qDebug() << "discoveredServices error: " << error << reply.error().message();
 #endif
         watcher->deleteLater();
-        error = QBluetoothServiceDiscoveryAgent::UnknownError;
-        errorString = reply.error().message();
+        if (singleDevice) {
+            Q_Q(QBluetoothServiceDiscoveryAgent);
+            error = QBluetoothServiceDiscoveryAgent::UnknownError;
+            errorString = reply.error().message();
+            emit q->error(error);
+        }
         _q_serviceDiscoveryFinished();
         return;
     }

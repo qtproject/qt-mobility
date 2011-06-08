@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -47,9 +47,10 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoEncoderControl
-    
+
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     \brief The QVideoEncoderControl class provides access to the settings
     of a media service that performs video encoding.
@@ -97,12 +98,14 @@ QVideoEncoderControl::~QVideoEncoderControl()
     \fn QVideoEncoderControl::supportedVideoCodecs() const
 
     Returns the list of supported video codecs.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::videoCodecDescription(const QString &codec) const
 
     Returns a description of a video \a codec.
+    \since 1.0
 */
 
 /*!
@@ -111,18 +114,21 @@ QVideoEncoderControl::~QVideoEncoderControl()
     Returns a list of supported encoding options for a video \a codec.
 
     The names and types of the options in the list is system dependent.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::encodingOption(const QString &codec, const QString &option) const
 
     Returns the value of a video \a codec \a option.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::setEncodingOption(const QString &codec, const QString &option, const QVariant &value)
 
     Sets the \a value of a \a codec specific \a option.
+    \since 1.0
 */
 
 /*!
@@ -139,6 +145,7 @@ QVideoEncoderControl::~QVideoEncoderControl()
     If the encoder supports arbitrary resolutions within the supported resolutions range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.
 
+    \since 1.0
     \sa QVideoEncoderSettings::resolution()
 */
 
@@ -156,6 +163,7 @@ QVideoEncoderControl::~QVideoEncoderControl()
     If the encoder supports arbitrary frame rates within the supported range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.
 
+    \since 1.0
     \sa QVideoEncoderSettings::frameRate()
 */
 
@@ -167,12 +175,14 @@ QVideoEncoderControl::~QVideoEncoderControl()
     The returned value may be different tha passed to QVideoEncoderControl::setVideoSettings()
     if the settings contains the default or undefined parameters.
     In this case if the undefined parameters are already resolved, they should be returned.
+    \since 1.0
 */
 
 /*!
     \fn QVideoEncoderControl::setVideoSettings(const QVideoEncoderSettings &settings)
 
     Sets the selected video encoder \a settings.
+    \since 1.0
 */
 
 #include "moc_qvideoencodercontrol.cpp"

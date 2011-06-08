@@ -123,7 +123,7 @@ public: // Methods
     int saturation();
     void setSaturation(int value);
 
-Q_SIGNALS: // Notifications
+signals: // Notifications
 
     // For QCameraExposureControl
     void flashReady(bool ready);

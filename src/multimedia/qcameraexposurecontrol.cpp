@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
     The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
     defined in QCameraExposureControl_iid.
@@ -92,6 +93,7 @@ QCameraExposureControl::~QCameraExposureControl()
   \fn QCamera::ExposureMode QCameraExposureControl::exposureMode() const
 
   Returns the exposure mode.
+  \since 1.1
 */
 
 
@@ -99,6 +101,7 @@ QCameraExposureControl::~QCameraExposureControl()
   \fn void QCameraExposureControl::setExposureMode(QCameraExposure::ExposureMode mode)
 
   Set the exposure mode to \a mode.
+  \since 1.1
 */
 
 
@@ -106,24 +109,28 @@ QCameraExposureControl::~QCameraExposureControl()
   \fn bool QCameraExposureControl::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
 
   Returns true if the exposure \a mode is supported.
+  \since 1.1
 */
 
 
 /*!
   \fn QCameraExposure::MeteringMode QCameraExposureControl::meteringMode() const
   Returns the current metering mode.
+  \since 1.1
 */
 
 /*!
   \fn void QCameraExposureControl::setMeteringMode(QCameraExposure::MeteringMode mode)
 
-Set the metering mode to \a mode.
+  Set the metering mode to \a mode.
+  \since 1.1
 */
 
 
 /*!
   \fn bool QCameraExposureControl::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
     Returns true if the metering \a mode is supported.
+  \since 1.1
 */
 
 /*!
@@ -167,18 +174,21 @@ Set the metering mode to \a mode.
   \fn QCameraExposureControl::isParameterSupported(ExposureParameter parameter) const
 
   Returns true is exposure \a parameter is supported by backend.
+  \since 1.1
 */
 
 /*!
   \fn QCameraExposureControl::exposureParameter(ExposureParameter parameter) const
 
   Returns the exposure \a parameter value, or invalid QVariant() if the value is unknown or not supported.
+  \since 1.1
 */
 
 /*!
   \fn QCameraExposureControl::exposureParameterFlags(ExposureParameter parameter) const
 
   Returns the properties of exposure \a parameter.
+  \since 1.1
 */
 
 
@@ -186,6 +196,7 @@ Set the metering mode to \a mode.
   \fn QCameraExposureControl::supportedParameterRange(ExposureParameter parameter) const
 
   Returns the list of supported \a parameter values;
+  \since 1.1
 */
 
 /*!
@@ -196,24 +207,28 @@ Set the metering mode to \a mode.
   and if possible report the actual value to user with QCameraExposureControl::exposureParameter().
 
   Returns true if parameter is supported and value is correct.
+  \since 1.1
 */
 
 /*!
   \fn QCameraExposureControl::extendedParameterName(ExposureParameter parameter)
 
   Returns the extended exposure \a parameter name.
+  \since 1.1
 */
 
 /*!
     \fn void QCameraExposureControl::flashReady(bool ready)
 
     Signal emitted when flash state changes, flash is charged \a ready.
+    \since 1.1
 */
 
 /*!
     \fn void QCameraExposureControl::exposureParameterChanged(int parameter)
 
     Signal emitted when the exposure \a parameter has changed.
+    \since 1.1
 */
 
 /*!
@@ -221,6 +236,7 @@ Set the metering mode to \a mode.
     \fn void QCameraExposureControl::exposureParameterRangeChanged(int parameter)
 
     Signal emitted when the exposure \a parameter range has changed.
+    \since 1.1
 */
 
 

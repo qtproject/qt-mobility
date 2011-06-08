@@ -15,6 +15,7 @@
 *
 */
 
+#include "cntimagerescaler.h"
 #include "cntimagerescaleutility.h"
 #include "cntdbconsts_internal.h"
 
@@ -27,12 +28,12 @@
 #include <utf.h>
 
 _LIT(KImagesBackupFolderName, "backup_registration_images.xml");
-_LIT8(KXmlFilePart1, 
+_LIT8(KXmlFilePart1,
             "<?xml version=\"1.0\" standalone=\"yes\"?>\r\n"
             "<backup_registration>\r\n"
             "    <public_backup delete_before_restore=\"yes\">\r\n"
             "        <include_directory name=\"");
-_LIT8(KXmlFilePart2, 
+_LIT8(KXmlFilePart2,
             "\"/>\r\n"
             "    </public_backup>\r\n"
             "</backup_registration>\r\n");
@@ -56,7 +57,7 @@ EXPORT_C TPath TCntImageRescaleUtility::ImageDirectoryL()
     
     User::LeaveIfError(PathInfo::GetRootPath(imagesDirPath, drive));
     imagesDirPath.Append(KImagesFolder);
-        
+
     CleanupStack::PopAndDestroy(); // RFs
     return imagesDirPath;
 }
@@ -72,8 +73,8 @@ EXPORT_C TPath TCntImageRescaleUtility::CreateImageDirectoryL()
         User::LeaveIfError( fs.Connect() );
         
         BaflUtils::EnsurePathExistsL( fs, imagePath );
-        User::LeaveIfError(fs.SetAtt(imagePath, KEntryAttHidden, KEntryAttNormal));
         TCntImageRescaleUtility::CreateBackupAndRestoreFileL( fs, imagePath );
+        User::LeaveIfError(fs.SetAtt(imagePath, KEntryAttHidden, KEntryAttNormal));
         
         CleanupStack::PopAndDestroy(); // close RFs
     }

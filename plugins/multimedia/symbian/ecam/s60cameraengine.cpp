@@ -57,9 +57,6 @@ CCameraEngine::CCameraEngine(TInt aCameraHandle,
                              MCameraEngineObserver* aObserver) :
     // CBase initializes member variables to NULL
     iObserver(aObserver),
-    iImageCaptureObserver(NULL),
-    iAdvancedSettingsObserver(NULL),
-    iViewfinderObserver(NULL),
     iCameraIndex(aCameraHandle),
     iPriority(aPriority),
     iEngineState(EEngineNotReady),
@@ -160,8 +157,10 @@ void CCameraEngine::SetViewfinderObserver(MCameraViewfinderObserver* aViewfinder
 
 void CCameraEngine::ReserveAndPowerOn()
 {
-    if (!iCamera || iEngineState > EEngineNotReady)
+    if (!iCamera || iEngineState > EEngineNotReady) {
         iObserver->MceoHandleError(EErrReserve, KErrNotReady);
+        return;
+    }
 
     iCamera->Reserve();
 }
@@ -205,7 +204,6 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
                             TRect& aScreenRect,
                             TRect& aClipRect)
 {
-    Q_UNUSED(aClipRect)
     if (iEngineState < EEngineIdle)
         User::Leave(KErrNotReady);
 
@@ -213,10 +211,18 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
         User::Leave(KErrNotSupported);
 
     if (!iCamera->ViewFinderActive()) {
+        // Viewfinder extent needs to be clipped according to the clip rect.
+        // This is because the native camera framework does not support
+        // clipping and starting viewfinder with bigger than the display(S60
+        // 5.0 and older)/window(Symbian^3 and later) would cause viewfinder
+        // starting to fail entirely. This causes shrinking effect in some
+        // cases, but is better than not having the viewfinder at all.
+        if (aScreenRect.Intersects(aClipRect))
+            aScreenRect.Intersection(aClipRect);
 
         if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
-        if (aScreenRect.Width() != 0 && aScreenRect.Height() != 0) {
+        if (aScreenRect.Width() > 0 && aScreenRect.Height() > 0) {
             iCamera->StartViewFinderDirectL(aSession, aScreenDevice, aWindow, aScreenRect);
         } else {
             if (iObserver)
@@ -394,8 +400,9 @@ void CCameraEngine::DisablePreviewProvider()
     iCameraSnapshot->StopSnapshot();
 
     delete iCameraSnapshot;
+    iCameraSnapshot = 0;
 
-    iPreviewObserver = NULL;
+    iPreviewObserver = 0;
 }
 #endif // ECAM_PREVIEW_API
 

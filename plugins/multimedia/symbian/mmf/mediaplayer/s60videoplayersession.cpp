@@ -51,6 +51,7 @@
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
+#include <QtGui/QSymbianEvent>
 #include <QtGui/QWidget>
 
 #include <coecntrl.h>
@@ -59,12 +60,94 @@
 #include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 #include <MMFROPCustomCommandConstants.h>
+#ifdef HTTP_COOKIES_ENABLED
+#include <MMFSessionInfoCustomCommandConstants.h>
+#endif
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
 const TUid KHelixUID = {0x101F8514};
 
 //Hard-coding the command to support older versions.
 const TInt KMMFROPControllerEnablePausedLoadingStatus = 7;
+
+TVideoRotation videoRotation(qreal angle)
+{
+    // Convert to clockwise
+    angle = 360.0f - angle;
+    while (angle >= 360.0f)
+        angle -= 360.0f;
+    TVideoRotation result = EVideoRotationNone;
+    if (angle >= 45.0f && angle < 135.0f)
+        result = EVideoRotationClockwise90;
+    else if (angle >= 135.0f && angle < 225.0f)
+        result = EVideoRotationClockwise180;
+    else if (angle >= 225.0f && angle < 315.0f)
+        result = EVideoRotationClockwise270;
+    return result;
+}
+
+S60VideoPlayerEventHandler *S60VideoPlayerEventHandler::m_instance = 0;
+QCoreApplication::EventFilter S60VideoPlayerEventHandler::m_eventFilter = 0;
+QList<ApplicationFocusObserver *> S60VideoPlayerEventHandler::m_applicationFocusObservers;
+
+S60VideoPlayerEventHandler *S60VideoPlayerEventHandler::instance()
+{
+    if (!m_instance)
+        m_instance = new S60VideoPlayerEventHandler();
+    return m_instance;
+}
+
+S60VideoPlayerEventHandler::S60VideoPlayerEventHandler()
+{
+    m_eventFilter = QCoreApplication::instance()->setEventFilter(filterEvent);
+}
+
+S60VideoPlayerEventHandler::~S60VideoPlayerEventHandler()
+{
+    QCoreApplication::instance()->setEventFilter(m_eventFilter);
+}
+
+void S60VideoPlayerEventHandler::addApplicationFocusObserver(ApplicationFocusObserver *observer)
+{
+    m_applicationFocusObservers.append(observer);
+}
+
+void S60VideoPlayerEventHandler::removeApplicationFocusObserver(ApplicationFocusObserver *observer)
+{
+    m_applicationFocusObservers.removeAt(m_applicationFocusObservers.indexOf(observer));
+    if (m_applicationFocusObservers.count() == 0) {
+        delete m_instance;
+        m_instance = 0;
+    }
+}
+
+bool S60VideoPlayerEventHandler::filterEvent(void *message, long *result)
+{
+    if (const QSymbianEvent *symbianEvent = reinterpret_cast<const QSymbianEvent*>(message)) {
+        switch (symbianEvent->type()) {
+        case QSymbianEvent::WindowServerEvent:
+            {
+                const TWsEvent *wsEvent = symbianEvent->windowServerEvent();
+                if (EEventFocusLost == wsEvent->Type() || EEventFocusGained == wsEvent->Type()) {
+                    for (QList<ApplicationFocusObserver *>::const_iterator it = m_applicationFocusObservers.constBegin();
+                         it != m_applicationFocusObservers.constEnd(); ++it) {
+                        if (EEventFocusLost == wsEvent->Type())
+                            (*it)->applicationLostFocus();
+                        else if (EEventFocusGained == wsEvent->Type())
+                            (*it)->applicationGainedFocus();
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    bool ret = false;
+    if (m_eventFilter)
+        ret = m_eventFilter(message, result);
+    return ret;
+}
 
 /*!
     Constructs the CVideoPlayerUtility2 object with given \a service and \a object.
@@ -89,6 +172,10 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
 #endif
     , m_audioEndpoint(DefaultAudioEndpoint)
     , m_pendingChanges(0)
+    , m_backendInitiatedPause(false)
+#ifdef HTTP_COOKIES_ENABLED
+    , m_destinationPckg(KUidInterfaceMMFControllerSessionInfo)
+#endif
 {
     DP0("S60VideoPlayerSession::S60VideoPlayerSession +++");
 
@@ -127,7 +214,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
-
+    S60VideoPlayerEventHandler::instance()->addApplicationFocusObserver(this);
     DP0("S60VideoPlayerSession::S60VideoPlayerSession ---");
 }
 
@@ -140,7 +227,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
     DP0("S60VideoPlayerSession::~S60VideoPlayerSession +++");
-
+    S60VideoPlayerEventHandler::instance()->removeApplicationFocusObserver(this);
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
@@ -150,6 +237,26 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
     delete m_player;
 
     DP0("S60VideoPlayerSession::~S60VideoPlayerSession ---");
+}
+
+void S60VideoPlayerSession::applicationGainedFocus()
+{
+    if (m_backendInitiatedPause) {
+        m_backendInitiatedPause = false;
+        play();
+    }
+    if (QMediaPlayer::PausedState == state()) {
+       TRAPD(err, m_player->RefreshFrameL());
+       setError(err);
+    }
+}
+
+void S60VideoPlayerSession::applicationLostFocus()
+{
+    if (QMediaPlayer::PlayingState == state()) {
+        m_backendInitiatedPause = true;
+        pause();
+    }
 }
 
 /*!
@@ -267,13 +374,14 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
         if (videoOutput) {
             if (S60VideoWidgetControl *control = qobject_cast<S60VideoWidgetControl *>(videoOutput))
                 m_videoOutputDisplay = control->display();
-            if (S60VideoWindowControl *control = qobject_cast<S60VideoWindowControl *>(videoOutput))
-                m_videoOutputDisplay = control->display();
+            if (!m_videoOutputDisplay)
+                return;
             m_videoOutputDisplay->setNativeSize(m_nativeSize);
             connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
             connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
             connect(m_videoOutputDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(displayRectChanged()));
             connect(m_videoOutputDisplay, SIGNAL(aspectRatioModeChanged(Qt::AspectRatioMode)), this, SLOT(aspectRatioChanged()));
+            connect(m_videoOutputDisplay, SIGNAL(rotationChanged(qreal)), this, SLOT(rotationChanged()));
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
             connect(m_videoOutputDisplay, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
             connect(m_videoOutputDisplay, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
@@ -343,13 +451,16 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
 
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
         if (KErrNone == error && (m_pendingChanges & ScaleFactors) && m_displayWindow && m_videoOutputDisplay) {
+            const TVideoRotation rotation = videoRotation(m_videoOutputDisplay->rotation());
+            const bool swap = (rotation == EVideoRotationClockwise90 || rotation == EVideoRotationClockwise270);
+            const QSize extentSize = swap ? QSize(extentRect.height(), extentRect.width()) : extentRect.size();
             QSize scaled = m_nativeSize;
             if (m_videoOutputDisplay->aspectRatioMode() == Qt::IgnoreAspectRatio)
-                scaled.scale(extentRect.size(), Qt::IgnoreAspectRatio);
+                scaled.scale(extentSize, Qt::IgnoreAspectRatio);
             else if (m_videoOutputDisplay->aspectRatioMode() == Qt::KeepAspectRatio)
-                scaled.scale(extentRect.size(), Qt::KeepAspectRatio);
+                scaled.scale(extentSize, Qt::KeepAspectRatio);
             else if (m_videoOutputDisplay->aspectRatioMode() == Qt::KeepAspectRatioByExpanding)
-                scaled.scale(extentRect.size(), Qt::KeepAspectRatioByExpanding);
+                scaled.scale(extentSize, Qt::KeepAspectRatioByExpanding);
             const qreal width = qreal(scaled.width()) / qreal(m_nativeSize.width()) * qreal(100);
             const qreal height = qreal(scaled.height()) / qreal(m_nativeSize.height()) * qreal(100);
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
@@ -359,6 +470,15 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
             TRAP(error, m_player->SetScaleFactorL(width, height, antialias));
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
             m_pendingChanges ^= ScaleFactors;
+        }
+        if (KErrNone == error && (m_pendingChanges && Rotation) && m_displayWindow && m_videoOutputDisplay) {
+            const TVideoRotation rotation = videoRotation(m_videoOutputDisplay->rotation());
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+            TRAP(error, m_player->SetRotationL(*m_displayWindow, rotation));
+#else
+            TRAP(error, m_player->SetRotationL(rotation));
+#endif // VIDEOOUTPUT_GRAPHICS_SURFACES
+            m_pendingChanges ^= Rotation;
         }
         setError(error);
     }
@@ -540,9 +660,45 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
     DP1("S60VideoPlayerSession::MvpuoOpenComplete - aError:", aError);
 
     setError(aError);
+#ifdef HTTP_COOKIES_ENABLED
+    if (KErrNone == aError) {
+        TInt err(KErrNone);
+        const QByteArray userAgentString("User-Agent");
+        TInt uasize = m_source.canonicalRequest().rawHeader(userAgentString).size();
+        TPtrC8 userAgent((const unsigned char*)(m_source.canonicalRequest().rawHeader(userAgentString).constData()), uasize);
+        if (userAgent.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("User-Agent"), userAgent);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        const QByteArray refererString("Referer");
+        TInt refsize = m_source.canonicalRequest().rawHeader(refererString).size();
+        TPtrC8 referer((const unsigned char*)m_source.canonicalRequest().rawHeader(refererString).constData(),refsize);
+        if (referer.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("Referer"), referer);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        const QByteArray cookieString("Cookie");
+        TInt cksize = m_source.canonicalRequest().rawHeader(cookieString).size();
+        TPtrC8 cookie((const unsigned char*)m_source.canonicalRequest().rawHeader(cookieString).constData(),cksize);
+        if (cookie.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("Cookie"), cookie);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        m_player->Prepare();
+    }
+#else
     if (KErrNone == aError)
         m_player->Prepare();
-
+#endif
     const TMMFMessageDestinationPckg dest( KUidInterfaceMMFROPController );
     TRAP_IGNORE(m_player->CustomCommandSync(dest, KMMFROPControllerEnablePausedLoadingStatus, KNullDesC8, KNullDesC8));
 
@@ -564,7 +720,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
         emit accessPointChanged(m_accessPointId);
         }
     if (KErrCouldNotConnect == aError && !(m_networkAccessControl->isLastAccessPoint())) {
-        load(m_UrlPath);
+        load(m_source);
     return;
     }
     TInt error = aError;
@@ -626,8 +782,12 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
     if (m_stream)
     m_networkAccessControl->resetIndex();
 
-    endOfMedia();
-    setError(aError);
+    if (aError != KErrNone) {
+        setError(aError);
+        doClose();
+    } else {
+        endOfMedia();
+    }
 
     DP0("S60VideoPlayerSession::MvpuoPlayComplete ---");
 }
@@ -710,6 +870,13 @@ void S60VideoPlayerSession::aspectRatioChanged()
     applyPendingChanges();
 
     DP0("S60VideoPlayerSession::aspectRatioChanged ---");
+}
+
+void S60VideoPlayerSession::rotationChanged()
+{
+    m_pendingChanges |= ScaleFactors;
+    m_pendingChanges |= Rotation;
+    applyPendingChanges();
 }
 
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
@@ -881,7 +1048,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 }
 
 /*!
-    The default Audio ouptut has been changed.
+    The default Audio output has been changed.
 
     \a aAudioOutput Audio Output object.
 

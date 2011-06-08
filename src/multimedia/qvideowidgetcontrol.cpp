@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -46,13 +46,14 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoWidgetControl
-    
+
 
     \brief The QVideoWidgetControl class provides a media control which
     implements a video widget.
 
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     The videoWidget() property of QVideoWidgetControl provides a pointer to a
     video widget implemented by the control's media service.  This widget is
@@ -97,24 +98,28 @@ QVideoWidgetControl::~QVideoWidgetControl()
     \fn QVideoWidgetControl::isFullScreen() const
 
     Returns true if the video is shown using the complete screen.
+    \since 1.0
 */
 
 /*!
     \fn QVideoWidgetControl::setFullScreen(bool fullScreen)
 
     Sets whether a video widget is in \a fullScreen mode.
+    \since 1.0
 */
 
 /*!
     \fn QVideoWidgetControl::fullScreenChanged(bool fullScreen)
 
     Signals that the \a fullScreen state of a video widget has changed.
+    \since 1.0
 */
 
 /*!
     \fn QVideoWidgetControl::aspectRatioMode() const
 
     Returns how video is scaled to fit the widget with respect to its aspect ratio.
+    \since 1.0
 */
 
 /*!
@@ -122,6 +127,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
 
     Sets the aspect ratio \a mode which determines how video is scaled to the fit the widget with
     respect to its aspect ratio.
+    \since 1.0
 */
 
 /*!
@@ -130,6 +136,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Returns the brightness adjustment applied to a video.
 
     Valid brightness values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 /*!
@@ -138,12 +145,14 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Sets a \a brightness adjustment for a video.
 
     Valid brightness values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 /*!
     \fn QVideoWidgetControl::brightnessChanged(int brightness)
 
     Signals that a video widget's \a brightness adjustment has changed.
+    \since 1.0
 */
 
 /*!
@@ -152,6 +161,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Returns the contrast adjustment applied to a video.
 
     Valid contrast values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 /*!
@@ -160,6 +170,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Sets the contrast adjustment for a video widget to \a contrast.
 
     Valid contrast values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 
@@ -167,6 +178,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     \fn QVideoWidgetControl::contrastChanged(int contrast)
 
     Signals that a video widget's \a contrast adjustment has changed.
+    \since 1.0
 */
 
 /*!
@@ -175,6 +187,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Returns the hue adjustment applied to a video widget.
 
     Value hue values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 /*!
@@ -183,6 +196,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Sets a \a hue adjustment for a video widget.
 
     Valid hue values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 
@@ -190,6 +204,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     \fn QVideoWidgetControl::hueChanged(int hue)
 
     Signals that a video widget's \a hue adjustment has changed.
+    \since 1.0
 */
 
 /*!
@@ -198,6 +213,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Returns the saturation adjustment applied to a video widget.
 
     Value saturation values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 
@@ -207,18 +223,21 @@ QVideoWidgetControl::~QVideoWidgetControl()
     Sets a \a saturation adjustment for a video widget.
 
     Valid saturation values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 /*!
     \fn QVideoWidgetControl::saturationChanged(int saturation)
 
     Signals that a video widget's \a saturation adjustment has changed.
+    \since 1.0
 */
 
 /*!
     \fn QVideoWidgetControl::videoWidget()
 
     Returns the QWidget.
+    \since 1.0
 */
 
 #include "moc_qvideowidgetcontrol.cpp"

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -64,8 +64,9 @@
 #include <QTimer>
 #include <QBasicTimer>
 #include <QtCore/qlibrary.h>
-#include <QUuid>
 #include <QSysInfo>
+#include <QUuid>
+#include <QCryptographicHash>
 
 #include <qabstracteventdispatcher.h>
 
@@ -511,7 +512,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
-    QString errorStr = "Not Available";
     bool useDate = false;
     if(parameter == "versionDate") {
         useDate = true;
@@ -540,15 +540,12 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
 #endif
         }
         break;
-    case QSystemInfo::QtCore :
-       return  qVersion();
-       break;
    case QSystemInfo::Firmware :
        {
        }
        break;
     };
-  return errorStr;
+  return QString();
 }
 
 
@@ -1898,6 +1895,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
     return state;
 }
 
+QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
+{
+    return QSystemDeviceInfo::UnknownThermal;
+}
+
 QString QSystemDeviceInfoPrivate::imei()
 {
         return "";
@@ -2138,7 +2140,7 @@ bool QSystemDeviceInfoPrivate::keypadLightOn(QSystemDeviceInfo::KeypadType type)
     return false;
 }
 
-QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
+QByteArray QSystemDeviceInfoPrivate::uniqueDeviceID()
 {
     WMIHelper *wHelper;
     wHelper = new WMIHelper(this);
@@ -2146,7 +2148,11 @@ QUuid QSystemDeviceInfoPrivate::uniqueDeviceID()
     wHelper->setClassName("Win32_ComputerSystemProduct");
     wHelper->setClassProperty(QStringList() << "UUID");
 
-    return  QUuid(wHelper->getWMIData().toString());
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    QString id = wHelper->getWMIData().toString();
+    hash.addData(id.toLocal8Bit());
+
+    return  hash.result().toHex();
 }
 
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()

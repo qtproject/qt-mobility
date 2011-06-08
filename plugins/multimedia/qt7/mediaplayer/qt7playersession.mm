@@ -76,6 +76,7 @@ QT_USE_NAMESPACE
 - (void) processLoadStateChange:(NSNotification *)notification;
 - (void) processVolumeChange:(NSNotification *)notification;
 - (void) processNaturalSizeChange :(NSNotification *)notification;
+- (void) processPositionChange :(NSNotification *)notification;
 @end
 
 @implementation QTMovieObserver
@@ -115,6 +116,11 @@ QT_USE_NAMESPACE
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(processVolumeChange:)
                                                      name:QTMovieVolumeDidChangeNotification
+                                                   object:m_movie];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(processPositionChange:)
+                                                     name:QTMovieTimeDidChangeNotification
                                                    object:m_movie];
 
         if (QSysInfo::MacintoshVersion >= QSysInfo::MV_10_6) {
@@ -157,6 +163,12 @@ QT_USE_NAMESPACE
 {
     Q_UNUSED(notification);
     QMetaObject::invokeMethod(m_session, "processNaturalSizeChange", Qt::AutoConnection);
+}
+
+- (void) processPositionChange :(NSNotification *)notification
+{
+    Q_UNUSED(notification);
+    QMetaObject::invokeMethod(m_session, "processPositionChange", Qt::AutoConnection);
 }
 
 @end
@@ -261,6 +273,44 @@ bool QT7PlayerSession::isMuted() const
 bool QT7PlayerSession::isSeekable() const
 {
     return true;
+}
+
+#ifndef QUICKTIME_C_API_AVAILABLE
+@interface QTMovie(QtExtensions)
+- (NSArray*)loadedRanges;
+- (QTTime)maxTimeLoaded;
+@end
+#endif
+
+QMediaTimeRange QT7PlayerSession::availablePlaybackRanges() const
+{
+    QTMovie *movie = (QTMovie*)m_QTMovie;
+#ifndef QUICKTIME_C_API_AVAILABLE
+    AutoReleasePool pool;
+    if ([movie respondsToSelector:@selector(loadedRanges)]) {
+        QMediaTimeRange rc;
+        NSArray *r = [movie loadedRanges];
+        for (NSValue *tr in r) {
+            QTTimeRange timeRange = [tr QTTimeRangeValue];
+            qint64 startTime = qint64(float(timeRange.time.timeValue) / timeRange.time.timeScale * 1000.0);
+            rc.addInterval(startTime, startTime + qint64(float(timeRange.duration.timeValue) / timeRange.duration.timeScale * 1000.0));
+        }
+        return rc;
+    }
+    else if ([movie respondsToSelector:@selector(maxTimeLoaded)]) {
+        QTTime loadedTime = [movie maxTimeLoaded];
+        return QMediaTimeRange(0, qint64(float(loadedTime.timeValue) / loadedTime.timeScale * 1000.0));
+    }
+#else
+    TimeValue loadedTime;
+    TimeScale scale;
+    Movie m = [movie quickTimeMovie];
+    if (GetMaxLoadedTimeInMovie(m, &loadedTime) == noErr) {
+        scale = GetMovieTimeScale(m);
+        return QMediaTimeRange(0, qint64(float(loadedTime) / scale * 1000.0f));
+    }
+#endif
+    return QMediaTimeRange(0, duration());
 }
 
 qreal QT7PlayerSession::playbackRate() const
@@ -635,8 +685,14 @@ void QT7PlayerSession::processLoadStateChange()
         newStatus = isPlaying ? QMediaPlayer::BufferedMedia : QMediaPlayer::LoadedMedia;
     } else if (state >= kMovieLoadStatePlayable)
         newStatus = isPlaying ? QMediaPlayer::BufferingMedia : QMediaPlayer::LoadingMedia;
-    else if (state >= kMovieLoadStateLoading)
-        newStatus = isPlaying ? QMediaPlayer::StalledMedia : QMediaPlayer::LoadingMedia;
+    else if (state >= kMovieLoadStateLoading) {
+        if (!isPlaying)
+            newStatus = QMediaPlayer::LoadingMedia;
+        else if (m_mediaStatus >= QMediaPlayer::LoadedMedia)
+            newStatus = QMediaPlayer::StalledMedia;
+        else
+            newStatus = QMediaPlayer::LoadingMedia;
+    }
 
     if (state >= kMovieLoadStatePlayable &&
         m_state == QMediaPlayer::PlayingState &&
@@ -685,6 +741,11 @@ void QT7PlayerSession::processNaturalSizeChange()
 
     if (m_videoOutput)
         m_videoOutput->updateNaturalSize(QSize(size.width, size.height));
+}
+
+void QT7PlayerSession::processPositionChange()
+{
+    emit positionChanged(position());
 }
 
 #include "moc_qt7playersession.cpp"

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -51,6 +51,19 @@
 #include <qvector.h>
 
 QT_BEGIN_NAMESPACE
+
+namespace
+{
+class QVideoFramePrivateRegisterMetaTypes
+{
+public:
+    QVideoFramePrivateRegisterMetaTypes()
+    {
+        qRegisterMetaType<QVideoFrame::PixelFormat>("QVideoFrame::PixelFormat");
+    }
+} _registerMetaTypes;
+}
+
 
 class QVideoFramePrivate : public QSharedData
 {
@@ -102,7 +115,7 @@ private:
 /*!
     \class QVideoFrame
     \brief The QVideoFrame class provides a representation of a frame of video data.
-    \since 4.6
+    \since 1.0
     \inmodule QtMultimediaKit
 
     A QVideoFrame encapsulates the data of a video frame, and information about the frame.
@@ -126,93 +139,93 @@ private:
     Enumerates video data types.
 
     \value Format_Invalid
-    The frame is invalid. 
- 
+    The frame is invalid.
+
     \value Format_ARGB32
     The frame is stored using a 32-bit ARGB format (0xAARRGGBB).  This is equivalent to
     QImage::Format_ARGB32.
- 
+
     \value Format_ARGB32_Premultiplied
     The frame stored using a premultiplied 32-bit ARGB format (0xAARRGGBB).  This is equivalent
     to QImage::Format_ARGB32_Premultiplied.
- 
+
     \value Format_RGB32
     The frame stored using a 32-bit RGB format (0xffRRGGBB).  This is equivalent to
     QImage::Format_RGB32
- 
+
     \value Format_RGB24
     The frame is stored using a 24-bit RGB format (8-8-8).  This is equivalent to
     QImage::Format_RGB888
- 
+
     \value Format_RGB565
     The frame is stored using a 16-bit RGB format (5-6-5).  This is equivalent to
     QImage::Format_RGB16.
- 
+
     \value Format_RGB555
     The frame is stored using a 16-bit RGB format (5-5-5).  This is equivalent to
     QImage::Format_RGB555.
- 
+
     \value Format_ARGB8565_Premultiplied
     The frame is stored using a 24-bit premultiplied ARGB format (8-6-6-5).
- 
+
     \value Format_BGRA32
     The frame is stored using a 32-bit ARGB format (0xBBGGRRAA).
- 
+
     \value Format_BGRA32_Premultiplied
     The frame is stored using a premultiplied 32bit BGRA format.
- 
+
     \value Format_BGR32
     The frame is stored using a 32-bit BGR format (0xBBGGRRff).
- 
+
     \value Format_BGR24
     The frame is stored using a 24-bit BGR format (0xBBGGRR).
- 
+
     \value Format_BGR565
     The frame is stored using a 16-bit BGR format (5-6-5).
- 
+
     \value Format_BGR555
     The frame is stored using a 16-bit BGR format (5-5-5).
- 
+
     \value Format_BGRA5658_Premultiplied
     The frame is stored using a 24-bit premultiplied BGRA format (5-6-5-8).
- 
+
     \value Format_AYUV444
     The frame is stored using a packed 32-bit AYUV format (0xAAYYUUVV).
- 
+
     \value Format_AYUV444_Premultiplied
     The frame is stored using a packed premultiplied 32-bit AYUV format (0xAAYYUUVV).
 
     \value Format_YUV444
     The frame is stored using a 24-bit packed YUV format (8-8-8).
- 
+
     \value Format_YUV420P
     The frame is stored using an 8-bit per component planar YUV format with the U and V planes
     horizontally and vertically sub-sampled, i.e. the height and width of the U and V planes are
     half that of the Y plane.
- 
+
     \value Format_YV12
     The frame is stored using an 8-bit per component planar YVU format with the V and U planes
     horizontally and vertically sub-sampled, i.e. the height and width of the V and U planes are
     half that of the Y plane.
- 
+
     \value Format_UYVY
     The frame is stored using an 8-bit per component packed YUV format with the U and V planes
     horizontally sub-sampled (U-Y-V-Y), i.e. two horizontally adjacent pixels are stored as a 32-bit
     macropixel which has a Y value for each pixel and common U and V values.
- 
+
     \value Format_YUYV
     The frame is stored using an 8-bit per component packed YUV format with the U and V planes
     horizontally sub-sampled (Y-U-Y-V), i.e. two horizontally adjacent pixels are stored as a 32-bit
     macropixel which has a Y value for each pixel and common U and V values.
- 
+
     \value Format_NV12
     The frame is stored using an 8-bit per component semi-planar YUV format with a Y plane (Y)
     followed by a horizontally and vertically sub-sampled, packed UV plane (U-V).
- 
+
     \value Format_NV21
     The frame is stored using an 8-bit per component semi-planar YUV format with a Y plane (Y)
     followed by a horizontally and vertically sub-sampled, packed VU plane (V-U).
- 
+
     \value Format_IMC1
     The frame is stored using an 8-bit per component planar YUV format with the U and V planes
     horizontally and vertically sub-sampled.  This is similar to the Format_YUV420P type, except
@@ -223,23 +236,32 @@ private:
     horizontally and vertically sub-sampled.  This is similar to the Format_YUV420P type, except
     that the lines of the U and V planes are interleaved, i.e. each line of U data is followed by a
     line of V data creating a single line of the same stride as the Y data.
- 
+
     \value Format_IMC3
     The frame is stored using an 8-bit per component planar YVU format with the V and U planes
     horizontally and vertically sub-sampled.  This is similar to the Format_YV12 type, except that
     the bytes per line of the V and U planes are padded out to the same stride as the Y plane.
- 
+
     \value Format_IMC4
     The frame is stored using an 8-bit per component planar YVU format with the V and U planes
     horizontally and vertically sub-sampled.  This is similar to the Format_YV12 type, except that
     the lines of the V and U planes are interleaved, i.e. each line of V data is followed by a line
     of U data creating a single line of the same stride as the Y data.
- 
+
     \value Format_Y8
     The frame is stored using an 8-bit greyscale format.
- 
+
     \value Format_Y16
     The frame is stored using a 16-bit linear greyscale format.  Little endian.
+
+    \value Format_Jpeg
+    The frame is stored in compressed Jpeg format.
+
+    \value Format_CameraRaw
+    The frame is stored using device specific camera raw format.
+
+    \value Format_AdobeDng
+    The frame is stored using raw Adobe Digital Negative (DNG) format.
 
     \value Format_User
     Start value for user defined pixel formats.
@@ -269,6 +291,7 @@ QVideoFrame::QVideoFrame()
     Constructs a video frame from a \a buffer of the given pixel \a format and \a size in pixels.
 
     \note This doesn't increment the reference count of the video buffer.
+    \since 1.0
 */
 
 QVideoFrame::QVideoFrame(
@@ -283,6 +306,7 @@ QVideoFrame::QVideoFrame(
 
     The \a bytesPerLine (stride) is the length of each scan line in bytes, and \a bytes is the total
     number of bytes that must be allocated for the frame.
+    \since 1.0
 */
 
 QVideoFrame::QVideoFrame(int bytes, const QSize &size, int bytesPerLine, PixelFormat format)
@@ -304,6 +328,7 @@ QVideoFrame::QVideoFrame(int bytes, const QSize &size, int bytesPerLine, PixelFo
     \note This will construct an invalid video frame if there is no frame type equivalent to the
     image format.
 
+    \since 1.0
     \sa pixelFormatFromImageFormat()
 */
 
@@ -317,6 +342,7 @@ QVideoFrame::QVideoFrame(const QImage &image)
 
 /*!
     Constructs a copy of \a other.
+    \since 1.0
 */
 
 QVideoFrame::QVideoFrame(const QVideoFrame &other)
@@ -326,6 +352,7 @@ QVideoFrame::QVideoFrame(const QVideoFrame &other)
 
 /*!
     Assigns the contents of \a other to a video frame.
+    \since 1.0
 */
 
 QVideoFrame &QVideoFrame::operator =(const QVideoFrame &other)
@@ -349,6 +376,7 @@ QVideoFrame::~QVideoFrame()
     An invalid frame has no video buffer associated with it.
 
     Returns true if the frame is valid, and false if it is not.
+    \since 1.0
 */
 
 bool QVideoFrame::isValid() const
@@ -358,6 +386,7 @@ bool QVideoFrame::isValid() const
 
 /*!
     Returns the color format of a video frame.
+    \since 1.0
 */
 
 QVideoFrame::PixelFormat QVideoFrame::pixelFormat() const
@@ -367,6 +396,7 @@ QVideoFrame::PixelFormat QVideoFrame::pixelFormat() const
 
 /*!
     Returns the type of a video frame's handle.
+    \since 1.0
 */
 
 QAbstractVideoBuffer::HandleType QVideoFrame::handleType() const
@@ -376,6 +406,7 @@ QAbstractVideoBuffer::HandleType QVideoFrame::handleType() const
 
 /*!
     Returns the size of a video frame.
+    \since 1.0
 */
 
 QSize QVideoFrame::size() const
@@ -385,6 +416,7 @@ QSize QVideoFrame::size() const
 
 /*!
     Returns the width of a video frame.
+    \since 1.0
 */
 
 int QVideoFrame::width() const
@@ -394,6 +426,7 @@ int QVideoFrame::width() const
 
 /*!
     Returns the height of a video frame.
+    \since 1.0
 */
 
 int QVideoFrame::height() const
@@ -405,6 +438,7 @@ int QVideoFrame::height() const
     Returns the field an interlaced video frame belongs to.
 
     If the video is not interlaced this will return WholeFrame.
+    \since 1.0
 */
 
 QVideoFrame::FieldType QVideoFrame::fieldType() const
@@ -414,6 +448,7 @@ QVideoFrame::FieldType QVideoFrame::fieldType() const
 
 /*!
     Sets the \a field an interlaced video frame belongs to.
+    \since 1.0
 */
 
 void QVideoFrame::setFieldType(QVideoFrame::FieldType field)
@@ -430,6 +465,7 @@ void QVideoFrame::setFieldType(QVideoFrame::FieldType field)
     Returns true if the contents of the video frame are mapped to system memory, and false
     otherwise.
 
+    \since 1.0
     \sa mapMode(), QAbstractVideoBuffer::MapMode
 */
 
@@ -450,6 +486,7 @@ bool QVideoFrame::isMapped() const
     Depending on the buffer implementation the changes may be persisted, or worse alter a shared
     buffer.
 
+    \since 1.0
     \sa mapMode(), QAbstractVideoBuffer::MapMode
 */
 
@@ -467,6 +504,7 @@ bool QVideoFrame::isWritable() const
     Returns true if the contents of the mapped memory were read from the video frame, and false
     otherwise.
 
+    \since 1.0
     \sa mapMode(), QAbstractVideoBuffer::MapMode
 */
 
@@ -478,6 +516,7 @@ bool QVideoFrame::isReadable() const
 /*!
     Returns the mode a video frame was mapped to system memory in.
 
+    \since 1.0
     \sa map(), QAbstractVideoBuffer::MapMode
 */
 
@@ -503,6 +542,7 @@ QAbstractVideoBuffer::MapMode QVideoFrame::mapMode() const
 
     Returns true if the buffer was mapped to memory in the given \a mode and false otherwise.
 
+    \since 1.0
     \sa unmap(), mapMode(), bits()
 */
 
@@ -526,6 +566,7 @@ bool QVideoFrame::map(QAbstractVideoBuffer::MapMode mode)
     If the \l {QAbstractVideoBuffer::MapMode}{MapMode} included the QAbstractVideoBuffer::WriteOnly
     flag this will persist the current content of the mapped memory to the video frame.
 
+    \since 1.0
     \sa map()
 */
 
@@ -548,6 +589,7 @@ void QVideoFrame::unmap()
 
     This value is only valid while the frame data is \l {map()}{mapped}.
 
+    \since 1.0
     \sa bits(), map(), mappedBytes()
 */
 
@@ -561,6 +603,7 @@ int QVideoFrame::bytesPerLine() const
 
     This value is only valid while the frame data is \l {map()}{mapped}.
 
+    \since 1.0
     \sa map(), mappedBytes(), bytesPerLine()
 */
 
@@ -574,6 +617,7 @@ uchar *QVideoFrame::bits()
 
     This value is only valid while the frame data is \l {map()}{mapped}.
 
+    \since 1.0
     \sa map(), mappedBytes(), bytesPerLine()
 */
 
@@ -587,6 +631,7 @@ const uchar *QVideoFrame::bits() const
 
     This value is only valid while the frame data is \l {map()}{mapped}.
 
+    \since 1.0
     \sa map()
 */
 
@@ -600,6 +645,7 @@ int QVideoFrame::mappedBytes() const
 
     For an OpenGL texture this would be the texture ID.
 
+    \since 1.0
     \sa QAbstractVideoBuffer::handle()
 */
 
@@ -610,6 +656,7 @@ QVariant QVideoFrame::handle() const
 
 /*!
     Returns the presentation time when the frame should be displayed.
+    \since 1.0
 */
 
 qint64 QVideoFrame::startTime() const
@@ -619,6 +666,7 @@ qint64 QVideoFrame::startTime() const
 
 /*!
     Sets the presentation \a time when the frame should be displayed.
+    \since 1.0
 */
 
 void QVideoFrame::setStartTime(qint64 time)
@@ -628,6 +676,7 @@ void QVideoFrame::setStartTime(qint64 time)
 
 /*!
     Returns the presentation time when a frame should stop being displayed.
+    \since 1.0
 */
 
 qint64 QVideoFrame::endTime() const
@@ -637,6 +686,7 @@ qint64 QVideoFrame::endTime() const
 
 /*!
     Sets the presentation \a time when a frame should stop being displayed.
+    \since 1.0
 */
 
 void QVideoFrame::setEndTime(qint64 time)
@@ -647,6 +697,7 @@ void QVideoFrame::setEndTime(qint64 time)
 /*!
     Returns an video pixel format equivalent to an image \a format.  If there is no equivalent
     format QVideoFrame::InvalidType is returned instead.
+    \since 1.0
 */
 
 QVideoFrame::PixelFormat QVideoFrame::pixelFormatFromImageFormat(QImage::Format format)
@@ -688,6 +739,7 @@ QVideoFrame::PixelFormat QVideoFrame::pixelFormatFromImageFormat(QImage::Format 
 /*!
     Returns an image format equivalent to a video frame pixel \a format.  If there is no equivalent
     format QImage::Format_Invalid is returned instead.
+    \since 1.0
 */
 
 QImage::Format QVideoFrame::imageFormatFromPixelFormat(PixelFormat format)
@@ -732,6 +784,9 @@ QImage::Format QVideoFrame::imageFormatFromPixelFormat(PixelFormat format)
     case Format_IMC4:
     case Format_Y8:
     case Format_Y16:
+    case Format_Jpeg:
+    case Format_CameraRaw:
+    case Format_AdobeDng:
         return QImage::Format_Invalid;
     case Format_User:
         return QImage::Format_Invalid;

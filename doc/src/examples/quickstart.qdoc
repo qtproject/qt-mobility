@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -28,11 +28,11 @@
 /*!
 \example quickstart
 
-\title Quickstart Example
+\title Quickstart guide
 
 The following steps outline how to make a simple
-"hello world" like application that uses QtMobility.
-It is assumed that QtMobility has been
+"hello world" like application that uses Qt Mobility.
+It is assumed that Qt Mobility has been
 successfully built and environment variables have been set
 as per \l {Installation Guide}.
 
@@ -49,7 +49,7 @@ Steps 1 and 2 are shown in the example below:
 
 This example uses the QSystemInfo headers to print out the
 system's current country code.  All the domain APIs are wrapped
-within a QtMobility namespace and thus developers
+within a Qt Mobility namespace and thus developers
 need to use the QTM_USE_NAMESPACE macro.
 
 In step 3, to specify that our project is using
@@ -57,7 +57,7 @@ System Information we declare in the project file:
 
 \snippet quickstart/quickstart.pro 0
 
-The project file states that the application uses QtMobility and that it requires the
+The project file states that the application uses Qt Mobility and that it requires the
 System Information API. By adding \c mobility to \c CONFIG qmake finds
 the \c {mobility.prf} file in \c{$QTDIR/mkspecs/features} and includes it when
 processing the current project file. \c{mobility.prf} is generated when running
@@ -136,12 +136,10 @@ This can be achieved with a line such as the following:
     TARGET.CAPABILITY = CAPABILITY_A CABAPILITY_B
 \endcode
 
-CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian
-capabilities and their availability to application developers can be found in the
-\l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)}{Symbian capability documentation}.
-
-When developing on Harmattan we will need to list the required security tokens in the application's aegis manifest file.
-Please refer to the SDK documentation for the aegis file syntax and its integration with debian packaging.
+CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian
+capabilities. A complete list of all Symbian capabilities and their availability
+to application developers can be found in the
+\l {http://wiki.forum.nokia.com/index.php/Capabilities}{Forum Nokia Symbian capability documentation}.
 
 The subsequent table provides an overview of possibily required security tokens for each QtMobility library.
 Note that not all tokens are always required when using a particular API. The exact list depends
@@ -157,9 +155,17 @@ on which parts of an API is utilized by an application.
     \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
     \o No token requirements known at this stage.
 \row
+    \o \l {Connectivity}{Connectivity - NFC}
+    \o LocalServices
+    \o No token requirements known at this stage.
+\row
+    \o \l {Connectivity}{Connectivity - Bluetooth} 
+    \o LocalServices NetworkServices (ReadDeviceData WriteDeviceData for Pairing control)
+    \o No token requirements known at this stage.
+\row
     \o \l {Contacts}
     \o ReadUserData WriteUserData
-    \o TrackerReadAccess TrackerWriteAccess
+    \o TrackerReadAccess TrackerWriteAccess GRP::metadata-users
 \row
     \o \l {Location}
     \o Location LocalServices ReadUserData WriteUserData ReadDeviceData WriteDeviceData NetworkServices
@@ -194,19 +200,20 @@ on which parts of an API is utilized by an application.
     \o No token requirements known at this stage.
 \row
     \o \l {Document Gallery}
-    \o No capabilities at this stage.
-    \o No token requirements known at this stage.
+    \o ReadDeviceData WriteDeviceData
+    \o TrackerReadAccess TrackerWriteAccess
 \row
     \o \l {Organizer}
     \o ReadUserData WriteUserData
-    \o No token requirements known at this stage.
+    \o TrackerReadAccess TrackerWriteAccess GRP::calendar GRP::metadata-users
 \row
     \o \l {Feedback}{Tactile Feedback}
     \o No capabilities at this stage.
     \o No token requirements known at this stage.
 \endtable
 
-The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}.
+The complete list of all Symbian capabilities and how they can be obtained can
+be found at \l {http://wiki.forum.nokia.com/index.php/Capabilities}{Forum Nokia Symbian capability documentation}.
 
 And we're done.  If you are using the command line simply
 enter:
@@ -234,6 +241,6 @@ To make a release build and SIS package for a device run:
 
 For further details on how to build applications for
 Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html}
-{The Symbian Platform - Introduction to Qt} and \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
-{Qt Quick Start}
+{The Symbian Platform - Introduction to Qt} and \l {http://wiki.forum.nokia.com/index.php/Category:Qt_for_Symbian}
+{Qt for Symbian}
 */

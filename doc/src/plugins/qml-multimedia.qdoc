@@ -52,20 +52,22 @@
 
     The code extract below shows the creation and use of an audio element.
 
+
     \qml
     import Qt 4.7
     import QtMultimediaKit 1.1
     // ...
 
-        Audio {
-            id: playMusic
-            source: "music.wav"
-        }
-        MouseArea {
-            id: playArea
-            anchors.fill: parent
-            onPressed:  { playMusic.play() }
-        }
+    Audio {
+        id: playMusic
+        source: "music.wav"
+    }
+
+    MouseArea {
+        id: playArea
+        anchors.fill: parent
+        onPressed:  { playMusic.play() }
+    }
     \endqml
 
     The snippet above shows how the inclusion of \i playMusic enables audio features on the element that contains it. So that when the parent's MouseArea is clicked the \l {Audio::play()}{play()} method of the audio element is run. Other typical audio control methods are available such as \l {Audio::pause}{pause()} and \l {Audio::stop()}{stop()}.
@@ -142,6 +144,56 @@
             \o Called when the specified error occurs.
     \endtable
 
+    \section2 Camera
+
+    The \l Camera element in the plugin enables still image capture using
+    QML. The element has methods for starting and stopping the camera, capturing
+    the image, camera settings and many signals indicating critical events.
+
+    The follow code is taken from the \l {QML Camera Example}. This snippet
+    shows the setting up of the \l Camera element
+
+    \qml
+
+    Camera {
+        id: camera
+        x : 0
+        y : 0
+        width : 640
+        height : 480
+        focus : visible //to receive focus and capture key events
+        //captureResolution : "640x480"
+
+        flashMode: stillControls.flashMode
+        whiteBalanceMode: stillControls.whiteBalance
+        exposureCompensation: stillControls.exposureCompensation
+
+        onImageCaptured : {
+            photoPreview.source = preview
+            stillControls.previewAvailable = true
+            cameraUI.state = "PhotoPreview"
+        }
+    }
+
+    \endqml
+
+    Notice that the slot for the \l {Camera::imageCaptured()}{imageCaptured()}
+    signal is implemented in \i onImageCaptured. However, this code only
+    changes some state information to allow previewing.
+
+    The capture call itself is part of the implementation of the button
+    that the user presses to take the image. It uses a call to
+    \l {Camera::captureImage()}{captureImage()}:
+
+    \qml
+
+    CameraButton {
+        text: "Capture"
+        onClicked: camera.captureImage()
+    }
+
+    \endqml
+
 
     \section2 Video
 
@@ -182,11 +234,25 @@
     The \l SoundEffect element provides a way to play short sound effects, like in video games. Multiple sound effect instances can be played simultaneously.
     You should use the \l Audio element for music playback.
 
-    \code
+    \qml
+
     import Qt 4.7
     import QtMultimediaKit 1.1
-    ...
-    
+
+
+        SoundEffect {
+            id: effect
+            source: "test.wav"
+        }
+        MouseArea {
+            id: playArea
+            anchors.fill: parent
+            onPressed:  { effect.play() }
+        }
+
+    \endqml
+
+
     In the above sample the sound effect will be played when the MouseArea is clicked.
 
     For a complete description of this element, see \l SoundEffect
@@ -215,6 +281,8 @@
     \endqml
 
     For a complete description of this element, see \l Camera, and look at the \l {declarative-camera}{QML Camera Example}.
+
+    \section1 Multimedia QML Elements
 
     \annotatedlist qml-multimedia
 */

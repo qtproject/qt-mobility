@@ -61,7 +61,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_muted(false)
     , m_volume(0)
     , m_state(QMediaPlayer::StoppedState)
-    , m_mediaStatus(QMediaPlayer::UnknownMediaStatus)
+    , m_mediaStatus(QMediaPlayer::NoMedia)
     , m_progressTimer(new QTimer(this))
     , m_stalledTimer(new QTimer(this))
     , m_error(KErrNone)
@@ -110,6 +110,8 @@ void S60MediaPlayerSession::setVolume(int volume)
         return;
     
     m_volume = volume;
+    emit volumeChanged(m_volume);
+
     // Dont set symbian players volume until media loaded.
     // Leaves with KerrNotReady although documentation says otherwise.
     if (!m_muted && 
@@ -119,11 +121,7 @@ void S60MediaPlayerSession::setVolume(int volume)
         || mediaStatus() == QMediaPlayer::BufferedMedia
         || mediaStatus() == QMediaPlayer::EndOfMedia)) {
         TRAPD(err, doSetVolumeL(m_volume));
-
-        if (KErrNone == err)
-            emit volumeChanged(m_volume);
-        else
-            setError(err);
+        setError(err);
     }
     DP0("S60MediaPlayerSession::setVolume ---");
 }
@@ -218,19 +216,20 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
  *  If it is a local video file then loads the video playersession.
 */
 
-void S60MediaPlayerSession::load(QUrl url)
+void S60MediaPlayerSession::load(const QMediaContent source)
 {
     DP0("S60MediaPlayerSession::load +++");
 
+    m_source = source;
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
-    m_stream = (url.scheme() == "file")?false:true;
-    m_UrlPath = url;
+    m_stream = (source.canonicalUrl().scheme() == "file")?false:true;
+    m_UrlPath = source.canonicalUrl();
     TRAPD(err,
-        if(m_stream)
-            doLoadUrlL(QString2TPtrC(url.toString()));
+        if (m_stream)
+            doLoadUrlL(QString2TPtrC(source.canonicalUrl().toString()));
         else
-            doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));
+            doLoadL(QString2TPtrC(QDir::toNativeSeparators(source.canonicalUrl().toLocalFile()))));
     setError(err);
 
     DP0("S60MediaPlayerSession::load ---");
@@ -248,11 +247,13 @@ void S60MediaPlayerSession::play()
 {
     DP0("S60MediaPlayerSession::play +++");
 
-    if (state() == QMediaPlayer::PlayingState
+    if ( (state() == QMediaPlayer::PlayingState && m_play_requested == false)
         || mediaStatus() == QMediaPlayer::UnknownMediaStatus
         || mediaStatus() == QMediaPlayer::NoMedia
         || mediaStatus() == QMediaPlayer::InvalidMedia)
         return;
+
+    setState(QMediaPlayer::PlayingState);
 
     if (mediaStatus() == QMediaPlayer::LoadingMedia ||
        (mediaStatus() == QMediaPlayer::StalledMedia &&
@@ -266,7 +267,6 @@ void S60MediaPlayerSession::play()
     m_duration = duration();
     setVolume(m_volume);
     setMuted(m_muted);
-    setState(QMediaPlayer::PlayingState);
     startProgressTimer();
     doPlay();
 
@@ -291,6 +291,7 @@ void S60MediaPlayerSession::pause()
     setState(QMediaPlayer::PausedState);
     stopProgressTimer();
     TRAP_IGNORE(doPauseL());
+    m_play_requested = false;
 
     DP0("S60MediaPlayerSession::pause ---");
 }
@@ -307,7 +308,7 @@ void S60MediaPlayerSession::stop()
         return;
 
     m_play_requested = false;
-    setState(QMediaPlayer::StoppedState);
+    m_state = QMediaPlayer::StoppedState;
     if (mediaStatus() == QMediaPlayer::BufferingMedia ||
         mediaStatus() == QMediaPlayer::BufferedMedia ||
         mediaStatus() == QMediaPlayer::StalledMedia) 
@@ -318,6 +319,7 @@ void S60MediaPlayerSession::stop()
     stopStalledTimer();
     doStop();
     emit positionChanged(0);
+    emit stateChanged(m_state);
 
     DP0("S60MediaPlayerSession::stop ---");
 }
@@ -339,6 +341,7 @@ void S60MediaPlayerSession::reset()
     doClose();
     setState(QMediaPlayer::StoppedState);
     setMediaStatus(QMediaPlayer::UnknownMediaStatus);
+    setPosition(0);
 
     DP0("S60MediaPlayerSession::reset ---");
 }
@@ -536,17 +539,15 @@ void S60MediaPlayerSession::setMuted(bool muted)
     DP1("S60MediaPlayerSession::setMuted - ", muted);
 
     m_muted = muted;
-    
+    emit mutedChanged(m_muted);
+
     if(   m_mediaStatus == QMediaPlayer::LoadedMedia 
        || (m_mediaStatus == QMediaPlayer::StalledMedia && state() != QMediaPlayer::StoppedState)
        || m_mediaStatus == QMediaPlayer::BufferingMedia
        || m_mediaStatus == QMediaPlayer::BufferedMedia
        || m_mediaStatus == QMediaPlayer::EndOfMedia) {
         TRAPD(err, doSetVolumeL((m_muted)?0:m_volume));
-        if (KErrNone == err)
-            emit mutedChanged(m_muted);
-        else
-            setError(err);
+        setError(err);
     }
     DP0("S60MediaPlayerSession::setMuted ---");
 }
@@ -616,7 +617,11 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
     TRAPD(err, doSetPositionL(pos * 1000));
     setError(err);
 
-    if (err == KErrNotSupported) {
+    if (err == KErrNone) {
+        if (mediaStatus() == QMediaPlayer::EndOfMedia)
+            setMediaStatus(QMediaPlayer::LoadedMedia);
+    }
+    else if (err == KErrNotSupported) {
         m_seekable = false;
         emit seekableChanged(m_seekable);
     }
@@ -777,6 +782,8 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrServerBusy:
         case KErrCompletion:  
         case KErrBadPower:    
+        case KErrMMInvalidProtocol:
+        case KErrMMInvalidURL:
             return QMediaPlayer::ResourceError;
         
         case KErrMMPartialPlayback:   
@@ -795,8 +802,6 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
         case KErrMMServerSocket:
         case KErrMMServerNotSupported:
         case KErrMMUDPReceive:
-        case KErrMMInvalidProtocol:
-        case KErrMMInvalidURL:
         case KErrMMMulticast:
         case KErrMMProxyServer:
         case KErrMMProxyServerNotSupported:
@@ -869,7 +874,9 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString, bool
 
     emit this->error(mediaError, symbianError);
 
-    if (mediaError !=QMediaPlayer::NoError) {
+    if (m_error == KErrInUse) {
+        pause();
+    } else if (mediaError != QMediaPlayer::NoError) {
         m_play_requested = false;
         setMediaStatus(QMediaPlayer::InvalidMedia);
         stop();

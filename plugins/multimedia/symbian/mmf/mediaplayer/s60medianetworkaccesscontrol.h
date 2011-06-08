@@ -46,10 +46,10 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qstring.h>
-#include <QMetaObject.h>
+#include <qmetaobject.h>
 #include <QtNetwork/qnetworkconfiguration.h>
-#include <CommDbConnPref.h>
-#include <CommDb.h>
+#include <commdbconnpref.h>
+#include <commdb.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 #include <qmedianetworkaccesscontrol.h>
 #include "s60mediaplayercontrol.h"

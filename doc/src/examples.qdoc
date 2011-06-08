@@ -48,8 +48,9 @@
         \o \l{btfiletransfer}{Bluetooth File Transfer}
         \o \l{btscanner}{Bluetooth Scanner}
         \o \l{ndefeditor}{NDEF Editor}
-        \o \l{declarative-bluetooth/tennis}{QML Bluetooth Tennis}
-        \o \l{scanner}{QML Bluetooth Scanner}
+        \o \l{declarative-connectivity/tennis}{QML Bluetooth Tennis}
+        \o \l{declarative-connectivity/scanner}{QML Bluetooth Scanner}
+        \o \l{declarative-connectivity/poster}{QML Poster}
     \endlist
 
     \section2 Contacts

@@ -41,11 +41,23 @@
 #include "mapbox.h"
 #include "geomap.h"
 
+
+#include <qgeomaprectangleobject.h>
+#include <qgeomapcircleobject.h>
+#include <qgeomappolylineobject.h>
+#include <qgeomappolygonobject.h>
 #include <qgeomappixmapobject.h>
 #include <qgeomaptextobject.h>
+#include <qgeomaprouteobject.h>
+#include <qgeomapcustomobject.h>
 
 #include <QMessageBox>
 #include <QLineEdit>
+
+#include <QPixmap>
+#include <QPainter>
+#include <QBrush>
+#include <QGraphicsEllipseItem>
 
 void MapBox::selectObjects()
 {
@@ -244,4 +256,76 @@ void MapBox::captureCoordinates()
 
     m_latitudeEdit->setText(QString::number(coords.latitude()));
     m_longitudeEdit->setText(QString::number(coords.longitude()));
+}
+
+void MapBox::testDateline()
+{
+    m_mapWidget->setCenter(QGeoCoordinate(0.0, 180.0));
+    m_mapWidget->setZoomLevel(5.0);
+
+    QList<QGeoCoordinate> dateline;
+
+    dateline << QGeoCoordinate(-15.0, 180.0);
+    dateline << QGeoCoordinate(15.0, 180.0);
+
+    QGeoMapPolylineObject *datelineObject = new QGeoMapPolylineObject();
+    datelineObject->setPath(dateline);
+    QPen p(Qt::DashLine);
+    p.setColor(Qt::black);
+    p.setWidth(2);
+    //p.setCosmetic(true);
+    datelineObject->setPen(p);
+
+    m_mapWidget->addMapObject(datelineObject);
+
+    addRectangle(QGeoCoordinate(-5.0, 179.0), QGeoCoordinate(-6.0, -179.0));
+    addCircle(QGeoCoordinate(-7.0, 180.0), 50000.0);
+
+    QList<QGeoCoordinate> polyline;
+
+    polyline << QGeoCoordinate(-3.0, 180.0);
+    polyline << QGeoCoordinate(-4.0, 179.0);
+    polyline << QGeoCoordinate(-4.0, -179.0);
+
+    addPolyline(polyline);
+
+    QList<QGeoCoordinate> polygon;
+
+    polygon << QGeoCoordinate(0.0, 180.0);
+    polygon << QGeoCoordinate(-2.0, 179.0);
+    polygon << QGeoCoordinate(-2.0, -179.0);
+
+    addPolygon(polygon);
+
+    QPixmap pixmap(48, 48);
+    QPainter pixmapPainter(&pixmap);
+    pixmapPainter.fillRect(pixmap.rect(), Qt::yellow);
+    pixmapPainter.setPen(QPen(Qt::black));
+    pixmapPainter.setBrush(QBrush(Qt::black));
+
+    QFont font = pixmapPainter.font();
+    font.setPointSize(8);
+    pixmapPainter.setFont(font);
+
+    pixmapPainter.drawText(pixmap.rect(), Qt::AlignCenter, "Pixmap");
+
+    addPixmap(QGeoCoordinate(6.0, 180.0), QPoint(-1 * pixmap.width() / 2, -1 * pixmap.width() / 2), pixmap);
+
+    addText(QGeoCoordinate(4.0, 180.0), QString("Text"));
+
+    QList<QGeoCoordinate> route;
+
+    route << QGeoCoordinate(3.0, 180.0);
+    route << QGeoCoordinate(2.5, 179.0);
+    route << QGeoCoordinate(1.5, 179.0);
+    route << QGeoCoordinate(1.0, 180.0);
+    route << QGeoCoordinate(1.5, -179.0);
+    route << QGeoCoordinate(2.5, -179.0);
+
+    addFakeRoute(route, 3);
+
+    QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem(QRectF(0.0, 0.0, 96.0, 48.0));
+    ellipseItem->setBrush(Qt::red);
+
+    addCustom(QGeoCoordinate(10.0, 180.0), QPoint(-48, -24), ellipseItem);
 }

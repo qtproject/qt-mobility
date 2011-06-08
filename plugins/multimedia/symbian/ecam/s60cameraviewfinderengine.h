@@ -127,6 +127,7 @@ private slots:
     void handleWindowChange(RWindow *handle);
     void handleDesktopResize(int screen);
     void handleContentAspectRatioChange(const QSize& newSize);
+    void rendererSurfaceSet();
 
 private: // Enums
 

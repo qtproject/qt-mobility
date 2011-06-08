@@ -53,32 +53,40 @@ meegoorientationsensor::meegoorientationsensor(QSensor *sensor)
     setReading<QOrientationReading>(&m_reading);
 }
 
+
+void meegoorientationsensor::start(){
+    Unsigned data(((OrientationSensorChannelInterface*)m_sensorInterface)->orientation());
+    m_reading.setOrientation(meegoorientationsensor::getOrientation(data.x()));
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
+    newReadingAvailable();
+    meegosensorbase::start();
+}
+
+
 void meegoorientationsensor::slotDataAvailable(const Unsigned& data)
 {
-    QOrientationReading::Orientation o;
-    switch (data.x()) {
-    case PoseData::BottomDown: o = QOrientationReading::TopUp;     break;
-    case PoseData::BottomUp:   o = QOrientationReading::TopDown;   break;
-    case PoseData::LeftUp:     o = QOrientationReading::LeftUp;    break;
-    case PoseData::RightUp:    o = QOrientationReading::RightUp;   break;
-    case PoseData::FaceUp:     o = QOrientationReading::FaceUp;    break;
-    case PoseData::FaceDown:   o = QOrientationReading::FaceDown;  break;
-    default:                   o = QOrientationReading::Undefined;
-    }
-    m_reading.setOrientation(o);
+    m_reading.setOrientation(meegoorientationsensor::getOrientation(data.x()));
     m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }
 
 bool meegoorientationsensor::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
-    }
-    return true;
+    return QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
+                            this, SLOT(slotDataAvailable(const Unsigned&)));
 }
 
-const QString meegoorientationsensor::sensorName(){
+QString meegoorientationsensor::sensorName() const{
     return "orientationsensor";
 }
 
+QOrientationReading::Orientation meegoorientationsensor::getOrientation(int orientation){
+    switch (orientation) {
+    case PoseData::BottomDown: return QOrientationReading::TopUp;
+    case PoseData::BottomUp:   return QOrientationReading::TopDown;
+    case PoseData::LeftUp:     return QOrientationReading::LeftUp;
+    case PoseData::RightUp:    return QOrientationReading::RightUp;
+    case PoseData::FaceUp:     return QOrientationReading::FaceUp;
+    case PoseData::FaceDown:   return QOrientationReading::FaceDown;
+    }
+    return QOrientationReading::Undefined;
+}

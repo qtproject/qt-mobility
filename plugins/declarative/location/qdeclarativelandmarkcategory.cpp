@@ -46,12 +46,12 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass LandmarkCategory QDeclarativeLandmarkCategory
     \brief The LandmarkCategory element presents one landmark category.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
     The primary source for categories is the \l LandmarkCategoryModel.
-    To get \l Landmarks belonging to certain category (ies),
+    To get \l Landmarks belonging to certain category(ies),
     \l LandmarkCategoryFilter may be used. Currently saving of categories
     is not supported.
 

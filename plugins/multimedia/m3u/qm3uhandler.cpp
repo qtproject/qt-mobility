@@ -91,24 +91,47 @@ public:
     {
         QMediaContent item;
         if (!nextResource.isNull())
-        item = QMediaContent(nextResource);
+            item = QMediaContent(nextResource);
 
         nextResource = QMediaContent();
 
         while (m_textStream && !m_textStream->atEnd()) {
             QString line = m_textStream->readLine().trimmed();
-            if (line.isEmpty() || line[0] == '#')
+            if (line.isEmpty() || line[0] == '#' || line.size() > 4096)
                 continue;
 
-            if (QFile::exists(line)) {
-                nextResource = QMediaContent(QUrl::fromLocalFile(line));
-            } else {
-                QUrl url(line);
-                if (!m_location.isEmpty() && url.isRelative())
-                    url = m_location.resolved(url);
+            QUrl fileUrl = QUrl::fromLocalFile(line);
+            QUrl url(line);
 
-                nextResource = QMediaContent(url);
+            //m3u may contain url encoded entries or absolute/relative file names
+            //prefer existing file if any
+            QList<QUrl> candidates;
+            if (!m_location.isEmpty()) {
+                candidates << m_location.resolved(fileUrl);
+                candidates << m_location.resolved(url);
             }
+            candidates << fileUrl;
+            candidates << url;
+
+            foreach (const QUrl &candidate, candidates) {
+                if (QFile::exists(candidate.toLocalFile())) {
+                    nextResource = candidate;
+                    break;
+                }
+            }
+
+            if (nextResource.isNull()) {
+                //assume the relative urls are file names, not encoded urls if m3u is local file
+                if (!m_location.isEmpty() && url.isRelative()) {
+                    if (m_location.scheme() == QLatin1String("file"))
+                        nextResource = m_location.resolved(fileUrl);
+                    else
+                        nextResource = m_location.resolved(url);
+                } else {
+                    nextResource = QMediaContent(QUrl::fromUserInput(line));
+                }
+            }
+
             break;
         }
 

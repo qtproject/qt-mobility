@@ -68,9 +68,10 @@ protected:
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
     static const int KErrNotFound;
     static const int KErrInUse;
+    static QStringList m_bufferingSensors;
 
     void setRanges(qreal correctionFactor=1);
-    virtual const QString sensorName()=0;
+    virtual QString sensorName() const=0;
 
     template<typename T>
     void initSensor(bool &initDone)
@@ -124,21 +125,28 @@ protected:
         }
 
         //bufferSizes
-        IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
-        int l = sizes.size();
-        for (int i=0; i<l; i++){
-            int second = sizes.at(i).second;
-            m_maxBufferSize = second>m_bufferSize? second:m_maxBufferSize;
+        if (m_bufferingSensors.contains(sensor()->identifier())){
+
+            IntegerRangeList sizes = m_sensorInterface->getAvailableBufferSizes();
+            int l = sizes.size();
+            for (int i=0; i<l; i++){
+                int second = sizes.at(i).second;
+                m_maxBufferSize = second>m_bufferSize? second:m_maxBufferSize;
+            }
+            m_maxBufferSize = m_maxBufferSize<0?1:m_maxBufferSize;
+            //SensorFW guarantees to provide the most efficient size first
+            //TODO: remove from comments
+            //m_efficientBufferSize  = m_sensorInterface->hwBuffering()? (l>0?sizes.at(0).first:1) : 1;
         }
-        m_maxBufferSize = m_maxBufferSize<0?1:m_maxBufferSize;
-        //SensorFW guarantees to provide the most efficient size first
-        //TODO: remove from comments
-//         m_efficientBufferSize  = m_sensorInterface->hwBuffering()? (l>0?sizes.at(0).first:1) : 1;
+        else
+            m_maxBufferSize = 1;
 
         sensor()->setProperty(MAX_BUFFER_SIZE, m_maxBufferSize);
         sensor()->setProperty(EFFICIENT_BUFFER_SIZE, m_efficientBufferSize);
 
-        if (sensor()->type()=="QAmbientLightSensor")    return; // SensorFW returns lux values, plugin enumerated values
+        QString type = sensor()->type();
+        if (type=="QAmbientLightSensor")    return;   // SensorFW returns lux values, plugin enumerated values
+        if (type=="QIRProximitySensor")    return;    // SensorFW returns raw reflectance values, plugin % of max reflectance
         if (name=="accelerometersensor") return;      // SensorFW returns milliGs, plugin m/s^2
         if (name=="magnetometersensor") return;       // SensorFW returns nanoTeslas, plugin Teslas
         if (name=="gyroscopesensor") return;          // SensorFW returns DSPs, plugin milliDSPs
@@ -153,10 +161,11 @@ protected:
 
     AbstractSensorChannelInterface* m_sensorInterface;
     int m_bufferSize;
-    const int bufferSize();
-    virtual const qreal correctionFactor();
+    int bufferSize() const;
+    virtual qreal correctionFactor() const;
 
 private:
+
     static SensorManagerInterface* m_remoteSensorManager;
     int m_prevOutputRange;
     bool doConnectAfterCheck();

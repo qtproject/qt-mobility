@@ -59,13 +59,13 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
                                    S60ImageCaptureSession *imagesession,
                                    QObject *parent):
     QCameraControl(parent),
-    m_cameraEngine(NULL),
-    m_viewfinderEngine(NULL),
-    m_imageSession(NULL),
-    m_videoSession(NULL),
-    m_advancedSettings(NULL),
-    m_videoOutput(NULL),
-    m_inactivityTimer(NULL),
+    m_cameraEngine(0),
+    m_viewfinderEngine(0),
+    m_imageSession(0),
+    m_videoSession(0),
+    m_advancedSettings(0),
+    m_videoOutput(0),
+    m_inactivityTimer(0),
     m_captureMode(QCamera::CaptureStillImage),  // Default CaptureMode
     m_requestedCaptureMode(QCamera::CaptureStillImage),
     m_settingCaptureModeInternally(false),
@@ -95,7 +95,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     }
 
     m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine, this);
-    if (m_viewfinderEngine == NULL) {
+    if (m_viewfinderEngine == 0) {
         m_error = KErrNoMemory;
         qWarning("Failed to create viewfinder engine.");
         return;
@@ -127,7 +127,7 @@ S60CameraControl::~S60CameraControl()
 
     if (m_viewfinderEngine) {
         delete m_viewfinderEngine;
-        m_viewfinderEngine = NULL;
+        m_viewfinderEngine = 0;
     }
 
     // Make sure AdvancedSettings are destructed
@@ -135,12 +135,12 @@ S60CameraControl::~S60CameraControl()
 
     if (m_cameraEngine) {
         delete m_cameraEngine;
-        m_cameraEngine = NULL;
+        m_cameraEngine = 0;
     }
 
     if (m_inactivityTimer) {
         delete m_inactivityTimer;
-        m_inactivityTimer = NULL;
+        m_inactivityTimer = 0;
     }
 }
 
@@ -649,7 +649,9 @@ void S60CameraControl::MceoCameraReady()
                     m_changeCaptureModeWhenReady = false; // Reset
                 }
 
-                m_inactivityTimer->start(KInactivityTimerTimeout);
+                if (m_requestedState == QCamera::LoadedStatus &&
+                    m_internalState == QCamera::LoadedStatus)
+                    m_inactivityTimer->start(KInactivityTimerTimeout);
                 break;
 
             case QCamera::ActiveState:
@@ -824,17 +826,17 @@ void S60CameraControl::resetCamera(bool errorHandling)
     disconnect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
     if (m_viewfinderEngine) {
         delete m_viewfinderEngine;
-        m_viewfinderEngine = NULL;
+        m_viewfinderEngine = 0;
     }
 
     if (m_cameraEngine) {
         delete m_cameraEngine;
-        m_cameraEngine = NULL;
+        m_cameraEngine = 0;
     }
 
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
     if (err) {
-        m_cameraEngine = NULL;
+        m_cameraEngine = 0;
         if (errorHandling) {
             qWarning("Failed to recover from error.");
             if (err == KErrPermissionDenied)
@@ -854,7 +856,7 @@ void S60CameraControl::resetCamera(bool errorHandling)
     emit devicesChanged();
 
     m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine, this);
-    if (m_viewfinderEngine == NULL)
+    if (m_viewfinderEngine == 0)
         setError(KErrNoMemory, tr("Viewfinder device creation failed."));
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
 
@@ -920,10 +922,10 @@ void S60CameraControl::resetCameraOrientation()
     unloadCamera();
 
     // Unset CameraEngine to ViewfinderEngine
-    m_viewfinderEngine->setNewCameraEngine(NULL);
+    m_viewfinderEngine->setNewCameraEngine(0);
     if (m_cameraEngine) {
         delete m_cameraEngine;
-        m_cameraEngine = NULL;
+        m_cameraEngine = 0;
     }
 
     TRAPD(err, m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));

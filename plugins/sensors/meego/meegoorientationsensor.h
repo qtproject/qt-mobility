@@ -59,10 +59,12 @@ public:
     meegoorientationsensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
+    virtual void start();
 
 private:
     QOrientationReading m_reading;
+    static QOrientationReading::Orientation getOrientation(int orientation);
     static bool m_initDone;
 
 private slots:

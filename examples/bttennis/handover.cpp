@@ -50,7 +50,7 @@
 static const QLatin1String tennisUri("urn:nfc:sn:com.nokia.qtmobility.tennis");
 
 Handover::Handover(quint16 serverPort, QObject *parent)
-:   QObject(parent), m_manager(new QNearFieldManager(this)), m_server(new QLlcpServer(this)),
+:   QObject(parent), m_server(new QLlcpServer(this)),
     m_client(new QLlcpSocket(this)), m_remote(0), m_serverPort(0), m_localServerPort(serverPort)
 {
     connect(m_server, SIGNAL(newConnection()), this, SLOT(handleNewConnection()));

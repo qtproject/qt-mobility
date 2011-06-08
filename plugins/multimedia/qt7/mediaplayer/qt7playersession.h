@@ -95,6 +95,7 @@ public:
     bool isVideoAvailable() const;
 
     bool isSeekable() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     qreal playbackRate() const;
 
@@ -114,6 +115,7 @@ public slots:
     void processLoadStateChange();
     void processVolumeChange();
     void processNaturalSizeChange();
+    void processPositionChange();
 
 signals:
     void positionChanged(qint64 position);

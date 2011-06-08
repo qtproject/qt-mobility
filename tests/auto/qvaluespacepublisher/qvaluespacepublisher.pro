@@ -25,3 +25,6 @@ symbian {
 win32 {
     !wince*:LIBS += -ladvapi32
 }
+
+
+maemo*:CONFIG += insignificant_test

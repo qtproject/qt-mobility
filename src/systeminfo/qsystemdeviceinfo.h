@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -43,7 +43,6 @@
 #define QSYSTEMDEVICEINFO_H
 
 #include <QObject>
-#include <QUuid>
 #include <QExplicitlySharedDataPointer>
 
 #include "qmobilityglobal.h"
@@ -53,15 +52,16 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemDeviceInfoPrivate;
 
-class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
+class Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
+
     Q_PROPERTY(Profile currentProfile READ currentProfile NOTIFY currentProfileChanged)
     Q_PROPERTY(PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
+    Q_PROPERTY(ThermalState currentThermalState READ currentThermalState NOTIFY thermalStateChanged)
     Q_PROPERTY(SimStatus simStatus READ simStatus CONSTANT)
     Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
     Q_PROPERTY(QSystemDeviceInfo::InputMethodFlags inputMethodType READ inputMethodType)
-
     Q_PROPERTY(QString imei READ imei CONSTANT)
     Q_PROPERTY(QString imsi READ imsi CONSTANT)
     Q_PROPERTY(QString manufacturer READ manufacturer CONSTANT)
@@ -70,14 +70,15 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked NOTIFY deviceLocked)
     Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState NOTIFY bluetoothStateChanged)
-
     Q_PROPERTY(KeyboardTypeFlags keyboardTypes READ keyboardTypes)//1.2
     Q_PROPERTY(bool isWirelessKeyboardConnected READ isWirelessKeyboardConnected NOTIFY wirelessKeyboardConnected)//1.2
     Q_PROPERTY(bool isKeyboardFlippedOpen READ isKeyboardFlippedOpen NOTIFY keyboardFlipped)//1.2
     Q_PROPERTY(QSystemDeviceInfo::LockTypeFlags lockStatus READ lockStatus NOTIFY lockStatusChanged)
+    Q_PROPERTY(QByteArray uniqueDeviceID READ uniqueDeviceID CONSTANT)
 
     Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
+    Q_ENUMS(ThermalState)
     Q_FLAGS(InputMethod InputMethodFlags)
     Q_ENUMS(SimStatus)
     Q_ENUMS(Profile)
@@ -88,7 +89,6 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_FLAGS(LockType LockTypeFlags) //1.2
 
 public:
-
     explicit QSystemDeviceInfo(QObject *parent = 0);
     virtual ~QSystemDeviceInfo();
 
@@ -100,7 +100,6 @@ public:
         BatteryNormal
     };
 
-
     enum PowerState {
         UnknownPower = 0,
         BatteryPower,
@@ -108,6 +107,13 @@ public:
         WallPowerChargingBattery
     };
 
+    enum ThermalState {
+        UnknownThermal = 0,
+        NormalThermal,
+        WarningThermal,
+        AlertThermal,
+        ErrorThermal
+    };
 
     enum InputMethod {
         Keys = 0x0000001,
@@ -131,7 +137,6 @@ public:
         BeepProfile
     };
 
-
     enum SimStatus {
         SimNotAvailable = 0,
         SingleSimAvailable,
@@ -147,19 +152,19 @@ public:
         FullQwertyKeyboard = 0x0000008,
         WirelessKeyboard = 0x0000010,
         FlipKeyboard = 0x0000020
-      };//1.2
+    };//1.2
     Q_DECLARE_FLAGS(KeyboardTypeFlags, KeyboardType)//1.2
 
     enum KeypadType {
        PrimaryKeypad = 0,
        SecondaryKeypad
     }; //1.2
+
 //    enum KeypadType {
-//       PrimaryKeypad = 0x0000001,
-//       SecondaryKeypad = 0x0000002
+//        PrimaryKeypad = 0x0000001,
+//        SecondaryKeypad = 0x0000002
 //    }; //1.2
 //    Q_DECLARE_FLAGS(KeypadTypeFlags, KeypadType)//1.2
-
 
     enum LockType {
         UnknownLock = 0,
@@ -182,6 +187,7 @@ public:
     QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 
     bool currentBluetoothPowerState();
 
@@ -191,38 +197,38 @@ public:
 
     Q_INVOKABLE bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
 //    QSystemDeviceInfo::KeypadTypeFlags keypadLightsOn(); //1.2
-    QUuid uniqueDeviceID(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
-    class  Q_SYSINFO_EXPORT ProfileDetails  {
+    class Q_SYSINFO_EXPORT ProfileDetails  {
     public:
         ProfileDetails();
-        ProfileDetails(const ProfileDetails &);
-        ProfileDetails &operator=(const ProfileDetails &);
+        ProfileDetails(const ProfileDetails &other);
+        ProfileDetails &operator=(const ProfileDetails &other);
 
         ~ProfileDetails();
 
         int messageRingtoneVolume() const;
         int voiceRingtoneVolume() const;
         bool vibrationActive() const;
+
     private:
-         friend class QSystemDeviceInfo;
+        friend class QSystemDeviceInfo;
     };
 
-    Q_INVOKABLE ProfileDetails activeProfileDetails();//1.2
+    Q_INVOKABLE ProfileDetails activeProfileDetails(); //1.2
 
 Q_SIGNALS:
     void batteryLevelChanged(int level);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus batteryStatus);
     void powerStateChanged(QSystemDeviceInfo::PowerState powerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState thermalState);
     void currentProfileChanged(QSystemDeviceInfo::Profile currentProfile);
     void bluetoothStateChanged(bool on);
-
-    void wirelessKeyboardConnected(bool connected);//1.2
-    void keyboardFlipped(bool open);//1.2
+    void wirelessKeyboardConnected(bool connected); //1.2
+    void keyboardFlipped(bool open); //1.2
     void deviceLocked(bool isLocked); // 1.2
     void lockStatusChanged(QSystemDeviceInfo::LockTypeFlags); //1.2
-
 
 private:
     QSystemDeviceInfoPrivate *d;
@@ -235,9 +241,7 @@ protected:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QSystemDeviceInfo::InputMethodFlags )
 
-
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
 #endif // QSYSTEMDEVICEINFO_H

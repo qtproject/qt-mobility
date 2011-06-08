@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -54,11 +54,12 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContact
- 
+
   \brief The QContact class represents an addressbook contact.
 
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-main
 
   Individual contacts, groups, and other types of contacts are represented with
@@ -82,7 +83,7 @@ QTM_BEGIN_NAMESPACE
   a group contact would have a \c "HasMember" relationship with the QContacts that
   are its members.  Spouses, managers and assistants can also be represented this
   way.
- 
+
   A QContact instance represents the in-memory version of an addressbook contact,
   and has no tie to a specific QContactManager.  It is possible for the contents
   of a QContact to change independently of the contents that are stored persistently
@@ -100,7 +101,7 @@ QTM_BEGIN_NAMESPACE
   you will need to ask a specific QContactManager for the new display label for the
   contact, since system settings (like the order of first or last names) can vary
   between managers.
- 
+
   \sa QContactManager, QContactDetail
  */
 
@@ -111,6 +112,7 @@ QTM_BEGIN_NAMESPACE
  *
  * For example:
  *  \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 3
+ * \since 1.0
  */
 
 /*!
@@ -120,17 +122,20 @@ QTM_BEGIN_NAMESPACE
  *
  * For example:
  *  \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 4
+ * \since 1.0
  */
 
 /*!
  * \fn T QContact::detail() const
  * Returns the first detail of the template parameter type, as returned by the template details() function.
  * The type must be a subclass of QContactDetail.
+ * \since 1.0
  */
 
 /*!
  * \fn QContact::operator!=(const QContact &other) const
  * Returns true if this contacts id or details are different to those of the \a other contact.
+ * \since 1.0
  */
 
 /*!
@@ -156,6 +161,7 @@ QContact::QContact(const QContact& other)
  *
  * An empty QContact has an empty label and no extra details.
  * The type of the contact is irrelevant.
+ * \since 1.0
  */
 bool QContact::isEmpty() const
 {
@@ -172,6 +178,7 @@ bool QContact::isEmpty() const
  * Removes all details of the contact.
  * This function does not modify the id or type of the contact.
  * Calling isEmpty() after calling this function will return true.
+ * \since 1.0
  */
 void QContact::clearDetails()
 {
@@ -190,7 +197,9 @@ void QContact::clearDetails()
     d->m_details.insert(1, contactType);
 }
 
-/*! Replace the contents of this QContact with \a other */
+/*! Replace the contents of this QContact with \a other
+ * \since 1.0
+*/
 QContact& QContact::operator=(const QContact& other)
 {
     d = other.d;
@@ -212,6 +221,7 @@ QContact::~QContact()
     information.
 
     \sa localId()
+    \since 1.0
  */
 QContactId QContact::id() const
 {
@@ -230,6 +240,7 @@ QContactId QContact::id() const
  * of an existing contact, or to save a contact in a different manager.
  *
  * \sa QContactManager::saveContact()
+ * \since 1.0
  */
 void QContact::setId(const QContactId& id)
 {
@@ -249,6 +260,7 @@ void QContact::setId(const QContactId& id)
     information.
 
    \sa id()
+   \since 1.0
 */
 QContactLocalId QContact::localId() const
 {
@@ -261,6 +273,7 @@ QContactLocalId QContact::localId() const
  * in the contact, or by calling \l setType()) or synthesized automatically.
  *
  * \sa setType()
+ * \since 1.0
  */
 QString QContact::type() const
 {
@@ -273,6 +286,7 @@ QString QContact::type() const
 
 /*!
  * Sets the type of the contact to the given \a type.
+ * \since 1.0
  */
 void QContact::setType(const QString& type)
 {
@@ -286,6 +300,7 @@ void QContact::setType(const QString& type)
 
 /*!
  * Sets the type of the contact to the given \a type detail.
+ * \since 1.0
  */
 void QContact::setType(const QContactType& type)
 {
@@ -309,6 +324,7 @@ void QContact::setType(const QContactType& type)
  * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
  *
  * \sa QContactManager::synthesizeContactDisplayLabel()
+ * \since 1.0
  */
 QString QContact::displayLabel() const
 {
@@ -376,6 +392,7 @@ void QContact::setTags(const QStringList& tags)
     the following manner:
 
     \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 1
+    \since 1.0
 */
 
 /*!
@@ -391,11 +408,13 @@ void QContact::setTags(const QStringList& tags)
     the following manner:
 
     \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 3
+    \since 1.0
 */
 
 /*!
     \fn QList<QContactDetail> QContact::details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value)
     Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
+    \since 1.0
 */
 
 /*!
@@ -403,10 +422,12 @@ void QContact::setTags(const QStringList& tags)
     \internal
 
     Returns a list of details of the template type which match the \a fieldName and \a value criteria
+    \since 1.0
 */
 
 /*!
     Returns the first detail stored in the contact with the given \a definitionName
+    \since 1.0
 */
 QContactDetail QContact::detail(const QString& definitionName) const
 {
@@ -435,6 +456,7 @@ QContactDetail QContact::detail(const QString& definitionName) const
     \l{QContactDetailDefinition::name()}{name()} of each
     definition.  If \a definitionName is empty, all details of any definition
     will be returned.
+    \since 1.0
  */
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
@@ -468,6 +490,7 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     \l{QContactDetailDefinition::name()}{name()} of each
     definition.  If \a definitionName is empty, all details of any definition
     will be returned.
+    \since 1.0
  */
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
@@ -493,6 +516,7 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
 /*!
     \internal
     Returns the first detail stored in the contact which with the given \a definitionName
+    \since 1.0
 */
 QContactDetail QContact::detail(const char* definitionName) const
 {
@@ -513,6 +537,7 @@ QContactDetail QContact::detail(const char* definitionName) const
 /*!
     \internal
     Returns a list of details with the given \a definitionName
+    \since 1.0
 */
 QList<QContactDetail> QContact::details(const char* definitionName) const
 {
@@ -537,6 +562,7 @@ QList<QContactDetail> QContact::details(const char* definitionName) const
 /*!
     \internal
     Returns a list of details with the given \a definitionName, \a fieldName and field \a value
+    \since 1.0
 */
 QList<QContactDetail> QContact::details(const char* definitionName, const char* fieldName, const QString& value) const
 {
@@ -593,6 +619,7 @@ QList<QContactDetail> QContact::details(const char* definitionName, const char* 
  *
  * Note that the caller retains ownership of the detail.
  * \sa QContactManager::synthesizeContactDisplayLabel()
+ * \since 1.0
  */
 bool QContact::saveDetail(QContactDetail* detail)
 {
@@ -650,6 +677,7 @@ bool QContact::saveDetail(QContactDetail* detail)
  * Returns true if the detail was removed successfully, false if an error occurred.
  *
  * Note that the caller retains ownership of the detail.
+ * \since 1.0
  */
 bool QContact::removeDetail(QContactDetail* detail)
 {
@@ -689,7 +717,9 @@ bool QContact::removeDetail(QContactDetail* detail)
     return true;
 }
 
-/*! Returns true if this contact is equal to the \a other contact, false if either the id or stored details are not the same */
+/*! Returns true if this contact is equal to the \a other contact, false if either the id or stored details are not the same
+    \since 1.0
+*/
 bool QContact::operator==(const QContact& other) const
 {
     return other.d->m_id == d->m_id &&
@@ -699,6 +729,7 @@ bool QContact::operator==(const QContact& other) const
 /*!
     \relates QContact
     Returns the hash value for \a key.
+    \since 1.0
 */
 uint qHash(const QContact &key)
 {
@@ -723,6 +754,7 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a contact to the stream \a out.
+ * \since 1.0
  */
 QDataStream& operator<<(QDataStream& out, const QContact& contact)
 {
@@ -732,6 +764,7 @@ QDataStream& operator<<(QDataStream& out, const QContact& contact)
 
 /*!
  * Reads a contact from stream \a in into \a contact.
+ * \since 1.0
  */
 QDataStream& operator>>(QDataStream& in, QContact& contact)
 {
@@ -764,6 +797,7 @@ QDataStream& operator>>(QDataStream& in, QContact& contact)
     \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 5
 
     \sa QContactRelationshipFetchRequest, QContactManager::relationships()
+    \since 1.0
  */
 QList<QContactRelationship> QContact::relationships(const QString& relationshipType) const
 {
@@ -795,6 +829,7 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
 
     \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 6
 
+    \since 1.0
     \sa QContactRelationshipFetchRequest, QContactManager::relationships()
  */
 QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationship::Role role) const

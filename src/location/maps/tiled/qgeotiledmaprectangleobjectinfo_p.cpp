@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -113,26 +113,29 @@ void QGeoTiledMapRectangleObjectInfo::regenPolygon()
 {
     QPolygonF poly;
 
-    const QGeoCoordinate tl = rectangle->bounds().topLeft();
-    if (!tl.isValid())
+    if (!rectangle->bounds().isValid())
         return;
 
-    const QGeoCoordinate tr = rectangle->bounds().topRight();
-    if (!tr.isValid())
+    const QGeoCoordinate tl = rectangle->bounds().topLeft();
+    if (!tl.isValid())
         return;
 
     const QGeoCoordinate br = rectangle->bounds().bottomRight();
     if (!br.isValid())
         return;
 
-    const QGeoCoordinate bl = rectangle->bounds().bottomLeft();
-    if (!bl.isValid())
-        return;
+    double left = tl.longitude() * 3600.0;
+    double right = br.longitude() * 3600.0;
+    double top = tl.latitude() * 3600.0;
+    double bottom = br.latitude() * 3600.0;
 
-    poly << QPointF(tl.longitude()*3600.0, tl.latitude()*3600.0);
-    poly << QPointF(tr.longitude()*3600.0, tr.latitude()*3600.0);
-    poly << QPointF(br.longitude()*3600.0, br.latitude()*3600.0);
-    poly << QPointF(bl.longitude()*3600.0, bl.latitude()*3600.0);
+    if (left > right)
+        right += 360.0 * 3600.0;
+
+    poly << QPointF(left, top);
+    poly << QPointF(right, top);
+    poly << QPointF(right, bottom);
+    poly << QPointF(left, bottom);
 
     polygonItem->setPolygon(poly);
 }

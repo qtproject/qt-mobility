@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,24 +49,25 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageAddress class provides an interface for a message address.
 
-    
+
     \inmodule QtMessaging
-    
+
     \ingroup messaging
-   
+    \since 1.0
+
     A message address consists of an addressee string and a type.
-*/    
+*/
 
 /*!
     \enum QMessageAddress::Type
 
     This enum type is used to describe the type of a message address.
-    
+
     \value System             A system address.
     \value Phone              A telephony address.
     \value Email              An Email, Internet Message Format address.
     \value InstantMessage     An Instant Messaging address.
-    
+
     \sa type(), setType()
 */
 
@@ -81,6 +82,7 @@ QMessageAddress::QMessageAddress()
 
 /*!
     Constructs a message address with the given \a type and \a addressee.
+    \since 1.0
 */
 QMessageAddress::QMessageAddress(Type type, const QString &addressee)
     : d_ptr(new QMessageAddressPrivate(this))
@@ -91,6 +93,7 @@ QMessageAddress::QMessageAddress(Type type, const QString &addressee)
 
 /*!
     Constructs a copy of \a other.
+    \since 1.0
 */
 QMessageAddress::QMessageAddress(const QMessageAddress &other)
     : d_ptr(new QMessageAddressPrivate(this))
@@ -98,7 +101,9 @@ QMessageAddress::QMessageAddress(const QMessageAddress &other)
     this->operator=(other);
 }
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 QMessageAddress& QMessageAddress::operator=(const QMessageAddress& other)
 {
     if (&other != this) {
@@ -118,13 +123,17 @@ QMessageAddress::~QMessageAddress()
     d_ptr = 0;
 }
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 bool QMessageAddress::operator==(const QMessageAddress& other) const
 {
     return ((d_ptr->type == other.d_ptr->type) && (d_ptr->addressee == other.d_ptr->addressee));
 }
 
-/*! \internal */
+/*! \internal
+    \since 1.0
+*/
 bool QMessageAddress::operator!=(const QMessageAddress& other) const
 {
     return !operator==(other);
@@ -133,6 +142,7 @@ bool QMessageAddress::operator!=(const QMessageAddress& other) const
 /*!
     Returns the addressee.
 
+    \since 1.0
     \sa setAddressee()
 */
 QString QMessageAddress::addressee() const
@@ -143,6 +153,7 @@ QString QMessageAddress::addressee() const
 /*!
     Sets the addressee to \a addressee.
 
+    \since 1.0
     \sa addressee()
 */
 void QMessageAddress::setAddressee(const QString &addressee)
@@ -153,6 +164,7 @@ void QMessageAddress::setAddressee(const QString &addressee)
 /*!
     Returns the type of the message address.
 
+    \since 1.0
     \sa setType()
 */
 QMessageAddress::Type QMessageAddress::type() const
@@ -163,6 +175,7 @@ QMessageAddress::Type QMessageAddress::type() const
 /*!
     Sets the type of the message address to \a type.
 
+    \since 1.0
     \sa type()
 */
 void QMessageAddress::setType(Type type)
@@ -176,16 +189,17 @@ void QMessageAddress::setType(Type type)
     * \a name is set to the name part of the email address.
     * \a address is set to the address part of the email address.
     * \a suffix is set to the suffix part of the email address.
-    
-    If the starting delimeter between the name and address part of the email address is found 
+
+    If the starting delimeter between the name and address part of the email address is found
     then * \a startDelimeterFound is set to true; otherwise * \a startDelimeterFound is set to false;
 
     If the starting delimeter is not found, then the parsing is ambiguous and both * \a name and
     * \a address will be set to the input \a emailAddress.
 
-    If the ending delimeter of the address part of the email address is found 
+    If the ending delimeter of the address part of the email address is found
     then * \a endDelimeterFound is set to true; otherwise * \a endDelimeterFound is set to false;
 
+    \since 1.0
 */
 void QMessageAddress::parseEmailAddress(const QString &emailAddress, QString *name, QString *address, QString *suffix, bool *startDelimeterFound, bool *endDelimeterFound)
 {

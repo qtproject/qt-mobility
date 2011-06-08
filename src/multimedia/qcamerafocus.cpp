@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -172,6 +172,7 @@ void QCameraFocusZone::setStatus(QCameraFocusZone::FocusZoneStatus status)
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
 */
 
@@ -234,6 +235,7 @@ QCameraFocus::~QCameraFocus()
 
 /*!
     Returns true if focus related settings are supported by this camera.
+    \since 1.1
 */
 bool QCameraFocus::isAvailable() const
 {
@@ -244,6 +246,7 @@ bool QCameraFocus::isAvailable() const
   \property QCameraFocus::focusMode
   \brief The current camera focus mode.
 
+  \since 1.1
   \sa QCameraFocus::isFocusModeSupported()
 */
 
@@ -260,6 +263,7 @@ void QCameraFocus::setFocusMode(QCameraFocus::FocusMode mode)
 
 /*!
     Returns true if the focus \a mode is supported by camera.
+    \since 1.1
 */
 
 bool QCameraFocus::isFocusModeSupported(QCameraFocus::FocusMode mode) const
@@ -272,6 +276,7 @@ bool QCameraFocus::isFocusModeSupported(QCameraFocus::FocusMode mode) const
   \brief The current camera focus point selection mode.
 
   \sa QCameraFocus::isFocusPointModeSupported()
+  \since 1.1
 */
 
 QCameraFocus::FocusPointMode QCameraFocus::focusPointMode() const
@@ -291,6 +296,7 @@ void QCameraFocus::setFocusPointMode(QCameraFocus::FocusPointMode mode)
 
 /*!
   Returns true if focus point \a mode is supported.
+  \since 1.1
  */
 bool QCameraFocus::isFocusPointModeSupported(QCameraFocus::FocusPointMode mode) const
 {
@@ -307,6 +313,7 @@ bool QCameraFocus::isFocusPointModeSupported(QCameraFocus::FocusPointMode mode) 
   QPointF(0,0) points to the left top frame point, QPointF(0.5,0.5) points to the frame center.
 
   Custom focus point is used only in FocusPointCustom focus mode.
+  \since 1.1
  */
 
 QPointF QCameraFocus::customFocusPoint() const
@@ -335,6 +342,7 @@ void QCameraFocus::setCustomFocusPoint(const QPointF &point)
 
   The coordinates system is the same as for custom focus points:
   QPointF(0,0) points to the left top frame point, QPointF(0.5,0.5) points to the frame center.
+  \since 1.1
  */
 QCameraFocusZoneList QCameraFocus::focusZones() const
 {
@@ -345,6 +353,7 @@ QCameraFocusZoneList QCameraFocus::focusZones() const
 
 /*!
     Returns the maximum optical zoom
+    \since 1.1
 */
 
 qreal QCameraFocus::maximumOpticalZoom() const
@@ -354,6 +363,7 @@ qreal QCameraFocus::maximumOpticalZoom() const
 
 /*!
     Returns the maximum digital zoom
+    \since 1.1
 */
 
 qreal QCameraFocus::maximumDigitalZoom() const
@@ -365,6 +375,7 @@ qreal QCameraFocus::maximumDigitalZoom() const
   \property QCameraFocus::opticalZoom
   \brief The current optical zoom value.
 
+  \since 1.1
   \sa QCameraFocus::digitalZoom
 */
 
@@ -377,6 +388,7 @@ qreal QCameraFocus::opticalZoom() const
   \property QCameraFocus::digitalZoom
   \brief The current digital zoom value.
 
+  \since 1.1
   \sa QCameraFocus::opticalZoom
 */
 qreal QCameraFocus::digitalZoom() const
@@ -387,6 +399,7 @@ qreal QCameraFocus::digitalZoom() const
 
 /*!
     Set the camera \a optical and \a digital zoom values.
+    \since 1.1
 */
 void QCameraFocus::zoomTo(qreal optical, qreal digital)
 {
@@ -422,18 +435,21 @@ void QCameraFocus::zoomTo(qreal optical, qreal digital)
     \fn void QCameraFocus::opticalZoomChanged(qreal value)
 
     Signal emitted when optical zoom value changes to new \a value.
+    \since 1.1
 */
 
 /*!
     \fn void QCameraFocus::digitalZoomChanged(qreal value)
 
     Signal emitted when digital zoom value changes to new \a value.
+    \since 1.1
 */
 
 /*!
     \fn void QCameraFocus::maximumOpticalZoomChanged(qreal zoom)
 
     Signal emitted when the maximum supported optical \a zoom value changed.
+    \since 1.1
 */
 
 /*!
@@ -443,6 +459,7 @@ void QCameraFocus::zoomTo(qreal optical, qreal digital)
 
     The maximum supported zoom value can depend on other camera settings,
     like capture mode or resolution.
+    \since 1.1
 */
 
 
@@ -453,6 +470,7 @@ void QCameraFocus::zoomTo(qreal optical, qreal digital)
   Signal is emitted when the set of zones, camera focused on is changed.
 
   Usually the zones list is changed when the camera is focused.
+  \since 1.1
 */
 
 

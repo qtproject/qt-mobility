@@ -81,6 +81,14 @@ file=ABI_DIR\BUILD_DIR\qtversit_backuphandler.dll                               
 data=\epoc32\data\z\resource\qt\plugins\versit\qtversit_backuphandler.qtplugin           resource\qt\plugins\versit\qtversit_backuphandler.qtplugin
 file=ABI_DIR\BUILD_DIR\qtversit_vcardpreserver.dll                                       SHARED_LIB_DIR\qtversit_vcardpreserver.dll
 data=\epoc32\data\z\resource\qt\plugins\versit\qtversit_vcardpreserver.qtplugin          resource\qt\plugins\versit\qtversit_vcardpreserver.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitfavoriteplugin.dll                                       SHARED_LIB_DIR\cntversitfavoriteplugin.dll
+data=\epoc32\data\z\resource\qt\plugins\versit\cntversitfavoriteplugin.qtplugin          resource\qt\plugins\versit\cntversitfavoriteplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitlandlineplugin.dll                                       SHARED_LIB_DIR\cntversitlandlineplugin.dll
+data=\epoc32\data\z\resource\qt\plugins\versit\cntversitlandlineplugin.qtplugin          resource\qt\plugins\versit\cntversitlandlineplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitmycardplugin.dll                                         SHARED_LIB_DIR\cntversitmycardplugin.dll
+data=\epoc32\data\z\resource\qt\plugins\versit\cntversitmycardplugin.qtplugin            resource\qt\plugins\versit\cntversitmycardplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitprefplugin.dll                                           SHARED_LIB_DIR\cntversitprefplugin.dll
+data=\epoc32\data\z\resource\qt\plugins\versit\cntversitprefplugin.qtplugin              resource\qt\plugins\versit\cntversitprefplugin.qtplugin
 file=ABI_DIR\BUILD_DIR\declarative_contacts.dll                                          SHARED_LIB_DIR\declarative_contacts.dll
 data=\epoc32\data\z\resource\qt\imports\qtmobility\contacts\declarative_contacts.qtplugin resource\qt\imports\qtmobility\contacts\declarative_contacts.qtplugin
 data=\epoc32\data\z\resource\qt\imports\qtmobility\contacts\qmldir                       resource\qt\imports\qtmobility\contacts\qmldir
@@ -116,10 +124,11 @@ data=\epoc32\data\z\resource\qt\imports\qtmobility\systeminfo\declarative_system
 data=\epoc32\data\z\resource\qt\imports\qtmobility\systeminfo\qmldir                     resource\qt\imports\qtmobility\systeminfo\qmldir
 
 //Resource
-data=DATAZ_\CONTACTS_RESOURCE_DIR\customisedcntmodel.rsc                                 CONTACTS_RESOURCE_DIR\customisedcntmodel.rsc
 data=\epoc32\data\z\private\2002ac7f\qtserviceframework_4.7_system.db                    private\2002ac7f\qtserviceframework_4.7_system.db
 data=\epoc32\data\z\private\10202D56\import\packages\2002AC89\backup_registration.xml    private\10202D56\import\packages\2002AC89\backup_registration.xml
 
+// Symbian3 PS1 support
+file=\sf\mw\qtmobility\src\s60installs\deviceconfiguration\QtBearer{000a0000}.dll                                                      SHARED_LIB_DIR\QtBearer{000a0000}.dll
 #endif // FF_QT_IN_UDA
 
 #endif // __QT_MOBILITY_IBY__

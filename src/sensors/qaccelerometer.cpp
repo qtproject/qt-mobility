@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,6 +50,7 @@ IMPLEMENT_READING(QAccelerometerReading)
     \class QAccelerometerReading
     \ingroup sensors_reading
     \inmodule QtSensors
+    \since 1.0
 
     \brief The QAccelerometerReading class reports on linear acceleration
            along the X, Y and Z axes.
@@ -72,6 +73,7 @@ IMPLEMENT_READING(QAccelerometerReading)
 
     The scale of the values is meters per second squared.
     \sa {QAccelerometerReading Units}
+    \since 1.0
 */
 
 qreal QAccelerometerReading::x() const
@@ -81,6 +83,7 @@ qreal QAccelerometerReading::x() const
 
 /*!
     Sets the acceleration on the X axis to \a x.
+    \since 1.0
 */
 void QAccelerometerReading::setX(qreal x)
 {
@@ -93,6 +96,7 @@ void QAccelerometerReading::setX(qreal x)
 
     The scale of the values is meters per second squared.
     \sa {QAccelerometerReading Units}
+    \since 1.0
 */
 
 qreal QAccelerometerReading::y() const
@@ -102,6 +106,7 @@ qreal QAccelerometerReading::y() const
 
 /*!
     Sets the acceleration on the Y axis to \a y.
+    \since 1.0
 */
 void QAccelerometerReading::setY(qreal y)
 {
@@ -114,6 +119,7 @@ void QAccelerometerReading::setY(qreal y)
 
     The scale of the values is meters per second squared.
     \sa {QAccelerometerReading Units}
+    \since 1.0
 */
 
 qreal QAccelerometerReading::z() const
@@ -123,6 +129,7 @@ qreal QAccelerometerReading::z() const
 
 /*!
     Sets the acceleration on the Z axis to \a z.
+    \since 1.0
 */
 void QAccelerometerReading::setZ(qreal z)
 {
@@ -140,6 +147,7 @@ void QAccelerometerReading::setZ(qreal z)
 
     The only difference is that the filter() method features a pointer to QAccelerometerReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -148,6 +156,7 @@ void QAccelerometerReading::setZ(qreal z)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QAccelerometer::type("QAccelerometer");
@@ -166,18 +175,21 @@ char const * const QAccelerometer::type("QAccelerometer");
     For details about how the sensor works, see \l QAccelerometerReading.
 
     \sa QAccelerometerReading
+    \since 1.0
 */
 
 /*!
     \fn QAccelerometer::QAccelerometer(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QAccelerometer::~QAccelerometer()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -186,6 +198,7 @@ char const * const QAccelerometer::type("QAccelerometer");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 #include "moc_qaccelerometer.cpp"

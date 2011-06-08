@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -78,13 +78,14 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
 
 /*!
   \class QContactDetail
- 
+
   \brief The QContactDetail class represents a single, complete detail about a contact.
   \inmodule QtContacts
   \ingroup contacts-main
- 
+  \since 1.0
+
   All of the information for a contact is stored in one or more QContactDetail objects.
- 
+
   A detail is a group of logically related bits of data - for example, a street address is a single
   detail that has multiple fields (number, region, country etc).  Every QContactDetail has the name of an
   associated QContactDetailDefinition that describes the fields, their data type, and any
@@ -120,7 +121,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
   standardized access to values.  For example, \l QContactPhoneNumber provides
   a convenient API for manipulating a QContactDetail as a phone number, according
   to the schema.
- 
+
   In general, QContactDetail and the built in subclasses (like \l QContactPhoneNumber) provide
   constants for the names of fields (like \l QContactPhoneNumber::FieldNumber), and for predefined
   common values like \l QContactDetail::ContextHome.  Typically the constants for field names start
@@ -132,36 +133,36 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
   See the predefined detail subclasses (like \l QContactPhoneNumber,
   \l QContactAddress) for more information.
- 
+
   QContactDetail objects act like type checked values.  In general, you can assign them
   to and fro and have reasonable behaviour, like the following example.
- 
+
   \code
- 
+
   QContactPhoneNumber number;
   number.setNumber("555-1212");
   // number.value(QContactPhoneNumber::FieldNumber) == "555-1212";
   // number.definitionName() == QContactPhoneNumber::DefinitionName
- 
+
   QContactDetail detail = number;
   // detail.value(QContactPhoneNumber::FieldNumber) == "555-1212";
   // detail.definitionName() == QContactPhoneNumber::DefinitionName
- 
+
   QContactPhoneNumber otherNumber = detail;
   // otherNumber.number() == "555-1212";
   // otherNumber.definitionName() == QContactPhoneNumber::DefinitionName
- 
+
   QContactAddress address = detail;
   // address is now a default constructed QContactAddress
   // address.value(QContactPhoneNumber::FieldNumber) is empty
   // address.definitionName() == QContactAddress::DefinitionName
- 
+
   QContactAddress otherAddress = number;
   // otherAddress is now a default constructed QContactAddress
   // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty
   // otherAddress.definitionName() == QContactAddress::DefinitionName
   \endcode
- 
+
   \sa QContact, QContactDetailDefinition, QContactDetailFilter, QContactDetailRangeFilter, Q_DECLARE_CUSTOM_CONTACT_DETAIL
  */
 
@@ -189,6 +190,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
 /*!
   \fn QContactDetail::operator!=(const QContactDetail& other) const
   Returns true if the values or id of this detail is different to those of the \a other detail
+  \since 1.0
  */
 
 /*!
@@ -202,6 +204,7 @@ QContactDetail::QContactDetail()
 /*!
     Constructs a new, empty detail of the definition identified by \a thisDefinitionId.
     The definitionId must be restricted to the Latin 1 character set.
+    \since 1.0
  */
 QContactDetail::QContactDetail(const QString& thisDefinitionId)
     : d(new QContactDetailPrivate)
@@ -215,6 +218,7 @@ QContactDetail::QContactDetail(const QString& thisDefinitionId)
     The supplied pointer must be valid for the lifetime of the program.  In general
     this means it should be a constant, and not allocated on the stack.  If you cannot
     meet this requirement, use the alternative constructor that takes a QString instead.
+    \since 1.0
 */
 QContactDetail::QContactDetail(const char* thisDefinitionId)
     : d(new QContactDetailPrivate)
@@ -222,7 +226,9 @@ QContactDetail::QContactDetail(const char* thisDefinitionId)
     d->m_definitionName = thisDefinitionId;
 }
 
-/*! Constructs a detail that is a copy of \a other */
+/*! Constructs a detail that is a copy of \a other
+    \since 1.0
+*/
 QContactDetail::QContactDetail(const QContactDetail& other)
     : d(other.d)
 {
@@ -236,6 +242,7 @@ QContactDetail::QContactDetail(const QContactDetail& other)
     definition identified by the \a expectedDefinitionId.
 
     The \a expectedDefinitionId pointer must be valid for the lifetime of the program.
+    \since 1.0
 */
 QContactDetail::QContactDetail(const QContactDetail& other, const char* expectedDefinitionId)
 {
@@ -253,6 +260,7 @@ QContactDetail::QContactDetail(const QContactDetail& other, const char* expected
     Constructs a detail that is a copy of \a other if \a other is of the expected definition
     identified by \a expectedDefinitionId, else constructs a new, empty detail of the
     definition identified by the \a expectedDefinitionId
+    \since 1.0
 */
 QContactDetail::QContactDetail(const QContactDetail& other, const QString& expectedDefinitionId)
 {
@@ -278,6 +286,7 @@ QContactDetail& QContactDetail::operator=(const QContactDetail& other)
     Assigns this detail to \a other if the definition of \a other is that identified
     by the given \a expectedDefinitionId, else assigns this detail to be a new, empty
     detail of the definition identified by the given \a expectedDefinitionId
+    \since 1.0
 */
 QContactDetail& QContactDetail::assign(const QContactDetail& other, const char* expectedDefinitionId)
 {
@@ -298,6 +307,7 @@ QContactDetail& QContactDetail::assign(const QContactDetail& other, const char* 
     Assigns this detail to \a other if the definition of \a other is that identified
     by the given \a expectedDefinitionId, else assigns this detail to be a new, empty
     detail of the definition identified by the given \a expectedDefinitionId
+    \since 1.0
 */
 QContactDetail& QContactDetail::assign(const QContactDetail& other, const QString& expectedDefinitionId)
 {
@@ -320,6 +330,7 @@ QContactDetail::~QContactDetail()
 /*!
     Returns the (unique) name of the definition which defines the semantics and structure of this detail.
     The actual QContactDetailDefinition should be retrieved from the relevant QContactManager using this name.
+    \since 1.0
  */
 QString QContactDetail::definitionName() const
 {
@@ -330,6 +341,7 @@ QString QContactDetail::definitionName() const
     Compares this detail to \a other.  Returns true if the definition, access constraints and values of \a other are equal to those of this detail.
     The keys of each detail are not considered during the comparison, in order to allow details from different contacts to
     be compared according to their values.
+    \since 1.0
  */
 bool QContactDetail::operator==(const QContactDetail& other) const
 {
@@ -362,7 +374,9 @@ uint qHash(const QContactStringHolder& key)
     return h;
 }
 
-/*! Returns the hash value for \a key. */
+/*! Returns the hash value for \a key.
+    \since 1.0
+*/
 uint qHash(const QContactDetail &key)
 {
     const QContactDetailPrivate* dptr= QContactDetailPrivate::detailPrivate(key);
@@ -394,6 +408,7 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a detail to the stream \a out.
+ * \since 1.0
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
 {
@@ -406,6 +421,7 @@ QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
 
 /*!
  * Reads a contact detail from stream \a in into \a detail.
+ * \since 1.0
  */
 QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
 {
@@ -435,7 +451,12 @@ QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
 #endif
 
 /*!
-    Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false.
+    Returns true if no values are contained in this detail.  Note that context
+    is stored as a value; hence, if a context is set, this function will return false.
+
+    An empty value (for example, the string "") is still a value contained in this
+    detail, so this function will return false.
+    \since 1.0
  */
 bool QContactDetail::isEmpty() const
 {
@@ -453,6 +474,7 @@ bool QContactDetail::isEmpty() const
  * clients should reload the detail that they wish to save in or remove from a contact
  * after retrieving the contact from the backend, in order to ascertain the keys of
  * any such details.
+    \since 1.0
  */
 int QContactDetail::key() const
 {
@@ -461,7 +483,9 @@ int QContactDetail::key() const
 
 /*! Causes the implicitly-shared detail to be detached from any other copies, and generates a new key for it.
     This ensures that calling QContact::saveDetail() will result in a new detail being saved, rather than
-    another detail being updated. */
+    another detail being updated.
+    \since 1.0
+*/
 void QContactDetail::resetKey()
 {
     d->m_id = QContactDetailPrivate::lastDetailKey.fetchAndAddOrdered(1);
@@ -469,7 +493,9 @@ void QContactDetail::resetKey()
 
 /*! \overload
   Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
-  no value for the given \a key exists */
+  no value for the given \a key exists
+    \since 1.0
+*/
 QString QContactDetail::value(const QString& key) const
 {
     return d.constData()->m_values.value(QContactStringHolder(key)).toString();
@@ -480,6 +506,7 @@ QString QContactDetail::value(const QString& key) const
     \overload
     Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
     no value for the given \a key exists
+    \since 1.0
 */
 QString QContactDetail::value(const char* key) const
 {
@@ -490,9 +517,12 @@ QString QContactDetail::value(const char* key) const
     \fn T QContactDetail::value(const char* key) const
     \internal
     \overload
+    \since 1.0
 */
 
-/*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
+/*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists
+    \since 1.0
+*/
 QVariant QContactDetail::variantValue(const QString& key) const
 {
     return d.constData()->m_values.value(QContactStringHolder(key));
@@ -501,6 +531,7 @@ QVariant QContactDetail::variantValue(const QString& key) const
 /*!
     \internal
     Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists
+    \since 1.0
  */
 QVariant QContactDetail::variantValue(const char* key) const
 {
@@ -509,6 +540,7 @@ QVariant QContactDetail::variantValue(const char* key) const
 
 /*!
   Returns true if this detail has a field with the given \a key, or false otherwise.
+  \since 1.0
  */
 bool QContactDetail::hasValue(const QString& key) const
 {
@@ -518,6 +550,7 @@ bool QContactDetail::hasValue(const QString& key) const
 /*!
   \internal
   Returns true if this detail has a field with the given \a key, or false otherwise.
+  \since 1.0
  */
 bool QContactDetail::hasValue(const char * key) const
 {
@@ -527,7 +560,9 @@ bool QContactDetail::hasValue(const char * key) const
 /*! Inserts \a value into the detail for the given \a key if \a value is valid.  If \a value is invalid,
     removes the field with the given \a key from the detail.  Returns true if the given \a value was set
     for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
-    \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid) */
+    \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid)
+    \since 1.0
+*/
 bool QContactDetail::setValue(const QString& key, const QVariant& value)
 {
     if (!value.isValid())
@@ -544,6 +579,7 @@ bool QContactDetail::setValue(const QString& key, const QVariant& value)
     removes the field with the given \a key from the detail.  Returns true if the given \a value was set
     for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
     \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid)
+    \since 1.0
 */
 bool QContactDetail::setValue(const char* key, const QVariant& value)
 {
@@ -557,6 +593,7 @@ bool QContactDetail::setValue(const char* key, const QVariant& value)
 /*!
     Removes the value stored in this detail for the given \a key.  Returns true if a value was stored
     for the given \a key and the operation succeeded, and false otherwise.
+    \since 1.0
 */
 bool QContactDetail::removeValue(const QString& key)
 {
@@ -569,6 +606,7 @@ bool QContactDetail::removeValue(const QString& key)
     \internal
     Removes the value stored in this detail for the given \a key.  Returns true if a value was stored
     for the given \a key and the operation succeeded, and false otherwise.
+    \since 1.0
 */
 bool QContactDetail::removeValue(const char * key)
 {
@@ -579,6 +617,7 @@ bool QContactDetail::removeValue(const char * key)
 
 /*!
   Returns the values stored in this detail as a map from value key to value
+  \since 1.0
  */
 QVariantMap QContactDetail::variantValues() const
 {
@@ -600,37 +639,44 @@ QVariantMap QContactDetail::variantValues() const
     removes the field with the given \a key from the detail.  Returns true if the given \a value was set
     for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
     \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid)
+    \since 1.0
 */
 /*!
     \fn bool QContactDetail::removeValue(const QLatin1Constant& key)
 
     Removes the value stored in this detail for the given \a key.  Returns true if a value was stored
     for the given \a key and the operation succeeded, and false otherwise.
+    \since 1.0
 */
 
 /*!
     \fn bool QContactDetail::hasValue(const QLatin1Constant& key) const
     Returns true if this detail has a field with the given \a key, or false otherwise.
+    \since 1.0
  */
 
 /*!
     \fn QVariant QContactDetail::variantValue(const QLatin1Constant& key) const
     Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists
+    \since 1.0
  */
 
 /*!
     \fn T QContactDetail::value(const QLatin1Constant& key) const
     \overload
     Returns the value of the template type associated with the given \a key
+    \since 1.0
  */
 /*!
     \fn QString QContactDetail::value(const QLatin1Constant& key) const
     Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
     no value for the given \a key exists
+    \since 1.0
 */
 /*!
     \fn T QContactDetail::value(const QString& key) const
     Returns the value of the template type associated with the given \a key
+    \since 1.0
  */
 
 /*!
@@ -669,6 +715,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa setValue()
+  \since 1.0
  */
 
 /*!
@@ -683,6 +730,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa setValue()
+  \since 1.0
  */
 
 /*!
@@ -696,6 +744,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa value()
+  \since 1.0
  */
 
 
@@ -711,6 +760,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa setValue()
+  \since 1.0
  */
 
 /*!
@@ -724,6 +774,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa value()
+  \since 1.0
  */
 
 
@@ -738,6 +789,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa setValue()
+  \since 1.0
  */
 
 /*!
@@ -752,6 +804,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa setValue()
+  \since 1.0
  */
 
 /*!
@@ -765,6 +818,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
   \endcode
 
   \sa value()
+  \since 1.0
  */
 
 QTM_END_NAMESPACE

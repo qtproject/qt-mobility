@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -63,6 +63,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-request
+    \since 1.1
 */
 
 /*!
@@ -85,6 +86,7 @@ QLandmarkFetchRequest::~QLandmarkFetchRequest()
 
     By default, the filter's type will be a QLandmarkFilter::DefaultFilter
     and thus match all landmarks.
+    \since 1.1
 */
 QLandmarkFilter QLandmarkFetchRequest::filter() const
 {
@@ -95,6 +97,7 @@ QLandmarkFilter QLandmarkFetchRequest::filter() const
 
 /*!
     Sets the \a filter which will be used to select landmarks.
+    \since 1.1
 */
 void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 {
@@ -106,6 +109,7 @@ void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 /*!
     Returns the sort ordering which is used to sort the result.  By default
     the sort order list is empty, thus no sorting will take place.
+    \since 1.1
 */
 QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
 {
@@ -118,6 +122,7 @@ QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
     Sets the sort ordering of the request to \a sorting.  This
     function will only have an effect on the results if invoked
     prior to calling \l QLandmarkAbstractRequest::start().
+    \since 1.1
 */
 void QLandmarkFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
 {
@@ -130,6 +135,7 @@ void QLandmarkFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
     Convenience function which sets the sort ordering of the request to a single \a sorting.  This function
     will only have an effect on results if invoked prior to calling
     \l QLandmarkAbstractRequest::start().
+    \since 1.1
 */
 void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 {
@@ -142,6 +148,7 @@ void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 /*!
     Returns the maximum number of landmarks to be returned.  By default the limit
     is -1 indicating that all landmarks matching the filter sould be retrieved.
+    \since 1.1
 */
 int QLandmarkFetchRequest::limit() const
 {
@@ -156,6 +163,7 @@ int QLandmarkFetchRequest::limit() const
     A limit of -1 will retrieve all landmarks that match the filter.
 
     (A limit of 0 will retrieve no landmarks.)
+    \since 1.1
  */
 void QLandmarkFetchRequest::setLimit(int limit)
 {
@@ -172,6 +180,7 @@ void QLandmarkFetchRequest::setLimit(int limit)
     For example, if there are 10 landmarks in the landmark store, setting the offset
     to 2 and limit to 5 will retrieve the 3rd to 7th landmarks inclusively.  (The order
     of the landmarks is specified by the sorting field).
+    \since 1.1
 */
 int QLandmarkFetchRequest::offset() const
 {
@@ -182,6 +191,7 @@ int QLandmarkFetchRequest::offset() const
 
 /*!
     Sets the index \a offset for the request.
+    \since 1.1
 */
 void QLandmarkFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkFetchRequest);
@@ -192,6 +202,7 @@ void QLandmarkFetchRequest::setOffset(int offset) {
 /*!
     Returns the list of landmarks which matched the
     filter.
+    \since 1.1
 */
 QList<QLandmark> QLandmarkFetchRequest::landmarks() const
 {

@@ -62,7 +62,7 @@ PlayerResourcePolicy::PlayerResourcePolicy(QObject *parent) :
 {
 #ifdef HAVE_RESOURCE_POLICY
     m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
-    m_resourceSet->setAutoRelease();
+    m_resourceSet->setAlwaysReply();
 
     ResourcePolicy::AudioResource *audioResource = new ResourcePolicy::AudioResource("player");
     audioResource->setProcessID(QCoreApplication::applicationPid());
@@ -77,6 +77,8 @@ PlayerResourcePolicy::PlayerResourcePolicy(QObject *parent) :
     connect(m_resourceSet, SIGNAL(resourcesDenied()),
             this, SLOT(handleResourcesDenied()));
     connect(m_resourceSet, SIGNAL(lostResources()),
+            this, SLOT(handleResourcesLost()));
+    connect(m_resourceSet, SIGNAL(resourcesReleasedByManager()),
             this, SLOT(handleResourcesLost()));
 #endif
 }
@@ -113,7 +115,7 @@ void PlayerResourcePolicy::acquire()
 #ifdef DEBUG_RESOURCE_POLICY
     qDebug() << Q_FUNC_INFO << "Acquire resource";
 #endif
-
+    m_status = RequestedResource;
     m_resourceSet->acquire();
 #else
     m_status = GrantedResource;
@@ -129,9 +131,9 @@ void PlayerResourcePolicy::release()
 #endif
 
     m_resourceSet->release();
-#else
-    m_status = Initial;
 #endif
+    m_status = Initial;
+
 }
 
 bool PlayerResourcePolicy::isGranted() const
@@ -164,9 +166,15 @@ void PlayerResourcePolicy::handleResourcesDenied()
 
 void PlayerResourcePolicy::handleResourcesLost()
 {
-    m_status = Initial;
 #ifdef DEBUG_RESOURCE_POLICY
     qDebug() << Q_FUNC_INFO << "Resource lost";
 #endif
-    emit resourcesLost();
+    if (m_status != Initial) {
+        m_status = Initial;
+        emit resourcesLost();
+    }
+
+#ifdef HAVE_RESOURCE_POLICY
+    m_resourceSet->release();
+#endif
 }

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -108,6 +108,7 @@ public:
     \ingroup gallery-requests
 
     \inmodule QtGallery
+    \since 1.1
 
     \brief The QGalleryItemRequest class provides a request for the properties
     of a single item from a gallery.
@@ -144,6 +145,7 @@ QGalleryItemRequest::QGalleryItemRequest(QObject *parent)
     Contructs a new item request for the given \a gallery.
 
     The \a parent is passed to QObject.
+    \since 1.1
 */
 
 QGalleryItemRequest::QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent)
@@ -163,6 +165,7 @@ QGalleryItemRequest::~QGalleryItemRequest()
     \property QGalleryItemRequest::propertyNames
 
     \brief A list of names of meta-data properties a request should return values for.
+    \since 1.1
 */
 
 QStringList QGalleryItemRequest::propertyNames() const
@@ -183,6 +186,7 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &names)
     \fn QGalleryItemRequest::propertyNamesChanged()
 
     Signals that the value of \l propertyNames has changed.
+    \since 1.1
 */
 
 /*!
@@ -193,6 +197,7 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &names)
 
     If this is true the request will go into the Idle state when the request has
     finished rather than returning to Inactive.
+    \since 1.1
 */
 
 bool QGalleryItemRequest::autoUpdate() const
@@ -213,12 +218,14 @@ void QGalleryItemRequest::setAutoUpdate(bool enabled)
     \fn QGalleryItemRequest::autoUpdateChanged()
 
     Signals that the value of \l autoUpdate has changed.
+    \since 1.1
 */
 
 /*!
     \property QGalleryItemRequest::itemId
 
     \brief the ID of an item the request should return the properties of.
+    \since 1.1
 */
 
 QVariant QGalleryItemRequest::itemId() const
@@ -239,10 +246,12 @@ void QGalleryItemRequest::setItemId(const QVariant &itemId)
     \fn QGalleryItemRequest::itemIdChanged()
 
     Signals that the value of the \l itemId property has changed.
+    \since 1.1
 */
 
 /*!
     Returns the result set containing the meta-data of a type.
+    \since 1.1
 */
 
 QGalleryResultSet *QGalleryItemRequest::resultSet() const
@@ -255,16 +264,19 @@ QGalleryResultSet *QGalleryItemRequest::resultSet() const
 
     Signals that the \a resultSet containing the meta-data of an item has
     changed.
+    \since 1.1
 */
 
 /*!
     \fn QGalleryItemRequest::itemChanged()
 
     Signals that the properties of an item have changed.
+    \since 1.1
 */
 
 /*!
     Returns the key of \a property.
+    \since 1.1
 */
 
 int QGalleryItemRequest::propertyKey(const QString &property) const
@@ -274,6 +286,7 @@ int QGalleryItemRequest::propertyKey(const QString &property) const
 
 /*!
     Returns the attributes of the property identified by \a key.
+    \since 1.1
 */
 
 QGalleryProperty::Attributes QGalleryItemRequest::propertyAttributes(int key) const
@@ -283,6 +296,7 @@ QGalleryProperty::Attributes QGalleryItemRequest::propertyAttributes(int key) co
 
 /*!
     Returns the type of the property identified by \a key.
+    \since 1.1
 */
 
 QVariant::Type QGalleryItemRequest::propertyType(int key) const
@@ -294,6 +308,7 @@ QVariant::Type QGalleryItemRequest::propertyType(int key) const
     \property QGalleryItemRequest::valid
 
     \brief Whether the request currently holds valid type information.
+    \since 1.1
 */
 
 bool QGalleryItemRequest::isValid() const
@@ -305,6 +320,7 @@ bool QGalleryItemRequest::isValid() const
     \property QGalleryItemRequest::itemUrl
 
     \brief The URL of an item.
+    \since 1.1
 */
 
 QUrl QGalleryItemRequest::itemUrl() const
@@ -316,6 +332,7 @@ QUrl QGalleryItemRequest::itemUrl() const
     \property QGalleryItemRequest::itemType
 
     \brief the type of an item.
+    \since 1.1
 */
 
 QString QGalleryItemRequest::itemType() const
@@ -327,6 +344,7 @@ QString QGalleryItemRequest::itemType() const
     \property QGalleryItemRequest::resources
 
     \brief the resources of an item.
+    \since 1.1
 */
 
 QList<QGalleryResource> QGalleryItemRequest::resources() const
@@ -336,8 +354,8 @@ QList<QGalleryResource> QGalleryItemRequest::resources() const
 
 /*!
     Returns the value of a meta-data property identified by \a key.
+    \since 1.1
 */
-
 
 QVariant QGalleryItemRequest::metaData(int key) const
 {
@@ -348,6 +366,7 @@ QVariant QGalleryItemRequest::metaData(int key) const
     Sets the \a value of a meta-data property identified by \a key.
 
     Returns true if the value was changed; otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryItemRequest::setMetaData(int key, const QVariant &value)
@@ -357,8 +376,8 @@ bool QGalleryItemRequest::setMetaData(int key, const QVariant &value)
 
 /*!
     Returns the value of a meta-data \a property.
+    \since 1.1
 */
-
 
 QVariant QGalleryItemRequest::metaData(const QString &property) const
 {
@@ -370,6 +389,7 @@ QVariant QGalleryItemRequest::metaData(const QString &property) const
     Sets the \value of a meta-data \a property.
 
     Returns true if the value was changed; otherwise returns false.
+    \since 1.1
 */
 
 bool QGalleryItemRequest::setMetaData(const QString &property, const QVariant &value)
@@ -383,10 +403,12 @@ bool QGalleryItemRequest::setMetaData(const QString &property, const QVariant &v
 
     Signals that the values of meta-data properties identified by \a keys
     have changed.
+    \since 1.1
 */
 
 /*!
     \reimp
+    \since 1.1
 */
 
 void QGalleryItemRequest::setResponse(QGalleryAbstractResponse *response)

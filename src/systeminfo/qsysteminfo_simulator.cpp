@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -68,6 +68,41 @@
 #ifndef QT_BUILD_SYSINFO_LIB
 QTM_BEGIN_NAMESPACE
 #endif
+
+#ifdef TESTR
+SystemInfoConnection::SystemInfoConnection(QObject *parent)
+    : QObject(parent)
+{
+}
+
+QSystemInfoPrivate *SystemInfoConnection::systeminfoPrivate()
+{
+    return getSystemInfoPrivate();
+}
+
+QSystemNetworkInfoPrivate *SystemInfoConnection::networkInfoPrivate()
+{
+    return getSystemNetworkInfoPrivate();
+}
+
+QSystemDeviceInfoPrivate *SystemInfoConnection::deviceInfoPrivate()
+{
+    return getSystemDeviceInfoPrivate();
+}
+
+QSystemStorageInfoPrivate *SystemInfoConnection::storageInfoPrivate()
+{
+    return getSystemStorageInfoPrivate();
+}
+
+QSystemBatteryInfoPrivate *SystemInfoConnection::batteryInfoPrivate()
+{
+    return getSystemBatteryInfoPrivate();
+}
+
+#include "qsysteminfo_simulator.moc"
+#endif
+
 
 #ifdef QT_BUILD_SYSINFO_LIB
 #include <mobilityconnection_p.h>
@@ -169,6 +204,7 @@ namespace Simulator
         s->setSimStatus(data.simStatus);
         s->setCurrentProfile(data.currentProfile);
         s->setCurrentPowerState(data.currentPowerState);
+        s->setCurrentThermalState(data.currentThermalState);
 
         s->setBatteryLevel(data.batteryLevel);
         s->setDeviceLocked(data.deviceLocked);
@@ -239,7 +275,10 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     QMetaEnum featureMeta = QSystemInfo::staticMetaObject.enumerator(QSystemInfo::staticMetaObject.indexOfEnumerator("Feature"));
     data.features.fill(false, featureMeta.keyCount());
     QMetaEnum versionMeta = QSystemInfo::staticMetaObject.enumerator(QSystemInfo::staticMetaObject.indexOfEnumerator("Version"));
-    data.versions.fill("unknown", versionMeta.keyCount() + 1);
+    data.versions.fill("", versionMeta.keyCount() + 1);
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemInfoPrivate::setInitialData()
@@ -250,8 +289,9 @@ void QSystemInfoPrivate::setInitialData()
     addAvailableLanguage("de");
     setFeature(QSystemInfo::LocationFeature, true);
     setFeature(QSystemInfo::UsbFeature, true);
-    setVersion(QSystemInfo::QtCore, "4.6 probably");
-    setVersion(QSystemInfo::Firmware, "1.9-alpha-rc7");
+    setVersion(QSystemInfo::QtCore, qVersion());
+    setVersion(QSystemInfo::Os, "1.0-simulator-os");
+    setVersion(QSystemInfo::Firmware, "1.0-simulator-firmware");
 }
 
 void QSystemInfoPrivate::setCurrentLanguage(const QString &v)
@@ -335,6 +375,9 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     QMetaEnum modeMeta = QSystemNetworkInfo::staticMetaObject.enumerator(QSystemNetworkInfo::staticMetaObject.indexOfEnumerator("NetworkMode"));
     data.networkInfo.fill(init, modeMeta.keyCount());
 
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -377,6 +420,15 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 {
     return data.networkInfo[static_cast<int>(m)].interface;
 }
+
+void QSystemNetworkInfoPrivate::setCellDataTechnology(QSystemNetworkInfo::CellDataTechnology  cd)
+{
+    if (data.cellData != cd) {
+        data.cellData = cd;
+        emit cellDataTechnologyChanged(cd);
+    }
+}
+
 
 void QSystemNetworkInfoPrivate::setCellId(int id)
 {
@@ -472,6 +524,9 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDisplayInfoPrivate::setInitialData()
@@ -523,12 +578,16 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemDeviceInfoPrivate::setInitialData()
 {
     setCurrentProfile(QSystemDeviceInfo::NormalProfile);
     setCurrentPowerState(QSystemDeviceInfo::WallPower);
+    setCurrentThermalState(QSystemDeviceInfo::NormalThermal);
     setSimStatus(QSystemDeviceInfo::SimNotAvailable);
     setInputMethodType(
            static_cast<QSystemDeviceInfo::InputMethod>(static_cast<int>(
@@ -577,6 +636,14 @@ void QSystemDeviceInfoPrivate::setCurrentPowerState(QSystemDeviceInfo::PowerStat
     if (data.currentPowerState != v) {
         data.currentPowerState = v;
         emit powerStateChanged(v);
+    }
+}
+
+void QSystemDeviceInfoPrivate::setCurrentThermalState(QSystemDeviceInfo::ThermalState v)
+{
+    if (data.currentThermalState != v) {
+        data.currentThermalState = v;
+        emit thermalStateChanged(v);
     }
 }
 
@@ -698,7 +765,7 @@ void QSystemDeviceInfoPrivate::setBackLightOn(bool v)
     }
 }
 
-void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QUuid &v)
+void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QByteArray &v)
 {
     if (data.uniqueDeviceId != v) {
         data.uniqueDeviceId = v;
@@ -708,7 +775,7 @@ void QSystemDeviceInfoPrivate::setUniqueDeviceId(const QUuid &v)
 void QSystemDeviceInfoPrivate::setTypeOfLock(QSystemDeviceInfo::LockTypeFlags v)
 {
     bool lockTypeChanged = false;
-    bool deviceLockChanged = false;
+   // bool deviceLockChanged = false;
     if (data.lockType != v) {
         data.lockType = v;
         lockTypeChanged = true;
@@ -753,6 +820,9 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 void QSystemStorageInfoPrivate::setInitialData()
@@ -985,6 +1055,9 @@ bool QSystemScreenSaverPrivate::isScreenLockOn()
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
         : QObject(parent)
 {
+#ifdef TESTR
+    setInitialData();
+#endif
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
@@ -1093,6 +1166,14 @@ void QSystemBatteryInfoPrivate::setMaxBars(int v)
         data.maxBars = v;
     }
 }
+
+//QSystemBatteryInfo::EnergyUnit QSystemBatteryInfoPrivate::energyMeasurementUnit()
+//{
+//    if (data.energyMeasurementUnit != v) {
+//        data.energyMeasurementUnit = v;
+//    }
+
+//}
 
 int QtMobility::QSystemDisplayInfoPrivate::getDPIHeight(int screen) const
 {

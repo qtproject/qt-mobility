@@ -85,7 +85,7 @@ Q_SIGNALS: // QCameraLocksControl
                            QCamera::LockChangeReason reason);
 */
 
-private Q_SLOTS: // Internal Slots
+private slots: // Internal Slots
 
     void exposureStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);

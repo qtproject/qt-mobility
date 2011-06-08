@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -51,7 +51,8 @@
     changes for a specified set of coordinates.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in
@@ -129,6 +130,7 @@ QGeoAreaMonitor::~QGeoAreaMonitor()
 
     Note: Subclass implementations must call the base implementation of
     setCenter() so that center() returns the correct value.
+    \since 1.0
 */
 void QGeoAreaMonitor::setCenter(const QGeoCoordinate &coordinate)
 {
@@ -155,6 +157,7 @@ QGeoCoordinate QGeoAreaMonitor::center() const
 
     Note: Subclass implementations must call the base implementation of
     setRadius() so that radius() returns the correct value.
+    \since 1.0
 */
 void QGeoAreaMonitor::setRadius(qreal radius)
 {
@@ -172,21 +175,24 @@ qreal QGeoAreaMonitor::radius() const
 
     Returns 0 if the system has no support for position monitoring.
 
-    Note: Symbian applications will need to have the Location capability 
+    Note: Symbian applications will need to have the Location capability
     otherwise this will return 0.
+    \since 1.0
 */
 QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
-#if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
-    QGeoAreaMonitor *ret = NULL;
-    TRAPD(error, ret = QGeoAreaMonitorS60::NewL(parent));
-    return ret;
-#else
+    // Native Symbian area monitor is temporarily disabled,
+    // see http://bugreports.qt.nokia.com/browse/QTMOBILITY-1059
+//#if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
+//    QGeoAreaMonitor *ret = NULL;
+//    TRAPD(error, ret = QGeoAreaMonitorS60::NewL(parent));
+//    return ret;
+//#else
     QGeoAreaMonitorPolling *ret = NULL;
     ret = new QGeoAreaMonitorPolling(parent);
     if (ret && ret->isValid())
         return ret;
-#endif
+//#endif
     return 0;
 }
 
@@ -197,6 +203,7 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
     monitored area to a position within the monitored area.
 
     The \a update holds the new position.
+    \since 1.0
 */
 
 /*!
@@ -206,6 +213,7 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
     monitored area to a position outside the monitored area.
 
     The \a update holds the new position.
+    \since 1.0
 */
 
 QTM_END_NAMESPACE

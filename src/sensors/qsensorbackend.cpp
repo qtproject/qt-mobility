@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
     \class QSensorBackend
     \ingroup sensors_backend
     \inmodule QtSensors
+    \since 1.0
 
     \brief The QSensorBackend class is a sensor implementation.
 
@@ -58,6 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \internal
+    \since 1.0
 */
 QSensorBackend::QSensorBackend(QSensor *sensor)
     : m_sensor(sensor)
@@ -66,6 +68,7 @@ QSensorBackend::QSensorBackend(QSensor *sensor)
 
 /*!
     \internal
+    \since 1.0
 */
 QSensorBackend::~QSensorBackend()
 {
@@ -73,6 +76,7 @@ QSensorBackend::~QSensorBackend()
 
 /*!
     Notify the QSensor class that a new reading is available.
+    \since 1.0
 */
 void QSensorBackend::newReadingAvailable()
 {
@@ -97,12 +101,14 @@ void QSensorBackend::newReadingAvailable()
     \fn QSensorBackend::start()
 
     Start reporting values.
+    \since 1.0
 */
 
 /*!
     \fn QSensorBackend::stop()
 
     Stop reporting values.
+    \since 1.0
 */
 
 /*!
@@ -113,6 +119,7 @@ void QSensorBackend::newReadingAvailable()
     type.
 
     \sa setReading()
+    \since 1.0
 */
 QSensorReading *QSensorBackend::reading() const
 {
@@ -124,6 +131,7 @@ QSensorReading *QSensorBackend::reading() const
     \fn QSensorBackend::sensor() const
 
     Returns the sensor front end associated with this backend.
+    \since 1.0
 */
 
 /*!
@@ -188,10 +196,12 @@ QSensorReading *QSensorBackend::reading() const
     \endcode
 
     \sa reading()
+    \since 1.0
 */
 
 /*!
     \internal
+    \since 1.0
 */
 void QSensorBackend::setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache)
 {
@@ -208,6 +218,7 @@ void QSensorBackend::setReadings(QSensorReading *device, QSensorReading *filter,
     is available immediately.
 
     \sa QSensor::availableDataRates
+    \since 1.0
 */
 void QSensorBackend::addDataRate(qreal min, qreal max)
 {
@@ -228,6 +239,7 @@ void QSensorBackend::addDataRate(qreal min, qreal max)
     is available immediately.
 
     \sa QSensor::availableDataRates, addDataRate()
+    \since 1.0
 */
 void QSensorBackend::setDataRates(const QSensor *otherSensor)
 {
@@ -251,6 +263,7 @@ void QSensorBackend::setDataRates(const QSensor *otherSensor)
     is available immediately.
 
     \sa QSensor::outputRange, QSensor::outputRanges
+    \since 1.0
 */
 void QSensorBackend::addOutputRange(qreal min, qreal max, qreal accuracy)
 {
@@ -266,6 +279,7 @@ void QSensorBackend::addOutputRange(qreal min, qreal max, qreal accuracy)
 
     Note that this function should be called from the constructor so that the information
     is available immediately.
+    \since 1.0
 */
 void QSensorBackend::setDescription(const QString &description)
 {
@@ -282,6 +296,7 @@ void QSensorBackend::setDescription(const QString &description)
     the sensor has stopped. If the sensor has stopped due to an error
     the sensorError() function should be called to notify the class
     of the error condition.
+    \since 1.0
 */
 void QSensorBackend::sensorStopped()
 {
@@ -298,6 +313,7 @@ void QSensorBackend::sensorStopped()
     the sensor is busy. If the sensor has stopped due to an error
     the sensorError() function should be called to notify the class
     of the error condition.
+    \since 1.0
 */
 void QSensorBackend::sensorBusy()
 {
@@ -312,6 +328,7 @@ void QSensorBackend::sensorBusy()
     not stop the sensor.
 
     \sa sensorStopped()
+    \since 1.0
 */
 void QSensorBackend::sensorError(int error)
 {

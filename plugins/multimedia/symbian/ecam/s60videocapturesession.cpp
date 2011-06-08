@@ -55,8 +55,8 @@
 
 S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     QObject(parent),
-    m_cameraEngine(NULL),
-    m_videoRecorder(NULL),
+    m_cameraEngine(0),
+    m_videoRecorder(0),
     m_position(0),
     m_error(KErrNone),
     m_cameraStarted(false),
@@ -99,12 +99,12 @@ S60VideoCaptureSession::~S60VideoCaptureSession()
 
     if (m_videoRecorder) {
         delete m_videoRecorder;
-        m_videoRecorder = NULL;
+        m_videoRecorder = 0;
     }
 
     if (m_durationTimer) {
         delete m_durationTimer;
-        m_durationTimer = NULL;
+        m_durationTimer = 0;
     }
 
     // Clear all data structures
@@ -265,7 +265,7 @@ void S60VideoCaptureSession::doInitializeVideoRecorderL()
     emit stateChanged(m_captureState);
 
     // Open Dummy file to be able to query supported settings
-    int cameraHandle = m_cameraEngine->Camera()->Handle();
+    int cameraHandle = m_cameraEngine->Camera() ? m_cameraEngine->Camera()->Handle() : 0;
 
     TUid controllerUid;
     TUid formatUid;
@@ -285,7 +285,7 @@ void S60VideoCaptureSession::resetSession(bool errorHandling)
 {
     if (m_videoRecorder) {
         delete m_videoRecorder;
-        m_videoRecorder = NULL;
+        m_videoRecorder = 0;
     }
 
     if (m_captureState != ENotInitialized) {
@@ -656,7 +656,7 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
     QString fileName = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 fileSink(reinterpret_cast<const TUint16*>(fileName.utf16()));
 
-    int cameraHandle = m_cameraEngine->Camera()->Handle();
+    int cameraHandle = m_cameraEngine->Camera() ? m_cameraEngine->Camera()->Handle() : 0;
 
     TUid controllerUid;
     TUid formatUid;
@@ -1581,6 +1581,9 @@ QList<int> S60VideoCaptureSession::doGetSupportedSampleRatesL(const QAudioEncode
 {
     QList<int> sampleRates;
 
+    if (m_captureState < EOpenComplete)
+        return sampleRates;
+
 #ifndef S60_31_PLATFORM
     RArray<TUint> supportedSampleRates;
     CleanupClosePushL(supportedSampleRates);
@@ -1703,7 +1706,7 @@ void S60VideoCaptureSession::doSetCodecsL()
 
     if (m_videoRecorder) {
         TPtrC16 str(reinterpret_cast<const TUint16*>(m_videoSettings.codec().utf16()));
-        HBufC8* videoCodec(NULL);
+        HBufC8* videoCodec(0);
         videoCodec = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str);
         CleanupStack::PushL(videoCodec);
 
@@ -1957,7 +1960,7 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
         if (m_videoRecorder && m_captureState >= EInitialized) {
 
             // Resolution
-            QList<QSize> resos = supportedVideoResolutions(NULL);
+            QList<QSize> resos = supportedVideoResolutions(0);
             foreach (QSize reso, resos) {
                 if ((reso.width() * reso.height()) > (resolution.width() * resolution.height()))
                     resolution = reso;
@@ -1968,7 +1971,7 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
             m_videoSettings.setResolution(resolution);
 
             // FrameRate
-            QList<qreal> fRates = supportedVideoFrameRates(m_videoSettings, NULL);
+            QList<qreal> fRates = supportedVideoFrameRates(m_videoSettings, 0);
             foreach (qreal rate, fRates) {
                 if (rate > frameRate)
                     frameRate = rate;

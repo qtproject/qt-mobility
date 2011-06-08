@@ -36,3 +36,5 @@ symbian: {
     TARGET.CAPABILITY = ReadUserData \
                         WriteUserData
 }
+
+maemo*:CONFIG += insignificant_test

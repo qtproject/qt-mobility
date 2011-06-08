@@ -1,0 +1,174 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/versit
+
+// helper function re :contact actions may be in a separate "Contacts menu"
+function contactsMenuItem(menuText)
+{
+    var menuEntries = getValue(menuBar()).toString().split("\n");
+    var index = 0;
+    var separateMenu = false; // optimize number of calls to indexOf
+
+    for (index = 0; index < menuEntries.length; index++){
+        if (!separateMenu && menuEntries[index].indexOf("&Contacts") >= 0){
+            separateMenu = true;
+            menuText = "&Contacts/" + menuText;
+        }
+        if (menuEntries[index] == menuText)
+            return menuText;
+    }
+
+    return undefined;
+
+}
+
+function importContactsMenu() {
+    return contactsMenuItem("&Import contacts...");
+}
+
+function exportVCardContactsMenu() {
+    return contactsMenuItem("Ex&port contacts...");
+}
+
+var checkImportedVCardContactData = new Array(
+   ["John Smith", "+123456", "John.Smith@SmithsComputerServices.com", "1/21 Anywhere St", "BAT"],
+   ["Bill Smith", "+9876", "Bill.Smith@SmithsComputerServices.com", "2/21 Anywhere St", "BAT"]
+);
+
+testcase = {
+
+    importVCardContacts_data : {
+        vCard1 : ["testdata/testimport1.vcf"]
+    },
+
+    importVCardContacts: function(vCardFile) {
+
+        if (!runAsManualTest()){
+            startApplication("samplephonebook");
+            var menuItem = importContactsMenu();
+            if (menuItem == undefined)
+                skip("Versit support not enabled", SkipAll);
+
+            select(menuItem, menuBar());
+
+
+            enter(vCardFile, "File name:");
+            // need to accept entry due to autocompletion
+            keyClick(Qt.Key_Enter);
+            // verify the contacts
+            for (var contactIndex=0; contactIndex < checkImportedVCardContactData.length;contactIndex++){
+                var contactList = findWidget( { className: "QListWidget" } );
+                select(checkImportedVCardContactData[contactIndex][0], contactList[0]);
+                select("&Edit");
+                compare(getText("Name"), checkImportedVCardContactData[contactIndex][0]);
+                compare(getText("Phone"), checkImportedVCardContactData[contactIndex][1]);
+                compare(getText("Email"), checkImportedVCardContactData[contactIndex][2]);
+                compare(getText("Address"), checkImportedVCardContactData[contactIndex][3]);
+                prompt("Verify that the Avatar looks like the word *BAT*");
+                select("Cancel");
+            }
+
+        } else {
+            var promptText = "| *Name* | *Phone Number* | *Email* | *Address* | *Avatar* |\n";
+            for (var contactIndex=0; contactIndex < checkImportedVCardContactData.length;contactIndex++){
+                for (var contactDataIndex=0; contactDataIndex < checkImportedVCardContactData[0].length; contactDataIndex++){
+                    promptText += "|" + checkImportedVCardContactData[contactIndex][contactDataIndex];
+                }
+                promptText += "|\n";
+            }
+
+            prompt(twiki('---+++ Verify Can Import vCard Contacts
+
+    1. Launch application *samplephonebook*
+    1. If =Import Contacts...= menu entry is missing skip this test
+    1. Select the =Import Contacts...= menu entry
+    1. Enter the vCard file name of : *' + vCardFile + '*
+    1. Accept the value for vCard file (close file selection dialog)
+    1. Verify that no errors are present on screen
+    1. Verify the imported contacts :\n' + promptText + '
+                '));
+        }
+
+
+    },
+
+
+    exportVCardContacts_data : {
+        NameSet1 : ["testdata/contacts.vcf", "FN:John Smith", "FN:Bill Smith"]
+    },
+
+    /* Requirement : Verify contact export*/
+    /* If versit suport is present test it */
+    exportVCardContacts: function(vCardFile, name1, name2)
+    {
+        if (!runAsManualTest()){
+            startApplication("samplephonebook");
+            var menuItem = exportVCardContactsMenu();
+            if (menuItem == undefined)
+                skip("Versit support not enabled", SkipAll);
+
+            select(menuItem, menuBar());
+
+            enter(vCardFile, "File name:");
+            // need to accept entry due to autocompletion
+            keyClick(Qt.Key_Enter);
+            var contactVCFData = getData(vCardFile);
+            if (!(contactVCFData.indexOf(name1)
+                && contactVCFData.indexOf(name2))) {
+                print(".vcf contains:" + contactVCFData);
+                deletePath(contactsVCFFile);
+                fail("Did not find in .vcf:" + name1 + "," + name2);
+            }
+            deletePath(vCardFile);
+        }else{
+            prompt(twiki('---+++ Verify Exported vCard Contacts
+
+    1. Launch application *samplephonebook*
+    1. If =Export Contacts...= menu entry is missing skip this test
+    1. Select the =Export Contacts...= menu entry
+    1. Enter name of contacts vCard as *' + vCardFile + '*
+    1. Verify that *' + vCardFile + '* contains *' + name1 + '* and *' + name2 + '*
+                '));
+        }
+
+    }
+}

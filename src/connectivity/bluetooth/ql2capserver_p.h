@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -43,13 +43,14 @@
 #define QL2CAPSERVER_P_H
 
 #include <qmobilityglobal.h>
+#include <qbluetoothsocket.h>
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
 #include <es_sock.h>
 #include <bt_sock.h>
 #endif //QTM_SYMBIAN_BLUETOOTH
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
 QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
 #endif
 
@@ -67,10 +68,6 @@ class QBluetoothSocketPrivate;
 class QL2capServer;
 
 class QL2capServerPrivate
-#ifdef QTM_SYMBIAN_BLUETOOTH
-: public MBluetoothSocketNotifier
-#endif //QTM_SYMBIAN_BLUETOOTH
-
 {
     Q_DECLARE_PUBLIC(QL2capServer)
 
@@ -78,20 +75,17 @@ public:
     QL2capServerPrivate();
     ~QL2capServerPrivate();
 
-#ifndef QT_NO_DBUS
+#ifdef QTM_SYMBIAN_BLUETOOTH
+    // private slots
+    void _q_connected();
+    void _q_socketError(QBluetoothSocket::SocketError err);
+    void _q_disconnected();
+#endif //QTM_SYMBIAN_BLUETOOTH
+    
+#ifdef QTM_BLUEZ_BLUETOOTH
     void _q_newConnection();
 #endif
 
-#ifdef QTM_SYMBIAN_BLUETOOTH
-    /* MBluetoothSocketNotifier virtual functions */
-    void HandleAcceptCompleteL(TInt aErr);
-    void HandleActivateBasebandEventNotifierCompleteL(TInt aErr, TBTBasebandEventNotification &aEventNotification);
-    void HandleConnectCompleteL(TInt aErr);
-    void HandleIoctlCompleteL(TInt aErr);
-    void HandleReceiveCompleteL(TInt aErr);
-    void HandleSendCompleteL(TInt aErr);
-    void HandleShutdownCompleteL(TInt aErr);
-#endif //QTM_SYMBIAN_BLUETOOTH
 
 public:
     QBluetoothSocket *socket;
@@ -101,7 +95,6 @@ public:
     QBluetooth::SecurityFlags securityFlags;
 
 #ifdef QTM_SYMBIAN_BLUETOOTH
-    QBluetoothSocket *pendingSocket;
     mutable QList<QBluetoothSocket *> activeSockets;
     QBluetoothSocketPrivate *ds;
 #endif //QTM_SYMBIAN_BLUETOOTH
@@ -110,7 +103,7 @@ protected:
     QL2capServer *q_ptr;
 
 private:
-#ifndef QT_NO_DBUS
+#ifdef QTM_BLUEZ_BLUETOOTH
     QSocketNotifier *socketNotifier;
 #endif
 };

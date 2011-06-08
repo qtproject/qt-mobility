@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,10 +49,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaResource
-    
+
     \brief The QMediaResource class provides a description of a media resource.
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     A media resource is composed of a \l {url()}{URL} containing the
     location of the resource and a set of properties that describe the
@@ -90,6 +91,7 @@ QMediaResource::QMediaResource()
 
 /*!
     Constructs a media resource with the given \a mimeType from a \a url.
+    \since 1.0
 */
 QMediaResource::QMediaResource(const QUrl &url, const QString &mimeType)
 {
@@ -99,6 +101,7 @@ QMediaResource::QMediaResource(const QUrl &url, const QString &mimeType)
 
 /*!
     Constructs a media resource with the given \a mimeType from a network \a request.
+    \since 1.0
 */
 QMediaResource::QMediaResource(const QNetworkRequest &request, const QString &mimeType)
 {
@@ -109,6 +112,7 @@ QMediaResource::QMediaResource(const QNetworkRequest &request, const QString &mi
 
 /*!
     Constructs a copy of a media resource \a other.
+    \since 1.0
 */
 QMediaResource::QMediaResource(const QMediaResource &other)
     : values(other.values)
@@ -117,6 +121,7 @@ QMediaResource::QMediaResource(const QMediaResource &other)
 
 /*!
     Assigns the value of \a other to a media resource.
+    \since 1.0
 */
 QMediaResource &QMediaResource::operator =(const QMediaResource &other)
 {
@@ -137,6 +142,7 @@ QMediaResource::~QMediaResource()
     Compares a media resource to \a other.
 
     Returns true if the resources are identical, and false otherwise.
+    \since 1.0
 */
 bool QMediaResource::operator ==(const QMediaResource &other) const
 {
@@ -159,6 +165,7 @@ bool QMediaResource::operator ==(const QMediaResource &other) const
     Compares a media resource to \a other.
 
     Returns true if they are different, and false otherwise.
+    \since 1.0
 */
 bool QMediaResource::operator !=(const QMediaResource &other) const
 {
@@ -169,6 +176,7 @@ bool QMediaResource::operator !=(const QMediaResource &other) const
     Identifies if a media resource is null.
 
     Returns true if the resource is null, and false otherwise.
+    \since 1.0
 */
 bool QMediaResource::isNull() const
 {
@@ -177,6 +185,7 @@ bool QMediaResource::isNull() const
 
 /*!
     Returns the URL of a media resource.
+    \since 1.0
 */
 QUrl QMediaResource::url() const
 {
@@ -185,6 +194,7 @@ QUrl QMediaResource::url() const
 
 /*!
     Returns the network request associated with this media resource.
+    \since 1.0
 */
 QNetworkRequest QMediaResource::request() const
 {
@@ -198,6 +208,7 @@ QNetworkRequest QMediaResource::request() const
     Returns the MIME type of a media resource.
 
     This may be null if the MIME type is unknown.
+    \since 1.0
 */
 QString QMediaResource::mimeType() const
 {
@@ -208,6 +219,7 @@ QString QMediaResource::mimeType() const
     Returns the language of a media resource as an ISO 639-2 code.
 
     This may be null if the language is unknown.
+    \since 1.0
 */
 QString QMediaResource::language() const
 {
@@ -216,6 +228,7 @@ QString QMediaResource::language() const
 
 /*!
     Sets the \a language of a media resource.
+    \since 1.0
 */
 void QMediaResource::setLanguage(const QString &language)
 {
@@ -230,6 +243,7 @@ void QMediaResource::setLanguage(const QString &language)
 
     This may be null if the media resource does not contain an audio stream, or the codec is
     unknown.
+    \since 1.0
 */
 QString QMediaResource::audioCodec() const
 {
@@ -238,6 +252,7 @@ QString QMediaResource::audioCodec() const
 
 /*!
     Sets the audio \a codec of a media resource.
+    \since 1.0
 */
 void QMediaResource::setAudioCodec(const QString &codec)
 {
@@ -252,6 +267,7 @@ void QMediaResource::setAudioCodec(const QString &codec)
 
     This may be null if the media resource does not contain a video stream, or the codec is
     unknonwn.
+    \since 1.0
 */
 QString QMediaResource::videoCodec() const
 {
@@ -260,6 +276,7 @@ QString QMediaResource::videoCodec() const
 
 /*!
     Sets the video \a codec of media resource.
+    \since 1.0
 */
 void QMediaResource::setVideoCodec(const QString &codec)
 {
@@ -273,6 +290,7 @@ void QMediaResource::setVideoCodec(const QString &codec)
     Returns the size in bytes of a media resource.
 
     This may be zero if the size is unknown.
+    \since 1.0
 */
 qint64 QMediaResource::dataSize() const
 {
@@ -281,6 +299,7 @@ qint64 QMediaResource::dataSize() const
 
 /*!
     Sets the \a size in bytes of a media resource.
+    \since 1.0
 */
 void QMediaResource::setDataSize(const qint64 size)
 {
@@ -294,6 +313,7 @@ void QMediaResource::setDataSize(const qint64 size)
     Returns the bit rate in bits per second of a media resource's audio stream.
 
     This may be zero if the bit rate is unknown, or the resource contains no audio stream.
+    \since 1.0
 */
 int QMediaResource::audioBitRate() const
 {
@@ -302,6 +322,7 @@ int QMediaResource::audioBitRate() const
 
 /*!
     Sets the bit \a rate in bits per second of a media resource's video stream.
+    \since 1.0
 */
 void QMediaResource::setAudioBitRate(int rate)
 {
@@ -315,6 +336,7 @@ void QMediaResource::setAudioBitRate(int rate)
     Returns the audio sample rate of a media resource.
 
     This may be zero if the sample size is unknown, or the resource contains no audio stream.
+    \since 1.0
 */
 int QMediaResource::sampleRate() const
 {
@@ -323,6 +345,7 @@ int QMediaResource::sampleRate() const
 
 /*!
     Sets the audio \a sampleRate of a media resource.
+    \since 1.0
 */
 void QMediaResource::setSampleRate(int sampleRate)
 {
@@ -336,6 +359,7 @@ void QMediaResource::setSampleRate(int sampleRate)
     Returns the number of audio channels in a media resource.
 
     This may be zero if the sample size is unknown, or the resource contains no audio stream.
+    \since 1.0
 */
 int QMediaResource::channelCount() const
 {
@@ -344,6 +368,7 @@ int QMediaResource::channelCount() const
 
 /*!
     Sets the number of audio \a channels in a media resource.
+    \since 1.0
 */
 void QMediaResource::setChannelCount(int channels)
 {
@@ -357,6 +382,7 @@ void QMediaResource::setChannelCount(int channels)
     Returns the bit rate in bits per second of a media resource's video stream.
 
     This may be zero if the bit rate is unknown, or the resource contains no video stream.
+    \since 1.0
 */
 int QMediaResource::videoBitRate() const
 {
@@ -365,6 +391,7 @@ int QMediaResource::videoBitRate() const
 
 /*!
     Sets the bit \a rate in bits per second of a media resource's video stream.
+    \since 1.0
 */
 void QMediaResource::setVideoBitRate(int rate)
 {
@@ -379,6 +406,7 @@ void QMediaResource::setVideoBitRate(int rate)
 
     This may be null is the resolution is unknown, or the resource contains no pixel data (i.e. the
     resource is an audio stream.
+    \since 1.0
 */
 QSize QMediaResource::resolution() const
 {
@@ -387,6 +415,7 @@ QSize QMediaResource::resolution() const
 
 /*!
     Sets the \a resolution in pixels of a media resource.
+    \since 1.0
 */
 void QMediaResource::setResolution(const QSize &resolution)
 {
@@ -398,6 +427,7 @@ void QMediaResource::setResolution(const QSize &resolution)
 
 /*!
     Sets the \a width and \a height in pixels of a media resource.
+    \since 1.0
 */
 void QMediaResource::setResolution(int width, int height)
 {

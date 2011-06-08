@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
     the usage of request classes and ownership semantics.
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-request
 */
@@ -82,6 +83,7 @@ QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
 /*!
     Returns the list of category identifiers that have been found during the
     request.
+    \since 1.1
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::categoryIds() const
 {
@@ -94,6 +96,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::categoryIds() const
     Returns the sorting of the categories.
     By default the sorting is case insensitive and in ascending order
     according to the category name.
+    \since 1.1
 */
 QLandmarkNameSort QLandmarkCategoryIdFetchRequest::sorting() const
 {
@@ -104,6 +107,7 @@ QLandmarkNameSort QLandmarkCategoryIdFetchRequest::sorting() const
 
 /*!
     Sets \a nameSort to specify the sorting of the returned category ids.
+    \since 1.1
 */
 void QLandmarkCategoryIdFetchRequest::setSorting(const QLandmarkNameSort &nameSort)
 {
@@ -115,6 +119,7 @@ void QLandmarkCategoryIdFetchRequest::setSorting(const QLandmarkNameSort &nameSo
 /*!
     Returns the maximum number of category IDs to be returned.  By default the limit is set to -1
     indicating that IDs of all categories should be retrieved.
+    \since 1.1
 */
 int QLandmarkCategoryIdFetchRequest::limit() const
 {
@@ -129,6 +134,7 @@ int QLandmarkCategoryIdFetchRequest::limit() const
     A limit of -1 indicates that IDs of all categories are to be retrieved.
 
     (A limit of 0 will retrieve no categories.)
+    \since 1.1
  */
 void QLandmarkCategoryIdFetchRequest::setLimit(int limit)
 {
@@ -145,6 +151,7 @@ void QLandmarkCategoryIdFetchRequest::setLimit(int limit)
     For example, if there are 10 categories in the landmark store, setting the offset
     to 2 and limit to 5 will retrieve the 3rd to 7th category ids inclusively.  (The order
     of category ids is specified by the sorting field).
+    \since 1.1
 */
 int QLandmarkCategoryIdFetchRequest::offset() const
 {
@@ -155,6 +162,7 @@ int QLandmarkCategoryIdFetchRequest::offset() const
 
 /*!
     Sets the index \a offset for the request.
+    \since 1.1
 */
 void QLandmarkCategoryIdFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkCategoryIdFetchRequest);

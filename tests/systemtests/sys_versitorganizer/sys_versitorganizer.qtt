@@ -1,0 +1,166 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/versitorganizer
+
+function startTestApp()
+{
+    prompt('Start application \'calendardemo\'
+    Verify test application started and closed without issue');
+}
+
+
+// Note for test cases relating to  functionality such as add event see test relating to src/organizer
+testcase = {
+
+        // prove that the test application starts before anything else is tested.
+        runTestApplication: function()
+        {
+            startTestApp();
+            if (!runAsManualTest()){
+                // ensure we have a widget to work with, dump its details
+                // TODO when run this test case 'automaticly' then enable this following code
+                //print('Focus widget is' + focusWidget());
+            }
+        },
+
+
+        import_ical: function()
+        {
+            prompt(twiki('---++ Import iCalendar items
+
+        1. Launch the *calendardemo* application
+        1. On app menu, select \'Delete all items\' to insure you are dealing with a pristine calendar
+        1. As required transfer exampleEvents.ics onto a location on the target
+        1. On app menu, select \'Import items\' menu entry
+        1. In file dialog that presents select the exampleEvents.ics that was transfer to the target
+        1. Click \'Open\'
+        1. In the case of the importing exampleEvents.ics:
+            1. Verify there is now the following event:
+                | Subject       | \'Bastille Day Party\'        |
+                | Start time    | July 14, 1997 17:00 (UTC)     |
+                | End time      | July 15, 1997 03:59:59 (UTC)  |
+            1. Verify there is the following Todo:
+                | Subject   | \'Submit Income Taxes\'   |
+                | Time      | April 15, 1998 |
+            1. if the platform(backend) supports journal entries:
+                | Subject   | \'Project xyz Review Meeting Minutes\' |
+                | Time      | March 24, 1997 |
+           * *Hint:* Possibly using the target system\'s Todo, Calendar and Journal applications will be easiest to verify above details
+        1. On app menu, select \'Delete all items\'
+        1. Close the *calendardemo* application
+            '));
+        },
+
+        export_ical: function()
+        {
+             prompt(twiki('---++ Export iCalendar items
+
+        1. Launch the *calendardemo* application
+        1. On app menu, select \'Delete all items\' to insure you are dealing with a pristine calendar
+        1. Verify that the current backend is the best to suit device
+        1. Add *valid* events
+            1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject      | \'Event 1\' |
+                | Start time   | today\'s date, 08:00 AM |
+                | End time     | today\'s date, 01:00 PM |
+                | Alarm        | \'30 minutes before\' |
+                | Repeat       | \'None\' |
+            1. Click \'Save\' button
+            1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject      | \'Event 2\' |
+                | Start time   | tomorrow\'s date, 02:00 PM |
+                | End time     | tomorrow\'s date, 03:00 PM |
+                | Alarm        | \'15 minutes before\' |
+                | Repeat       | \'None\' |
+            1. Click \'Save\' button
+        1. Add a *valid* Todos:
+            1. Select: \'Add Todo\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter Todo detail:
+                | Subject       | \'Todo 1\'                    |
+                | Start time    | today\'s date 08:00 AM        |
+                | End time      | today\'s date 04:00 PM        |
+                | Priority      | \'High\'                      |
+                | Status        | default                       |
+                | Alarm option  | \'30 minutes before\'         |
+            1. Click \'Save\' button
+            1. Select: \'Add Todo\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter Todo detail:
+                | Subject       | \'Todo 2\'                    |
+                | Start time    | tomorrow\'s date 03:00 PM     |
+                | End time      | tomorrow\'s date 04:00 PM     |
+                | Priority      | \'Low\'                       |
+                | Status        | default                       |
+                | Alarm option  | \'5   minutes before\'        |
+            1. Click \'Save\' button
+        1. If platform(backend) supports Journal entries then add a Journal entry:
+            1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject    | \'Journal 1\' |
+                | Time       | today\'s date, 08:00 AM |
+                | Alarm      | \'30 minutes before\' |
+            1. Click \'Save\' button
+        1. If platform(backend) supports Journal entries then add a journal entry for later today:
+            1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
+            1. Enter event details:
+                | Subject    | \'Journal 2\' |
+                | Time       | today\'s date at 02:00 PM |
+                | Alarm      | \'15 minutes before\' |
+            1. Click \'Save\' button
+        1. On app menu, select \'Export items\' menu entry
+        1  Enter/select suitable location saving as testcalendar.ics
+        1. Click on \'Save\'
+        1. Ideally the testcalendar.ics be opened on a separate system and its contents validated, if that is not possible then ..
+            1. On app menu, select \'Delete all items\' to remove all calendar items
+            1. Close the *calendardemo* application
+            1. Launch the *calendardemo* application
+            1. On app menu, select menu entry \'Import items\'
+            1. Select location for testcalendar.ics entered earlier
+            1. Click \'Select\' button
+            1. Verify that calendar items \'Event 1\', \'Event 2\', \'Todo 1\' and \'Todo 2\' are present and have expected details
+            1. If platform(backend) supports Journal entries then Verify that calendar items \'Journal 1\' and \'Journal 2\' are present and have expected details
+        1. Delete events \'Event 1\', \'Event 2\', \'Todo 1\', \'Todo 2\', \'Journal 1\' and \'Journal 2\' (using native calendar application if neccessary)
+        1. Close the *calendardemo* application
+             '));
+        },
+}

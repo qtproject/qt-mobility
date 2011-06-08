@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -52,7 +52,8 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailDefinition
 
   \inmodule QtContacts
-  
+   \since 1.0
+
   The QContactDetailDefinition class provides the specification for
   a detail that can be included in any particular QContact.
   The definition does not include any data, but defines
@@ -63,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \fn QContactDetailDefinition::operator!=(const QContactDetailDefinition& other) const
   Returns true if this detail definition has different allowable field types or uniqueness to the \a other definition
+  \since 1.0
  */
 
 /*! Construct a new, invalid QContactDetailDefinition */
@@ -71,13 +73,17 @@ QContactDetailDefinition::QContactDetailDefinition()
 {
 }
 
-/*! Constructs a new QContactDetailDefinition from \a other */
+/*! Constructs a new QContactDetailDefinition from \a other
+    \since 1.0
+*/
 QContactDetailDefinition::QContactDetailDefinition(const QContactDetailDefinition& other)
     : d(other.d)
 {
 }
 
-/*! Assigns this QContactDetailDefinition to \a other */
+/*! Assigns this QContactDetailDefinition to \a other
+   \since 1.0
+*/
 QContactDetailDefinition& QContactDetailDefinition::operator=(const QContactDetailDefinition& other)
 {
     d = other.d;
@@ -89,7 +95,9 @@ QContactDetailDefinition::~QContactDetailDefinition()
 {
 }
 
-/*! Returns true if the definition has the same type, uniqueness and allowable value datatypes as \a other */
+/*! Returns true if the definition has the same type, uniqueness and allowable value datatypes as \a other
+    \since 1.0
+*/
 bool QContactDetailDefinition::operator==(const QContactDetailDefinition& other) const
 {
     if (d->m_name != other.d->m_name)
@@ -101,7 +109,9 @@ bool QContactDetailDefinition::operator==(const QContactDetailDefinition& other)
     return true;
 }
 
-/*! Returns true if the id and fields of this definition are empty */
+/*! Returns true if the id and fields of this definition are empty
+    \since 1.0
+*/
 bool QContactDetailDefinition::isEmpty() const
 {
     if (!d->m_name.isEmpty())
@@ -114,6 +124,7 @@ bool QContactDetailDefinition::isEmpty() const
 #ifndef QT_NO_DATASTREAM
 /*!
  * Writes \a definition to the stream \a out.
+ * \since 1.0
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& definition)
 {
@@ -126,6 +137,7 @@ QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& defini
 
 /*!
  * Reads a detail definition from stream \a in into \a definition.
+ * \since 1.0
  */
 QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
 {
@@ -163,7 +175,9 @@ QDebug operator<<(QDebug dbg, const QContactDetailDefinition& definition)
 }
 #endif
 
-/*! Sets the unique identifier of this detail type to \a definitionName. */
+/*! Sets the unique identifier of this detail type to \a definitionName.
+    \since 1.0
+*/
 void QContactDetailDefinition::setName(const QString& definitionName)
 {
     d->m_name = definitionName;
@@ -173,44 +187,57 @@ void QContactDetailDefinition::setName(const QString& definitionName)
   Sets whether a contact can have more than one detail of this type.
   If \a unique is true, only one detail of this type can be added.
   Otherwise, any number can be added.
+  \since 1.0
  */
 void QContactDetailDefinition::setUnique(bool unique)
 {
     d->m_unique = unique;
 }
 
-/*! Returns the identifier of this detail definition */
+/*! Returns the identifier of this detail definition
+    \since 1.0
+*/
 QString QContactDetailDefinition::name() const
 {
     return d->m_name;
 }
 
-/*! Returns the per-contact uniqueness of this definition */
+/*! Returns the per-contact uniqueness of this definition
+    \since 1.0
+*/
 bool QContactDetailDefinition::isUnique() const
 {
     return d->m_unique;
 }
 
-/*! Sets the fields which constitute the data of details of this this definition to \a fields */
+/*! Sets the fields which constitute the data of details of this this definition to \a fields
+    \since 1.0
+*/
 void QContactDetailDefinition::setFields(const QMap<QString, QContactDetailFieldDefinition>& fields)
 {
     d->m_fields = fields;
 }
 
-/*! Returns the map of keys to fields which are present in details of this definition */
+/*! Returns the map of keys to fields which are present in details of this definition
+    \since 1.0
+*/
 QMap<QString, QContactDetailFieldDefinition> QContactDetailDefinition::fields() const
 {
     return d->m_fields;
 }
 
 /*! Inserts the field \a field into the map of fields which constitute the data of details of this definition for the given field key \a key.
-    If another field for that key already exists in the definition, it will be overwritten. */
+    If another field for that key already exists in the definition, it will be overwritten.
+    \since 1.0
+*/
 void QContactDetailDefinition::insertField(const QString& key, const QContactDetailFieldDefinition& field)
 {
     d->m_fields.insert(key, field);
 }
 
-/*! Removes the field associated with the given field key \a key from the map of fields which constitute the data of details of this definition. */
+/*! Removes the field associated with the given field key \a key from the map of fields which constitute the data of details of this definition.
+    \since 1.0
+*/
 void QContactDetailDefinition::removeField(const QString& key)
 {
     d->m_fields.remove(key);

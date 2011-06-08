@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -53,6 +53,8 @@
 #include <qcameraimagecapturecontrol.h>
 #include <qimageencodercontrol.h>
 #include <qcameraimageprocessingcontrol.h>
+#include <qcameracapturebufferformatcontrol.h>
+#include <qcameracapturedestinationcontrol.h>
 #include <qmediaservice.h>
 #include <qcamera.h>
 #include <qcameraimagecapture.h>
@@ -63,6 +65,8 @@
 
 QT_USE_NAMESPACE
 class MockCaptureControl;
+
+Q_DECLARE_METATYPE(QtMultimediaKit::MetaData)
 
 class MockCameraControl : public QCameraControl
 {
@@ -272,8 +276,21 @@ public:
 private Q_SLOTS:
     void captured()
     {
-        if (!m_captureCanceled)
+        if (!m_captureCanceled) {
             emit imageCaptured(m_captureRequest, QImage());
+
+            emit imageMetadataAvailable(m_captureRequest,
+                                        QtMultimediaKit::FocalLengthIn35mmFilm,
+                                        QVariant(50));
+
+            emit imageMetadataAvailable(m_captureRequest,
+                                        QtMultimediaKit::DateTimeOriginal,
+                                        QVariant(QDateTime::currentDateTime()));
+
+            emit imageMetadataAvailable(m_captureRequest,
+                                        QLatin1String("Answer to the Ultimate Question of Life, the Universe, and Everything"),
+                                        QVariant(42));
+        }
 
         if (!m_ready)
             emit readyForCaptureChanged(m_ready = true);
@@ -290,6 +307,74 @@ private:
     int m_captureRequest;
     bool m_ready;
     bool m_captureCanceled;
+};
+
+class MockCaptureDestinationControl : public QCameraCaptureDestinationControl
+{
+    Q_OBJECT
+public:
+    MockCaptureDestinationControl(QObject *parent = 0):
+            QCameraCaptureDestinationControl(parent),
+            m_destination(QCameraImageCapture::CaptureToFile)
+    {
+    }
+
+    bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const
+    {
+        return destination == QCameraImageCapture::CaptureToBuffer ||
+               destination == QCameraImageCapture::CaptureToFile;
+    }
+
+    QCameraImageCapture::CaptureDestinations captureDestination() const
+    {
+        return m_destination;
+    }
+
+    void setCaptureDestination(QCameraImageCapture::CaptureDestinations destination)
+    {
+        if (isCaptureDestinationSupported(destination) && destination != m_destination) {
+            m_destination = destination;
+            emit captureDestinationChanged(m_destination);
+        }
+    }
+
+private:
+    QCameraImageCapture::CaptureDestinations m_destination;
+};
+
+class MockCaptureBufferFormatControl : public QCameraCaptureBufferFormatControl
+{
+    Q_OBJECT
+public:
+    MockCaptureBufferFormatControl(QObject *parent = 0):
+            QCameraCaptureBufferFormatControl(parent),
+            m_format(QVideoFrame::Format_Jpeg)
+    {
+    }
+
+    QList<QVideoFrame::PixelFormat> supportedBufferFormats() const
+    {
+        return QList<QVideoFrame::PixelFormat>()
+                << QVideoFrame::Format_Jpeg
+                << QVideoFrame::Format_RGB32
+                << QVideoFrame::Format_AdobeDng;
+    }
+
+    QVideoFrame::PixelFormat bufferFormat() const
+    {
+        return m_format;
+    }
+
+    void setBufferFormat(QVideoFrame::PixelFormat format)
+    {
+        if (format != m_format && supportedBufferFormats().contains(format)) {
+            m_format = format;
+            emit bufferFormatChanged(m_format);
+        }
+    }
+
+private:
+    QVideoFrame::PixelFormat m_format;
 };
 
 class MockCameraExposureControl : public QCameraExposureControl
@@ -808,6 +893,8 @@ public:
         mockFlashControl = new MockCameraFlashControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
         mockCaptureControl = new MockCaptureControl(mockControl, this);
+        mockCaptureBufferControl = new MockCaptureBufferFormatControl(this);
+        mockCaptureDestinationControl = new MockCaptureDestinationControl(this);
         mockImageProcessingControl = new MockImageProcessingControl(this);
         mockImageEncoderControl = new MockImageEncoderControl(this);
         rendererControl = new MockVideoRendererControl(this);
@@ -840,6 +927,12 @@ public:
         if (qstrcmp(iid, QCameraImageCaptureControl_iid) == 0)
             return mockCaptureControl;
 
+        if (qstrcmp(iid, QCameraCaptureBufferFormatControl_iid) == 0)
+            return mockCaptureBufferControl;
+
+        if (qstrcmp(iid, QCameraCaptureDestinationControl_iid) == 0)
+            return mockCaptureDestinationControl;
+
         if (qstrcmp(iid, QCameraImageProcessingControl_iid) == 0)
             return mockImageProcessingControl;
 
@@ -871,6 +964,8 @@ public:
     MockCameraControl *mockControl;
     MockCameraLocksControl *mockLocksControl;
     MockCaptureControl *mockCaptureControl;
+    MockCaptureBufferFormatControl *mockCaptureBufferControl;
+    MockCaptureDestinationControl *mockCaptureDestinationControl;
     MockCameraExposureControl *mockExposureControl;
     MockCameraFlashControl *mockFlashControl;
     MockCameraFocusControl *mockFocusControl;
@@ -914,20 +1009,28 @@ private slots:
     void testSimpleCameraFocus();
     void testSimpleCameraCapture();
     void testSimpleCameraLock();
+    void testSimpleCaptureDestination();
+    void testSimpleCaptureFormat();
 
     void testCameraWhiteBalance();
     void testCameraExposure();
     void testCameraFocus();
     void testCameraCapture();
+    void testCameraCaptureMetadata();
     void testImageSettings();
     void testCameraLock();
     void testCameraLockCancel();
     void testCameraEncodingProperyChange();
+    void testCaptureDestination();
+    void testCaptureFormat();
+
 
     void testSetVideoOutput();
     void testSetVideoOutputNoService();
     void testSetVideoOutputNoControl();
     void testSetVideoOutputDestruction();
+
+    void testEnumDebug();
 
 private:
     MockSimpleCameraService  *mockSimpleCameraService;
@@ -939,6 +1042,7 @@ void tst_QCamera::initTestCase()
     provider = new MockProvider;
     mockSimpleCameraService = new MockSimpleCameraService;
     provider->service = mockSimpleCameraService;
+    qRegisterMetaType<QtMultimediaKit::MetaData>("QtMultimediaKit::MetaData");
 }
 
 void tst_QCamera::cleanupTestCase()
@@ -1158,6 +1262,86 @@ void tst_QCamera::testSimpleCameraLock()
     QCOMPARE(lockStatusChangedSignal.count(), 1);
 }
 
+void tst_QCamera::testSimpleCaptureDestination()
+{
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QVERIFY(imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToFile));
+    QVERIFY(!imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer));
+    QVERIFY(!imageCapture.isCaptureDestinationSupported(
+                QCameraImageCapture::CaptureToBuffer | QCameraImageCapture::CaptureToFile));
+
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToFile);
+    imageCapture.setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToFile);
+}
+
+void tst_QCamera::testSimpleCaptureFormat()
+{
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_Invalid);
+    QVERIFY(imageCapture.supportedBufferFormats().isEmpty());
+
+    imageCapture.setBufferFormat(QVideoFrame::Format_AdobeDng);
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_Invalid);
+}
+
+void tst_QCamera::testCaptureDestination()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QVERIFY(imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToFile));
+    QVERIFY(imageCapture.isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer));
+    QVERIFY(!imageCapture.isCaptureDestinationSupported(
+                QCameraImageCapture::CaptureToBuffer | QCameraImageCapture::CaptureToFile));
+
+    QSignalSpy destinationChangedSignal(&imageCapture, SIGNAL(captureDestinationChanged(QCameraImageCapture::CaptureDestinations)));
+
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToFile);
+    imageCapture.setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(destinationChangedSignal.size(), 1);
+    QCOMPARE(destinationChangedSignal.first().first().value<QCameraImageCapture::CaptureDestinations>(),
+             QCameraImageCapture::CaptureToBuffer);
+
+    //not supported combination
+    imageCapture.setCaptureDestination(QCameraImageCapture::CaptureToBuffer | QCameraImageCapture::CaptureToFile);
+    QCOMPARE(imageCapture.captureDestination(), QCameraImageCapture::CaptureToBuffer);
+    QCOMPARE(destinationChangedSignal.size(), 1);
+}
+
+void tst_QCamera::testCaptureFormat()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QSignalSpy formatChangedSignal(&imageCapture, SIGNAL(bufferFormatChanged(QVideoFrame::PixelFormat)));
+
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_Jpeg);
+    QCOMPARE(imageCapture.supportedBufferFormats().size(), 3);
+
+    imageCapture.setBufferFormat(QVideoFrame::Format_AdobeDng);
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_AdobeDng);
+
+    QCOMPARE(formatChangedSignal.size(), 1);
+    QCOMPARE(formatChangedSignal.first().first().value<QVideoFrame::PixelFormat>(),
+             QVideoFrame::Format_AdobeDng);
+
+    imageCapture.setBufferFormat(QVideoFrame::Format_Y16);
+    QCOMPARE(imageCapture.bufferFormat(), QVideoFrame::Format_AdobeDng);
+
+    QCOMPARE(formatChangedSignal.size(), 1);
+}
+
+
 void tst_QCamera::testCameraCapture()
 {
     MockCameraService service;
@@ -1190,6 +1374,45 @@ void tst_QCamera::testCameraCapture()
     QCOMPARE(capturedSignal.size(), 1);
     QCOMPARE(errorSignal.size(), 0);
     QCOMPARE(imageCapture.error(), QCameraImageCapture::NoError);
+}
+
+void tst_QCamera::testCameraCaptureMetadata()
+{
+    MockCameraService service;
+    provider->service = &service;
+    QCamera camera(0, provider);
+    QCameraImageCapture imageCapture(&camera);
+
+    QSignalSpy metadataSignal(&imageCapture, SIGNAL(imageMetadataAvailable(int,QtMultimediaKit::MetaData,QVariant)));
+    QSignalSpy extendedMetadataSignal(&imageCapture, SIGNAL(imageMetadataAvailable(int,QString,QVariant)));
+    QSignalSpy savedSignal(&imageCapture, SIGNAL(imageSaved(int,QString)));
+
+    camera.start();
+    int id = imageCapture.capture(QString::fromLatin1("/dev/null"));
+
+    for (int i=0; i<100 && savedSignal.isEmpty(); i++)
+        QTest::qWait(10);
+
+    QCOMPARE(savedSignal.size(), 1);
+
+    QCOMPARE(metadataSignal.size(), 2);
+
+    QVariantList metadata = metadataSignal[0];
+    QCOMPARE(metadata[0].toInt(), id);
+    QCOMPARE(metadata[1].value<QtMultimediaKit::MetaData>(), QtMultimediaKit::FocalLengthIn35mmFilm);
+    QCOMPARE(metadata[2].value<QVariant>().toInt(), 50);
+
+    metadata = metadataSignal[1];
+    QCOMPARE(metadata[0].toInt(), id);
+    QCOMPARE(metadata[1].value<QtMultimediaKit::MetaData>(), QtMultimediaKit::DateTimeOriginal);
+    QDateTime captureTime = metadata[2].value<QVariant>().value<QDateTime>();
+    QVERIFY(qAbs(captureTime.secsTo(QDateTime::currentDateTime()) < 5)); //it should not takes more than 5 seconds for signal to arrive here
+
+    QCOMPARE(extendedMetadataSignal.size(), 1);
+    metadata = extendedMetadataSignal.first();
+    QCOMPARE(metadata[0].toInt(), id);
+    QCOMPARE(metadata[1].toString(), QLatin1String("Answer to the Ultimate Question of Life, the Universe, and Everything"));
+    QCOMPARE(metadata[2].value<QVariant>().toInt(), 42);
 }
 
 
@@ -1762,6 +1985,26 @@ void tst_QCamera::testSetVideoOutputDestruction()
     }
     QVERIFY(service.rendererControl->surface() == 0);
     QCOMPARE(service.rendererRef, 0);
+}
+
+void tst_QCamera::testEnumDebug()
+{
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::ActiveState ");
+    qDebug() << QCamera::ActiveState;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::ActiveStatus ");
+    qDebug() << QCamera::ActiveStatus;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::CaptureVideo ");
+    qDebug() << QCamera::CaptureVideo;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::CameraError ");
+    qDebug() << QCamera::CameraError;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::Unlocked ");
+    qDebug() << QCamera::Unlocked;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::LockAcquired ");
+    qDebug() << QCamera::LockAcquired;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::NoLock ");
+    qDebug() << QCamera::NoLock;
+    QTest::ignoreMessage(QtDebugMsg, "QCamera::LockExposure ");
+    qDebug() << QCamera::LockExposure;
 }
 
 QTEST_MAIN(tst_QCamera)

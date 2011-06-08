@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -63,6 +63,7 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup landmarks-request
 
@@ -192,6 +193,7 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
     the enine implementation, even though the request itself has been destroyed.
     The sqlite engine continues the operation behind the scenes if the
     request is destroyed whilst active.  For the symbian engine see the note below.
+    \since 1.1
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
@@ -201,6 +203,7 @@ QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 
 /*!
     Returns the type of this asynchronous request.
+    \since 1.1
 */
 QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 {
@@ -210,6 +213,7 @@ QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 
 /*!
     Returns the state of the request
+    \since 1.1
 */
 QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 {
@@ -220,6 +224,7 @@ QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Inactive state;
     otherwise, returns false.
+    \since 1.1
     \sa state()
 */
 bool QLandmarkAbstractRequest::isInactive() const
@@ -231,6 +236,7 @@ bool QLandmarkAbstractRequest::isInactive() const
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Active state;
     otherwise, returns false.
+    \since 1.1
     \sa state()
 */
 bool QLandmarkAbstractRequest::isActive() const
@@ -242,6 +248,7 @@ bool QLandmarkAbstractRequest::isActive() const
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Finished state;
     otherwise, returns false.
+    \since 1.1
     \sa state()
 */
 bool QLandmarkAbstractRequest::isFinished() const
@@ -252,6 +259,7 @@ bool QLandmarkAbstractRequest::isFinished() const
 
 /*!
     Returns the overall error of the most recent asynchronous operation.
+    \since 1.1
     \sa errorString()
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
@@ -264,6 +272,7 @@ QLandmarkManager::Error QLandmarkAbstractRequest::error() const
     Returns a human readable string of the last error
     that occurred.  This error string is intended to be used
     by developers only and should not be seen by end users.
+    \since 1.1
     \sa error()
 */
 QString QLandmarkAbstractRequest::errorString() const
@@ -275,6 +284,7 @@ QString QLandmarkAbstractRequest::errorString() const
 /*!
     Returns a pointer to the landmark manager which
     this request operates on.
+    \since 1.1
 */
 QLandmarkManager *QLandmarkAbstractRequest::manager() const
 {
@@ -291,6 +301,7 @@ QLandmarkManager *QLandmarkAbstractRequest::manager() const
 
     A manager cannot be assigned while the request is in the
     QLandmarkAbstractRequest::ActiveState.
+    \since 1.1
 */
 void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 {
@@ -305,6 +316,7 @@ void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 
     Returns true if the request was started, otherwise false. Trying to start a
     request that is already active returns false.
+    \since 1.1
     \sa cancel().
 */
 bool QLandmarkAbstractRequest::start()
@@ -341,6 +353,7 @@ bool QLandmarkAbstractRequest::start()
     could not be made or the request is not in the
     QLandmarkManager::Active state.
 
+    \since 1.1
     \sa start()
 */
 bool QLandmarkAbstractRequest::cancel()
@@ -379,6 +392,7 @@ bool QLandmarkAbstractRequest::cancel()
     the calling thread's event loop is dispatched.  If your code depends on
     your slots being invoked, you may need to process events after calling
     this function.
+    \since 1.1
 */
 bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 {
@@ -410,6 +424,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
   or derived-class specific results which are accessible through
   the derived class API.
 
+    \since 1.1
   \sa error()
 */
 
@@ -417,6 +432,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
     \fn void QLandmarkAbstractRequest::stateChanged(QLandmarkAbstractRequest::State newState)
     This signal is emitted when the state of the request is changed.  The new state of
     the request will be contained in \a newState.
+    \since 1.1
 */
 
 #include "moc_qlandmarkabstractrequest.cpp"

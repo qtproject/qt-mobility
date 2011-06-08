@@ -16,7 +16,9 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo-tester
 contains(mobility_modules,connectivity) {
     SUBDIRS += nfctestserver
 
-    linux*:!linux-armcc: SUBDIRS += btclient
+    linux*:!linux-armcc:contains(bluez_enabled, yes):contains(QT_CONFIG, dbus) {
+        SUBDIRS += btclient
+    }
 }
 
 symbian {

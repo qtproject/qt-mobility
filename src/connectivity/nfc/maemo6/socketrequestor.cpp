@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -202,8 +202,9 @@ public:
 private:
     bool parseAccessFailed(DBusMessage *message, SocketRequestor *socketRequestor);
     bool parseAccessGranted(DBusMessage *message, SocketRequestor *socketRequestor);
-    bool parseAcceptConnectSocket(DBusMessage *message, SocketRequestor *socketRequestor,
-                                  const char *member);
+    bool parseAcceptConnect(DBusMessage *message, SocketRequestor *socketRequestor,
+                            const char *member);
+    bool parseSocket(DBusMessage *message, SocketRequestor *socketRequestor, const char *member);
     bool parseErrorDenied(DBusMessage *message, SocketRequestor *socketRequestor);
 
 private slots:
@@ -283,11 +284,11 @@ DBusHandlerResult SocketRequestorPrivate::messageFilter(DBusConnection *connecti
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.AccessRequestor", "AccessGranted"))
         handled = parseAccessGranted(message, socketRequestor) ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Accept"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "accept") ? HandledSendReply : NotHandled;
+        handled = parseAcceptConnect(message, socketRequestor, "accept") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Connect"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "connect") ? HandledSendReply : NotHandled;
+        handled = parseAcceptConnect(message, socketRequestor, "connect") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Socket"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "socket") ? HandledSendReply : NotHandled;
+        handled = parseSocket(message, socketRequestor, "socket") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_error(message, "com.nokia.nfc.Error.Denied"))
         handled = parseErrorDenied(message, socketRequestor) ? Handled : NotHandled;
     else
@@ -331,11 +332,21 @@ bool SocketRequestorPrivate::parseAccessFailed(DBusMessage *message,
     // read DBus Object Path
     QVariant objectPath = getVariantFromDBusMessage(&args);
 
+    if (!dbus_message_iter_next(&args))
+        return false;
+
+    // read DBus kind string
+    QVariant kind = getVariantFromDBusMessage(&args);
+
+    if (!dbus_message_iter_next(&args))
+        return false;
+
     // read DBus error string
     QVariant errorString = getVariantFromDBusMessage(&args);
 
     QMetaObject::invokeMethod(socketRequestor, "accessFailed",
                               Q_ARG(QDBusObjectPath, QDBusObjectPath(objectPath.toString())),
+                              Q_ARG(QString, kind.toString()),
                               Q_ARG(QString, errorString.toString()));
     return true;
 }
@@ -355,6 +366,9 @@ bool SocketRequestorPrivate::parseAccessGranted(DBusMessage *message,
     // read DBus Object Path
     QVariant objectPath = getVariantFromDBusMessage(&args);
 
+    if (!dbus_message_iter_next(&args))
+        return false;
+
     // read access kind
     QVariant kind = getVariantFromDBusMessage(&args);
 
@@ -364,9 +378,9 @@ bool SocketRequestorPrivate::parseAccessGranted(DBusMessage *message,
     return true;
 }
 
-bool SocketRequestorPrivate::parseAcceptConnectSocket(DBusMessage *message,
-                                                      SocketRequestor *socketRequestor,
-                                                      const char *member)
+bool SocketRequestorPrivate::parseAcceptConnect(DBusMessage *message,
+                                                SocketRequestor *socketRequestor,
+                                                const char *member)
 {
     // m_mutex is locked in messageFilter()
 
@@ -405,6 +419,45 @@ bool SocketRequestorPrivate::parseAcceptConnectSocket(DBusMessage *message,
 
     QMetaObject::invokeMethod(socketRequestor, member, Q_ARG(QDBusVariant, QDBusVariant(lsap)),
                               Q_ARG(QDBusVariant, QDBusVariant(rsap)),
+                              Q_ARG(int, fd.toInt()), Q_ARG(QVariantMap, properties));
+
+    return true;
+}
+
+bool SocketRequestorPrivate::parseSocket(DBusMessage *message, SocketRequestor *socketRequestor,
+                                         const char *member)
+{
+    // m_mutex is locked in messageFilter()
+
+    DBusMessageIter args;
+
+    if (!dbus_message_iter_init(message, &args))
+        return false;
+
+    // read DBus Variant (lsap)
+    QVariant lsap = getVariantFromDBusMessage(&args);
+
+    if (!dbus_message_iter_next(&args))
+        return false;
+
+    // read socket fd
+    QVariant fd = getVariantFromDBusMessage(&args);
+
+    if (!dbus_message_iter_next(&args))
+        return false;
+
+    // read DBus a{sv} into QVariantMap
+    QVariant prop = getVariantFromDBusMessage(&args);
+    QVariantMap properties;
+    foreach (const QVariant &v, prop.toList()) {
+        QVariantList vl = v.toList();
+        if (vl.length() != 2)
+            continue;
+
+        properties.insert(vl.first().toString(), vl.at(1));
+    }
+
+    QMetaObject::invokeMethod(socketRequestor, member, Q_ARG(QDBusVariant, QDBusVariant(lsap)),
                               Q_ARG(int, fd.toInt()), Q_ARG(QVariantMap, properties));
 
     return true;
@@ -501,14 +554,16 @@ void SocketRequestorPrivate::sendRequestAccess(const QString &adaptor, const QSt
         return;
 
     dbus_message_iter_init_append(message, &args);
-    const char *cdata = path.toUtf8().constData();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &cdata)) {
+    const QByteArray p = path.toUtf8();
+    const char *pData = p.constData();
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &pData)) {
         dbus_message_unref(message);
         return;
     }
 
-    cdata = kind.toUtf8().constData();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &cdata)) {
+    const QByteArray k = kind.toUtf8();
+    const char *kData = k.constData();
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &kData)) {
         dbus_message_unref(message);
         return;
     }
@@ -539,14 +594,16 @@ void SocketRequestorPrivate::sendCancelAccessRequest(const QString &adaptor, con
         return;
 
     dbus_message_iter_init_append(message, &args);
-    const char *cdata = path.toUtf8().constData();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &cdata)) {
+    const QByteArray p = path.toUtf8();
+    const char *pData = p.constData();
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &pData)) {
         dbus_message_unref(message);
         return;
     }
 
-    cdata = kind.toUtf8().constData();
-    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &cdata)) {
+    const QByteArray k = kind.toUtf8();
+    const char *kData = k.constData();
+    if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &kData)) {
         dbus_message_unref(message);
         return;
     }

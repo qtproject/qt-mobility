@@ -1,0 +1,127 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/serviceframework
+
+function startTestApp()
+{
+    prompt('Start application \'declarative-sfw-notes\'
+    Verify test application started and closed without issue');
+}
+
+
+testcase = {
+
+    // prove that the test application starts before anything else is tested.
+    Run_Test_Application: function()
+    {
+        startTestApp();
+        if (!runAsManualTest()){
+            // ensure we have a widget to work with, dump its details
+            // TODO when run this test case 'automaticly' then enable this following code
+            //print('Focus widget is' + focusWidget());
+        }
+    },
+
+    Add_Note_With_Date: function()
+    {
+        prompt(twiki('*Add Note with date*
+
+    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
+    1 Start application *declarative-sfw-notes*
+    1 Click \"+\" button
+    1 Enter a note in the form *Note1#2010-10-01#10:30*
+    1 Click *Ok* button
+    1 Verify that note entered is listed with date mentioned
+        '));
+    },
+
+    Add_Note_Without_Date: function()
+    {
+        prompt(twiki('*Add Note without date*
+
+    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
+    1 Start application *declarative-sfw-notes*
+    1 Click \"+\" button
+    1 Enter a note in the form *My Note*
+    1 Click *Ok* button
+    1 Verify that note entered has the current date
+       '));
+    },
+
+    Browse_Notes: function()
+    {
+        prompt(twiki('*Browse Notes*
+
+    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
+    1 Start application *declarative-sfw-notes*
+    1 If not done so enter at least three notes see in this System Test the functions *Add_Note_With_Date* and *Add_Note_Without_Date*
+    1 Verify that *right* arrow button on dialog can be used to navigate to last note
+    1 Verify that the *left* arrow button on dialog can be used to navigate to first note
+        '));
+    },
+
+    Find_Note: function()
+    {
+        prompt(twiki('*Find Note*
+
+    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
+    1 Start application *declarative-sfw-notes*
+    1 Click *Search* button ( looking glass )
+    1 Enter text from previously entered note, eg *My Note*
+    1 Click *OK* button
+    1 Verify that expected note is displayed
+        '));
+   },
+
+    Delete_Note: function()
+    {
+        prompt(twiki('*Delete Note*
+
+    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
+    1 Start application *declarative-sfw-notes*
+    1 Click the *Delete* button ( in between Add and Search buttons )
+    1 Verify that the current note was deleted, ie use left and right arrow buttons to browse notes.
+        '));
+    },
+
+}
+

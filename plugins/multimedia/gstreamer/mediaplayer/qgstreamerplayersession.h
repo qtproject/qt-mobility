@@ -73,6 +73,7 @@ public:
     QNetworkRequest request() const;
 
     QMediaPlayer::State state() const { return m_state; }
+    QMediaPlayer::State pendingState() const { return m_pendingState; }
 
     qint64 duration() const;
     qint64 position() const;
@@ -93,6 +94,8 @@ public:
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
+
+    QMediaTimeRange availablePlaybackRanges() const;
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
     QMap<QtMultimediaKit::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
@@ -155,6 +158,8 @@ private:
     static void handleVolumeChange(GObject *o, GParamSpec *p, gpointer d);
     static void handleMutedChange(GObject *o, GParamSpec *p, gpointer d);
     static void insertColorSpaceElement(GstElement *element, gpointer data);
+    static void handleElementAdded(GstBin *bin, GstElement *element, QGstreamerPlayerSession *session);
+    void processInvalidMedia(QMediaPlayer::Error errorCode, const QString& errorString);
 
     QNetworkRequest m_request;
     QMediaPlayer::State m_state;
@@ -175,6 +180,8 @@ private:
     QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
 
+    bool m_haveQueueElement;
+
 #if defined(HAVE_GST_APPSRC)
     QGstAppSrc *m_appSrc;
 #endif
@@ -192,9 +199,19 @@ private:
     bool m_videoAvailable;
     bool m_seekable;
 
-    qint64 m_lastPosition;
+    mutable qint64 m_lastPosition;
     qint64 m_duration;
     int m_durationQueries;
+
+    enum SourceType
+    {
+        UnknownSrc,
+        SoupHTTPSrc,
+        UDPSrc,
+        MMSSrc
+    };
+    SourceType m_sourceType;
+    bool m_everPlayed;
 };
 
 #endif // QGSTREAMERPLAYERSESSION_H

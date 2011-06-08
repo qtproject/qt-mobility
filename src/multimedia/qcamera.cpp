@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -68,6 +68,7 @@ public:
         qRegisterMetaType<QCamera::Error>("QCamera::Error");
         qRegisterMetaType<QCamera::State>("QCamera::State");
         qRegisterMetaType<QCamera::Status>("QCamera::Status");
+        qRegisterMetaType<QCamera::CaptureMode>("QCamera::CaptureMode");
         qRegisterMetaType<QCamera::LockType>("QCamera::LockType");
         qRegisterMetaType<QCamera::LockStatus>("QCamera::LockStatus");
         qRegisterMetaType<QCamera::LockChangeReason>("QCamera::LockChangeReason");
@@ -84,6 +85,7 @@ public:
 
     \inmodule QtMultimediaKit
     \ingroup camera
+    \since 1.1
 
     QCamera can be used with QVideoWidget for viewfinder display,
     QMediaRecorder for video recording and QCameraImageCapture for image taking.
@@ -101,6 +103,7 @@ public:
         QMediaObjectPrivate(),
         provider(0),
         control(0),
+        deviceControl(0),
         viewfinder(0),
         capture(0),
         state(QCamera::UnloadedState),
@@ -119,6 +122,7 @@ public:
     QMediaServiceProvider *provider;
 
     QCameraControl *control;
+    QVideoDeviceControl *deviceControl;
     QCameraLocksControl *locksControl;
 
     QCameraExposure *cameraExposure;
@@ -241,6 +245,7 @@ void QCameraPrivate::initControls()
     if (service) {
         control = qobject_cast<QCameraControl *>(service->requestControl(QCameraControl_iid));
         locksControl = qobject_cast<QCameraLocksControl *>(service->requestControl(QCameraLocksControl_iid));
+        deviceControl = qobject_cast<QVideoDeviceControl*>(service->requestControl(QVideoDeviceControl_iid));
 
         if (control) {
             q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SLOT(_q_updateState(QCamera::State)));
@@ -261,6 +266,7 @@ void QCameraPrivate::initControls()
     } else {
         control = 0;
         locksControl = 0;
+        deviceControl = 0;
 
         error = QCamera::ServiceMissingError;
         errorString = QCamera::tr("The camera service is missing");
@@ -358,15 +364,12 @@ QCamera::QCamera(const QByteArray& device, QObject *parent):
 
     if (d->service != 0) {
         //pass device name to service
-        QVideoDeviceControl *deviceControl =
-                qobject_cast<QVideoDeviceControl*>(d->service->requestControl(QVideoDeviceControl_iid));
-
-        if (deviceControl) {
+        if (d->deviceControl) {
             QString deviceName(device);
 
-            for (int i=0; i<deviceControl->deviceCount(); i++) {
-                if (deviceControl->deviceName(i) == deviceName) {
-                    deviceControl->setSelectedDevice(i);
+            for (int i=0; i<d->deviceControl->deviceCount(); i++) {
+                if (d->deviceControl->deviceName(i) == deviceName) {
+                    d->deviceControl->setSelectedDevice(i);
                     break;
                 }
             }
@@ -397,6 +400,8 @@ QCamera::~QCamera()
             d->service->releaseControl(d->control);
         if (d->locksControl)
             d->service->releaseControl(d->locksControl);
+        if (d->deviceControl)
+            d->service->releaseControl(d->deviceControl);
 
         d->provider->releaseService(d->service);
     }
@@ -404,34 +409,38 @@ QCamera::~QCamera()
 
 
 /*!
-    Returne true if the camera service is ready to use.
+    Return true if the camera service is ready to use.
+    \since 1.1
 */
 bool QCamera::isAvailable() const
 {
-    if (d_func()->control != NULL)
-        return true;
-    else
-        return false;
+    return availabilityError() == QtMultimediaKit::NoError;
 }
 
 /*!
     Returns the error state of the camera service.
+    \since 1.1
 */
 
 QtMultimediaKit::AvailabilityError QCamera::availabilityError() const
 {
-    if (d_func()->control != NULL) {
-        if (d_func()->error == QCamera::NoError)
-            return QtMultimediaKit::NoError;
-        else
-            return QtMultimediaKit::ResourceError;
-    } else
+    Q_D(const QCamera);
+    if (d->control == NULL)
         return QtMultimediaKit::ServiceMissingError;
+
+    if (d->deviceControl && d->deviceControl->deviceCount() == 0)
+        return QtMultimediaKit::ResourceError;
+
+    if (d->error != QCamera::NoError)
+        return QtMultimediaKit::ResourceError;
+
+    return QtMultimediaKit::NoError;
 }
 
 
 /*!
     Returns the camera exposure control object.
+    \since 1.1
 */
 QCameraExposure *QCamera::exposure() const
 {
@@ -440,6 +449,7 @@ QCameraExposure *QCamera::exposure() const
 
 /*!
     Returns the camera focus control object.
+    \since 1.1
 */
 QCameraFocus *QCamera::focus() const
 {
@@ -448,6 +458,7 @@ QCameraFocus *QCamera::focus() const
 
 /*!
     Returns the camera image processing control object.
+    \since 1.1
 */
 QCameraImageProcessing *QCamera::imageProcessing() const
 {
@@ -457,6 +468,7 @@ QCameraImageProcessing *QCamera::imageProcessing() const
 /*!
   Sets the QVideoWidget based camera \a viewfinder.
   The previously set viewfinder is detached.
+  \since 1.1
 */
 void QCamera::setViewfinder(QVideoWidget *viewfinder)
 {
@@ -472,6 +484,7 @@ void QCamera::setViewfinder(QVideoWidget *viewfinder)
 /*!
   Sets the QGraphicsVideoItem based camera \a viewfinder.
   The previously set viewfinder is detached.
+  \since 1.1
 */
 void QCamera::setViewfinder(QGraphicsVideoItem *viewfinder)
 {
@@ -489,6 +502,7 @@ void QCamera::setViewfinder(QGraphicsVideoItem *viewfinder)
 
     If a viewfinder has already been set on the camera the new surface
     will replace it.
+    \since 1.2
 */
 
 void QCamera::setViewfinder(QAbstractVideoSurface *surface)
@@ -507,6 +521,7 @@ void QCamera::setViewfinder(QAbstractVideoSurface *surface)
 
 /*!
     Returns the error state of the object.
+    \since 1.1
 */
 
 QCamera::Error QCamera::error() const
@@ -516,6 +531,7 @@ QCamera::Error QCamera::error() const
 
 /*!
     Returns a string describing a camera's error state.
+    \since 1.1
 */
 QString QCamera::errorString() const
 {
@@ -525,6 +541,7 @@ QString QCamera::errorString() const
 
 /*!
     Returns true if the capture \a mode is suported.
+    \since 1.1
 */
 bool QCamera::isCaptureModeSupported(QCamera::CaptureMode mode) const
 {
@@ -542,6 +559,7 @@ bool QCamera::isCaptureModeSupported(QCamera::CaptureMode mode) const
   chaging capture mode is likely to lead to camera status
   chaged to QCamera::LoadedStatus, QCamera::LoadingStatus,
   and when the camera is ready to QCamera::ActiveStatus.
+  \since 1.1
 */
 
 QCamera::CaptureMode QCamera::captureMode() const
@@ -571,6 +589,7 @@ void QCamera::setCaptureMode(QCamera::CaptureMode mode)
     While the camera state is changed to QCamera::ActiveState,
     starting the camera service can be asynchronous with the actual
     status reported with QCamera::status property.
+    \since 1.1
 */
 void QCamera::start()
 {
@@ -581,6 +600,7 @@ void QCamera::start()
 /*!
     Stops the camera.
     The camera state is changed from QCamera::ActiveState to QCamera::LoadedState.
+    \since 1.1
 */
 void QCamera::stop()
 {
@@ -598,6 +618,7 @@ void QCamera::stop()
 
     In all the other cases it's possible to start the camera directly
     from unloaded state.
+    \since 1.1
 */
 void QCamera::load()
 {
@@ -608,6 +629,7 @@ void QCamera::load()
 /*!
     Close the camera device and deallocate the related resources.
     The camera state is changed to QCamera::UnloadedStatus.
+    \since 1.1
 */
 void QCamera::unload()
 {
@@ -618,6 +640,7 @@ void QCamera::unload()
 
 /*!
     Returns a list of camera device's available from the default service provider.
+    \since 1.1
 */
 
 QList<QByteArray> QCamera::availableDevices()
@@ -627,6 +650,7 @@ QList<QByteArray> QCamera::availableDevices()
 
 /*!
     Returns the description of the \a device.
+    \since 1.1
 */
 
 QString QCamera::deviceDescription(const QByteArray &device)
@@ -650,6 +674,7 @@ QCamera::Status QCamera::status() const
 
 /*!
     Returns the lock types, camera supports.
+    \since 1.1
 */
 QCamera::LockTypes QCamera::supportedLocks() const
 {
@@ -658,6 +683,7 @@ QCamera::LockTypes QCamera::supportedLocks() const
 
 /*!
     Returns the requested lock types.
+    \since 1.1
 */
 QCamera::LockTypes QCamera::requestedLocks() const
 {
@@ -666,6 +692,7 @@ QCamera::LockTypes QCamera::requestedLocks() const
 
 /*!
     Returns the status of requested camera settings locks.
+    \since 1.1
 */
 QCamera::LockStatus QCamera::lockStatus() const
 {
@@ -674,6 +701,7 @@ QCamera::LockStatus QCamera::lockStatus() const
 
 /*!
     Returns the status of camera settings \a lock.
+    \since 1.1
 */
 QCamera::LockStatus QCamera::lockStatus(QCamera::LockType lockType) const
 {
@@ -715,6 +743,7 @@ QCamera::LockStatus QCamera::lockStatus(QCamera::LockType lockType) const
 
     It's also acceptable to relock already locked settings,
     depending on the lock parameter this initiates new focusing, exposure or white balance calculation.
+    \since 1.1
  */
 void QCamera::searchAndLock(QCamera::LockTypes locks)
 {
@@ -738,6 +767,7 @@ void QCamera::searchAndLock(QCamera::LockTypes locks)
 
 /*!
     Lock all the supported camera settings.
+    \since 1.1
  */
 void QCamera::searchAndLock()
 {
@@ -746,6 +776,7 @@ void QCamera::searchAndLock()
 
 /*!
     Unlocks the camera settings specified with \a locks or cancel the current locking if one is active.
+    \since 1.1
  */
 void QCamera::unlock(QCamera::LockTypes locks)
 {
@@ -769,6 +800,7 @@ void QCamera::unlock(QCamera::LockTypes locks)
 
 /*!
     Unlock all the requested camera locks.
+    \since 1.1
  */
 void QCamera::unlock()
 {
@@ -805,6 +837,7 @@ void QCamera::unlock()
 /*!
     \property QCamera::state
     \brief The current state of the camera object.
+    \since 1.1
 */
 
 /*!
@@ -849,6 +882,7 @@ void QCamera::unlock()
 /*!
     \property QCamera::status
     \brief The current status of the camera object.
+    \since 1.1
 */
 
 
@@ -856,6 +890,7 @@ void QCamera::unlock()
     \enum QCamera::CaptureMode
     \value CaptureStillImage Camera is configured for still frames capture.
     \value CaptureVideo  Camera is configured for video capture.
+    \since 1.1
 */
 
 /*!
@@ -874,29 +909,34 @@ void QCamera::unlock()
 /*!
     \property QCamera::lockStatus
     \brief The overall status for all the requested camera locks.
+    \since 1.1
 */
 
 /*!
     \fn void QCamera::locked()
 
     Signals all the requested camera settings are locked.
+    \since 1.1
 */
 
 /*!
     \fn void QCamera::lockFailed()
 
     Signals locking of at least one requested camera settings failed.
+    \since 1.1
 */
 
 /*!
     \fn QCamera::lockStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason)
 
     Signals the overall \a status for all the requested camera locks was changed with specified \a reason.
+    \since 1.1
 */
 
 /*!
     \fn QCamera::lockStatusChanged(QCamera::LockType lock, QCamera::LockStatus status, QCamera::LockChangeReason reason)
     Signals the \a lock \a status was changed with specified \a reason.
+    \since 1.1
 */
 
 /*!
@@ -954,12 +994,14 @@ void QCamera::unlock()
     \fn void QCamera::error(QCamera::Error value)
 
     Signal emitted when error state changes to \a value.
+    \since 1.1
 */
 
 /*!
     \fn void QCamera::captureModeChanged(QCamera::CaptureMode mode)
 
     Signals the capture \a mode has changed.
+    \since 1.1
 */
 
 /*!
@@ -970,6 +1012,7 @@ void QCamera::unlock()
   Usually the state changes is caused by calling
   load(), unload(), start() and stop(),
   but the state can also be changed change as a result of camera error.
+    \since 1.1
 */
 
 /*!
@@ -977,6 +1020,7 @@ void QCamera::unlock()
 
   Signals the camera \a status has changed.
 
+  \since 1.1
 */
 
 

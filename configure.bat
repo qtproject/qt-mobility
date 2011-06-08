@@ -455,9 +455,9 @@ goto qmakeFound
 echo ... Not found  >> %PROJECT_LOG% 2>&1
 if "%QT_PATH%" == "" (
     echo >&2Cannot find 'qmake' in your PATH.
-    echo >&2Your PATH is: %PATH%
+    echo >&2Your PATH is: "%PATH%"
 ) else (
-    echo >&2Cannot find 'qmake' in %QT_PATH%.
+    echo >&2Cannot find 'qmake' in "%QT_PATH%".
 )
 echo >&2Aborting.
 goto errorTag
@@ -628,6 +628,11 @@ call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
 call :compileTest LockandFlipKeys LockandFlipPSkeys
 call :compileTest FmTxClientCheck FmTxClient
 call :compileTest DiskNotifyClientCheck DiskNotifyClient
+call :compileTest ThermalStatus_Symbian thermalstatus_symbian
+call :compileTest Flextimer_Symbian symbianflextimer
+call :compileTest ETelPacketservice_symbian etelpacketservice_symbian
+call :compileTest mmf_http_cookies mmf_http_cookies
+call :compileTest networkhandlingengine_symbian networkhandlingengine_symbian
 goto noTests
 
 :windowsTests

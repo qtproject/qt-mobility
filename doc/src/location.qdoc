@@ -55,7 +55,7 @@ and mapping and navigation.
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
 to facilitate the future migration of QtMobility APIs into Qt. See the
-\l {Quickstart Example}{Quickstart guide} for an example on how the
+\l {Quickstart guide} for an example on how the
 namespace impacts on application development.
 
 \section1 Location Positioning
@@ -109,6 +109,7 @@ QGeoSatelliteInfoSource class. Call QGeoSatelliteInfoSource::createDefaultSource
 create an instance of the default satellite data source for the platform,
 if one is available. Alternatively, clients can subclass it to provide a
 custom satellite data source.
+
 
 \section2 Requesting location data from data sources
 
@@ -365,10 +366,10 @@ The behaviour of some parts of the Landmarks API varies between platforms.  A fe
 \o The symbian manager does not support the MatchContains flag in the attribute filters.  The symbian manager also does not
 support multiple attributes with an AND operation type in an attribute filter.  Some versions of s60 do not support the
 MatchContains flag in name filters. See the documentation on the attribute and name filters for more details.
-\o The sparql manager as of 1.1.1 does not support the countryCode, county and district fields of QGeoAddress.  These
-fields are ignored when a landmark is saved.
+\o The sparql manager does not support the countryCode field of QGeoAddress.  This
+field is ignored when a landmark is saved.  As of QtMobility 1.2.1 support for district and county fields were added to
+the sparql manager, note that a tracker version of 0.9.35 or greater is required.
 \endlist
-
 
 \section3 Importing and Exporting Landmarks
 The landmarks API supports import and exporting of landmarks.  The file formats that are supported depends on the particular manager.
@@ -415,10 +416,9 @@ landmarks which have NaN latitude and longitude values.  If you try to export al
 are skipped over.  However if you provide a list of ids of landmarks to export, the export operation will fail if any one
 of those landmarks have NaN latitude or longitude values.
 
-Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid URI
-as defined by RFC 2396 as amended by RFC 2732.  The managers differ in behaviour with the symbian manager
-ignoring the url field during export if the URI is invalid while the sqlite and sparql manager will export the url
-and subsequently create an invalid lmx file (this issue is intended to be resolved in a future release).
+Also note that when exporting landmarks in lmx format, the url of the landmark should be a valid absolute URI
+as specified in the Landmark Exchange Format Specification 1.0.  If the URI is relative, then the url of
+that landmark is not exported.
 
 \section2 Landmark classes
 
@@ -484,6 +484,13 @@ is part of QtMobility.  See the section \l{The Nokia plugin} for more details.
         searchManager = serviceProvider.searchManager();
     }
 \endcode
+
+\bold {Important notice:} \i {The map data provided by the offline plug-in is
+place-shifted for the area of the People’s Republic of China. To provide
+un-shifted maps of China in an application, the application developer must
+first obtain permission from Chinese officials. The Qt Mobility Location
+API cannot offer this on the API level.}
+
 
 \section2 Common classes
 
@@ -561,7 +568,9 @@ The Ovi services plugin can be loaded by using the plugin key "nokia".
 
 Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with the QtMobility package.
 
-On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services.
+On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services. 
+
+The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to 10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application on Symbian is 4 MB, it may be good idea to increase the application's heap size (depending on the app of course). Otherwise somewhat misleading error popups may appear, e.g. "<application name>: Memory full. Close some applications and try again." See e.g.  \l {http://library.forum.nokia.com/index.jsp?topic=/Qt_for_Symbian_Developers_Library/GUID-4427F6F8-AB72-489B-BB9C-3261A0568E4E.html}{Forum Nokia documentation.}
 
 The following table lists optional parameters that can be passed to the Nokia plugin.
 \table

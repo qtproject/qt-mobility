@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -153,10 +153,10 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
 {
     m_detectTargetTypes = targetTypes;
 
-    connect(m_adapter, SIGNAL(TargetDetected(QString)),
-            this, SLOT(_q_targetDetected(QString)));
-    connect(m_adapter, SIGNAL(TargetLost(QString)),
-            this, SLOT(_q_targetLost(QString)));
+    connect(m_adapter, SIGNAL(TargetDetected(QDBusObjectPath)),
+            this, SLOT(_q_targetDetected(QDBusObjectPath)));
+    connect(m_adapter, SIGNAL(TargetLost(QDBusObjectPath)),
+            this, SLOT(_q_targetLost(QDBusObjectPath)));
 
     return true;
 }
@@ -165,10 +165,10 @@ void QNearFieldManagerPrivateImpl::stopTargetDetection()
 {
     m_detectTargetTypes.clear();
 
-    disconnect(m_adapter, SIGNAL(TargetDetected(QString)),
-               this, SLOT(_q_targetDetected(QString)));
-    disconnect(m_adapter, SIGNAL(TargetLost(QString)),
-               this, SLOT(_q_targetLost(QString)));
+    disconnect(m_adapter, SIGNAL(TargetDetected(QDBusObjectPath)),
+               this, SLOT(_q_targetDetected(QDBusObjectPath)));
+    disconnect(m_adapter, SIGNAL(TargetLost(QDBusObjectPath)),
+               this, SLOT(_q_targetLost(QDBusObjectPath)));
 }
 
 QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &path)
@@ -195,7 +195,8 @@ QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &pat
             else
                 nearFieldTarget = new NearFieldTarget<QNearFieldTarget>(this, target, tag);
         } else if (type == QLatin1String("device")) {
-            nearFieldTarget = new NearFieldTarget<QNearFieldTarget>(this, target, 0);
+            Device *device = new Device(QLatin1String("com.nokia.nfc"), path, m_connection);
+            nearFieldTarget = new NearFieldTarget<QNearFieldTarget>(this, target, device);
         }
 
         if (nearFieldTarget)
@@ -379,10 +380,10 @@ void QNearFieldManagerPrivateImpl::releaseAccess(QNearFieldManager::TargetAccess
     QNearFieldManagerPrivate::releaseAccess(accessModes);
 }
 
-void QNearFieldManagerPrivateImpl::AccessFailed(const QDBusObjectPath &target,
+void QNearFieldManagerPrivateImpl::AccessFailed(const QDBusObjectPath &target, const QString &kind,
                                                 const QString &error)
 {
-    qDebug() << "Access for" << target.path() << "failed with error:" << error;
+    qDebug() << "Access for" << target.path() << kind << "failed with error:" << error;
 }
 
 void QNearFieldManagerPrivateImpl::AccessGranted(const QDBusObjectPath &target,
@@ -425,23 +426,23 @@ void QNearFieldManagerPrivateImpl::emitTargetDetected(const QString &targetPath)
         emit targetDetected(target);
 }
 
-void QNearFieldManagerPrivateImpl::_q_targetDetected(const QString &targetPath)
+void QNearFieldManagerPrivateImpl::_q_targetDetected(const QDBusObjectPath &targetPath)
 {
     if (!m_requestedModes)
-        emitTargetDetected(targetPath);
+        emitTargetDetected(targetPath.path());
     else
-        m_pendingDetectedTargets[targetPath].start(500, this);
+        m_pendingDetectedTargets[targetPath.path()].start(500, this);
 }
 
-void QNearFieldManagerPrivateImpl::_q_targetLost(const QString &targetPath)
+void QNearFieldManagerPrivateImpl::_q_targetLost(const QDBusObjectPath &targetPath)
 {
-    QNearFieldTarget *nearFieldTarget = m_targets.value(targetPath).data();
+    QNearFieldTarget *nearFieldTarget = m_targets.value(targetPath.path()).data();
 
     // haven't seen target so just drop this event
     if (!nearFieldTarget) {
         // We either haven't seen target (started after target was detected by system) or the
-        // application deleted the target. Remove from map and dont emit anything.
-        m_targets.remove(targetPath);
+        // application deleted the target. Remove from map and don't emit anything.
+        m_targets.remove(targetPath.path());
         return;
     }
 

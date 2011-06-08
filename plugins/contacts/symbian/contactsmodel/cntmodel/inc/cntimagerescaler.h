@@ -29,14 +29,15 @@ class CActiveSchedulerWait;
 class CContactItem;
 
 /**
- * This class is used to rescale thumbnail images large images assigned 
- * to contacts.
+ * This class is used to rescale and image assigned to a contact and store an copy
+ * of the rescaled image to a contacts images folder as well as store the path in
+ * the image field of the CContactItem. A thumbnail is generated also and stored in
+ * the thumbnail field of the CContactItem.
  * 
- * Contacts containing a thumbnail fields store paths of the thumbnail image which 
- * is in the file system. Each contact should own its own image meaning that the life 
- * of this thumbnail image extends until the parent contact is deleted. The main aim 
+ * The rationale behind this is that each contact should own its own image meaning that 
+ * the life of this image extends until the parent contact is deleted. The main aim 
  * of checking the size of these images is to avoid having to big images stored in the 
- * internal folder. Too large images are rescaled using an instance of this class.
+ * contact images folder. Too large images are rescaled using an instance of this class.
  */
 class CImageRescaler : public CActive
     {
@@ -49,7 +50,8 @@ class CImageRescaler : public CActive
         EStartRescale = 0,
         EDecoding,
         EEncoding,
-        EScaling
+        EScaling,
+        EComplete
         };
     
     public:
@@ -58,6 +60,9 @@ class CImageRescaler : public CActive
         
     public:
         void ProcessImageFieldL(CContactItem& aItem);
+        void ScaleAndStoreImage(TRequestStatus* aRequestStatus, const TDesC& aSrcPath);
+        void EnsureImageRemoved(const TDesC& aImagePath);
+        TPath DestinationPath() const;
 
     protected: // CActive
         void DoCancel();
@@ -68,12 +73,17 @@ class CImageRescaler : public CActive
         CImageRescaler();
         void ConstructL();
         TPath ResizeAndCopyImage(const TDesC& aSourceFile, const CContactItem& aItem);
-        TBool IsImageToLarge(const TDesC& aSourceFile) const;
+        TBool IsImageTooLarge(const TDesC& aSourceFile) const;
         void ResizeImageL(const TDesC& aSourceFile, const TDesC& aDestFile);
+        void StartRescaleL();
         void DecodeL();
         void EncodeL();
         void ScaleL();
         void StopWait();
+        void Reset();
+        void CompleteRerescale();
+        TPath GenerateDestPath(const TDesC& aSrcPath);
+        TBool ExistsInImagesDirectory(const TDesC& aImagePath) const;
 
     private:
         CFbsBitmap* iBitmap; // decoded image
@@ -82,12 +92,12 @@ class CImageRescaler : public CActive
         CImageEncoder* iImageEncoder;
         CBitmapScaler* iScaler;
         TState iState;
-        TFileName iSourceFile;
-        TFileName iDestFile;
-        TSize iScreenSize;
+        TPath iSourceFile;
+        TPath iDestFile;
         CActiveSchedulerWait* iWait;
         TInt iErr;
         TPath iImagesDirPath;
+        TRequestStatus* iRequestStatus;
     };
 
 #endif // __CNTIMAGERESCALER_H__

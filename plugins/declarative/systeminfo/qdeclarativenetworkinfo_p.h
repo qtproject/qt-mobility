@@ -62,6 +62,8 @@ class QDeclarativeNetworkInfo : public QSystemNetworkInfo
     Q_PROPERTY(bool monitorModeChanges READ monitorModeChanges WRITE startModeChanged)
     Q_PROPERTY(bool monitorCurrentMobileCountryCodeChanges READ monitorCurrentMobileCountryCodeChanges WRITE startCurrentMobileCountryCodeChanged)
     Q_PROPERTY(bool monitorCurrentMobileNetworkCodeChanges READ monitorCurrentMobileNetworkCodeChanges WRITE startCurrentMobileNetworkCodeChanged)
+    Q_PROPERTY(bool monitorCellDataChanges READ monitorCellDataChanges WRITE startCellDataChanged)
+    Q_PROPERTY(bool monitorCellIdChanges READ monitorCellIdChanges WRITE startCellIdChanged)
 
 public:
     explicit QDeclarativeNetworkInfo(QObject *parent = 0);
@@ -90,6 +92,12 @@ public:
     bool monitorCurrentMobileNetworkCodeChanges();
     void startCurrentMobileNetworkCodeChanged(bool on);
 
+    bool monitorCellDataChanges();
+    void startCellDataChanged(bool on);
+
+    bool monitorCellIdChanges();
+    void startCellIdChanged(bool on);
+
     void useMode(QSystemNetworkInfo::NetworkMode curmode);
 
 public slots:
@@ -105,6 +113,10 @@ Q_SIGNALS:
    void currentMobileCountryCodeChanged(const QString &newMcc);
    void currentMobileNetworkCodeChanged(const QString &newMnc);
 
+   void cellIdChanges(int cellId);
+   void cellDataTechnologyChanges(QSystemNetworkInfo::CellDataTechnology cellTech);
+
+
 private:
     QSystemNetworkInfo::NetworkMode m_mode;
     QString statusToString(QSystemNetworkInfo::NetworkStatus);
@@ -116,6 +128,8 @@ private:
     bool monitoringModeChanges;
     bool monitoringCurrentMobileCountryCodeChanges;
     bool monitoringCurrentMobileNetworkCodeChanges;
+    bool monitoringCellDataTechnologyChanges;
+    bool monitoringCellIdChanges;
 
 private slots:
     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);

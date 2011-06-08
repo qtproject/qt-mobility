@@ -13,4 +13,11 @@ MOBILITY += connectivity
 
 TEMPLATE = app
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    socketcontroller.cpp \
+    servercontroller.cpp
+
+HEADERS += \
+    socketcontroller.h \
+    servercontroller.h \
+    servicenames.h

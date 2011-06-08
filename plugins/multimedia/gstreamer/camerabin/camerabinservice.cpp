@@ -55,6 +55,8 @@
 #include "camerabinfocus.h"
 #include "camerabinimagecapture.h"
 #include "camerabinimageprocessing.h"
+#include "camerabincapturebufferformat.h"
+#include "camerabincapturedestination.h"
 
 #include "qgstreameraudioinputendpointselector.h"
 #include "qgstreamervideoinputdevicecontrol.h"
@@ -62,6 +64,10 @@
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideowindow.h"
 #include "qgstreamervideorenderer.h"
+
+#if defined(Q_WS_MAEMO_6) && defined(__arm__)
+#include "qgstreamergltexturerenderer.h"
+#endif
 
 #include "qgstreamervideowidget.h"
 
@@ -106,7 +112,12 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
         if (m_videoInputDevice->deviceCount())
             m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));        
 
+#if defined(Q_WS_MAEMO_6) && defined(__arm__)
+        m_videoRenderer = new QGstreamerGLTextureRenderer(this);
+#else
         m_videoRenderer = new QGstreamerVideoRenderer(this);
+#endif
+
 
 #ifdef Q_WS_MAEMO_6
         m_videoWindow = new QGstreamerVideoWindow(this, "omapxvsink");
@@ -220,6 +231,12 @@ QMediaControl *CameraBinService::requestControl(const char *name)
 
     if (qstrcmp(name, QCameraLocksControl_iid) == 0)
         return m_captureSession->cameraLocksControl();
+
+    if (qstrcmp(name, QCameraCaptureDestinationControl_iid) == 0)
+        return m_captureSession->captureDestinationControl();
+
+    if (qstrcmp(name, QCameraCaptureBufferFormatControl_iid) == 0)
+        return m_captureSession->captureBufferFormatControl();
 
     return 0;
 }

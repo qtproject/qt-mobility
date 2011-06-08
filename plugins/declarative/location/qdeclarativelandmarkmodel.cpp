@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     \brief The LandmarkAbstractModel element is an uncreatable /
     uninstantiable base element for LandmarkModel and LandmarkCategoryModel.
     It defines many common properties for the two models.
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     The LandmarkAbstractModel element is an uncreatable /
     uninstantiable base element for LandmarkModel and LandmarkCategoryModel.
@@ -351,7 +351,7 @@ void QDeclarativeLandmarkAbstractModel::setSortOrder(QDeclarativeLandmarkAbstrac
     \qmlclass LandmarkModel QDeclarativeLandmarkModel
     \brief The LandmarkModel element provides access to landmarks.
     \inherits LandmarkAbstractModel
-    \ingroup qml-location
+    \ingroup qml-location-landmarks
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 

@@ -5,6 +5,7 @@ TARGET=tst_icheck
 CONFIG+=testcase
 QT -= gui
 DEFINES += ICHECK_BUILD ICHECK_APP_BUILD
+include(../../../common.pri)
 
 wince*|symbian*: {
     addFiles.sources = testdata/*
@@ -39,3 +40,4 @@ SOURCES += tst_icheck.cpp \
 HEADERS += ../../../tools/icheck/parsemanager.h \
     ../../../tools/icheck/ichecklib.h
 
+maemo*:CONFIG += insignificant_test

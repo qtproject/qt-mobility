@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -75,6 +75,13 @@ QVideoWidgetControlBackend::QVideoWidgetControlBackend(
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     layout->setSpacing(0);
+
+#ifdef Q_OS_SYMBIAN
+    // On some cases the flag is not reset automatically
+    // This would lead to viewfinder not being visible on Symbian
+    control->videoWidget()->setAttribute(Qt::WA_WState_ExplicitShowHide, false);
+#endif // Q_OS_SYMBIAN
+
     layout->addWidget(control->videoWidget());
 
     widget->setLayout(layout);
@@ -578,11 +585,15 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
 
 /*!
     \class QVideoWidget
-    
+
 
     \brief The QVideoWidget class provides a widget which presents video
     produced by a media object.
     \ingroup multimedia
+    \inmodule QtMultimediaKit
+    \since 1.0
+
+    \inmodule QtMultimediaKit
 
     Attaching a QVideoWidget to a QMediaObject allows it to display the
     video or image output of that media object.  A QVideoWidget is attached
@@ -636,6 +647,7 @@ QVideoWidget::~QVideoWidget()
 /*!
     \property QVideoWidget::mediaObject
     \brief the media object which provides the video displayed by a widget.
+    \since 1.0
 */
 
 QMediaObject *QVideoWidget::mediaObject() const
@@ -645,6 +657,7 @@ QMediaObject *QVideoWidget::mediaObject() const
 
 /*!
     \internal
+    \since 1.0
 */
 bool QVideoWidget::setMediaObject(QMediaObject *object)
 {
@@ -690,6 +703,7 @@ bool QVideoWidget::setMediaObject(QMediaObject *object)
 /*!
     \property QVideoWidget::aspectRatioMode
     \brief how video is scaled with respect to its aspect ratio.
+    \since 1.0
 */
 
 Qt::AspectRatioMode QVideoWidget::aspectRatioMode() const
@@ -712,6 +726,7 @@ void QVideoWidget::setAspectRatioMode(Qt::AspectRatioMode mode)
 /*!
     \property QVideoWidget::fullScreen
     \brief whether video display is confined to a window or is fullScreen.
+    \since 1.0
 */
 
 void QVideoWidget::setFullScreen(bool fullScreen)
@@ -725,7 +740,7 @@ void QVideoWidget::setFullScreen(bool fullScreen)
         flags |= Qt::Window;
         flags &= ~Qt::SubWindow;
         setWindowFlags(flags);
-        
+
         showFullScreen();
     } else {
         showNormal();
@@ -737,6 +752,7 @@ void QVideoWidget::setFullScreen(bool fullScreen)
 
     Signals that the \a fullScreen mode of a video widget has changed.
 
+    \since 1.0
     \sa fullScreen
 */
 
@@ -745,6 +761,7 @@ void QVideoWidget::setFullScreen(bool fullScreen)
     \brief an adjustment to the brightness of displayed video.
 
     Valid brightness values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 int QVideoWidget::brightness() const
@@ -769,6 +786,7 @@ void QVideoWidget::setBrightness(int brightness)
 
     Signals that a video widgets's \a brightness adjustment has changed.
 
+    \since 1.0
     \sa brightness
 */
 
@@ -778,6 +796,7 @@ void QVideoWidget::setBrightness(int brightness)
 
     Valid contrast values range between -100 and 100, the default is 0.
 
+    \since 1.0
 */
 
 int QVideoWidget::contrast() const
@@ -802,6 +821,7 @@ void QVideoWidget::setContrast(int contrast)
 
     Signals that a video widgets's \a contrast adjustment has changed.
 
+    \since 1.0
     \sa contrast
 */
 
@@ -810,6 +830,7 @@ void QVideoWidget::setContrast(int contrast)
     \brief an adjustment to the hue of displayed video.
 
     Valid hue values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 int QVideoWidget::hue() const
@@ -834,6 +855,7 @@ void QVideoWidget::setHue(int hue)
 
     Signals that a video widgets's \a hue has changed.
 
+    \since 1.0
     \sa hue
 */
 
@@ -842,6 +864,7 @@ void QVideoWidget::setHue(int hue)
     \brief an adjustment to the saturation of displayed video.
 
     Valid saturation values range between -100 and 100, the default is 0.
+    \since 1.0
 */
 
 int QVideoWidget::saturation() const
@@ -867,12 +890,14 @@ void QVideoWidget::setSaturation(int saturation)
 
     Signals that a video widgets's \a saturation has changed.
 
+    \since 1.0
     \sa saturation
 */
 
 /*!
   Returns the size hint for the current back end,
   if there is one, or else the size hint from QWidget.
+  \since 1.0
  */
 QSize QVideoWidget::sizeHint() const
 {
@@ -889,6 +914,7 @@ QSize QVideoWidget::sizeHint() const
 /*!
   Current event \a event.
   Returns the value of the baseclass QWidget::event(QEvent *event) function.
+  \since 1.0
 */
 bool QVideoWidget::event(QEvent *event)
 {
@@ -921,6 +947,7 @@ bool QVideoWidget::event(QEvent *event)
 
 /*!
   Handles the show \a event.
+  \since 1.0
  */
 void QVideoWidget::showEvent(QShowEvent *event)
 {
@@ -945,6 +972,7 @@ void QVideoWidget::showEvent(QShowEvent *event)
 /*!
 
   Handles the hide \a event.
+  \since 1.0
 */
 void QVideoWidget::hideEvent(QHideEvent *event)
 {
@@ -958,6 +986,7 @@ void QVideoWidget::hideEvent(QHideEvent *event)
 
 /*!
   Handles the resize \a event.
+  \since 1.0
  */
 void QVideoWidget::resizeEvent(QResizeEvent *event)
 {
@@ -971,6 +1000,7 @@ void QVideoWidget::resizeEvent(QResizeEvent *event)
 
 /*!
   Handles the move \a event.
+  \since 1.0
  */
 void QVideoWidget::moveEvent(QMoveEvent *event)
 {
@@ -982,6 +1012,7 @@ void QVideoWidget::moveEvent(QMoveEvent *event)
 
 /*!
   Handles the paint \a event.
+  \since 1.0
  */
 void QVideoWidget::paintEvent(QPaintEvent *event)
 {
@@ -1001,6 +1032,7 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 /*!
     \reimp
     \internal
+    \since 1.1
 */
 bool QVideoWidget::winEvent(MSG *message, long *result)
 {

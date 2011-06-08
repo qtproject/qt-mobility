@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -56,6 +56,8 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup maps-impl-tiled
+
+    \since 1.1
 
     Instances of QGeoTiledMapReply manage the state and results of these
     operations.
@@ -95,6 +97,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     Constructs a tiled map reply object based on \a request,  with parent \a parent.
+    \since 1.1
 */
 QGeoTiledMapReply::QGeoTiledMapReply(const QGeoTiledMapRequest &request, QObject *parent)
     : QObject(parent),
@@ -104,6 +107,7 @@ QGeoTiledMapReply::QGeoTiledMapReply(const QGeoTiledMapRequest &request, QObject
 
 /*!
     Constructs a tiled map reply object with a given \a error and \a errorString and the specified \a parent.
+    \since 1.1
 */
 QGeoTiledMapReply::QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent)
     : QObject(parent),
@@ -128,6 +132,7 @@ QGeoTiledMapReply::~QGeoTiledMapReply()
     QGeoTiledMapReply::setTiledMapFormat() should be called before this
     function. If an error occurred, QGeoTiledMapReply::setError() should be used
     instead.
+    \since 1.1
 */
 void QGeoTiledMapReply::setFinished(bool finished)
 {
@@ -139,6 +144,7 @@ void QGeoTiledMapReply::setFinished(bool finished)
 /*!
     Return true if the operation completed successfully or encountered an
     error which cause the operation to come to a halt.
+    \since 1.1
 */
 bool QGeoTiledMapReply::isFinished() const
 {
@@ -151,6 +157,7 @@ bool QGeoTiledMapReply::isFinished() const
 
     This wil also cause error() and finished() signals to be emitted, in that
     order.
+    \since 1.1
 */
 void QGeoTiledMapReply::setError(QGeoTiledMapReply::Error error, const QString &errorString)
 {
@@ -164,6 +171,7 @@ void QGeoTiledMapReply::setError(QGeoTiledMapReply::Error error, const QString &
     Returns the error state of this reply.
 
     If the result is QGeoTiledMapReply::NoError then no error has occurred.
+    \since 1.1
 */
 QGeoTiledMapReply::Error QGeoTiledMapReply::error() const
 {
@@ -179,6 +187,7 @@ QGeoTiledMapReply::Error QGeoTiledMapReply::error() const
 
     To determine whether an error has occurred, check to see if
     QGeoTiledMapReply::error() is equal to QGeoTiledMapReply::NoError.
+    \since 1.1
 */
 QString QGeoTiledMapReply::errorString() const
 {
@@ -187,6 +196,7 @@ QString QGeoTiledMapReply::errorString() const
 
 /*!
     Returns whether the reply is coming from a cache.
+    \since 1.1
 */
 bool QGeoTiledMapReply::isCached() const
 {
@@ -195,6 +205,7 @@ bool QGeoTiledMapReply::isCached() const
 
 /*!
     Sets whether the reply is coming from a cache to \a cached.
+    \since 1.1
 */
 void QGeoTiledMapReply::setCached(bool cached)
 {
@@ -203,6 +214,7 @@ void QGeoTiledMapReply::setCached(bool cached)
 
 /*!
     Returns the request which corresponds to this reply.
+    \since 1.1
 */
 QGeoTiledMapRequest QGeoTiledMapReply::request() const
 {
@@ -211,6 +223,7 @@ QGeoTiledMapRequest QGeoTiledMapReply::request() const
 
 /*!
     Returns the tile image data.
+    \since 1.1
 */
 QByteArray QGeoTiledMapReply::mapImageData() const
 {
@@ -219,6 +232,7 @@ QByteArray QGeoTiledMapReply::mapImageData() const
 
 /*!
     Sets the tile image data to \a data.
+    \since 1.1
 */
 void QGeoTiledMapReply::setMapImageData(const QByteArray &data)
 {
@@ -227,6 +241,7 @@ void QGeoTiledMapReply::setMapImageData(const QByteArray &data)
 
 /*!
     Returns the format of the tile image.
+    \since 1.1
 */
 QString QGeoTiledMapReply::mapImageFormat() const
 {
@@ -235,6 +250,7 @@ QString QGeoTiledMapReply::mapImageFormat() const
 
 /*!
     Sets the format of the tile image to \a format.
+    \since 1.1
 */
 void QGeoTiledMapReply::setMapImageFormat(const QString &format)
 {
@@ -245,6 +261,7 @@ void QGeoTiledMapReply::setMapImageFormat(const QString &format)
     Cancels the operation immediately.
 
     This will do nothing if the reply is finished.
+    \since 1.1
 */
 void QGeoTiledMapReply::abort()
 {
@@ -290,6 +307,7 @@ void QGeoTiledMapReply::abort()
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 /*!
     \fn void QGeoTiledMapReply::error(QGeoTiledMapReply::Error error, const QString &errorString)
@@ -302,6 +320,7 @@ void QGeoTiledMapReply::abort()
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
+    \since 1.1
 */
 
 /*******************************************************************************

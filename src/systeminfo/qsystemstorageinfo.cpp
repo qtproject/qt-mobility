@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -45,17 +45,18 @@
 
 QTM_BEGIN_NAMESPACE
 
-        Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
 #ifdef QT_SIMULATOR
 QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPrivate(); }
-#endif
+#endif // QT_SIMULATOR
 
 /*!
-   \class QSystemStorageInfo
-   \ingroup systeminfo
-   \inmodule QtSystemInfo
-        \brief The QSystemStorageInfo class provides access to disk storage information from the system.
+    \class QSystemStorageInfo
+    \ingroup systeminfo
+    \inmodule QtSystemInfo
+    \brief The QSystemStorageInfo class provides access to disk storage information from the system.
+    \since 1.0
 */
 
 /*!
@@ -63,12 +64,12 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     This enum describes the type of drive or volume
 
     \value NoDrive               Drive type undetermined.
-    \value InternalDrive         Is internal mass storage drive like a harddrive.
+    \value InternalDrive         Is internal mass storage drive like a hard drive.
     \value RemovableDrive        Is a removable disk like MMC.
     \value RemoteDrive           Is a network drive.
     \value CdromDrive            Is a cd rom drive.
-    \value InternalFlashDrive    Is an internal flash disk, or Phone Memory.
-    \value RamDrive              Is a virtual drive made in RAM memory.
+    \value InternalFlashDrive    Is an internal flash disk, or Phone Memory. Since 1.2
+    \value RamDrive              Is a virtual drive made in RAM memory. Since 1.2
 */
 
 /*!
@@ -80,102 +81,109 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     \value LowStorageState             Storage level indicates below 40%.
     \value VeryLowStorageState         Storage level indicates below 10%.
     \value CriticalStorageState        Storage level indicates below 2%.
-
 */
 
 /*!
-     \fn void QSystemStorageInfo::logicalDriveChanged(bool added,const QString &vol)
+    \fn void QSystemStorageInfo::logicalDriveChanged(bool added, const QString &drive)
 
-     This signal gets emitted when new storage has been added or removed from the system.
-     \a added is true when a new drive is found, otherwise false when removed.
-     \a vol is the volume's name.
+    This signal gets emitted when a new \a drive storage has been added or removed. If \a added is true,
+    it means a new drive is found, otherwise a drive is removed.
+    \since 1.1
 */
 
 /*!
-     \fn void QSystemStorageInfo::storageStateChanged(const QString &vol, QSystemStorageInfo::StorageState state)
+    \fn void QSystemStorageInfo::storageStateChanged(const QString &drive, QSystemStorageInfo::StorageState state)
 
-     This signal gets emitted when a volume has changed from one StorageState to another, \a vol
-     being the volume name, and \a state being the new state.
-
-     The polling time may be different for different platforms.
+    This signal gets emitted when the storage state of a \a drive has changed to \a state. Note that the
+    polling time may be different for different platforms.
+    \since 1.2
 */
-
 
 /*!
     Constructs a QSystemStorageInfo with the given \a parent.
 */
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
-   : QObject(parent), d(storageInfoPrivate())
+    : QObject(parent)
+    , d(storageInfoPrivate())
 {
     qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
     qRegisterMetaType<QSystemStorageInfo::StorageState>("QSystemStorageInfo::StorageState");
-
-    connect(d,SIGNAL(logicalDriveChanged(bool,const QString &)),
-           this,SIGNAL(logicalDriveChanged(bool,const QString &)),Qt::UniqueConnection);
-
-    connect(d,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
-           this,SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)));
 }
 
 /*!
- Destroys the QSystemStorageInfo object.
+    Destroys the QSystemStorageInfo object.
 */
 QSystemStorageInfo::~QSystemStorageInfo()
 {
 }
 
 /*!
-   Returns the amount of total space on the \a volumeDrive,
-   in bytes.
+    Returns the amount of total space on the \a drive, in bytes.
 */
-qlonglong QSystemStorageInfo::totalDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::totalDiskSpace(const QString &drive)
 {
-   return storageInfoPrivate()->totalDiskSpace(volumeDrive);
+    return storageInfoPrivate()->totalDiskSpace(drive);
 }
 
 /*!
-   Returns the amount of available free space on the \a volumeDrive,
-in bytes.
+    Returns the amount of available free space on the \a drive, in bytes.
 */
-qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
+qlonglong QSystemStorageInfo::availableDiskSpace(const QString &drive)
 {
-   return storageInfoPrivate()->availableDiskSpace(volumeDrive);
+    return storageInfoPrivate()->availableDiskSpace(drive);
 }
 
 /*!
- \property QSystemStorageInfo::logicalDrives
- \brief The logical drives.
+    \property QSystemStorageInfo::logicalDrives
+    \brief The  list of logical drives.
 
-   Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
+    Returns a QStringList of drives or volumes, or an empty list if no drives are found.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
-   return storageInfoPrivate()->logicalDrives();
+    return storageInfoPrivate()->logicalDrives();
 }
 
 /*!
- Returns the type of volume \a driveVolume
+    Returns the type of the give \a drive.
 */
-QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &driveVolume)
+QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &drive)
 {
-   return storageInfoPrivate()->typeForDrive(driveVolume);
+    return storageInfoPrivate()->typeForDrive(drive);
 }
 
 /*!
-  Returns the uri, or unique identifier for \a driveVolume.
-  */
-QString QSystemStorageInfo::uriForDrive(const QString &driveVolume)
-{
-    return storageInfoPrivate()->uriForDrive(driveVolume);
-}
-
-
-/*!
- Returns the storage state of volume \a driveVolume
+    Returns the URI, or unique identifier for the given \a drive.
+    \since 1.2
 */
-QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &driveVolume)
+QString QSystemStorageInfo::uriForDrive(const QString &drive)
 {
-   return storageInfoPrivate()->getStorageState(driveVolume);
+    return storageInfoPrivate()->uriForDrive(drive);
+}
+
+/*!
+    Returns the storage state of the given \a drive.
+    \since 1.2
+*/
+QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &drive)
+{
+    return storageInfoPrivate()->getStorageState(drive);
+}
+
+/*!
+    \internal
+*/
+void QSystemStorageInfo::connectNotify(const char *signal)
+{
+     if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+         connect(storageInfoPrivate(), SIGNAL(logicalDriveChanged(bool,QString)),
+                 this, SIGNAL(logicalDriveChanged(bool,QString)), Qt::UniqueConnection);
+     }
+     if (QLatin1String(signal) == SIGNAL(logicalDriveChanged(bool,QString))) {
+         connect(storageInfoPrivate(), SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+                 this, SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),Qt::UniqueConnection);
+     }
 }
 
 #include "moc_qsystemstorageinfo.cpp"

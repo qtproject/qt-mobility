@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -52,13 +52,13 @@
 #define XML_MAX "1.1"
 
 //Service related
-#define SERVICE_TAG "service" 
+#define SERVICE_TAG "service"
 #define SERVICE_FILEPATH "filepath"
 #define SERVICE_IPCADDRESS "ipcaddress"
 
 //Interface related
 #define INTERFACE_TAG "interface"
-#define INTERFACE_VERSION "version" 
+#define INTERFACE_VERSION "version"
 #define INTERFACE_CAPABILITY "capabilities"
 #define INTERFACE_CUSTOM_PROPERTY "customproperty"
 
@@ -88,9 +88,11 @@ QDataStream &operator>>(QDataStream &in, ServiceMetaDataResults &r)
 /*
     \class ServiceMetaData
 
-    Utility class (used by service database) that offers support for 
+    \since 1.0
+
+    Utility class (used by service database) that offers support for
     parsing metadata service xml registry file during service registration. \n
-    
+
     It uses QXMLStreamReader class for parsing. Supproted Operations are:
         - Parse the service and interfaces defined in XML file
         - name, version, capabilitiesList, description and filePath of service can be retrieved
@@ -100,7 +102,7 @@ QDataStream &operator>>(QDataStream &in, ServiceMetaDataResults &r)
 /*
  *  Class constructor
  *
- * @param aXmlFilePath path to the xml file that describes the service. 
+ * @param aXmlFilePath path to the xml file that describes the service.
  */
 ServiceMetaData::ServiceMetaData(const QString &aXmlFilePath)
 {
@@ -123,7 +125,7 @@ ServiceMetaData::ServiceMetaData(QIODevice *device)
 
 /*
  *  Class destructor
- * 
+ *
  */
 ServiceMetaData::~ServiceMetaData()
 {
@@ -158,7 +160,7 @@ QIODevice *ServiceMetaData::device() const
 {
     return serviceName;
 }*/
- 
+
 /*
  *  Gets the path of the service implementation file
  *
@@ -168,7 +170,7 @@ QIODevice *ServiceMetaData::device() const
 {
     return serviceLocation;
 }*/
- 
+
 /*
  *  Gets the service description
  *
@@ -178,7 +180,7 @@ QIODevice *ServiceMetaData::device() const
 {
     return serviceDescription;
 }*/
- 
+
 /*
    Returns the metadata of the interace at \a index; otherwise
    returns 0.
@@ -219,7 +221,7 @@ bool ServiceMetaData::extractMetadata()
     Q_ASSERT(checkVersion(XML_MAX));
 
     latestError = 0;
-    clearMetadata();                   
+    clearMetadata();
     QXmlStreamReader xmlReader;
     bool parseError = false;
     //Open xml file
@@ -229,7 +231,7 @@ bool ServiceMetaData::extractMetadata()
     } else {
         //Load xml content
         xmlReader.setDevice(xmlDevice);
-        // Read XML doc 
+        // Read XML doc
         while (!xmlReader.atEnd() && !parseError) {
             xmlReader.readNext();
             //Found <SFW> xml versioning tag introduced in 1.1
@@ -258,7 +260,7 @@ bool ServiceMetaData::extractMetadata()
         if (ownsXmlDevice)
             xmlDevice->close();
     }
-    
+
     if (parseError) {
         //provide better error reports
         switch (latestError) {
@@ -290,7 +292,7 @@ bool ServiceMetaData::extractMetadata()
                 qDebug() << "Not a valid service xml";
                 break;
             case SFW_ERROR_PARSE_SERVICE:                            /* Error parsing service node */
-                qDebug().nospace() << "Invalid tag within <service> with the supplied version(" 
+                qDebug().nospace() << "Invalid tag within <service> with the supplied version("
                                    << xmlVersion << ")";
                 break;
             case SFW_ERROR_PARSE_INTERFACE:                          /* Error parsing interface node */
@@ -321,11 +323,11 @@ bool ServiceMetaData::extractMetadata()
                 qDebug() << "Invalid or missing version attribute in <SFW> tag";
                 break;
             case SFW_ERROR_UNSUPPORTED_IPC:                          /* Servicefw version doesn't support IPC */
-                qDebug().nospace() << "Supplied service framework version(" << xmlVersion 
+                qDebug().nospace() << "Supplied service framework version(" << xmlVersion
                                    << ") doesn't support the <ipcaddress> tag";
                 break;
             case SFW_ERROR_UNSUPPORTED_XML_VERSION:                  /* Unsupported servicefw version supplied */
-                qDebug().nospace() << "Service framework version(" << xmlVersion 
+                qDebug().nospace() << "Service framework version(" << xmlVersion
                                    << ") is higher than available support(" << QString(XML_MAX) << ")";
                 break;
         }
@@ -333,7 +335,7 @@ bool ServiceMetaData::extractMetadata()
     }
     return !parseError;
 }
- 
+
 /*
     Gets the latest parsing error \n
     @return parsing error(negative value) or 0 in case there is none
@@ -342,7 +344,7 @@ int ServiceMetaData::getLatestError() const
 {
     return latestError;
 }
- 
+
 /*
     Parses the service framework xml version tag and continues to parse the service
 */
@@ -350,7 +352,7 @@ bool ServiceMetaData::processVersionElement(QXmlStreamReader &aXMLReader)
 {
     Q_ASSERT(aXMLReader.isStartElement() && aXMLReader.name() == SERVICEFW_TAG);
     bool parseError = false;
-    
+
     if (aXMLReader.attributes().hasAttribute("version")) {
         xmlVersion = aXMLReader.attributes().value("version").toString();
         bool success = checkVersion(xmlVersion);
@@ -376,11 +378,11 @@ bool ServiceMetaData::processVersionElement(QXmlStreamReader &aXMLReader)
             if (!processServiceElement(aXMLReader)) {
                 parseError = true;
             }
-        } 
+        }
         else if (aXMLReader.isEndElement() && aXMLReader.name() == SERVICEFW_TAG) {
             //Found </SFW>, leave the loop
             break;
-        } 
+        }
         else if (aXMLReader.isStartElement() && aXMLReader.name() != SERVICE_TAG) {
             latestError = ServiceMetaData::SFW_ERROR_NO_SERVICE;
             parseError = true;
@@ -442,8 +444,8 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
                 parseError = true;
             }
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_TAG) {
-            //Found interface> node, read module related metadata  
-            if (!processInterfaceElement(aXMLReader)) 
+            //Found interface> node, read module related metadata
+            if (!processInterfaceElement(aXMLReader))
                 parseError = true;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == "version") {
             //Found <version> tag on service level. We ignore this for now
@@ -453,7 +455,7 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
             break;
         } else if (aXMLReader.isEndElement() || aXMLReader.isStartElement()) {
             latestError = ServiceMetaData::SFW_ERROR_PARSE_SERVICE;
-            parseError = true;            
+            parseError = true;
         } else if (aXMLReader.tokenType() == QXmlStreamReader::Invalid) {
             latestError = ServiceMetaData::SFW_ERROR_INVALID_XML_FILE;
             parseError = true;
@@ -520,7 +522,7 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         0   //->description
     };
     aInterface.d = new QServiceInterfaceDescriptorPrivate;
-           
+
     while (!parseError && !aXMLReader.atEnd()) {
         aXMLReader.readNext();
         //Read interface description
@@ -594,7 +596,7 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
             parseError = true;
         }
     }
-    
+
     for(int i=0;!parseError && i<4;i++) {
         if (dupITags[i] > 1) {
             parseError = true;
@@ -665,7 +667,7 @@ bool ServiceMetaData::greaterThan(const QString &v1, const QString &v2) const
     int minorV2 = -1;
     transformVersion(v2, &majorV2, &minorV2);
 
-    return  (majorV1 > majorV2 
+    return  (majorV1 > majorV2
              || (majorV1 == majorV2 && minorV1 > minorV2));
 }
 

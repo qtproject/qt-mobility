@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -178,6 +178,7 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 
     \inmodule QtMultimediaKit
     \ingroup multimedia
+    \since 1.0
 
     Attaching a QGraphicsVideoItem to a QMediaObject allows it to display
     the video or image output of that media object.  A QGraphicsVideoItem
@@ -229,6 +230,7 @@ QGraphicsVideoItem::~QGraphicsVideoItem()
     \property QGraphicsVideoItem::mediaObject
     \brief the media object which provides the video displayed by a graphics
     item.
+    \since 1.0
 */
 
 QMediaObject *QGraphicsVideoItem::mediaObject() const
@@ -238,6 +240,7 @@ QMediaObject *QGraphicsVideoItem::mediaObject() const
 
 /*!
   \internal
+  \since 1.0
 */
 bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 {
@@ -283,6 +286,7 @@ bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 /*!
     \property QGraphicsVideoItem::aspectRatioMode
     \brief how a video is scaled to fit the graphics item's size.
+    \since 1.0
 */
 
 Qt::AspectRatioMode QGraphicsVideoItem::aspectRatioMode() const
@@ -304,6 +308,7 @@ void QGraphicsVideoItem::setAspectRatioMode(Qt::AspectRatioMode mode)
 
     QGraphicsVideoItem will draw video using the offset for its top left
     corner.
+    \since 1.0
 */
 
 QPointF QGraphicsVideoItem::offset() const
@@ -325,6 +330,7 @@ void QGraphicsVideoItem::setOffset(const QPointF &offset)
 
     QGraphicsVideoItem will draw video scaled to fit size according to its
     fillMode.
+    \since 1.0
 */
 
 QSizeF QGraphicsVideoItem::size() const
@@ -343,6 +349,7 @@ void QGraphicsVideoItem::setSize(const QSizeF &size)
 /*!
     \property QGraphicsVideoItem::nativeSize
     \brief the native size of the video.
+    \since 1.0
 */
 
 QSizeF QGraphicsVideoItem::nativeSize() const
@@ -354,10 +361,12 @@ QSizeF QGraphicsVideoItem::nativeSize() const
     \fn QGraphicsVideoItem::nativeSizeChanged(const QSizeF &size)
 
     Signals that the native \a size of the video has changed.
+    \since 1.0
 */
 
 /*!
     \reimp
+    \since 1.0
 */
 QRectF QGraphicsVideoItem::boundingRect() const
 {
@@ -366,6 +375,7 @@ QRectF QGraphicsVideoItem::boundingRect() const
 
 /*!
     \reimp
+    \since 1.0
 */
 void QGraphicsVideoItem::paint(
         QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -402,6 +412,7 @@ void QGraphicsVideoItem::paint(
     \reimp
 
     \internal
+    \since 1.0
 */
 QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
@@ -410,6 +421,7 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
 
 /*!
   \internal
+    \since 1.0
 */
 void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
 {

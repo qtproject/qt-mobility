@@ -71,14 +71,14 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
                                                      QObject *parent):
     QObject(parent),
     m_cameraEngine(engine),
-    m_cameraControl(NULL),
-    m_viewfinderOutput(NULL),
+    m_cameraControl(0),
+    m_viewfinderOutput(0),
     m_viewfinderDisplay(0),
-    m_viewfinderSurface(NULL),
+    m_viewfinderSurface(0),
     m_wsSession(CCoeEnv::Static()->WsSession()),
     m_screenDevice(*CCoeEnv::Static()->ScreenDevice()),
-    m_window(NULL),
-    m_desktopWidget(NULL),
+    m_window(0),
+    m_desktopWidget(0),
     m_vfState(EVFNotConnectedNotStarted),
     m_viewfinderSize(KDefaultViewfinderSize),
     m_actualViewFinderSize(KDefaultViewfinderSize),
@@ -125,8 +125,8 @@ S60CameraViewfinderEngine::~S60CameraViewfinderEngine()
     // Engine has stopped it already
     // Surface will be stopped by VideoRendererControl
 
-    m_viewfinderOutput = NULL;
-    m_viewfinderSurface = NULL;
+    m_viewfinderOutput = 0;
+    m_viewfinderSurface = 0;
 }
 
 void S60CameraViewfinderEngine::setNewCameraEngine(CCameraEngine *engine)
@@ -244,88 +244,40 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
 
     if (viewFinderRenderControl) {
         m_viewfinderNativeType = EBitmapViewFinder; // Always Bitmap
-        m_isViewFinderVisible = true; // Always visible (in backends point-of-view)
 
         connect(viewFinderRenderControl, SIGNAL(viewFinderSurfaceSet()),
-            this, SLOT(resetViewfinderDisplay()));
+            this, SLOT(rendererSurfaceSet()));
 
-        if (viewFinderRenderControl->surface() == NULL) {
-            m_viewfinderOutput = viewfinderOutput;
-            m_viewfinderType = OutputTypeRenderer;
-
-            // Use display resolution as default viewfinder resolution
-            QDesktopWidget* desktopWidget = QApplication::desktop();
-            QRect screenRect = desktopWidget->screenGeometry();
-            m_viewfinderSize = QSize(screenRect.width(), screenRect.height());
-
-            switch (m_vfState) {
-                case EVFNotConnectedNotStarted:
-                    m_vfState = EVFIsConnectedNotStarted;
-                    break;
-                case EVFNotConnectedIsStarted:
-                    m_vfState = EVFIsConnectedIsStartedIsVisible; // GraphicsItem "always visible" (FrameWork decides to draw/not draw)
-                    break;
-                case EVFIsConnectedNotStarted:
-                case EVFIsConnectedIsStartedNotVisible:
-                case EVFIsConnectedIsStartedIsVisible:
-                    // Already connected, state does not change
-                    break;
-                default:
-                    emit error(QCamera::CameraError, tr("General viewfinder error."));
-                    break;
-            }
-
-            if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-                startViewfinder(true);
-
-            return;
-        }
-
-        connect(this, SIGNAL(viewFinderFrameReady(const CFbsBitmap &)),
-            this, SLOT(viewFinderBitmapReady(const CFbsBitmap &)));
-
-        m_viewfinderSurface = viewFinderRenderControl->surface();
+        Q_ASSERT(!viewFinderRenderControl->surface());
         m_viewfinderOutput = viewfinderOutput;
         m_viewfinderType = OutputTypeRenderer;
+        // RendererControl viewfinder is "visible" when surface is set
+        m_isViewFinderVisible = false;
+        if (EVFIsConnectedIsStartedIsVisible)
+            m_vfState = EVFIsConnectedIsStartedNotVisible;
 
-        m_viewfinderSize = m_viewfinderSurface->nativeResolution();
-        // Use display size if no native resolution has been set
-        if (m_viewfinderSize.width() == -1 || m_viewfinderSize.height() == -1) {
-            QDesktopWidget* desktopWidget = QApplication::desktop();
-            QRect screenRect = desktopWidget->screenGeometry();
-            m_viewfinderSize = QSize(screenRect.width(), screenRect.height());
-        }
-
-        connect(m_viewfinderSurface, SIGNAL(nativeResolutionChanged(const QSize&)),
-            this, SLOT(resetViewfinderSize(QSize)));
-
-        // Set Surface Properties
-        m_surfaceFormat = m_viewfinderSurface->surfaceFormat();
-        m_surfaceFormat.setFrameSize(m_viewfinderSize);
-        m_surfaceFormat.setFrameRate(KViewfinderFrameRate);
-        m_surfaceFormat.setViewport(QRect(0, 0, m_viewfinderSize.width(), m_viewfinderSize.height()));
-        m_surfaceFormat.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_Undefined); // EColor16MU (compatible with EColor16MA)
-        m_surfaceFormat.setPixelAspectRatio(1,1); // PAR 1:1
+        // Use display resolution as default viewfinder resolution
+        m_viewfinderSize = QApplication::desktop()->screenGeometry().size();
 
         switch (m_vfState) {
-            case EVFNotConnectedNotStarted:
-                m_vfState = EVFIsConnectedNotStarted;
-                break;
-            case EVFNotConnectedIsStarted:
-                m_vfState = EVFIsConnectedIsStartedIsVisible; // GraphicsItem "always visible" (FrameWork decides to draw/not draw)
-                break;
-            case EVFIsConnectedNotStarted:
-            case EVFIsConnectedIsStartedNotVisible:
-            case EVFIsConnectedIsStartedIsVisible:
-                // Already connected, state does not change
-                break;
-            default:
-                emit error(QCamera::CameraError, tr("General viewfinder error."));
-                break;
+        case EVFNotConnectedNotStarted:
+            m_vfState = EVFIsConnectedNotStarted;
+            break;
+        case EVFNotConnectedIsStarted:
+            m_vfState = EVFIsConnectedIsStartedIsVisible; // GraphicsItem "always visible" (FrameWork decides to draw/not draw)
+            break;
+        case EVFIsConnectedNotStarted:
+        case EVFIsConnectedIsStartedNotVisible:
+        case EVFIsConnectedIsStartedIsVisible:
+            // Already connected, state does not change
+            break;
+        default:
+            emit error(QCamera::CameraError, tr("General viewfinder error."));
+            break;
         }
 
         if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-            startViewfinder(true); // Internal start (i.e. start if started externally)
+            startViewfinder(true);
     }
 }
 
@@ -398,12 +350,28 @@ void S60CameraViewfinderEngine::setVideoWindowControl(QObject *viewfinderOutput)
 
 void S60CameraViewfinderEngine::releaseControl(ViewfinderOutputType type)
 {
+    if (m_vfState == EVFIsConnectedIsStartedIsVisible)
+        stopViewfinder(true);
+
     if (m_viewfinderOutput) {
         switch (type) {
         case OutputTypeNotSet:
             return;
         case OutputTypeVideoWidget:
+            if (m_viewfinderType != OutputTypeVideoWidget)
+                return;
+            disconnect(m_viewfinderOutput);
+            m_viewfinderOutput->disconnect(this);
+            Q_ASSERT(m_viewfinderDisplay);
+            disconnect(m_viewfinderDisplay);
+            m_viewfinderDisplay->disconnect(this);
+            m_viewfinderDisplay = 0;
+            // Invalidate the extent rect
+            qobject_cast<S60VideoWidgetControl*>(m_viewfinderOutput)->setExtentRect(QRect());
+            break;
         case OutputTypeVideoWindow:
+            if (m_viewfinderType != OutputTypeVideoWindow)
+                return;
             disconnect(m_viewfinderOutput);
             m_viewfinderOutput->disconnect(this);
             Q_ASSERT(m_viewfinderDisplay);
@@ -412,19 +380,42 @@ void S60CameraViewfinderEngine::releaseControl(ViewfinderOutputType type)
             m_viewfinderDisplay = 0;
             break;
         case OutputTypeRenderer:
+            if (m_viewfinderType != OutputTypeRenderer)
+                return;
             disconnect(m_viewfinderOutput);
             m_viewfinderOutput->disconnect(this);
             if (m_viewfinderSurface)
-                disconnect(m_viewfinderSurface, SIGNAL(nativeResolutionChanged(const QSize&)), this, SLOT(resetViewfinderSize(QSize)));
+                m_viewfinderSurface->disconnect(this);
+            disconnect(this, SIGNAL(viewFinderFrameReady(const CFbsBitmap &)),
+                this, SLOT(viewFinderBitmapReady(const CFbsBitmap &)));
             break;
         default:
             emit error(QCamera::CameraError, tr("Unexpected viewfinder error."));
             return;
         }
     }
+
     Q_ASSERT(!m_viewfinderDisplay);
     m_viewfinderOutput = 0;
     m_viewfinderType = OutputTypeNotSet;
+
+    // Update state
+    switch (m_vfState) {
+    case EVFNotConnectedNotStarted:
+    case EVFNotConnectedIsStarted:
+        // Do nothing
+        break;
+    case EVFIsConnectedNotStarted:
+        m_vfState = EVFNotConnectedNotStarted;
+        break;
+    case EVFIsConnectedIsStartedNotVisible:
+    case EVFIsConnectedIsStartedIsVisible:
+        m_vfState = EVFNotConnectedIsStarted;
+        break;
+    default:
+        emit error(QCamera::CameraError, tr("General viewfinder error."));
+        break;
+    }
 }
 
 void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
@@ -459,7 +450,7 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
 
         if (m_viewfinderNativeType == EDirectScreenViewFinder) {
 
-            if (RWindow *window = m_viewfinderDisplay->windowHandle()) {
+            if (RWindow *window = m_viewfinderDisplay ? m_viewfinderDisplay->windowHandle() : 0) {
                 m_window = window;
             } else {
                 emit error(QCamera::CameraError, tr("Requesting window for viewfinder failed."));
@@ -488,16 +479,20 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
             TSize size = TSize(m_viewfinderSize.width(), m_viewfinderSize.height());
 
             if( m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
-                if (!m_surfaceFormat.isValid())
-                    return;
-
-                // Start rendering to surface with correct size and format
-                if (m_viewfinderSurface->isFormatSupported(m_surfaceFormat))
-                    m_viewfinderSurface->start(m_surfaceFormat);
-                else {
-                    emit error(QCamera::NotSupportedFeatureError, tr("Viewfinder format not supported."));
+                if (!m_surfaceFormat.isValid()) {
+                    emit error(QCamera::NotSupportedFeatureError, tr("Invalid surface format."));
                     return;
                 }
+
+                // Start rendering to surface with correct size and format
+                if (!m_viewfinderSurface->isFormatSupported(m_surfaceFormat) ||
+                    !m_viewfinderSurface->start(m_surfaceFormat)) {
+                    emit error(QCamera::NotSupportedFeatureError, tr("Failed to start surface."));
+                    return;
+                }
+
+                if (!m_viewfinderSurface->isActive())
+                    return;
             }
 
             TRAPD(vfErr, m_cameraEngine->StartViewFinderL(size));
@@ -513,8 +508,18 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
             m_actualViewFinderSize = QSize(size.iWidth, size.iHeight);
             m_viewfinderAspectRatio = qreal(m_actualViewFinderSize.width()) / qreal(m_actualViewFinderSize.height());
 
-            if (m_viewfinderDisplay)
+            // Notify control about the frame size (triggers frame position calculation)
+            if (m_viewfinderDisplay) {
                 m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
+            } else {
+                if (m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
+                    m_viewfinderSurface->stop();
+                    QVideoSurfaceFormat format = m_viewfinderSurface->surfaceFormat();
+                    format.setFrameSize(QSize(m_actualViewFinderSize));
+                    format.setViewport(QRect(0, 0, m_actualViewFinderSize.width(), m_actualViewFinderSize.height()));
+                    m_viewfinderSurface->start(format);
+                }
+            }
         }
     }
 }
@@ -523,12 +528,9 @@ void S60CameraViewfinderEngine::stopViewfinder(const bool internalStop)
 {
     // Stop if viewfinder is started
     if (m_vfState == EVFIsConnectedIsStartedIsVisible) {
-        if (m_viewfinderType == OutputTypeRenderer) {
+        if (m_viewfinderOutput && m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
             // Stop surface if one still exists
-            if (m_viewfinderOutput) {
-                if (m_viewfinderSurface)
-                    m_viewfinderSurface->stop();
-            }
+            m_viewfinderSurface->stop();
         }
 
         if (m_cameraEngine)
@@ -558,7 +560,6 @@ void S60CameraViewfinderEngine::stopViewfinder(const bool internalStop)
 
 void S60CameraViewfinderEngine::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 {
-
     emit viewFinderFrameReady(aFrame);
     if (m_cameraEngine)
         m_cameraEngine->ReleaseViewFinderBuffer();
@@ -569,6 +570,7 @@ void S60CameraViewfinderEngine::resetViewfinderSize(const QSize size)
     m_viewfinderSize = size;
 
     if(m_vfState != EVFIsConnectedIsStartedIsVisible) {
+        // Set native size to Window/Renderer Control
         if (m_viewfinderDisplay)
             m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         return;
@@ -615,70 +617,62 @@ void S60CameraViewfinderEngine::resetViewfinderDisplay()
             // Not ViewFinder Output has been set, Discard
             break;
         }
-
-    } else if (m_viewfinderNativeType == EBitmapViewFinder) { // Bitmap ViewFinder
-
-        switch (m_viewfinderType) {
-        case OutputTypeVideoWidget:
-            // Nothing to do
-            break;
-        case OutputTypeRenderer: {
-            // New surface has been set
-            S60VideoRendererControl* viewFinderRenderControl =
-                qobject_cast<S60VideoRendererControl*>(m_viewfinderOutput);
-            m_viewfinderSurface = viewFinderRenderControl->surface();
-            if (!m_viewfinderSurface) {
-                m_viewfinderSurface = NULL;
-                stopViewfinder(); // Stop viewfinder
-                return;
-            }
-
-            if (!m_viewfinderSurface->nativeResolution().isEmpty()) {
-                if (m_viewfinderSurface->nativeResolution() != m_viewfinderSize)
-                    resetViewfinderSize(m_viewfinderSurface->nativeResolution());
-            }
-
-            connect(m_viewfinderSurface, SIGNAL(nativeResolutionChanged(const QSize&)),
-                this, SLOT(resetViewfinderSize(QSize)));
-
-            // Set Surface Properties
-            if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_RGB32))
-                m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_RGB32);
-            else if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_ARGB32))
-                m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_ARGB32);
-            else
-                return;
-
-            m_surfaceFormat.setFrameRate(KViewfinderFrameRate);
-            m_surfaceFormat.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_Undefined); // EColor16MU (compatible with EColor16MA)
-            m_surfaceFormat.setPixelAspectRatio(1,1); // PAR 1:1
-
-            connect(this, SIGNAL(viewFinderFrameReady(const CFbsBitmap &)),
-                this, SLOT(viewFinderBitmapReady(const CFbsBitmap &)));
-        }
-            break;
-        case OutputTypeVideoWindow:
-            // Do nothing
-            break;
-
-        default:
-            // Not ViewFinder Output has been set, Discard
-            break;
-        }
     }
+}
+
+void S60CameraViewfinderEngine::rendererSurfaceSet()
+{
+    S60VideoRendererControl* viewFinderRenderControl =
+        qobject_cast<S60VideoRendererControl*>(m_viewfinderOutput);
+
+    // Reset old surface if needed
+    if (m_viewfinderSurface) {
+        handleVisibilityChange(false);
+        disconnect(m_viewfinderSurface);
+        if (viewFinderRenderControl->surface())
+            stopViewfinder(true); // Temporary stop
+        else
+            stopViewfinder(); // Stop for good
+        m_viewfinderSize = QApplication::desktop()->screenGeometry().size();
+        m_viewfinderSurface = 0;
+    }
+
+    // Set new surface
+    m_viewfinderSurface = viewFinderRenderControl->surface();
+    if (!m_viewfinderSurface)
+        return;
+    if (!m_viewfinderSurface->nativeResolution().isEmpty()) {
+        if (m_viewfinderSurface->nativeResolution() != m_viewfinderSize)
+            resetViewfinderSize(m_viewfinderSurface->nativeResolution());
+    }
+
+    connect(m_viewfinderSurface, SIGNAL(nativeResolutionChanged(const QSize&)),
+        this, SLOT(resetViewfinderSize(QSize)));
+
+    // Set Surface Properties
+    if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_RGB32))
+        m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_RGB32);
+    else if (m_viewfinderSurface->supportedPixelFormats().contains(QVideoFrame::Format_ARGB32))
+        m_surfaceFormat = QVideoSurfaceFormat(m_actualViewFinderSize, QVideoFrame::Format_ARGB32);
+    else {
+        return;
+    }
+    m_surfaceFormat.setFrameRate(KViewfinderFrameRate);
+    m_surfaceFormat.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_Undefined); // EColor16MU (compatible with EColor16MA)
+    m_surfaceFormat.setPixelAspectRatio(1,1); // PAR 1:1
+
+
+    connect(this, SIGNAL(viewFinderFrameReady(const CFbsBitmap &)),
+        this, SLOT(viewFinderBitmapReady(const CFbsBitmap &)));
+
+    // Surface set, viewfinder is "visible"
+    handleVisibilityChange(true);
 }
 
 void S60CameraViewfinderEngine::viewFinderBitmapReady(const CFbsBitmap &bitmap)
 {
     CFbsBitmap *bitmapPtr = const_cast<CFbsBitmap*>(&bitmap);
     QPixmap pixmap = QPixmap::fromSymbianCFbsBitmap(bitmapPtr);
-    // Adjust surface size according to ViewFinder frame size if needed
-    if(m_surfaceFormat.frameSize() != pixmap.size()) {
-        m_viewfinderSurface->stop();
-        m_surfaceFormat.setFrameSize(pixmap.size());
-        m_surfaceFormat.setViewport(QRect(0, 0, pixmap.size().width(), pixmap.size().height()));
-        m_viewfinderSurface->start(m_surfaceFormat);
-    }
 
     QImage newImage = pixmap.toImage();
     if (newImage.format() != QImage::Format_ARGB32 &&

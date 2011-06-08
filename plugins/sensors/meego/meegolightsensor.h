@@ -59,7 +59,7 @@ public:
     meegolightsensor(QSensor *sensor);
 protected:
     virtual bool doConnect();
-    virtual const QString sensorName();
+    virtual QString sensorName() const;
 
 private:
     QLightReading m_reading;

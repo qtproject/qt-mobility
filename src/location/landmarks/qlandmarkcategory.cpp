@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -104,6 +104,7 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     \inmodule QtLocation
 
     \ingroup landmarks-main
+    \since 1.1
 
     Landmarks of similar type may be grouped together into categories,
     e.g. restaurants, accommodation etc,  a QLandmarkCategory object
@@ -137,6 +138,7 @@ QLandmarkCategory::QLandmarkCategory()
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QLandmarkCategory::QLandmarkCategory(const QLandmarkCategory &other)
     : d(other.d)
@@ -151,6 +153,7 @@ QLandmarkCategory::~QLandmarkCategory()
 }
 /*!
     Assigns \a other to this category and returns a reference to this category.
+    \since 1.1
 */
 QLandmarkCategory& QLandmarkCategory::operator= (const QLandmarkCategory & other)
 {
@@ -162,6 +165,7 @@ QLandmarkCategory& QLandmarkCategory::operator= (const QLandmarkCategory & other
     Returns true if this category is equal to \a other, otherwise
     returns false.
 
+    \since 1.1
     \sa operator!=()
 */
 bool QLandmarkCategory::operator== (const QLandmarkCategory &other) const
@@ -173,6 +177,7 @@ bool QLandmarkCategory::operator== (const QLandmarkCategory &other) const
     Returns true if this category is not equal to \a other, otherwise
     returns false.
 
+    \since 1.1
     \sa operator==()
 */
 bool QLandmarkCategory::operator!= (const QLandmarkCategory &other) const
@@ -182,6 +187,7 @@ bool QLandmarkCategory::operator!= (const QLandmarkCategory &other) const
 
 /*!
     Returns the name of the category.
+    \since 1.1
 */
 QString QLandmarkCategory::name() const
 {
@@ -192,6 +198,7 @@ QString QLandmarkCategory::name() const
     Sets the \a name of the category.
 
     Using the default manager on the Symbian platform, the catgory name is retricted to a length of 124 characters.
+    \since 1.1
 */
 void QLandmarkCategory::setName(const QString &name)
 {
@@ -200,6 +207,7 @@ void QLandmarkCategory::setName(const QString &name)
 
 /*!
     Returns the url of the category's icon.
+    \since 1.1
 */
 QUrl QLandmarkCategory::iconUrl() const
 {
@@ -208,6 +216,7 @@ QUrl QLandmarkCategory::iconUrl() const
 
 /*!
     Sets the \a url of the category's icon
+    \since 1.1
 */
 void QLandmarkCategory::setIconUrl(const QUrl &url)
 {
@@ -217,6 +226,7 @@ void QLandmarkCategory::setIconUrl(const QUrl &url)
 
 /*!
     Returns the identifier of the category.
+    \since 1.1
 */
 QLandmarkCategoryId QLandmarkCategory::categoryId() const
 {
@@ -228,6 +238,7 @@ QLandmarkCategoryId QLandmarkCategory::categoryId() const
 
     Note that saving a new category using a QLandmarkManager
     will automatically assign the category a valid identifier.
+    \since 1.1
 */
 void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 {
@@ -236,6 +247,7 @@ void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 
 /*!
     Clears all the data fields of the category.
+    \since 1.1
 */
 void QLandmarkCategory::clear()
 {

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -46,6 +46,7 @@
 
 #include <qbluetoothaddress.h>
 #include <qbluetoothlocaldevice.h>
+
 QTM_USE_NAMESPACE
 
 #define WAIT_FOR_CONDITION(a,e)            \
@@ -108,11 +109,18 @@ void tst_QBluetoothLocalDevice::tst_pairDevice_data()
     QTest::addColumn<QBluetoothAddress>("deviceAddress");
     QTest::addColumn<QBluetoothLocalDevice::Pairing>("pairingExpected");
 
-    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
-    //QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Paired;
+    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") 
+            << QBluetoothLocalDevice::Unpaired;
 #ifdef Q_OS_SYMBIAN
-    QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
-    QTest::newRow("PAIR Device: TESTMACHINE") << QBluetoothAddress("00:09:DD:50:93:DD") << QBluetoothLocalDevice::Paired;
+    
+    QTest::newRow("unPAIRED Device: J X6") << QBluetoothAddress("d8:75:33:6a:82:85") 
+            << QBluetoothLocalDevice::Unpaired;
+    QTest::newRow("AuthPAIRED Device: J X6") << QBluetoothAddress("d8:75:33:6a:82:85") 
+            << QBluetoothLocalDevice::AuthorizedPaired;
+    QTest::newRow("PAIRED Device: J C-7-1") << QBluetoothAddress("6c:9b:02:0c:91:ca") 
+            << QBluetoothLocalDevice::Paired;
+    
+
 #endif // Q_OS_SYMBIAN
 }
 
@@ -121,10 +129,13 @@ void tst_QBluetoothLocalDevice::tst_pairingStatus_data()
     QTest::addColumn<QBluetoothAddress>("deviceAddress");
     QTest::addColumn<QBluetoothLocalDevice::Pairing>("pairingExpected");
 
-    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") << QBluetoothLocalDevice::Unpaired;
+    QTest::newRow("UnPaired Device: DUMMY") << QBluetoothAddress("11:00:00:00:00:00") 
+            << QBluetoothLocalDevice::Unpaired;
 #ifdef Q_OS_SYMBIAN
-    QTest::newRow("UNPAIR Device: BH-604") << QBluetoothAddress("00:0d:3c:b0:77:1c") << QBluetoothLocalDevice::Unpaired;
-    QTest::newRow("Paired Device: TESTMACHINE") << QBluetoothAddress("00:09:DD:50:93:DD") << QBluetoothLocalDevice::Paired;
+    QTest::newRow("PAIRED Device: J X6") << QBluetoothAddress("d8:75:33:6a:82:85") 
+            << QBluetoothLocalDevice::Paired;
+    QTest::newRow("AuthPAIRED Device: J C-7-1") << QBluetoothAddress("6c:9b:02:0c:91:ca") 
+            << QBluetoothLocalDevice::AuthorizedPaired;
 #endif // Q_OS_SYMBIAN
 }
 
@@ -222,7 +233,7 @@ void tst_QBluetoothLocalDevice::tst_construction()
     QBluetoothLocalDevice localDevice;
     QVERIFY(localDevice.isValid());
 
-    QBluetoothLocalDevice anotherDevice = new QBluetoothLocalDevice(QBluetoothAddress(000000000000));
+    QBluetoothLocalDevice anotherDevice(QBluetoothAddress(000000000000));
     QVERIFY(anotherDevice.isValid());
     QVERIFY(anotherDevice.address().toUInt64() != 0);
 
@@ -232,6 +243,9 @@ void tst_QBluetoothLocalDevice::tst_pairDevice()
 {
     QFETCH(QBluetoothAddress, deviceAddress);
     QFETCH(QBluetoothLocalDevice::Pairing, pairingExpected);
+    
+    qDebug() << "tst_pairDevice(): address=" << deviceAddress.toString() << "pairingModeExpected=" 
+            << static_cast<int>(pairingExpected);
 
     QBluetoothLocalDevice localDevice;
     //powerOn if not already
@@ -262,6 +276,9 @@ void tst_QBluetoothLocalDevice::tst_pairingStatus()
     QFETCH(QBluetoothAddress, deviceAddress);
     QFETCH(QBluetoothLocalDevice::Pairing, pairingExpected);
 
+    qDebug() << "tst_pairingStatus(): address=" << deviceAddress.toString() << "pairingModeExpected=" 
+            << static_cast<int>(pairingExpected);
+    
     QBluetoothLocalDevice localDevice;
     QCOMPARE(pairingExpected, localDevice.pairingStatus(deviceAddress));
 }

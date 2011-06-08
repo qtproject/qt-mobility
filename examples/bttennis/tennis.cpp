@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -58,6 +58,7 @@
 #include <qbluetoothdeviceinfo.h>
 #include <qbluetoothsocket.h>
 #include <qbluetoothservicediscoveryagent.h>
+#include <qbluetoothlocaldevice.h>
 
 #include <qnearfieldmanager.h>
 #include <qllcpserver.h>
@@ -65,8 +66,14 @@
 
 Tennis::Tennis(QWidget *parent)
 : QDialog(parent), ui(new Ui_Tennis), board(new Board), controller(new Controller), socket(0),
-  m_discoveryAgent(new QBluetoothServiceDiscoveryAgent)
+  m_discoveryAgent(new QBluetoothServiceDiscoveryAgent), m_handover(0)
 {
+    // start Bluetooth if not started
+    QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
+    device->powerOn();
+    delete device;
+    device = 0;
+
     //! [Construct UI]
     ui->setupUi(this);
 
@@ -89,6 +96,7 @@ Tennis::Tennis(QWidget *parent)
     connect(this, SIGNAL(moveLeftPaddle(int)), board, SLOT(setLeftPaddle(int)));
     connect(this, SIGNAL(moveRightPaddle(int)), board, SLOT(setRightPaddle(int)));
     connect(controller, SIGNAL(score(int,int)), board, SLOT(setScore(int,int)));
+    connect(controller, SIGNAL(fps(const QString&)), this, SLOT(fps(const QString&)));
 
     setFocusPolicy(Qt::WheelFocus);
 
@@ -130,12 +138,15 @@ Tennis::Tennis(QWidget *parent)
 //    ui->pongView->setBackgroundBrush(QBrush(Qt::white));
     ui->pongView->setCacheMode(QGraphicsView::CacheBackground);
 
-    m_handover = new Handover(server->serverPort(), this);
-    connect(m_handover, SIGNAL(bluetoothServiceChanged()), this, SLOT(nearFieldHandover()));
+    QNearFieldManager nearFieldManager;
+    if (nearFieldManager.isAvailable()) {
+        m_handover = new Handover(server->serverPort(), this);
+        connect(m_handover, SIGNAL(bluetoothServiceChanged()), this, SLOT(nearFieldHandover()));
 
-    connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
-            this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
-    connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
+        connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
+                this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+        connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
+    }
 
 
     m_discoveryAgent->setUuidFilter(QBluetoothUuid(serviceUuid));
@@ -176,17 +187,9 @@ Tennis::Tennis(QWidget *parent)
         service.setDevice(device);
         client->startClient(service);
         board->setStatus("Connecting", 100, 25);
-//        board->setStatus("Waiting", 100, 25);
-//        QTimer::singleShot(15000, this, SLOT(startDiscovery()));
-    } else {
+    } else if (nearFieldManager.isAvailable()) {
         board->setStatus(tr("Touch to play"), 100, 25);
-
-    //    m_discoveryAgent->start(); // do minimal scan first
-//        startDiscovery();
-       // board->setStatus("Waiting", 100, 25);
     }
-
-
 
     setEnabled(true);
 
@@ -412,3 +415,9 @@ void Tennis::nearFieldHandover()
     client->startClient(service);
     board->setStatus(tr("Connecting: %1 %2").arg(m_handover->bluetoothAddress().toString()).arg(m_handover->serverPort()), 100, 25);
 }
+
+void Tennis::fps(const QString &f)
+{
+  board->setStatus(f, 100, 100);
+}
+

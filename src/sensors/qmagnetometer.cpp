@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,6 +50,7 @@ IMPLEMENT_READING(QMagnetometerReading)
     \class QMagnetometerReading
     \ingroup sensors_reading
     \inmodule QtSensors
+    \since 1.0
 
     \brief The QMagnetometerReading class represents one reading from the
            magnetometer.
@@ -77,6 +78,7 @@ IMPLEMENT_READING(QMagnetometerReading)
     The accuracy of each reading is measured as a number from 0 to 1.
     A value of 1 is the highest level that the device can support and 0 is
     the worst.
+    \sa {http://wiki.forum.nokia.com/index.php/CS001671_-_Calibrating_the_magnetometer_sensor}{CS001671 - Calibrating the magnetometer sensor}
 */
 
 /*!
@@ -85,6 +87,7 @@ IMPLEMENT_READING(QMagnetometerReading)
 
     Measured as telsas.
     \sa {QMagnetometerReading Units}
+    \since 1.0
 */
 
 qreal QMagnetometerReading::x() const
@@ -94,6 +97,7 @@ qreal QMagnetometerReading::x() const
 
 /*!
     Sets the raw magnetic flux density on the X axis to \a x.
+    \since 1.0
 */
 void QMagnetometerReading::setX(qreal x)
 {
@@ -106,6 +110,7 @@ void QMagnetometerReading::setX(qreal x)
 
     Measured as telsas.
     \sa {QMagnetometerReading Units}
+    \since 1.0
 */
 
 qreal QMagnetometerReading::y() const
@@ -115,6 +120,7 @@ qreal QMagnetometerReading::y() const
 
 /*!
     Sets the raw magnetic flux density on the Y axis to \a y.
+    \since 1.0
 */
 void QMagnetometerReading::setY(qreal y)
 {
@@ -127,6 +133,7 @@ void QMagnetometerReading::setY(qreal y)
 
     Measured as telsas.
     \sa {QMagnetometerReading Units}
+    \since 1.0
 */
 
 qreal QMagnetometerReading::z() const
@@ -136,6 +143,7 @@ qreal QMagnetometerReading::z() const
 
 /*!
     Sets the raw magnetic flux density on the Z axis to \a z.
+    \since 1.0
 */
 void QMagnetometerReading::setZ(qreal z)
 {
@@ -150,7 +158,8 @@ void QMagnetometerReading::setZ(qreal z)
 
     Note that this only changes when measuring geomagnetic flux density.
     Raw magnetic flux readings will always have a value of 1.
-    \sa {QMagnetometerReading Units}
+    \sa {QMagnetometerReading Units}, {http://wiki.forum.nokia.com/index.php/CS001671_-_Calibrating_the_magnetometer_sensor}{CS001671 - Calibrating the magnetometer sensor}
+    \since 1.0
 */
 
 qreal QMagnetometerReading::calibrationLevel() const
@@ -160,6 +169,7 @@ qreal QMagnetometerReading::calibrationLevel() const
 
 /*!
     Sets the accuracy of the reading to \a calibrationLevel.
+    \since 1.0
 */
 void QMagnetometerReading::setCalibrationLevel(qreal calibrationLevel)
 {
@@ -177,6 +187,7 @@ void QMagnetometerReading::setCalibrationLevel(qreal calibrationLevel)
 
     The only difference is that the filter() method features a pointer to QMagnetometerReading
     instead of QSensorReading.
+    \since 1.0
 */
 
 /*!
@@ -185,6 +196,7 @@ void QMagnetometerReading::setCalibrationLevel(qreal calibrationLevel)
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
+    \since 1.0
 */
 
 char const * const QMagnetometer::type("QMagnetometer");
@@ -203,18 +215,21 @@ char const * const QMagnetometer::type("QMagnetometer");
     For details about how the sensor works, see \l QMagnetometerReading.
 
     \sa QMagnetometerReading
+    \since 1.0
 */
 
 /*!
     \fn QMagnetometer::QMagnetometer(QObject *parent)
 
     Construct the sensor as a child of \a parent.
+    \since 1.0
 */
 
 /*!
     \fn QMagnetometer::~QMagnetometer()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
+    \since 1.0
 */
 
 /*!
@@ -223,6 +238,7 @@ char const * const QMagnetometer::type("QMagnetometer");
     Returns the reading class for this sensor.
 
     \sa QSensor::reading()
+    \since 1.0
 */
 
 /*!
@@ -234,6 +250,7 @@ char const * const QMagnetometer::type("QMagnetometer");
 
     Note that you must access this property via QObject::property() and QObject::setProperty().
     The property must be set before calling start().
+    \since 1.0
 */
 
 #include "moc_qmagnetometer.cpp"

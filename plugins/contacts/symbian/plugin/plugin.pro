@@ -3,8 +3,8 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_symbian)
 PLUGIN_TYPE=contacts
 
-include(../../../../common.pri)
 include(symbian_defines.pri)
+include(deploy.pri)
 symbian: { 
     load(data_caging_paths)
 
@@ -132,20 +132,7 @@ symbian: {
     target.path = /sys/bin
     INSTALLS += target
 
-    contains(DEFINES, SYMBIAN_BACKEND_USE_CNTMODEL_V2) {
-        cntmodelResourceFile = \
-            "START RESOURCE ../../rss/customisedcntmodel.rss" \
-            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
-            "LANGUAGE_IDS" \
-            "END"
-        MMP_RULES += cntmodelResourceFile
-    }
-    
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
-    
-    # Public header
-    headers.sources = inc/cntbackendsdefs.h
-    for(header, headers.sources):BLD_INF_RULES.prj_exports += "$$header $$basename(header)"
 }

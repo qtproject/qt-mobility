@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,18 +49,19 @@ QTM_BEGIN_NAMESPACE
     \ingroup servicefw
     \brief The QAbstractSecuritySession class provides a generic mechanism to enable
     permission checks for services.
-    
+    \since 1.0
+
     QAbstractSecuritySession describes the abstract interface that security/permission
     engines must implement in order to provide capability related functionality.
 
     A QAbstractSecuritySession encapsulates the service client's capabilities. QServiceManager
-    can match those capabilites with the capabilites required by a particular service. 
-    Service capabilites are declared via the services XML description. 
+    can match those capabilites with the capabilites required by a particular service.
+    Service capabilites are declared via the services XML description.
 
     The use of a security session is not mandated by the service manager. If the client
     is passing a security session object QServiceManager ensures that the permissions
-    are checked before the requested service is loaded and forwards the session to the 
-    service in case the service intends to implement additional checks. If no security 
+    are checked before the requested service is loaded and forwards the session to the
+    service in case the service intends to implement additional checks. If no security
     session is passed to QServiceManager capability checks are not performed. Note that
     the security session is no substitute for platform security such as control over
     a processes ability to load arbitrary plug-ins.
@@ -93,11 +94,12 @@ QAbstractSecuritySession::~QAbstractSecuritySession()
 {
 }
 
-/*! 
+/*!
     \fn bool QAbstractSecuritySession::isAllowed(const QStringList& capabilities) = 0;
 
     Returns true if the security session has sufficient rights to access the required
-    service \a capabilities. 
+    service \a capabilities.
+    \since 1.0
 */
 
 #include "moc_qabstractsecuritysession.cpp"

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -65,6 +65,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-request
+    \since 1.1
 */
 
 /*!
@@ -84,6 +85,7 @@ QLandmarkExportRequest::~QLandmarkExportRequest()
 
 /*!
     Returns the device to which landmarks are written.
+    \since 1.1
 */
 QIODevice *QLandmarkExportRequest::device() const
 {
@@ -94,6 +96,7 @@ QIODevice *QLandmarkExportRequest::device() const
 
 /*!
     Sets the \a device to which landmarks are written.
+    \since 1.1
 */
 void QLandmarkExportRequest::setDevice(QIODevice *device)
 {
@@ -107,6 +110,7 @@ void QLandmarkExportRequest::setDevice(QIODevice *device)
     been called, this function returns the name of the file to be
     written to.  In all other cases, it returns an empty string.
 
+    \since 1.1
     \sa setFileName(), setDevice()
 */
 QString QLandmarkExportRequest::fileName() const
@@ -122,6 +126,7 @@ QString QLandmarkExportRequest::fileName() const
     QLandmarkExportRequest will create a QFile use this as the
     device to export to.
 
+    \since 1.1
     \sa fileName(), setDevice()
 */
 void QLandmarkExportRequest::setFileName(const QString &fileName)
@@ -133,6 +138,7 @@ void QLandmarkExportRequest::setFileName(const QString &fileName)
 
 /*!
     Returns the data format for the export operation.
+    \since 1.1
 */
 QString QLandmarkExportRequest::format() const
 {
@@ -143,6 +149,7 @@ QString QLandmarkExportRequest::format() const
 
 /*!
     Sets the data \a format for the export operation.
+    \since 1.1
 */
 void QLandmarkExportRequest::setFormat(const QString &format)
 {
@@ -157,6 +164,7 @@ void QLandmarkExportRequest::setFormat(const QString &format)
     during the export operation.  The default option is
     QLandmarkManager::IncludeCategoryData.
 
+    \since 1.1
 */
 QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
 {
@@ -169,6 +177,7 @@ QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
     Sets the transfer \a option of the export request.
     The transfer \a option defines how categories are treated
     during the export operation.
+    \since 1.1
 */
 void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption option)
 {
@@ -181,6 +190,7 @@ void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption 
     Returns the list of identifiers of landmarks that will be exported.
     By default the list of identifiers is empty, indicating that all
     landmarks should be exported.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 {
@@ -192,6 +202,7 @@ QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 /*!
     Sets the landmarks to be exported by specifying a list of
     \a landmarkIds.
+    \since 1.1
 */
 void QLandmarkExportRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {

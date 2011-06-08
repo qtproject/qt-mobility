@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -42,6 +42,8 @@
 #include <QtTest/QtTest>
 
 #include <QDebug>
+
+ #include <QProcessEnvironment>
 
 #include <qbluetoothsocket.h>
 #include <qbluetoothdeviceinfo.h>
@@ -132,31 +134,43 @@ void tst_QBluetoothSocket::initTestCase()
     device->powerOn();
     delete device;
 
-    // Go find an echo server for BTADDRESS
-    QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
-    connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
-    connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
-    connect(sda, SIGNAL(finished()), this, SLOT(finished()));
-
-    qDebug() << "Starting discovery";
-    done_discovery = false;
-    memset(BTADDRESS, 0, 18);
-
-    sda->setUuidFilter(QBluetoothUuid(QString(ECHO_SERVICE_UUID)));
-    sda->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
-
-    int connectTime = MaxConnectTime;
-    while (!done_discovery) {
-        QTest::qWait(1000);
-        connectTime -= 1000;
+    QProcessEnvironment pe = QProcessEnvironment::systemEnvironment();
+    QLatin1String t("TESTSERVER");
+    if(pe.contains(t)){
+        qDebug() << pe.value(t);
+        strcpy(BTADDRESS, pe.value(t).toAscii());
     }
 
-    sda->stop();
+    if(QBluetoothAddress(BTADDRESS).isNull()){
+        // Go find an echo server for BTADDRESS
+        QBluetoothServiceDiscoveryAgent *sda = new QBluetoothServiceDiscoveryAgent(this);
+        connect(sda, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)), this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+        connect(sda, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)), this, SLOT(error(QBluetoothServiceDiscoveryAgent::Error)));
+        connect(sda, SIGNAL(finished()), this, SLOT(finished()));
 
-    if(BTADDRESS[0] == 0){
-        QFAIL("Unable to find test service");
+
+        qDebug() << "Starting discovery";
+        done_discovery = false;
+        memset(BTADDRESS, 0, 18);
+
+        sda->setUuidFilter(QBluetoothUuid(QString(ECHO_SERVICE_UUID)));
+        sda->start(QBluetoothServiceDiscoveryAgent::MinimalDiscovery);
+
+        int connectTime = MaxConnectTime;
+        while (!done_discovery) {
+            QTest::qWait(1000);
+            connectTime -= 1000;
+        }
+
+        sda->stop();
+
+        if(QBluetoothAddress(BTADDRESS).isNull()){
+            QFAIL("Unable to find test service");
+        }
+        delete sda;
+        sda = 0x0;
     }
-    delete sda;
+
 }
 
 void tst_QBluetoothSocket::error(QBluetoothServiceDiscoveryAgent::Error error)
@@ -326,7 +340,7 @@ void tst_QBluetoothSocket::tst_clientConnection()
 // TODO: no buffereing, all data is sent on write
         if (!data.isEmpty()) {
             // Check that pending write did not complete.
-            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
+//            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
             QCOMPARE(bytesWrittenSpy.count(), 0);
         }
 
@@ -528,7 +542,7 @@ void tst_QBluetoothSocket::tst_clientCommunication()
 
             socket->write(line.toUtf8());
 
-            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
+//            QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
             QCOMPARE(socket->bytesToWrite(), qint64(line.length()));
 
             int readWriteTime = MaxReadWriteTime;
@@ -599,7 +613,7 @@ void tst_QBluetoothSocket::tst_clientCommunication()
         QString joined = data.join(QString());
         socket->write(joined.toUtf8());
 
-        QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
+//        QEXPECT_FAIL("", "TODO: need to implement write buffering", Continue);
         QCOMPARE(socket->bytesToWrite(), qint64(joined.length()));
 
         int readWriteTime = MaxReadWriteTime;

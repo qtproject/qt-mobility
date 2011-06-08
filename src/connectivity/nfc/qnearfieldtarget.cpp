@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \since 1.2
 
     QNearFieldTarget provides a generic interface for communicating with an NFC target device.
     Both NFC Forum devices and NFC Forum Tag targets are supported by this class.  All target
@@ -69,8 +70,8 @@ QTM_BEGIN_NAMESPACE
     target.
 
     If the target supports NdefAccess, hasNdefMessage() can be called to test if the target has a
-    stored NDEF message, ndefMessages() and setNdefMessages() functions can be used to get and set
-    the NDEF message.
+    stored NDEF message, readNdefMessages() and writeNdefMessages() functions can be used to get
+    and set the NDEF message.
 
     If the target supports TagTypeSpecificAccess, sendCommand() can be used to send a single
     proprietary command to the target and retrieve the response.  sendCommands() can be used to
@@ -101,8 +102,8 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the access methods a near field target supports.
 
-    \value NdefAccess               The target supports NDEF records using ndefMessages() and
-                                    setNdefMessages().
+    \value NdefAccess               The target supports reading and writing NDEF messages using
+                                    readNdefMessages() and writeNdefMessages().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
                                     sendCommand() and sendCommands().
     \value LlcpAccess               The target supports peer-to-peer LLCP communication.
@@ -114,6 +115,7 @@ QTM_BEGIN_NAMESPACE
     This enum describes the error codes that that a near field target reports.
 
     \value NoError                  No error has occurred.
+    \value UnknownError             An unidentified error occurred.
     \value UnsupportedError         The requested operation is unsupported by this near field
                                     target.
     \value TargetOutOfRangeError    The target is no longer within range.
@@ -236,6 +238,14 @@ bool QNearFieldTarget::RequestId::operator==(const RequestId &other) const
 }
 
 /*!
+    \internal
+*/
+bool QNearFieldTarget::RequestId::operator!=(const RequestId &other) const
+{
+    return d != other.d;
+}
+
+/*!
     Assigns a copy of \a other to this request id and returns a reference to this request id.
 */
 QNearFieldTarget::RequestId &QNearFieldTarget::RequestId::operator=(const RequestId &other)
@@ -251,6 +261,7 @@ QNearFieldTarget::QNearFieldTarget(QObject *parent)
 :   QObject(parent), d_ptr(new QNearFieldTargetPrivate)
 {
     qRegisterMetaType<RequestId>("QNearFieldTarget::RequestId");
+    qRegisterMetaType<Error>("QNearFieldTarget::Error");
 }
 
 /*!
@@ -305,24 +316,37 @@ bool QNearFieldTarget::hasNdefMessage()
 }
 
 /*!
-    Starts reading NDEF messages stored on the near field target. An ndefMessageRead() signal will
-    be emitted for each NDEF message.  If an error occurs the error() signal will be emitted.
+    Starts reading NDEF messages stored on the near field target. Returns a request id which can
+    be used to track the completion status of the request. An invalid request id will be returned
+    if the target does not support reading NDEF messages.
+
+    An ndefMessageRead() signal will be emitted for each NDEF message. The requestCompleted()
+    signal will be emitted was all NDEF messages have been read. The error() signal is emitted if
+    an error occurs.
+
+    \note Symbian^3 and Maemo 6 only support read one NDEF message.
 */
-void QNearFieldTarget::readNdefMessages()
+QNearFieldTarget::RequestId QNearFieldTarget::readNdefMessages()
 {
-    emit error(UnsupportedError, RequestId());
+    return RequestId();
 }
 
 /*!
-    Writes the NDEF messages in \a messages to the target. The ndefMessagesWritten() signal will be
-    emitted when the write operation completes successfully; otherwise the error() signal is
-    emitted.
+    Writes the NDEF messages in \a messages to the target. Returns a request id which can be used
+    to track the completion status of the request. An invalid request id will be returned if the
+    target does not support reading NDEF messages.
+
+    The ndefMessagesWritten() signal will be emitted when the write operation completes
+    successfully; otherwise the error() signal is emitted.
+
+    \note Symbian^3 and Maemo 6 only support writing one NDEF message.  Only the first NDEF message
+    in the list will be written, others are silently dropped.
 */
-void QNearFieldTarget::writeNdefMessages(const QList<QNdefMessage> &messages)
+QNearFieldTarget::RequestId QNearFieldTarget::writeNdefMessages(const QList<QNdefMessage> &messages)
 {
     Q_UNUSED(messages);
 
-    emit error(UnsupportedError, RequestId());
+    return RequestId();
 }
 
 /*!

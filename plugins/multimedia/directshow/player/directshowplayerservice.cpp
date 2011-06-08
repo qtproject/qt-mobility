@@ -343,6 +343,7 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
         case VFW_E_NOT_FOUND:
             m_error = QMediaPlayer::ResourceError;
             m_errorString = QString();
+            break;
         default:
             m_error = QMediaPlayer::ResourceError;
             m_errorString = QString();
@@ -491,6 +492,7 @@ void DirectShowPlayerService::doRender(QMutexLocker *locker)
                 case VFW_E_UNSUPPORTED_STREAM:
                     m_error = QMediaPlayer::FormatError;
                     m_errorString = QString();
+                    break;
                 default:
                     m_error = QMediaPlayer::ResourceError;
                     m_errorString = QString();
@@ -1335,6 +1337,12 @@ void DirectShowPlayerService::run()
             m_executingTask = ReleaseGraph;
 
             doReleaseGraph(&locker);
+            //if the graph is released, we should not process other operations later
+            if (m_pendingTasks & Shutdown) {
+                m_pendingTasks = 0;
+                return;
+            }
+            m_pendingTasks = 0;
         } else if (m_pendingTasks & Shutdown) {
             return;
         } else if (m_pendingTasks & ReleaseAudioOutput) {

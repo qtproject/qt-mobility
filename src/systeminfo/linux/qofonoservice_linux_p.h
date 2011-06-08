@@ -7,29 +7,29 @@
 ** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -53,90 +53,57 @@
 // We mean it.
 //
 
-#include <QtDBus/QtDBus>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusError>
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusMessage>
-#include <QtDBus/QDBusReply>
-
-#include <QtDBus/QDBusPendingCallWatcher>
-#include <QtDBus/QDBusObjectPath>
-#include <QtDBus/QDBusContext>
-#include <QMap>
-#include <QVariantMap>
-
-#define OFONO_SERVICE	                         "org.ofono"
-#define OFONO_MANAGER_INTERFACE                  "org.ofono.Manager"
-#define OFONO_MANAGER_PATH                       "/"
-#define OFONO_MODEM_INTERFACE                    "org.ofono.Modem"
-#define OFONO_NETWORK_REGISTRATION_INTERFACE     "org.ofono.NetworkRegistration"
-#define OFONO_NETWORK_OPERATOR_INTERFACE         "org.ofono.NetworkOperator"
-#define OFONO_SIM_MANAGER_INTERFACE              "org.ofono.SimManager"
-#define OFONO_DATA_CONTEXT_INTERFACE             "org.ofono.PrimaryDataContext"
-
-#define OFONO_MESSAGE_MANAGER_INTERFACE          "org.ofono.MessageManager"
-#define OFONO_PHONEBOOK_INTERFACE                "org.ofono.Phonebook"
-#define OFONO_MESSAGE_WAITING_INTERFACE          "org.ofono.MessageWaiting"
-
-#define OFONO_MESSAGE_MANAGER_INTERFACE          "org.ofono.MessageManager"
-#define OFONO_CONNECTION_MANAGER_INTERFACE       "org.ofono.ConnectionManager"
-
-QT_BEGIN_NAMESPACE
+#include "qmobilityglobal.h"
+#include <QtDBus/qdbusabstractinterface.h>
+#include <QtDBus/qdbuscontext.h>
 
 struct QOfonoProperties
 {
     QDBusObjectPath path;
     QVariantMap properties;
 };
-
 Q_DECLARE_METATYPE(QOfonoProperties)
-
-QDBusArgument &operator<<(QDBusArgument &argument,const QOfonoProperties &prop);
-
-const QDBusArgument &operator>>(const QDBusArgument &argument,QOfonoProperties &prop);
 
 typedef QList<QOfonoProperties> QOfonoPropertyMap;
 Q_DECLARE_METATYPE(QOfonoPropertyMap)
 
-class QOfonoManagerInterface : public  QDBusAbstractInterface
+QTM_BEGIN_NAMESPACE
+
+class QOfonoManagerInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
-
     QOfonoManagerInterface( QObject *parent = 0);
     ~QOfonoManagerInterface();
 
-    QDBusObjectPath path() const;
-
-    QVariantMap getProperties();
-    bool setProperty(const QString &name, const QDBusVariant &value);
-    QList <QDBusObjectPath> getModems();
     QDBusObjectPath currentModem();
+    QList<QDBusObjectPath> getModems();
 
 Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
+    void propertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
+
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
 
+private:
+    QVariant getProperty(const QString &property);
 };
 
-
 class QOfonoDBusHelper: public QObject, protected QDBusContext
- {
-     Q_OBJECT
- public:
+{
+    Q_OBJECT
+
+public:
     QOfonoDBusHelper(QObject *parent = 0);
     ~QOfonoDBusHelper();
 
- public slots:
-    void propertyChanged(const QString &, const QDBusVariant &);
- Q_SIGNALS:
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
+public Q_SLOTS:
+    void propertyChanged(const QString &item, const QDBusVariant &value);
+
+Q_SIGNALS:
+    void propertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
 };
 
 class QOfonoModemInterface : public QDBusAbstractInterface
@@ -144,63 +111,41 @@ class QOfonoModemInterface : public QDBusAbstractInterface
     Q_OBJECT
 
 public:
-
     QOfonoModemInterface(const QString &dbusModemPathName, QObject *parent = 0);
     ~QOfonoModemInterface();
 
-    QVariantMap getProperties();
-    //properties
     bool isPowered();
-    bool isOnline();
-    QString getName();
-    QString getManufacturer();
-    QString getModel();
-    QString getRevision();
     QString getSerial();
 
-    QStringList getFeatures(); //sms, sim
-    QStringList getInterfaces();
-    QString defaultInterface();
-
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
-Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
+private:
+    QVariant getProperty(const QString &property);
 };
-
 
 class QOfonoNetworkRegistrationInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
-
     QOfonoNetworkRegistrationInterface(const QString &dbusModemPathName, QObject *parent = 0);
     ~QOfonoNetworkRegistrationInterface();
 
-    QVariantMap getProperties();
-
-    //properties
+    int getSignalStrength();
+    QList<QDBusObjectPath> getOperators();
+    QString getOperatorName();
     QString getStatus();
+    QString getTechnology();
     quint16 getLac();
     quint32 getCellId();
-    QString getTechnology();
-    QString getOperatorName();
-    int getSignalStrength();
-    QString getBaseStation();
-    QList <QDBusObjectPath> getOperators();
 
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
-Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 
+private:
+    QVariant getProperty(const QString &property);
+
+Q_SIGNALS:
+    void propertyChangedContext(const QString &path, const QString &item, const QDBusVariant &value);
 };
 
 class QOfonoNetworkOperatorInterface : public QDBusAbstractInterface
@@ -208,23 +153,16 @@ class QOfonoNetworkOperatorInterface : public QDBusAbstractInterface
     Q_OBJECT
 
 public:
-//modem or operator paths
     QOfonoNetworkOperatorInterface(const QString &dbusPathName, QObject *parent = 0);
     ~QOfonoNetworkOperatorInterface();
 
-    QVariantMap getProperties();
-
-    //properties
-    QString getName();
-    QString getStatus();// "unknown", "available", "current" and "forbidden"
     QString getMcc();
     QString getMnc();
+    QString getStatus();
     QStringList getTechnologies();
 
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
+private:
+    QVariant getProperty(const QString &property);
 };
 
 class QOfonoSimInterface : public QDBusAbstractInterface
@@ -232,141 +170,33 @@ class QOfonoSimInterface : public QDBusAbstractInterface
     Q_OBJECT
 
 public:
-
     QOfonoSimInterface(const QString &dbusModemPathName, QObject *parent = 0);
     ~QOfonoSimInterface();
 
-    QVariantMap getProperties();
-
-    //properties
     bool isPresent();
     QString getHomeMcc();
     QString getHomeMnc();
-//    QStringList subscriberNumbers();
-//    QMap<QString,QString> serviceNumbers();
-    QString pinRequired();
-    QString lockedPins();
-    QString cardIdentifier();
     QString getImsi();
+    QString pinRequired();
 
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
+private:
+    QVariant getProperty(const QString &property);
 };
-
 
 class QOfonoConnectionManagerInterface : public QDBusAbstractInterface
 {
     Q_OBJECT
 
 public:
-
     QOfonoConnectionManagerInterface(const QString &dbusPathName, QObject *parent = 0);
     ~QOfonoConnectionManagerInterface();
 
-    QVariantMap getProperties();
-
-    //properties
-    QList<QDBusObjectPath> getPrimaryContexts();
-    bool isAttached();
-    bool isRoamingAllowed();
-    bool isPowered();
     QString bearer();
 
-    bool setPower(bool on);
-
-Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
+private:
     QVariant getProperty(const QString &);
 };
 
-
-class QOfonoPrimaryDataContextInterface : public QDBusAbstractInterface
-{
-    Q_OBJECT
-
-public:
-
-    QOfonoPrimaryDataContextInterface(const QString &dbusPathName, QObject *parent = 0);
-    ~QOfonoPrimaryDataContextInterface();
-
-    QVariantMap getProperties();
-
-    //properties
-    bool isActive();
-    QString getApName();
-    QString getType();
-    QString getName();
-    QVariantMap getSettings();
-    QString getInterface();
-    QString getAddress();
-
-    bool setActive(bool on);
-    bool setApn(const QString &name);
-
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
-    bool setProp(const QString &, const QVariant &var);
-};
-
-class QOfonoMessageManagerInterface : public QDBusAbstractInterface
-{
-    Q_OBJECT
-
-public:
-
-    QOfonoMessageManagerInterface(const QString &dbusModemPathName, QObject *parent = 0);
-    ~QOfonoMessageManagerInterface();
-
-    QVariantMap getProperties();
-    void sendMessage(const QString &to, const QString &message);
-
-    //properties
-    QString  serviceCenterAddress();
-    bool useDeliveryReports();
-    QString bearer();
-
-protected:
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
-    QVariant getProperty(const QString &);
-
-Q_SIGNALS:
-    void propertyChanged(const QString &, const QDBusVariant &value);
-    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-    void immediateMessage(const QString &message, const QVariantMap &info);
-    void incomingMessage(const QString &message, const QVariantMap &info);
-};
-
-//class QOfonoConnectionManagerInterface : public QDBusAbstractInterface
-//{
-//    Q_OBJECT
-
-//public:
-
-//    QOfonoConnectionManagerInterface(const QString &dbusModemPathName, QObject *parent = 0);
-//    ~QOfonoConnectionManagerInterface();
-
-//    QVariantMap getProperties();
-//    QString bearer();
-
-//Q_SIGNALS:
-//    void propertyChanged(const QString &, const QDBusVariant &value);
-//    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-
-//protected:
-//    void connectNotify(const char *signal);
-//    void disconnectNotify(const char *signal);
-//    QVariant getProperty(const QString &);
-
-//};
+QTM_END_NAMESPACE
 
 #endif //QOFONOSERVICE_H

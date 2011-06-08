@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -90,6 +90,7 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     \class QLandmarkManager
     \brief The QLandmarkManager class provides an interface for storage
     and retrieval of landmarks from a landmark store.
+    \since 1.1
 
     \inmodule QtLocation
 
@@ -106,9 +107,10 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     manager which may be instantiated without having to provide a name like so:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Instantiate default QLandmarkManager
 
-    \section1 Retrieval operations
+    \section1 Retrieval Operations
+
     To retrieve a set of landmarks we provide may provide a QLandmarkFilter, QLandmarkSortOrder and limit and offset as necessary.
-    The QLandmarkFilter defines the criteria for selecting landmarks e.g. a QLandmarkCategoryFilter may be used
+    The QLandmarkFilter defines the criteria for selecting landmarks; for example, a QLandmarkCategoryFilter may be used
     to choose landmarks that belong to a certain category.  A QLandmarkSortOrder order defines how the results should
     be sorted.  (Note that if you wish to sort by distance, you should use a proxmity filter, see QLandmarkProximityFilter).
     The limit allows specification of the maximum number of items to
@@ -121,16 +123,17 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     all landmarks, then the appropriate call is:
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve all landmarks synchronously
-    \bold {Note:} Landmark retrieval is potentially a long operation, the synchronous API provided by the manager
+    \note Landmark retrieval is potentially a long operation, the synchronous API provided by the manager
     is subject to blocking.  It is generally recommended that the QLandmarkFetchRequest be used because
     it behaves asynchronously.
 
     Categories may be retrieved in a similar manner:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously simple
 
-    \section1 Saving and deleting
+    \section1 Saving and Deleting
+
     Saving and deleting landmarks and categories are fairly straightforward.  To add a new landmark or category
-    simply instantiate a QLandmark or QLandmarkCategory, set its data fields(e.g name, coordiante etc) and pass
+    simply instantiate a QLandmark or QLandmarkCategory, set its data fields (e.g., name, coordinate, etc.) and pass
     a pointer to the appropriate save operation.  For example:
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark synchronously simple
@@ -141,12 +144,17 @@ Q_DEFINE_LATIN1_CONSTANT(QLandmarkManager::Kmz, "Kmz");
     Removal of landmark may be done as follows:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously simple
 
-    \section1 Importing and exporting
-    Import and exporting are potentially long operations, to perform these operations asynchronously
+    \section1 Importing and Exporting
+
+    Import and export are potentially long operations, to perform these operations asynchronously
     see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform an import
-    is to supply a filename while an export will need both a filename and format.
+    is to supply a file name while an export will need both a file name and format.
 
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp ImportExport landmark simple
+
+    The formats supported for import and export can be found by calling the
+    supportedFormats() function with the type of operation to be performed,
+    either ImportOperation or ExportOperation.
 */
 
 /*!
@@ -279,6 +287,7 @@ QLandmarkManager::~QLandmarkManager()
     Returns false on failure or true on success.  On successful save
     of a landmark with an empty id, it will be assigned a valid
     id and have its manager URI set to the URI of this manager.
+    \since 1.1
 */
 bool QLandmarkManager::saveLandmark(QLandmark *landmark)
 {
@@ -309,6 +318,7 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
 
     For each new landmark that was successfully saved, a landmark identifier
     is assigned to that landmark.
+    \since 1.1
 */
 bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks)
 {
@@ -333,6 +343,7 @@ bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks)
 
     Returns true if the landmark was removed successfully, otherwise
     returnse false.
+    \since 1.1
 */
 bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
 {
@@ -357,6 +368,7 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
 
     Returns true if the landmark was removed successfully,
     otherwise returns false.
+    \since 1.1
 */
 bool QLandmarkManager::removeLandmark(const QLandmark &landmark)
 {
@@ -386,6 +398,7 @@ bool QLandmarkManager::removeLandmark(const QLandmark &landmark)
     The QLandmarkManager::error() function will only return
     \c QLandmarkManager::NoError if all landmarks were removed successfully.
 
+    \since 1.1
     \sa QLandmarkManager::removeLandmark()
 */
 bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds)
@@ -419,6 +432,7 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds)
 
 
 
+    \since 1.1
     \sa QLandmarkManager::removeLandmark()
 */
 bool QLandmarkManager::removeLandmarks(const QList<QLandmark> &landmarks)
@@ -464,6 +478,7 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmark> &landmarks)
     Returns false on failure or true on success.  On successful save
     of a category with an invalid id, it will be assigned a valid
     id and have its manager URI set to the URI of this manager.
+    \since 1.1
 */
 bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
 {
@@ -486,7 +501,8 @@ bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
     Remove the category identified by \a categoryId from the database.
 
     Returns true if the category was removed successfully, otherwise
-    returnse false.
+    returns false.
+    \since 1.1
 */
 bool QLandmarkManager::removeCategory(const QLandmarkCategoryId &categoryId)
 {
@@ -509,7 +525,8 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategoryId &categoryId)
     Remove the given \a category from the database
 
     Returns true if the category was removed successfully, otherwise
-    returnse false.
+    returns false.
+    \since 1.1
 */
 bool QLandmarkManager::removeCategory(const QLandmarkCategory &category)
 {
@@ -530,6 +547,7 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategory &category)
 
 /*!
     Returns the cateory in the database identified by \a categoryId.
+    \since 1.1
 */
 QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &categoryId) const
 {
@@ -560,6 +578,7 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 
     The QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
     all categories were successfully retrieved.
+    \since 1.1
  */
 QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds) const
 {
@@ -587,6 +606,7 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
     A \a limit of -1 means all categories should be returned(a limit of 0 means zero
     categories are returned).  The categories
     are returned in the order as designated by \a nameSort.
+    \since 1.1
 */
 QList<QLandmarkCategory> QLandmarkManager::categories(int limit, int offset, const QLandmarkNameSort &nameSort) const
 {
@@ -616,6 +636,7 @@ QList<QLandmarkCategory> QLandmarkManager::categories(int limit, int offset, con
     of the first id.  A \a limit of -1 means ids for all categories should be returned.
     The identifiers are returned in order as designed by \a nameSort.  Note that a limit
     of 0 will return zero category ids.
+    \since 1.1
 */
 QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(int limit, int offset, const QLandmarkNameSort &nameSort) const
 {
@@ -641,6 +662,7 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(int limit, int offset, 
 
 /*!
     Returns the landmark in the database identified by \a landmarkId
+    \since 1.1
 */
 QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 {
@@ -668,6 +690,7 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned.
+    \since 1.1
 */
 QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int limit, int offset,
                                              const QList<QLandmarkSortOrder> &sortOrders) const
@@ -700,6 +723,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
     The \a limit defines the maximum number of landmarks to return and the \a offset defines the index offset
     of the first landmark.  A \a limit of -1 means all matching landmarks should be returned and that
     a limit of 0 will return zero landmarks.
+    \since 1.1
 */
 QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int limit, int offset,
                                              const QLandmarkSortOrder &sortOrder) const
@@ -739,6 +763,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
     The QLandmarkManager::error() function will only return \c QLandmarkManager::NoError if
     all landmarks were successfully retrieved.
 
+    \since 1.1
 */
 QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkIds) const
 {
@@ -765,6 +790,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     \a offset defines the index offset of the first landmark id.
     A \a limit of -1 means that ids of all matching landmarks should be returned.  Note that
     a limit of 0 will return zero landmark ids.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
                                                 int limit, int offset,
@@ -801,6 +827,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     that a limit of 0 will return zero landmark ids.
 
 
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
                                                  int limit, int offset,
@@ -847,6 +874,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     Returns true if all landmarks could be imported, otherwise
     returns false.
 
+    \since 1.1
 */
 bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
@@ -883,6 +911,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
 
     Returns true if all landmarks could be imported, otherwise
     returns false.
+    \since 1.1
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::TransferOption option, const QLandmarkCategoryId &categoryId)
 {
@@ -905,6 +934,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &f
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
+    \since 1.1
 */
 bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option) const
 {
@@ -941,6 +971,7 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format,
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
+    \since 1.1
 */
 bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, const QList<QLandmarkId> &landmarkIds, QLandmarkManager::TransferOption option) const
 {
@@ -951,6 +982,7 @@ bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &f
 
 /*!
     Returns the file formats supported for the given transfer \a operation. ie import or export.
+    \since 1.1
 */
 QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperation operation) const
 {
@@ -970,6 +1002,7 @@ QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperati
 /*!
     Returns the error code of the most recent operation.  All functions will modify the error based on whether the
     operation successfully or not.
+    \since 1.1
 */
 QLandmarkManager::Error QLandmarkManager::error() const
 {
@@ -981,6 +1014,7 @@ QLandmarkManager::Error QLandmarkManager::error() const
     Returns a short human-readable description of the error that occurred
     in the most recent operation.  The error string is intended to be used
     by developers and is not suitable for showing to end users.
+    \since 1.1
 */
 QString QLandmarkManager::errorString() const
 {
@@ -996,6 +1030,7 @@ The error map is only populated for indexes at which an error occurred.
 Eg If we saved 5 landmarks and an error occurred at index 3, the error map
 will have only a single key for index 3.
 
+\since 1.1
 \sa error(), categories(), landmarks(), saveLandmarks(), removeCategory(),  removeLandmarks()
 */
 QMap<int, QLandmarkManager::Error> QLandmarkManager::errorMap() const
@@ -1006,6 +1041,7 @@ QMap<int, QLandmarkManager::Error> QLandmarkManager::errorMap() const
 
 /*!
     Returns whether the manager supports the given \a feature.
+    \since 1.1
 */
 bool QLandmarkManager::isFeatureSupported(QLandmarkManager::ManagerFeature feature) const
 {
@@ -1026,6 +1062,7 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::ManagerFeature featu
     Returns the support level the manager provides for the given \a filter.  For the case
     of intersection and union filters, whether the elements will be individually processed
     is dependent on the particular manager implementation.
+    \since 1.1
 */
 QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
 {
@@ -1044,6 +1081,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
 
 /*!
     Returns the support level the manager provides for the given \a sortOrder.
+    \since 1.1
 */
 QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLandmarkSortOrder &sortOrder) const
 {
@@ -1063,6 +1101,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLa
 /*!
     Returns true if the manager is entirely read-only.  Meaning
     landmarks and categories cannot be added, modified or removed.
+    \since 1.1
 */
 bool QLandmarkManager::isReadOnly() const
 {
@@ -1084,6 +1123,7 @@ bool QLandmarkManager::isReadOnly() const
 
     If the \a landmarkId does not refer to an existing landmark,
     it is considered writable unless the manager is exclusively read-only.
+    \since 1.1
 */
 bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
 {
@@ -1105,6 +1145,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
 
     If \a categoryId does not refer to an existing category,
     it is considered writable unless the manager is exclusively read-only.
+    \since 1.1
 */
 bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 {
@@ -1123,6 +1164,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 /*!
     Returns a list of landmark attribute keys that may be used in a
     QLandmarkAttributeFilter.
+    \since 1.1
 */
 QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
 {
@@ -1143,6 +1185,7 @@ QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
 
     The manager name usually takes the format of a reverse domain string.  An example
     of a manager name is \c com.nokia.qt.landmarks.engines.sqlite
+    \since 1.1
 */
 QString QLandmarkManager::managerName() const
 {
@@ -1163,6 +1206,7 @@ QString QLandmarkManager::managerName() const
 
     The parameters may be viewed as a set of key-value pairs.  Each manager
     may have a different set of parameters depending upon its backend implementation.
+    \since 1.1
 */
 QMap<QString, QString> QLandmarkManager::managerParameters() const
 {
@@ -1180,6 +1224,7 @@ QMap<QString, QString> QLandmarkManager::managerParameters() const
 
 /*!
   Return the uri describing this QLandmarkManager, consisting of the manager name and any parameters.
+  \since 1.1
  */
 QString QLandmarkManager::managerUri() const
 {
@@ -1197,6 +1242,7 @@ QString QLandmarkManager::managerUri() const
 
 /*!
   Returns the engine backend implementation version number.
+  \since 1.1
 */
 int QLandmarkManager::managerVersion() const
 {
@@ -1215,6 +1261,7 @@ int QLandmarkManager::managerVersion() const
 /*!
     Returns a list of available manager names that can
     be used when constructing a QLandmarkManager
+    \since 1.1
 */
 QStringList QLandmarkManager::availableManagers()
 {
@@ -1223,7 +1270,9 @@ QStringList QLandmarkManager::availableManagers()
 
 /*! Returns a URI that completely describes a manager implementation/datastore,
     and the parameters with which to instantiate the manager,
-    from the given \a managerName, \a params and an optional \a implementationVersion */
+    from the given \a managerName, \a params and an optional \a implementationVersion
+    \since 1.1
+*/
 QString QLandmarkManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion)
 {
     QString ret(QLatin1String("qtlandmarks:%1:%2"));
@@ -1254,6 +1303,7 @@ QString QLandmarkManager::buildUri(const QString& managerName, const QMap<QStrin
 /*!
   Constructs a QLandmarkManager whose implementation, store and parameters are specified in the given \a storeUri,
   and whose parent object is \a parent.
+  \since 1.1
  */
 QLandmarkManager* QLandmarkManager::fromUri(const QString& storeUri, QObject* parent)
 {
@@ -1275,6 +1325,7 @@ QLandmarkManager* QLandmarkManager::fromUri(const QString& storeUri, QObject* pa
   Splits the given \a uri into the manager name and parameters that it describes, and places the information
   into the memory addressed by \a pManagerName and \a pParams respectively.  Returns true if \a uri could be split successfully,
   otherwise returns false
+  \since 1.1
  */
 bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerName, QMap<QString, QString>* pParams)
 {
@@ -1331,6 +1382,7 @@ bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerName, QMap<
 
 /*!
     \internal
+    \since 1.1
 */
 void QLandmarkManager::connectNotify(const char *signal)
 {
@@ -1368,6 +1420,7 @@ void QLandmarkManager::connectNotify(const char *signal)
 
 /*!
     \internal
+    \since 1.1
 */
 void QLandmarkManager::disconnectNotify(const char *signal)
 {
@@ -1411,6 +1464,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     This signal is emitted by the manager if its internal state changes and it is unable to precisely determine
     the changes which occurred, or if the manager considers the changes to be radical enough to require clients to reload
     all data.  If the signal is emitted, no other signals will be emitted for the associated changes.
+    \since 1.1
 */
 
 /*!
@@ -1418,6 +1472,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been added to the datastore managed by this manager.
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+    \since 1.1
     \sa landmarksChanged(), landmarksRemoved()
 */
 
@@ -1428,6 +1483,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.  Note that removal
     of a category will not trigger a \c landmarksChanged signal for landmarks belonging to that category.
 
+    \since 1.1
     \sa landmarksAdded(), landmarksRemoved()
 */
 
@@ -1436,6 +1492,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been removed from the datastore managed by this manager.
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+    \since 1.1
     \sa landmarksAdded(), landmarksChanged()
 */
 
@@ -1444,6 +1501,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     This signal is emitted when categories (identified by \a categoryIds) have been added to the datastore managed by this manager.
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+    \since 1.1
     \sa categoriesChanged(), categoriesRemoved()
 */
 
@@ -1452,6 +1510,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     This signal is emitted when categories (identified by \a categoryIds) have been modified in the datastore managed by this manager.
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+    \since 1.1
     \sa categoriesAdded(), categoriesRemoved()
 */
 
@@ -1460,6 +1519,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     This signal is emitted when categories (identified by \a categoryIds) have been removed from the datastore managed by this manager.
     This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+    \since 1.1
     \sa categoriesAdded(), categoriesChanged()
 */
 

@@ -79,6 +79,7 @@ void CntDisplayLabel::setDisplayLabelDetails()
     m_contactDisplayLabelDetails.clear();
     m_groupDisplayLabelDetails.clear();
     QList<QPair<QLatin1String, QLatin1String> > contactPrefferedDisplayLabelDetails;
+    QList<QPair<QLatin1String, QLatin1String> > contactOptionalDisplayLabelDetails;
     QLatin1String firstLatin(QContactName::FieldFirstName);
     QLatin1String secondLatin(QContactName::FieldLastName);
     
@@ -90,6 +91,8 @@ void CntDisplayLabel::setDisplayLabelDetails()
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), firstLatin));
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), secondLatin));
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
+    contactOptionalDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldCustomLabel)));
+    m_contactDisplayLabelDetails.append(contactOptionalDisplayLabelDetails);
     
     //Group
     QList<QPair<QLatin1String, QLatin1String> > preferredGroupDisplayLabelDetails;

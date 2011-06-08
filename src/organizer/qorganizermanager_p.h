@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -73,7 +73,7 @@ class QOrganizerManagerData
 public:
     QOrganizerManagerData()
         : m_engine(0),
-        m_error(QOrganizerManager::NoError)
+        m_lastError(QOrganizerManager::NoError)
     {
     }
 
@@ -89,8 +89,8 @@ public:
     static QOrganizerCollectionEngineId* createEngineCollectionId(const QString& managerName, const QMap<QString, QString>& parameters, const QString& engineIdString);
 
     QOrganizerManagerEngineV2* m_engine;
-    QOrganizerManager::Error m_error;
-    QMap<int, QOrganizerManager::Error> m_errorMap;
+    QOrganizerManager::Error m_lastError;
+    QMap<int, QOrganizerManager::Error> m_lastErrorMap;
 
     /* Manager plugins */
     static QHash<QString, QOrganizerManagerEngineFactory*> m_engines;
@@ -107,9 +107,40 @@ public:
     void _q_itemsDeleted(const QList<QOrganizerItemId>& ids);
 
     QMultiHash<QOrganizerItemId, QOrganizerItemObserver*> m_observerForItem;
+    static QOrganizerManagerData* managerData(const QOrganizerManager*m) {return m->d;}
 
 private:
     Q_DISABLE_COPY(QOrganizerManagerData)
+};
+
+/*
+    Helper to hold the error state of a synchronous operation - when destructed, updates the
+    manager's last error variables to the result of this operation.  This means that during
+    callbacks the error state can't be modified behind the engines back. and it's more conceptually
+    correct.
+ */
+class QOrganizerManagerSyncOpErrorHolder
+{
+public:
+    QOrganizerManagerSyncOpErrorHolder(const QOrganizerManager* m, QMap<int, QOrganizerManager::Error> *pUserError = 0)
+        : error(QOrganizerManager::NoError),
+        data(QOrganizerManagerData::managerData(m)),
+        userError(pUserError)
+    {
+    }
+
+    ~QOrganizerManagerSyncOpErrorHolder()
+    {
+        data->m_lastError = error;
+        data->m_lastErrorMap = errorMap;
+        if (userError)
+            *userError = errorMap;
+    }
+
+    QOrganizerManager::Error error;
+    QOrganizerManagerData* data;
+    QMap<int, QOrganizerManager::Error> errorMap;
+    QMap<int, QOrganizerManager::Error> *userError;
 };
 
 QTM_END_NAMESPACE

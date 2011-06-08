@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
 /*! \internal
     \class BluetoothLinkManagerDeviceDiscoverer
     \brief The BluetoothLinkManagerDeviceDiscoverer class searches other bluetooth devices.
+    \since 1.2
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
@@ -79,6 +80,7 @@ BluetoothLinkManagerDeviceDiscoverer::BluetoothLinkManagerDeviceDiscoverer(RSock
     : QObject(parent)
     , CActive(CActive::EPriorityStandard)
     , m_socketServer(socketServer)
+    , m_pendingCancel(false), m_pendingStart(false), m_discoveryType (0)
 {
     TInt result;
 
@@ -107,13 +109,17 @@ BluetoothLinkManagerDeviceDiscoverer::~BluetoothLinkManagerDeviceDiscoverer()
 /*!
     Starts up device discovery. When devices are discovered signal deviceDiscovered is emitted.
     After signal deviceDiscoveryComplete() is emitted new discovery request can be made.
-    Returns false if discovery is ongoing and new discovery is started.
 */
-bool BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryType)
+void BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryType)
 {
-    bool returnValue = false;
+    m_discoveryType = discoveryType;
+    
+    if(m_pendingCancel == true) {
+        m_pendingStart = true;
+        m_pendingCancel = false;  
+        return;
+    }
     if (!IsActive()) {
-        returnValue = true;
         m_addr.SetIAC( discoveryType );
 #ifdef EIR_SUPPORTED
         m_addr.SetAction(KHostResInquiry | KHostResName | KHostResIgnoreCache | KHostResEir);
@@ -123,24 +129,67 @@ bool BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryTy
         m_hostResolver.GetByAddress(m_addr, m_entry, iStatus);
         SetActive();
     }
-    return returnValue;
 }
+
+void BluetoothLinkManagerDeviceDiscoverer::stopDiscovery()
+{
+    m_pendingStart = false; 
+    if (IsActive() && !m_pendingCancel) {
+        m_pendingCancel = true;
+        m_hostResolver.Cancel();
+    }
+}
+
 /*!
   Informs that our request has been prosessed and the data is available to be used.
 */
 void BluetoothLinkManagerDeviceDiscoverer::RunL()
 {
-    if (iStatus.Int() == KErrHostResNoMoreResults) {
-        emit deviceDiscoveryComplete(iStatus.Int());
-    } else if (iStatus.Int() != KErrNone) {
+    qDebug() << __PRETTY_FUNCTION__ << iStatus.Int();
+    switch (iStatus.Int()) {
+    case KErrNone:  // found device
+        if (m_pendingCancel && !m_pendingStart) {
+            m_pendingCancel = false;
+            emit canceled();
+        } else {
+            m_pendingCancel = false;
+            m_pendingStart = false;
+            // get next (possible) discovered device
+            m_hostResolver.Next(m_entry, iStatus);
+            SetActive();
+            emit deviceDiscovered(currentDeviceDataToQBluetoothDeviceInfo());
+        }
+        break;
+    case KErrHostResNoMoreResults:  // done with search
+        if (m_pendingCancel && !m_pendingStart){  // search was canceled prior to finishing
+            m_pendingCancel = false;
+            m_pendingStart = false;
+            emit canceled();
+        }
+        else if (m_pendingStart){  // search was restarted just prior to finishing
+            m_pendingStart = false;
+            m_pendingCancel = false;
+            startDiscovery(m_discoveryType);
+        } else {  // search completed normally
+            m_pendingStart = false;
+            m_pendingCancel = false;
+            emit deviceDiscoveryComplete();
+        }
+        break;
+    case KErrCancel:  // user canceled search
+        if (m_pendingStart){  // user activated search after cancel
+            m_pendingStart = false;
+            m_pendingCancel = false;
+            startDiscovery(m_discoveryType);
+        } else {  // standard user cancel case
+            m_pendingCancel = false;
+            emit canceled();
+        }
+        break;
+    default:
+        m_pendingStart = false;
+        m_pendingCancel = false;
         setError(iStatus.Int());
-    } else {
-        // get next (possible) discovered device
-        m_hostResolver.Next(m_entry, iStatus);
-        // set this AO active ie running
-        SetActive();
-        // finally inform that we have found a new device
-        emit deviceDiscovered(currentDeviceDataToQBluetoothDeviceInfo());
     }
 }
 /*!
@@ -157,6 +206,15 @@ TInt BluetoothLinkManagerDeviceDiscoverer::RunError(TInt aError)
     return KErrNone;
 }
 
+bool BluetoothLinkManagerDeviceDiscoverer::isReallyActive() const
+{
+    if(m_pendingStart)
+        return true;
+    if(m_pendingCancel)
+        return false;
+    return IsActive();
+}
+
 /*!
     Transforms Symbian device name, address and service classes to QBluetootDeviceInfo.
 */
@@ -166,17 +224,31 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 #ifdef EIR_SUPPORTED
     TBluetoothNameRecordWrapper eir(m_entry());
     TInt bufferlength = 0;
+    TInt err = KErrNone;
     QString deviceName;
     bufferlength = eir.GetDeviceNameLength();
 
     if (bufferlength > 0) {
         TBool nameComplete;
-        HBufC *deviceNameBuffer = HBufC::NewLC(bufferlength);
-        TPtr ptr = deviceNameBuffer->Des();
-        TInt error = eir.GetDeviceName(ptr,nameComplete);
-        if (error == KErrNone && nameComplete)
-            deviceName = QString::fromUtf16(ptr.Ptr(), ptr.Length()).toUpper();
-        CleanupStack::PopAndDestroy(deviceNameBuffer);
+        HBufC *deviceNameBuffer = 0;
+        TRAP(err,deviceNameBuffer = HBufC::NewL(bufferlength));
+        if(err)
+            deviceName = QString();
+        else
+            {
+            TPtr ptr = deviceNameBuffer->Des();
+            err = eir.GetDeviceName(ptr,nameComplete);
+            if (err == KErrNone /*&& nameComplete*/)
+                {
+                if(!nameComplete)
+                    qWarning() << "device name incomplete";
+                // isn't it better to get an incomplete name than getting nothing?
+                deviceName = QString::fromUtf16(ptr.Ptr(), ptr.Length()).toUpper();
+                }
+            else
+                deviceName = QString();
+            delete deviceNameBuffer;
+            }
     }
 
     QList<QBluetoothUuid> serviceUidList;
@@ -220,11 +292,19 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     bufferlength = eir.GetVendorSpecificDataLength();
 
     if (bufferlength > 0) {
-        HBufC8 *msd = HBufC8::NewLC(bufferlength);
-        TPtr8 temp = msd->Des();
-        if (eir.GetVendorSpecificData(temp))
-            manufacturerData = s60Desc8ToQByteArray(temp);
-        CleanupStack::PopAndDestroy(msd);
+        HBufC8 *msd = 0;
+        TRAP(err,msd = HBufC8::NewL(bufferlength));
+        if(err)
+            manufacturerData = QByteArray();
+        else
+            {
+            TPtr8 temp = msd->Des();
+            if (eir.GetVendorSpecificData(temp))
+                manufacturerData = s60Desc8ToQByteArray(temp);
+            else
+                manufacturerData = QByteArray();
+            delete msd;
+            }
     }
 
     // Get transmission power level
@@ -270,30 +350,41 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 
 void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
 {
-    QString errorDescription;
+    qDebug() << __PRETTY_FUNCTION__ << "errorCode=" << errorCode;
+    QString errorString;
     switch (errorCode) {
         case KLinkManagerErrBase:
-            errorDescription.append("Link manager base error value or Insufficient baseband resources error value");
+            errorString.append("Link manager base error value or Insufficient baseband resources error value");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrProxyWriteNotAvailable:
-            errorDescription.append("Proxy write not available error value");
+            errorString.append("Proxy write not available error value");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrReflexiveBluetoothLink:
-            errorDescription.append("Reflexive BT link error value");
+            errorString.append("Reflexive BT link error value");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrPendingPhysicalLink:
-            errorDescription.append("Physical link connection already pending when trying to connect the physical link");
+            errorString.append("Physical link connection already pending when trying to connect the physical link");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
         case KErrNotReady:
-            errorDescription.append("KErrNotReady");
+            errorString.append("KErrNotReady");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
+        case KErrCancel:
+            errorString.append("KErrCancel");
+            qDebug() << "emitting canceled";
+            emit canceled();
+            break;
+        case KErrNone:
+            // do nothing
+            break;
         default:
-            errorDescription.append("Symbian errorCode =") + errorCode;
+            errorString = QString("Symbian errorCode = %1").arg(errorCode);
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
             break;
     }
-    if (errorCode == KErrCancel)
-        emit canceled();
-    else if (errorCode != KErrNone)
-        emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError);
 }
 #include "moc_bluetoothlinkmanagerdevicediscoverer.cpp"
 

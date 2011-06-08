@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,6 +49,7 @@ QTM_USE_NAMESPACE
   \brief The QOrganizerEvent class provides an event in time which may reoccur
   \inmodule QtOrganizer
   \ingroup organizer-items
+  \since 1.1
 
   A QOrganizerEvent is an item which occurs at a particular point in time
   and may be associated with a location or have other details.  It may have
@@ -57,7 +58,9 @@ QTM_USE_NAMESPACE
  */
 
 /*! Sets the start date time of the event to \a startDateTime (for recurring events, this applies to
- * the first instance).  For all-day events, the time part can be set to any valid value. */
+ * the first instance).  For all-day events, the time part can be set to any valid value.
+   \since 1.1
+*/
 void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
@@ -66,7 +69,9 @@ void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 }
 
 /*! Returns the date time at which the event starts (for recurring events, this applies to the first
- * instance).  For all-day events, the time part is meaningless. */
+ * instance).  For all-day events, the time part is meaningless.
+   \since 1.1
+ */
 QDateTime QOrganizerEvent::startDateTime() const
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
@@ -76,6 +81,7 @@ QDateTime QOrganizerEvent::startDateTime() const
 /*! Sets the end date time of the event to \a endDateTime (for recurring events, this applies to the
   first instance).  For all-day events, the time part can be set to any valid value, and the date is
   to be interpreted as the inclusive end date.
+  \since 1.1
   */
 void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 {
@@ -87,6 +93,7 @@ void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 /*! Returns the date time at which the event ends (for recurring events, this applies to the first
  * instance).  For all-day events, the time part is meaningless, and the date is to be interpreted
  * as the inclusive end date.
+   \since 1.1
  */
 QDateTime QOrganizerEvent::endDateTime() const
 {
@@ -99,6 +106,7 @@ QDateTime QOrganizerEvent::endDateTime() const
   insignificant (eg. this is generally set to true for a birthday).  If \a isAllDay is true,
   the time-of-day component is considered insignificant, and the event will be an all-day
   item.
+  \since 1.1
  */
 void QOrganizerEvent::setAllDay(bool isAllDay)
 {
@@ -108,14 +116,18 @@ void QOrganizerEvent::setAllDay(bool isAllDay)
 }
 
 /*! Returns true if and only if the time component of the start date/time or end date/time are
- * insignificant. */
+ * insignificant.
+   \since 1.1
+*/
 bool QOrganizerEvent::isAllDay() const
 {
     QOrganizerEventTime etr = detail<QOrganizerEventTime>();
     return etr.isAllDay();
 }
 
-/*! Sets the list of dates \a rdates to be dates on which the event occurs */
+/*! Sets the list of dates \a rdates to be dates on which the event occurs
+    \since 1.1
+*/
 void QOrganizerEvent::setRecurrenceDates(const QSet<QDate>& rdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -126,13 +138,17 @@ void QOrganizerEvent::setRecurrenceDates(const QSet<QDate>& rdates)
 /*!
   \internal
   Sets a single date \a rdate to be the date on which the event occurs.
-  \sa setRecurrenceDates() */
+  \sa setRecurrenceDates()
+  \since 1.1
+*/
 void QOrganizerEvent::setRecurrenceDate(const QDate& rdate)
 {
     setRecurrenceDates(QSet<QDate>() << rdate);
 }
 
-/*! Returns the list of dates which have been explicitly set as dates on which the event occurs */
+/*! Returns the list of dates which have been explicitly set as dates on which the event occurs
+    \since 1.1
+*/
 QSet<QDate> QOrganizerEvent::recurrenceDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -140,7 +156,9 @@ QSet<QDate> QOrganizerEvent::recurrenceDates() const
 }
 
 /*! Sets the list of recurrence rules \a rrules to be the rules which define when the event occurs, other than those dates
-    specified explicitly via setRecurrenceDates(). */
+    specified explicitly via setRecurrenceDates().
+   \since 1.1
+*/
 void QOrganizerEvent::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& rrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -150,13 +168,17 @@ void QOrganizerEvent::setRecurrenceRules(const QSet<QOrganizerRecurrenceRule>& r
 
 /*! Sets a single recurrence rule \a rrule to be the rule which define when the event occurs, other than those dates
     specified explicitly via setRecurrenceDates().
-    \sa setRecurrenceRules()*/
+    \sa setRecurrenceRules()
+    \since 1.1
+*/
 void QOrganizerEvent::setRecurrenceRule(const QOrganizerRecurrenceRule& rrule)
 {
     setRecurrenceRules(QSet<QOrganizerRecurrenceRule>() << rrule);
 }
 
-/*! Returns the list of recurrence rules which define when the event occurs */
+/*! Returns the list of recurrence rules which define when the event occurs
+   \since 1.1
+*/
 QSet<QOrganizerRecurrenceRule> QOrganizerEvent::recurrenceRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -165,6 +187,7 @@ QSet<QOrganizerRecurrenceRule> QOrganizerEvent::recurrenceRules() const
 
 /*! Returns a recurrence rule which has been explicitly set for the event.
     Note: if more than one rule exists, the order of the rules is undefined, so any one could be returned.
+   \since 1.1
  */
 QOrganizerRecurrenceRule QOrganizerEvent::recurrenceRule() const
 {
@@ -177,6 +200,7 @@ QOrganizerRecurrenceRule QOrganizerEvent::recurrenceRule() const
 /*! Sets the given list of dates \a exdates to be dates on which the event explicitly does not occur,
     even if the recurrence rules suggest that the event should occur on those dates.  Any previously
     specified exception dates will be cleared when this function is called.
+   \since 1.1
  */
 void QOrganizerEvent::setExceptionDates(const QSet<QDate>& exdates)
 {
@@ -191,6 +215,7 @@ void QOrganizerEvent::setExceptionDates(const QSet<QDate>& exdates)
   event if the recurrence rules suggest that the event should occur on this date.  Any previously
   specified exception dates will be cleared when this function is called.
   \sa setExceptionDates()
+   \since 1.1
  */
 void QOrganizerEvent::setExceptionDate(const QDate& exdate)
 {
@@ -198,7 +223,9 @@ void QOrganizerEvent::setExceptionDate(const QDate& exdate)
 }
 
 /*! Returns the list of dates on which the event explicitly does not occur despite
-    the recurrence rules for the event */
+    the recurrence rules for the event
+    \since 1.1
+*/
 QSet<QDate> QOrganizerEvent::exceptionDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -207,7 +234,9 @@ QSet<QDate> QOrganizerEvent::exceptionDates() const
 
 /*! Sets the given list of recurrence rules \a exrules to be the rules which define when
     the event does not occur.  Any previously specified exception rules will be cleared
-    when this function is called. */
+    when this function is called.
+    \since 1.1
+*/
 void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& exrules)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
@@ -219,6 +248,7 @@ void QOrganizerEvent::setExceptionRules(const QSet<QOrganizerRecurrenceRule>& ex
     the event does not occur.  Any previously specified exception rules will be cleared
     when this function is called.
     \sa setExceptionRules()
+    \since 1.1
  */
 void QOrganizerEvent::setExceptionRule(const QOrganizerRecurrenceRule& xrule)
 {
@@ -226,7 +256,9 @@ void QOrganizerEvent::setExceptionRule(const QOrganizerRecurrenceRule& xrule)
 }
 
 /*! Returns an exception rule which has been explicitly set for the event.
-    Note: if more than one exception rule exists, the order of the rules is undefined, so any one could be returned.*/
+    Note: if more than one exception rule exists, the order of the rules is undefined, so any one could be returned.
+    \since 1.1
+*/
 QOrganizerRecurrenceRule QOrganizerEvent::exceptionRule() const
 {
     QSet<QOrganizerRecurrenceRule> exrules = exceptionRules();
@@ -235,14 +267,18 @@ QOrganizerRecurrenceRule QOrganizerEvent::exceptionRule() const
     return QOrganizerRecurrenceRule();
 }
 
-/*! Returns the list of exception rules for the event */
+/*! Returns the list of exception rules for the event
+    \since 1.1
+*/
 QSet<QOrganizerRecurrenceRule> QOrganizerEvent::exceptionRules() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionRules();
 }
 
-/*! Sets the priority of this event to \a priority */
+/*! Sets the priority of this event to \a priority
+    \since 1.1
+*/
 void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)
 {
     QOrganizerItemPriority pd = detail<QOrganizerItemPriority>();
@@ -250,21 +286,27 @@ void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)
     saveDetail(&pd);
 }
 
-/*! Returns the priority of the event */
+/*! Returns the priority of the event
+    \since 1.1
+*/
 QOrganizerItemPriority::Priority QOrganizerEvent::priority() const
 {
     QOrganizerItemPriority pd = detail<QOrganizerItemPriority>();
     return pd.priority();
 }
 
-/*! Returns the label of the location at which the event occurs, if known */
+/*! Returns the label of the location at which the event occurs, if known
+    \since 1.1
+*/
 QString QOrganizerEvent::location() const
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
     return ld.label();
 }
 
-/*! Sets the label of the location at which the event occurs to \a location */
+/*! Sets the label of the location at which the event occurs to \a location
+    \since 1.1
+*/
 void QOrganizerEvent::setLocation(const QString& location)
 {
     QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();

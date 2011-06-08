@@ -1,4 +1,0 @@
-SUBDIRS +=  qserviceinterfacedescriptor \
-	qservicefilter \
-	qservicecontext
-

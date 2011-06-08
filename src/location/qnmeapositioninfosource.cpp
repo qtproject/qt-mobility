@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -429,7 +429,8 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
     \brief The QNmeaPositionInfoSource class provides positional information using a NMEA data source.
 
     \inmodule QtLocation
-    
+    \since 1.0
+
     \ingroup location
 
     NMEA is a commonly used protocol for the specification of one's global
@@ -465,6 +466,7 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
 /*!
     Constructs a QNmeaPositionInfoSource instance with the given \a parent
     and \a updateMode.
+    \since 1.0
 */
 QNmeaPositionInfoSource::QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent)
         : QGeoPositionInfoSource(parent),
@@ -495,6 +497,7 @@ QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
 
     Returns true if the sentence was succsesfully parsed, otherwise returns false and should not
     modifiy \a posInfo or \a hasFix.
+    \since 1.0
 */
 bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int size,
         QGeoPositionInfo *posInfo, bool *hasFix)
@@ -504,6 +507,7 @@ bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int siz
 
 /*!
     Returns the update mode.
+    \since 1.0
 */
 QNmeaPositionInfoSource::UpdateMode QNmeaPositionInfoSource::updateMode() const
 {
@@ -521,6 +525,7 @@ QNmeaPositionInfoSource::UpdateMode QNmeaPositionInfoSource::updateMode() const
     source to be notified when data is available for reading.
     QNmeaPositionInfoSource does not assume the ownership of the device,
     and hence does not deallocate it upon destruction.
+    \since 1.0
 */
 void QNmeaPositionInfoSource::setDevice(QIODevice *device)
 {
@@ -534,6 +539,7 @@ void QNmeaPositionInfoSource::setDevice(QIODevice *device)
 
 /*!
     Returns the NMEA data source.
+    \since 1.0
 */
 QIODevice *QNmeaPositionInfoSource::device() const
 {
@@ -542,6 +548,7 @@ QIODevice *QNmeaPositionInfoSource::device() const
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::setUpdateInterval(int msec)
 {
@@ -557,6 +564,7 @@ void QNmeaPositionInfoSource::setUpdateInterval(int msec)
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::startUpdates()
 {
@@ -565,6 +573,7 @@ void QNmeaPositionInfoSource::startUpdates()
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::stopUpdates()
 {
@@ -573,6 +582,7 @@ void QNmeaPositionInfoSource::stopUpdates()
 
 /*!
     \reimp
+    \since 1.0
 */
 void QNmeaPositionInfoSource::requestUpdate(int msec)
 {
@@ -581,6 +591,7 @@ void QNmeaPositionInfoSource::requestUpdate(int msec)
 
 /*!
     \reimp
+    \since 1.0
 */
 QGeoPositionInfo QNmeaPositionInfoSource::lastKnownPosition(bool) const
 {
@@ -590,6 +601,7 @@ QGeoPositionInfo QNmeaPositionInfoSource::lastKnownPosition(bool) const
 
 /*!
     \reimp
+    \since 1.0
 */
 QGeoPositionInfoSource::PositioningMethods QNmeaPositionInfoSource::supportedPositioningMethods() const
 {
@@ -598,6 +610,7 @@ QGeoPositionInfoSource::PositioningMethods QNmeaPositionInfoSource::supportedPos
 
 /*!
     \reimp
+    \since 1.0
 */
 int QNmeaPositionInfoSource::minimumUpdateInterval() const
 {

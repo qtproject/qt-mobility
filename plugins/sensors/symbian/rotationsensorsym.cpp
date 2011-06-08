@@ -81,6 +81,7 @@ CRotationSensorSym::CRotationSensorSym(QSensor *sensor):CSensorBackendSym(sensor
         {
         setReading<QRotationReading>(&iReading);
         iBackendData.iSensorType = KSensrvChannelTypeIdRotationData;
+        sensor->setProperty("hasZ", QVariant(FALSE));
         }
 
 /*
@@ -118,31 +119,13 @@ void CRotationSensorSym::ProcessReading()
     // This logic maps value to Qt range -180 to 180
     if(iData.iDeviceRotationAboutYAxis >= 0 && iData.iDeviceRotationAboutYAxis <= 180)
         {
-        iReading.setY(iData.iDeviceRotationAboutYAxis);
+        iReading.setY(0 - (180 - iData.iDeviceRotationAboutYAxis));
         }
     else if(iData.iDeviceRotationAboutYAxis > 180 && iData.iDeviceRotationAboutYAxis < 360)
         {
-        iReading.setY(iData.iDeviceRotationAboutYAxis - 360);
+        iReading.setY(iData.iDeviceRotationAboutYAxis - 180);
         }
 
-    if(iData.iDeviceRotationAboutZAxis == TSensrvRotationData::KSensrvRotationUndefined)
-        {
-        sensor()->setProperty("hasZ", QVariant(FALSE));
-        }
-    else
-        {
-        sensor()->setProperty("hasZ", QVariant(TRUE));
-        // For z axis symbian provides reading from 0 to 359 range
-        // This logic maps value to Qt range -180 to 180
-        if(iData.iDeviceRotationAboutZAxis >= 0 && iData.iDeviceRotationAboutZAxis <= 180)
-            {
-            iReading.setZ(iData.iDeviceRotationAboutZAxis);
-            }
-        else if(iData.iDeviceRotationAboutZAxis > 180 && iData.iDeviceRotationAboutZAxis < 360)
-            {
-            iReading.setZ(iData.iDeviceRotationAboutZAxis - 360);
-            }
-        }
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock

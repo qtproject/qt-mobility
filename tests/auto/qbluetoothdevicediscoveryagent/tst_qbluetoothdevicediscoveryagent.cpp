@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -94,9 +94,23 @@ void tst_QBluetoothDeviceDiscoveryAgent::initTestCase()
     qRegisterMetaType<QBluetoothDeviceInfo>("QBluetoothDeviceInfo");
     qRegisterMetaType<QBluetoothDeviceDiscoveryAgent::InquiryType>("QBluetoothDeviceDiscoveryAgent::InquiryType");
 
-    // start Bluetooth if not started
+    // turn on BT in case it is not on
     QBluetoothLocalDevice *device = new QBluetoothLocalDevice();
-    device->powerOn();
+    if (device->hostMode() == QBluetoothLocalDevice::HostPoweredOff) {
+        QSignalSpy hostModeSpy(device, SIGNAL(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
+        QVERIFY(hostModeSpy.isEmpty());
+        device->powerOn();
+        int connectTime = 5000;  // ms
+        while (hostModeSpy.count() < 1 && connectTime > 0) {
+            QTest::qWait(500);
+            connectTime -= 500;
+        }
+        QVERIFY(hostModeSpy.count() > 0);
+    }
+    QBluetoothLocalDevice::HostMode hostMode= device->hostMode();
+    QVERIFY(hostMode == QBluetoothLocalDevice::HostConnectable
+         || hostMode == QBluetoothLocalDevice::HostDiscoverable
+         || hostMode == QBluetoothLocalDevice::HostDiscoverableLimitedInquiry);
     delete device;
 }
 
@@ -118,14 +132,6 @@ void tst_QBluetoothDeviceDiscoveryAgent::deviceDiscoveryDebug(const QBluetoothDe
     qDebug() << "Discovered device:" << info.address().toString() << info.name();
 }
 
-void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery_data()
-{
-    QTest::addColumn<QBluetoothDeviceDiscoveryAgent::InquiryType>("inquiryType");
-
-    QTest::newRow("general unlimited inquiry") << QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry;
-    QTest::newRow("limited inquiry") << QBluetoothDeviceDiscoveryAgent::LimitedInquiry;
-}
-
 void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
 {
     {
@@ -141,10 +147,8 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QSignalSpy cancelSpy(&discoveryAgent, SIGNAL(canceled()));
         QSignalSpy errorSpy(&discoveryAgent, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
         QSignalSpy discoveredSpy(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)));
-//        connect(&discoveryAgent, SIGNAL(finished()), this, SLOT(finished()));
-//        connect(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
-//                this, SLOT(deviceDiscoveryDebug(const QBluetoothDeviceInfo&)));
 
+        // Starting case 1: start-stop, expecting cancel signal
         discoveryAgent.setInquiryType(inquiryType);
         // we should have no errors at this point.
         QVERIFY(errorSpy.isEmpty());
@@ -158,8 +162,8 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         // Wait for up to MaxWaitTime for the cancel to finish
         int waitTime = MaxWaitTime;
         while (cancelSpy.count() == 0 && waitTime > 0) {
-            QTest::qWait(1);
-            waitTime--;
+            QTest::qWait(100);
+            waitTime-=100;
         }
 
         // we should not be active anymore
@@ -167,7 +171,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QVERIFY(errorSpy.isEmpty());
         QVERIFY(cancelSpy.count() == 1);
         cancelSpy.clear();
-        // start again
+        // Starting case 2: start-start-stop, expecting cancel signal
         discoveryAgent.start();
         // we should be active now
         QVERIFY(discoveryAgent.isActive());
@@ -182,8 +186,8 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         // Wait for up to MaxWaitTime for the cancel to finish
         waitTime = MaxWaitTime;
         while (cancelSpy.count() == 0 && waitTime > 0) {
-            QTest::qWait(1);
-            waitTime--;
+            QTest::qWait(100);
+            waitTime-=100;
         }
 
         // we should not be active anymore
@@ -192,7 +196,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QVERIFY(cancelSpy.count() == 1);
         cancelSpy.clear();
 
-        // stop
+        //  Starting case 3: stop
         discoveryAgent.stop();
         QVERIFY(!discoveryAgent.isActive());
         QVERIFY(errorSpy.isEmpty());
@@ -203,7 +207,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QVERIFY(discoveryAgent.errorString().isEmpty());
 
 
-        // call start while there's a pending cancel should only get 1 cancel
+        // Starting case 4: start-stop-start-stop, expecting only 1 cancel signal
         discoveryAgent.start();
         QVERIFY(discoveryAgent.isActive());
         QVERIFY(errorSpy.isEmpty());
@@ -219,9 +223,9 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
 
         // Wait for up to MaxWaitTime for the cancel to finish
         waitTime = MaxWaitTime;
-        while (cancelSpy.count() == 0 && waitTime > 0) {
-            QTest::qWait(1);
-            waitTime--;
+        while (waitTime > 0) {
+            QTest::qWait(100);
+            waitTime-=100;
         }
 
         // we should not be active anymore
@@ -231,7 +235,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QVERIFY(cancelSpy.count() == 1);
         cancelSpy.clear();
 
-        // call start while there's a pending cancel should start
+        // Starting case 5: start-stop-start: expecting finished signal & no cancel
         discoveryAgent.start();
         QVERIFY(discoveryAgent.isActive());
         QVERIFY(errorSpy.isEmpty());
@@ -243,7 +247,7 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
         QVERIFY(discoveryAgent.isActive());
         QVERIFY(errorSpy.isEmpty());
 
-        // Wait for up to MaxWaitTime for the cancel to finish
+        // Wait for up to MaxScanTime for the cancel to finish
         waitTime = MaxScanTime;
         while (finishedSpy.count() == 0 && waitTime > 0) {
             QTest::qWait(1000);
@@ -262,6 +266,14 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_startStopDeviceDiscoveries()
 void tst_QBluetoothDeviceDiscoveryAgent::finished()
 {
     qDebug() << "Finished called";
+}
+
+void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery_data()
+{
+    QTest::addColumn<QBluetoothDeviceDiscoveryAgent::InquiryType>("inquiryType");
+
+    QTest::newRow("general unlimited inquiry") << QBluetoothDeviceDiscoveryAgent::GeneralUnlimitedInquiry;
+    QTest::newRow("limited inquiry") << QBluetoothDeviceDiscoveryAgent::LimitedInquiry;
 }
 
 void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
@@ -291,8 +303,8 @@ void tst_QBluetoothDeviceDiscoveryAgent::tst_deviceDiscovery()
         // Wait for up to MaxScanTime for the scan to finish
         int scanTime = MaxScanTime;
         while (finishedSpy.count() == 0 && scanTime > 0) {
-            QTest::qWait(1000);
-            scanTime -= 1000;
+            QTest::qWait(15000);
+            scanTime -= 15000;
         }
         qDebug() << scanTime << MaxScanTime;
         // verify that we are finished

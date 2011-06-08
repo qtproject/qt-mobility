@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -179,10 +179,16 @@ void QAudioOutputPrivate::stop()
 
 void QAudioOutputPrivate::reset()
 {
+#ifndef PRE_S60_52_PLATFORM
+    int err =  m_devSound->flush();
+    if (err != 0)
+        setError(QAudio::FatalError);
+#else
     m_totalSamplesPlayed += getSamplesPlayed();
     m_devSound->stop();
     m_bytesPadding = 0;
     startPlayback();
+#endif
 }
 
 void QAudioOutputPrivate::suspend()
@@ -193,8 +199,10 @@ void QAudioOutputPrivate::suspend()
         const qint64 samplesWritten = SymbianAudio::Utils::bytesToSamples(
                                           m_format, m_bytesWritten);
         const qint64 samplesPlayed = getSamplesPlayed();
+#ifdef PRE_S60_52_PLATFORM
         m_totalSamplesPlayed += samplesPlayed;
         m_bytesWritten = 0;
+#endif
         const bool paused = m_devSound->pause();
         if (paused) {
             setState(SymbianAudio::SuspendedPausedState);
@@ -213,10 +221,19 @@ void QAudioOutputPrivate::suspend()
 void QAudioOutputPrivate::resume()
 {
     if (QAudio::SuspendedState == m_externalState) {
-        if (SymbianAudio::SuspendedPausedState == m_internalState)
+        if (SymbianAudio::SuspendedPausedState == m_internalState) {
+#ifndef PRE_S60_52_PLATFORM
+            setState(SymbianAudio::ActiveState);
+            if (m_devSoundBuffer != 0)
+                devsoundBufferToBeFilled(m_devSoundBuffer);
+            m_devSound->start();
+#else
+//defined in else part of macro to enable compatibility of previous code
             m_devSound->resume();
-        else
+#endif
+        } else {
             startPlayback();
+        }
     }
 }
 
@@ -274,16 +291,26 @@ int QAudioOutputPrivate::notifyInterval() const
 qint64 QAudioOutputPrivate::processedUSecs() const
 {
     int samplesPlayed = 0;
-    if (m_devSound && QAudio::SuspendedState != m_externalState)
+
+    if (!m_devSound)
+        return samplesPlayed;
+
+    if (QAudio::SuspendedState != m_externalState)
         samplesPlayed = getSamplesPlayed();
 
     // Protect against division by zero
     Q_ASSERT_X(m_format.frequency() > 0, Q_FUNC_INFO, "Invalid frequency");
 
+#ifndef PRE_S60_52_PLATFORM
+    const qint64 devSoundSamplesPlayed(m_devSound->samplesProcessed());
+    const qint64 result = qint64(1000000) *
+                          (devSoundSamplesPlayed)
+                        / m_format.frequency();
+#else
     const qint64 result = qint64(1000000) *
                           (samplesPlayed + m_totalSamplesPlayed)
                         / m_format.frequency();
-
+#endif
     return result;
 }
 
@@ -342,6 +369,9 @@ void QAudioOutputPrivate::underflowTimerExpired()
     const TInt samplesPlayed = getSamplesPlayed();
     if (m_samplesPlayed && (samplesPlayed == m_samplesPlayed)) {
         setError(QAudio::UnderrunError);
+#ifndef PRE_S60_52_PLATFORM
+        m_underflowTimer->stop();
+#endif
     } else {
         m_samplesPlayed = samplesPlayed;
         m_underflowTimer->start();
@@ -367,6 +397,13 @@ void QAudioOutputPrivate::devsoundBufferToBeFilled(CMMFBuffer *bufferBase)
 
     // Will be returned to DevSoundWrapper by bufferProcessed().
     m_devSoundBuffer = static_cast<CMMFDataBuffer*>(bufferBase);
+#ifndef PRE_S60_52_PLATFORM
+    if (m_externalState == QAudio::SuspendedState) {
+        // This condition occurs when buffertobefilled callback is received after
+        // pause command is processed.
+        return;
+     }
+#endif
 
     if (!m_devSoundBufferSize)
         m_devSoundBufferSize = m_devSoundBuffer->Data().MaxLength();

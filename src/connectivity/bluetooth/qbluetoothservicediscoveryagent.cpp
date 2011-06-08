@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
+    \since 1.2
 
     To query the services provided by all contactable Bluetooth devices create an instance of
     QBluetoothServiceDiscoveryAgent, connect to either the serviceDiscovered() or finished()
@@ -74,7 +75,6 @@ QTM_BEGIN_NAMESPACE
     This enum describes errors that can occur during service discovery.
 
     \value NoError              No error.
-    \value Canceled             Service discovery was canceled.
     \value DeviceDiscoveryError Error occurred during device discovery.
     \value UnknownError         An unidentified error occurred.
 */
@@ -110,7 +110,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new QBluetoothServiceDiscoveryAgent with \a parent.
+    Constructs a new QBluetoothServiceDiscoveryAgent with \a parent. Services will be discovered on all
+    contactable devices.
 */
 QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(QObject *parent)
 : QObject(parent), d_ptr(new QBluetoothServiceDiscoveryAgentPrivate(QBluetoothAddress()))
@@ -121,13 +122,16 @@ QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(QObject *parent
 /*!
     Constructs a new QBluetoothServiceDiscoveryAgent for \a remoteAddress and with \a parent.
 
-    If \a remoteAddress is invalid the agent will discover services on all contactable Bluetooth
+    If \a remoteAddress is null services will be discovred on all contactable Bluetooth
     devices.
 */
 QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(const QBluetoothAddress &remoteAddress, QObject *parent)
 : QObject(parent), d_ptr(new QBluetoothServiceDiscoveryAgentPrivate(remoteAddress))
 {
     d_ptr->q_ptr = this;
+    if (!remoteAddress.isNull()) {
+        d_ptr->singleDevice = true;
+    }
 }
 
 /*!
@@ -194,6 +198,8 @@ QList<QBluetoothUuid> QBluetoothServiceDiscoveryAgent::uuidFilter() const
 
 /*!
     Starts service discovery. \a mode specifies the type of service discovery to perform.
+
+    \sa DiscoveryMode
 */
 void QBluetoothServiceDiscoveryAgent::start(DiscoveryMode mode)
 {
@@ -253,7 +259,15 @@ bool QBluetoothServiceDiscoveryAgent::isActive() const
 }
 
 /*!
-    Returns the type of error that last occurred.
+    Returns the type of error that last occurred. If service discovery is done
+    on a signle address it will returns errors when trying to discover services
+    on that device. If the alternate constructor is used and devices are
+    discovered by a scan, then errors doing service discovery on individual
+    devices are not saved and no signals are emitted. In this case errors are
+    fairly normal since some devices may not respond to discovery or
+    may no longer be in range.  As such errors are surpressed.  If no services
+    are returned, it can be assumed no services could be discovered.
+
 */
 QBluetoothServiceDiscoveryAgent::Error QBluetoothServiceDiscoveryAgent::error() const
 {
@@ -263,13 +277,21 @@ QBluetoothServiceDiscoveryAgent::Error QBluetoothServiceDiscoveryAgent::error() 
 }
 
 /*!
-    Returns a human-readable description of the last error that occurred.
+    Returns a human-readable description of the last error that occurred when
+    doing service discovery on a single device.
 */
 QString QBluetoothServiceDiscoveryAgent::errorString() const
 {
     Q_D(const QBluetoothServiceDiscoveryAgent);
     return d->errorString;
 }
+
+
+/*!
+    \fn QBluetoothServiceDiscoveryAgent::canceled()
+    Signals the cancellation of the service discovery.
+ */
+
 
 /*!
     Starts device discovery.
@@ -304,7 +326,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopDeviceDiscovery()
     setDiscoveryState(Inactive);
 
     Q_Q(QBluetoothServiceDiscoveryAgent);
-    emit q->finished();
+    emit q->canceled();
 }
 
 /*!
@@ -387,6 +409,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished()
 
     startServiceDiscovery();
 }
+
 
 #include "moc_qbluetoothservicediscoveryagent.cpp"
 

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -56,70 +56,75 @@ QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
 {
     /* connect to socker server */
     TInt result = m_socketServer.Connect();
-    setError(result, QString("RSocketServ.Connect() failed with error"));
+    if (result != KErrNone)
+        _q_setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
+                QString("RSocketServ.Connect() failed with error"));
 }
 
 QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
 {
     delete m_deviceDiscovery;
-    m_socketServer.Close();
+    if (m_socketServer.Handle() != NULL) 
+        m_socketServer.Close();
+}
+
+void QBluetoothDeviceDiscoveryAgentPrivate::allocate()
+{
+    Q_Q(QBluetoothDeviceDiscoveryAgent);
+    // create link manager device discoverer
+    if (m_socketServer.Handle() != NULL) {
+        // create new active object for querying devices
+        m_deviceDiscovery = new BluetoothLinkManagerDeviceDiscoverer(m_socketServer);
+        if (m_deviceDiscovery) {
+            QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscoveryComplete()), q, SIGNAL(finished()));
+            QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
+                q, SLOT(_q_newDeviceFound(const QBluetoothDeviceInfo&)));
+            QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error,QString)),
+                q, SLOT(_q_setError(QBluetoothDeviceDiscoveryAgent::Error,QString)));
+            QObject::connect(m_deviceDiscovery, SIGNAL(canceled()), q, SIGNAL(canceled()));
+        } else {
+            _q_setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
+                    QString("Cannot allocate BluetoothLinkManagerDeviceDiscoverer: failed with error"));
+        }
+    } 
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::start()
 {
-    // we need to delete previous discovery as only one query could be active a one time
-    if (m_deviceDiscovery) {
-        delete m_deviceDiscovery;
-        m_deviceDiscovery = NULL;
-    }
+
     // clear list of found devices
     discoveredDevices.clear();
-    if (m_socketServer.Handle() != NULL) {
-        // create new active object for querying devices
-        m_deviceDiscovery = new BluetoothLinkManagerDeviceDiscoverer(m_socketServer);
-        //bind signals on public interface
-        Q_Q(QBluetoothDeviceDiscoveryAgent);
-        QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscoveryComplete(int)), q, SIGNAL(finished()));
-        QObject::connect(m_deviceDiscovery, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
-            q, SLOT(_q_newDeviceFound(const QBluetoothDeviceInfo&)));
-        QObject::connect(m_deviceDiscovery, SIGNAL(linkManagerError(QBluetoothDeviceDiscoveryAgent::Error)),
-            q, SIGNAL(error(QBluetoothDeviceDiscoveryAgent::Error)));
-        QObject::connect(m_deviceDiscovery, SIGNAL(canceled()),
-            q, SIGNAL(canceled()));
-        // startup the device discovery. Discovery results are obtained from signal connected above.
-        if (!m_deviceDiscovery->startDiscovery(inquiryTypeToIAC()))
-            setError(KErrNotReady, "Discovery is still active");
-    } else {
-        setError(KErrBadHandle, QString("RSocketServ.Connect() failed with error"));
-    }
+    if (!m_deviceDiscovery) {
+        allocate();
+    } 
+    m_deviceDiscovery->startDiscovery(inquiryTypeToIAC());
+
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::stop()
 {
-    delete m_deviceDiscovery;
-    m_deviceDiscovery = NULL;
+    if (m_deviceDiscovery)
+        m_deviceDiscovery->stopDiscovery();
 }
 
 bool QBluetoothDeviceDiscoveryAgentPrivate::isActive() const
 {
     if (m_deviceDiscovery)
-        return m_deviceDiscovery->IsActive();
+        return m_deviceDiscovery->isReallyActive();
     return false;
 }
 
-void QBluetoothDeviceDiscoveryAgentPrivate::setError(int errorCode, QString errorDescription)
+void QBluetoothDeviceDiscoveryAgentPrivate::_q_setError(QBluetoothDeviceDiscoveryAgent::Error errorCode, 
+        QString errorDescription)
 {
+    qDebug() << __PRETTY_FUNCTION__ << errorCode << errorDescription;
     if (errorCode == KErrNone)
         return;
 
     Q_Q(QBluetoothDeviceDiscoveryAgent);
 
     errorString = errorDescription;
-    if (errorCode == KErrCancel)
-        emit q->canceled();
-    else
-        emit q->error(QBluetoothDeviceDiscoveryAgent::UnknownError);
-
+    emit q->error(errorCode);
 }
 
 void QBluetoothDeviceDiscoveryAgentPrivate::_q_newDeviceFound(const QBluetoothDeviceInfo &device)

@@ -120,7 +120,7 @@ void QDeclarativeFileEffect::load()
 /*!
     \qmlmethod  FileEffect::unload()
 
-    makes sure that the file associated with the feedback object is unloaded.
+    Makes sure that the file associated with the feedback object is unloaded.
     \sa QFeedbackFileEffect::unload()
 */
 void QDeclarativeFileEffect::unload()

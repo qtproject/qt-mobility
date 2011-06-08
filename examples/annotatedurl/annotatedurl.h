@@ -63,15 +63,10 @@ public:
     ~AnnotatedUrl();
 
 public slots:
-    void targetDetected(QNearFieldTarget *target);
-    void targetLost(QNearFieldTarget *target);
-    void targetDetected(const QNdefMessage &message, QNearFieldTarget *target);
+    void handleMessage(const QNdefMessage &message, QNearFieldTarget *target);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
-
-private slots:
-    void displayNdefMessage(const QNdefMessage &message);
 
 private:
     QLabel *m_image;

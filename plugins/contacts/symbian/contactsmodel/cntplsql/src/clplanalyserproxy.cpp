@@ -223,32 +223,6 @@ CContactItem* CLplAnalyserProxy::DeleteLC(TContactItemId  aItemId, TUint aSessio
 	}
 
 /**
-Delete multiple contacts.
-*/
-void CLplAnalyserProxy::DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType)
-    {
-    // Delegate delete to generic proxy.
-    CLplGenericProxy::DeleteMultipleContactsL(aIdArray, aSessionId, aEventType); 
-    
-    // Notify observers of the change.
-    NotifyObserverL(EContactDbObserverEventNull, KNullContactId, 0,
-            EContactDbObserverEventV2ContactsOrGroupsDeleted, aIdArray);
-
-    // If an item with a speed dial is deleted then update the speed
-    // dials.
-    for (TInt i = 0; i < aIdArray->Count(); i++)
-        {
-        CheckSpeedDialDeletesL(aIdArray->operator[](i));
-        }
-    
-    //update own card id
-    if (aIdArray->Find(iProperties.OwnCardIdL()) != KErrNotFound)
-        {
-        iProperties.SetOwnCardIdL(KNullContactId);
-        }
-    }
-
-/**
 Change the type of an existing Contact item.
 */
 void CLplAnalyserProxy::ChangeTypeL(TContactItemId aItemId, TUid aNewType)

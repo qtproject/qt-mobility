@@ -60,6 +60,7 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
         streetLineEdit->setText(landmark.address().street());
         districtLineEdit->setText(landmark.address().district());
         cityLineEdit->setText(landmark.address().city());
+        countyLineEdit->setText(landmark.address().county());
         stateLineEdit->setText(landmark.address().state());
         countryLineEdit->setText(landmark.address().country());
         descriptionLineEdit->setText(landmark.description());
@@ -80,7 +81,7 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
         QVariant var;
         var.setValue(category.categoryId());
         categoryItem->setData(Qt::UserRole, var);
-        categoryItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+        categoryItem->setFlags(Qt::ItemIsEnabled);
         if (landmark.categoryIds().contains(category.categoryId()))
             categoryItem->setCheckState(Qt::Checked);
         else
@@ -90,6 +91,8 @@ LandmarkAddDialog::LandmarkAddDialog(QWidget *parent, Qt::WindowFlags flags, con
     categoryList->setMinimumHeight(categories.count()
                                    * (categoryList->sizeHintForRow(0) + categoryList->spacing())
                                    + categoryList->frameWidth() *2);
+    QObject::connect(categoryList, SIGNAL(itemPressed(QListWidgetItem *)),
+            this, SLOT(categoryPressed(QListWidgetItem *)));
 }
 
 LandmarkAddDialog::~LandmarkAddDialog()
@@ -129,6 +132,7 @@ void LandmarkAddDialog::accept()
     address.setStreet(streetLineEdit->text());
     address.setDistrict(districtLineEdit->text());
     address.setCity(cityLineEdit->text());
+    address.setCounty(countyLineEdit->text());
     address.setState(stateLineEdit->text());
     address.setCountry(countryLineEdit->text());
     lm.setAddress(address);
@@ -151,4 +155,15 @@ void LandmarkAddDialog::reject()
 {
     lm.clear();
     QDialog::reject();
+}
+
+void LandmarkAddDialog::categoryPressed(QListWidgetItem *item)
+{
+    //the purpose of this function is to ensure that when the item is pressed
+    //anywhere the checkbox will toggle (previously only clicking the box
+    //itself would cause a toggle)
+    if (item->checkState() == Qt::Checked)
+        item->setCheckState(Qt::Unchecked);
+    else
+        item->setCheckState(Qt::Checked);
 }

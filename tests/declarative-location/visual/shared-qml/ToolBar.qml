@@ -50,6 +50,8 @@ Item {
     signal button3Clicked
     Rectangle {
         id: button1
+        border.color: 'black'
+        border.width: 1
         anchors.left: parent.left; y: 3; width: parent.width/3; height: 32
         Text {id: button1Text; text:  button1Label; color: "black"}
         MouseArea {
@@ -59,7 +61,9 @@ Item {
     }
     Rectangle {
         id: button2
-        anchors.left: button1.right; anchors.leftMargin: 5; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
+        border.color: 'black'
+        border.width: 1
+        anchors.left: button1.right; y: 3; anchors.leftMargin: -1; width: parent.width/3 - anchors.leftMargin; height: 32
         Text {id: button2Text; text:  button2Label; color: "black"}
         MouseArea {
             anchors.fill: parent
@@ -68,7 +72,9 @@ Item {
     }
     Rectangle {
         id: button3
-        anchors.left: button2.right; anchors.leftMargin: 5; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
+        border.color: 'black'
+        border.width: 1
+        anchors.left: button2.right; anchors.leftMargin: -1; y: 3; width: parent.width/3 - anchors.leftMargin; height: 32
         Text {id: button3Text; text:  button3Label; color: "black"}
         MouseArea {
             anchors.fill: parent

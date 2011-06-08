@@ -33,3 +33,5 @@ symbian {
 wince* {
     DEPLOYMENT_PLUGIN += qsqlite
 }
+
+maemo*:CONFIG += insignificant_test

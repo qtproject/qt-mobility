@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -56,10 +56,11 @@ QTM_BEGIN_NAMESPACE
 
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
-  
-  
+
+
   \inmodule QtContacts
-  
+  \since 1.0
+
   \ingroup contacts-requests
  */
 
@@ -84,6 +85,7 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
       setDefinitionNames(QStringList(definitionName));
   \endcode
 
+  \since 1.0
   \sa setContactType()
  */
 void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
@@ -98,6 +100,7 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& def
   Sets the names of the detail definitions to remove from the manager to \a names.
   Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
   definitions exist for contacts of the given contact type, specified via setContactType().
+  \since 1.0
   \sa setContactType()
  */
 void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
@@ -107,7 +110,9 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList
     d->m_names = names;
 }
 
-/*! Returns the list of names of the detail definitions that will be removed from the manager */
+/*! Returns the list of names of the detail definitions that will be removed from the manager
+    \since 1.0
+*/
 QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
@@ -117,6 +122,7 @@ QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 
 /*!
   Sets the type of contact for which detail definitions should be removed to \a contactType
+  \since 1.0
  */
 void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
 {
@@ -125,7 +131,9 @@ void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contac
     d->m_contactType = contactType;
 }
 
-/*! Returns the type of contact for which detail definitions will be removed */
+/*! Returns the type of contact for which detail definitions will be removed
+    \since 1.0
+*/
 QString QContactDetailDefinitionRemoveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
@@ -133,7 +141,9 @@ QString QContactDetailDefinitionRemoveRequest::contactType() const
     return d->m_contactType;
 }
 
-/*! Returns the map of input name list indices to errors which occurred */
+/*! Returns the map of input name list indices to errors which occurred
+    \since 1.0
+*/
 QMap<int, QContactManager::Error> QContactDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);

@@ -79,8 +79,8 @@ public:
         qmlRegisterType<QDeclarativeNetworkInfo>(uri,1, 1, "NetworkInfo");
         qmlRegisterType<QDeclarativeScreenSaver>(uri, 1, 1, "ScreenSaver");
         qmlRegisterType<QSystemStorageInfo>(uri, 1, 1, "StorageInfo");
-        qmlRegisterType<QDeclarativeBatteryInfo>(uri, 1, 1, "BatteryInfo");
-        qmlRegisterType<QSystemAlignedTimer>(uri, 1, 1, "AlignedTimer");
+        qmlRegisterType<QDeclarativeBatteryInfo>(uri, 1, 2, "BatteryInfo");
+        qmlRegisterType<QSystemAlignedTimer>(uri, 1, 2, "AlignedTimer");
     }
 };
 

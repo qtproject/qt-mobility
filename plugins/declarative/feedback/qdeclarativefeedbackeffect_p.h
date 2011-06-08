@@ -98,6 +98,9 @@ signals:
     void errorChanged();
 public slots:
     void updateState();
+    void start();
+    void stop();
+    void pause();
 private slots:
     void _error(QFeedbackEffect::ErrorType err);
 private:

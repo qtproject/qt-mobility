@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -127,6 +127,33 @@ static const symbol_t NetworkMode_lut[] =
   SYM(QSystemNetworkInfo::WimaxMode),
   SYM(QSystemNetworkInfo::LteMode),
   {0,0}
+};
+
+static const symbol_t BatteryStatus_lut[] =
+{
+    SYM(QSystemBatteryInfo::BatteryUnknown),
+    SYM(QSystemBatteryInfo::BatteryCritical),
+    SYM(QSystemBatteryInfo::BatteryVeryLow),
+    SYM(QSystemBatteryInfo::BatteryLow),
+    SYM(QSystemBatteryInfo::BatteryOk),
+    SYM(QSystemBatteryInfo::BatteryFull),
+};
+
+static const symbol_t ChargingState_lut[] =
+{
+    SYM(QSystemBatteryInfo::NotCharging),
+    SYM(QSystemBatteryInfo::Charging),
+    SYM(QSystemBatteryInfo::BatteryVeryLow),
+    SYM(QSystemBatteryInfo::ChargingError),
+};
+
+static const symbol_t ChargerType_lut[] =
+{
+    SYM(QSystemBatteryInfo::UnknownCharger),
+    SYM(QSystemBatteryInfo::NoCharger),
+    SYM(QSystemBatteryInfo::WallCharger),
+    SYM(QSystemBatteryInfo::USB_500mACharger),
+    SYM(QSystemBatteryInfo::USB_100mACharger),
 };
 
 /* ------------------------------------------------------------------------- *
@@ -311,8 +338,8 @@ static void test_systemnetworkinfo(void)
 
 
   for(const symbol_t *sym = NetworkMode_lut; sym->key; ++sym) {
-    QtMobility::QSystemNetworkInfo::NetworkMode mode =
-    (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
+      QtMobility::QSystemNetworkInfo::NetworkMode mode =
+              (QtMobility::QSystemNetworkInfo::NetworkMode) sym->val;
 
     if(QCoreApplication::arguments().count() > 2)
         if(!QString(sym->key).contains(QCoreApplication::arguments().at(2),Qt::CaseInsensitive))
@@ -338,6 +365,9 @@ static void test_systemnetworkinfo(void)
   }
 }
 
+/* ------------------------------------------------------------------------- *
+ * test_systemscreensaver
+ * ------------------------------------------------------------------------- */
 static void test_systemscreensaver(void)
 {
   QSystemScreenSaver screensaver;
@@ -345,6 +375,10 @@ static void test_systemscreensaver(void)
   X(screensaver.screenSaverInhibited());
   X(screensaver.setScreenSaverInhibit());
 }
+
+/* ------------------------------------------------------------------------- *
+ * test_systembatteryinfo
+ * ------------------------------------------------------------------------- */
 
 static void test_systembatteryinfo(void)
 {
@@ -362,6 +396,7 @@ static void test_systembatteryinfo(void)
     X(batInfo.batteryStatus());
     X(batInfo.energyMeasurementUnit());
 }
+
 
 struct dummy_t
 {

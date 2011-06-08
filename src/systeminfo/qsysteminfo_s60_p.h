@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -81,6 +81,14 @@
 #include "storagedisknotifier_s60.h"
 #endif
 
+#ifdef THERMALSTATUS_SUPPORTED
+#include "thermalstatus_s60.h"
+#endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+#include "networkoperatornamelistener_s60.h"
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -113,7 +121,10 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+, public MNetworkOperatorNameObserver
+#endif
 {
     Q_OBJECT
 
@@ -149,6 +160,7 @@ Q_SIGNALS:
     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
     void cellIdChanged(int);//1.2
+    void cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology);
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged(){};
@@ -164,11 +176,22 @@ protected:  //from MTelephonyInfoObserver
     void changedCellId(int);
     virtual void changedNetworkStatus();
     virtual void changedNetworkMode();
+    virtual void changedCellDataTechnology();
 
-public slots:
+    //from MWLanInfoObserver
     void wlanNetworkNameChanged();
     void wlanNetworkSignalStrengthChanged();
     void wlanNetworkStatusChanged();
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+    //from MNetworkOperatorNameObserver
+    void OperatorNameChanged();
+#endif
+
+//public slots:
+    //void wlanNetworkNameChanged();
+    //void wlanNetworkSignalStrengthChanged();
+    //void wlanNetworkStatusChanged();
 };
 
 //////// QSystemDisplayInfo
@@ -265,6 +288,9 @@ class QSystemDeviceInfoPrivate : public QObject,
 #ifdef LOCKANDFLIP_SUPPORTED
     ,public MKeylockStatusObserver,public MFlipStatusObserver
 #endif
+#ifdef THERMALSTATUS_SUPPORTED
+    ,public MThermalStatusObserver
+#endif
 {
     Q_OBJECT
 
@@ -290,6 +316,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
+    QSystemDeviceInfo::ThermalState currentThermalState();
 
     bool currentBluetoothPowerState();
 
@@ -298,7 +325,7 @@ public:
     bool isKeyboardFlippedOpen();//1.2
     void keyboardConnected(bool connect);//1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
-    QUuid uniqueDeviceID(); //1.2
+    QByteArray uniqueDeviceID(); //1.2
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
 
     int messageRingtoneVolume();//1.2
@@ -310,6 +337,7 @@ Q_SIGNALS:
     void bluetoothStateChanged(bool);
     void currentProfileChanged(QSystemDeviceInfo::Profile);
     void powerStateChanged(QSystemDeviceInfo::PowerState);
+    void thermalStateChanged(QSystemDeviceInfo::ThermalState);
 
     void wirelessKeyboardConnected(bool connected);//1.2
     void keyboardFlipped(bool open);//1.2
@@ -346,6 +374,11 @@ protected:
 
     //from MFlipStatusObserver
     void flipStatusChanged(TInt aFlipType , TInt aFilpKeyBoard );
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    //from MThermalStatusObserver
+    void NotiftythermalStateChanged(TUint8 aThermalStatus);
 #endif
 private:
     QSystemDeviceInfo::Profile s60ProfileIdToProfile(TInt profileId) const;
@@ -495,6 +528,28 @@ public:
     }
 #endif
 
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus *thermalStatus()
+        {
+           if (!m_thermalStatus)
+            {
+             m_thermalStatus = new CThermalStatus;
+            }
+            return m_thermalStatus;
+        }
+#endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+     CNetworkOperatorNameListener *networkInfoListener()
+        {
+         if (!m_networkinfolistener)
+          {
+           m_networkinfolistener = CNetworkOperatorNameListener::NewL();
+          }
+          return m_networkinfolistener;
+        }
+#endif
+
     CBatteryCommonInfo *batteryCommonInfo ()
     {
         if (!m_batteryCommonInfo) {
@@ -521,12 +576,20 @@ private:
 #ifdef DISKNOTIFY_SUPPORTED
         ,m_storagedisknotifier(NULL)
 #endif
+#ifdef THERMALSTATUS_SUPPORTED
+        ,m_thermalStatus(NULL)
+#endif
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+        ,m_networkinfolistener(NULL)
+#endif
     {
+        TRACES(qDebug() << "DeviceInfo():Constructor");
         m_telephony = CTelephony::NewL();
     };
 
     ~DeviceInfo()
     {
+        TRACES(qDebug() << "DeviceInfo():Destructor");
         delete m_cellSignalStrengthInfo;
         delete m_cellNetworkRegistrationInfo;
         delete m_cellNetworkInfo;
@@ -545,6 +608,14 @@ private:
 #endif
 #ifdef DISKNOTIFY_SUPPORTED
         delete m_storagedisknotifier;
+#endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+        delete m_thermalStatus;
+#endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+        delete m_networkinfolistener;
 #endif
     }
 
@@ -571,6 +642,15 @@ private:
 #ifdef DISKNOTIFY_SUPPORTED
     CStorageDiskNotifier* m_storagedisknotifier;
 #endif
+
+#ifdef THERMALSTATUS_SUPPORTED
+    CThermalStatus* m_thermalStatus;
+#endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+   CNetworkOperatorNameListener* m_networkinfolistener;
+#endif
+
 };
 
 class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver

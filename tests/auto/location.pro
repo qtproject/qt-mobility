@@ -60,12 +60,12 @@ meego: {
                qgeosatelliteinfosource
 }
 
-!symbian{
+!symbian:!maemo*{
 SUBDIRS += qgeoserviceproviderplugins \
             qgeoserviceprovider 
 }
 
-!symbian:SUBDIRS +=qlandmarkmanagerplugins
+!symbian:!maemo*:SUBDIRS +=qlandmarkmanagerplugins
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += qdeclarativeposition

@@ -1,7 +1,14 @@
 <aegis>
     <request>
         <credential name="TrackerReadAccess" />
+        <for path="/usr/lib/qtmobility/examples/declarative-music-browser" />
+        <for path="/usr/lib/qtmobility/examples/documentproperties" />
+        <for path="/usr/lib/qtmobility/examples/mediabrowser" />
+    </request>
+    <request>
+        <credential name="TrackerReadAccess" />
         <credential name="TrackerWriteAccess" />
+        <credential name="GRP::metadata-users"/>
         <for path="/usr/lib/qtmobility/examples/samplephonebook" />
         <for path="/usr/lib/qtmobility/demos/qmlcontacts" />
     </request>
@@ -13,6 +20,9 @@
         <for path="/usr/lib/qtmobility/examples/qml_landmarkmap" />
         <for path="/usr/lib/qtmobility/examples/qml_location_flickr" />
         <for path="/usr/lib/qtmobility/examples/qml_mapviewer" />
+        <for path="/usr/lib/qtmobility/examples/flickrdemo" />
+        <for path="/usr/lib/qtmobility/demos/lightmaps_with_location" />
+        <for path="/usr/lib/qtmobility/demos/weatherinfo_with_location" />
     </request>
     <request>
         <credential name="Cellular" />
@@ -21,6 +31,7 @@
         <for path="/usr/lib/qtmobility/examples/writemessage" />
         <for path="/usr/lib/qtmobility/examples/querymessages" />
         <for path="/usr/lib/qtmobility/examples/keepintouch" />
+        <for path="/usr/lib/qtmobility/examples/qml_messages" />
     </request>
     <request>
         <credential name="Cellular" />

@@ -55,7 +55,7 @@ arbitrary services.
 
 The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
 to facilitate the future migration of QtMobility APIs into Qt. See the
-\l {Quickstart Example}{Quickstart guide} for an example on how the
+\l {Quickstart guide} for an example on how the
 namespace impacts on application development.
 
 
@@ -498,6 +498,14 @@ example of this, using the previous sample XML description, is provided below.
 
 \section3 Limitations
 
+When using interger types for arguments to signals and slots,
+bass types as defined by http://doc.trolltech.com/4.7/qdbustypesystem.html.
+For example, quint64 is generally equivalent to qulonglong, but
+all unsigned 64 bit values must be defined as qulonglong or they will
+not work with the dbus implementation. For more details and the current
+state of the limitation please refer to bug QTMOBLITY-1694 available at
+http://bugreports.qt.nokia.com/browse/QTMOBILITY-1694.
+
 A current known limitation for Qt Service Framework using QtDBus for IPC is
 that enumerators cannot be read due to lack of support on D-Bus.  This will be
 added in future versions once the QtDBus module enables enumerator support. A
@@ -589,10 +597,10 @@ same VID/SID may register a service of the same name.
 
 An example project can be found at \c {examples/serviceinstaller_sfw_symbian}.
 
-More info about VID and SID can be found from:
+More info about VID and SID can be found from
 \list
-    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID}{VendorID}
-    \o \l {http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID}{SecureID}
+    \o \l {http://wiki.forum.nokia.com/index.php/Symbian_Platform_Security_Model}
+    \o \l {http://wiki.forum.nokia.com/index.php/Symbian_Signed_Test_Criteria_V4_Wiki_version}
 \endlist
 
 \section4 ROM build registration

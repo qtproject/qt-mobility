@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -83,7 +83,6 @@ private:
 
 tst_QRfcommServer::tst_QRfcommServer()
 {
-    localDevice.powerOn();
 }
 
 tst_QRfcommServer::~tst_QRfcommServer()
@@ -93,6 +92,23 @@ tst_QRfcommServer::~tst_QRfcommServer()
 void tst_QRfcommServer::initTestCase()
 {
     qRegisterMetaType<QBluetooth::SecurityFlags>("QBluetooth::SecurityFlags");
+    
+    // turn on BT in case it is not on
+    if (localDevice.hostMode() == QBluetoothLocalDevice::HostPoweredOff) {
+        QSignalSpy hostModeSpy(&localDevice, SIGNAL(hostModeStateChanged(QBluetoothLocalDevice::HostMode)));
+        QVERIFY(hostModeSpy.isEmpty());
+        localDevice.powerOn();
+        int connectTime = 5000;  // ms
+        while (hostModeSpy.count() < 1 && connectTime > 0) {
+            QTest::qWait(500);
+            connectTime -= 500;
+        }
+        QVERIFY(hostModeSpy.count() > 0);
+    }
+    QBluetoothLocalDevice::HostMode hostMode= localDevice.hostMode();
+    QVERIFY(hostMode == QBluetoothLocalDevice::HostConnectable
+         || hostMode == QBluetoothLocalDevice::HostDiscoverable
+         || hostMode == QBluetoothLocalDevice::HostDiscoverableLimitedInquiry);
 }
 
 void tst_QRfcommServer::tst_construction()
@@ -119,7 +135,7 @@ void tst_QRfcommServer::tst_listen_data()
     //use localdevice address for listen address.
     QTest::newRow("specified address") << localDevice.address() << quint16(0);
     QTest::newRow("specified port") << QBluetoothAddress() << quint16(20);
-    QTest::newRow("specified address/port") << localDevice.address() << quint16(21);
+    QTest::newRow("specified address/port") << localDevice.address() << quint16(27);  // port 21 returns KErrInUse
 #else
     QTest::newRow("specified address") << QBluetoothAddress("00:11:B1:08:AD:B8") << quint16(0);
     QTest::newRow("specified port") << QBluetoothAddress() << quint16(10);
@@ -134,7 +150,7 @@ void tst_QRfcommServer::tst_listen()
 
     {
         QRfcommServer server;
-
+        qDebug() << "tst_listen() address=" << address.toString() << "port=" << port;
         bool result = server.listen(address, port);
         QTest::qWait(1000);
 
@@ -156,7 +172,7 @@ void tst_QRfcommServer::tst_listen()
         QVERIFY(server.nextPendingConnection() == 0);
 
         server.close();
-        QTest::qWait(500);
+        QTest::qWait(2000);
 
         QVERIFY(!server.isListening());
 
@@ -180,60 +196,58 @@ void tst_QRfcommServer::tst_pendingConnections()
 {
     QFETCH(int, maxConnections);
 
-    {
-        QRfcommServer server;
+    QRfcommServer server;
+    QBluetoothLocalDevice localDev;
+    
+    QBluetoothAddress address = localDev.address();
+    server.setMaxPendingConnections(maxConnections);
+    bool result = server.listen(address, 20);  // port == 20
+    QTest::qWait(1000);
 
-        server.setMaxPendingConnections(maxConnections);
+    QVERIFY(result);
+    QVERIFY(server.isListening());
 
-        bool result = server.listen();
+    qDebug() << "tst_pendingConnections() Listening on address " << address.toString() << "RFCOMM channel:" << server.serverPort();
 
-        QVERIFY(result);
-        QVERIFY(server.isListening());
+    QCOMPARE(server.maxPendingConnections(), maxConnections);
 
-        qDebug() << "Listening on RFCOMM channel:" << server.serverPort();
+    QVERIFY(!server.hasPendingConnections());
+    QVERIFY(server.nextPendingConnection() == 0);
 
-        QCOMPARE(server.maxPendingConnections(), maxConnections);
+    /* wait for maxConnections simultaneous connections */
+    qDebug() << "Waiting for" << maxConnections << "simultaneous connections.";
 
-        QVERIFY(!server.hasPendingConnections());
-        QVERIFY(server.nextPendingConnection() == 0);
+    QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
 
-        {
-            /* wait for maxConnections simultaneous connections */
-            qDebug() << "Waiting for" << maxConnections << "simultaneous connections.";
-
-            QSignalSpy connectionSpy(&server, SIGNAL(newConnection()));
-
-            int connectTime = MaxConnectTime;
-            while (connectionSpy.count() < maxConnections && connectTime > 0) {
-                QTest::qWait(1000);
-                connectTime -= 1000;
-            }
-
-            QList<QBluetoothSocket *> sockets;
-            while (server.hasPendingConnections())
-                sockets.append(server.nextPendingConnection());
-
-            QCOMPARE(connectionSpy.count(), maxConnections);
-            QCOMPARE(sockets.count(), maxConnections);
-
-            foreach (QBluetoothSocket *socket, sockets) {
-                qDebug() << socket->state();
-                QVERIFY(socket->state() == QBluetoothSocket::ConnectedState);
-                QVERIFY(socket->openMode() == QIODevice::ReadWrite);
-            }
-
-            QVERIFY(!server.hasPendingConnections());
-            QVERIFY(server.nextPendingConnection() == 0);
-
-            while (!sockets.isEmpty()) {
-                QBluetoothSocket *socket = sockets.takeFirst();
-                socket->close();
-                delete socket;
-            }
-        }
-
-        server.close();
+    int connectTime = MaxConnectTime;
+    while (connectionSpy.count() < maxConnections && connectTime > 0) {
+        QTest::qWait(1000);
+        connectTime -= 1000;
     }
+        
+    QList<QBluetoothSocket *> sockets;
+    while (server.hasPendingConnections())
+        sockets.append(server.nextPendingConnection());
+
+    QCOMPARE(connectionSpy.count(), maxConnections);
+    QCOMPARE(sockets.count(), maxConnections);
+
+    foreach (QBluetoothSocket *socket, sockets) {
+        qDebug() << socket->state();
+        QVERIFY(socket->state() == QBluetoothSocket::ConnectedState);
+        QVERIFY(socket->openMode() == QIODevice::ReadWrite);
+    }
+
+    QVERIFY(!server.hasPendingConnections());
+    QVERIFY(server.nextPendingConnection() == 0);
+
+    while (!sockets.isEmpty()) {
+        QBluetoothSocket *socket = sockets.takeFirst();
+        socket->close();
+        delete socket;
+    }
+
+    server.close();
 }
 
 void tst_QRfcommServer::tst_receive_data()
@@ -248,12 +262,16 @@ void tst_QRfcommServer::tst_receive()
     QFETCH(QByteArray, expected);
 
     QRfcommServer server;
-
-    bool result = server.listen();
+    QBluetoothLocalDevice localDev;
+    
+    QBluetoothAddress address = localDev.address();
+    bool result = server.listen(address, 20);  // port == 20
+    QTest::qWait(1000);
 
     QVERIFY(result);
+    QVERIFY(server.isListening());
 
-    qDebug() << "Listening on RFCOMM channel:" << server.serverPort();
+    qDebug() << "Listening on address " << address.toString() << "RFCOMM channel:" << server.serverPort();
 
     int connectTime = MaxConnectTime;
     while (!server.hasPendingConnections() && connectTime > 0) {
@@ -288,11 +306,12 @@ void tst_QRfcommServer::tst_receive()
 void tst_QRfcommServer::tst_secureFlags()
 {
     QRfcommServer server;
-    qDebug() << server.securityFlags();
-    QCOMPARE(server.securityFlags(), QBluetooth::Authorization);
+
+    server.setSecurityFlags(QBluetooth::NoSecurity);
+    QCOMPARE(server.securityFlags(), QBluetooth::NoSecurity);
 
     server.setSecurityFlags(QBluetooth::Encryption);
-    QCOMPARE(server.securityFlags(), QBluetooth::Encryption|QBluetooth::Authorization);
+    QCOMPARE(server.securityFlags(), QBluetooth::Encryption);
 }
 
 QTEST_MAIN(tst_QRfcommServer)

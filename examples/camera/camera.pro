@@ -1,7 +1,9 @@
 TEMPLATE = app
 TARGET = camera
 
-INCLUDEPATH+=../../src/multimedia
+INCLUDEPATH+=../../src/multimedia \
+             ../../src/multimedia/video
+
 include(../mobility_examples.pri)
 
 CONFIG += mobility
@@ -24,7 +26,8 @@ FORMS += \
     imagesettings.ui
 
 symbian {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
+    include(camerakeyevent_symbian/camerakeyevent_symbian.pri)
+    TARGET.CAPABILITY += UserEnvironment WriteUserData ReadUserData
     TARGET.EPOCHEAPSIZE = 0x20000 0x3000000
     LIBS += -lavkon -leiksrv -lcone -leikcore
 }

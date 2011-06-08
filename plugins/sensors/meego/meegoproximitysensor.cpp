@@ -41,33 +41,42 @@
 
 #include "meegoproximitysensor.h"
 
-char const * const meegoproximitysensor::id("meego.proximity");
+char const * const meegoproximitysensor::id("meego.proximitysensor");
 bool meegoproximitysensor::m_initDone = false;
 
 meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
-    : meegosensorbase(sensor)
+    : meegosensorbase(sensor), m_exClose(false)
 {
     initSensor<ProximitySensorChannelInterface>(m_initDone);
     setReading<QProximityReading>(&m_reading);
     addDataRate(10,10); //TODO: fix this when we know better
 }
 
-void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
-{
+void meegoproximitysensor::start(){
+    Unsigned data(((ProximitySensorChannelInterface*)m_sensorInterface)->proximity());
     m_reading.setClose(data.x()? true: false);
     m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
+    meegosensorbase::start();
+}
+
+
+void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
+{
+    bool close = data.x()? true: false;
+    if (close == m_exClose) return;
+    m_reading.setClose(close);
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
+    newReadingAvailable();
+    m_exClose = close;
 }
 
 bool meegoproximitysensor::doConnect(){
-    if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))))){
-        return false;
-    }
-    return true;
+    return (QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
+                           this, SLOT(slotDataAvailable(const Unsigned&))));
 }
 
 
-const QString meegoproximitysensor::sensorName(){
+QString meegoproximitysensor::sensorName() const{
     return "proximitysensor";
 }

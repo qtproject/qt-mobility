@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
+    \since 1.1
 
     \ingroup maps-routing
 
@@ -198,6 +199,7 @@ QGeoRoutingManager::~QGeoRoutingManager()
 
     The combination of managerName() and managerVersion() should be unique
     amongst the plugin implementations.
+    \since 1.1
 */
 QString QGeoRoutingManager::managerName() const
 {
@@ -210,6 +212,7 @@ QString QGeoRoutingManager::managerName() const
 
     The combination of managerName() and managerVersion() should be unique
     amongst the plugin implementations.
+    \since 1.1
 */
 int QGeoRoutingManager::managerVersion() const
 {
@@ -236,6 +239,7 @@ int QGeoRoutingManager::managerVersion() const
     this can be done in the slot connected to QGeoRoutingManager::finished(),
     QGeoRoutingManager::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
+    \since 1.1
 */
 QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
 {
@@ -268,6 +272,7 @@ QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& reque
     this can be done in the slot connected to QGeoRoutingManager::finished(),
     QGeoRoutingManager::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
+    \since 1.1
 */
 QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
@@ -276,6 +281,7 @@ QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QG
 
 /*!
     Returns whether this manager supports updating routes.
+    \since 1.1
 */
 bool QGeoRoutingManager::supportsRouteUpdates() const
 {
@@ -284,6 +290,7 @@ bool QGeoRoutingManager::supportsRouteUpdates() const
 
 /*!
     Returns whether this manager supports request for alternative routes.
+    \since 1.1
 */
 bool QGeoRoutingManager::supportsAlternativeRoutes() const
 {
@@ -292,6 +299,7 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 
 /*!
     Returns whether this engine supports the exclusion of areas from routes.
+    \since 1.1
 */
 bool QGeoRoutingManager::supportsExcludeAreas() const
 {
@@ -300,6 +308,7 @@ bool QGeoRoutingManager::supportsExcludeAreas() const
 
 /*!
     Returns the travel modes supported by this manager.
+    \since 1.1
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 {
@@ -309,6 +318,7 @@ QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 /*!
     Returns the types of features that this manager can take into account
     during route planning.
+    \since 1.1
 */
 QGeoRouteRequest::FeatureTypes QGeoRoutingManager::supportedFeatureTypes() const
 {
@@ -318,6 +328,7 @@ QGeoRouteRequest::FeatureTypes QGeoRoutingManager::supportedFeatureTypes() const
 /*!
     Returns the weightings which this manager can apply to different features
     during route planning.
+    \since 1.1
 */
 QGeoRouteRequest::FeatureWeights QGeoRoutingManager::supportedFeatureWeights() const
 {
@@ -326,6 +337,7 @@ QGeoRouteRequest::FeatureWeights QGeoRoutingManager::supportedFeatureWeights() c
 
 /*!
     Returns the route optimizations supported by this manager.
+    \since 1.1
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizations() const
 {
@@ -335,6 +347,7 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
 /*!
     Returns the levels of detail for routing segments which can be requested
     with this manager.
+    \since 1.1
 */
 QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() const
 {
@@ -344,6 +357,7 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() c
 /*!
     Returns the levels of detail for navigation maneuvers which can be
     requested by this manager.
+    \since 1.1
 */
 QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails() const
 {
@@ -357,6 +371,7 @@ QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails()
     in different languages, they will be returned in the language of \a locale.
 
     The locale used defaults to the system locale if this is not set.
+    \since 1.1
 */
 void QGeoRoutingManager::setLocale(const QLocale &locale)
 {
@@ -366,6 +381,7 @@ void QGeoRoutingManager::setLocale(const QLocale &locale)
 /*!
     Returns the locale used to hint to this routing manager about what
     language to use for addresses and instructions.
+    \since 1.1
 */
 QLocale QGeoRoutingManager::locale() const
 {
@@ -384,6 +400,7 @@ This signal and QGeoRouteReply::finished() will be emitted at the same time.
 
 \note Do no delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.
+\since 1.1
 */
 
 /*!
@@ -399,6 +416,7 @@ This signal and QGeoRouteReply::error() will be emitted at the same time.
 
 \note Do no delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.
+\since 1.1
 */
 
 /*******************************************************************************

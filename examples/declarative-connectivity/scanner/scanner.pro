@@ -1,9 +1,16 @@
+include(../../mobility_examples.pri)
+
 QT += declarative network
-SOURCES += $$PWD/qmlscanner.cpp
-include($$PWD/../declarative-connectivity.pri)
-include($$PWD/deployment.pri)
+SOURCES += qmlscanner.cpp
 
 TARGET = qml_scanner
+TEMPLATE = app
+
+win32 {
+    #required by Qt SDK to resolve Mobility libraries
+    CONFIG+=mobility
+    MOBILITY+=connectivity
+}
 
 symbian {
     TARGET.CAPABILITY = LocalServices NetworkServices Location ReadUserData WriteUserData ReadDeviceData WriteDeviceData
@@ -12,3 +19,6 @@ symbian {
 
 RESOURCES += \
     scanner.qrc
+
+OTHER_FILES += \
+    scanner.qml

@@ -39,12 +39,17 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
+#include <QtGui/QDesktopWidget>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
 
 #if !defined(QT_NO_OPENGL)
 #include <QtOpenGL/QGLWidget>
 #endif
+
+#ifdef Q_OS_SYMBIAN
+#include "camerakeyevent_symbian.h"
+#endif // Q_OS_SYMBIAN
 
 int main(int argc, char *argv[])
 {
@@ -67,7 +72,7 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:/declarative-camera.qml");
     QDeclarativeView view;
-#if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && !defined(Q_WS_S60)
+#if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_S60)
     view.setViewport(new QGLWidget);
 #endif
     view.setSource(QUrl(mainQmlApp));
@@ -76,7 +81,11 @@ int main(int argc, char *argv[])
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    view.setGeometry(application.desktop()->screenGeometry());
     view.showFullScreen();
+#ifdef Q_OS_SYMBIAN
+    new QSymbianCameraKeyListener(&view);
+#endif // Q_OS_SYMBIAN
 #else
     view.setGeometry(QRect(100, 100, 800, 480));
     view.show();
