@@ -43,7 +43,7 @@
 
 testcase = {
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-65
     current_position: function()
     {
         prompt(twiki('---+++ Position is detected
@@ -53,7 +53,7 @@ testcase = {
         ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-65
     location_is_updated: function()
     {
         prompt(twiki('---+++ Position changes are detected
@@ -64,8 +64,7 @@ testcase = {
        ));
     },
 
-    //test case for QTMOBILITY-873: Allow 3rd party position sources
-    // \groups BAT,1.2
+    // \groups BAT,1.2,QTMOBILITY-873
     third_party_position_source: function()
     {
         prompt(twiki('---+++ Position is detected via cusom plugin
@@ -77,9 +76,8 @@ testcase = {
         ));
     },
 
-    //test case for QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate
     //Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
-    // \groups BAT,1.2
+    // \groups BAT,1.2,QTMOBILITY-658
     shift_to_the_given_offset: function()
     {
         prompt(twiki('---+++ New coordinats are calculated
@@ -111,7 +109,7 @@ testcase = {
         landmark : ["landmark", "20", "120"]
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     store_and_load_a_landmark: function(name, latitude, longitude)
     {
         startApplication("landmarkbrowser");
@@ -129,7 +127,7 @@ testcase = {
         bad_landmark_long : ["bad_landmark", "80", "300"]
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     negative_store_and_load_a_landmark: function(name, latitude, longitude)
     {
         startApplication("landmarkbrowser");
@@ -143,7 +141,7 @@ testcase = {
         select("Cancel");
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     sorted_search_based_on_category: function()
     {
         prompt(twiki('---+++ Landmarks for the specified category are displayed
@@ -164,7 +162,7 @@ testcase = {
        ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     sort_landmarks_in_alphabetical_and_nearest: function()
     {
         prompt(twiki('---+++ Nearest landmarks are displayed
@@ -189,7 +187,7 @@ testcase = {
        ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     landmarks_within_range_of_a_position: function()
     {
         prompt(twiki('---+++ Landmarks within range are displayed
@@ -209,7 +207,7 @@ testcase = {
        ));
     },
     
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     create_edit_and_delete_a_landmark: function()
     {
     //Landmark manager provides notifications whenever landmarks are added, updated or deleted
@@ -239,7 +237,7 @@ testcase = {
         ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     enumerate_categories: function()
     {
         prompt(twiki('---+++ Categories are displayed
@@ -251,7 +249,7 @@ testcase = {
         ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-66
     add_and_delete_a_category: function()
     {
     //Landmark manager provides notifications whenever categories are added, updated or deleted
@@ -284,7 +282,7 @@ testcase = {
     },
 
     // Maps and Navigation
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     select_service_provider: function()
     {
         startApplication("geoservicedemo");
@@ -298,7 +296,7 @@ testcase = {
         route:["-27.575", "153.088", "-27.465", "153.023", "15901", "15987"]
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
     {
         startApplication("geoservicedemo");
@@ -327,7 +325,7 @@ testcase = {
         compare(getText("distance"), distance2);
     },
     
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     geocoding: function()
     {
         prompt(twiki('---+++ Geocoding
@@ -347,7 +345,7 @@ testcase = {
 
     },
     
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     reverse_geocoding: function()
     {
         prompt(twiki('---+++ Reverse geocoding
@@ -364,7 +362,7 @@ testcase = {
         ));
    },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     displaying_a_map: function()
     {
         prompt(twiki('---+++ Different views are displayed
@@ -374,7 +372,7 @@ testcase = {
         ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     different_map_types: function()
     {
         prompt(twiki('---+++ Different views are displayed
@@ -391,7 +389,7 @@ testcase = {
         ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     zooming_support:function()
     {
         prompt(twiki('---+++ Map is zoomed in and out
@@ -403,7 +401,7 @@ testcase = {
         ));
     },
 
-    // \groups BAT,1.1
+    // \groups BAT,1.1,MOBILITY-538
     capturing_coordinates:function()
     {
         prompt(twiki('---+++ Coordinates are captured
@@ -417,9 +415,7 @@ testcase = {
         ));
     },
 
-    //test case for QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs
-    //test case for QTMOBILITY-701: Add a QGraphicsItem based map object.
-    // \groups BAT,1.2
+    // \groups BAT,1.2,QTMOBILITY-757,QTMOBILITY-701
     pixmap_object_zooming: function()
     {
         prompt(twiki('---+++ Pixmap object is not scaled during zooming
@@ -443,11 +439,9 @@ testcase = {
 
     //TESTED_COMPONENT=plugins/declarative/location
 
-    //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
-    // \groups BAT,1.2
+    // \groups BAT,1.2,QTMOBILITY-796
     qml_display_map: function()
     {
-        //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
         prompt(twiki('---+++ Map is displayed
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
@@ -455,8 +449,7 @@ testcase = {
         ));
     },
 
-    //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
-    // \groups BAT,1.2
+    // \groups BAT,1.2,QTMOBILITY-796
     qml_zoom_a_map: function()
     {
         prompt(twiki('---+++ Zoom in and out the map
