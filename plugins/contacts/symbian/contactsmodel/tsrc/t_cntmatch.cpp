@@ -198,7 +198,7 @@ LOCAL_C void Test2L()
 	//it shouldn't match to 228 000 5324 as well, but... it does
 	CreateContactL(KCntName,KCntSurname,_L("228 000 5324"),KNullDesC);
 	TESTVALUE(CheckPhoneMatchL(					_L("5324"),11),0);
-	TESTVALUE(CheckPhoneMatchL(					_L("5324"), 4),1);
+	TESTVALUE(CheckPhoneMatchL(					_L("5324"), 4),0);
 	}
 
 
@@ -705,9 +705,9 @@ LOCAL_C void TestBestMatchingStrategyL()
     
     ResetDatabaseL();
     CreateContactL(KCntName,KCntSurname,_L("3560 0123456"),KNullDesC);
-    TESTVALUE(CheckPhoneMatchL(_L("0000 0123456"),KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("0000 0123456"),KBestMatchingPhoneNumbers),0);
     // false positive?
-    TESTVALUE(CheckPhoneMatchL(_L("123456"), KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("123456"), KBestMatchingPhoneNumbers),0);
     
     ResetDatabaseL();
     CreateContactL(KCntName,KCntSurname,_L("1234567"),KNullDesC);
@@ -741,12 +741,12 @@ LOCAL_C void TestBestMatchingStrategyL()
     CreateContactL(KCntName,KCntSurname,_L("9 9000 000"),KNullDesC);
     CreateContactL(KCntName,KCntSurname,_L("9000 000"),KNullDesC);
     TESTVALUE(CheckPhoneMatchL(_L("9999 9990 0999 999"), KBestMatchingPhoneNumbers),1);
-    TESTVALUE(CheckPhoneMatchL(_L("9000 0000 0000 000"), KBestMatchingPhoneNumbers),2);
-    TESTVALUE(CheckPhoneMatchL(_L("0000 0000 0000 000"), KBestMatchingPhoneNumbers),2);
+    TESTVALUE(CheckPhoneMatchL(_L("9000 0000 0000 000"), KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("0000 0000 0000 000"), KBestMatchingPhoneNumbers),1);
     TESTVALUE(CheckPhoneMatchL(_L("0000 0000 0000 009"), KBestMatchingPhoneNumbers),1);
     TESTVALUE(CheckPhoneMatchL(_L("9 9000 000"), KBestMatchingPhoneNumbers),2);
     TESTVALUE(CheckPhoneMatchL(_L("9000 000"), KBestMatchingPhoneNumbers),2);
-    TESTVALUE(CheckPhoneMatchL(_L("0000 000"), KBestMatchingPhoneNumbers),2);
+    TESTVALUE(CheckPhoneMatchL(_L("0000 000"), KBestMatchingPhoneNumbers),1);
     
     ResetDatabaseL();
     CreateContactL(KCntName,KCntSurname,_L("443049607"),KNullDesC);
