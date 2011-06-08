@@ -1,6 +1,6 @@
 qt-mobility (1.2.0+610) unstable; urgency=low
 
-  
+  * Fixes: NB#244943
 
  -- Simo Fält <simo.falt@nokia.com>  Wed, 8 Jun 2011 11:49:48 +1000
 
