@@ -59,7 +59,7 @@ testcase = {
         prompt(twiki('---+++ Position changes are detected
         Note that GPS and internet connection is required for this test case.
     | *Step* | *Verification* |
-    | Run the lightmaps_with_location app (sources are in demos\lightmaps). | Verify that map is displayed and centered with the current position |
+    | Run the lightmaps_with_location app (sources are in demos/lightmaps). | Verify that map is displayed and centered with the current position |
     | Move to a different location | Verify that map is updated and centered with new location |'
        ));
     },
@@ -88,17 +88,17 @@ testcase = {
     | Select the MapNavigation | |
     | Fill in "0" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
-    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
     | Fill "1000000, 90" in to the given field | |
     | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
     | Fill in "60" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
-    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
     | Fill "1000000, 180" in to the given field | |
     | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
     | Fill in "60" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
-    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
     | Fill "1000000, 20" in to the given field | |
     | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |'
         ));
@@ -177,7 +177,7 @@ testcase = {
     | Press Set Filter button | |
     | Select Proximity checkbox | |
     | Fill in 0 in to Lat field | |
-    | Fill in 0 in to Long field |
+    | Fill in 0 in to Long field | |
     | Fill in 10000000 in to Radius field| |
     | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
     | Press Set Filter button | |
@@ -272,7 +272,7 @@ testcase = {
     | Press Ok button | |
     | Select AAA category | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
-    | Press Ok button | Verify that list of categories does not contain AAA category only| 
+    | Press Ok button | Verify that list of categories does not contain AAA category only | 
     | Add A1 and A2 categories | |
     | Select A1 and A2 categories | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
@@ -451,7 +451,7 @@ testcase = {
         prompt(twiki('---+++ Map is displayed
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
-    | Run the qml_mapviewer application (sources are in examples\declarative-location\mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
+    | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
         ));
     },
 
