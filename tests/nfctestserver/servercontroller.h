@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,46 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QSYSTEMREADWRITELOCK_H
-#define QSYSTEMREADWRITELOCK_H
+#ifndef SERVERCONTROLLER_H
+#define SERVERCONTROLLER_H
 
-#include "qmobilityglobal.h"
-#include <QString>
+#include <QtCore/QObject>
 
-QTM_BEGIN_NAMESPACE
+#include <qllcpserver.h>
 
-class QSystemReadWriteLockPrivate;
-class QM_AUTOTEST_EXPORT QSystemReadWriteLock
+QTM_USE_NAMESPACE
+
+class ServerController : public QObject
 {
+    Q_OBJECT
+
 public:
-    enum AccessMode{Create, Open};
-    enum SystemReadWriteLockError{
-        NoError,
-        PermissionDenied,
-        KeyError,//TODO:remove this enum
-        NotFound,
-        LockError,//TODO: remove this enum
-        OutOfResources, 
-        FailedToInitialize,//TODO: remove this enum
-        UnknownError
+    enum ConnectionType {
+        StreamConnection,
+        DatagramConnection
     };
 
-    explicit QSystemReadWriteLock(const QString &key, AccessMode mode = Open);
-    ~QSystemReadWriteLock();
+    ServerController(ConnectionType type, QObject *parent = 0);
+    ~ServerController();
 
-    bool lockForRead();
-    bool lockForWrite();
-    void unlock();
+private slots:
+    void newConnection();
 
-    SystemReadWriteLockError error() const;
-    QString errorString() const;
-
-    QString key() const;
+    void socketReadyRead();
+    void socketBytesWritten(qint64 bytes);
+    void socketDisconnected();
 
 private:
-    QSystemReadWriteLockPrivate *d;
+    QLlcpServer *m_server;
+    QLlcpSocket *m_socket;
+    ConnectionType m_connectionType;
+    QString m_service;
 };
 
-QTM_END_NAMESPACE
-
-#endif
+#endif // SERVERCONTROLLER_H

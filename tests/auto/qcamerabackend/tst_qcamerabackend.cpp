@@ -542,6 +542,12 @@ void tst_QCameraBackend::testExposureCompensation()
 
     QSignalSpy exposureCompensationSignal(exposure, SIGNAL(exposureCompensationChanged(qreal)));
 
+#ifdef Q_OS_SYMBIAN
+    // Camera needs to be started, see: QTMOBILITY-1566
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+#endif // Q_OS_SYMBIAN
+
     //it should be possible to set exposure parameters in Unloaded state
     QCOMPARE(exposure->exposureCompensation()+1.0, 1.0);
     exposure->setExposureCompensation(1.0);
@@ -592,13 +598,34 @@ void tst_QCameraBackend::testExposureMode()
 #endif
     QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
 
-    exposure->setExposureMode(QCameraExposure::ExposurePortrait);
-    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
+#ifdef Q_OS_SYMBIAN
+    // Camera needs to be started, see: QTMOBILITY-1566
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+#endif // Q_OS_SYMBIAN
 
+    // Night
+    exposure->setExposureMode(QCameraExposure::ExposureNight);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureNight);
     camera.start();
     QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureNight);
 
-    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
+    camera.unload();
+    QTRY_COMPARE(camera.status(), QCamera::UnloadedStatus);
+
+#ifdef Q_OS_SYMBIAN
+    // Camera needs to be started, see: QTMOBILITY-1566
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+#endif // Q_OS_SYMBIAN
+
+    // Auto
+    exposure->setExposureMode(QCameraExposure::ExposureAuto);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
 }
 
 QTEST_MAIN(tst_QCameraBackend)

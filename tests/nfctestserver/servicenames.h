@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,46 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QSYSTEMREADWRITELOCK_H
-#define QSYSTEMREADWRITELOCK_H
+#ifndef SERVICENAMES_H
+#define SERVICENAMES_H
 
-#include "qmobilityglobal.h"
-#include <QString>
+static const QLatin1String commandServer("urn:nfc:sn:com.nokia.qtmobility.commandserver");
+static const QLatin1String helloServer("urn:nfc:sn:com.nokia.qtmobility.helloserver");
+static const QLatin1String streamSuffix(".stream");
+static const QLatin1String datagramSuffix(".datagram");
 
-QTM_BEGIN_NAMESPACE
+static const quint8 boundSocketPort = 63;
 
-class QSystemReadWriteLockPrivate;
-class QM_AUTOTEST_EXPORT QSystemReadWriteLock
-{
-public:
-    enum AccessMode{Create, Open};
-    enum SystemReadWriteLockError{
-        NoError,
-        PermissionDenied,
-        KeyError,//TODO:remove this enum
-        NotFound,
-        LockError,//TODO: remove this enum
-        OutOfResources, 
-        FailedToInitialize,//TODO: remove this enum
-        UnknownError
-    };
-
-    explicit QSystemReadWriteLock(const QString &key, AccessMode mode = Open);
-    ~QSystemReadWriteLock();
-
-    bool lockForRead();
-    bool lockForWrite();
-    void unlock();
-
-    SystemReadWriteLockError error() const;
-    QString errorString() const;
-
-    QString key() const;
-
-private:
-    QSystemReadWriteLockPrivate *d;
-};
-
-QTM_END_NAMESPACE
-
-#endif
+#endif // SERVICENAMES_H

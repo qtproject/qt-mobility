@@ -331,3 +331,26 @@ bool CameraBinControl::canChangeProperty(PropertyChangeType changeType, QCamera:
         return false;
     }
 }
+
+#define VIEWFINDER_COLORSPACE_CONVERSION 0x00000004
+
+bool CameraBinControl::viewfinderColorSpaceConversion() const
+{
+    gint flags = 0;
+    g_object_get(G_OBJECT(m_session->cameraBin()), "flags", &flags, NULL);
+
+    return flags & VIEWFINDER_COLORSPACE_CONVERSION;
+}
+
+void CameraBinControl::setViewfinderColorSpaceConversion(bool enabled)
+{
+    gint flags = 0;
+    g_object_get(G_OBJECT(m_session->cameraBin()), "flags", &flags, NULL);
+
+    if (enabled)
+        flags |= VIEWFINDER_COLORSPACE_CONVERSION;
+    else
+        flags &= ~VIEWFINDER_COLORSPACE_CONVERSION;
+
+    g_object_set(G_OBJECT(m_session->cameraBin()), "flags", flags, NULL);
+}

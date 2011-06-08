@@ -63,8 +63,7 @@ public:
     enum Target
     {
         TargetCentralRepository = 0,
-        TargetPublishAndSubscribe,
-        TargetFeatureManager
+        TargetPublishAndSubscribe
     };
 
     XQSettingsKey(XQSettingsKey::Target target, long int uid, unsigned long int key);

@@ -708,123 +708,27 @@ void CPplCommAddrTable::CreateTableL()
 
 /**
 Returns an array of contact item IDs for all the contact items which may contain
-the specified telephone number in a telephone, fax or SMS type field.
+the specified telephone number in a telephone, fax or mobile type field.
 
-The comparison method used is not exact.  The number is compared starting from
-the right side of the number and the method returns an array of candidate
-matches.  Punctuation (e.g. spaces) and other alphabetic characters are ignored
-when comparing.
-
-Additionally, if the Contacts Model Phone Parser (CNTPHONE.DLL) is available,
-then any DTMF digits are also excluded from the comparision.
-
-Note that due to the way numbers are stored in the database, it is recommended
-that at least 7 match digits are specified even when matching a number
-containing fewer digits.  Failure to follow this guideline may (depending on the
-database contents) mean that the function will not return the expected Contact
-IDs.
+The method returns an array of candidate matches.  
+Punctuation (e.g. spaces), '+' and other alphabetic characters are ignored
+when comparing. Leading zeros are removed.
+A minimum of aMatchLengthFromRight digits are compared from right
+up to the length of the shorter number.
+If both numbers are shorter than aMatchLengthFromRight, they match if they are identical.
 
 @param aNumber Phone number string.
-@param aMatchLengthFromRight Number of digits from the right of the phone number
-to use.  Up to 15 digits can be specified, and it is recommended that at least 7
+@param aMatchLengthFromRight Minimum number of digits from the right of the phone
+number to use. Up to 15 digits can be specified, and it is recommended that at least 7
 match digits are specified.
-@param aDatabase The database.
-
 @return Array of contact IDs which are candidate matches.
 */
 CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight)
 	{
-	CContactIdArray* phoneMatchArray = CContactIdArray::NewLC();
-
-	TInt numLowerDigits = aMatchLengthFromRight;
-	TInt numUpperDigits = 0;
-
-	if(numLowerDigits > KLowerSevenDigits)
-		{
-		// New style matching.
-		numLowerDigits = KLowerSevenDigits;
-		numUpperDigits = aMatchLengthFromRight - KLowerSevenDigits;
-		}
-
-	TMatch phoneDigits = CreatePaddedPhoneDigitsL(aNumber, numLowerDigits, numUpperDigits);
-
-	if (phoneDigits.iNumLowerDigits + phoneDigits.iNumUpperDigits > 0)
-		{
-		// build statement
-		RSqlStatement stmnt;
-		CleanupClosePushL(stmnt);
-		stmnt.PrepareL(iDatabase, iMatchSelectStmnt->SqlStringL() );
-
-		const TInt KValueParamIndex(KFirstParam);			// first parameter in query...
-		const TInt KTypeParamIndex(KValueParamIndex + 1);	// ...and the second.
-
-    	User::LeaveIfError(stmnt.BindInt(KValueParamIndex, phoneDigits.iLowerSevenDigits ));
-    	User::LeaveIfError(stmnt.BindInt(KTypeParamIndex, EPhoneNumber ));
-
-		// fetch the list of any matching contact ids
-		TInt err(KErrNone);
-		const TInt KContactIdIdx(iMatchSelectStmnt->ParameterIndex(KCommAddrContactId() ) );
-		const TInt KExtraValueIdx(iMatchSelectStmnt->ParameterIndex(KCommAddrExtraValue() ) );
-		while ((err = stmnt.Next() ) == KSqlAtRow)
-			{
-			if (aMatchLengthFromRight <= KLowerSevenDigits)
-				{
-				// Matching 7 or less digits...we've already matched.
-				phoneMatchArray->AddL(stmnt.ColumnInt(KContactIdIdx) );
-				}
-			else
-				{
-				// Check the upper digits...
-				TInt32 storedUpperDigits(0);
-				TPtrC extValString = stmnt.ColumnTextL(KExtraValueIdx);
-				User::LeaveIfError(TLex(extValString).Val(storedUpperDigits) );
-
-				const TInt KDigitsToRemove = KMaxPhoneMatchLength - KLowerSevenDigits - phoneDigits.iNumUpperDigits;
-				for(TInt i = 0; i < KDigitsToRemove; ++i)
-					{
-					// repeatedly divide by 10 to lop off the appropriate number of digits from the right
-					storedUpperDigits /= 10;
-					}
-
-				storedUpperDigits = TMatch::PadOutPhoneMatchNumber(storedUpperDigits, KDigitsToRemove);
-
-				if (phoneDigits.iUpperDigits == storedUpperDigits)
-					{
-					phoneMatchArray->AddL(stmnt.ColumnInt(KContactIdIdx) );
-					}
-				}
-			}
-
-		// leave if we didn't complete going through the results properly
-		if(err != KSqlAtEnd)
-			{
-			User::Leave(err);
-			}
-		CleanupStack::PopAndDestroy(&stmnt);
-		}
-
-	CleanupStack::Pop(phoneMatchArray);
-	return phoneMatchArray;
-	}
-
-/**
-Returns an array of contact item IDs for all the contact items which may contain
-the specified telephone number in a telephone, fax or SMS type field.
-
-This is improved version of MatchPhoneNumberL method.
-The number is compared starting from the right side of the number and 
-the method returns an array of candidate matches.  
-Punctuation (e.g. spaces) and other alphabetic characters are ignored
-when comparing. Leading zeros are removed. Digits are compared up to 
-the lenght of shorter number.
-
-@param aNumber Phone number string.
-@return Array of contact IDs which are candidate matches.
-*/
-CContactIdArray* CPplCommAddrTable::BestMatchingPhoneNumberL(const TDesC& aNumber)
-    {
+    // We have to handle deprecated KBestMatchingPhoneNumbers argument, KBestMatchingPhoneNumbers = DM(7)
+    const TInt KMatchLengthFromRight = aMatchLengthFromRight ? aMatchLengthFromRight : KLowerSevenDigits;
     const TInt KUpperMaxLength = KMaxPhoneMatchLength - KLowerSevenDigits;
-
+    
     CContactIdArray* phoneMatchArray = CContactIdArray::NewLC();
 
     TMatch phoneDigits = CreatePaddedPhoneDigitsL(aNumber, KLowerSevenDigits, KUpperMaxLength);
@@ -850,28 +754,29 @@ CContactIdArray* CPplCommAddrTable::BestMatchingPhoneNumberL(const TDesC& aNumbe
         while ((err = stmnt.Next()) == KSqlAtRow)
             {
             // Check the upper digits...
-            TInt32 number = phoneDigits.iUpperDigits;
+            TInt32 numberUpperDigits = phoneDigits.iUpperDigits;
             TPtrC extValString = stmnt.ColumnTextL(KExtraValueIdx);
             TInt32 storedUpperDigits;
             User::LeaveIfError(TLex(extValString).Val(storedUpperDigits));
-            TInt32 stored = storedUpperDigits;
 
-            TBool nonZeroInStoredFound = EFalse;
-            TBool nonZeroInNumberFound = EFalse;
-            while ((number != 0) && (stored != 0))
+            
+            TBool nonZeroInNumberFound = (numberUpperDigits % 10 != 0); // is last digit != 0
+            TBool nonZeroInStoredFound = (storedUpperDigits % 10 != 0); // is last digit != 0
+            
+            // Upper digits are in reverse order and padded (i.e. 21853000 for number +358 12 3456789).
+            // Loop cuts nonsignificant part of upper digits
+            for (TInt cutCount = KMatchLengthFromRight - KLowerSevenDigits; 
+                (cutCount < KUpperMaxLength)                        // all KMatchLengthFromRight digits are significant
+                && !(nonZeroInNumberFound && nonZeroInStoredFound); // DM:if there are more non zero digits they are significant 
+                cutCount++)
                 {
-                nonZeroInNumberFound |= (number % 10 != 0);
-                nonZeroInStoredFound |= (stored % 10 != 0);
-                if (nonZeroInStoredFound && nonZeroInNumberFound)
-                    {
-                    break;
-                    }
-                number /= 10;
-                stored /= 10;
+                numberUpperDigits /= 10;
+                storedUpperDigits /= 10;
+                nonZeroInNumberFound |= (numberUpperDigits % 10 != 0);
+                nonZeroInStoredFound |= (storedUpperDigits % 10 != 0);
                 }
 
-            if ((phoneDigits.iUpperDigits == 0) || (storedUpperDigits == 0) ||
-                 (number == stored))
+            if (numberUpperDigits == storedUpperDigits)
                 {
                 phoneMatchArray->AddL(stmnt.ColumnInt(KContactIdIdx));
                 }
@@ -887,7 +792,8 @@ CContactIdArray* CPplCommAddrTable::BestMatchingPhoneNumberL(const TDesC& aNumbe
 
     CleanupStack::Pop(phoneMatchArray);
     return phoneMatchArray;
-    }
+	}
+
 
 /**
 Searches the contacts database to find any contact items with an exact match on the email address supplied.
