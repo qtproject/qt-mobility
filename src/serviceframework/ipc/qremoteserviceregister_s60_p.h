@@ -173,7 +173,7 @@ private:
     QString iServerAddress;
     ServiceMessageListener* iListener;
     MovingAverage<10> iDataSizes;
-    
+    TBool iServerStarted;
     friend class ServiceMessageListener;
 };
 
