@@ -59,6 +59,7 @@ private slots:
     void saveContactWithPreferredDetails();
     void saveContactWithFavoriteDetail();
     void saveContacts();
+    void saveContactWithThumbnailAndAvatar();
     void retrieveContact();
     void retrieveContacts();
     void retrieveLimitedAmountContacts();

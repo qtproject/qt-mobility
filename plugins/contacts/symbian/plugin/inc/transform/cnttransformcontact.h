@@ -82,6 +82,7 @@ public:
     void detailDefinitions(QMap<QString, QContactDetailDefinition>& defaultSchema, const QString& contactType, QContactManager::Error* error) const;
     QContactDetail *transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const;
     QContactDetail *transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase);
+    void generateThumbnailDetail(QContact &contact) const;
 private:
 	enum ContactData
 	{
