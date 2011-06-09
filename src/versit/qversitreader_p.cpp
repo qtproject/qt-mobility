@@ -422,6 +422,22 @@ QVersitReaderPrivate::valueTypeMap() {
                              QVersitProperty::ListType);
         mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("X-NICKNAME")),
                              QVersitProperty::ListType);
+
+        // Some MeeGo specific types, for EDS/SyncEvolution roundtripping until the API allows
+        // better control over the type of custom properties.
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-EDS-QTCONTACTS")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-EDS-QTCONTACTS")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("X-EDS-QTCONTACTS")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-SYNCEVO-QTCONTACTS")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-SYNCEVO-QTCONTACTS")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard40Type, QString::fromAscii("X-SYNCEVO-QTCONTACTS")),
+                             QVersitProperty::CompoundType);
+
     }
     return mValueTypeMap;
 }

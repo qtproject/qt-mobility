@@ -277,6 +277,10 @@ void tst_QVersit::testImportVCardFiles_data()
         assistantphone.setNumber(QLatin1String("1234"));
         assistantphone.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
         contact.saveDetail(&assistantphone);
+        QContactGeoLocation geo;
+        geo.setLatitude(32.0);
+        geo.setLongitude(-64);
+        contact.saveDetail(&geo);
         QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
         QTest::newRow("test1.vcf") << QString::fromAscii("test1.vcf")
             << QByteArray("UTF-8") << (QList<QContact>() << contact);
