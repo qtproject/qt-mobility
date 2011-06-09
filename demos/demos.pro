@@ -43,8 +43,11 @@ contains(mobility_modules,contacts) {
 
 # Connectivity
 contains(mobility_modules,connectivity):!win32 {
-    SUBDIRS += \
-        bttennis
+    SUBDIRS += bttennis
+
+    contains(QT_CONFIG, declarative) {
+	SUBDIRS += qmltennis
+    }
 
 }
 

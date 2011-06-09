@@ -44,7 +44,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QTime>
-#include "../../bttennis/board.h"
+#include "../bttennis/board.h"
 
 #define TOP 1
 #define BOTTOM 2
