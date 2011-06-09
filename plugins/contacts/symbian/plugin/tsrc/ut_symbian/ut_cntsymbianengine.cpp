@@ -43,6 +43,8 @@
 #include "cntsymbianengine.h"
 #include "qcontactrelationship.h"
 #include "qcontactrelationshipfilter.h"
+#include "cntbackendsdefs.h"
+#include "cnttransformthumbnail.h"
 
 #include <qcontactmanager.h>
 #include <qcontactdetailfilter.h>
@@ -55,6 +57,8 @@
 #include <qcontactanniversary.h>
 #include <qcontactnickname.h>
 #include <qcontactgender.h>
+#include <qcontactthumbnail.h>
+#include <qcontactavatar.h>
 #include <qcontactgeolocation.h>
 #include <qcontactringtone.h>
 #include <qcontactpresence.h>
@@ -534,6 +538,59 @@ void TestSymbianEngine::saveContacts()
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count + count == current_count);
     contacts.clear();
+}
+
+void TestSymbianEngine::saveContactWithThumbnailAndAvatar()
+{
+    QContact c;
+    QContactManager::Error err;
+    // save contact with a (big) thumbnail detail
+    QContactName nm;
+    nm.setFirstName("first");
+    QVERIFY(c.saveDetail(&nm));
+    QContactThumbnail thumb;
+    QImage img("c:\\data\\test_img.jpg");
+    thumb.setThumbnail(img);
+    QVERIFY(c.saveDetail(&thumb));
+    QVERIFY(m_engine->saveContact(&c, &err));
+    QVERIFY(err == QContactManager::NoError);
+            
+    // fetch contact and check that thumbnail detail exists and scaled down
+    QContact c2 = m_engine->contact(c.localId(), QContactFetchHint(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactThumbnail thumb2 = c2.detail<QContactThumbnail>();
+    QVERIFY(!thumb2.thumbnail().isNull());
+    QVERIFY(thumb2.thumbnail().size().height() <= KMaxThumbnailSize.iHeight);
+    QVERIFY(thumb2.thumbnail().size().width() <= KMaxThumbnailSize.iWidth);
+    QByteArray origByteArray = thumb2.variantValue("jpg_image").toByteArray();
+    
+    // change contact, save again and verify thumbnail is still the same
+    QContactName name2 = c2.detail<QContactName>();
+    QString first = name2.firstName();
+    name2.setLastName("last");
+    QVERIFY(c2.saveDetail(&name2));
+    QVERIFY(m_engine->saveContact(&c2, &err));
+    QVERIFY(err == QContactManager::NoError);
+    QContact c3 = m_engine->contact(c2.localId(), QContactFetchHint(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactThumbnail thumb3 = c3.detail<QContactThumbnail>();
+    QVERIFY(!thumb3.thumbnail().isNull());
+    QByteArray fetchedByteArray = thumb3.variantValue("jpg_image").toByteArray();
+    QVERIFY(origByteArray == fetchedByteArray);
+    
+    // save contact with avatar detail, check that thumbnail was generated
+    QContact c4;
+    QContactAvatar avatar;
+    avatar.setImageUrl(QUrl("c:\\data\\test_img.jpg"));
+    QVERIFY(c4.saveDetail(&avatar));
+    QVERIFY(m_engine->saveContact(&c4, &err));
+    QVERIFY(err == QContactManager::NoError);
+    QContact c5 = m_engine->contact(c4.localId(), QContactFetchHint(), &err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactThumbnail thumb5 = c5.detail<QContactThumbnail>();
+    QVERIFY(!thumb5.thumbnail().isNull());
+    QVERIFY(thumb5.thumbnail().size().height() <= KMaxThumbnailSize.iHeight);
+    QVERIFY(thumb5.thumbnail().size().width() <= KMaxThumbnailSize.iWidth);
 }
 
 void TestSymbianEngine::retrieveContact()
