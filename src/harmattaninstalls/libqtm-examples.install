@@ -10,6 +10,7 @@ usr/lib/qtmobility/demos/qmlcontacts
 usr/lib/qtmobility/demos/serviceactions
 usr/lib/qtmobility/demos/smallsensors
 usr/lib/qtmobility/demos/weatherinfo_with_location
+usr/lib/qtmobility/demos/bttennis
 usr/lib/qtmobility/examples/accel
 usr/lib/qtmobility/examples/annotatedurl
 usr/lib/qtmobility/examples/arrowkeys
@@ -23,7 +24,6 @@ usr/lib/qtmobility/examples/battery-subscriber/content/bubble.png
 usr/lib/qtmobility/examples/btchat
 usr/lib/qtmobility/examples/btfiletransfer
 usr/lib/qtmobility/examples/btscanner
-usr/lib/qtmobility/examples/bttennis
 usr/lib/qtmobility/examples/calendardemo
 usr/lib/qtmobility/examples/camera
 usr/lib/qtmobility/examples/cubehouse
