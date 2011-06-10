@@ -54,6 +54,7 @@ testcase = {
         '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     select_backends: function()
     {
         prompt(twiki('---++ Various backends can be selected
@@ -66,6 +67,7 @@ testcase = {
         '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     add_event: function()
     {
         prompt(twiki('---++ Add Calendar Event
@@ -136,6 +138,7 @@ testcase = {
         '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     delete_event: function()
     {
         prompt(twiki('---++ Delete Calendar Event
@@ -173,6 +176,7 @@ testcase = {
         '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_event: function()
     {
         prompt(twiki('---++ Edit Calendar Event
@@ -229,6 +233,7 @@ testcase = {
         '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     event_recurrence: function()
     {
         prompt(twiki('---++ Event Recurrence
@@ -276,6 +281,7 @@ testcase = {
         '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     add_todo: function()
     {
         prompt(twiki('---++ Add Calendar Todo
@@ -342,6 +348,7 @@ testcase = {
         '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_todo: function()
     {
         prompt(twiki('---++ Edit Calendar Todo
@@ -406,194 +413,280 @@ testcase = {
      '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
+    delete_todo: function()
+    {
+        prompt(twiki('---++ Delete Calendar Todo
+        | *Step* | *Verification* |
+        | Launch the calendardemo application | |
+        | Add a Todo todo1 | |
+        | Add a Todo todo2 | |
+        | Add a Todo todo3 | |
+        | Open day with todo1 | |
+        | Select todo1 | |
+        | Press Remove button | Verify that todo1 is deleted |
+        | Press Options Button and select \'delete All items\' | Verify that all todos were deleted |
+        '));
+    },
+
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     add_journal: function()
     {
         prompt(twiki('---++ Add Journal Entry
-
-    1. Launch the *calendardemo* application
-    1. Select appropriate backend
-    1. Verify that no journal entries are listed. If journal entries are listed then
-        1. Remove the journal entries
-        1. Close the *calendardemo* application
-        1. Restart this test case
-    1. Verify that the current backend is the best to suit device
-    1. If platform(backend) does not support Journal entries then skip all steps in this test.
-    1. Add a Journal entry:
-        1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject    | \'Journal 1\' |
-            | Time       | today\'s date, 08:00 AM |
-            | Alarm      | \'30 minutes before\' |
-        1. Click \'Save\' button
-    1. Verify that you are presented with the day view for today and that \'Journal 1\' is listed with start time shown
-    1. Click \'View Month\' button
-    1. Verify that you are in the Month View with todays date underlined.
-    1. Add a journal entry for later today:
-        1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject    | \'Journal 2\' |
-            | Time       | today\'s date at 02:00 PM |
-            | Alarm      | \'15 minutes before\' |
-        1. Click \'Save\' button
-    1. Verify that events \'Journal 1\' and \'Journal 2\' are listed against today\'s date
-    1. Click \'View Month\' button
-    1. Verify that events \'Journal 1\' and \'Journal 2\' are listed for today\'s date
-    1. Add Journal for 2 days in the future:
-        1. Clicking date 2 days into the future in the Calendar View
-        1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject   | \'Journal 3\' |
-            | Time      | future date, 06:00 PM |
-            | Alarm     | \'05 minutes before\' |
-        1. Click \'Save\' button
-    1. If \'Memory\' backend is not being used
-    1. Close the *calendardemo* application
-    1. Launch the *calendardemo* application
-    1. Verify that today\'s date has Journal entries \'Journal 1\' and \'Journal 2\' listed with correct details
-    1. Verify that the day after tomorrow has the Journal entry \'Journal 3\'
-    1. Delete Journal entries  \'Journal 1\', \'Journal 2\', \'Journal 3\' (using native calendar application if neccessary)
-    1. Close the *calendardemo* application
+        | *Step* | *Verification* |
+        | Launch the testQtOrganizer application | |
+        | Select \'Organize items\' | |
+        | Press \'Create item\' button | |
+        | Add a Journal entry: | |
+        |       Subject:  \'Journal1\' | |
+        |       Reminder:  disabled |
+        |       Press Save button and save to default collection | Verify that Journal1 appears in the item's tabel |
      '));
     },
 
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_journal: function()
     {
         prompt(twiki('---++ Edit Journal Entry
-
-    1. Launch the *calendardemo* application
-    1. Select appropriate backend
-    1. Verify that no journal entries are listed. If journal entries are listed then
-        1. Remove the journal entries
-        1. Close the *calendardemo* application
-        1. Restart this test case
-    1. If platform(backend) does not support Journal entries then skip all steps in this test.
-    1. Add a Journal entry:
-        1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject    | \'Journal 1\' |
-            | Time       | today\'s date, 08:00 AM |
-            | Alarm      | \'30 minutes before\' |
-        1. Click \'Save\' button
-    1. Add a journal entry for later today:
-        1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject    | \'Journal 2\' |
-            | Time       | today\'s date at 02:00 PM |
-            | Alarm      | \'15 minutes before\' |
-        1. Click \'Save\' button
-    1. Add Journal for 2 days in the future:
-        1. Clicking date 2 days into the future in the Calendar View
-        1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject   | \'Journal 3\' |
-            | Time      | future date, 06:00 PM |
-            | Alarm     | \'05 minutes before\' |
-        1. Click \'Save\' button
-    1. Click Journal Entry \'Journal 2\'
-    1. Click \'Edit\' menu entry
-    1. Enter new details for \'Journal 2\':
-        | Subject | \'Journal 2 Edited\'  |
-        | Time    | today\'s date at 02:00 PM |
-        | Alarm   | \'5 minutes before\' |
-    1. Click \'Save\' button
-    1. Verify details of \'Journal 2 Edited\', eg
-        1. Click \'Edit\' menu entry
-        1. Verify Journal details seen with:
-            | Subject | \'Journal 2 Edited\'  |
-            | Time    | today\'s date at 02:00 PM |
-            | Alarm   | \'5 minutes before\' |
-         1. Click \'Cancel\' button
-    1. Verify that the details of \'Journal 1\' and \'Journal 3\' have not changed
-    1. Delete Journal entries  \'Journal 1\', \'Journal 2 Edited\', \'Journal 3\' (using native calendar application if neccessary)
-    1. Close the *calendardemo* application
+        prompt(twiki('---++ Add Journal Entry
+        | *Step* | *Verification* |
+        | Launch the testQtOrganizer application | |
+        | Select \'Organize items\' | |
+        | Press \'Create item\' button | |
+        | Add a Journal entry: | |
+        |       Subject:  \'Journal1\' | |
+        |       Reminder:  disabled |
+        |       Press Save button and save to default collection | |
+        | Select Joutnal1 and press \'Edit...\' button | |
+        | Modify label to Journal2 and save the changes | Verify that tabel has Journal2 record and no Journal1 |
       '));
     },
 
-// Candidate for future fully described tests, disable for the moment.
-/*
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
+    delete_journal: function()
+    {
+        prompt(twiki('---++ Edit Journal Entry
+        prompt(twiki('---++ Add Journal Entry
+        | *Step* | *Verification* |
+        | Launch the testQtOrganizer application | |
+        | Select \'Organize items\' | |
+        | Press \'Create item\' button | |
+        | Add a Journal entry: | |
+        |       Subject:  \'Journal1\' | |
+        |       Reminder:  disabled |
+        |       Press Save button and save to default collection | |
+        | Add a Journal enry Journal2 | |
+        | Select Joutnal1 and press \'Remove...\' button | Verify that tabel has no Journal1 record and has Journal2 |
+      '));
+    },
+
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     search_items_by_time: function()
     {
          prompt(twiki('---++ Search Items By Time
-
-    1. Launch the *calendardemo* application
-    1. Access all organizer items corresponding to a particular period. For example, an application that shows all organizer items occurring on the current day.
-    1. Close the *calendardemo* application
+         | *Step* | *Verification* |
+         | Launch the testQtOrganizer application | |
+         | Select \'Search items\' | |
+         | Add an entry | |
+         |      Fill in following fields | |
+         |          Type:   event | |
+         |          Name:   Event 1 | |
+         |          Start time:   06/10/11 1:00 PM | |
+         |          End time:   06/10/11 1:00 PM | |
+         |      Press \'Add New Entry\' button | |
+         | Add an entry | |
+         |          Type:   event | |
+         |          Name:   Event 2 | |
+         |          Start time:   06/11/11 1:00 PM | |
+         |          End time:   06/11/11 1:00 PM | |
+         | Add an entry | |
+         |          Type:   Todo | |
+         |          Name:   Todo 1 | |
+         | Add an entry | |
+         |          Type:   Journal | |
+         |          Name:   Journal 1 | |
+         |          Start time:   06/10/11 1:00 PM | |
+         | Add an entry | |
+         |          Type:   Note | |
+         |          Name:   Note 1 | |
+         |          Start time:   06/10/11 1:00 PM | |
+         | Press Search button | |
+         | Fill in 6/10/11 1:00 PM into \'Start time\' | |
+         | Fill in 6/10/11 2:00 PM into \'Start time\' | |
+         | Press Search button | Verify that only "Event 1", "Note 1", "Journal 1" are in the list |
+         | Press Search button | |
+         | Select \'Detail\' in drop-down list | |
+         | Fill in "Event 1" into Name field | |
+         | Press Search button | Verify that only "Event 1" is in the list |
         '));
     },
-*/
 
-// Candidate for future fully described tests, disable for the moment.
-/*
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     search_items_any_attribute: function()
     {
         prompt(twiki('---++ Search Items Using Any Attribute
+        | *Step* | *Verification* |
+        | Launch the testQtOrganizer application | |
+        | Select \'Search items\' | |
+        | Add an entry | |
+        |      Fill in following fields | |
+        |          Type:   event | |
+        |          Name:   Event 1 | |
+        |          Start time:   06/10/11 1:00 PM | |
+        |          End time:   06/10/11 1:00 PM | |
+        |      Press \'Add New Entry\' button | |
+        | Add an entry | |
+        |          Type:   event | |
+        |          Name:   Event 2 | |
+        |          Start time:   06/11/11 1:00 PM | |
+        |          End time:   06/11/11 1:00 PM | |
+        | Add an entry | |
+        |          Type:   Todo | |
+        |          Name:   Todo 1 | |
+        | Add an entry | |
+        |          Type:   Journal | |
+        |          Name:   Journal 1 | |
+        |          Start time:   06/10/11 1:00 PM | |
+        | Add an entry | |
+        |          Type:   Note | |
+        |          Name:   Note 1 | |
+        |          Start time:   06/10/11 1:00 PM | |
+        | Press Search button | |
+        | Select \'Detail\' in drop-down list | |
+        | Fill in "Event 1" into Name field | |
+        | Press Search button | Verify that only "Event 1" is in the list |
+       '));
 
-    1. Launch the *calendardemo* application
-    1. Access organizer items corresponding to one or more attribute values.
-    1. For example a user may search for all items that occurred January to March 2009, at Brisbane where the description contains \'birthday party\' .
-    1. Close the *calendardemo* application
-        '));
-    },\'Event 1\'
-    */
-
-// Candidate for future fully described tests, disable for the moment.
-/*
-    online_calendar: function()
-    {
-        prompt(twiki('---++ Search Items Using Any Attribute
-
-    1. Launch the *calendardemo* application
-    1. Access organizer items corresponding to one or more attribute values.
-    1. For example a user may search for all items that occurred January to March 2009, at Brisbane where the description contains \'birthday party\'.
-    1. Close the *calendardemo* application
-        '));
-    },
-    */
-
-// Candidate for future fully described tests, disable for the moment.
-/*
+// \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     custom_data: function()
     {
         prompt(twiki('---++ Custom Data
-
-    1. Launch the *calendardemo* application
-    1. Add custom data to an organizer item.
-    1. For example a travel organizer application may want to add non-standard new fields to an organizer item representing travel information.
-    1. Close the *calendardemo* application
+        | *Step* | *Verification* |
+        | Launch the testQtOrganizer application | |
+        | Select \'Organize items\' | |
+        | Press \'Create item...\' button | |
+        | Fill in "event1" in \'Display label field\' | |
+        | Press \'Details...\' button | |
+        | Fill in \'Custom detail label\' field with some informaion | |
+        | Press \'Save\' button | |
+        | Press \'Close\' button | |
+        | Press \'Save\' button | Verify that event is saved with custam details (press \'Edit\' button to check all field)|
+        | Create Todo element with custom details | Verify that Todo is saved with custam details |
+        | Create Journal element with custom details | Verify that Journal is saved with custam details |
+        | Create Note element with custom details | Verify that Note is saved with custam details |
         '));
     },
-    */
 
-// Candidate for future fully described tests, disable for the moment.
-/*
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     multiple_stores: function()
     {
-        prompt(twiki('---++ Supporting Multiple Stores
-
-    1. Launch the *calendardemo* application
-    1. Application may want to choose between the internal calendar store and an online calendar store.
-    1. It is possible for there to be more than one store on the local device.
-    1. Close the *calendardemo* application
+        prompt(twiki('---++ Access Control
+        | *Step* | *Verification* |
+        | Create 2 calendars in regular calendar application (Calendar1 and Calendar2) | |
+        | Launch the calendardemo application | |
+        | Create an event Event1 in Calendar1 calendar | Verify that Event1 belongs Calendar1 only |
+        | Create an event Event2 in Calendar2 calendar | Verify that  Event1 belongs Calendar1 only and Event2 belongs Calendar2 only |
+        | Edit Event1 | Verify that Event1 is updated correct  ly and did not affect Event2 |
+        | Delete Event2 | verify that Event2 is removed and did not affect Event1 |
         '));
     },
-    */
 
-// Candidate for future fully described tests, disable for the moment.
-/*
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     change_notification: function()
     {
-        prompt(twiki('---++ Notifications of Changes in Data
+        prompt(twiki('---++ Notifications of Chan ges in Data
+        | *Step* | *Verification* |
+        | Set current date to 2011/06/04 | |
+        | Launch the calendardemo application | Verify that 2011/June/04 is current date (text is underlined) |
+        | Open Clock application and change current date to 2011/June/07 | |
+        | Switch back to calendardemo application | Verify that current date is changed to 2011/June/07 |
+        '));
+    },
+
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
+    import_vcal: function()
+    {
+        prompt(twiki('---++ Import vCal items
+    | *Step* | *Verification* |
+    | Launch the calendardemo application | |
+    | On app \'Options\' menu, select \'Delete all items\' to insure you are dealing with a pristine calendar | |
+    | On app \'Options\' menu, select \'Import items\', then navigate to a exported instance of an empty vCal file | |
+    | Click on file | Verify that error message appears on the screen  |
+    | Press Ok button to close the message | Verify that calendar has no new items |
+    | On app \'Options\' menu, select \'Import items\', then navigate to a saved instance of an not empty vCal file | |
+    | Click on file | Verify that calendar items have populated the dates in the calendar. |
+        '));
+    },
+
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
+    export_vcal: function()
+    {
+        prompt(twiki('---++ Import vCal items
+    | *Step* | *Verification* |
+    | Launch the calendardemo application | |
+    | Create several items (events or todo) | |
+    | On app \'Options\' menu, select \'Export items\' | |
+    | Navigate to a folder for export | |
+    | Press Save button | |
+    | Enter file name and press Ok button | Check phone file system and verify that file is present there |
+        '));
+    }
+
+// Candidate for future fully described tests, disable for the moment.
+/*
+    // \groups BAT,MOBILITY-421
+    online_calendar: function()
+    {
+        prompt(twiki('---++ Access Control
 
     1. Launch the *calendardemo* application
-    1. An application can use the API to be notified of changed in the underlying data.
-    1. For example an application that shows the coming weeks organizer items would want to be notified when the underlying calendar data changes so it can check if it needs to update the displayed organizer items.
-    1. Close the *calendardemo* application
+    2. Work with entries in an online organizer item store such as Google Calendar.
         '));
     },
     */
 
 // Candidate for future fully described tests, disable for the moment.
 /*
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
+    edit_recursive_event: function()
+    {
+        prompt(twiki('---++ Edit recursive event
+        | *Step* | *Verification* |
+        | Launch the ? application |  |
+        | Create recursive event | |
+        | Select any event from this seria | |
+        | Press Edit button | Verify that user has choice to edit selected event or entire seria |
+        | Edit seria | Verify that all event from the serias are updated correctly |
+        | Select any event from this seria | |
+        | Press Edit button and edit the event occurrence | Verify that only selected event from the seria is updated |
+        '));
+    },
+    */
+
+
+// Candidate for future fully described tests, disable for the moment.
+/*
+    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
+    delete_recursive_event: function()
+    {
+        prompt(twiki('---++ Edit recursive event
+        | *Step* | *Verification* |
+        | Launch the ? application | |
+        | Create recursive event | |
+        | Select any event from this seria | |
+        | Press Remove button | Verify that user has choice to edit selected event or entire seria |
+        | Remove the entire seria | Verify that all event from the seria was removed |
+        | Create recursive event | |
+        | Select any event from this seria | |
+        | Press Remove button | |
+        | Remove the event occurrence | Verify that only selected event from the seria is removed |
+        '));
+    },
+    */
+
+// Candidate for future fully described tests, disable for the moment.
+/*
+    // \groups BAT,MOBILITY-408
     access_control: function()
     {
         prompt(twiki('---++ Access Control
@@ -602,28 +695,6 @@ testcase = {
     1. Control who can and who cannot view organizer items.
     1. Close the *calendardemo* application
         '));
-    },
-    */
-
-
-// Candidate for future fully described tests, disable for the moment.
-/*
-    import_vcal: function()
-    {
-        prompt(twiki('---++ Import vCal items
-
-    1. Launch the *calendardemo* application
-    1. On app menu, select \'Delete all items\' to insure you are dealing with a pristine calendar
-    1. On app menu, select \'Import items\', then navigate to a saved instance of an vCal file
-    1. Click on file
-    1. Verify that calendar items have populated the dates in the calendar.
-    1. Close the *calendardemo* application
-        '));
     }
     */
 }
-
-/*
----++ Access Online Calendar Store
-Work with entries in an online organizer item store such as Google Calendar.
-*/
