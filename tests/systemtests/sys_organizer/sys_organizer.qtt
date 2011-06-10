@@ -234,9 +234,9 @@ testcase = {
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    event_recurrence: function()
+    add_recurring_event: function()
     {
-        prompt(twiki('---++ Event Recurrence
+        prompt(twiki('---++ Add Recurring Event
 
     1. Launch the *calendardemo* application
     1. Select appropriate backend
@@ -417,190 +417,188 @@ testcase = {
     delete_todo: function()
     {
         prompt(twiki('---++ Delete Calendar Todo
-        | *Step* | *Verification* |
-        | Launch the calendardemo application | |
-        | Add a Todo todo1 | |
-        | Add a Todo todo2 | |
-        | Add a Todo todo3 | |
-        | Open day with todo1 | |
-        | Select todo1 | |
-        | Press Remove button | Verify that todo1 is deleted |
-        | Press Options Button and select \'delete All items\' | Verify that all todos were deleted |
-        '));
+    | *Step* | *Verification* |
+    | Launch the *calendardemo* application | |
+    | Add a Todo todo1 | |
+    | Add a Todo todo2 | |
+    | Add a Todo todo3 | |
+    | Open day with todo1 | |
+    | Select todo1 | |
+    | Press Remove button | Verify that todo1 is deleted |
+    | Press Options Button and select \'delete All items\' | Verify that all todos were deleted |
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     add_journal: function()
     {
         prompt(twiki('---++ Add Journal Entry
-        | *Step* | *Verification* |
-        | Launch the testQtOrganizer application | |
-        | Select \'Organize items\' | |
-        | Press \'Create item\' button | |
-        | Add a Journal entry: | |
-        |       Subject:  \'Journal1\' | |
-        |       Reminder:  disabled |
-        |       Press Save button and save to default collection | Verify that Journal1 appears in the item's tabel |
-     '));
+    1. Launch the *testQtOrganizer* application
+    1. Select \'Organize items\'
+    1. Press \'Create item\' button
+    1. Add a Journal entry:
+        1. Fill in following fileds
+            | Subject | Journal1 |
+            | Reminder | disabled |
+        1. Press Save button and save to default collection
+    1. Verify that Journal1 appears in the items tabel
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_journal: function()
     {
         prompt(twiki('---++ Edit Journal Entry
-        prompt(twiki('---++ Add Journal Entry
-        | *Step* | *Verification* |
-        | Launch the testQtOrganizer application | |
-        | Select \'Organize items\' | |
-        | Press \'Create item\' button | |
-        | Add a Journal entry: | |
-        |       Subject:  \'Journal1\' | |
-        |       Reminder:  disabled |
-        |       Press Save button and save to default collection | |
-        | Select Joutnal1 and press \'Edit...\' button | |
-        | Modify label to Journal2 and save the changes | Verify that tabel has Journal2 record and no Journal1 |
-      '));
+    1. Launch the *testQtOrganizer* application
+    1. Select \'Organize items\'
+    1. Press \'Create item\' button
+    1. Add a Journal entry:
+        1. Fill in following fields:
+            | Subject | Journal1 |
+            | Reminder |disabled |
+        1.Press Save button and save to default collection
+    1. Select Joutnal1 and press \'Edit...\' button
+    1. Modify label to Journal2 and save the changes
+    1. Verify that tabel has Journal2 record and no Journal1
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     delete_journal: function()
     {
-        prompt(twiki('---++ Edit Journal Entry
-        prompt(twiki('---++ Add Journal Entry
-        | *Step* | *Verification* |
-        | Launch the testQtOrganizer application | |
-        | Select \'Organize items\' | |
-        | Press \'Create item\' button | |
-        | Add a Journal entry: | |
-        |       Subject:  \'Journal1\' | |
-        |       Reminder:  disabled |
-        |       Press Save button and save to default collection | |
-        | Add a Journal enry Journal2 | |
-        | Select Joutnal1 and press \'Remove...\' button | Verify that tabel has no Journal1 record and has Journal2 |
-      '));
+        prompt(twiki('---++ Delete Journal Entry
+    1. Launch the *testQtOrganizer* application
+    1. Select \'Organize items\'
+    1. Press \'Create item\' button
+    1. Add a Journal entry:
+        1. Fill in following fields:
+            | Subject | Journal1 |
+            | Reminder | disabled |
+        1. Press Save button and save to default collection
+    1. Add a Journal enry Journal2
+    1. Select Joutnal1 and press \'Remove...\' button 
+    1.Verify that tabel has no Journal1 record and has Journal2
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     search_items_by_time: function()
     {
-         prompt(twiki('---++ Search Items By Time
-         | *Step* | *Verification* |
-         | Launch the testQtOrganizer application | |
-         | Select \'Search items\' | |
-         | Add an entry | |
-         |      Fill in following fields | |
-         |          Type:   event | |
-         |          Name:   Event 1 | |
-         |          Start time:   06/10/11 1:00 PM | |
-         |          End time:   06/10/11 1:00 PM | |
-         |      Press \'Add New Entry\' button | |
-         | Add an entry | |
-         |          Type:   event | |
-         |          Name:   Event 2 | |
-         |          Start time:   06/11/11 1:00 PM | |
-         |          End time:   06/11/11 1:00 PM | |
-         | Add an entry | |
-         |          Type:   Todo | |
-         |          Name:   Todo 1 | |
-         | Add an entry | |
-         |          Type:   Journal | |
-         |          Name:   Journal 1 | |
-         |          Start time:   06/10/11 1:00 PM | |
-         | Add an entry | |
-         |          Type:   Note | |
-         |          Name:   Note 1 | |
-         |          Start time:   06/10/11 1:00 PM | |
-         | Press Search button | |
-         | Fill in 6/10/11 1:00 PM into \'Start time\' | |
-         | Fill in 6/10/11 2:00 PM into \'Start time\' | |
-         | Press Search button | Verify that only "Event 1", "Note 1", "Journal 1" are in the list |
-         | Press Search button | |
-         | Select \'Detail\' in drop-down list | |
-         | Fill in "Event 1" into Name field | |
-         | Press Search button | Verify that only "Event 1" is in the list |
-        '));
+        prompt(twiki('---++ Search Items By Time
+    1. Launch the *testQtOrganizer* application
+    1. Select \'Search items\'
+    1. Add an entry
+        1. Fill in following fields:
+            | Type | event |
+            | Name | Event 1 |
+            | Start time | 06/10/11 1:00 PM |
+            | End time | 06/10/11 1:00 PM |
+        1. Press \'Add New Entry\' button
+    1. Add an entry
+        | Type | event |
+        | Name | Event 2 |
+        | Start time | 06/11/11 1:00 PM |
+        | End time | 06/11/11 1:00 PM |
+    1. Add an entry 
+        | Type | Todo | 
+        | Name | Todo 1 |
+    1. Add an entry |
+        | Type | Journal |
+        | Name | Journal 1 |
+        | Start time | 06/10/11 1:00 PM |
+    1. Add an entry
+        | Type | Note |
+        | Name | Note 1 |
+        | Start time | 06/10/11 1:00 PM |
+    1. Press Search button
+    1. Fill in 6/10/11 1:00 PM into \'Start time\'
+    1. Fill in 6/10/11 2:00 PM into \'End time\'
+    1. Press Search button 
+    1. Verify that only "Event 1", "Note 1", "Journal 1" are in the list
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     search_items_any_attribute: function()
     {
         prompt(twiki('---++ Search Items Using Any Attribute
-        | *Step* | *Verification* |
-        | Launch the testQtOrganizer application | |
-        | Select \'Search items\' | |
-        | Add an entry | |
-        |      Fill in following fields | |
-        |          Type:   event | |
-        |          Name:   Event 1 | |
-        |          Start time:   06/10/11 1:00 PM | |
-        |          End time:   06/10/11 1:00 PM | |
-        |      Press \'Add New Entry\' button | |
-        | Add an entry | |
-        |          Type:   event | |
-        |          Name:   Event 2 | |
-        |          Start time:   06/11/11 1:00 PM | |
-        |          End time:   06/11/11 1:00 PM | |
-        | Add an entry | |
-        |          Type:   Todo | |
-        |          Name:   Todo 1 | |
-        | Add an entry | |
-        |          Type:   Journal | |
-        |          Name:   Journal 1 | |
-        |          Start time:   06/10/11 1:00 PM | |
-        | Add an entry | |
-        |          Type:   Note | |
-        |          Name:   Note 1 | |
-        |          Start time:   06/10/11 1:00 PM | |
-        | Press Search button | |
-        | Select \'Detail\' in drop-down list | |
-        | Fill in "Event 1" into Name field | |
-        | Press Search button | Verify that only "Event 1" is in the list |
-       '));
-
+    1. Launch the *testQtOrganizer* application
+    1. Select \'Search items\'
+    1. Add an entry
+        1. Fill in following fields):
+            | Type | event |
+            | Name | Event 1 |
+            | Start time | 06/10/11 1:00 PM |
+            | End time | 06/10/11 1:00 PM |
+        1. Press \'Add New Entry\' button
+    1. Add an entry
+        | Type | event |
+        | Name | Event 2 |
+        | Start time | 06/11/11 1:00 PM |
+        | End time | 06/11/11 1:00 PM |
+    1. Add an entry 
+        | Type | Todo | 
+        | Name | Todo 1 |
+    1. Add an entry |
+        | Type | Journal |
+        | Name | Journal 1 |
+        | Start time | 06/10/11 1:00 PM |
+    1. Add an entry
+        | Type | Note |
+        | Name | Note 1 |
+        | Start time | 06/10/11 1:00 PM |
+    1. Press Search button
+    1. Select \'Detail\' in drop-down list
+    1. Fill in "Event 1" into Name field
+    1. Press Search button 
+    1. Verify that only "Event 1" is in the list
+    '));
+    },
+    
 // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     custom_data: function()
     {
         prompt(twiki('---++ Custom Data
-        | *Step* | *Verification* |
-        | Launch the testQtOrganizer application | |
-        | Select \'Organize items\' | |
-        | Press \'Create item...\' button | |
-        | Fill in "event1" in \'Display label field\' | |
-        | Press \'Details...\' button | |
-        | Fill in \'Custom detail label\' field with some informaion | |
-        | Press \'Save\' button | |
-        | Press \'Close\' button | |
-        | Press \'Save\' button | Verify that event is saved with custam details (press \'Edit\' button to check all field)|
-        | Create Todo element with custom details | Verify that Todo is saved with custam details |
-        | Create Journal element with custom details | Verify that Journal is saved with custam details |
-        | Create Note element with custom details | Verify that Note is saved with custam details |
-        '));
+    | *Step* | *Verification* |
+    | Launch the *testQtOrganizer* application | |
+    | Select \'Organize items\' | |
+    | Press \'Create item...\' button | |
+    | Fill in "event1" in \'Display label field\' | |
+    | Press \'Details...\' button | |
+    | Fill in \'Custom detail label\' field with some informaion | |
+    | Press \'Save\' button | |
+    | Press \'Close\' button | |
+    | Press \'Save\' button | Verify that event is saved with custam details (press \'Edit\' button to check all field)|
+    | Create Todo element with custom details | Verify that Todo is saved with custam details |
+    | Create Journal element with custom details | Verify that Journal is saved with custam details |
+    | Create Note element with custom details | Verify that Note is saved with custam details |
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     multiple_stores: function()
     {
-        prompt(twiki('---++ Access Control
-        | *Step* | *Verification* |
-        | Create 2 calendars in regular calendar application (Calendar1 and Calendar2) | |
-        | Launch the calendardemo application | |
-        | Create an event Event1 in Calendar1 calendar | Verify that Event1 belongs Calendar1 only |
-        | Create an event Event2 in Calendar2 calendar | Verify that  Event1 belongs Calendar1 only and Event2 belongs Calendar2 only |
-        | Edit Event1 | Verify that Event1 is updated correct  ly and did not affect Event2 |
-        | Delete Event2 | verify that Event2 is removed and did not affect Event1 |
-        '));
+        prompt(twiki('---++ Multiple stores
+    | *Step* | *Verification* |
+    | Create 2 calendars in *regular calendar* application (Calendar1 and Calendar2) | |
+    | Launch the *calendardemo* application | |
+    | Create an event Event1 in Calendar1 calendar | Verify that Event1 belongs Calendar1 only |
+    | Create an event Event2 in Calendar2 calendar | Verify that  Event1 belongs Calendar1 only and Event2 belongs Calendar2 only |
+    | Edit Event1 | Verify that Event1 is updated correct  ly and did not affect Event2 |
+    | Delete Event2 | verify that Event2 is removed and did not affect Event1 |
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     change_notification: function()
     {
-        prompt(twiki('---++ Notifications of Chan ges in Data
-        | *Step* | *Verification* |
-        | Set current date to 2011/06/04 | |
-        | Launch the calendardemo application | Verify that 2011/June/04 is current date (text is underlined) |
-        | Open Clock application and change current date to 2011/June/07 | |
-        | Switch back to calendardemo application | Verify that current date is changed to 2011/June/07 |
-        '));
+        prompt(twiki('---++ Notifications of Changes in Data
+    | *Step* | *Verification* |
+    | Set current date to 2011/06/04 | |
+    | Launch the *calendardemo* application | Verify that 2011/June/04 is current date (text is underlined) |
+    | Open Clock application and change current date to 2011/June/07 | |
+    | Switch back to calendardemo application | Verify that current date is changed to 2011/June/07 |
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
@@ -608,14 +606,14 @@ testcase = {
     {
         prompt(twiki('---++ Import vCal items
     | *Step* | *Verification* |
-    | Launch the calendardemo application | |
+    | Launch the *calendardemo* application | |
     | On app \'Options\' menu, select \'Delete all items\' to insure you are dealing with a pristine calendar | |
     | On app \'Options\' menu, select \'Import items\', then navigate to a exported instance of an empty vCal file | |
     | Click on file | Verify that error message appears on the screen  |
     | Press Ok button to close the message | Verify that calendar has no new items |
     | On app \'Options\' menu, select \'Import items\', then navigate to a saved instance of an not empty vCal file | |
     | Click on file | Verify that calendar items have populated the dates in the calendar. |
-        '));
+    '));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
@@ -623,13 +621,13 @@ testcase = {
     {
         prompt(twiki('---++ Import vCal items
     | *Step* | *Verification* |
-    | Launch the calendardemo application | |
+    | Launch the *calendardemo* application | |
     | Create several items (events or todo) | |
     | On app \'Options\' menu, select \'Export items\' | |
     | Navigate to a folder for export | |
     | Press Save button | |
     | Enter file name and press Ok button | Check phone file system and verify that file is present there |
-        '));
+    '));
     }
 
 // Candidate for future fully described tests, disable for the moment.
@@ -640,7 +638,7 @@ testcase = {
         prompt(twiki('---++ Access Control
 
     1. Launch the *calendardemo* application
-    2. Work with entries in an online organizer item store such as Google Calendar.
+    1. Work with entries in an online organizer item store such as Google Calendar.
         '));
     },
     */
@@ -648,7 +646,7 @@ testcase = {
 // Candidate for future fully described tests, disable for the moment.
 /*
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    edit_recursive_event: function()
+    edit_recurring_event: function()
     {
         prompt(twiki('---++ Edit recursive event
         | *Step* | *Verification* |
@@ -667,7 +665,7 @@ testcase = {
 // Candidate for future fully described tests, disable for the moment.
 /*
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    delete_recursive_event: function()
+    delete_recurring_event: function()
     {
         prompt(twiki('---++ Edit recursive event
         | *Step* | *Verification* |
