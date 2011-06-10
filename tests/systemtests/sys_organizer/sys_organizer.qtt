@@ -569,9 +569,9 @@ testcase = {
     | Press \'Save\' button | |
     | Press \'Close\' button | |
     | Press \'Save\' button | Verify that event is saved with custam details (press \'Edit\' button to check all field)|
-    | Create Todo element with custom details | Verify that Todo is saved with custam details |
-    | Create Journal element with custom details | Verify that Journal is saved with custam details |
-    | Create Note element with custom details | Verify that Note is saved with custam details |
+    | Create Todo element with custom details | Verify that Todo is saved with custom details |
+    | Create Journal element with custom details | Verify that Journal is saved with custom details |
+    | Create Note element with custom details | Verify that Note is saved with custom details |
     '));
     },
 
@@ -589,17 +589,15 @@ testcase = {
     '));
     },
 
+// Candidate for future fully described tests, disable for the moment.
+/*
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     change_notification: function()
     {
         prompt(twiki('---++ Notifications of Changes in Data
-    | *Step* | *Verification* |
-    | Set current date to 2011/06/04 | |
-    | Launch the *calendardemo* application | Verify that 2011/June/04 is current date (text is underlined) |
-    | Open Clock application and change current date to 2011/June/07 | |
-    | Switch back to calendardemo application | Verify that current date is changed to 2011/June/07 |
     '));
     },
+*/
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     import_vcal: function()
