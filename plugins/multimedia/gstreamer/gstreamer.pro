@@ -13,7 +13,7 @@ MOBILITY = multimedia
 
 DEPENDPATH += .
 
-unix:contains(QT_CONFIG, alsa) {
+unix:!maemo*:contains(QT_CONFIG, alsa) {
 DEFINES += HAVE_ALSA
 LIBS += \
     -lasound
