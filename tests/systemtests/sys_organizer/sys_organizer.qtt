@@ -476,7 +476,7 @@ testcase = {
             | Reminder | disabled |
         1. Press Save button and save to default collection
     1. Add a Journal enry Journal2
-    1. Select Joutnal1 and press \'Remove...\' button 
+    1. Select Joutnal1 and press \'Remove...\' button
     1.Verify that tabel has no Journal1 record and has Journal2
     '));
     },
@@ -499,8 +499,8 @@ testcase = {
         | Name | Event 2 |
         | Start time | 06/11/11 1:00 PM |
         | End time | 06/11/11 1:00 PM |
-    1. Add an entry 
-        | Type | Todo | 
+    1. Add an entry
+        | Type | Todo |
         | Name | Todo 1 |
     1. Add an entry |
         | Type | Journal |
@@ -513,7 +513,7 @@ testcase = {
     1. Press Search button
     1. Fill in 6/10/11 1:00 PM into \'Start time\'
     1. Fill in 6/10/11 2:00 PM into \'End time\'
-    1. Press Search button 
+    1. Press Search button
     1. Verify that only "Event 1", "Note 1", "Journal 1" are in the list
     '));
     },
@@ -536,8 +536,8 @@ testcase = {
         | Name | Event 2 |
         | Start time | 06/11/11 1:00 PM |
         | End time | 06/11/11 1:00 PM |
-    1. Add an entry 
-        | Type | Todo | 
+    1. Add an entry
+        | Type | Todo |
         | Name | Todo 1 |
     1. Add an entry |
         | Type | Journal |
@@ -550,11 +550,11 @@ testcase = {
     1. Press Search button
     1. Select \'Detail\' in drop-down list
     1. Fill in "Event 1" into Name field
-    1. Press Search button 
+    1. Press Search button
     1. Verify that only "Event 1" is in the list
     '));
     },
-    
+
 // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     custom_data: function()
     {
