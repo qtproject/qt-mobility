@@ -66,8 +66,8 @@ CStorageDiskNotifier::CStorageDiskNotifier()
 
 CStorageDiskNotifier::~CStorageDiskNotifier()
     {
-    iFs.Close();
     delete iStorageDiskNotifyHandler;
+    iFs.Close();
     }
 
 void CStorageDiskNotifier::AddObserver(MStorageSpaceNotifyObserver *observer)

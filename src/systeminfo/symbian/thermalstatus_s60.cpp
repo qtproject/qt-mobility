@@ -73,6 +73,7 @@ CThermalStatus::CThermalStatus() : CActive(EPriorityStandard),
 CThermalStatus::~CThermalStatus()
 {
   TRACES(qDebug() << "CThermalStatus::~CThermalStatus()";)
+  Cancel();
 }
 
 void CThermalStatus::addObserver(MThermalStatusObserver *observer)
