@@ -50,7 +50,7 @@ Q_GLOBAL_STATIC(QSystemBatteryInfoPrivate, batteryInfoPrivateSingleton)
 #endif
 
 #ifdef QT_SIMULATOR
-QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivate(); }
+QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!

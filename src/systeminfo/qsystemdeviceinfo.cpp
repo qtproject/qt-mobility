@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivateSingleton)
 
 #ifdef QT_SIMULATOR
-QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivate(); }
+QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!
