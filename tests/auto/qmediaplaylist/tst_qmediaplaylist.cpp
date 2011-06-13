@@ -496,6 +496,9 @@ void tst_QMediaPlaylist::loadM3uFile()
     QCOMPARE(playlist.media(4).canonicalUrl(), QUrl(QLatin1String("file:///testdir/testfile")));
     QCOMPARE(playlist.media(5).canonicalUrl(), QUrl(QLatin1String("file://path/name#suffix")));
     //ensure #2 suffix is not stripped from path
+#ifdef Q_OS_SYMBIAN
+    QSKIP("Hash is not approved separator in Symbian project file, skipping the test", SkipSingle);
+#endif
     QCOMPARE(playlist.media(6).canonicalUrl(), QUrl::fromLocalFile(TESTDATA_DIR "testdata/testfile2#suffix"));
 }
 

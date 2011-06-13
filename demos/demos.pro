@@ -41,5 +41,16 @@ contains(mobility_modules,contacts) {
     }
 }
 
+# Connectivity
+contains(mobility_modules,connectivity):!win32 {
+    SUBDIRS += bttennis
+
+    contains(QT_CONFIG, declarative) {
+	SUBDIRS += qmltennis
+    }
+
+}
+
+
 sources.path = $$QT_MOBILITY_DEMOS
 INSTALLS += sources

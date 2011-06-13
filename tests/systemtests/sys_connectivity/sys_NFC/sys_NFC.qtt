@@ -1,0 +1,169 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/systeminfo
+
+testcase = {
+
+    Target_Detection_Notification: function()
+    {
+        prompt(twiki('*Get notification of target detection and loss*
+
+    1 Run the ndefeditor application
+    1 Select "Retrieve"
+    1 Verify a blue square appears in the upper left corner, this shows the application is waiting for an NFC card
+    1 Bring the card within 1 cm of the NFC sensor
+    1 Verify the blue square disappears indicating the card was detected
+        '));
+    },
+
+    Touched_Target_Information: function()
+    {
+        prompt(twiki('*Display information about a touched target*
+
+    1 Run the Bluewheel application then select "NFC"
+    1 Select "NFC Target Detection"
+    1 Select "start"
+    1 Bring the card within 1 cm of the NFC sensor
+    1 Verify a popup message appears that reads "target detected"
+    1 Take the sensor away from the card
+    1 Verify the message changes to "target lost"
+    1 Press okay until the messages disappears
+    1 Verify the "Target UID", "Type" and "Access methods" are shown as expected
+        '));
+    },
+
+    NDEF_Notification_Registration: function()
+    {
+      skip all;
+        prompt(twiki('*Register for NDEF notifications*
+
+    1 Currently no test application
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+        '));
+    },
+
+    NDEF_Notification_Deregistration: function()
+    {
+      skip all
+        prompt(twiki('*Unregister for NDEF notifications*
+
+    1 currently no test application
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+        '));
+    },
+
+    NDEF_Message_Display: function()
+    {
+        prompt(twiki('*Touch the device to a tag and display the NDEF message*
+
+    1 Run the ndefeditor application
+    1 Select "Retrieve"
+    1 Verify a blue square appears in the upper left corner, this shows the application is waiting for an NFC card
+    1 Bring the card within 1 cm of the NFC sensor
+    1 Verify the blue square disappears indicating the card was detected
+    1 Verify the target information is displayed by ndefeditor
+        '));
+    },
+
+    NDEF_Message_Write: function()
+    {
+        prompt(twiki('*Create an NDEF message and write it to a tag upon touch*
+
+    1 Run the ndefeditor application
+    1 Select clear to erase any existing records
+    1 Select "add" then "NFC Text Record" and fill in the fields with text
+    1 Select "add" a second time and select "NFC URI Record" and fill this field with a URL
+    1 Select "store"
+    1 Verify a yellow square appears in the upper left hand corner of the application indicating awaiting a tag to write to
+    1 Bring the card within 1 cm of the NFC sensor
+    1 Verify the yellow square disappears indicating the card was written to
+    1 Select "clear" to clear the fields and then press "Retrieve"
+    1 Bring the card within 1 cm of the NFC sensor
+    1 Verify the blue square disappears indicating the card was detected and read
+    1 Verify the fields are populated with the data that was entered previously
+        '));
+    },
+
+    Tag_Specific_Command_Write: function()
+    {
+      skip all;
+        prompt(twiki('*Send tag specific commands to a tag *
+
+    1 not enabled yet in bluewheel
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+        '));
+    },
+
+    LLCP_Connection: function()
+    {
+        prompt(twiki('*Initiates an LLCP connection*
+
+    1 Run the bttennis (bluetooth tennis) application on two NFC capable devices
+    1 Touch the two devices together to enable a handshake and bluetooth connection via NFC
+    1 Verify the devices link together and enable play
+        '));
+    }
+}

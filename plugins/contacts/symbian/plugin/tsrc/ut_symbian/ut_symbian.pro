@@ -49,6 +49,8 @@ symbian:
     
     BLD_INF_RULES.prj_exports += \
         "test_data.txt \epoc32\winscw\c\filtering\test_data.txt"
+    BLD_INF_RULES.prj_exports += \
+        "test_img.jpg \epoc32\winscw\c\data\test_img.jpg"
         
     CONFIG += symbian_test
 }

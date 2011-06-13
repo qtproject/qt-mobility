@@ -151,7 +151,6 @@ contains(mobility_modules,connectivity):!win32 {
         btchat \
         btfiletransfer \
         btscanner \
-        bttennis \
         ndefeditor
 
     contains(QT_CONFIG, declarative):SUBDIRS += declarative-connectivity
