@@ -254,8 +254,10 @@ void S60VideoPlayerSession::applicationGainedFocus()
 void S60VideoPlayerSession::applicationLostFocus()
 {
     if (QMediaPlayer::PlayingState == state()) {
+        if (!m_stream) {
         m_backendInitiatedPause = true;
         pause();
+        }
     }
 }
 
