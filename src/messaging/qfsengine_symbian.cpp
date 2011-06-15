@@ -180,12 +180,12 @@ void CFSEngine::cleanupFSBackend()
     }
     m_contentFetchOperations.clear();
 
+#ifdef FREESTYLEMAILMAPI12USED
     foreach (CFSContentStructureFetchOperation* operation, m_contentStructurefetchOperations) {
         delete operation;
     }
     m_contentStructurefetchOperations.clear();
 
-#ifdef FREESTYLEMAILMAPI12USED
     m_moveRequests.clear();
 #endif
 
@@ -1152,6 +1152,7 @@ bool CFSEngine::retrieveBody(QMessageServicePrivate& privateService, const QMess
             }
         }
     } else {
+#ifdef FREESTYLEMAILMAPI12USED
         CFSContentStructureFetchOperation* op = new CFSContentStructureFetchOperation(*this, privateService, emailMessage);
         emailMessage = NULL; // CFSContentStructureFetchOperation took emailMessage ownership
         if (op->fetch()) {
@@ -1160,6 +1161,7 @@ bool CFSEngine::retrieveBody(QMessageServicePrivate& privateService, const QMess
         } else {
             delete op;
         }
+#endif
     }
 
     if (emailMessage)
@@ -1748,13 +1750,13 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
         delete cfOp;
     }
 
+#ifdef FREESTYLEMAILMAPI12USED
     CFSContentStructureFetchOperation* csfOp = m_contentStructurefetchOperations.take(&privateService);
     if (csfOp) {
         csfOp->cancelFetch();
         delete csfOp;
     }
 
-#ifdef FREESTYLEMAILMAPI12USED
     foreach (EMailSyncRequest* req, m_syncRequests) {
         if (&req->m_observer == &privateService) {
             req->m_active = false;
@@ -3110,6 +3112,7 @@ QMessageAccountId CFSEngine::qMessageAccountIdFromFsMailboxId(TMailboxId mailbox
     return QMessageAccountId(addIdPrefix(QString::number(mailboxId.iId), SymbianHelpers::EngineTypeFreestyle));
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 void CFSEngine::contentStructureFetched(void* service, bool success)
 {
     QMessageServicePrivate* pService = reinterpret_cast<QMessageServicePrivate*>(service);
@@ -3126,6 +3129,7 @@ void CFSEngine::contentStructureFetched(void* service, bool success)
         delete op;
     }
 }
+#endif
 
 void CFSEngine::contentFetched(void* service, bool success)
 {
@@ -3200,6 +3204,7 @@ void CFSContentFetchOperation::DataFetchedL(const TInt aResult)
                               Q_ARG(bool, result));
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 CFSContentStructureFetchOperation::CFSContentStructureFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
                                                    MEmailMessage* message)
     : m_parentEngine(parentEngine),
@@ -3243,6 +3248,7 @@ void CFSContentStructureFetchOperation::DataFetchedL(const TInt aResult)
                               Q_ARG(void*, reinterpret_cast<void*>(&m_service)),
                               Q_ARG(bool, result));
 }
+#endif
 
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
