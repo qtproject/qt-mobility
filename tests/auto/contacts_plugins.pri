@@ -14,7 +14,7 @@ symbian{
     TARGET.CAPABILITY = ALL -TCB
 
     testplugin.sources = $${TARGET}.dll
-    testplugin.path = plugins/contacts
+    testplugin.path = $${QT_PLUGINS_BASE_DIR}/contacts
     DEPLOYMENT += testplugin
 
     target.path = plugins/contacts
