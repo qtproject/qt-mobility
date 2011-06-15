@@ -103,7 +103,7 @@ private:
     QString m_requestorPath;
     SocketRequestor *m_socketRequestor;
 
-    QList<int> m_pendingSockets;
+    QList<QPair<int, QVariantMap> > m_pendingSockets;
 
     QLlcpSocket::SocketError m_error;
 };
