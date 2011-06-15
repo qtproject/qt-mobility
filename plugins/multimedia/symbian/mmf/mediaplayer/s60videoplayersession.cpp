@@ -254,7 +254,7 @@ void S60VideoPlayerSession::applicationGainedFocus()
 void S60VideoPlayerSession::applicationLostFocus()
 {
     if (QMediaPlayer::PlayingState == state()) {
-        if (!m_stream) {
+        if (!m_isaudiostream) {
         m_backendInitiatedPause = true;
         pause();
         }
@@ -744,6 +744,14 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 #endif
         }
         if (KErrNone == error) {
+        // changes made to play without pausing in case of audio streaming use case
+            if (m_player->VideoFormatMimeType().Length() == 0) {
+            m_isaudiostream = true;
+            m_backendInitiatedPause = false;
+            play();
+            } else {
+            m_isaudiostream = false;
+            }
             applyPendingChanges(true); // force apply even though state is not Loaded
             if (KErrNone == this->error()) // applyPendingChanges() can call setError()
                 loaded();

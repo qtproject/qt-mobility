@@ -168,6 +168,7 @@ protected:
     QUrl m_UrlPath;
     bool m_stream;
     QMediaContent m_source;
+    bool m_isaudiostream;
 
 private:
     qreal m_playbackRate;
