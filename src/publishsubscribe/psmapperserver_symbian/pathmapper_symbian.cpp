@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
 const QString CrPathPrefix("cr");
 const QString PsPathPrefix("ps");
 const QString FmPathPrefix("fm");
+const QLatin1Char UrlParameterSeparator('?');
 
 // check if the path is for numeric access to central repository, publish&subscribe or featuremanager
 // (i.e. the path starts with "/cr/", "/ps/" or "/fm/")
@@ -93,6 +94,18 @@ static bool parseNumericPath(const QString &path, PathMapper::Target &target, qu
     }
 
     return success;
+}
+
+// Removes url-style parameter from path.
+// Example: Path "/cr/0x100012ab/0x1?raw" returns "/cr/0x100012ab/0x1"
+static QString removeUrlParameter(const QString &path)
+{
+    QString returnString = path;
+    int parameterMarkerIndex = returnString.lastIndexOf(UrlParameterSeparator, -1);
+    if (parameterMarkerIndex > 0)
+        returnString.chop(path.size() - parameterMarkerIndex);
+
+    return returnString;
 }
 
 CCRMLDirectoryMonitor::CCRMLDirectoryMonitor() : CActive(EPriorityStandard)
@@ -188,21 +201,21 @@ bool PathMapper::getChildren(const QString &path, QSet<QString> &children) const
 
 QStringList PathMapper::childPaths(const QString &path) const
 {
-    QString basePath = path;
+    QString basePath = removeUrlParameter(path);
     QStringList children;
     XQSettingsManager settingsManager;
 
     // In case of numeric cenrep, pubsub and featuremanager access, there can be no childpaths.
     // Just return the original path, if it is valid.
-    if (isNumericPath(path)) {
+    if (isNumericPath(basePath)) {
         Target target;
         quint32 category;
         quint32 key;
-        if (parseNumericPath(path, target, category, key)) {
+        if (parseNumericPath(basePath, target, category, key)) {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
             settingsManager.readItemValue(settingsKey);
             if (settingsManager.error() != XQSettingsManager::NotFoundError) {
-                children << path;
+                children << basePath;
             }
         }
         return children;
@@ -228,11 +241,13 @@ QStringList PathMapper::childPaths(const QString &path) const
 
 bool PathMapper::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
 {
-    if (isNumericPath(path))
-        return parseNumericPath(path, target, category, key);
+    QString pathWithoutParameter = removeUrlParameter(path);
+    
+    if (isNumericPath(pathWithoutParameter))
+        return parseNumericPath(pathWithoutParameter, target, category, key);
 
-    if (m_paths.contains(path)) {
-        const PathData &data = m_paths.value(path);
+    if (m_paths.contains(pathWithoutParameter)) {
+        const PathData &data = m_paths.value(pathWithoutParameter);
         target = data.m_target;
         category = data.m_category;
         key = data.m_key;

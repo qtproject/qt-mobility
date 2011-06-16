@@ -1,3 +1,4 @@
+
 ; Language
 &EN
 
@@ -13,5 +14,7 @@
 "/epoc32/release/armv5/urel/publishsubscribe_cenrep_mt.exe" - "!:\sys\bin\publishsubscribe_cenrep_mt.exe"
 "/epoc32/data/z/resource/apps/publishsubscribe_cenrep_mt.rsc" - "!:\resource\apps\publishsubscribe_cenrep_mt.rsc"
 "/epoc32/data/z/private/10003a3f/import/apps/publishsubscribe_cenrep_mt_reg.rsc" - "!:\private\10003a3f\import\apps\publishsubscribe_cenrep_mt_reg.rsc"
-"/epoc32/data/z/resource/qt/crml/test.qcrml" - "c:\resource\qt\crml\test.qcrml"
+"/epoc32/data/z/resource/qt/crml/moduletest_configurability.qcrml" - "c:\resource\qt\crml\moduletest_configurability.qcrml"
+"/epoc32/data/z/resource/qt/crml/moduletest_configurability_cr.qcrml" - "c:\resource\qt\crml\moduletest_configurability_cr.qcrml"
+"/epoc32/data/z/resource/qt/crml/moduletest_configurability_ps.qcrml" - "c:\resource\qt\crml\moduletest_configurability_ps.qcrml"
 @"mt_configurability_cenrep.sis", (0x10202BE9)

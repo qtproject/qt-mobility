@@ -55,12 +55,31 @@ private slots:
     void cleanup();          //after each
     void cleanupTestCase();  //after last
 
+    void readAndSetCenrep_data();
     void readAndSetCenrep();
-    void partialCenrepPath();
+    void readAndSetPubsub_data();
     void readAndSetPubsub();
 
     void invalidPath_data();
     void invalidPath();
+
+    void cenrepInteroperabilityQtToSymbian_data();
+    void cenrepInteroperabilityQtToSymbian();
+    void cenrepInteroperabilitySymbianToQt_data();
+    void cenrepInteroperabilitySymbianToQt();
+    void cenrepInteroparabilityDecodableBytearray_data();
+    void cenrepInteroparabilityDecodableBytearray();
+
+    void floatType();
+    void floatTypeProperty();
+    void stringParameter1_data();
+    void stringParameter1();
+    void stringParameter2_data();
+    void stringParameter2();
+    void stringRProperty1_data();
+    void stringRProperty1();
+    void stringRProperty2_data();
+    void stringRProperty2();
 
     void featManagerSimpleSubscriber_data();
     void featManagerSimpleSubscriber();

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="RProperty" uidValue="0xe056f50b">
+    <key ref="/publishsubscribe_mt/pubsub/int" int="0x1" />
+    <key ref="/publishsubscribe_mt/pubsub/string" int="0x3" />
+</repository>

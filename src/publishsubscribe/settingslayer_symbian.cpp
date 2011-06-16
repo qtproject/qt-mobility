@@ -41,6 +41,7 @@
 
 #include "settingslayer_symbian_p.h"
 #include <QVariant>
+#include <QTextCodec>
 #include "xqsettingskey_p.h"
 #include "xqpublishandsubscribeutils.h"
 
@@ -57,6 +58,25 @@ QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(SymbianSettingsLayer, symbianSettingsLayer);
 QVALUESPACE_AUTO_INSTALL_LAYER(SymbianSettingsLayer);
+
+const QString KeyTypeParameterRaw("raw");
+const QString KeyTypeParameterString("string");
+
+// Returns url-style parameter from path. If there is no parameter,
+// null QString is returned.
+// Example: Path "/cr/0x100012ab/0x1?raw/" returns: "raw"
+static QString getUrlParameter(const QString &path)
+{
+    int parameterMarkerIndex = path.lastIndexOf(QLatin1Char('?'), -1);
+    if (parameterMarkerIndex >= 0) {
+        QString typeParameter = path.mid(parameterMarkerIndex+1);
+        while (typeParameter.endsWith(QLatin1Char('/'))) {
+            typeParameter.chop(1);
+        }
+        return typeParameter;
+    }
+    return QString();
+}
 
 SymbianSettingsLayer::SymbianSettingsLayer()
 {
@@ -165,6 +185,8 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
 
     fullPath.append(value);
 
+    QString typeParameter = getUrlParameter(fullPath);
+    
     bool success = false;
     PathMapper::Target target;
     quint32 category;
@@ -179,7 +201,18 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
         } else {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
             QVariant readValue = m_settingsManager.readItemValue(settingsKey);
-            if (readValue.type() == QVariant::ByteArray) {
+            if (readValue.type() == QVariant::ByteArray && typeParameter == KeyTypeParameterString) {
+                // interpret the bytearray as utf-16 string
+                QTextCodec *codec = QTextCodec::codecForName("UTF-16");
+                QVariant resString;
+                if (codec) {
+                    resString = QVariant(codec->toUnicode(readValue.toByteArray()));
+                    *data = resString;
+                    success = true;
+                } else {
+                    success = false;
+                }
+            } else if (readValue.type() == QVariant::ByteArray && typeParameter != KeyTypeParameterRaw) {
                 QDataStream readStream(readValue.toByteArray());
                 QVariant serializedValue;
                 readStream >> serializedValue;
@@ -334,6 +367,8 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
         fullPath.append(QLatin1Char('/'));
 
     fullPath.append(value);
+    
+    QString typeParameter = getUrlParameter(fullPath);
 
     bool success = false;
     PathMapper::Target target;
@@ -362,9 +397,18 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
                 m_settingsManager.startMonitoring(settingsKey);
             }
 
-            if (data.type() == QVariant::Int || data.type() == QVariant::ByteArray) {
-                //Write integers and bytearrays as such
+            if (data.type() == QVariant::Int || data.type() == QVariant::ByteArray ||
+                    (target == PathMapper::TargetCRepository && data.type() == QVariant::Double)) {
+                //Write integers and bytearrays as such (and doubles to cenrep)
                 success = m_settingsManager.writeItemValue(settingsKey, data);
+            } else if (data.type() == QVariant::String && typeParameter == KeyTypeParameterString) {
+                // write native type string. need to convert it to utf-16, and write that into bytearray
+                QByteArray stringByteArray;
+                QTextCodec *codec = QTextCodec::codecForName("UTF-16");
+                if (codec) {
+                    stringByteArray = codec->fromUnicode(data.toString());
+                    success = m_settingsManager.writeItemValue(settingsKey, QVariant(stringByteArray));
+                }
             } else {
                 //Write other data types serialized into a bytearray
                 QByteArray byteArray;
