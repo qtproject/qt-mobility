@@ -56,10 +56,12 @@ meegoals::meegoals(QSensor *sensor)
 }
 
 void meegoals::start(){
-    Unsigned data(((ALSSensorChannelInterface*)m_sensorInterface)->lux());
-    m_reading.setLightLevel(getLightLevel(data.x()));
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
+    if (m_sensorInterface) {
+        Unsigned data(((ALSSensorChannelInterface*)m_sensorInterface)->lux());
+        m_reading.setLightLevel(getLightLevel(data.x()));
+        m_reading.setTimestamp(data.UnsignedData().timestamp_);
+        newReadingAvailable();
+    }
     meegosensorbase::start();
 }
 
@@ -76,7 +78,7 @@ void meegoals::slotDataAvailable(const Unsigned& data)
 
 bool meegoals::doConnect(){
     return QObject::connect(m_sensorInterface, SIGNAL(ALSChanged(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&)));
+                            this, SLOT(slotDataAvailable(const Unsigned&)));
 }
 
 

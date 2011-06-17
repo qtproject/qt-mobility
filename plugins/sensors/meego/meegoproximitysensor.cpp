@@ -53,10 +53,12 @@ meegoproximitysensor::meegoproximitysensor(QSensor *sensor)
 }
 
 void meegoproximitysensor::start(){
-    Unsigned data(((ProximitySensorChannelInterface*)m_sensorInterface)->proximity());
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
+    if (m_sensorInterface) {
+        Unsigned data(((ProximitySensorChannelInterface*)m_sensorInterface)->proximity());
+        m_reading.setClose(data.x()? true: false);
+        m_reading.setTimestamp(data.UnsignedData().timestamp_);
+        newReadingAvailable();
+    }
     meegosensorbase::start();
 }
 
@@ -73,7 +75,7 @@ void meegoproximitysensor::slotDataAvailable(const Unsigned& data)
 
 bool meegoproximitysensor::doConnect(){
     return (QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                           this, SLOT(slotDataAvailable(const Unsigned&))));
+                             this, SLOT(slotDataAvailable(const Unsigned&))));
 }
 
 
