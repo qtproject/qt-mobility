@@ -105,9 +105,6 @@ QMessageStore::QMessageStore(QObject *parent)
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
-    qDebug() << "QMessageStore::QMessageStore";
- //   d_ptr->initialize(this);
-    qDebug() << "QMessageStore::QMessageStore exit";
 
     connect(QMFStore::instance(), SIGNAL(accountRemoved(const QMessageAccountId &)),
             this, SIGNAL(accountRemoved(const QMessageAccountId &)));
