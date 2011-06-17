@@ -96,15 +96,16 @@ static bool parseNumericPath(const QString &path, PathMapper::Target &target, qu
     return success;
 }
 
-// Removes url-style parameter from path.
+// Removes url-style parameter from path (only know parameters are removed).
 // Example: Path "/cr/0x100012ab/0x1?raw" returns "/cr/0x100012ab/0x1"
 static QString removeUrlParameter(const QString &path)
 {
     QString returnString = path;
-    int parameterMarkerIndex = returnString.lastIndexOf(UrlParameterSeparator, -1);
-    if (parameterMarkerIndex > 0)
-        returnString.chop(path.size() - parameterMarkerIndex);
-
+    if (returnString.endsWith(KeyTypeParameterRaw))
+        returnString.chop(KeyTypeParameterRaw.size());
+    else if (returnString.endsWith(KeyTypeParameterString))
+        returnString.chop(KeyTypeParameterString.size());
+    
     return returnString;
 }
 

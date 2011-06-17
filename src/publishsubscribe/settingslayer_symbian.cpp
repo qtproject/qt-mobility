@@ -64,18 +64,14 @@ const QString KeyTypeParameterString("string");
 
 // Returns url-style parameter from path. If there is no parameter,
 // null QString is returned.
-// Example: Path "/cr/0x100012ab/0x1?raw/" returns: "raw"
+// Example: Path "/cr/0x100012ab/0x1?raw" returns: "raw"
 static QString getUrlParameter(const QString &path)
 {
     int parameterMarkerIndex = path.lastIndexOf(QLatin1Char('?'), -1);
-    if (parameterMarkerIndex >= 0) {
-        QString typeParameter = path.mid(parameterMarkerIndex+1);
-        while (typeParameter.endsWith(QLatin1Char('/'))) {
-            typeParameter.chop(1);
-        }
-        return typeParameter;
-    }
-    return QString();
+    if (parameterMarkerIndex >= 0)
+        return path.mid(parameterMarkerIndex+1);
+    else
+        return QString();
 }
 
 SymbianSettingsLayer::SymbianSettingsLayer()
