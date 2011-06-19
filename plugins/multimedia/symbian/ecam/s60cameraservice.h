@@ -65,6 +65,8 @@ QT_FORWARD_DECLARE_CLASS(S60ImageEncoderControl)
 QT_FORWARD_DECLARE_CLASS(S60CameraLocksControl)
 QT_FORWARD_DECLARE_CLASS(S60VideoRendererControl)
 QT_FORWARD_DECLARE_CLASS(S60VideoWindowControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraCaptureDestinationControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraCaptureBufferFormatControl)
 
 class S60CameraService : public QMediaService
 {
@@ -106,6 +108,8 @@ private: // Data
     S60CameraLocksControl           *m_locksControl;
     S60VideoRendererControl         *m_rendererControl;
     S60VideoWindowControl           *m_windowControl;
+    S60CameraCaptureDestinationControl *m_captureDestinationControl;
+    S60CameraCaptureBufferFormatControl *m_bufferFormatControl;
 };
 
 #endif // S60CAMERASERVICE_H

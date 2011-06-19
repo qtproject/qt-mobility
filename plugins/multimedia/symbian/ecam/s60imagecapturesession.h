@@ -208,6 +208,9 @@ public: // Methods
     void cancelCapture();
     void releaseImageBuffer();
 
+    // Capture Destination
+    void setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination);
+
     // Image Resolution
     QSize captureSize() const;
     QSize minimumCaptureSize();
@@ -224,6 +227,10 @@ public: // Methods
     // Image Quality
     QtMultimediaKit::EncodingQuality captureQuality() const;
     void setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality);
+
+    // Image Format (Buffer Capture)
+    QList<QVideoFrame::PixelFormat> supportedBufferCaptureFormats() const;
+    void setBufferCaptureFormat(const QVideoFrame::PixelFormat format);
 
     // S60 3.1 Focus Control (S60 3.2 and later via S60CameraSettings class)
     bool isFocusSupported() const;
@@ -302,11 +309,15 @@ private: // Internal
     void processFileName(const QString &fileName);
     TFileName convertImagePath();
 
+    QVideoFrame generateImageBuffer(TDesC8 *aData);
+
 signals: // Notifications
 
     void stateChanged(QCamera::State);
     void advancedSettingChanged();
     void captureSizeChanged(const QSize&);
+    void destinationChanged(const QCameraImageCapture::CaptureDestinations);
+    void bufferCaptureFormatChanged(const QVideoFrame::PixelFormat);
 
     // Error signals
     void cameraError(int, const QString&);          // For QCamera::error
@@ -316,6 +327,7 @@ signals: // Notifications
     void readyForCaptureChanged(bool);
     void imageExposed(int);
     void imageCaptured(const int, const QImage&);
+    void imageAvailable(const int, const QVideoFrame&);
     void imageSaved(const int, const QString&);
 
     // Focus notifications
@@ -339,11 +351,14 @@ private: // Data
     TInt                    m_activeDeviceIndex;
     bool                    m_cameraStarted;
     ImageCaptureState       m_icState;
+    QCameraImageCapture::CaptureDestinations m_captureDestionation;
     QStringList             m_supportedImageCodecs;
+    QList<QVideoFrame::PixelFormat> m_supportedBufferCaptureFormats;
     QString                 m_currentCodec;
     CCamera::TFormat        m_currentFormat;
     QSize                   m_captureSize;
     int                     m_symbianImageQuality;
+    QVideoFrame::PixelFormat  m_bufferCaptureFormat;
     bool                    m_captureSettingsSet;
     QString                 m_stillCaptureFileName;
     QString                 m_requestedStillCaptureFileName;

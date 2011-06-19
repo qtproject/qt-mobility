@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,62 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef S60CAMERAIMAGECAPTURECONTROL_H
-#define S60CAMERAIMAGECAPTURECONTROL_H
+#ifndef S60CAMERACAPTUREDESTINATIONCONTROL_H
+#define S60CAMERACAPTUREDESTINATIONCONTROL_H
 
-#include "qcameraimagecapturecontrol.h"
+#include <qcameracapturedestinationcontrol.h>
 
 QT_USE_NAMESPACE
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
-QT_FORWARD_DECLARE_CLASS(S60CameraControl)
 
 /*
- * Control for image capture operations.
+ * Control to setup image capture destination.
  */
-class S60CameraImageCaptureControl : public QCameraImageCaptureControl
+class S60CameraCaptureDestinationControl : public QCameraCaptureDestinationControl
 {
     Q_OBJECT
 
-public: // Contructors & Destrcutor
+public: // Constructors & Destructor
 
-    S60CameraImageCaptureControl(QObject *parent = 0);
-    S60CameraImageCaptureControl(S60CameraService *service,
-                                 S60ImageCaptureSession *session,
-                                 QObject *parent = 0);
-    ~S60CameraImageCaptureControl();
+    S60CameraCaptureDestinationControl(QObject *parent = 0);
+    S60CameraCaptureDestinationControl(S60ImageCaptureSession *session, QObject *parent = 0);
+    ~S60CameraCaptureDestinationControl();
 
-public: // QCameraImageCaptureControl
+public: // QCameraCaptureDestinationControl
 
-    bool isReadyForCapture() const;
-
-    // Drive Mode
-    QCameraImageCapture::DriveMode driveMode() const;
-    void setDriveMode(QCameraImageCapture::DriveMode mode);
-
-    // Capture
-    int capture(const QString &fileName);
-    void cancelCapture();
+    // Capture Destination
+    bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const;
+    QCameraImageCapture::CaptureDestinations captureDestination() const;
+    void setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination);
 
 /*
-Q_SIGNALS: // QCameraImageCaptureControl
-    void readyForCaptureChanged(bool);
+Q_SIGNALS: // QCameraCaptureDestinationControl
 
-    void imageExposed(int id);
-    void imageCaptured(int id, const QImage &preview);
-    void imageAvailable(int id, const QVideoFrame &image);
-    void imageSaved(int id, const QString &fileName);
-
-    void error(int id, int error, const QString &errorString);
+    void captureDestinationChanged(QCameraImageCapture::CaptureDestinations);
 */
+
+private slots: // Internal
+
+    void handleCaptureDestinationChange(const QCameraImageCapture::CaptureDestinations destination);
 
 private: // Data
 
-    S60ImageCaptureSession          *m_session;
-    S60CameraService                *m_service;
-    S60CameraControl                *m_cameraControl;
-    QCameraImageCapture::DriveMode  m_driveMode;
+    S60ImageCaptureSession                      *m_session;
+    S60CameraService                            *m_service;
+    QCameraImageCapture::CaptureDestinations    m_captureDestination;
 };
 
-#endif // S60CAMERAIMAGECAPTURECONTROL_H
+#endif // S60CAMERACAPTUREDESTINATIONCONTROL_H

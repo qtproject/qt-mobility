@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,62 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef S60CAMERAIMAGECAPTURECONTROL_H
-#define S60CAMERAIMAGECAPTURECONTROL_H
+#ifndef S60CAMERACAPTUREBUFFERFORMATCONTROL_H
+#define S60CAMERACAPTUREBUFFERFORMATCONTROL_H
 
-#include "qcameraimagecapturecontrol.h"
+#include <qcameracapturebufferformatcontrol.h>
 
 QT_USE_NAMESPACE
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
-QT_FORWARD_DECLARE_CLASS(S60CameraControl)
 
 /*
- * Control for image capture operations.
+ * Control to setup buffer image capture format.
  */
-class S60CameraImageCaptureControl : public QCameraImageCaptureControl
+class S60CameraCaptureBufferFormatControl : public QCameraCaptureBufferFormatControl
 {
     Q_OBJECT
 
-public: // Contructors & Destrcutor
+public: // Constructors & Destructor
 
-    S60CameraImageCaptureControl(QObject *parent = 0);
-    S60CameraImageCaptureControl(S60CameraService *service,
-                                 S60ImageCaptureSession *session,
-                                 QObject *parent = 0);
-    ~S60CameraImageCaptureControl();
+    S60CameraCaptureBufferFormatControl(QObject *parent = 0);
+    S60CameraCaptureBufferFormatControl(S60ImageCaptureSession *session, QObject *parent = 0);
+    ~S60CameraCaptureBufferFormatControl();
 
-public: // QCameraImageCaptureControl
+public: // QCameraCaptureBufferFormatControl
 
-    bool isReadyForCapture() const;
-
-    // Drive Mode
-    QCameraImageCapture::DriveMode driveMode() const;
-    void setDriveMode(QCameraImageCapture::DriveMode mode);
-
-    // Capture
-    int capture(const QString &fileName);
-    void cancelCapture();
+    // Image Buffer Format
+    QList<QVideoFrame::PixelFormat> supportedBufferFormats() const;
+    QVideoFrame::PixelFormat bufferFormat() const;
+    void setBufferFormat(const QVideoFrame::PixelFormat format);
 
 /*
-Q_SIGNALS: // QCameraImageCaptureControl
-    void readyForCaptureChanged(bool);
+Q_SIGNALS: // QCameraCaptureBufferFormatControl
 
-    void imageExposed(int id);
-    void imageCaptured(int id, const QImage &preview);
-    void imageAvailable(int id, const QVideoFrame &image);
-    void imageSaved(int id, const QString &fileName);
-
-    void error(int id, int error, const QString &errorString);
+    void bufferFormatChanged(QVideoFrame::PixelFormat);
 */
+
+private slots: // Internal
+
+    void bufferFormatChanged(const QVideoFrame::PixelFormat format);
 
 private: // Data
 
     S60ImageCaptureSession          *m_session;
     S60CameraService                *m_service;
-    S60CameraControl                *m_cameraControl;
-    QCameraImageCapture::DriveMode  m_driveMode;
+    QVideoFrame::PixelFormat        m_bufferCaptureFormat;
 };
 
-#endif // S60CAMERAIMAGECAPTURECONTROL_H
+#endif // S60CAMERACAPTUREBUFFERFORMATCONTROL_H
