@@ -53,13 +53,13 @@
 
 QT_USE_NAMESPACE
 
-class S60CameraService;
-class S60ImageCaptureSession;
-class S60VideoCaptureSession;
-class S60CameraSettings;
-class CCameraEngine;
-class S60CameraViewfinderEngine;
-class QTimer;
+QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60CameraSettings)
+QT_FORWARD_DECLARE_CLASS(CCameraEngine)
+QT_FORWARD_DECLARE_CLASS(S60CameraViewfinderEngine)
+QT_FORWARD_DECLARE_CLASS(QTimer)
 
 /*
  * Control for controlling camera base operations (e.g. start/stop and capture

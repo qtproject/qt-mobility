@@ -61,12 +61,12 @@
 
 QT_USE_NAMESPACE
 
-class S60CameraService;
-class CImageDecoder;
-class CImageEncoder;
-class CFrameImageData;
-class RFs;
-class S60ImageCaptureSession;
+QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(CImageDecoder)
+QT_FORWARD_DECLARE_CLASS(CImageEncoder)
+QT_FORWARD_DECLARE_CLASS(CFrameImageData)
+QT_FORWARD_DECLARE_CLASS(RFs)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 
 /*
  * This class implements asynchronous image decoding service for the

@@ -47,24 +47,24 @@
 
 QT_USE_NAMESPACE
 
-class S60MediaContainerControl;
-class S60VideoEncoderControl;
-class S60AudioEncoderControl;
-class S60CameraControl;
-class S60VideoDeviceControl;
-class S60MediaRecorderControl;
-class S60ImageCaptureSession;
-class S60VideoCaptureSession;
-class S60CameraFocusControl;
-class S60CameraExposureControl;
-class S60CameraFlashControl;
-class S60CameraImageProcessingControl;
-class S60CameraImageCaptureControl;
-class S60VideoWidgetControl;
-class S60ImageEncoderControl;
-class S60CameraLocksControl;
-class S60VideoRendererControl;
-class S60VideoWindowControl;
+QT_FORWARD_DECLARE_CLASS(S60MediaContainerControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoEncoderControl)
+QT_FORWARD_DECLARE_CLASS(S60AudioEncoderControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoDeviceControl)
+QT_FORWARD_DECLARE_CLASS(S60MediaRecorderControl)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60CameraFocusControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraExposureControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraFlashControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraImageProcessingControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraImageCaptureControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoWidgetControl)
+QT_FORWARD_DECLARE_CLASS(S60ImageEncoderControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraLocksControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoRendererControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoWindowControl)
 
 class S60CameraService : public QMediaService
 {

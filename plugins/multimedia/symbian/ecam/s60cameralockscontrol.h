@@ -47,10 +47,10 @@
 
 QT_USE_NAMESPACE
 
-class S60CameraService;
-class S60ImageCaptureSession;
-class S60CameraSettings;
-class S60CameraFocusControl;
+QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60CameraSettings)
+QT_FORWARD_DECLARE_CLASS(S60CameraFocusControl)
 
 /*
  * Control for searching and locking 3A algorithms (AutoFocus, AutoExposure

@@ -46,9 +46,9 @@
 
 QT_USE_NAMESPACE
 
-class S60CameraService;
-class S60ImageCaptureSession;
-class S60CameraControl;
+QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60CameraControl)
 
 /*
  * Control for image capture operations.
