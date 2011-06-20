@@ -45,10 +45,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivateSingleton)
 
 #ifdef QT_SIMULATOR
-QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivate(); }
+QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!
@@ -57,6 +57,12 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \inmodule QtSystemInfo
     \brief The QSystemDeviceInfo class provides access to device information from the system.
     \since 1.0
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
 */
 
 /*!
@@ -65,6 +71,10 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \inmodule QtSystemInfo
     \brief The ProfileDetails class provides access to details of the currently active phone profile.
     \since 1.2
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
 */
 
 /*!
@@ -246,8 +256,12 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 */
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent)
-    , d(deviceInfoPrivate())
 {
+#ifdef Q_OS_SYMBIAN
+    d = new QSystemDeviceInfoPrivate();
+#else
+    d = deviceInfoPrivateSingleton();
+#endif
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
     qRegisterMetaType<QSystemDeviceInfo::ThermalState>("QSystemDeviceInfo::ThermalState");
@@ -264,6 +278,9 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
  */
 QSystemDeviceInfo::~QSystemDeviceInfo()
 {
+#ifdef Q_OS_SYMBIAN
+    delete d;
+#endif
 }
 
 /*!
@@ -365,7 +382,7 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
 */
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 {
-    return deviceInfoPrivate()->inputMethodType();
+    return d->inputMethodType();
 }
 
 /*!
@@ -377,7 +394,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 */
 QString QSystemDeviceInfo::imei()
 {
-    return deviceInfoPrivate()->imei();
+    return d->imei();
 }
 
 /*!
@@ -389,7 +406,7 @@ QString QSystemDeviceInfo::imei()
 */
 QString QSystemDeviceInfo::imsi()
 {
-    return deviceInfoPrivate()->imsi();
+    return d->imsi();
 }
 
 /*!
@@ -402,7 +419,7 @@ QString QSystemDeviceInfo::imsi()
 */
 QString QSystemDeviceInfo::manufacturer()
 {
-    return deviceInfoPrivate()->manufacturer();
+    return d->manufacturer();
 }
 
 /*!
@@ -416,7 +433,7 @@ QString QSystemDeviceInfo::manufacturer()
 */
 QString QSystemDeviceInfo::model()
 {
-    return deviceInfoPrivate()->model();
+    return d->model();
 }
 
 /*!
@@ -429,7 +446,7 @@ QString QSystemDeviceInfo::model()
 */
 QString QSystemDeviceInfo::productName()
 {
-    return deviceInfoPrivate()->productName();
+    return d->productName();
 }
 /*!
     \property QSystemDeviceInfo::batteryLevel
@@ -440,7 +457,7 @@ QString QSystemDeviceInfo::productName()
 */
 int QSystemDeviceInfo::batteryLevel() const
 {
-    return deviceInfoPrivate()->batteryLevel();
+    return d->batteryLevel();
 }
 
 /*!
@@ -474,7 +491,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
 */
 QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
 {
-    return deviceInfoPrivate()->simStatus();
+    return d->simStatus();
 }
 
 /*!
@@ -486,7 +503,7 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
 */
 bool QSystemDeviceInfo::isDeviceLocked()
 {
-    return deviceInfoPrivate()->isDeviceLocked();
+    return d->isDeviceLocked();
 }
 
 /*!
@@ -498,7 +515,7 @@ bool QSystemDeviceInfo::isDeviceLocked()
 */
 QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 {
-    return deviceInfoPrivate()->currentProfile();
+    return d->currentProfile();
 }
 
 /*!
@@ -510,7 +527,7 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 */
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 {
-    return deviceInfoPrivate()->currentPowerState();
+    return d->currentPowerState();
 }
 
 /*!
@@ -522,7 +539,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 */
 QSystemDeviceInfo::ThermalState QSystemDeviceInfo::currentThermalState()
 {
-    return deviceInfoPrivate()->currentThermalState();
+    return d->currentThermalState();
 }
 
 /*!
@@ -534,7 +551,7 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfo::currentThermalState()
 */
 bool QSystemDeviceInfo::currentBluetoothPowerState()
 {
-    return deviceInfoPrivate()->currentBluetoothPowerState();
+    return d->currentBluetoothPowerState();
 }
 
 /*!
@@ -546,7 +563,7 @@ bool QSystemDeviceInfo::currentBluetoothPowerState()
 */
 QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardTypes()
 {
-    return deviceInfoPrivate()->keyboardTypes();
+    return d->keyboardTypes();
 }
 
 /*!
@@ -558,7 +575,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardTypes()
 */
 bool QSystemDeviceInfo::isWirelessKeyboardConnected()
 {
-    return deviceInfoPrivate()->isWirelessKeyboardConnected();
+    return d->isWirelessKeyboardConnected();
 }
 
 /*!
@@ -570,7 +587,7 @@ bool QSystemDeviceInfo::isWirelessKeyboardConnected()
 */
 bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 {
-    return deviceInfoPrivate()->isKeyboardFlippedOpen();
+    return d->isKeyboardFlippedOpen();
 }
 
 /*!
@@ -579,7 +596,7 @@ bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 */
 bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
-    return deviceInfoPrivate()->keypadLightOn(type);
+    return d->keypadLightOn(type);
 }
 
 /*!
@@ -591,7 +608,7 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 */
 QByteArray QSystemDeviceInfo::uniqueDeviceID()
 {
-    return deviceInfoPrivate()->uniqueDeviceID();
+    return d->uniqueDeviceID();
 }
 
 /*!
@@ -604,7 +621,7 @@ QByteArray QSystemDeviceInfo::uniqueDeviceID()
 */
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 {
-    return deviceInfoPrivate()->lockStatus();
+    return d->lockStatus();
 }
 
 /*!
@@ -653,7 +670,7 @@ QSystemDeviceInfo::ProfileDetails::~ProfileDetails()
 */
 int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
 {
-    return deviceInfoPrivate()->messageRingtoneVolume();
+    return deviceInfoPrivateSingleton()->messageRingtoneVolume();
 }
 
 /*!
@@ -662,7 +679,7 @@ int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
 */
 int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 {
-    return deviceInfoPrivate()->voiceRingtoneVolume();
+    return deviceInfoPrivateSingleton()->voiceRingtoneVolume();
 }
 
 /*!
@@ -671,7 +688,7 @@ int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 */
 bool QSystemDeviceInfo::ProfileDetails::vibrationActive() const
 {
-    return deviceInfoPrivate()->vibrationActive();
+    return deviceInfoPrivateSingleton()->vibrationActive();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"

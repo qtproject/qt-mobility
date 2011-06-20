@@ -67,9 +67,10 @@ QLlcpSocketPrivate::QLlcpSocketPrivate(QLlcpSocket *q)
 {
 }
 
-QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int readFd)
-:   q_ptr(0), m_connection(connection), m_port(0), m_socketRequestor(0), m_fd(readFd),
-    m_pendingBytes(0),
+QLlcpSocketPrivate::QLlcpSocketPrivate(const QDBusConnection &connection, int fd,
+                                       const QVariantMap &properties)
+:   q_ptr(0), m_properties(properties), m_connection(connection), m_port(0), m_socketRequestor(0),
+    m_fd(fd), m_pendingBytes(0),
     m_state(QLlcpSocket::ConnectedState), m_error(QLlcpSocket::UnknownSocketError)
 {
     m_readNotifier = new QSocketNotifier(m_fd, QSocketNotifier::Read, this);

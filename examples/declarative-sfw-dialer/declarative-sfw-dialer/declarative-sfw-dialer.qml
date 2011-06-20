@@ -103,9 +103,9 @@ Rectangle {
     {
         dialerObject = dialerList.dialService.serviceObject
 
-        serviceDetails.text = "Selected dial service:" + "\n   " + 
-                               dialerList.dialService.serviceName + 
-                               " (" + dialerList.dialService.majorVersion + 
+        serviceDetails.text = "Selected dial service:" + "\n   " +
+                               dialerList.dialService.serviceName +
+                               " (" + dialerList.dialService.majorVersion +
                                "." + dialerList.dialService.minorVersion + ")";
     }
     
@@ -147,8 +147,9 @@ Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
         onDial: {
-            if (activeCall == false) {
+            if (activeCall === false) {
                 if (dialerList.dialService != 0) {
+                    dialerList.allowselction = false;
                     var o = dialerObject;
                     status.text = "Dialing " + numberToDial +"...";
                     dialScreen.currentDialer = o;
@@ -158,10 +159,11 @@ Rectangle {
             }
         }
         onHangup: {
-            if (activeCall) {
+            if (activeCall === true) {
                 if (dialScreen.currentDialer != 0) {
                     dialScreen.currentDialer.hangup();
                 }
+                dialerList.allowselction = true;
                 status.text = "Hang up";
             }
         }

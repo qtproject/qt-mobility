@@ -78,5 +78,49 @@ testcase = {
     1. Click on Send button
     1. Verify that the message is echoed to the message box in the middle of current window
         '));
+    },
+
+
+    Find_available_services : function()
+    {
+        prompt(twiki('*Find available services*
+
+    1. The purpose of this test is to list all available services
+    1. Start the sfwecho_client application (it will ensure the sfw server is running automatically)
+    1. Start the servicebrowser application
+    1. Verify that a list of available services is displayed
+    1. Verify that one of the available services is "EchoService"
+        '));
+    },
+    
+    
+    Find_service_interfaces : function()
+    {
+        prompt(twiki('*Find service interfaces*
+
+    1. The purpose of this test is to list all available interfaces for a service
+    1. Start the sfwecho_client application (it will ensure the sfw server is running automatically)
+    1. Start the servicebrowser application
+    1. Select "EchoService" from the list of services (on Symbian select "EchoService" from the list and then "Interfaces" from the pulldown menu)
+    1. Verify the interfaces implemented by Echo Service are displayed
+    1. Repeat this with another service
+    1. Verify the interfaces for this other service are also displayed
+        '));
+    },
+
+
+    Look_up_interface_attributes : function()
+    {
+        prompt(twiki('*Look up interface attributes*
+
+    1. The purpose of this test is to list all available attributes for a service interface
+    1. Start the sfwecho_client application (it will ensure the sfw server is running automatically)
+    1. Start the servicebrowser application
+    1. Select "EchoService" from the list of services (on Symbian select "EchoService" from the list and then "Interfaces" from the pulldown menu)
+    1. From the list of interfaces select one (on Symbian select an interface then select "Attributes" from the pulldown menu)
+    1. Verify the attributes for this interface are shown
+    1. Repeat this test choosing a different service
+    1. Verify the attributes for this new service are also shown
+        '));
     }
 }
