@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/documentgallery
+//TESTED_COMPONENT=src/gallery
 
 #include <qgalleryfilter.h>
 #include <qgalleryproperty.h>
