@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -43,9 +43,10 @@
 
 #include <qmobilityglobal.h>
 
-#include <QtGui/QWidget>
+#include <QtCore/QObject>
 
-QT_FORWARD_DECLARE_CLASS(QLabel)
+QT_FORWARD_DECLARE_CLASS(QUrl)
+QT_FORWARD_DECLARE_CLASS(QPixmap)
 
 QTM_BEGIN_NAMESPACE
 class QNearFieldTarget;
@@ -54,24 +55,19 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class AnnotatedUrl : public QWidget
+class AnnotatedUrl : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit AnnotatedUrl(QWidget *parent = 0);
+    explicit AnnotatedUrl(QObject *parent = 0);
     ~AnnotatedUrl();
+
+signals:
+    void annotatedUrl(const QUrl &url, const QString &title, const QPixmap &pixmap);
 
 public slots:
     void handleMessage(const QNdefMessage &message, QNearFieldTarget *target);
-
-protected:
-    void mouseReleaseEvent(QMouseEvent *event);
-
-private:
-    QLabel *m_image;
-    QLabel *m_title;
-    QLabel *m_url;
 };
 
 #endif // ANNOTATEDURL_H

@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -43,6 +43,8 @@
 
 #include <QtGui/QMainWindow>
 
+QT_FORWARD_DECLARE_CLASS(QUrl)
+
 namespace Ui {
     class MainWindow;
 }
@@ -54,6 +56,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void displayAnnotatedUrl(const QUrl &url, const QString &title, const QPixmap &pixmap);
+
+protected:
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
     Ui::MainWindow *ui;
