@@ -199,7 +199,7 @@ void TelepathyEngine::addAccount(const Tp::AccountPtr &acc)
 							       QMessageAddress(QMessageAddress::Phone, accountAddress),
 							       QMessage::Sms);
 	m_accounts.insert(accountId, AccountPair(acc, account));
-	qDebug() << "SMS account Id:" << accountId << "cmname:" << acc->cmName()  << "protocol:" << acc->protocolName() << "servicename" << acc->serviceName(); 
+        QPRETTYDEBUG("SMS account Id:" << accountId << "cmname:" << acc->cmName()  << "protocol:" << acc->protocolName() << "servicename" << acc->serviceName());
     } else { 
 	qWarning() << "Protocol " << acc->protocolName() << "with connectionmanager " << cm << "Is not yet supported";
     }
@@ -214,7 +214,7 @@ bool TelepathyEngine::sendMessage(QMessage &message, QMessageService *service)
     bool retVal(false);	
 
     QString id = message.parentAccountId().toString();
-    qDebug() << __FUNCTION__ << "accountId: " << id;
+    QPRETTYDEBUG("accountId: " << id);
 
     if (m_accounts.contains(id)) {
 	Tp::AccountPtr acc = m_accounts[id].first;
@@ -346,7 +346,7 @@ SendRequest::SendRequest(const QMessage &message, QMessageService *service)
 
 SendRequest::~SendRequest()
 {
-    qDebug() << "SendRequest::~SendRequest()";
+    QPRETTYDEBUG("");
 }
 
 QStringList SendRequest::to() const
@@ -393,10 +393,11 @@ void SendRequest::finished(Tp::PendingOperation *operation)
 
 void SendRequest::onServiceDestroyed(QObject*)
 {
-    qDebug() << __PRETTY_FUNCTION__ ;
+    QDEBUG_FUNCTION_BEGIN
     _service = 0;
     // To be sure that instance is deleted
     deleteLater();
+    QDEBUG_FUNCTION_END
 }
 
 void SendRequest::down()
