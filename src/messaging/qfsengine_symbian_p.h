@@ -238,7 +238,9 @@ public:
 public slots:
     void cleanupFSBackend();
     void contentFetched(void* service, bool success);
+#ifdef FREESTYLEMAILMAPI12USED
     void contentStructureFetched(void* service, bool success);
+#endif
 
 private:
 
@@ -321,7 +323,9 @@ private:
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
     mutable QMap<QMessageServicePrivate*, CFSContentFetchOperation*> m_contentFetchOperations;
+#ifdef FREESTYLEMAILMAPI12USED
     mutable QMap<QMessageServicePrivate*, CFSContentStructureFetchOperation*> m_contentStructurefetchOperations;
+#endif
     mutable bool m_messageQueryActive;
     TMailboxId m_mailboxId;
     QMessageStorePrivate* ipMessageStorePrivate;
@@ -372,6 +376,7 @@ private:
     friend class CFSEngine;
 };
 
+#ifdef FREESTYLEMAILMAPI12USED
 class CFSContentStructureFetchOperation : public QObject, MEmailMessageObserver
 {
     Q_OBJECT
@@ -394,6 +399,7 @@ private:
 
     friend class CFSEngine;
 };
+#endif
 
 class CFSMessagesFindOperation : public QObject
 {
