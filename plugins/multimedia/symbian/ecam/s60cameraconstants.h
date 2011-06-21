@@ -42,6 +42,7 @@
 #ifndef S60CAMERACONSTANTS_H
 #define S60CAMERACONSTANTS_H
 
+#include <QCameraImageCapture>
 //=============================================================================
 
 // GENERAL SETTINGS
@@ -71,6 +72,7 @@
 
 #define KDefaultImagePath               QLatin1String("c:\\Data\\Images")
 #define KDefaultImageFileName           QLatin1String("image.jpg")
+const QCameraImageCapture::CaptureDestination KDefaultCaptureDestination = QCameraImageCapture::CaptureToFile;
 #define KDefaultImageCodec              QLatin1String("image/jpeg")
 #define KDefaultImageFormatPrimaryCam   CCamera::EFormatExif
 #ifdef SYMBIAN_3_PLATFORM
@@ -81,6 +83,8 @@
 #define KDefaultImageResolution         QSize(2048, 1536)
 #endif // SYMBIAN_3_PLATFORM
 #define KSymbianImageQualityCoefficient 25
+const CCamera::TFormat KDefaultBufferCaptureSymbianFormat   = CCamera::EFormatExif;
+const QVideoFrame::PixelFormat KDefaultBufferCaptureQtFormat    = QVideoFrame::Format_Jpeg;
 // This must be divisible by 4 and creater or equal to 8
 #define KSnapshotDownScaleFactor        8
 #define KSnapshotMinWidth               640

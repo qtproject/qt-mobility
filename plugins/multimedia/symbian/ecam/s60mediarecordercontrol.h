@@ -50,9 +50,9 @@
 
 QT_USE_NAMESPACE
 
-class S60VideoCaptureSession;
-class S60CameraService;
-class S60CameraControl;
+QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(S60CameraControl)
 
 /*
  * Control for video recording operations.

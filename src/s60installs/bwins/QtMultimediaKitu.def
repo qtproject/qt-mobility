@@ -1621,4 +1621,45 @@ EXPORTS
 	?configurationChanged@QMediaNetworkAccessControl@@IAEXABVQNetworkConfiguration@@@Z @ 1620 NONAME ; void QMediaNetworkAccessControl::configurationChanged(class QNetworkConfiguration const &)
 	?tr@QMediaNetworkAccessControl@@SA?AVQString@@PBD0@Z @ 1621 NONAME ; class QString QMediaNetworkAccessControl::tr(char const *, char const *)
 	?qt_metacast@QMediaNetworkAccessControl@@UAEPAXPBD@Z @ 1622 NONAME ; void * QMediaNetworkAccessControl::qt_metacast(char const *)
+	?qt_metacast@QCameraCaptureBufferFormatControl@@UAEPAXPBD@Z @ 1623 NONAME ; void * QCameraCaptureBufferFormatControl::qt_metacast(char const *)
+	?trUtf8@QCameraCaptureDestinationControl@@SA?AVQString@@PBD0@Z @ 1624 NONAME ; class QString QCameraCaptureDestinationControl::trUtf8(char const *, char const *)
+	?tr@QCameraCaptureBufferFormatControl@@SA?AVQString@@PBD0@Z @ 1625 NONAME ; class QString QCameraCaptureBufferFormatControl::tr(char const *, char const *)
+	?bufferFormat@QCameraImageCapture@@QBE?AW4PixelFormat@QVideoFrame@@XZ @ 1626 NONAME ; enum QVideoFrame::PixelFormat QCameraImageCapture::bufferFormat(void) const
+	?imageAvailable@QCameraImageCaptureControl@@IAEXHABVQVideoFrame@@@Z @ 1627 NONAME ; void QCameraImageCaptureControl::imageAvailable(int, class QVideoFrame const &)
+	??_EQCameraCaptureDestinationControl@@UAE@I@Z @ 1628 NONAME ; QCameraCaptureDestinationControl::~QCameraCaptureDestinationControl(unsigned int)
+	?qt_metacall@QCameraCaptureDestinationControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1629 NONAME ; int QCameraCaptureDestinationControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??1QCameraCaptureDestinationControl@@UAE@XZ @ 1630 NONAME ; QCameraCaptureDestinationControl::~QCameraCaptureDestinationControl(void)
+	?tr@QCameraCaptureDestinationControl@@SA?AVQString@@PBD0@Z @ 1631 NONAME ; class QString QCameraCaptureDestinationControl::tr(char const *, char const *)
+	?getStaticMetaObject@QCameraCaptureDestinationControl@@SAABUQMetaObject@@XZ @ 1632 NONAME ; struct QMetaObject const & QCameraCaptureDestinationControl::getStaticMetaObject(void)
+	?tr@QCameraCaptureDestinationControl@@SA?AVQString@@PBD0H@Z @ 1633 NONAME ; class QString QCameraCaptureDestinationControl::tr(char const *, char const *, int)
+	?imageAvailable@QCameraImageCapture@@IAEXHABVQVideoFrame@@@Z @ 1634 NONAME ; void QCameraImageCapture::imageAvailable(int, class QVideoFrame const &)
+	?isCaptureDestinationSupported@QCameraImageCapture@@QBE_NV?$QFlags@W4CaptureDestination@QCameraImageCapture@@@@@Z @ 1635 NONAME ; bool QCameraImageCapture::isCaptureDestinationSupported(class QFlags<enum QCameraImageCapture::CaptureDestination>) const
+	?trUtf8@QCameraCaptureBufferFormatControl@@SA?AVQString@@PBD0@Z @ 1636 NONAME ; class QString QCameraCaptureBufferFormatControl::trUtf8(char const *, char const *)
+	?bufferFormatChanged@QCameraCaptureBufferFormatControl@@IAEXW4PixelFormat@QVideoFrame@@@Z @ 1637 NONAME ; void QCameraCaptureBufferFormatControl::bufferFormatChanged(enum QVideoFrame::PixelFormat)
+	?setCaptureDestination@QCameraImageCapture@@QAEXV?$QFlags@W4CaptureDestination@QCameraImageCapture@@@@@Z @ 1638 NONAME ; void QCameraImageCapture::setCaptureDestination(class QFlags<enum QCameraImageCapture::CaptureDestination>)
+	?trUtf8@QCameraCaptureBufferFormatControl@@SA?AVQString@@PBD0H@Z @ 1639 NONAME ; class QString QCameraCaptureBufferFormatControl::trUtf8(char const *, char const *, int)
+	?imageMetadataAvailable@QCameraImageCapture@@IAEXHABVQString@@ABVQVariant@@@Z @ 1640 NONAME ; void QCameraImageCapture::imageMetadataAvailable(int, class QString const &, class QVariant const &)
+	?imageMetadataAvailable@QCameraImageCaptureControl@@IAEXHW4MetaData@QtMultimediaKit@@ABVQVariant@@@Z @ 1641 NONAME ; void QCameraImageCaptureControl::imageMetadataAvailable(int, enum QtMultimediaKit::MetaData, class QVariant const &)
+	?trUtf8@QCameraCaptureDestinationControl@@SA?AVQString@@PBD0H@Z @ 1642 NONAME ; class QString QCameraCaptureDestinationControl::trUtf8(char const *, char const *, int)
+	??6@YA?AVQDebug@@V0@ABVQMediaTimeRange@@@Z @ 1643 NONAME ; class QDebug operator<<(class QDebug, class QMediaTimeRange const &)
+	?metaObject@QCameraCaptureBufferFormatControl@@UBEPBUQMetaObject@@XZ @ 1644 NONAME ; struct QMetaObject const * QCameraCaptureBufferFormatControl::metaObject(void) const
+	?captureDestinationChanged@QCameraImageCapture@@IAEXV?$QFlags@W4CaptureDestination@QCameraImageCapture@@@@@Z @ 1645 NONAME ; void QCameraImageCapture::captureDestinationChanged(class QFlags<enum QCameraImageCapture::CaptureDestination>)
+	?qt_metacast@QCameraCaptureDestinationControl@@UAEPAXPBD@Z @ 1646 NONAME ; void * QCameraCaptureDestinationControl::qt_metacast(char const *)
+	?imageMetadataAvailable@QCameraImageCaptureControl@@IAEXHABVQString@@ABVQVariant@@@Z @ 1647 NONAME ; void QCameraImageCaptureControl::imageMetadataAvailable(int, class QString const &, class QVariant const &)
+	?getStaticMetaObject@QCameraCaptureBufferFormatControl@@SAABUQMetaObject@@XZ @ 1648 NONAME ; struct QMetaObject const & QCameraCaptureBufferFormatControl::getStaticMetaObject(void)
+	?setBufferFormat@QCameraImageCapture@@QAEXW4PixelFormat@QVideoFrame@@@Z @ 1649 NONAME ; void QCameraImageCapture::setBufferFormat(enum QVideoFrame::PixelFormat)
+	??0QCameraCaptureDestinationControl@@IAE@PAVQObject@@@Z @ 1650 NONAME ; QCameraCaptureDestinationControl::QCameraCaptureDestinationControl(class QObject *)
+	?captureDestination@QCameraImageCapture@@QBE?AV?$QFlags@W4CaptureDestination@QCameraImageCapture@@@@XZ @ 1651 NONAME ; class QFlags<enum QCameraImageCapture::CaptureDestination> QCameraImageCapture::captureDestination(void) const
+	?tr@QCameraCaptureBufferFormatControl@@SA?AVQString@@PBD0H@Z @ 1652 NONAME ; class QString QCameraCaptureBufferFormatControl::tr(char const *, char const *, int)
+	?staticMetaObject@QCameraCaptureBufferFormatControl@@2UQMetaObject@@B @ 1653 NONAME ; struct QMetaObject const QCameraCaptureBufferFormatControl::staticMetaObject
+	?qt_metacall@QCameraCaptureBufferFormatControl@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1654 NONAME ; int QCameraCaptureBufferFormatControl::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?supportedBufferFormats@QCameraImageCapture@@QBE?AV?$QList@W4PixelFormat@QVideoFrame@@@@XZ @ 1655 NONAME ; class QList<enum QVideoFrame::PixelFormat> QCameraImageCapture::supportedBufferFormats(void) const
+	?staticMetaObject@QCameraCaptureDestinationControl@@2UQMetaObject@@B @ 1656 NONAME ; struct QMetaObject const QCameraCaptureDestinationControl::staticMetaObject
+	??0QCameraCaptureBufferFormatControl@@IAE@PAVQObject@@@Z @ 1657 NONAME ; QCameraCaptureBufferFormatControl::QCameraCaptureBufferFormatControl(class QObject *)
+	??_EQCameraCaptureBufferFormatControl@@UAE@I@Z @ 1658 NONAME ; QCameraCaptureBufferFormatControl::~QCameraCaptureBufferFormatControl(unsigned int)
+	?captureDestinationChanged@QCameraCaptureDestinationControl@@IAEXV?$QFlags@W4CaptureDestination@QCameraImageCapture@@@@@Z @ 1659 NONAME ; void QCameraCaptureDestinationControl::captureDestinationChanged(class QFlags<enum QCameraImageCapture::CaptureDestination>)
+	??1QCameraCaptureBufferFormatControl@@UAE@XZ @ 1660 NONAME ; QCameraCaptureBufferFormatControl::~QCameraCaptureBufferFormatControl(void)
+	?bufferFormatChanged@QCameraImageCapture@@IAEXW4PixelFormat@QVideoFrame@@@Z @ 1661 NONAME ; void QCameraImageCapture::bufferFormatChanged(enum QVideoFrame::PixelFormat)
+	?imageMetadataAvailable@QCameraImageCapture@@IAEXHW4MetaData@QtMultimediaKit@@ABVQVariant@@@Z @ 1662 NONAME ; void QCameraImageCapture::imageMetadataAvailable(int, enum QtMultimediaKit::MetaData, class QVariant const &)
+	?metaObject@QCameraCaptureDestinationControl@@UBEPBUQMetaObject@@XZ @ 1663 NONAME ; struct QMetaObject const * QCameraCaptureDestinationControl::metaObject(void) const
 

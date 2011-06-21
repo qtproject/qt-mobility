@@ -48,18 +48,17 @@
 
 #include "s60cameraengineobserver.h"
 
-class CCameraEngine;
-class S60CameraControl;
-class QAbstractVideoSurface;
+QT_FORWARD_DECLARE_CLASS(CCameraEngine)
+QT_FORWARD_DECLARE_CLASS(S60CameraControl)
+QT_FORWARD_DECLARE_CLASS(QAbstractVideoSurface)
+QT_FORWARD_DECLARE_CLASS(QDesktopWidget)
+QT_FORWARD_DECLARE_CLASS(S60VideoDisplay)
 
 // For DirectScreen ViewFinder
-class RWsSession;
-class CWsScreenDevice;
-class RWindowBase;
-class RWindow;
-class QDesktopWidget;
-
-class S60VideoDisplay;
+QT_FORWARD_DECLARE_CLASS(RWsSession)
+QT_FORWARD_DECLARE_CLASS(CWsScreenDevice)
+QT_FORWARD_DECLARE_CLASS(RWindowBase)
+QT_FORWARD_DECLARE_CLASS(RWindow)
 
 /*
  * Class implementing video output selection for the viewfinder and the handler of

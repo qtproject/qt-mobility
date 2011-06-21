@@ -46,9 +46,9 @@
 
 QT_USE_NAMESPACE
 
-class S60CameraService;
-class S60ImageCaptureSession;
-class S60CameraControl;
+QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60CameraControl)
 
 /*
  * Control for image capture operations.
@@ -83,6 +83,7 @@ Q_SIGNALS: // QCameraImageCaptureControl
 
     void imageExposed(int id);
     void imageCaptured(int id, const QImage &preview);
+    void imageAvailable(int id, const QVideoFrame &image);
     void imageSaved(int id, const QString &fileName);
 
     void error(int id, int error, const QString &errorString);

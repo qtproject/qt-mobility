@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef S60CAMERAFLASHCONTROL_H
-#define S60CAMERAFLASHCONTROL_H
+#ifndef S60CAMERACAPTUREBUFFERFORMATCONTROL_H
+#define S60CAMERACAPTUREBUFFERFORMATCONTROL_H
 
-#include <qcameraflashcontrol.h>
-
-#include "s60camerasettings.h"
+#include <qcameracapturebufferformatcontrol.h>
 
 QT_USE_NAMESPACE
 
@@ -52,42 +50,40 @@ QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 
 /*
- * Control to setup Flash related camera settings.
+ * Control to setup buffer image capture format.
  */
-class S60CameraFlashControl : public QCameraFlashControl
+class S60CameraCaptureBufferFormatControl : public QCameraCaptureBufferFormatControl
 {
     Q_OBJECT
 
 public: // Constructors & Destructor
 
-    S60CameraFlashControl(QObject *parent = 0);
-    S60CameraFlashControl(S60ImageCaptureSession *session, QObject *parent = 0);
-    ~S60CameraFlashControl();
+    S60CameraCaptureBufferFormatControl(QObject *parent = 0);
+    S60CameraCaptureBufferFormatControl(S60ImageCaptureSession *session, QObject *parent = 0);
+    ~S60CameraCaptureBufferFormatControl();
 
-public: // QCameraExposureControl
+public: // QCameraCaptureBufferFormatControl
 
-    // Flash Mode
-    QCameraExposure::FlashModes flashMode() const;
-    void setFlashMode(QCameraExposure::FlashModes mode);
-    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
-
-    bool isFlashReady() const;
+    // Image Buffer Format
+    QList<QVideoFrame::PixelFormat> supportedBufferFormats() const;
+    QVideoFrame::PixelFormat bufferFormat() const;
+    void setBufferFormat(const QVideoFrame::PixelFormat format);
 
 /*
-Q_SIGNALS: // QCameraExposureControl
-    void flashReady(bool);
+Q_SIGNALS: // QCameraCaptureBufferFormatControl
+
+    void bufferFormatChanged(QVideoFrame::PixelFormat);
 */
 
-private slots: // Internal Slots
+private slots: // Internal
 
-    void resetAdvancedSetting();
+    void bufferFormatChanged(const QVideoFrame::PixelFormat format);
 
 private: // Data
 
     S60ImageCaptureSession          *m_session;
     S60CameraService                *m_service;
-    S60CameraSettings               *m_advancedSettings;
-    QCameraExposure::FlashModes     m_flashMode;
+    QVideoFrame::PixelFormat        m_bufferCaptureFormat;
 };
 
-#endif // S60CAMERAFLASHCONTROL_H
+#endif // S60CAMERACAPTUREBUFFERFORMATCONTROL_H
