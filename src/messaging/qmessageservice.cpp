@@ -250,8 +250,9 @@ QTM_BEGIN_NAMESPACE
     If the message can not be found on the originating server it will be marked as removed.
 
     Returns true if the operation can be initiated; otherwise returns false.
-
-    \since 1.0
+    
+    On the Symbian^3 platform this function is not yet supported.
+    
     \sa QMessageId, QMessage::Removed
 */
 
@@ -261,8 +262,6 @@ QTM_BEGIN_NAMESPACE
     Retrieve the body of the message identified by \a id.
 
     If the message can not be found on the originating server it will be marked as removed.
-
-    On the Symbian^3 platform this function is not yet supported.
 
     Returns true if the operation can be initiated; otherwise returns false.
 

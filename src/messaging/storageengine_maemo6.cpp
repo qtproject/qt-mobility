@@ -301,8 +301,7 @@ Event StorageEngine::eventFromMessage(const QMessage &message)
  *
  */
 QMessage StorageEngine::messageFromEvent(const Event &ev)
-{
-    QDEBUG_FUNCTION_BEGIN
+{    
     QMessage message;
 
     if (!ev.isValid())
@@ -374,7 +373,6 @@ QMessage StorageEngine::messageFromEvent(const Event &ev)
     privateMessage->_id = QMessageId(prefixForEvent(ev) + QString::number(ev.id()));
     privateMessage->_modified = false;   
 
-    QDEBUG_FUNCTION_END
     return message;
 }
 
@@ -563,7 +561,7 @@ void StorageEngine::unlockEventModifiers(const QList<CommHistory::Event> &events
         }
 
         if (foundRequiredId){
-            qDebug() << __PRETTY_FUNCTION__ << "Quitting the loop. Event id" << m_updatedEventId;
+            QPRETTYDEBUG("Quitting the loop. Event id" << m_updatedEventId);
             m_updatedEventId = 0;
             m_ready = true;
             m_loop.quit();
@@ -612,7 +610,7 @@ bool StorageEngine::removeMessage(const QMessageId &id)
             ret = m_SMSModel.deleteEvent(iId);
             if (ret) {
 		m_error = QMessageManager::NoError;
-		qDebug() << __PRETTY_FUNCTION__ << "Removed successfully";
+                QPRETTYDEBUG("Removed successfully");
             } else {
 		m_error = QMessageManager::FrameworkFault;
                 qWarning() << __PRETTY_FUNCTION__ << "Cannot removeMessage";             
@@ -644,7 +642,7 @@ bool StorageEngine::addMessage(QMessage &message)
 	QMessagePrivate *privateMessage = QMessagePrivate::implementation(message);
         privateMessage->_id = QMessageId(prefixForEvent(event) + QString::number(event.id()));
 	privateMessage->_modified = false;
-	qDebug() << __PRETTY_FUNCTION__ << "Message added to store. new id = " << message.id().toString();
+        QPRETTYDEBUG("Message added to store. new id = " << message.id().toString());
 	m_error = QMessageManager::NoError;
 	ret = true;
     }  else {
@@ -726,9 +724,9 @@ int StorageEngine::countFolders(const QMessageFolderFilter& filter)
            << QMessageFolderId(FOLDER_ID_SENT)
            << QMessageFolderId(FOLDER_ID_TRASH);
 
-    //qDebug() << __PRETTY_FUNCTION__ << "size before filtering:" << result.size();
+    QPRETTYDEBUG("size before filtering:" << result.size());
     MessagingHelper::filterFolders(result, filter);
-    //qDebug() << __PRETTY_FUNCTION__ << "size after filtering:" << result.size();
+    QPRETTYDEBUG("size after filtering:" << result.size());
 
     return result.size();
 }
@@ -846,7 +844,7 @@ void StorageEngine::unregisterNotificationFilter(QMessageManager::NotificationFi
 void StorageEngine::processFilters(const QList<CommHistory::Event> &events, void (StorageEngine::*signal)(const QMessageId &, const QMessageManager::NotificationFilterIdSet &))
 {
     if (events.count() == 0) {
-        qDebug() << __PRETTY_FUNCTION__ << "No events to process";
+        QPRETTYDEBUG("No events to process");
         return;
     }
 
@@ -855,7 +853,7 @@ void StorageEngine::processFilters(const QList<CommHistory::Event> &events, void
     QList<QMessage> messages;
     foreach (const Event &event, events) {
 	messages << messageFromEvent(event);
-        qDebug() << "StorageEngine::processFilters:" << "added/updated/removed" << event.id();
+        QPRETTYDEBUG("added/updated/removed" << event.id());
     }
 
     NotificationFilterMap::const_iterator it = m_filters.begin(), end = m_filters.end();
@@ -889,7 +887,7 @@ bool StorageEngine::compose(const QMessage &message)
 
     QStringList contacts = MessagingHelper::stringListFromAddressList(message.to());
 
-    qDebug() << __PRETTY_FUNCTION__ << contacts << message.textContent();
+    QPRETTYDEBUG(contacts << message.textContent());
     MessagingIf l_pMessagingIf;
     l_pMessagingIf.showSmsEditor(contacts, message.textContent(), QString());
 
@@ -961,7 +959,7 @@ ServiceQuery::ServiceQuery(QMessageService *service, const QMessageFilter &filte
 
 ServiceQuery::~ServiceQuery()
 {
-    qDebug() << "ServiceQuery::~ServiceQuery()";
+    QPRETTYDEBUG("");
 }
 
 /*!
