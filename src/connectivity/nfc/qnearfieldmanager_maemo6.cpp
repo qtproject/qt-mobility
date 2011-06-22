@@ -131,8 +131,6 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
 
     if (!m_adapter->isValid())
         return;
-
-    m_adapter->setState(QLatin1String("on"));
 }
 
 QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()

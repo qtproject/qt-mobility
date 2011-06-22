@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -41,9 +41,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+#include <QtCore/QUrl>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QDesktopServices>
+
+MainWindow::MainWindow(QWidget *parent)
+:   QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 }
@@ -51,4 +54,19 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::displayAnnotatedUrl(const QUrl &url, const QString &title, const QPixmap &pixmap)
+{
+    ui->m_help->setHidden(true);
+
+    ui->m_url->setText(url.toString());
+    ui->m_title->setText(title);
+    ui->m_image->setPixmap(pixmap);
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (ui->centralWidget->rect().contains(event->pos()))
+        QDesktopServices::openUrl(QUrl(ui->m_url->text()));
 }

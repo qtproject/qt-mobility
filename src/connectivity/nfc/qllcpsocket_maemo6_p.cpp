@@ -293,26 +293,24 @@ qint64 QLlcpSocketPrivate::writeData(const char *data, qint64 len)
 {
     Q_Q(QLlcpSocket);
 
-    qint64 miu = m_properties.value(QLatin1String("RemoteMIU"), 128).toUInt();
-    qint64 current = 0;
+    qint64 remoteMiu = m_properties.value(QLatin1String("RemoteMIU"), 128).toLongLong();
+    qint64 localMiu = m_properties.value(QLatin1String("LocalMIU"), 128).toLongLong();
+    qint64 miu = qMin(remoteMiu, localMiu);
 
     m_writeNotifier->setEnabled(true);
 
-    while (current < len) {
-        ssize_t wrote = ::write(m_fd, data + current, qMin(miu, len - current));
-        if (wrote == -1) {
-            if (errno == EAGAIN)
-                break;
+    ssize_t wrote = ::write(m_fd, data, qMin(miu, len));
+    if (wrote == -1) {
+        if (errno == EAGAIN)
+            return 0;
 
-            setSocketError(QLlcpSocket::RemoteHostClosedError);
-            q->disconnectFromService();
-            return -1;
-        }
-        current += wrote;
-        m_pendingBytes += wrote;
+        setSocketError(QLlcpSocket::RemoteHostClosedError);
+        q->disconnectFromService();
+        return -1;
     }
 
-    return current;
+    m_pendingBytes += wrote;
+    return wrote;
 }
 
 qint64 QLlcpSocketPrivate::bytesAvailable() const

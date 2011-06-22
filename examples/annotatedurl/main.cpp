@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include "annotatedurl.h"
+#include "mainwindow.h"
 
 #include <qnearfieldmanager.h>
 #include <qndefnfctextrecord.h>
@@ -47,7 +48,6 @@
 #include <QtCore/QLocale>
 
 #include <QtGui/QApplication>
-#include <QtGui/QMainWindow>
 
 
 int main(int argc, char *argv[])
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     //QLocale::setDefault(QLocale(QLocale::Japanese));
 
     QApplication a(argc, argv);
-    QMainWindow mainWindow;
+    MainWindow mainWindow;
 
     QNearFieldManager manager;
     AnnotatedUrl annotatedUrl;
@@ -65,9 +65,10 @@ int main(int argc, char *argv[])
     filter.appendRecord<QNdefNfcTextRecord>(1, UINT_MAX);
     filter.appendRecord<QNdefNfcUriRecord>();
     manager.registerNdefMessageHandler(filter, &annotatedUrl,
-                                       SLOT(targetDetected(QNdefMessage,QNearFieldTarget*)));
+                                       SLOT(handleMessage(QNdefMessage,QNearFieldTarget*)));
 
-    mainWindow.setCentralWidget(&annotatedUrl);
+    QObject::connect(&annotatedUrl, SIGNAL(annotatedUrl(QUrl,QString,QPixmap)),
+                     &mainWindow, SLOT(displayAnnotatedUrl(QUrl,QString,QPixmap)));
 
 #if defined(Q_WS_S60) || defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
     mainWindow.showFullScreen();
