@@ -273,7 +273,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
 }
 
 RServiceSession::RServiceSession(QString address) 
-: iSize(0), iListener(0), iDataSizes(KIpcBufferMinimumSize)
+: iSize(0), iListener(0), iDataSizes(KIpcBufferMinimumSize),iServerStarted(EFalse)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "RServiceSession() for address: " << address;
@@ -307,14 +307,24 @@ TInt RServiceSession::Connect()
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "RServiceSession Connect()";
 #endif
-    TInt err = StartServer();
-    if (err == KErrNone) {
+    TInt err=KErrUnknown;
+    if(!iServerStarted){
+        TInt err = StartServer();
+        if (err == KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "StartServer successful, Creating session.";
+            qDebug() << "StartServer successful, Creating session.";
 #endif
-        TPtrC serviceAddressPtr(reinterpret_cast<const TUint16*>(iServerAddress.utf16()));
-        err = CreateSession(serviceAddressPtr, Version());
+        iServerStarted = ETrue;
+        }
     }
+    TPtrC serviceAddressPtr(reinterpret_cast<const TUint16*>(iServerAddress.utf16()));
+
+    for (int i = 0; (err != KErrNone) && (i < 1000); i++) {
+        err = CreateSession(serviceAddressPtr, Version());
+        if (err != KErrNone)
+            User::After(1000);
+    }
+   
     return err;
 }
 

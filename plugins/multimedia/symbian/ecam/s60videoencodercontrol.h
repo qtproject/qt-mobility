@@ -49,7 +49,7 @@
 
 QT_USE_NAMESPACE
 
-class S60VideoCaptureSession;
+QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
 
 /*
  * Control for video settings when recording video using QMediaRecorder.

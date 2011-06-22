@@ -76,30 +76,43 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 
 QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
-    // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
-    // Possible (codec specific) Options: None
     Q_UNUSED(codec);
-    return QStringList();
+
+    QStringList supportedOptions;
+    // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
+    // Possible (codec specific) Options: Audio Gain
+    supportedOptions << QLatin1String("gain");
+
+    return supportedOptions;
 }
 
 QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
     // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
-    // Possible (codec specific) Options: None
+    // Possible (codec specific) Options: Audio Gain
     Q_UNUSED(codec);
-    Q_UNUSED(name);
+
+    if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
+        return QVariant(m_session->gain());
+
     return QVariant();
 }
 
 void S60AudioEncoderControl::setEncodingOption(
     const QString &codec, const QString &name, const QVariant &value)
 {
-    m_session->setError(KErrNotSupported, tr("Audio encoding option is not supported"));
-
-    // The audio settings can currently be set only using setAudioSettings() function
-    Q_UNUSED(value)
     Q_UNUSED(codec)
-    Q_UNUSED(name)
+
+    if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0) {
+        bool convSuccess = false;
+        int gain = value.toInt(&convSuccess);
+        if (convSuccess) {
+            m_session->setGain(gain);
+            return;
+        }
+    }
+
+    m_session->setError(KErrNotSupported, tr("Audio encoding option is not supported"));
 }
 
 QList<int> S60AudioEncoderControl::supportedSampleRates(

@@ -59,7 +59,7 @@
 
 QT_USE_NAMESPACE
 
-class QTimer;
+QT_FORWARD_DECLARE_CLASS(QTimer)
 
 /*
  * VideoSession is the main class handling all video recording related

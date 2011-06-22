@@ -94,6 +94,12 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
         }
 #endif
     }
+    //Plugin library couldn't be found. Print out warning
+    qWarning() << "Library " + libNameOrPath + " not found!";
+    qWarning() << "please be sure that your library is in one of the following path:";
+    for (int i=0; i<paths.count(); i++) {
+        qWarning() << "- " << QDir::toNativeSeparators(paths[i]) + QDir::separator();
+    }
     return QString();
 }
 

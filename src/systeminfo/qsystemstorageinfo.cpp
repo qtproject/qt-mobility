@@ -45,10 +45,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivateSingleton)
 
 #ifdef QT_SIMULATOR
-QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPrivate(); }
+QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!
@@ -56,7 +56,14 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemStorageInfo class provides access to disk storage information from the system.
-    \since 1.0
+    \since 1.1
+
+
+    \reentrant
+
+    \note Most functions in this class are reentrant on all platforms. The exceptions are listed below.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
 */
 
 /*!
@@ -104,8 +111,12 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
 */
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     : QObject(parent)
-    , d(storageInfoPrivate())
 {
+#ifdef Q_OS_SYMBIAN
+    d = new QSystemStorageInfoPrivate();
+#else
+    d = storageInfoPrivateSingleton();
+#endif
     qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
     qRegisterMetaType<QSystemStorageInfo::StorageState>("QSystemStorageInfo::StorageState");
 }
@@ -115,6 +126,9 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
 */
 QSystemStorageInfo::~QSystemStorageInfo()
 {
+#ifdef Q_OS_SYMBIAN
+    delete d;
+#endif
 }
 
 /*!
@@ -122,7 +136,7 @@ QSystemStorageInfo::~QSystemStorageInfo()
 */
 qlonglong QSystemStorageInfo::totalDiskSpace(const QString &drive)
 {
-    return storageInfoPrivate()->totalDiskSpace(drive);
+    return d->totalDiskSpace(drive);
 }
 
 /*!
@@ -130,7 +144,7 @@ qlonglong QSystemStorageInfo::totalDiskSpace(const QString &drive)
 */
 qlonglong QSystemStorageInfo::availableDiskSpace(const QString &drive)
 {
-    return storageInfoPrivate()->availableDiskSpace(drive);
+    return d->availableDiskSpace(drive);
 }
 
 /*!
@@ -138,10 +152,12 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &drive)
     \brief The  list of logical drives.
 
     Returns a QStringList of drives or volumes, or an empty list if no drives are found.
+
+    \warning On Symbian this function is not reentrant and must be used from main thread only.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
-    return storageInfoPrivate()->logicalDrives();
+    return storageInfoPrivateSingleton()->logicalDrives();
 }
 
 /*!
@@ -149,7 +165,7 @@ QStringList QSystemStorageInfo::logicalDrives()
 */
 QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &drive)
 {
-    return storageInfoPrivate()->typeForDrive(drive);
+    return d->typeForDrive(drive);
 }
 
 /*!
@@ -158,7 +174,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 */
 QString QSystemStorageInfo::uriForDrive(const QString &drive)
 {
-    return storageInfoPrivate()->uriForDrive(drive);
+    return d->uriForDrive(drive);
 }
 
 /*!
@@ -167,7 +183,7 @@ QString QSystemStorageInfo::uriForDrive(const QString &drive)
 */
 QSystemStorageInfo::StorageState QSystemStorageInfo::getStorageState(const QString &drive)
 {
-    return storageInfoPrivate()->getStorageState(drive);
+    return d->getStorageState(drive);
 }
 
 /*!
@@ -177,11 +193,11 @@ void QSystemStorageInfo::connectNotify(const char *signal)
 {
      if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-         connect(storageInfoPrivate(), SIGNAL(logicalDriveChanged(bool,QString)),
+         connect(d, SIGNAL(logicalDriveChanged(bool,QString)),
                  this, SIGNAL(logicalDriveChanged(bool,QString)), Qt::UniqueConnection);
      }
      if (QLatin1String(signal) == SIGNAL(logicalDriveChanged(bool,QString))) {
-         connect(storageInfoPrivate(), SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
+         connect(d, SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),
                  this, SIGNAL(storageStateChanged(const QString &,QSystemStorageInfo::StorageState)),Qt::UniqueConnection);
      }
 }

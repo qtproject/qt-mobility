@@ -72,6 +72,7 @@ CWlanInfo::CWlanInfo() : CActive(EPriorityStandard),
 
 CWlanInfo::~CWlanInfo()
 {
+  Cancel();
 }
 
 void CWlanInfo::addObserver(MWlanInfoObserver *observer)

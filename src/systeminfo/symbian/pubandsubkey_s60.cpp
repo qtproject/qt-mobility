@@ -61,7 +61,7 @@ CPubSubKeyHandler::CPubSubKeyHandler(const TUid aCategory, const TUint aKey, MCo
 
 CPubSubKeyHandler::~CPubSubKeyHandler()
     {
-    DoCancel();
+    Cancel();
     iProperty.Close();
     }
 
