@@ -42,7 +42,12 @@
 #define TRANSFORMTHUMBNAIL_H
 
 #include "cnttransformcontactdata.h"
-#include "cntthumbnailcreator.h"
+
+#ifdef SYMBIAN_USE_SMALL_THUMBNAILS
+const TSize KMaxThumbnailSize(80, 96);
+#else
+const TSize KMaxThumbnailSize(150, 150);
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -61,8 +66,10 @@ protected:
     bool supportsSubType(const QString& subType) const;
     quint32 getIdForField(const QString& fieldName) const;
     void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
+private:    
+    void initializeThumbnailFieldL();
 private:
-    CntThumbnailCreator* m_thumbnailCreator;
+    CContactItemField *m_thumbnailFieldFromTemplate;
 };
 
 #endif

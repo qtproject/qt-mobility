@@ -62,6 +62,8 @@
 #include "s60cameralockscontrol.h"
 #include "s60videorenderercontrol.h"
 #include "s60videowindowcontrol.h"
+#include "s60cameracapturedestinationcontrol.h"
+#include "s60cameracapturebufferformatcontrol.h"
 
 #include "s60cameraviewfinderengine.h" // ViewfinderOutputType
 
@@ -90,6 +92,8 @@ S60CameraService::S60CameraService(QObject *parent) :
         m_locksControl = new S60CameraLocksControl(this, m_imagesession, this);
         m_rendererControl = new S60VideoRendererControl(this);
         m_windowControl = new S60VideoWindowControl(this);
+        m_captureDestinationControl = new S60CameraCaptureDestinationControl(m_imagesession, this);
+        m_bufferFormatControl = new S60CameraCaptureBufferFormatControl(m_imagesession, this);
     }
 }
 
@@ -120,6 +124,10 @@ S60CameraService::~S60CameraService()
         delete m_imageEncoderControl;
     if (m_locksControl)
         delete m_locksControl;
+    if (m_captureDestinationControl)
+        delete m_captureDestinationControl;
+    if (m_bufferFormatControl)
+        delete m_bufferFormatControl;
 
     // CameraControl destroys:
     // * ViewfinderEngine
@@ -214,6 +222,12 @@ QMediaControl *S60CameraService::requestControl(const char *name)
 
     if (qstrcmp(name, QCameraLocksControl_iid) == 0)
         return m_locksControl;
+
+    if (qstrcmp(name, QCameraCaptureDestinationControl_iid) == 0)
+        return m_captureDestinationControl;
+
+    if (qstrcmp(name, QCameraCaptureBufferFormatControl_iid) == 0)
+        return m_bufferFormatControl;
 
     return 0;
 }

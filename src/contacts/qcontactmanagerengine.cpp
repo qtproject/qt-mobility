@@ -1783,7 +1783,6 @@ static inline int compareStrings(const QString& left, const QString& right, Qt::
   CaseSensitive, strings that are identical under a case insensitive
   sort are then sorted case sensitively within that context.
 
-
   For example:
 
   aaron
@@ -1813,20 +1812,36 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
 {
     switch(first.type()) {
         case QVariant::Int:
-            return first.toInt() - second.toInt();
+            {
+                const int a = first.toInt();
+                const int b = second.toInt();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::LongLong:
-            return first.toLongLong() - second.toLongLong();
+            {
+                const qlonglong a = first.toLongLong();
+                const qlonglong b = second.toLongLong();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::Bool:
-        case QVariant::Char:
         case QVariant::UInt:
-            return first.toUInt() - second.toUInt();
+            {
+                const uint a = first.toUInt();
+                const uint b = second.toUInt();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::ULongLong:
-            return first.toULongLong() - second.toULongLong();
+            {
+                const qulonglong a = first.toULongLong();
+                const qulonglong b = second.toULongLong();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
-       case QVariant::String:
+        case QVariant::Char: // Needs to do proper string comparison
+        case QVariant::String:
             return compareStrings(first.toString(), second.toString(), sensitivity);
 
         case QVariant::Double:
@@ -1844,13 +1859,41 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             }
 
         case QVariant::Date:
-            return first.toDate().toJulianDay() - second.toDate().toJulianDay();
+            {
+                const QDate a = first.toDate();
+                const QDate b = second.toDate();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::Time:
             {
                 const QTime a = first.toTime();
                 const QTime b = second.toTime();
                 return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
+
+        case QVariant::StringList:
+            {
+                // We don't actually sort on these, I hope
+                // {} < {"aa"} < {"aa","bb"} < {"aa", "cc"} < {"bb"}
+
+                int i;
+                const QStringList a = first.toStringList();
+                const QStringList b = second.toStringList();
+                for (i = 0; i < a.size(); i++) {
+                    if (b.size() <= i)
+                        return 1; // first is longer
+                    int memberComp = compareStrings(a.at(i), b.at(i), sensitivity);
+                    if (memberComp != 0)
+                        return memberComp;
+                    // this element is the same, so loop again
+                }
+
+                // Either a.size() < b.size() and they are equal all
+                // the way, or a == b
+                if (a.size() < b.size())
+                    return -1; // a is less than b;
+                return 0; // they are equal
             }
 
         default:

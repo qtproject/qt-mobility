@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=plugins/declarative/gallery
+//TESTED_COMPONENT=src/gallery
 
 #include <qdocumentgallery.h>
 #include <qgalleryresultset.h>

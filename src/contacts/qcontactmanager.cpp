@@ -1071,7 +1071,10 @@ void QContactManager::connectNotify(const char *signal)
     /* For most signals we just connect from the engine to ourselves, since we just proxy, but we should connect only once */
     QByteArray ba(signal);
     if (!d->m_connectedSignals.contains(ba)) {
-        connect(d->m_engine, signal, this, signal);
+        // As a special case, we know that the V2 wrapper just proxies all the signals
+        // so we skip the second proxy.  If a wrapper ever emits signals itself then we
+        // can't do this.
+        connect(d->m_signalSource, signal, this, signal);
     }
     d->m_connectedSignals[ba]++;
 }
@@ -1085,7 +1088,7 @@ void QContactManager::disconnectNotify(const char *signal)
 {
     QByteArray ba(signal);
     if (d->m_connectedSignals[ba] <= 1) {
-        disconnect(d->m_engine, signal, this, signal);
+        disconnect(d->m_signalSource, signal, this, signal);
         d->m_connectedSignals.remove(ba);
     } else {
         d->m_connectedSignals[ba]--;

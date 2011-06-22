@@ -90,6 +90,7 @@ class CPhoneInfo : public CTelephonyInfo
 {
 public:
     CPhoneInfo(CTelephony &telephony);
+    ~CPhoneInfo();
 
 protected:
     void DoCancel();
@@ -112,6 +113,7 @@ class CSubscriberInfo : public CTelephonyInfo
 {
 public:
     CSubscriberInfo(CTelephony &telephony);
+    ~CSubscriberInfo();
 
 protected:
     void DoCancel();
@@ -130,6 +132,7 @@ class CBatteryInfo : public CTelephonyInfo
 {
 public:
     CBatteryInfo(CTelephony &telephony);
+    ~CBatteryInfo();
     void startMonitoring();
 
 protected:
@@ -153,6 +156,7 @@ class CCellNetworkInfo : public CTelephonyInfo
 {
 public:
     CCellNetworkInfo(CTelephony &telephony);
+    ~CCellNetworkInfo();
     void startMonitoring();
 
 protected:
@@ -197,6 +201,7 @@ class CCellNetworkRegistrationInfo : public CTelephonyInfo
 {
 public:
     CCellNetworkRegistrationInfo(CTelephony &telephony);
+    ~CCellNetworkRegistrationInfo();
     void startMonitoring();
 
 protected:
@@ -220,6 +225,7 @@ class CCellSignalStrengthInfo : public CTelephonyInfo
 {
 public:
     CCellSignalStrengthInfo(CTelephony &telephony);
+    ~CCellSignalStrengthInfo();
     void startMonitoring();
 
 protected:

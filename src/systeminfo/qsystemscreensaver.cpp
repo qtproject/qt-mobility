@@ -53,6 +53,12 @@ QTM_BEGIN_NAMESPACE
 
     On platforms where there is no one default screensaver mechanism, such as Linux, this class
     may not be available.
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
 */
 
 /*!

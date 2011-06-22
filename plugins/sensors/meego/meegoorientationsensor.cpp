@@ -55,10 +55,12 @@ meegoorientationsensor::meegoorientationsensor(QSensor *sensor)
 
 
 void meegoorientationsensor::start(){
-    Unsigned data(((OrientationSensorChannelInterface*)m_sensorInterface)->orientation());
-    m_reading.setOrientation(meegoorientationsensor::getOrientation(data.x()));
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
+    if (m_sensorInterface) {
+        Unsigned data(((OrientationSensorChannelInterface*)m_sensorInterface)->orientation());
+        m_reading.setOrientation(meegoorientationsensor::getOrientation(data.x()));
+        m_reading.setTimestamp(data.UnsignedData().timestamp_);
+        newReadingAvailable();
+    }
     meegosensorbase::start();
 }
 

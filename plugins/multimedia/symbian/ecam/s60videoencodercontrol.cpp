@@ -84,14 +84,13 @@ QList<QSize> S60VideoEncoderControl::supportedResolutions(const QVideoEncoderSet
 QStringList S60VideoEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
     // Possible settings: EncodingMode, Codec, Resolution, FrameRate, BitRate, Quality
-    // Possible (codec specific) options: PixelAspectRatio, Gain, MaxClipSizeInBytes
+    // Possible (codec specific) options: PixelAspectRatio, MaxClipSizeInBytes
 
     // Following options are valid for all codecs
     Q_UNUSED(codec);
 
     QStringList options;
     options.append("pixelAspectRatio");
-    options.append("gain");
     options.append("maxClipSizeInBytes");
 
     return options;
@@ -102,14 +101,12 @@ QVariant S60VideoEncoderControl::encodingOption(const QString &codec, const QStr
     Q_UNUSED(codec);
 
     // Possible settings: EncodingMode, Codec, Resolution, FrameRate, BitRate, Quality
-    // Possible (codec specific) options: PixelAspectRatio, Gain, MaxClipSizeInBytes
+    // Possible (codec specific) options: PixelAspectRatio, MaxClipSizeInBytes
 
     QVariant returnValue;
 
     if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         returnValue.setValue(m_session->pixelAspectRatio());
-    else if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
-        returnValue.setValue((int)m_session->gain());
     else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         returnValue.setValue(m_session->maxClipSizeInBytes());
 
@@ -124,8 +121,6 @@ void S60VideoEncoderControl::setEncodingOption(
 
     if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
         m_session->setPixelAspectRatio(value.toSize());
-    else if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
-        m_session->setGain(value.toInt());
     else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
         m_session->setMaxClipSizeInBytes(value.toInt());
     else

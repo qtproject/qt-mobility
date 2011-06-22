@@ -110,7 +110,7 @@ public :
     void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
     void Remove() {RemoveObserver();};
 
-private : //From CNetworkBase
+protected: //From CNetworkBase
     virtual void DoCancel();
     virtual void RunL() ;
     virtual void StartMonitoring();
@@ -145,7 +145,7 @@ public:
     void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
     void Remove() {RemoveObserver();};
 
-private : //From CNetworkBase
+protected : //From CNetworkBase
     virtual void DoCancel();
     virtual void RunL() ;
     virtual void StartMonitoring();
@@ -182,7 +182,7 @@ class CPacketDataStatus : private CNetworkBase
     void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
     void Remove() {RemoveObserver();};
     bool NetworkCtrlCapsenabled();
- private : //From CNetworkBase
+ protected: //From CNetworkBase
     virtual void DoCancel();
     virtual void RunL() ;
     virtual void StartMonitoring();
@@ -190,13 +190,6 @@ class CPacketDataStatus : private CNetworkBase
 
 class CNetworkInfo : public CBase, public MNetworkObserver
 {
-private :
-        CNetworkMode iNetMode;
-        CNetworkStatus iNetStat;
-        CPacketDataStatus iPacketDataStatus;
-        QList<MNetworkInfoObserver *> iObservers;
-        TUint32 iCellDataTechnology;
-
 protected :
     virtual void ChangedNetworkMode() ;
     virtual void ChangedNetworkStatus();
@@ -204,7 +197,7 @@ protected :
 
 public :
         CNetworkInfo();
-        //~CNetworkInfo();
+        ~CNetworkInfo();
         void addObserver(MNetworkInfoObserver *aObserver);
         void removeObserver(MNetworkInfoObserver *aObserver);
         RMobilePhone::TMobilePhoneNetworkMode GetMode() const;
@@ -213,6 +206,13 @@ public :
 #endif
        TUint32 GetCapability () const;
        TUint CellDataTechnology();
+
+private :
+        CNetworkMode iNetMode;
+        CNetworkStatus iNetStat;
+        CPacketDataStatus iPacketDataStatus;
+        QList<MNetworkInfoObserver *> iObservers;
+        TUint32 iCellDataTechnology;
 };
 
 
