@@ -614,6 +614,9 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
 
     Since the filters apply to the state of the data after the message removal, the only 
     data item that may be subject to filtration is the identifier of the removed message.
+    
+    On Symbian^3 platform to get signals about removed emails the related mailbox must
+    be manually synchronized.
 
     \sa messageAdded(), messageUpdated(), registerNotificationFilter()
 */
