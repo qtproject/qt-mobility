@@ -59,6 +59,11 @@
 #include <QDir>
 #include <QSystemSemaphore>
 
+#ifdef Q_OS_SYMBIAN
+    #include <QLibraryInfo>
+    #include <f32file.h>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
@@ -66,13 +71,45 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
     if (QFile::exists(libNameOrPath))
         return libNameOrPath;
 
-    // try to find plug-in via QLibrary
     QStringList paths = QCoreApplication::libraryPaths();
+
+#ifdef Q_OS_SYMBIAN
+    // try to find plug-in via QLibrary
+    // Work around for QCoreApplication::libraryPaths() caching
+    // paths from application startup.  On Symbian the paths can be
+    // created during the lifetime of the application.
+    QString pluginpaths = QLibraryInfo::location(QLibraryInfo::PluginsPath);
+
+    // Add existing path on all drives for relative PluginsPath in Symbian
+    if (pluginpaths.at(1) != QChar(QLatin1Char(':'))) {
+        QString tempPath = pluginpaths;
+        if (tempPath.at(tempPath.length() - 1) != QDir::separator()) {
+            tempPath += QDir::separator();
+        }
+        RFs iFs;
+        iFs.Connect();
+        iFs.ShareProtected();
+        TPtrC tempPathPtr(reinterpret_cast<const TText*> (tempPath.constData()));
+        TFindFile finder(iFs);
+        TInt err = finder.FindByDir(tempPathPtr, tempPathPtr);
+        while (err == KErrNone) {
+            QString foundDir(reinterpret_cast<const QChar *>(finder.File().Ptr()),
+                             finder.File().Length());
+            foundDir = QDir(foundDir).canonicalPath();
+            if (!paths.contains(foundDir)) {
+                paths << foundDir;
+            }
+            err = finder.Find();
+        }
+        iFs.Close();
+    }
+#endif
+
 #ifdef QTM_PLUGIN_PATH
     paths << QLatin1String(QTM_PLUGIN_PATH)+QLatin1String("/serviceframework");
 #endif
-    for (int i=0; i<paths.count(); i++) {
-        QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
+    foreach (QString path, paths) {
+        QString libPath = QDir::toNativeSeparators(path) + QDir::separator() + libNameOrPath;
 
 #ifdef Q_OS_SYMBIAN
         QFileInfo fi(libPath);
@@ -442,16 +479,17 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     }
 
     QPluginLoader *loader = new QPluginLoader(serviceFilePath);
+
     //pluginIFace is same for all service instances of the same plugin
     //calling loader->unload deletes pluginIFace automatically if now other
     //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
     if (pluginIFace) {
-
         //check initialization first as the service may be a pre-registered one
         bool doLoading = true;
         QString serviceInitialized = descriptor.customAttribute(SERVICE_INITIALIZED_ATTR);
         if (!serviceInitialized.isEmpty() && (serviceInitialized == QLatin1String("NO"))) {
+
             // open/create the semaphore using the service's name as identifier
             QSystemSemaphore semaphore(descriptor.serviceName(), 1);
             if (semaphore.error() != QSystemSemaphore::NoError) {
@@ -466,8 +504,9 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
                 // release semaphore
                 semaphore.release();
             }
-            else
+            else {
                 doLoading = false;
+            }
         }
 
         if (doLoading) {
