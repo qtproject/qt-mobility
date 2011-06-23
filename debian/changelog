@@ -1,5 +1,6 @@
 qt-mobility (1.2.0+677) unstable; urgency=low
 
+  * Temporaly disabled QContactDeclarative test case
   * Fixes: NB#264557
   * Fixes: NB#255843
 
