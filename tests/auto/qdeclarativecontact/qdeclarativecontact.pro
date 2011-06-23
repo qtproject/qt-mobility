@@ -80,6 +80,9 @@ SOURCES += tst_qdeclarativecontact.cpp \
 
 include(../../../plugins/declarative/common/dynamicproperties.pri)
 
+maemo*:CONFIG += insignificant_test
+
+
 # reserved for future use
 #symbian: {
 #    importFiles.sources = data
