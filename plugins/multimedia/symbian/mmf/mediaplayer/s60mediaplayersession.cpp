@@ -68,6 +68,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_play_requested(false)
     , m_seekable(true)
     , m_duration(0)
+    , m_progressduration(0)
 {
     DP0("S60MediaPlayerSession::S60MediaPlayerSession +++");
 
@@ -587,13 +588,14 @@ qint64 S60MediaPlayerSession::position() const
        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
        || mediaStatus() == QMediaPlayer::InvalidMedia)
         return 0;
-    
+
     qint64 pos = 0;
     TRAP_IGNORE(pos = doGetPositionL());
-    if (!m_play_requested && pos ==0
-        && mediaStatus() != QMediaPlayer::LoadedMedia)
+    if (pos >= m_progressduration)
+        return pos;
+    else if (pos < m_progressduration)
         return m_duration;
-    return pos;
+
 }
 
 /*!
@@ -612,7 +614,7 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
 
     QMediaPlayer::State originalState = state();
 
-    if (originalState == QMediaPlayer::PlayingState) 
+    if (originalState == QMediaPlayer::PlayingState)
         pause();
 
     TRAPD(err, doSetPositionL(pos * 1000));
@@ -630,7 +632,8 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
     if (originalState == QMediaPlayer::PlayingState)
         play();
 
-    emit positionChanged(position());
+    TRAP_IGNORE(m_progressduration = doGetPositionL());
+    emit positionChanged(m_progressduration);
 
     DP0("S60MediaPlayerSession::setPosition ---");
 }
@@ -904,7 +907,8 @@ void S60MediaPlayerSession::tick()
 {
     DP0("S60MediaPlayerSession::tick +++");
 
-    emit positionChanged(position());
+    m_progressduration = position();
+    emit positionChanged(m_progressduration);
 
     if (bufferStatus() < 100)
         emit bufferStatusChanged(bufferStatus());
@@ -933,6 +937,7 @@ void S60MediaPlayerSession::stopProgressTimer()
 {
     DP0("S60MediaPlayerSession::stopProgressTimer +++");
 
+    m_progressduration = 0;
     m_progressTimer->stop();
 
     DP0("S60MediaPlayerSession::stopProgressTimer ---");
