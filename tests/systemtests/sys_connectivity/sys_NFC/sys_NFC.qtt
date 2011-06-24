@@ -73,19 +73,12 @@ testcase = {
 
     NDEF_Notification_Registration: function()
     {
-      skip all;
         prompt(twiki('*Register for NDEF notifications*
 
-    1 Currently no test application
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
+    1 Requirements: An NFC tag with an NFC text and NFC URI field (see README.txt for instructions on writing a tag)
+    1 Run the annotatedURL application
+    1 Bring the card within 1 cm of the NFC sensor
+    1 Verify the Text and URL are displayed on the annotatedURL application and no other application is registered
         '));
     },
 
@@ -95,15 +88,6 @@ testcase = {
         prompt(twiki('*Unregister for NDEF notifications*
 
     1 currently no test application
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
         '));
     },
 
@@ -145,15 +129,6 @@ testcase = {
         prompt(twiki('*Send tag specific commands to a tag *
 
     1 not enabled yet in bluewheel
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
         '));
     },
 

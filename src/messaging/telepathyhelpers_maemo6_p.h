@@ -44,7 +44,26 @@
 
 #include <QDebug>
 
+//controls TelepathyEngine and StorageEngine debug info printing
+//#define PRINT_DEBUG_INFO
+
+//controls printing of "begin" and "end" markers in TelepathyEngine and StorageEngine
+//#define PRINT_DEBUG_BEGIN_END
+
+#ifdef PRINT_DEBUG_INFO
+#define QDEBUG(x) qDebug() << x
+#define QPRETTYDEBUG(x) qDebug() << __PRETTY_FUNCTION__ << x
+#else
+#define QDEBUG(x)
+#define QPRETTYDEBUG(x)
+#endif
+
+#ifdef PRINT_DEBUG_BEGIN_END
 #define QDEBUG_FUNCTION_BEGIN qDebug() << __PRETTY_FUNCTION__ << "begin" << endl;
 #define QDEBUG_FUNCTION_END qDebug() << __PRETTY_FUNCTION__ << "end" << endl;
+#else
+#define QDEBUG_FUNCTION_BEGIN
+#define QDEBUG_FUNCTION_END
+#endif
 
 #endif //_TELEPATHYHELPERS_MAEMO6_H_
