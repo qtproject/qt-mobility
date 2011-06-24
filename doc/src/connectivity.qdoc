@@ -69,9 +69,9 @@ about this issue: \l http://bugreports.qt.nokia.com/browse/QTMOBILITY-1660
 
 \section2 NFC
 
-The NFC API is only supported on Maemo6 and Symbian^3 and the Qt Simulator. On Symbian^3 the API is
+The NFC API is only supported on Harmattan and Symbian^3 and the Qt Simulator. On Symbian^3 the API is
 fully functional. On the Qt Simulator only target detection and loss and tag access are support. On
-Maemo6 the following features are \bold NOT supported:
+Harmattan the following features are \bold NOT supported:
 
 \list
     \o Connectionless LLCP sockets (both client and server).
