@@ -39,6 +39,11 @@ symbian {
     PRIVATE_HEADERS += databasemanager_symbian_p.h
     SOURCES += databasemanager_symbian.cpp
     LIBS += -lefsrv
+
+    # We break on Symbian^3 unless we have this include (normally obtained by linking to QtGui)
+    load(platform_paths)
+    INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
+
     TARGET.CAPABILITY = ALL \
         -TCB
     TARGET.UID3 = 0x2002AC84
@@ -47,6 +52,7 @@ symbian {
     QtServiceFrameworkDeployment.path = /sys/bin
     DEPLOYMENT += QtServiceFrameworkDeployment
 }
+
 else:SOURCES += servicedatabase.cpp \
     databasemanager.cpp
 HEADERS += $$PUBLIC_HEADERS \
