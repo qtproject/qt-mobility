@@ -459,7 +459,7 @@ void ModuletestConfigurability::stringParameter2_data()
     QTest::addColumn<QString>("path");
     QTest::addColumn<QString>("key");
 
-    QTest::newRow("numeric cenrep path") << QString("/cr/0xE056F50B/5?string") << QString();
+    QTest::newRow("numeric cenrep path") << QString("/cr/0xE056F50B") << QString("5?string");
     QTest::newRow("qrml cenrep path") << QString("/publishsubscribe_mt/cenrep") << QString("string?string");
 }
 

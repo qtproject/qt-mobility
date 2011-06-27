@@ -52,7 +52,8 @@ QTM_BEGIN_NAMESPACE
 const QString CrPathPrefix("cr");
 const QString PsPathPrefix("ps");
 const QString FmPathPrefix("fm");
-const QLatin1Char UrlParameterSeparator('?');
+const QString KeyTypeParameterRaw("?raw");
+const QString KeyTypeParameterString("?string");
 
 // check if the path is for numeric access to central repository, publish&subscribe or featuremanager
 // (i.e. the path starts with "/cr/", "/ps/" or "/fm/")
