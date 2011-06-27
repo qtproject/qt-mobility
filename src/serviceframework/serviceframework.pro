@@ -38,6 +38,7 @@ symbian {
     INCLUDEPATH += ./databasemanagerserver_symbian
     PRIVATE_HEADERS += databasemanager_symbian_p.h
     SOURCES += databasemanager_symbian.cpp
+    LIBS += -lefsrv
     TARGET.CAPABILITY = ALL \
         -TCB
     TARGET.UID3 = 0x2002AC84
