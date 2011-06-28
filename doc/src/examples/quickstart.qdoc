@@ -149,7 +149,7 @@ on which parts of an API is utilized by an application.
 \header
     \o Domain
     \o Symbian Capabilities
-    \o Harmattan Tokens
+    \o Harmattan Tokens (\l{http://www.developer.nokia.com/Community/Wiki/Harmattan:Developer_Library/Developing_for_Harmattan/Harmattan_security/Security_guide}{Aegis})
 \row
     \o \l {Bearer Management}
     \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
