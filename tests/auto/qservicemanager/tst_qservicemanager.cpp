@@ -45,7 +45,7 @@
 #include <qservicecontext.h>
 #include <qabstractsecuritysession.h>
 #include <qserviceinterfacedescriptor_p.h>
-#include "../../sampleserviceplugin/sampleserviceplugin.h"
+#include "../../tools/sampleserviceplugin/sampleserviceplugin.h"
 #include "../qsfwtestutil.h"
 
 #include <QtTest/QtTest>
