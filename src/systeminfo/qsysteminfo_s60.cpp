@@ -1183,9 +1183,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     }
 
     if (driveInfo.iDriveAtt & KDriveAttInternal) {
-        if (driveInfo.iType == EMediaHardDisk)
-            return QSystemStorageInfo::InternalFlashDrive;
-        else if (driveInfo.iType == EMediaNANDFlash)
+        if (driveInfo.iType == EMediaNANDFlash)
             return QSystemStorageInfo::RamDrive;
         else
             return QSystemStorageInfo::InternalDrive;
