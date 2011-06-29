@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef S60CAMERAFLASHCONTROL_H
-#define S60CAMERAFLASHCONTROL_H
+#ifndef S60CAMERACAPTUREDESTINATIONCONTROL_H
+#define S60CAMERACAPTUREDESTINATIONCONTROL_H
 
-#include <qcameraflashcontrol.h>
-
-#include "s60camerasettings.h"
+#include <qcameracapturedestinationcontrol.h>
 
 QT_USE_NAMESPACE
 
@@ -52,42 +50,40 @@ QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 
 /*
- * Control to setup Flash related camera settings.
+ * Control to setup image capture destination.
  */
-class S60CameraFlashControl : public QCameraFlashControl
+class S60CameraCaptureDestinationControl : public QCameraCaptureDestinationControl
 {
     Q_OBJECT
 
 public: // Constructors & Destructor
 
-    S60CameraFlashControl(QObject *parent = 0);
-    S60CameraFlashControl(S60ImageCaptureSession *session, QObject *parent = 0);
-    ~S60CameraFlashControl();
+    S60CameraCaptureDestinationControl(QObject *parent = 0);
+    S60CameraCaptureDestinationControl(S60ImageCaptureSession *session, QObject *parent = 0);
+    ~S60CameraCaptureDestinationControl();
 
-public: // QCameraExposureControl
+public: // QCameraCaptureDestinationControl
 
-    // Flash Mode
-    QCameraExposure::FlashModes flashMode() const;
-    void setFlashMode(QCameraExposure::FlashModes mode);
-    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
-
-    bool isFlashReady() const;
+    // Capture Destination
+    bool isCaptureDestinationSupported(QCameraImageCapture::CaptureDestinations destination) const;
+    QCameraImageCapture::CaptureDestinations captureDestination() const;
+    void setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination);
 
 /*
-Q_SIGNALS: // QCameraExposureControl
-    void flashReady(bool);
+Q_SIGNALS: // QCameraCaptureDestinationControl
+
+    void captureDestinationChanged(QCameraImageCapture::CaptureDestinations);
 */
 
-private slots: // Internal Slots
+private slots: // Internal
 
-    void resetAdvancedSetting();
+    void handleCaptureDestinationChange(const QCameraImageCapture::CaptureDestinations destination);
 
 private: // Data
 
-    S60ImageCaptureSession          *m_session;
-    S60CameraService                *m_service;
-    S60CameraSettings               *m_advancedSettings;
-    QCameraExposure::FlashModes     m_flashMode;
+    S60ImageCaptureSession                      *m_session;
+    S60CameraService                            *m_service;
+    QCameraImageCapture::CaptureDestinations    m_captureDestination;
 };
 
-#endif // S60CAMERAFLASHCONTROL_H
+#endif // S60CAMERACAPTUREDESTINATIONCONTROL_H

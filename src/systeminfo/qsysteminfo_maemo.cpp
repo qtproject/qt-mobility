@@ -41,6 +41,8 @@
 
 #include "qsysteminfo_maemo_p.h"
 
+#include <QFile>
+#include <QTextStream>
 #include <QtGui/qdesktopwidget.h>
 
 #include <fcntl.h>
@@ -1567,12 +1569,31 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
 
 QString QSystemDeviceInfoPrivate::model()
 {
+    QString productName;
 #if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
+    productName = sysinfodValueForKey("/component/product-name");
     if (!productName.isEmpty())
         return productName;
 #endif
-    return QString();
+    QFile cpuinfoFile("/proc/cpuinfo");
+
+    if (!cpuinfoFile.open(QFile::ReadOnly | QFile::Text))
+        return productName;
+
+    QTextStream in(&cpuinfoFile);
+    QString cpuinfo = in.readAll();
+
+    int start = cpuinfo.indexOf("model name\t", 0, Qt::CaseInsensitive);
+    if (start < 0)
+        start = cpuinfo.indexOf("processor\t", 0, Qt::CaseInsensitive);
+
+    if (start > -1 &&
+        (start = cpuinfo.indexOf(':', start)) > -1) {
+        int end = cpuinfo.indexOf('\n', start);
+        if (start < end)
+           productName = cpuinfo.mid(start+1, end-start).trimmed();
+    }
+    return productName;
 }
 
 QString QSystemDeviceInfoPrivate::productName()

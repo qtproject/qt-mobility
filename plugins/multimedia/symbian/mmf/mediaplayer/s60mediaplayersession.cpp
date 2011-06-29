@@ -67,6 +67,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_error(KErrNone)
     , m_play_requested(false)
     , m_seekable(true)
+    , m_duration(0)
 {
     DP0("S60MediaPlayerSession::S60MediaPlayerSession +++");
 

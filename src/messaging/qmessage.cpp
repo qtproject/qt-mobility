@@ -91,6 +91,11 @@ QList<QByteArray> charsets;
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
     or email addresses.
 
+    On symbian platform there is no support for email messages containing alternative versions
+    (multipart/alternative) of the same text content. Only one version is allowed. In the case
+    where an email message containing alternative versions is received only plain text content is
+    accessible.
+
     \sa QMessageContentContainer, QMessageManager, QMessageId
 */
 

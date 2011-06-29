@@ -46,9 +46,7 @@
 
 QT_USE_NAMESPACE
 
-class S60CameraControl;
-class QString;
-class QIcon;
+QT_FORWARD_DECLARE_CLASS(S60CameraControl)
 
 /*
  * Control for providing information of the video device (r. camera) and to
