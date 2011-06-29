@@ -9,5 +9,6 @@ usr/tests/qtm/tst_qorganizercollection
 usr/tests/qtm/tst_qorganizeritemfilter
 usr/tests/qtm/tst_qorganizermanager
 usr/tests/qtm/tst_bm_organizer
+usr/tests/qtm/tst_qdeclarativeorganizer
 usr/share/libqtm-organizer-tests/tests.xml
 usr/tests/qtm/plugins/organizer/libqtorganizer_skeleton.so
