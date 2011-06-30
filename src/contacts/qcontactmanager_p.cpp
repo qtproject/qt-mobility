@@ -93,7 +93,7 @@ static void qContactsCleanEngines()
     }
 
     foreach(QWeakPointer<QContactManager> manager, aliveManagers) {
-        if (not manager) {
+        if (!manager) {
             // deleting engine of one manager, could cause deleting next manager in list (aggregation case)
             continue;
         }
