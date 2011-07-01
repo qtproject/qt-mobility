@@ -204,10 +204,10 @@ unix:!simulator {
 
                 !isEmpty(SDK6) {
                     LIBS += -framework CoreWLAN  -framework CoreLocation
-                }
-            } else {
-                DEFINES += MAC_SDK_10_5
-                CONFIG += no_keywords
+                }  else {
+                   DEFINES += MAC_SDK_10_5
+                  CONFIG += no_keywords
+               }
             }
 
             TEMPLATE = lib
