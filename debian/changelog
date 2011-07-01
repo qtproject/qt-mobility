@@ -1,3 +1,9 @@
+qt-mobility (1.2.0+746) unstable; urgency=low
+
+  * Fixes: NB#
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Fri, 1 Jul 2011 11:27:48 +1000
+
 qt-mobility (1.2.0+732) unstable; urgency=low
 
   * Fixes: NB#230592
