@@ -52,8 +52,8 @@ QTM_BEGIN_NAMESPACE
 const QString CrPathPrefix("cr");
 const QString PsPathPrefix("ps");
 const QString FmPathPrefix("fm");
-const QString KeyTypeParameterRaw("?raw");
-const QString KeyTypeParameterString("?string");
+const QString KeyParameterRaw("?raw");
+const QString KeyParameterString("?string");
 
 // check if the path is for numeric access to central repository, publish&subscribe or featuremanager
 // (i.e. the path starts with "/cr/", "/ps/" or "/fm/")
@@ -102,10 +102,10 @@ static bool parseNumericPath(const QString &path, PathMapper::Target &target, qu
 static QString removeUrlParameter(const QString &path)
 {
     QString returnString = path;
-    if (returnString.endsWith(KeyTypeParameterRaw))
-        returnString.chop(KeyTypeParameterRaw.size());
-    else if (returnString.endsWith(KeyTypeParameterString))
-        returnString.chop(KeyTypeParameterString.size());
+    if (returnString.endsWith(KeyParameterRaw))
+        returnString.chop(KeyParameterRaw.size());
+    else if (returnString.endsWith(KeyParameterString))
+        returnString.chop(KeyParameterString.size());
     
     return returnString;
 }
