@@ -64,10 +64,35 @@ CWlanInfo::CWlanInfo() : CActive(EPriorityStandard),
     TRAP_IGNORE( m_wlanMgmtClient = CWlanMgmtClient::NewL();)
         if (m_wlanMgmtClient) {
             m_wlanMgmtClient->ActivateNotificationsL(*this);
+            initWlanInfo();
             StartMonitoring();
        }
 #endif
  TRACES(qDebug() << "CWlanInfo::CWlanInfo-->");
+}
+
+void CWlanInfo::initWlanInfo()
+{
+    TWlanConnectionMode wlanMode;
+    TInt err = m_wlanMgmtClient->GetConnectionMode(wlanMode);
+    if (err == KErrNone && wlanMode != EWlanConnectionModeNotConnected && wlanMode != EWlanConnectionModeSearching) {
+        m_wlanStatus = true;
+    }
+    else {
+        return;
+    }
+
+    TWlanSsid ssid;
+    err = m_wlanMgmtClient->GetConnectionSsid(ssid);
+    if (err == KErrNone) {
+        m_wlanSsid = ssidToString(ssid);
+    }
+
+    TInt32 signalQuality;
+    err = m_wlanMgmtClient->GetConnectionSignalQuality(signalQuality);
+    if (err == KErrNone) {
+        updateSignalStrength(signalQuality);
+    }
 }
 
 CWlanInfo::~CWlanInfo()
@@ -132,20 +157,25 @@ void CWlanInfo::checkWlanInfo()
     TInt32 signalQuality;
     TInt err = m_wlanMgmtClient->GetConnectionSignalQuality(signalQuality);
     if (err == KErrNone && m_wlanSignalStrength != signalQuality) {
-        if (signalQuality <= KWlanInfoSignalStrengthMax && signalQuality >= 0)
-            m_wlanSignalStrength = 100;
-        else if (signalQuality >= KWlanInfoSignalStrengthMin)
-            m_wlanSignalStrength = 0;
-        else {
-            m_wlanSignalStrength = (KWlanInfoSignalStrengthMin - signalQuality) * 100 /
-            (KWlanInfoSignalStrengthMin - KWlanInfoSignalStrengthMax);
-        }
+        updateSignalStrength(signalQuality);
         //emit wlanNetworkSignalStrengthChanged();
         foreach (MWlanInfoObserver *observer, m_observers)
          observer->wlanNetworkSignalStrengthChanged();
     }
  TRACES(qDebug() << "CWlanInfo::checkWlanInfo--->");
 #endif
+}
+
+void CWlanInfo::updateSignalStrength(TInt32 signalQuality)
+{
+    if (signalQuality <= KWlanInfoSignalStrengthMax && signalQuality >= 0)
+        m_wlanSignalStrength = 100;
+    else if (signalQuality >= KWlanInfoSignalStrengthMin)
+        m_wlanSignalStrength = 0;
+    else {
+        m_wlanSignalStrength = (KWlanInfoSignalStrengthMin - signalQuality) * 100 /
+        (KWlanInfoSignalStrengthMin - KWlanInfoSignalStrengthMax);
+    }
 }
 
 TInt CWlanInfo::TimeOut(TAny* aAny)
@@ -177,8 +207,8 @@ void CWlanInfo::ConnectionStateChanged(TWlanConnectionMode aNewState)
             err = m_wlanMgmtClient->GetConnectionSsid(ssid);
             TRACES(qDebug() << "Error code: GetConnectionSsid():" << err);
 
-            if (err == KErrNone && m_wlanSsid != QString::fromAscii((char*)ssid.Ptr(), ssid.Length())) {
-                m_wlanSsid = QString::fromAscii((char*)ssid.Ptr(), ssid.Length());
+            if (err == KErrNone && m_wlanSsid != ssidToString(ssid)) {
+                m_wlanSsid = ssidToString(ssid);
                 //emit wlanNetworkNameChanged();
                 foreach (MWlanInfoObserver *observer, m_observers)
                   observer->wlanNetworkNameChanged();
@@ -191,6 +221,11 @@ void CWlanInfo::ConnectionStateChanged(TWlanConnectionMode aNewState)
         }
     }
  TRACES(qDebug() << "CWlanInfo::ConnectionStateChanged--->");
+}
+
+QString CWlanInfo::ssidToString(TWlanSsid ssid)
+{
+    return QString::fromAscii((char*)ssid.Ptr(), ssid.Length());
 }
 
 void CWlanInfo::stopPolling()
