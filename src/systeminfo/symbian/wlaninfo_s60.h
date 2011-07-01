@@ -86,7 +86,13 @@ protected: // MWlanMgmtNotifications
     void RssChanged(TWlanRssClass , TUint strength) {};
     static TInt TimeOut(TAny*);
     void FreeResources();
+
+private:
+    void initWlanInfo();
     void checkWlanInfo();
+
+    void updateSignalStrength(TInt32 signalQuality);
+    QString ssidToString(TWlanSsid ssid);
 
 private:
     CWlanMgmtClient *m_wlanMgmtClient;
