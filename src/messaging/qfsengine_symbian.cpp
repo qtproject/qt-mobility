@@ -493,36 +493,36 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
     QMessage message;
     QMessageId realMessageId = qMessageIdFromFsMessageId(aMessageId);
 
-    if (aNotificationType == QMessageStorePrivate::Removed ||
-        aNotificationType == QMessageStorePrivate::Updated) {
-        // Remove updated or removed message from the cache
+    if (aNotificationType == QMessageStorePrivate::Removed) {
+        message = MessageCache::instance()->message(realMessageId);
+        // Remove the removed message from the cache
         MessageCache::instance()->remove(realMessageId.toString());
+    } else {
+
+        // Remove the updated message from the cache
+        if (aNotificationType == QMessageStorePrivate::Updated)
+            MessageCache::instance()->remove(realMessageId.toString());
+
+        // Some older versions of Email client API will return NULL instead of
+        // leaving with KErrNotFound if mailbox is not found.
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
+        if( !mailbox )
+            return;
+        CleanupReleasePushL(*mailbox);
+        MEmailMessage* fsMessage = NULL;
+        TRAP_IGNORE(fsMessage = mailbox->MessageL(aMessageId));
+        if (!fsMessage) {
+            CleanupStack::PopAndDestroy(mailbox);
+            return;
+        }
+        CleanupReleasePushL(*fsMessage);
+        CreateQMessageL(&message, *fsMessage);
+        CleanupStack::PopAndDestroy(fsMessage);
+        CleanupStack::PopAndDestroy(mailbox);
     }
 
-    bool messageRetrieved = false;
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
-
-    // Some older versions of Email client API will return NULL instead of 
-    // leaving with KErrNotFound if mailbox is not found.
-    if( !mailbox )
-        return;
-    
-    CleanupReleasePushL(*mailbox);
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
-        if (!messageRetrieved) {
-            MEmailMessage* fsMessage = NULL;
-            TRAP_IGNORE(fsMessage = mailbox->MessageL(aMessageId));
-            if (!fsMessage) {
-                CleanupStack::PopAndDestroy(mailbox);
-                return;
-            }
-            CleanupReleasePushL(*fsMessage);
-            CreateQMessageL(&message, *fsMessage);
-            messageRetrieved = true;
-            CleanupStack::PopAndDestroy(fsMessage);
-        }
-
         if (filter.isEmpty()) {
             // Empty filter matches to all messages
             matchingFilters.insert(it.key());
@@ -536,15 +536,13 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
         if (privateMessageFilter->filter(message)) {
             matchingFilters.insert(it.key());
         }
-        
     }
+
     int c = matchingFilters.count();
     QString id = realMessageId.toString();
     if (matchingFilters.count() > 0) {
         QT_TRYCATCH_LEAVING(ipMessageStorePrivate->messageNotification(aNotificationType, realMessageId, matchingFilters));
     }
-    
-    CleanupStack::PopAndDestroy(mailbox);
 }
 
 #ifdef FREESTYLEMAILMAPI12USED
