@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="CRepository" uidValue="0xe056f50b">
+    <key ref="/publishsubscribe_mt/cenrep/int" int="0x1" />
+    <key ref="/publishsubscribe_mt/cenrep/real" int="0x2" />
+    <key ref="/publishsubscribe_mt/cenrep/string" int="0x5" />
+    <key ref="/publishsubscribe_mt/cenrep/string8" int="0xc" />
+</repository>

@@ -1,0 +1,13 @@
+; Language
+&EN
+
+; SIS header: name, uid, version
+#{"configurability moduletest cenrep ini file"}, (0x10202BE9), 1, 0, 0, TYPE=SP
+
+; Default localized vendor name
+%{"Nokia"}
+
+; Default unique vendor name
+:"Nokia"
+
+"/epoc32/data/z/private/10202be9/persists/e056f50b.cre" - "c:\private\10202be9\persists\e056f50b.cre"
