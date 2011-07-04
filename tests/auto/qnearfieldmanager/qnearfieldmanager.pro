@@ -25,6 +25,13 @@ include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = connectivity
 
-DEFINES += SRCDIR=\\\"$$PWD/../nfcdata\\\"
+maemo* {
+    testfiles.sources = ../nfcdata/*
+    testfiles.path = nfcdata
+    DEPLOYMENT += testfiles
+    DEFINES += SRCDIR=\\\"$$MAEMO_TEST_INSTALL_ROOT/nfcdata\\\"
+} else {
+    DEFINES += SRCDIR=\\\"$$PWD/../nfcdata\\\"
+}
 
 maemo*:CONFIG += insignificant_test

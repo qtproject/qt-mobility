@@ -13,9 +13,9 @@ installtests.CONFIG = recursive
                 srcFiles = $$eval($$srcFiles)
                 testplugin {
                     isEmpty(PLUGIN_TYPE) : error (PLUGIN_TYPE not set in $$__PRO_FILE__)
-                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), $(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/plugins/$$PLUGIN_TYPE/)
+                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT/plugins/$$PLUGIN_TYPE/)
                 } testcase {
-                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), $(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/)
+                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT)
                 }
                 installtests.commands += $(CHK_DIR_EXISTS) $${destPath} || $(MKDIR) $${destPath} $${NL}
                 for(srcFile, $$list($$srcFiles)){
@@ -34,9 +34,9 @@ installtests.CONFIG = recursive
             isEmpty(srcFiles) : error (Deployment $${deployItem}.sources not set in $$__PRO_FILE__ project file)
 
             testplugin {
-                destPath = $(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/plugins/$$PLUGIN_TYPE/$$itemPath
+                destPath = $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT/plugins/$$PLUGIN_TYPE/$$itemPath
             } testcase {
-                destPath = $(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/$$itemPath
+                destPath = $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT/$$itemPath
             }
             installtests.commands += $(CHK_DIR_EXISTS) $${destPath} || $(MKDIR) $${destPath} $${NL}
             installtests.commands += $(COPY_DIR) $$srcFiles $$destPath $${NL}
@@ -44,10 +44,10 @@ installtests.CONFIG = recursive
 
         # Install the test binaries and plugins.
         testcase {
-            target.path = $$[QT_INSTALL_PREFIX]/tests/qtm/
+            target.path = $$MAEMO_TEST_INSTALL_ROOT
             INSTALLS += target
         } testplugin {
-            target.path = $$[QT_INSTALL_PREFIX]/tests/qtm/plugins/$$PLUGIN_TYPE/
+            target.path = $$MAEMO_TEST_INSTALL_ROOT/plugins/$$PLUGIN_TYPE/
             INSTALLS += target
         }
     }

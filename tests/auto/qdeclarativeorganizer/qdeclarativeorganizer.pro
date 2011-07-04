@@ -1,6 +1,10 @@
-load(qttest_p4)
+TARGET = tst_qdeclarativeorganizer
+CONFIG += testcase
+
 include (../../../common.pri)
+
 CONFIG += mobility
+DEFINES+=IGNORE_METAOBJECTBUILDER_EXPORT
 MOBILITY += organizer versit
 QT += declarative
 

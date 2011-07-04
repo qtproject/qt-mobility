@@ -2068,7 +2068,8 @@ bool DatabaseOperations::removeLandmarkHelper(const QLandmarkId &landmarkId,
                "WHERE { ?:landmark_uri nie:identifier ?ide . } "
                "delete { ?:landmark_uri nie:title ?name . } "
                "WHERE { ?:landmark_uri nie:title ?name . } "
-               "delete { ?:landmark_uri a slo:Landmark . }");
+               "delete { ?:landmark_uri a slo:Landmark . }"
+               "delete { ?:landmark_uri a rdfs:Resource . }");
 
     if (!otherContactHasSameNumber) {
         deleteQuery.prepend(QString("delete { ?pn a rdfs:Resource . } "
@@ -2633,7 +2634,8 @@ bool DatabaseOperations::removeCategoryHelper(const QLandmarkCategoryId &categor
             "WHERE { ?:category_uri nie:identifier ?ide . } "
             "delete { ?:category_uri nie:title ?title . } "
             "WHERE { ?:category_uri nie:title ?title . } "
-            "delete { ?:category_uri a slo:LandmarkCategory . }",
+            "delete { ?:category_uri a slo:LandmarkCategory . }"
+            "delete { ?:category_uri a rdfs:Resource . } ",
              QSparqlQuery::DeleteStatement);
 
     qsparqlDeleteQuery.unbindValues();
