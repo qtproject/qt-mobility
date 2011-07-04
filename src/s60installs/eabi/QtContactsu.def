@@ -967,4 +967,6 @@ EXPORTS
 	_ZNK10QtMobility8QContact4tagsEv @ 966 NONAME
 	_ZTIN10QtMobility16QContactObserverE @ 967 NONAME
 	_ZTVN10QtMobility16QContactObserverE @ 968 NONAME
+	_ZN10QtMobility15QContactManager13connectNotifyEPKc @ 969 NONAME
+	_ZN10QtMobility15QContactManager16disconnectNotifyEPKc @ 970 NONAME
 
