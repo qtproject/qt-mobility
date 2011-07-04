@@ -1116,7 +1116,7 @@ EXPORTS
 	?getStaticMetaObject@QOrganizerManagerEngineV2@QtMobility@@SAABUQMetaObject@@XZ @ 1115 NONAME ; struct QMetaObject const & QtMobility::QOrganizerManagerEngineV2::getStaticMetaObject(void)
 	?itemId@QOrganizerItemObserver@QtMobility@@QBE?AVQOrganizerItemId@2@XZ @ 1116 NONAME ; class QtMobility::QOrganizerItemId QtMobility::QOrganizerItemObserver::itemId(void) const
 	?metaObject@QOrganizerItemFetchByIdRequest@QtMobility@@UBEPBUQMetaObject@@XZ @ 1117 NONAME ; struct QMetaObject const * QtMobility::QOrganizerItemFetchByIdRequest::metaObject(void) const
-	??_EQOrganizerItemTag@QtMobility@@QAE@I@Z @ 1118 NONAME ; QtMobility::QOrganizerItemTag::~QOrganizerItemTag(unsigned int)
+	??_EQOrganizerItemTag@QtMobility@@QAE@I@Z @ 1118 NONAME ABSENT ; QtMobility::QOrganizerItemTag::~QOrganizerItemTag(unsigned int)
 	??0QOrganizerItemFetchByIdRequest@QtMobility@@QAE@PAVQObject@@@Z @ 1119 NONAME ; QtMobility::QOrganizerItemFetchByIdRequest::QOrganizerItemFetchByIdRequest(class QObject *)
 	??1QOrganizerItemTag@QtMobility@@QAE@XZ @ 1120 NONAME ; QtMobility::QOrganizerItemTag::~QOrganizerItemTag(void)
 	?setMaxCount@QOrganizerItemFetchRequest@QtMobility@@QAEXH@Z @ 1121 NONAME ; void QtMobility::QOrganizerItemFetchRequest::setMaxCount(int)
@@ -1164,6 +1164,6 @@ EXPORTS
 	?trUtf8@QOrganizerItemFetchByIdRequest@QtMobility@@SA?AVQString@@PBD0@Z @ 1163 NONAME ; class QString QtMobility::QOrganizerItemFetchByIdRequest::trUtf8(char const *, char const *)
 	?d_func@QOrganizerItemFetchByIdRequest@QtMobility@@ABEPBVQOrganizerItemFetchByIdRequestPrivate@2@XZ @ 1164 NONAME ; class QtMobility::QOrganizerItemFetchByIdRequestPrivate const * QtMobility::QOrganizerItemFetchByIdRequest::d_func(void) const
 	??6QtMobility@@YA?AVQDebug@@V1@ABVQOrganizerItemFetchHint@0@@Z @ 1165 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QOrganizerItemFetchHint const &)
-	??0QOrganizerItemTag@QtMobility@@QAE@ABV01@@Z @ 1166 NONAME ; QtMobility::QOrganizerItemTag::QOrganizerItemTag(class QtMobility::QOrganizerItemTag const &)
+	??0QOrganizerItemTag@QtMobility@@QAE@ABV01@@Z @ 1166 NONAME ABSENT ; QtMobility::QOrganizerItemTag::QOrganizerItemTag(class QtMobility::QOrganizerItemTag const &)
 	?errorMap@QOrganizerItemFetchByIdRequest@QtMobility@@QBE?AV?$QMap@HW4Error@QOrganizerManager@QtMobility@@@@XZ @ 1167 NONAME ; class QMap<int, enum QtMobility::QOrganizerManager::Error> QtMobility::QOrganizerItemFetchByIdRequest::errorMap(void) const
 
