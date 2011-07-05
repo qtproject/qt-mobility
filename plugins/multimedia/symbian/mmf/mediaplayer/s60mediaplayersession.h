@@ -182,6 +182,7 @@ private:
     bool m_play_requested;
     bool m_seekable;
     qint64 m_duration;
+    qint64 m_progressduration;
 };
 
 #endif
