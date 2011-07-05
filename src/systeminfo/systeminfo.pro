@@ -254,7 +254,7 @@ unix:!simulator {
             LIBS += -lptiengine
         }
 
-        contains(symbianflextimer_tenabled, yes) { #disabled until test crash is fixed
+        contains(symbianflextimer_enabled, yes) { #disabled until test crash is fixed
             message("SymbianFlexTimer enabled")
             SOURCES += qsystemalignedtimer_symbian.cpp heartbeattimer_s60.cpp
             HEADERS += qsystemalignedtimer_symbian_p.h heartbeattimer_s60.h
@@ -331,7 +331,7 @@ unix:!simulator {
             message("Thermalstatus enabled")
         }
 
-        contains(networkhandlingenginet_symbian_enabled, yes) {
+        contains(networkhandlingengine_symbian_enabled, yes) {
             DEFINES += NETWORKHANDLER_SYMBIAN_SUPPORTED
             SOURCES += networkoperatornamelistener_s60.cpp
             HEADERS += networkoperatornamelistener_s60.h
