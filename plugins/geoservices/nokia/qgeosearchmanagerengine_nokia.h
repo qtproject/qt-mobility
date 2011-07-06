@@ -87,7 +87,6 @@ private slots:
 private:
     static QString trimDouble(double degree, int decimalDigits = 10);
     QGeoSearchReply* search(QString requestString, QGeoBoundingArea *bounds, int limit = -1, int offset = 0);
-    QString languageToMarc(QLocale::Language language);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;

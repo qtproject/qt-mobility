@@ -34,7 +34,9 @@ SOURCES += \
             qgeosearchmanagerengine_nokia.cpp \
             qgeosearchreply_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp \
-            qgeotiledmapdata_nokia.cpp
+            qgeotiledmapdata_nokia.cpp\
+            marclanguagecodes.cpp
+
 
 INCLUDEPATH += $$SOURCE_DIR/src/location \
                 $$SOURCE_DIR/src/location/maps \

@@ -49,6 +49,7 @@
 #include "qgeomappingmanagerengine_nokia.h"
 #include "qgeomapreply_nokia.h"
 #include "qgeotiledmapdata_nokia.h"
+#include "marclanguagecodes.h"
 
 #include <qgeotiledmaprequest.h>
 
@@ -319,16 +320,17 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
 //#endif
     requestString += slashpng;
 
-    if (!m_token.isEmpty()) {
-        requestString += "?token=";
-        requestString += m_token;
+    requestString += "?lg=";
+    requestString += languageToMarc(locale().language());
 
-        if (!m_referer.isEmpty()) {
-            requestString += "&referer=";
-            requestString += m_referer;
-        }
-    } else if (!m_referer.isEmpty()) {
-        requestString += "?referer=";
+    if (!m_token.isEmpty()) {
+        requestString += "&token=";
+        requestString += m_token;
+    }
+
+    if (!m_referer.isEmpty()) {
+
+        requestString += "&referer=";
         requestString += m_referer;
     }
 

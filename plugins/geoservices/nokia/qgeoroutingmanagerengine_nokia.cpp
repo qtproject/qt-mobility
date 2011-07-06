@@ -48,6 +48,7 @@
 
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeoroutereply_nokia.h"
+#include "marclanguagecodes.h"
 
 #include <QStringList>
 #include <QNetworkProxy>
@@ -365,6 +366,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
         if (featureStrings.count())
             requestString += ";" + featureStrings.join(",");
     }
+
     return requestString;
 }
 
@@ -428,8 +430,8 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 
     requestString += "&instructionformat=text";
 
-    requestString += "&language=";
-    requestString += locale().name();
+    requestString += "&lg=";
+    requestString += languageToMarc(locale().language());
 
     return requestString;
 }

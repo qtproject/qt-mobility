@@ -297,21 +297,3 @@ void QGeoSearchManagerEngineNokia::placesError(QGeoSearchReply::Error error, con
 
     emit this->error(reply, error, errorString);
 }
-
-QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
-{
-    uint offset = 3 * (uint(language));
-    if (language == QLocale::C || offset + 3 > sizeof(marc_language_code_list))
-        return QLatin1String("eng");
-
-    const unsigned char *c = marc_language_code_list + offset;
-    if (c[0] == 0)
-        return QLatin1String("eng");
-
-    QString code(3, Qt::Uninitialized);
-    code[0] = ushort(c[0]);
-    code[1] = ushort(c[1]);
-    code[2] = ushort(c[2]);
-
-    return code;
-}
