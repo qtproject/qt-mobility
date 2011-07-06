@@ -128,7 +128,7 @@ data=\epoc32\data\z\private\2002ac7f\qtserviceframework_4.7_system.db           
 data=\epoc32\data\z\private\10202D56\import\packages\2002AC89\backup_registration.xml    private\10202D56\import\packages\2002AC89\backup_registration.xml
 
 // Symbian3 PS1 support
-file=\sf\mw\qtmobility\src\s60installs\deviceconfiguration\QtBearer{000a0000}.dll                                                      SHARED_LIB_DIR\QtBearer{000a0000}.dll
+file=EPOCROOT##sf\mw\qtmobility\src\s60installs\deviceconfiguration\QtBearer{000a0000}.dll                                                      SHARED_LIB_DIR\QtBearer{000a0000}.dll
 #endif // FF_QT_IN_UDA
 
 #endif // __QT_MOBILITY_IBY__
