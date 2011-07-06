@@ -50,7 +50,7 @@
 
 /*!
     \qmlclass BluetoothDiscoveryModel QDeclarativeBluetoothDiscoveryModel
-    \brief The BluetoothDisoceryModel element provides access device and service scanning
+    \brief The BluetoothDiscoveryModel element provides access device and service scanning
 
     \ingroup connectivity-qml
     \inmodule QtConnectivity
@@ -124,11 +124,15 @@ void QDeclarativeBluetoothDiscoveryModel::componentComplete()
 }
 
 /*!
-  \qmlproperty bool BluetoothSocket::discovery
+  \qmlproperty bool BluetoothDiscoveryModel::discovery
 
   This property starts or stops discovery.
 
   */
+bool QDeclarativeBluetoothDiscoveryModel::discovery()
+{
+    return d->m_working;
+}
 
 void QDeclarativeBluetoothDiscoveryModel::setDiscovery(bool discovery_)
 {
@@ -270,11 +274,6 @@ void QDeclarativeBluetoothDiscoveryModel::setMinimalDiscovery(bool minimalDiscov
 {
     d->m_minimal = minimalDiscovery_;
     emit minimalDiscoveryChanged();
-}
-
-bool QDeclarativeBluetoothDiscoveryModel::discovery()
-{
-    return d->m_working;
 }
 
 /*!
