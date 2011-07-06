@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the examples of the Qt Mobility Components.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,43 +38,66 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
-import QtMobility.connectivity 1.2
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
-Item {
-    id: root
+#include <QObject>
+#include <QTimer>
+#include <QTime>
+#include "../bttennis/board.h"
 
-    property BluetoothService bluetoothService
-    property bool available : false
+#define TOP 1
+#define BOTTOM 2
+#define LEFT 3
+#define RIGHT 4
 
-//! [tennis-handover]
-    NearFieldSocket {
-        id: socket
+class Controller : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Controller(QObject *parent = 0);
 
-        uri: "urn:nfc:sn:com.nokia.qtmobility.tennis"
-        connected: true
+signals:
+    void moveBall(int x, int y);
+    void score(int left, int right);    
 
-        function parse(s) {
-            console.log(s);
+public slots:
+    void ballCollision(int pos);
+    void scored(int pos);
+    void resetBoard();
+    void refresh();
 
-            var args = s.split(" ");
+    void moveLeftPaddle(int y);
+    void moveRightPaddle(int y);    
 
-            if (args.length == 2) {
-                console.log("Split: " + args[0] + " " + args[1]);
+    void start();
+    void stop();
 
-                bluetoothService.deviceAddress = args[0];
-                bluetoothService.servicePort = args[1];
-                root.bluetoothServiceChanged();
-            }
-        }
+private slots:
+    void tick();
 
-        onDataAvailable: parse(socket.stringData)
+private:
+    QTimer *timer;
+    QTime *elapsed;
+    QTime *elapsedPaddle;
+    int ball_x;
+    int speed_x;
+    int ball_y;
+    int speed_y;
+    int score_left;
+    int score_right;
+    int col_x;
+    int col_y;
 
-        onStateChanged: {
-            if (state == "Connecting") {
-                available = true;
-            }
-        }
-    }
-//! [tennis-handover]
-}
+    int rightPaddleForce;
+    int leftPaddleForce;
+    int rightPaddleLast;
+    int leftPaddleLast;
+    int rightPowerUp;
+    int leftPowerUp;
+
+    void restart_ball();
+
+};
+
+#endif // CONTROLLER_H

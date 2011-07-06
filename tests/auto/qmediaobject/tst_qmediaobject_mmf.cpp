@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/multimedia
+
 #include <tst_qmediaobject_mmf.h>
 
 QT_USE_NAMESPACE

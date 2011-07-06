@@ -43,27 +43,30 @@
 
 testcase = {
 
+    // \groups BAT,1.1,MOBILITY-65
     current_position: function()
     {
         prompt(twiki('---+++ Position is detected
+        Note that GPS connection is required for this test case
     | *Step* | *Verification* |
     | Run the weatherinfo_with_location example | Verify that weather information for your local area is displayed |'
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-65
     location_is_updated: function()
     {
         prompt(twiki('---+++ Position changes are detected
         Note that GPS and internet connection is required for this test case.
     | *Step* | *Verification* |
-    | Run the lightmaps_with_location app (sources are in demos\lightmaps). | Verify that map is displayed and centered with the current position |
+    | Run the lightmaps_with_location app (sources are in demos/lightmaps). | Verify that map is displayed and centered with the current position |
     | Move to a different location | Verify that map is updated and centered with new location |'
        ));
     },
 
+    // \groups BAT,1.2,QTMOBILITY-873
     third_party_position_source: function()
     {
-        //test case for QTMOBILITY-873: Allow 3rd party position sources
         prompt(twiki('---+++ Position is detected via cusom plugin
     Note that GPS and internet connection is required for this test case
     | *Step* | *Verification* |
@@ -73,27 +76,27 @@ testcase = {
         ));
     },
 
+    //Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
+    // \groups BAT,1.2,QTMOBILITY-658
     shift_to_the_given_offset: function()
     {
-        //test case for QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate
         prompt(twiki('---+++ New coordinats are calculated
-    Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
     | *Step* | *Verification* |
     | Run the testQtLocation application | |
     | Select the MapNavigation | |
     | Fill in "0" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
-    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
     | Fill "1000000, 90" in to the given field | |
     | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
     | Fill in "60" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
-    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
     | Fill "1000000, 180" in to the given field | |
     | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
     | Fill in "60" in to Start Latitude field | |
     | Fill in "100" in to Start Longitude field | |
-    | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
     | Fill "1000000, 20" in to the given field | |
     | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |'
         ));
@@ -106,6 +109,7 @@ testcase = {
         landmark : ["landmark", "20", "120"]
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     store_and_load_a_landmark: function(name, latitude, longitude)
     {
         startApplication("landmarkbrowser");
@@ -123,6 +127,7 @@ testcase = {
         bad_landmark_long : ["bad_landmark", "80", "300"]
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     negative_store_and_load_a_landmark: function(name, latitude, longitude)
     {
         startApplication("landmarkbrowser");
@@ -136,6 +141,7 @@ testcase = {
         select("Cancel");
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     sorted_search_based_on_category: function()
     {
         prompt(twiki('---+++ Landmarks for the specified category are displayed
@@ -156,6 +162,7 @@ testcase = {
        ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     sort_landmarks_in_alphabetical_and_nearest: function()
     {
         prompt(twiki('---+++ Nearest landmarks are displayed
@@ -168,7 +175,7 @@ testcase = {
     | Press Set Filter button | |
     | Select Proximity checkbox | |
     | Fill in 0 in to Lat field | |
-    | Fill in 0 in to Long field |
+    | Fill in 0 in to Long field | |
     | Fill in 10000000 in to Radius field| |
     | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
     | Press Set Filter button | |
@@ -180,6 +187,7 @@ testcase = {
        ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     landmarks_within_range_of_a_position: function()
     {
         prompt(twiki('---+++ Landmarks within range are displayed
@@ -199,6 +207,7 @@ testcase = {
        ));
     },
     
+    // \groups BAT,1.1,MOBILITY-66
     create_edit_and_delete_a_landmark: function()
     {
     //Landmark manager provides notifications whenever landmarks are added, updated or deleted
@@ -228,6 +237,7 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     enumerate_categories: function()
     {
         prompt(twiki('---+++ Categories are displayed
@@ -239,6 +249,7 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     add_and_delete_a_category: function()
     {
     //Landmark manager provides notifications whenever categories are added, updated or deleted
@@ -259,7 +270,7 @@ testcase = {
     | Press Ok button | |
     | Select AAA category | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
-    | Press Ok button | Verify that list of categories does not contain AAA category only| 
+    | Press Ok button | Verify that list of categories does not contain AAA category only | 
     | Add A1 and A2 categories | |
     | Select A1 and A2 categories | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
@@ -271,6 +282,7 @@ testcase = {
     },
 
     // Maps and Navigation
+    // \groups BAT,1.1,MOBILITY-538
     select_service_provider: function()
     {
         startApplication("geoservicedemo");
@@ -284,6 +296,7 @@ testcase = {
         route:["-27.575", "153.088", "-27.465", "153.023", "15901", "15987"]
     },
 
+    // \groups BAT,1.1,MOBILITY-538
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
     {
         startApplication("geoservicedemo");
@@ -312,6 +325,7 @@ testcase = {
         compare(getText("distance"), distance2);
     },
     
+    // \groups BAT,1.1,MOBILITY-538
     geocoding: function()
     {
         prompt(twiki('---+++ Geocoding
@@ -331,6 +345,7 @@ testcase = {
 
     },
     
+    // \groups BAT,1.1,MOBILITY-538
     reverse_geocoding: function()
     {
         prompt(twiki('---+++ Reverse geocoding
@@ -347,13 +362,24 @@ testcase = {
         ));
    },
 
+    // \groups BAT,1.1,MOBILITY-538
     displaying_a_map: function()
+    {
+        prompt(twiki('---+++ Different views are displayed
+    Note that  internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the mapsdemo application (sources are /examples/mapsdemo) | Map for current location is displayed on the screen |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-538
+    different_map_types: function()
     {
         prompt(twiki('---+++ Different views are displayed
     Note that  internet connection is required for this test case.
     Note that Nokia map engine supports only Street, Satellite and Terrain map types
     | *Step* | *Verification* |
-    | Run the MapView application (sources are /tests/location-testing-tools/mapviewer) | Map for current location is displayed on the screen |
+    | Run the MapViewer application (sources are /tests/location-testing-tools/mapviewer) | Map for current location is displayed on the screen |
     | Press Option button | |
     | Press Street button (if button is enabled) | Map is drawn in Street view |
     | Press Option button | |
@@ -363,38 +389,35 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-538
     zooming_support:function()
     {
         prompt(twiki('---+++ Map is zoomed in and out
     Note that internet connection is required for this test case.
     | *Step* | *Verification* |
-    | Run the MapView application | Map is displayed on the screen |
-    | Scroll mouse wheel down | Map is zoomed out correctly |
-    | Scroll mouse wheel up | Map is zoomed in correctly|
-    | Double click on the map | Map is zoomed in correctly, step of zooming is consistent|'
+    | Run the mapsdemo application | Map is displayed on the screen |
+    | Press - button | Map is zoomed out correctly |
+    | Press + button | Map is zoomed in correctly |'
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-538
     capturing_coordinates:function()
     {
         prompt(twiki('---+++ Coordinates are captured
     Note that internet connection is required for this test case.
     | *Step* | *Verification* |
-    | Run the MapView application | Map is displayed on the screen |
-    | Zoom in tha map to see Brisbane | |
+    | Run the MapViewer application | Map is displayed on the screen |
+    | Navigate and/or zoom in the map to see Brisbane | |
     | Right mouse click on the square which represents Brisbane | |
     | Select Coordinates menu item | |
     | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |'
         ));
     },
 
+    // \groups BAT,1.2,QTMOBILITY-757,QTMOBILITY-701
     pixmap_object_zooming: function()
     {
-        //test case for QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs
-        //test case for QTMOBILITY-701: Add a QGraphicsItem based map object.
-        //Test application testqtLocation covers just one use case meanwhile we have 8 different situation
-        //depending on what units and transforms are in use (we have 4 types of units (PixelUnit, MeterUnit, RelativeArcSecondUnit, AbsoluteArcSecondUnit)
-        //and 2 types of transforms (BilinearTransform, ExactTransform)). New set of tests has to be created as soon as testqtLocation is improved.
         prompt(twiki('---+++ Pixmap object is not scaled during zooming
     Note that GPS and internet connection is required for this test case
     | *Step* | *Verification* |
@@ -416,25 +439,23 @@ testcase = {
 
     //TESTED_COMPONENT=plugins/declarative/location
 
+    // \groups BAT,1.2,QTMOBILITY-796
     qml_display_map: function()
     {
-        //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
         prompt(twiki('---+++ Map is displayed
-    Note that GPS and internet connection is required for this test case
+    Note that internet connection is required for this test case
     | *Step* | *Verification* |
-    | Run the testQtLocation application | |
-    | Select the MapNavigation.qml | |
-    | Tap on Mode button | Verify that map is loaded for current position |'
+    | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
         ));
     },
 
-    qml_zoom_map: function()
+    // \groups BAT,1.2,QTMOBILITY-796
+    qml_zoom_a_map: function()
     {
-        //test case for QTMOBILITY-796: QML for Maps & Navigation:mapping
         prompt(twiki('---+++ Zoom in and out the map
     Note that GPS and internet connection is required for this test case
     | *Step* | *Verification* |
-    | Run the testQtLocation application | |
+    | Run the qml_mapviewer application | |
     | Select the MapNavigation.qml | |
     | Tap on the Mode button | Verify that map is loaded |
     | Tap on Plus button | Verify that map is zoomed in |

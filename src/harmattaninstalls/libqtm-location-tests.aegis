@@ -1,0 +1,16 @@
+<aegis>
+    <request>
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+        <credential name="Location" />
+        <for path="/usr/tests/qtm/tst_qlandmarkmanager" />
+        <for path="/usr/tests/qtm/tst_qdeclarativelandmark" />
+        <for path="/usr/tests/qtm/tst_qgeopositioninfosource" />
+        <for path="/usr/tests/qtm/tst_qgeomapcircleobject" />
+        <for path="/usr/tests/qtm/tst_qgeomapobject" />
+        <for path="/usr/tests/qtm/tst_qgeosearchmanager" />
+        <for path="/usr/tests/qtm/tst_qlandmarkfilehandler_lmx" />
+        <for path="/usr/tests/qtm/tst_qnmeapositioninfosource_realtime_generic" />
+        <for path="/usr/tests/qtm/tst_qnmeapositioninfosource_simulation_generic" />
+    </request>
+</aegis>

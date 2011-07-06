@@ -91,6 +91,11 @@ EXPORT_C const TDesC& CContactNamedLocalView::Name()
 
 EXPORT_C void CContactNamedLocalView::ChangeSortOrderL(RContactViewSortOrder& aSortOrder)
 	{
+    if (iSortOrder == aSortOrder)
+        {
+        return;
+        }
+    
 	SetState(ENotReady);
 	TRAPD(err,SortL(aSortOrder));
 	if (err)

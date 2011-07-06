@@ -414,7 +414,10 @@ void QVersitContactExporterPrivate::encodeRev(
 
     if ( rev.lastModified().toString(Qt::ISODate).size() ) {
         if ( rev.lastModified().timeSpec() == Qt::UTC ) {
-            value = rev.lastModified().toString(Qt::ISODate) + QLatin1Char('Z');
+            value = rev.lastModified().toString(Qt::ISODate);
+            if( !value.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive) ) {
+                value += QLatin1Char('Z');
+            }
         }
         else {
             value = rev.lastModified().toString(Qt::ISODate);
@@ -424,7 +427,10 @@ void QVersitContactExporterPrivate::encodeRev(
         *processedFields << QContactTimestamp::FieldModificationTimestamp;
     } else if ( rev.created().toString(Qt::ISODate).size()) {
         if ( rev.created().timeSpec() == Qt::UTC ) {
-            value = rev.created().toString(Qt::ISODate) + QLatin1Char('Z');
+            value = rev.created().toString(Qt::ISODate);
+            if( !value.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive) ) {
+                value += QLatin1Char('Z');
+            }
         }
         else {
             value = rev.created().toString(Qt::ISODate);
@@ -487,8 +493,8 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
     QContactGeoLocation geoLocation = static_cast<QContactGeoLocation>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
-    property.setValue(QStringList() << QString::number(geoLocation.longitude())
-                      << QString::number(geoLocation.latitude()));
+    property.setValue(QStringList() << QString::number(geoLocation.latitude())
+                      << QString::number(geoLocation.longitude()));
     property.setValueType(QVersitProperty::CompoundType);
     *generatedProperties << property;
     *processedFields << QContactGeoLocation::FieldLongitude

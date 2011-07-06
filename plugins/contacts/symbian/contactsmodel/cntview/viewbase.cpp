@@ -1296,10 +1296,11 @@ It must be less than the number of fields in the item. */
 	{
 	__ASSERT_DEBUG(aPosition >= 0 && aPosition < FieldCount(),Panic(ECntPanicInvalidViewIndex));
 	//
-	if	(!iExtension)
+	if	(!iExtension || FieldCount() <= aPosition || aPosition < 0)
 		{
 		// Have to resort to default value if there is no extension
 		// since we cannot obtain the field text without it.
+	    // aPosition has to be correct 
 		return TPtrC(KNullDesC);
 		}
 	//

@@ -87,8 +87,7 @@ Maximum number of fields that can be set as filterable fields by licensees.
 const TInt KMaxCustomFilterableFields=4;
 
 /** 
-Enables searching for best matching strategy: 
-Leading zeros are removed then shorter number must be substring of second one.
+Enables searching for dynamic matching with 7 digits as minimum.
 @see CContactDatabase::MatchPhoneNumberL
 @publishedAll
 @released
@@ -1124,6 +1123,7 @@ private:
    	void ConstructTableUsageFlagsFromSortOrderL(TInt& aFlags);
    	void LoadSyncPluginL();
    	void DeleteContactSendEventActionL(TContactItemId aContactId, TCntSendEventAction aActionType);
+   	TInt DeleteContactSendEventAction(TContactItemId aContactId, TCntSendEventAction aActionType);
 
 public:
    	//for LocalView

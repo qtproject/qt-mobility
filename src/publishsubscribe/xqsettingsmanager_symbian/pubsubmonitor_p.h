@@ -62,16 +62,16 @@
 class MSettingsHandlerObserver;
 
 class CPubSubMonitor : public CActive
-    {
+    { 
     public:
         CPubSubMonitor(const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver);
         ~CPubSubMonitor();
         TInt StartMonitoring();
-
+        
     private:
         void RunL();
         void DoCancel();
-
+              
     private:
         RProperty iProperty;
         XQSettingsKey iKey;

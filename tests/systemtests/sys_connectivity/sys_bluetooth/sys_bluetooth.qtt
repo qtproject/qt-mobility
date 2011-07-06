@@ -1,0 +1,207 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/systeminfo
+
+testcase = {
+
+    Bluetooth_Device_Discovery: function()
+    {
+        prompt(twiki('*Bluetooth Device Discovery*
+
+    1 Run the Bluewheel application then select "Bluetooth"
+    1 Select "Device Discovery"
+    1 Select "GeneralUnlimitedInquiry" and make sure the Incremental checkbox is checked
+    1 Press start and verify the nearby bluetooth enabled devices start populating the list one at a time
+    1 Press quit and deselect the incremental checkbox
+    1 Press start and verify the list blanks and remains blank until all devices are found (indicated by the "stop" button changing back to "scan")
+    1 Press quit again and then change "GeneralUnlimitedInquiry" to "LimitedInquiry"
+    1 Press start and verify the list blanks and remains blank until all devices are found (indicated by the "stop" button changing back to "scan") - note that not many devices are capable of Limited Inquiry so the list may stay blank
+        '));
+    },
+
+    Bluetooth_Service_Discovery: function()
+    {
+        prompt(twiki('*Bluetooth Service Discovery*
+
+    1 Run the Bluewheel application then select "Bluetooth"
+    1 Select "Service Discovery"
+    1 Select "all devices" and check the "Full Discovery" checkbox
+    1 Press "Find" and when the scan completes a dialog will open, if it doesn't press "Found Services"
+    1 Verify that for the device shown the expected services are displayed.
+    1 From the device menu at the top of the dialog select another device and verify it also shows the expected services
+    1 Add a filter and repeat the test, verify the only services found are of the filter type
+        '));
+    },
+
+    Bluetooth_Service_Record: function()
+    {
+        prompt(twiki('*Bluetooth Service Record*
+
+    1 Run the Bluewheel application then select "Bluetooth"
+    1 Select "Service Discovery"
+    1 Select "all devices" and check the "Full Discovery" checkbox
+    1 Press "Find" and when the scan completes a dialog will open, if it doesn't press "Found Services"
+    1 Select a device and then choose a service by tapping it
+    1 Verify that the service record attributes are displayed
+    1 On another device run Bluewheel, select Bluetooth and then run "Local Server"
+    1 Choose a server type and then press start server, don't press the register service button
+    1 Run the "Register Service" application from the bluetooth menu, the previously created service will already be selected
+    1 Press "Register"
+    1 On the other device press the find button again and wait till the scanning is complete
+    1 from the device list select the other bluetooth device and verify the created service is listed and the values are correct
+    1 On the second device deregister the service
+    1 Perform another scan on the first device and verify the service is no longer available
+        '));
+    },
+
+    Bluetooth_Sockets: function()
+    {
+      skip all;
+        prompt(twiki('*Bluetooth Sockets*
+
+    1 unit tests however the unit tests need to be run manually so as to set up the server first, can't do this on a device
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+    1 
+        '));
+    },
+
+    Bluetooth_Security: function()
+    {
+      skip all;
+        prompt(twiki('*Bluetooth Security*
+
+    1 No test app
+        '));
+    },
+
+    Bluetooth_Device_Control: function()
+    {
+        prompt(twiki('*Bluetooth Device Control*
+
+    1 From the devices settings menu turn off the Bluetooth
+    1 Run bluewheel and then select bluetooth
+    1 Run "Local Devices"
+    1 Verify that the Local Devices application shows "powered off"
+    1 In the "Local Devices" application change the setting to "connectable"
+    1 Go back to the device's settings menu and verify the Bluetooth is turned on and not visible
+    1 Go back to the "Local Devices" application and change the setting to "discoverable"
+    1 Go back to the device's settings menu and verify the Bluetooth is on and visible
+    1 Go back to the "Local Devices" application and change the setting to "powered off"
+    1 Go back to the device's settings menu and verify the Bluetooth is turned off
+        '));
+    },
+
+    Bluetooth_Pairing: function()
+    {
+        prompt(twiki('*Bluetooth Pairing*
+
+    1 Run bluewheel and then select bluetooth
+    1 Run "Pairing"
+    1 Press "scan"
+    1 When scanning is complete tap one of the devices in the list to open the pairing menu
+    1 From the pairing menu select paired and press the pair button
+    1 Verify the devices start the pairing proceedure, choose not to pair automatically
+    1 Currently the phones will go back to unpaired, from the menu choose paired again and press pair, this time they will stay paired
+    1 Press quit to go back to the scan list, verify that the item selected previously is in a paired state
+    1 Select the device again and this time change the state to unpaired and press the Pair button, "Pairing of unknown device" will be displayed
+    1 Press okay to close the dialog and quit to go back to the scan list, verify the device is now in an unpaired state
+    1 Select the device again to bring up the pairing menu and select AuthorizedPaired and press the Pair button, complete the pairing proceedure this time selecting the pair automatically option when asked
+    1 Press quit to go back to the scan list and verify the device is set to Authorized
+        '));
+    },
+
+    Bluetooth_Local_Device_Selection: function()
+    {
+      skip all;
+        prompt(twiki('*Bluetooth Local Device Selection*
+
+    1 This test requires a platform with multiple Bluetooth devices
+    1 Go to the settings menu and turn off all Bluetooth devices
+    1 Run bluewheel and then select bluetooth
+    1 Run "Local Devices"
+    1 From the top pull down menu choose a Bluetooth device
+    1 Set the device to "Discoverable"
+    1 Go back to the settings menu and verify only that Bluetooth device is on and visible
+    1 Return to the "Local Devices" application and make a different Bluetooth device discoverable
+    1 Go back to the settings menu and verify that Bluetooth device is now on and visible
+        '));
+    },
+
+    Bluetooth_QML_Accessability: function()
+    {
+      skip all;
+        prompt(twiki('*Bluetooth QML Accessability*
+    app doesn't seem to be working
+    1 Run the Bluewheel application then select "Bluetooth"
+    1 Select "Service Discovery.qml"
+    1 Select "all devices" and check the "Full Discovery" checkbox
+    1 Press "Find" and when the scan completes a dialog will open, if it doesn't press "Found Services"
+    1 Verify that for the device shown the expected services are displayed.
+    1 From the device menu at the top of the dialog select another device and verify it also shows the expected services
+    1 Add a filter and repeat the test, verify the only services found are of the filter type
+        '));
+    },
+
+    Bluetooth_Send_File: function()
+    {
+        prompt(twiki('*Bluetooth Send File*
+
+    1 preconditions: the device has a small text file and a vCard for sending
+    1 Run the Bluewheel application then select "Bluetooth"
+    1 Select "send item"
+    1 Press "select target device"
+    1 After the target device is selected check "file sending"
+    1 Press "select item" and choose a small text file to send
+    1 Press "send" and follow the prompts on the receiving device
+    1 Verify the text file is received on the other device
+    1 Repeat this with a vCard
+    1 Verify the vCard is received on the other device
+        '));
+    }
+}

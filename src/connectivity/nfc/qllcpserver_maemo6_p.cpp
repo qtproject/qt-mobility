@@ -81,8 +81,8 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
                 this, SLOT(Accept(QDBusVariant,QDBusVariant,int,QVariantMap)));
         connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,QVariantMap)),
                 this, SLOT(Connect(QDBusVariant,QDBusVariant,int,QVariantMap)));
-        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,QVariantMap)),
-                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,int,QVariantMap)),
+                this, SLOT(Socket(QDBusVariant,int,QVariantMap)));
     }
 
     if (m_socketRequestor) {
@@ -133,10 +133,10 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     if (m_pendingSockets.isEmpty())
         return 0;
 
-    int fd = m_pendingSockets.takeFirst();
+    QPair<int, QVariantMap> parameters = m_pendingSockets.takeFirst();
 
     QLlcpSocketPrivate *socketPrivate =
-        new QLlcpSocketPrivate(m_connection, fd);
+        new QLlcpSocketPrivate(m_connection, parameters.first, parameters.second);
 
     QLlcpSocket *socket = new QLlcpSocket(socketPrivate, 0);
 
@@ -168,7 +168,7 @@ void QLlcpServerPrivate::AccessGranted(const QDBusObjectPath &targetPath,
 }
 
 void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+                                int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
@@ -176,7 +176,7 @@ void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rs
 
     Q_Q(QLlcpServer);
 
-    m_pendingSockets.append(readFd);
+    m_pendingSockets.append(qMakePair(fd, properties));
 
     emit q->newConnection();
 }
@@ -190,12 +190,10 @@ void QLlcpServerPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     Q_UNUSED(properties);
 }
 
-void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
-    Q_UNUSED(rsap);
-    Q_UNUSED(readFd);
+    Q_UNUSED(fd);
     Q_UNUSED(properties);
 }
 

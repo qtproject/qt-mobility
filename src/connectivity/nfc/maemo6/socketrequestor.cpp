@@ -202,8 +202,9 @@ public:
 private:
     bool parseAccessFailed(DBusMessage *message, SocketRequestor *socketRequestor);
     bool parseAccessGranted(DBusMessage *message, SocketRequestor *socketRequestor);
-    bool parseAcceptConnectSocket(DBusMessage *message, SocketRequestor *socketRequestor,
-                                  const char *member);
+    bool parseAcceptConnect(DBusMessage *message, SocketRequestor *socketRequestor,
+                            const char *member);
+    bool parseSocket(DBusMessage *message, SocketRequestor *socketRequestor, const char *member);
     bool parseErrorDenied(DBusMessage *message, SocketRequestor *socketRequestor);
 
 private slots:
@@ -283,11 +284,11 @@ DBusHandlerResult SocketRequestorPrivate::messageFilter(DBusConnection *connecti
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.AccessRequestor", "AccessGranted"))
         handled = parseAccessGranted(message, socketRequestor) ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Accept"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "accept") ? HandledSendReply : NotHandled;
+        handled = parseAcceptConnect(message, socketRequestor, "accept") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Connect"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "connect") ? HandledSendReply : NotHandled;
+        handled = parseAcceptConnect(message, socketRequestor, "connect") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_method_call(message, "com.nokia.nfc.LLCPRequestor", "Socket"))
-        handled = parseAcceptConnectSocket(message, socketRequestor, "socket") ? HandledSendReply : NotHandled;
+        handled = parseSocket(message, socketRequestor, "socket") ? HandledSendReply : NotHandled;
     else if (dbus_message_is_error(message, "com.nokia.nfc.Error.Denied"))
         handled = parseErrorDenied(message, socketRequestor) ? Handled : NotHandled;
     else
@@ -312,6 +313,7 @@ bool SocketRequestorPrivate::parseErrorDenied(DBusMessage *message,
 
     QMetaObject::invokeMethod(socketRequestor, "accessFailed",
                               Q_ARG(QDBusObjectPath, QDBusObjectPath()),
+                              Q_ARG(QString, QLatin1String("")),
                               Q_ARG(QString, QLatin1String("Access denied")));
     return true;
 }
@@ -331,8 +333,14 @@ bool SocketRequestorPrivate::parseAccessFailed(DBusMessage *message,
     // read DBus Object Path
     QVariant objectPath = getVariantFromDBusMessage(&args);
 
+    if (!dbus_message_iter_next(&args))
+        return false;
+
     // read DBus kind string
     QVariant kind = getVariantFromDBusMessage(&args);
+
+    if (!dbus_message_iter_next(&args))
+        return false;
 
     // read DBus error string
     QVariant errorString = getVariantFromDBusMessage(&args);
@@ -359,6 +367,9 @@ bool SocketRequestorPrivate::parseAccessGranted(DBusMessage *message,
     // read DBus Object Path
     QVariant objectPath = getVariantFromDBusMessage(&args);
 
+    if (!dbus_message_iter_next(&args))
+        return false;
+
     // read access kind
     QVariant kind = getVariantFromDBusMessage(&args);
 
@@ -368,9 +379,9 @@ bool SocketRequestorPrivate::parseAccessGranted(DBusMessage *message,
     return true;
 }
 
-bool SocketRequestorPrivate::parseAcceptConnectSocket(DBusMessage *message,
-                                                      SocketRequestor *socketRequestor,
-                                                      const char *member)
+bool SocketRequestorPrivate::parseAcceptConnect(DBusMessage *message,
+                                                SocketRequestor *socketRequestor,
+                                                const char *member)
 {
     // m_mutex is locked in messageFilter()
 
@@ -409,6 +420,45 @@ bool SocketRequestorPrivate::parseAcceptConnectSocket(DBusMessage *message,
 
     QMetaObject::invokeMethod(socketRequestor, member, Q_ARG(QDBusVariant, QDBusVariant(lsap)),
                               Q_ARG(QDBusVariant, QDBusVariant(rsap)),
+                              Q_ARG(int, fd.toInt()), Q_ARG(QVariantMap, properties));
+
+    return true;
+}
+
+bool SocketRequestorPrivate::parseSocket(DBusMessage *message, SocketRequestor *socketRequestor,
+                                         const char *member)
+{
+    // m_mutex is locked in messageFilter()
+
+    DBusMessageIter args;
+
+    if (!dbus_message_iter_init(message, &args))
+        return false;
+
+    // read DBus Variant (lsap)
+    QVariant lsap = getVariantFromDBusMessage(&args);
+
+    if (!dbus_message_iter_next(&args))
+        return false;
+
+    // read socket fd
+    QVariant fd = getVariantFromDBusMessage(&args);
+
+    if (!dbus_message_iter_next(&args))
+        return false;
+
+    // read DBus a{sv} into QVariantMap
+    QVariant prop = getVariantFromDBusMessage(&args);
+    QVariantMap properties;
+    foreach (const QVariant &v, prop.toList()) {
+        QVariantList vl = v.toList();
+        if (vl.length() != 2)
+            continue;
+
+        properties.insert(vl.first().toString(), vl.at(1));
+    }
+
+    QMetaObject::invokeMethod(socketRequestor, member, Q_ARG(QDBusVariant, QDBusVariant(lsap)),
                               Q_ARG(int, fd.toInt()), Q_ARG(QVariantMap, properties));
 
     return true;

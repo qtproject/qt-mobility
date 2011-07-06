@@ -599,8 +599,8 @@ void tst_QVersitContactImporter::testTimeStamp()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     timeStamp = contact.detail<QContactTimestamp>();
-    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),dateAndTimeValue);
-    QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
+    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate), dateAndTimeWithUtcValue);
+    QCOMPARE(timeStamp.lastModified().timeSpec(), Qt::UTC);
 
     // Date and Time : ISO 8601 in basic format without utc offset
     dateAndTimeValue = QLatin1String("19810520T235555");
@@ -949,8 +949,8 @@ void tst_QVersitContactImporter::testGeo()
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty nameProperty;
     QStringList val;
-    val.append(QLatin1String("18.53"));// Longtitude
     val.append(QLatin1String("45.32")); // Latitude
+    val.append(QLatin1String("18.53"));// Longtitude
     nameProperty.setName(QLatin1String("GEO"));
     nameProperty.setValue(val);
     nameProperty.setValueType(QVersitProperty::CompoundType);
@@ -959,17 +959,17 @@ void tst_QVersitContactImporter::testGeo()
     QContact contact = mImporter->contacts().first();
     QContactGeoLocation geo = (QContactGeoLocation)contact.detail(QContactGeoLocation::DefinitionName);
     QString str;
-    str.setNum(geo.longitude(),'.',2);
-    QCOMPARE(str,val[0]);
     str.setNum(geo.latitude(),'.',2);
+    QCOMPARE(str,val[0]);
+    str.setNum(geo.longitude(),'.',2);
     QCOMPARE(str,val[1]);
 
     // some negative values
     document.clear();
     document.setType(QVersitDocument::VCard30Type);
     nameProperty = QVersitProperty();
-    val.append(QLatin1String("18.53"));// Longtitude
     val.append(QLatin1String("-45.32")); // Latitude
+    val.append(QLatin1String("18.53"));// Longtitude
     nameProperty.setName(QLatin1String("GEO"));
     nameProperty.setValue(val);
     nameProperty.setValueType(QVersitProperty::CompoundType);
@@ -977,9 +977,9 @@ void tst_QVersitContactImporter::testGeo()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     geo = (QContactGeoLocation)contact.detail(QContactGeoLocation::DefinitionName);
-    str.setNum(geo.longitude(),'.',2);
-    QCOMPARE(str,val[0]);
     str.setNum(geo.latitude(),'.',2);
+    QCOMPARE(str,val[0]);
+    str.setNum(geo.longitude(),'.',2);
     QCOMPARE(str,val[1]);
 }
 

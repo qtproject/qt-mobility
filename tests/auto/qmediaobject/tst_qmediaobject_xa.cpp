@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include "tst_qmediaobject_xa.h"
 
 QT_USE_NAMESPACE

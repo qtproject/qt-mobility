@@ -222,6 +222,11 @@ void tst_QCameraBackend::testCameraStates()
     QTRY_COMPARE(camera.status(), QCamera::UnloadedStatus);
     QCOMPARE(statusChangedSignal.last().first().value<QCamera::Status>(), QCamera::UnloadedStatus);
 
+#ifdef Q_WS_MAEMO_6
+    //resource policy doesn't work correctly when resource is released and immediately requested again.
+    QTest::qWait(250);
+#endif
+
     camera.start();
     QCOMPARE(camera.state(), QCamera::ActiveState);
     QCOMPARE(stateChangedSignal.last().first().value<QCamera::State>(), QCamera::ActiveState);
@@ -542,6 +547,12 @@ void tst_QCameraBackend::testExposureCompensation()
 
     QSignalSpy exposureCompensationSignal(exposure, SIGNAL(exposureCompensationChanged(qreal)));
 
+#ifdef Q_OS_SYMBIAN
+    // Camera needs to be started, see: QTMOBILITY-1566
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+#endif // Q_OS_SYMBIAN
+
     //it should be possible to set exposure parameters in Unloaded state
     QCOMPARE(exposure->exposureCompensation()+1.0, 1.0);
     exposure->setExposureCompensation(1.0);
@@ -592,13 +603,39 @@ void tst_QCameraBackend::testExposureMode()
 #endif
     QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
 
-    exposure->setExposureMode(QCameraExposure::ExposurePortrait);
-    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
+#ifdef Q_OS_SYMBIAN
+    // Camera needs to be started, see: QTMOBILITY-1566
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+#endif // Q_OS_SYMBIAN
 
+    // Night
+    exposure->setExposureMode(QCameraExposure::ExposureNight);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureNight);
     camera.start();
     QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureNight);
 
-    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposurePortrait);
+    camera.unload();
+    QTRY_COMPARE(camera.status(), QCamera::UnloadedStatus);
+
+#ifdef Q_OS_SYMBIAN
+    // Camera needs to be started, see: QTMOBILITY-1566
+    camera.load();
+    QTRY_COMPARE(camera.status(), QCamera::LoadedStatus);
+#endif // Q_OS_SYMBIAN
+
+#ifdef Q_WS_MAEMO_6
+    //resource policy doesn't work correctly when resource is released and immediately requested again.
+    QTest::qWait(250);
+#endif
+
+    // Auto
+    exposure->setExposureMode(QCameraExposure::ExposureAuto);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
+    camera.start();
+    QTRY_COMPARE(camera.status(), QCamera::ActiveStatus);
+    QCOMPARE(exposure->exposureMode(), QCameraExposure::ExposureAuto);
 }
 
 QTEST_MAIN(tst_QCameraBackend)

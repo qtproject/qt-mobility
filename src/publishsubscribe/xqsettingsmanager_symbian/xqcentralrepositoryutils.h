@@ -79,7 +79,7 @@ public:
         FailedTransaction,
         UnknownTransaction
     };
-
+    
     explicit XQCentralRepositoryUtils(XQSettingsManager& settingsManager, QObject* parent = 0);
     ~XQCentralRepositoryUtils();
     bool createKey(const XQCentralRepositorySettingsKey& key, const QVariant& value);

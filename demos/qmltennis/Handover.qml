@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,66 +38,38 @@
 **
 ****************************************************************************/
 
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+import QtQuick 1.0
+import QtMobility.connectivity 1.2
 
-#include <QObject>
-#include <QTimer>
-#include <QTime>
-#include "../../bttennis/board.h"
+Item {
+    id: root
 
-#define TOP 1
-#define BOTTOM 2
-#define LEFT 3
-#define RIGHT 4
+    property BluetoothService bluetoothService
+    property bool available : false
 
-class Controller : public QObject
-{
-    Q_OBJECT
-public:
-    explicit Controller(QObject *parent = 0);
+//! [tennis-handover]
+    NearFieldSocket {
+        id: socket
 
-signals:
-    void moveBall(int x, int y);
-    void score(int left, int right);    
+        uri: "urn:nfc:sn:com.nokia.qtmobility.tennis"
+        connected: true
 
-public slots:
-    void ballCollision(int pos);
-    void scored(int pos);
-    void resetBoard();
-    void refresh();
+        function parse(s) {
+            var args = s.split(" ");
+            if (args.length == 2) {
+                bluetoothService.deviceAddress = args[0];
+                bluetoothService.servicePort = args[1];
+                root.bluetoothServiceChanged();
+            }
+        }
 
-    void moveLeftPaddle(int y);
-    void moveRightPaddle(int y);    
+        onDataAvailable: parse(socket.stringData)
 
-    void start();
-    void stop();
-
-private slots:
-    void tick();
-
-private:
-    QTimer *timer;
-    QTime *elapsed;
-    QTime *elapsedPaddle;
-    int ball_x;
-    int speed_x;
-    int ball_y;
-    int speed_y;
-    int score_left;
-    int score_right;
-    int col_x;
-    int col_y;
-
-    int rightPaddleForce;
-    int leftPaddleForce;
-    int rightPaddleLast;
-    int leftPaddleLast;
-    int rightPowerUp;
-    int leftPowerUp;
-
-    void restart_ball();
-
-};
-
-#endif // CONTROLLER_H
+        onStateChanged: {
+            if (state == "Connecting") {
+                available = true;
+            }
+        }
+    }
+//! [tennis-handover]
+}

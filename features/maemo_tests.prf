@@ -4,8 +4,8 @@ installtests.CONFIG = recursive
     testcase|testplugin {
         # If the test has existing install rules, then we need to move them to the appropriate install path
         # It's a bit ugly, but ensures we get all the xml test data files
+        NL = $$escape_expand(\\n\\t)
         !isEmpty(INSTALLS) {
-            NL = $$escape_expand(\\n\\t)
             for(installItem, $$list($$INSTALLS)){
                 eval(srcPath = $${installItem}.path)
                 srcPath = $$eval($$srcPath)
@@ -13,9 +13,9 @@ installtests.CONFIG = recursive
                 srcFiles = $$eval($$srcFiles)
                 testplugin {
                     isEmpty(PLUGIN_TYPE) : error (PLUGIN_TYPE not set in $$__PRO_FILE__)
-                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), \$(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/plugins/$$PLUGIN_TYPE/)
+                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT/plugins/$$PLUGIN_TYPE/)
                 } testcase {
-                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), \$(INSTALL_ROOT)$$[QT_INSTALL_PREFIX]/tests/qtm/)
+                    destPath = $$replace(srcPath, $$re_escape($$DESTDIR), $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT)
                 }
                 installtests.commands += $(CHK_DIR_EXISTS) $${destPath} || $(MKDIR) $${destPath} $${NL}
                 for(srcFile, $$list($$srcFiles)){
@@ -25,12 +25,29 @@ installtests.CONFIG = recursive
             }
         }
 
+        # If the test has DEPLOYMENT rules, then we'll copy these as well
+        for(deployItem, $$list($$DEPLOYMENT)){
+            eval(itemPath = $${deployItem}.path)
+            itemPath = $$eval($$itemPath)
+            eval(srcFiles = $${deployItem}.sources)
+            srcFiles = $$eval($$srcFiles)
+            isEmpty(srcFiles) : error (Deployment $${deployItem}.sources not set in $$__PRO_FILE__ project file)
+
+            testplugin {
+                destPath = $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT/plugins/$$PLUGIN_TYPE/$$itemPath
+            } testcase {
+                destPath = $(INSTALL_ROOT)$$MAEMO_TEST_INSTALL_ROOT/$$itemPath
+            }
+            installtests.commands += $(CHK_DIR_EXISTS) $${destPath} || $(MKDIR) $${destPath} $${NL}
+            installtests.commands += $(COPY_DIR) $$srcFiles $$destPath $${NL}
+        }
+
         # Install the test binaries and plugins.
         testcase {
-            target.path = $$[QT_INSTALL_PREFIX]/tests/qtm/
+            target.path = $$MAEMO_TEST_INSTALL_ROOT
             INSTALLS += target
         } testplugin {
-            target.path = $$[QT_INSTALL_PREFIX]/tests/qtm/plugins/$$PLUGIN_TYPE/
+            target.path = $$MAEMO_TEST_INSTALL_ROOT/plugins/$$PLUGIN_TYPE/
             INSTALLS += target
         }
     }
@@ -39,12 +56,12 @@ installtests.CONFIG = recursive
 # if a test is marked as insignificant(is not critical test) then we want it to run in CITA but not cause a failure.
 insignificant_test {
     !isEmpty(installtests.commands) : installtests.commands += $${NL}
-    installtests.commands +=  echo  "insignificant_test"  >> \$(INSTALL_ROOT)$${target.path}/$${TARGET}.insignificant_test
+    installtests.commands +=  echo  "insignificant_test"  >> $(INSTALL_ROOT)$${target.path}/$${TARGET}.insignificant_test
 }
 
 # if a test is marked as manual then it needs to be ignored by CITA
 manual_test {
     !isEmpty(installtests.commands) : installtests.commands += $${NL}
-    installtests.commands +=  echo  "manual_test"  >> \$(INSTALL_ROOT)$${target.path}/$${TARGET}.manual_test
+    installtests.commands +=  echo  "manual_test"  >> $(INSTALL_ROOT)$${target.path}/$${TARGET}.manual_test
 }
 QMAKE_EXTRA_TARGETS += installtests

@@ -94,17 +94,24 @@ QSystemAlignedTimerPrivate::~QSystemAlignedTimerPrivate()
 
 void QSystemAlignedTimerPrivate::wokeUp()
 {
-    if (m_singleShot) {
-        stop();
+    if (!m_running)
+        return;
+
+    if (!(m_iphbdHandler && m_notifier)) {
+        m_lastError = QSystemAlignedTimer::InternalError;
+        emit error(m_lastError);
         return;
     }
 
-    int st = iphb_I_woke_up(m_iphbdHandler);
-    if (!(st >= 0)) {
-        m_lastError = QSystemAlignedTimer::TimerFailed;
-        emit error(m_lastError);
-        stop();
-    }
+    m_notifier->setEnabled(false);
+
+    (void)iphb_I_woke_up(m_iphbdHandler);
+
+    m_running = false;
+    m_lastError = QSystemAlignedTimer::NoError;
+
+    if (!m_singleShot)
+        start();
 }
 
 int QSystemAlignedTimerPrivate::minimumInterval() const
@@ -198,9 +205,10 @@ void QSystemAlignedTimerPrivate::stop()
         return;
     }
 
+    m_notifier->setEnabled(false);
+
     (void)iphb_discard_wakeups(m_iphbdHandler);
 
-    m_notifier->setEnabled(false);
     m_running = false;
     m_lastError = QSystemAlignedTimer::NoError;
 }

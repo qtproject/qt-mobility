@@ -55,7 +55,6 @@ CTelephonyInfo::CTelephonyInfo(CTelephony &telephony) : CActive(EPriorityStandar
 
 CTelephonyInfo::~CTelephonyInfo()
 {
-    Cancel();
     delete m_wait;
 }
 
@@ -103,6 +102,11 @@ CPhoneInfo::CPhoneInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
  TRACES (qDebug() << "CPhoneInfo::CPhoneInfo--->");
 }
 
+CPhoneInfo::~CPhoneInfo()
+{
+    Cancel();
+}
+
 void CPhoneInfo::DoCancel()
 {
    m_telephony.CancelAsync(CTelephony::EGetPhoneIdCancel);
@@ -135,6 +139,11 @@ CSubscriberInfo::CSubscriberInfo(CTelephony &telephony) : CTelephonyInfo(telepho
  TRACES (qDebug() << "CSubscriberInfo::CSubscriberInfo--->");
 }
 
+CSubscriberInfo::~CSubscriberInfo()
+{
+    Cancel();
+}
+
 void CSubscriberInfo::DoCancel()
 {
     m_telephony.CancelAsync(CTelephony::EGetSubscriberIdCancel);
@@ -158,6 +167,11 @@ CBatteryInfo::CBatteryInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
 
     startMonitoring();
  TRACES (qDebug() << "CBatteryInfo::CBatteryInfo--->");
+}
+
+CBatteryInfo::~CBatteryInfo()
+{
+    Cancel();
 }
 
 void CBatteryInfo::RunL()
@@ -240,6 +254,11 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
 
     startMonitoring();
  TRACES (qDebug() << "CCellNetworkInfo::CCellNetworkInfo--->");
+}
+
+CCellNetworkInfo::~CCellNetworkInfo()
+{
+    Cancel();
 }
 
 void CCellNetworkInfo::RunL()
@@ -410,6 +429,11 @@ CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo<---");
 }
 
+CCellNetworkRegistrationInfo::~CCellNetworkRegistrationInfo()
+{
+    Cancel();
+}
+
 void CCellNetworkRegistrationInfo::RunL()
 {
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::RunL<---");
@@ -472,6 +496,11 @@ CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelep
 
     startMonitoring();
  TRACES (qDebug() << "CCellSignalStrengthInfo::CCellSignalStrengthInfo--->");
+}
+
+CCellSignalStrengthInfo::~CCellSignalStrengthInfo()
+{
+    Cancel();
 }
 
 void CCellSignalStrengthInfo::RunL()

@@ -1,4 +1,4 @@
-include(../../mobility_examples.pri)
+include(../demos.pri)
 
 QT += declarative network
 
