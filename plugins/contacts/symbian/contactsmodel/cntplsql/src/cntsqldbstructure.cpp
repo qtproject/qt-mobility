@@ -294,8 +294,8 @@ void CCntSqlDbTable::AlterTableToAddColumnL( CCntSqlDbTableColumn* aColInfo)
         
         RSqlStatement addColStmt;
         CleanupClosePushL(addColStmt);
-        addColStmt.Prepare( iDatabase, *sqlstmt );
-        TInt err = addColStmt.Exec();
+        User::LeaveIfError(addColStmt.Prepare( iDatabase, *sqlstmt ));
+        User::LeaveIfError(addColStmt.Exec());
         CleanupStack::PopAndDestroy( &addColStmt );
         }
     CleanupStack::PopAndDestroy(); //sqlstmt

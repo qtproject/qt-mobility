@@ -61,6 +61,7 @@ Rectangle {
 
         // client side
 
+//! [discovery]
         BluetoothDiscoveryModel {
             id: myModel
 
@@ -75,6 +76,7 @@ Rectangle {
             onNewServiceDiscovered: { connect(service); discovery = false; }
             uuidFilter: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
        }
+//! [discovery]
 
 //       BluetoothService {
 //            id: btservice
@@ -158,6 +160,7 @@ Rectangle {
 
        // server side, not implemented
 
+//! [bt-service]
        BluetoothService {
             id: btserver
 
@@ -175,7 +178,9 @@ Rectangle {
                 }
             }
        }
+//! [bt-service]
 
+//! [server-socket]
        BluetoothSocket {
            id: server_socket
 
@@ -213,6 +218,7 @@ Rectangle {
            }
            onDataAvailable: parse(stringData);
        }
+//! [server-socket]
 
        Connections {
            target: deviceSensor.item
@@ -222,6 +228,7 @@ Rectangle {
            }
        }
 
+//! [tennis-handover]
        Handover {
            id: handover
 
@@ -240,6 +247,7 @@ Rectangle {
 
            onAvailableChanged: statusText.text = "Touch to play";
        }
+//! [tennis-handover]
 
        MouseArea {
            anchors.fill: parent

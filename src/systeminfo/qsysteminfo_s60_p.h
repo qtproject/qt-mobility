@@ -95,8 +95,24 @@ QTM_BEGIN_NAMESPACE
 
 const int KMaxBatteryBars = 7; //Max number of battery bars (7 is fixed for all symbian devices now)
 
+class DeviceInfo;
+
+//////// QSystemInfoPrivateBase
+class QSystemInfoPrivateBase : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemInfoPrivateBase(QObject *parent = 0);
+    virtual ~QSystemInfoPrivateBase();
+
+protected:
+    DeviceInfo* m_deviceInfo;
+};
+
 //////// QSystemInfo
-class QSystemInfoPrivate : public QObject
+class QSystemInfoPrivate : public QSystemInfoPrivateBase
 {
     Q_OBJECT
 
@@ -121,7 +137,7 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
+class QSystemNetworkInfoPrivate : public QSystemInfoPrivateBase, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
 , public MNetworkOperatorNameObserver
 #endif
@@ -134,17 +150,17 @@ public:
     virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    static int cellId();
-    static int locationAreaCode();
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    int cellId();
+    int locationAreaCode();
 
-    static QString currentMobileCountryCode();
-    static QString currentMobileNetworkCode();
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
-    static QString homeMobileCountryCode();
-    static QString homeMobileNetworkCode();
+    QString homeMobileCountryCode();
+    QString homeMobileNetworkCode();
 
-    static QString networkName(QSystemNetworkInfo::NetworkMode mode); //signal
+    QString networkName(QSystemNetworkInfo::NetworkMode mode); //signal
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
@@ -229,7 +245,7 @@ private:
 };
 
 //////// QSystemStorageInfo
-class QSystemStorageInfoPrivate : public QObject,
+class QSystemStorageInfoPrivate : public QSystemInfoPrivateBase,
     public MStorageStatusObserver
 #ifdef DISKNOTIFY_SUPPORTED
     ,public MStorageSpaceNotifyObserver
@@ -269,7 +285,6 @@ Q_SIGNALS:
 //////// QSystemDeviceInfo
 
 
-class DeviceInfo;
 QTM_END_NAMESPACE
 
 #include <mproengprofileactivationobserver.h>
@@ -280,7 +295,7 @@ class MProEngNotifyHandler;
 
 QTM_BEGIN_NAMESPACE
 
-class QSystemDeviceInfoPrivate : public QObject,
+class QSystemDeviceInfoPrivate : public QSystemInfoPrivateBase,
     public MTelephonyInfoObserver,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
@@ -302,17 +317,17 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     // device
-    static QString imei();
-    static QString imsi();
-    static QString manufacturer();
-    static QString model();
-    static QString productName();
+    QString imei();
+    QString imsi();
+    QString manufacturer();
+    QString model();
+    QString productName();
 
     int batteryLevel() const;
     QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     bool isDeviceLocked();
-    static QSystemDeviceInfo::SimStatus simStatus();
+    QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
@@ -419,15 +434,6 @@ private:    //data
 class DeviceInfo
 {
 public:
-    static DeviceInfo *instance()
-    {
-        if (!m_instance)
-        {
-            m_instance = new DeviceInfo;
-        }
-        return m_instance;
-    }
-
     CPhoneInfo *phoneInfo()
     {
         if (!m_phoneInfo) {
@@ -566,7 +572,6 @@ public:
         return m_networkInfo;
     }
 
-private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
         m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL)
@@ -619,9 +624,8 @@ private:
 #endif
     }
 
+private:
     DeviceInfo(const DeviceInfo &);
-
-    static DeviceInfo *m_instance;
 
     CTelephony *m_telephony;
     CPhoneInfo *m_phoneInfo;
@@ -653,7 +657,7 @@ private:
 
 };
 
-class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver
+class QSystemBatteryInfoPrivate : public QSystemInfoPrivateBase, public MBatteryInfoObserver, public MBatteryHWRMObserver
 {
     Q_OBJECT
 public:

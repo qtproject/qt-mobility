@@ -313,6 +313,7 @@ bool SocketRequestorPrivate::parseErrorDenied(DBusMessage *message,
 
     QMetaObject::invokeMethod(socketRequestor, "accessFailed",
                               Q_ARG(QDBusObjectPath, QDBusObjectPath()),
+                              Q_ARG(QString, QLatin1String("")),
                               Q_ARG(QString, QLatin1String("Access denied")));
     return true;
 }

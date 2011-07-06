@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/documentgallery
+//TESTED_COMPONENT=src/gallery
 
 #include <maemo6/qgallerytrackerresultset_p.h>
 #include <maemo6/qgallerytrackerlistcolumn_p.h>

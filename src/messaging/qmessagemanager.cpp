@@ -593,7 +593,7 @@ QMessageAccount QMessageManager::account(const QMessageAccountId& id) const
     The \a filter is applied to the state of the data after the occurrence of the event for which
     a notification may be emitted.
 
-    On Linux, Maemo 6 (Harmattan) and Meego.com it is only possible to filter messageRemoved()
+    On Linux and Meego.com it is only possible to filter messageRemoved()
     signals with an empty QMessageFilter() that matches all messages.
 
     \since 1.0
@@ -638,6 +638,9 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
 
     Since the filters apply to the state of the data after the message removal, the only
     data item that may be subject to filtration is the identifier of the removed message.
+    
+    On Symbian^3 platform to get signals about removed emails the related mailbox must
+    be manually synchronized.
 
     \since 1.0
     \sa messageAdded(), messageUpdated(), registerNotificationFilter()

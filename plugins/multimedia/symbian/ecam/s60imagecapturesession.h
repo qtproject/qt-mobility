@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -61,12 +61,12 @@
 
 QT_USE_NAMESPACE
 
-class S60CameraService;
-class CImageDecoder;
-class CImageEncoder;
-class CFrameImageData;
-class RFs;
-class S60ImageCaptureSession;
+QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(CImageDecoder)
+QT_FORWARD_DECLARE_CLASS(CImageEncoder)
+QT_FORWARD_DECLARE_CLASS(CFrameImageData)
+QT_FORWARD_DECLARE_CLASS(RFs)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 
 /*
  * This class implements asynchronous image decoding service for the
@@ -208,6 +208,9 @@ public: // Methods
     void cancelCapture();
     void releaseImageBuffer();
 
+    // Capture Destination
+    void setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination);
+
     // Image Resolution
     QSize captureSize() const;
     QSize minimumCaptureSize();
@@ -224,6 +227,10 @@ public: // Methods
     // Image Quality
     QtMultimediaKit::EncodingQuality captureQuality() const;
     void setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality);
+
+    // Image Format (Buffer Capture)
+    QList<QVideoFrame::PixelFormat> supportedBufferCaptureFormats() const;
+    void setBufferCaptureFormat(const QVideoFrame::PixelFormat format);
 
     // S60 3.1 Focus Control (S60 3.2 and later via S60CameraSettings class)
     bool isFocusSupported() const;
@@ -302,11 +309,15 @@ private: // Internal
     void processFileName(const QString &fileName);
     TFileName convertImagePath();
 
+    QVideoFrame generateImageBuffer(TDesC8 *aData);
+
 signals: // Notifications
 
     void stateChanged(QCamera::State);
     void advancedSettingChanged();
     void captureSizeChanged(const QSize&);
+    void destinationChanged(const QCameraImageCapture::CaptureDestinations);
+    void bufferCaptureFormatChanged(const QVideoFrame::PixelFormat);
 
     // Error signals
     void cameraError(int, const QString&);          // For QCamera::error
@@ -316,6 +327,7 @@ signals: // Notifications
     void readyForCaptureChanged(bool);
     void imageExposed(int);
     void imageCaptured(const int, const QImage&);
+    void imageAvailable(const int, const QVideoFrame&);
     void imageSaved(const int, const QString&);
 
     // Focus notifications
@@ -339,11 +351,14 @@ private: // Data
     TInt                    m_activeDeviceIndex;
     bool                    m_cameraStarted;
     ImageCaptureState       m_icState;
+    QCameraImageCapture::CaptureDestinations m_captureDestionation;
     QStringList             m_supportedImageCodecs;
+    QList<QVideoFrame::PixelFormat> m_supportedBufferCaptureFormats;
     QString                 m_currentCodec;
     CCamera::TFormat        m_currentFormat;
     QSize                   m_captureSize;
     int                     m_symbianImageQuality;
+    QVideoFrame::PixelFormat  m_bufferCaptureFormat;
     bool                    m_captureSettingsSet;
     QString                 m_stillCaptureFileName;
     QString                 m_requestedStillCaptureFileName;

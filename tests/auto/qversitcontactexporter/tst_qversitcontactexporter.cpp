@@ -665,7 +665,7 @@ void tst_QVersitContactExporter::testEncodeGeoLocation()
     QCOMPARE(property.parameters().count(), 0);
     QCOMPARE(property.name(), QLatin1String("GEO"));
     CHECK_VALUE(property, QVersitProperty::CompoundType,
-                QStringList() << QLatin1String("99.9") << QLatin1String("98.9"));
+                QStringList() << QLatin1String("98.9") << QLatin1String("99.9"));
 }
 
 void tst_QVersitContactExporter::testEncodeOrganization()

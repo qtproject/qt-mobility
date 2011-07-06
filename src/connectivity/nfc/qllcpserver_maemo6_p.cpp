@@ -133,10 +133,10 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     if (m_pendingSockets.isEmpty())
         return 0;
 
-    int fd = m_pendingSockets.takeFirst();
+    QPair<int, QVariantMap> parameters = m_pendingSockets.takeFirst();
 
     QLlcpSocketPrivate *socketPrivate =
-        new QLlcpSocketPrivate(m_connection, fd);
+        new QLlcpSocketPrivate(m_connection, parameters.first, parameters.second);
 
     QLlcpSocket *socket = new QLlcpSocket(socketPrivate, 0);
 
@@ -168,7 +168,7 @@ void QLlcpServerPrivate::AccessGranted(const QDBusObjectPath &targetPath,
 }
 
 void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+                                int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
@@ -176,7 +176,7 @@ void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rs
 
     Q_Q(QLlcpServer);
 
-    m_pendingSockets.append(readFd);
+    m_pendingSockets.append(qMakePair(fd, properties));
 
     emit q->newConnection();
 }

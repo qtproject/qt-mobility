@@ -1123,6 +1123,7 @@ private:
    	void ConstructTableUsageFlagsFromSortOrderL(TInt& aFlags);
    	void LoadSyncPluginL();
    	void DeleteContactSendEventActionL(TContactItemId aContactId, TCntSendEventAction aActionType);
+   	TInt DeleteContactSendEventAction(TContactItemId aContactId, TCntSendEventAction aActionType);
 
 public:
    	//for LocalView

@@ -71,6 +71,8 @@ iConstructed(EFalse), iObserver(NULL),iDynCaps(0),iPacketdataserviceCaps(true)
         User::LeaveIfError(err);
     )
 
+    CleanupClosePushL(iMobilePhone);
+
 #ifdef ETELPACKETSERVICE_SUPPORTED
     TRAP_IGNORE(
         TInt packetserviceerr = iPacketService.Open(iMobilePhone);
@@ -86,17 +88,18 @@ iConstructed(EFalse), iObserver(NULL),iDynCaps(0),iPacketdataserviceCaps(true)
         {
         iConstructed = ETrue;
         }
+    CleanupStack::Pop(&iMobilePhone);
     CleanupStack::Pop(&iTelServer);
     TRACES(qDebug() << "CNetworkBase::CNetworkBase--->");
     }
 
 CNetworkBase::~CNetworkBase()
     {
-    iMobilePhone.Close();
-    iTelServer.Close();
 #ifdef ETELPACKETSERVICE_SUPPORTED
     iPacketService.Close();
 #endif
+    iMobilePhone.Close();
+    iTelServer.Close();
     }
 
 void CNetworkBase::AddObserver(MNetworkObserver *aObserver)
@@ -129,7 +132,7 @@ CNetworkMode::CNetworkMode()
     }
 CNetworkMode::~CNetworkMode()
     {
-        DoCancel();
+        Cancel();
     }
 
 void CNetworkMode::DoCancel()
@@ -312,9 +315,16 @@ void CPacketDataStatus::StartMonitoring()
 CNetworkInfo::CNetworkInfo():iCellDataTechnology(KDefaultBearer)
     {
      //Add observers
-    iNetStat.Add(this);
     iNetMode.Add(this);
+    iNetStat.Add(this);
     if ( iPacketDataStatus.NetworkCtrlCapsenabled() == true ) iPacketDataStatus.Add(this);
+    }
+
+CNetworkInfo::~CNetworkInfo()
+    {
+    iNetMode.Remove();
+    iNetStat.Remove();
+    iPacketDataStatus.Remove();
     }
 
 RMobilePhone::TMobilePhoneNetworkMode CNetworkInfo::GetMode() const

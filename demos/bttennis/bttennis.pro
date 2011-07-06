@@ -8,7 +8,7 @@ DEPENDPATH += \
     ../../src/connectivity/bluetooth \
     ../../src/connectivity/nfc
 
-include(../mobility_examples.pri)
+include(../demos.pri)
 
 CONFIG += mobility
 MOBILITY = connectivity

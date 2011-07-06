@@ -67,7 +67,7 @@ class QLlcpSocketPrivate : public QObject
 
 public:
     QLlcpSocketPrivate(QLlcpSocket *q);
-    QLlcpSocketPrivate(const QDBusConnection &connection, int readFd);
+    QLlcpSocketPrivate(const QDBusConnection &connection, int fd, const QVariantMap &properties);
     ~QLlcpSocketPrivate();
 
     void connectToService(QNearFieldTarget *target, const QString &serviceUri);

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -67,6 +67,7 @@
 #include "cntsymbiantransformerror.h"
 #include "cntbackendsdefs.h"
 
+#include <QImageReader>
 #include <qtcontacts.h>
 #include <cntfldst.h>
 #include <cntdb.h>
@@ -125,6 +126,7 @@ void CntTransformContact::initializeCntTransformContactData()
 	m_transformContactData.insert(Family, new CntTransformFamily);
     m_transformContactData.insert(Ringtone, new CntTransformRingtone);
     m_transformContactData.insert(Avatar, new CntTransformAvatar);
+    m_transformContactData.insert(Thumbnail, new CntTransformThumbnail);
 
 #ifdef SYMBIAN_BACKEND_USE_CNTMODEL_V2
 	// variated transform classes
@@ -147,8 +149,6 @@ void CntTransformContact::initializeCntTransformContactData()
 #else
     // Empty transform class for removing unsupported detail definitions
     m_transformContactData.insert(Empty, new CntTransformEmpty);
-
-    m_transformContactData.insert(Thumbnail, new CntTransformThumbnail);
 
     // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
@@ -288,6 +288,8 @@ void CntTransformContact::transformContactL(
 	//Create a new fieldSet
 	CContactItemFieldSet *fieldSet = CContactItemFieldSet::NewLC();
 
+	// Create thumbnail from the avatar, if thumbnail is missing
+	generateThumbnailDetail(contact);
 	// Copy all fields to the Symbian contact.
 	QList<QContactDetail> detailList(contact.details());
 
@@ -589,5 +591,46 @@ void CntTransformContact::resetTransformObjects() const
     while (i != m_transformContactData.constEnd()) {
         i.value()->reset();
         ++i;
+    }
+}
+
+void CntTransformContact::generateThumbnailDetail(QContact &contact) const
+{
+    QContactAvatar avatar = contact.detail(QContactAvatar::DefinitionName);
+    QContactThumbnail thumbnail = contact.detail(QContactThumbnail::DefinitionName);
+    if (!avatar.imageUrl().toString().isEmpty() && thumbnail.thumbnail().isNull()) {
+        QImageReader reader(avatar.imageUrl().toString());
+        double imageWidth = reader.size().width();
+        double imageHeight = reader.size().height();
+        
+        if (imageWidth < KMaxThumbnailSize.iWidth || imageHeight < KMaxThumbnailSize.iHeight) {
+            // do not construct thumbnail from too small image
+            return;
+        }
+        
+        // trim the image for correct aspect ratio if needed
+        QRect rect;
+        rect.setSize(QSize(imageWidth, imageHeight));
+        double thumbnailAspectRatio = (double)KMaxThumbnailSize.iWidth/(double)KMaxThumbnailSize.iHeight;
+        double imageAspectRatio = imageWidth/imageHeight;
+        if (thumbnailAspectRatio != imageAspectRatio) {
+            if (thumbnailAspectRatio < imageAspectRatio) {
+                int newWidth = imageWidth*thumbnailAspectRatio/imageAspectRatio;
+                rect.setLeft((imageWidth - newWidth)/2);
+                rect.setWidth(newWidth);
+            } else {
+                int newHeight = imageHeight*imageAspectRatio/thumbnailAspectRatio;
+                rect.setTop((imageHeight - newHeight)/2);
+                rect.setHeight(newHeight);
+            }
+            reader.setClipRect(rect);
+        }
+        
+        reader.setScaledSize(QSize(KMaxThumbnailSize.iWidth, KMaxThumbnailSize.iHeight));
+        QImage scaledImage = reader.read(); 
+        if (!scaledImage.isNull()) {
+            thumbnail.setThumbnail(scaledImage);
+            contact.saveDetail(&thumbnail);
+        }
     }
 }

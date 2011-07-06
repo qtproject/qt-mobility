@@ -674,9 +674,9 @@ bool QVersitContactImporterPrivate::createGeoLocation(
         return false;
     QStringList values = variant.toStringList();
     bool ok1;
-    geo.setLongitude(takeFirst(values).toDouble(&ok1));
+    geo.setLatitude(takeFirst(values).toDouble(&ok1));
     bool ok2;
-    geo.setLatitude(takeFirst(values).toDouble(&ok2));
+    geo.setLongitude(takeFirst(values).toDouble(&ok2));
 
     if (ok1 && ok2) {
         saveDetailWithContext(updatedDetails, geo, extractContexts(property));

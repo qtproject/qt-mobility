@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
 ** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General Public
-** License version 2.1 as published by the Free Software Foundation and
-** appearing in the file LICENSE.LGPL included in the packaging of this
-** file. Please review the following information to ensure the GNU Lesser
-** General Public License version 2.1 requirements will be met:
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of this
-** file. Please review the following information to ensure the GNU General
-** Public License version 3.0 requirements will be met:
-** http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Other Usage
-** Alternatively, this file may be used in accordance with the terms and
-** conditions contained in a signed written agreement between you and Nokia.
+**
+**
 **
 **
 **
@@ -48,13 +48,20 @@
 #include <QValueSpacePublisher>
 
 #ifdef Q_OS_SYMBIAN
+#include <centralrepository.h>
+#include <e32property.h>
 #include <featdiscovery.h>
+#include <e32cmn.h>
 #endif
 
 const QString ownCrFullPath("/cr/0xE056F50B/1");
+const QString ownCrFullPathString("/cr/0xE056F50B/5");
 const QString ownCrPath("/cr/0xE056F50B");
 const QString ownCrKey("1");
 const QString ownPsFullPath("/ps/0xE056F50B/1");
+const uint ownUid = 3763795211;
+const int intProperty = 1;    
+const int stringProperty = 3;
 
 // ======== LOCAL FUNCTIONS ========
 
@@ -84,10 +91,11 @@ void ModuletestConfigurability::init()
     // set own cr key to default value
     QtMobility::QValueSpacePublisher publisher(ownCrPath, this);
     publisher.setValue(ownCrKey, QVariant(0));
-
-    // remove own ps key
-    QtMobility::QValueSpacePublisher publisher2(ownPsFullPath, this);
-    publisher2.resetValue(QString());
+    publisher.setValue(QString("5"), QString());
+    
+    // remove any defined ps properties:
+    RProperty::Delete(intProperty);
+    RProperty::Delete(stringProperty);
 }
 
 void ModuletestConfigurability::cleanup()
@@ -98,14 +106,43 @@ void ModuletestConfigurability::cleanupTestCase()
 {
 }
 
+// TEST CASE: basic read and and write operations to Symbian Central Repository
+//            through Symbian Settings Layer
+void ModuletestConfigurability::readAndSetCenrep_data()
+{
+    QTest::addColumn<QString>("writePath");
+    QTest::addColumn<QString>("writeKey");
+    QTest::addColumn<QString>("readPath");
+    QTest::addColumn<QString>("readKey");
+    QTest::addColumn<QVariant>("value");
+
+    QTest::newRow("numeric cenrep path, hex and decimal notation point to same key")
+            << QString("/cr/0xE056F50B/0x1") << QString()
+            << QString("/cr/3763795211/1") << QString() << QVariant(123);
+    QTest::newRow("numeric cenrep path and qcrml path point to same key")
+            << QString("/cr/0xE056F50B/0x1") << QString()
+            << QString("/publishsubscribe_mt/cenrep/int") << QString() << QVariant(124);
+    QTest::newRow("same as above but change the read and write keys around")
+            << QString("/publishsubscribe_mt/cenrep") << QString("int")
+            << QString("/cr/0xE056F50B/0x1") << QString() << QVariant(125);
+    QTest::newRow("read and write string to cenrep")
+            << QString("/publishsubscribe_mt/cenrep") << QString("string")
+            << QString("/cr/0xE056F50B/0x5") << QString() << QVariant(QString("testString1"));
+    QTest::newRow("read and write double to cenrep")
+            << QString("/cr/0xE056F50B") << QString("0x2")
+            << QString("/publishsubscribe_mt/cenrep/real") << QString() << QVariant(3.14);
+}
+
 void ModuletestConfigurability::readAndSetCenrep()
 {
-    QtMobility::QValueSpaceSubscriber subscriber(ownCrFullPath, this);
-    QtMobility::QValueSpacePublisher publisher(ownCrFullPath, this);
+    QFETCH(QString, writePath);
+    QFETCH(QString, writeKey);
+    QFETCH(QString, readPath);
+    QFETCH(QString, readKey);
+    QFETCH(QVariant, value);
 
-    QVariant value = subscriber.value();
-    QCOMPARE(value.type(), QVariant::Int);
-    QCOMPARE(value.toInt(), 0);
+    QtMobility::QValueSpaceSubscriber subscriber(readPath, this);
+    QtMobility::QValueSpacePublisher publisher(writePath, this);
 
     // using just signalspy doesn't emit connectNotify signal, so QValueSpaceSubscriber
     // doesn't start listening to change event.
@@ -113,55 +150,73 @@ void ModuletestConfigurability::readAndSetCenrep()
     connect(&subscriber, SIGNAL(contentsChanged()), this, SLOT(dummy()));
     QSignalSpy spy(&subscriber, SIGNAL(contentsChanged()));
 
-    publisher.setValue(QString(), QVariant(1234));
+    publisher.setValue(writeKey, value);
 
     // wait for the change notification (timout: 5 seconds)
     QVERIFY(waitForSignal(&subscriber, SIGNAL(contentsChanged()), 5000));
 
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(subscriber.value().toInt(), 1234);
+    QCOMPARE(subscriber.value(readKey), value);
 }
 
-void ModuletestConfigurability::partialCenrepPath()
+// TEST CASE: basic read and and write operations to Symbian RProperty
+//            through Symbian Settings Layer
+void ModuletestConfigurability::readAndSetPubsub_data()
 {
-    QtMobility::QValueSpaceSubscriber subscriber(ownCrPath, this);
-    QtMobility::QValueSpacePublisher publisher(ownCrPath, this);
+    QTest::addColumn<QString>("writePath");
+    QTest::addColumn<QString>("writeKey");
+    QTest::addColumn<QString>("readPath");
+    QTest::addColumn<QString>("readKey");
+    QTest::addColumn<QVariant>("value");
 
-    QCOMPARE(subscriber.value(ownCrKey).toInt(), 0);
-
-    // It is not possible to get change notifications for partial numeric path.
-
-    publisher.setValue(ownCrKey, QVariant(1234));
-
-    QCOMPARE(subscriber.value(ownCrKey).toInt(), 1234);
+    QTest::newRow("numeric pubsub path, hex and decimal notation point to same key")
+            << QString("/ps/0xE056F50B/0x1") << QString()
+            << QString("/ps/3763795211/1") << QString() << QVariant(123);
+    QTest::newRow("numeric pubsub path and qcrml path point to same key")
+            << QString("/ps/0xE056F50B/0x1") << QString()
+            << QString("/publishsubscribe_mt/pubsub/int") << QString() << QVariant(124);
+    QTest::newRow("same as above but change the read and write keys around")
+            << QString("/publishsubscribe_mt/pubsub") << QString("int")
+            << QString("/ps/0xE056F50B/0x1") << QString() << QVariant(125);
+    QTest::newRow("read and write string to pubusb")
+            << QString("/publishsubscribe_mt/pubsub") << QString("string")
+            << QString("/ps/0xE056F50B/0x3") << QString() << QVariant(QString("testString1"));
+    QTest::newRow("read and write double to pubsub")
+            << QString("/ps/0xE056F50B") << QString("0x3")
+            << QString("/publishsubscribe_mt/pubsub/string") << QString() << QVariant(3.14);
 }
 
 void ModuletestConfigurability::readAndSetPubsub()
 {
-    QtMobility::QValueSpaceSubscriber subscriber(ownPsFullPath, this);
-    QtMobility::QValueSpacePublisher publisher(ownPsFullPath, this);
+    QFETCH(QString, writePath);
+    QFETCH(QString, writeKey);
+    QFETCH(QString, readPath);
+    QFETCH(QString, readKey);
+    QFETCH(QVariant, value);
 
-    QVariant value = subscriber.value();
-    QCOMPARE(value.type(), QVariant::Invalid);
+    QtMobility::QValueSpaceSubscriber subscriber(readPath, this);
+    QtMobility::QValueSpacePublisher publisher(writePath, this);
 
-    publisher.setValue(QString(), QVariant(1));
+    // it is not possible to listen to changes to an undefined property (Qt Mobility restriction)
+    // so set some value here
+    publisher.setValue(writeKey, (value.type()==QVariant::Int ? QVariant(0) : QVariant()));
 
-    QCOMPARE(subscriber.value().toInt(), 1);
-
-    // we can start listening to change notifications only after the pubsub
-    // key has some value (Qt Mobility restriction).
+    // using just signalspy doesn't emit connectNotify signal, so QValueSpaceSubscriber
+    // doesn't start listening to change event.
+    //   ==> connect the signal to dummy slot
     connect(&subscriber, SIGNAL(contentsChanged()), this, SLOT(dummy()));
     QSignalSpy spy(&subscriber, SIGNAL(contentsChanged()));
 
-    publisher.setValue(QString(), QVariant(1234));
+    publisher.setValue(writeKey, value);
 
     // wait for the change notification (timout: 5 seconds)
     QVERIFY(waitForSignal(&subscriber, SIGNAL(contentsChanged()), 5000));
 
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(subscriber.value().toInt(), 1234);
+    QCOMPARE(subscriber.value(readKey), value);
 }
 
+// TEST CASE: verify that the numeric path parsing can handle invalid paths gracefully.
 void ModuletestConfigurability::invalidPath_data()
 {
     QTest::addColumn<QString>("path");
@@ -188,11 +243,314 @@ void ModuletestConfigurability::invalidPath()
     QCOMPARE((subscriber.value(QString(), KDefaultValue) != KDefaultValue), valid);
 }
 
-// Dummy slot for connecting QValueSpaceSubscriber::contentsChanged signal.
-// Subscriber doesn't start listening to change events before it is connected
-// to some slot.
-void ModuletestConfigurability::dummy()
+// TEST CASE: verify that a string written to central repository through QValueSpaceSubscriber
+//            can be read through native API (CRepository)
+void ModuletestConfigurability::cenrepInteroperabilityQtToSymbian_data()
 {
+    QTest::addColumn<QString>("path");
+    QTest::addColumn<QString>("key");
+
+    QTest::newRow("numeric cenrep path") << QString("/cr/0xE056F50B/5") << QString();
+    QTest::newRow("qrml cenrep path") << QString("/publishsubscribe_mt/cenrep") << QString("string");
+}
+
+void ModuletestConfigurability::cenrepInteroperabilityQtToSymbian()
+{
+    QFETCH(QString, path);
+    QFETCH(QString, key);
+
+    TUid uid;
+    uid.iUid = ownUid;
+    CRepository *repo = CRepository::NewL(uid);
+    
+    const QString testString("teststring");
+    
+    QtMobility::QValueSpacePublisher publisher(path, this);
+
+    // write the string in a format that can be understood by Symbian code:
+    QTextCodec *codec = QTextCodec::codecForName("UTF-16");
+    if (codec) {
+        QByteArray writeValue = codec->fromUnicode(testString);
+        publisher.setValue(key, writeValue);
+    }
+    HBufC *res = HBufC::New(NCentralRepositoryConstants::KMaxUnicodeStringLength);
+    TPtr ptr = res->Des();
+    
+    int err = repo->Get(5, ptr);
+    QVERIFY(!err);
+    
+    QString result = QString::fromUtf16(ptr.Ptr(), ptr.Length());
+    QCOMPARE(result, testString);
+    delete res;
+}
+
+// TEST CASE: verify that string written to central repository through CRepository
+//            can be read through QValueSpaceSubscriber.
+void ModuletestConfigurability::cenrepInteroperabilitySymbianToQt_data()
+{
+    QTest::addColumn<QString>("path");
+
+    QTest::newRow("numeric cenrep path") << QString("/cr/0xE056F50B/5?raw");
+    QTest::newRow("qrml cenrep path") << QString("/publishsubscribe_mt/cenrep/string?raw");
+}
+
+void ModuletestConfigurability::cenrepInteroperabilitySymbianToQt()
+{
+    QFETCH(QString, path);
+    
+    TUid uid;
+    uid.iUid = ownUid;
+    CRepository *repo = CRepository::NewL(uid);
+    
+    int err = repo->Set(5, _L("testString"));
+    QVERIFY(!err);
+
+    QtMobility::QValueSpaceSubscriber subscriber(path, this);
+
+    QVariant res = subscriber.value();
+    QByteArray resBA = res.toByteArray();
+    
+    // need to know the format of the bytearray to convert it into local type.
+    QTextCodec *codec = QTextCodec::codecForName("UTF-16");
+    QString resString;
+    if (codec)
+        resString = codec->toUnicode(resBA);
+
+    QCOMPARE(resString, QString("testString"));
+}
+
+// TEST CASE: test reading a bytearray, which can be deserialized into QVariant.
+void ModuletestConfigurability::cenrepInteroparabilityDecodableBytearray_data()
+{
+    QTest::addColumn<QString>("path");
+
+    QTest::newRow("numeric cenrep path") << QString("/cr/0xE056F50B/5");
+    QTest::newRow("qrml cenrep path") << QString("/publishsubscribe_mt/cenrep/string");
+}
+
+void ModuletestConfigurability::cenrepInteroparabilityDecodableBytearray()
+{
+    QFETCH(QString, path);
+
+    // crete a bytearray that can be deserialized to QVariant
+    QVariant data(12345);
+    QByteArray byteArray;
+    QDataStream writeStream(&byteArray, QIODevice::WriteOnly);
+    writeStream << data;
+
+    // convert bytearray into 8-bit descriptor
+    HBufC8 *dataBuf = HBufC8::NewL(byteArray.size());
+    TPtr8 ptr = dataBuf->Des();
+    ptr.Copy((unsigned char*)byteArray.data(), byteArray.size());
+
+    // write descriptor to cenrep
+    TUid uid;
+    uid.iUid = ownUid;
+    CRepository *repo = CRepository::NewL(uid);
+    int err = repo->Set(5, *dataBuf);
+
+    delete dataBuf;
+    
+    // now read the value through qt api. first without any parameter
+    QtMobility::QValueSpaceSubscriber subscriber(path, this);
+    QVariant res = subscriber.value();
+
+    // Following condition mostly verifies that the test is functioning correctly.
+    // The read value should be deserialized into int.
+    QCOMPARE(res.type(), QVariant::Int);
+    
+    // next read the value as raw bytearray
+    QtMobility::QValueSpaceSubscriber subscriber2(path + QString("?raw"), this);
+    QVariant res2 = subscriber2.value();
+
+    QCOMPARE(res2.type(), QVariant::ByteArray);
+    QCOMPARE(res2.toByteArray(), byteArray);
+}
+
+// TEST CASE: test support for native float type (cenrep)
+void ModuletestConfigurability::floatType()
+{
+    // write float to cenrep
+    TUid uid;
+    uid.iUid = ownUid;
+    CRepository *repo = CRepository::NewL(uid);
+    int err = repo->Set(2, 3.14);
+
+    // read it through QValueSpaceSubscriber
+    QtMobility::QValueSpaceSubscriber subscriber("/cr/0xE056F50B/2", this);
+    QVariant res = subscriber.value();
+
+    QCOMPARE(res.type(), QVariant::Double);
+    QCOMPARE(res.toDouble(), 3.14);
+    
+    // clear the cenrep value
+    repo->Set(2, TReal(0));
+
+    // next try it the other way
+    QtMobility::QValueSpacePublisher publisher("/cr/0xE056F50B/2", this);
+    publisher.setValue(QString(), QVariant(-3.14));
+
+    TReal result;
+    err = repo->Get(2, result);
+    QVERIFY(!err);
+    QCOMPARE(result, -3.14);
+}
+
+// TEST CASE: test float type with RProperty (which doesn't support it natively)
+void ModuletestConfigurability::floatTypeProperty()
+{
+    const double testDouble = 5.4321;
+    // write float to RProperty through QValueSpacePublisher
+    QtMobility::QValueSpacePublisher publisher("/ps/0xE056F50B/50", this);
+    publisher.setValue(QString(), QVariant(testDouble));
+
+    // verify that the property is saved as a bytearray (serialized QVariant)
+    TUid uid;
+    uid.iUid = ownUid;
+    TBuf8<RProperty::KMaxPropertySize> result;
+    int err = RProperty::Get(uid, 50, result);
+    QVERIFY(!err);
+    
+    QByteArray nativeResult((const char *)result.Ptr(), result.Size());
+    QDataStream readStream(nativeResult);
+    QVariant serializedValue;
+    readStream >> serializedValue;
+    QVERIFY(serializedValue.isValid());
+    QCOMPARE(serializedValue.type(), QVariant::Double);
+    QCOMPARE(serializedValue.toDouble(), testDouble);
+    
+    // read the value through QValueSpaceSubscriber
+    QtMobility::QValueSpaceSubscriber subscriber("/ps/0xE056F50B/50", this);
+    QVariant res = subscriber.value();
+    QCOMPARE(res.type(), QVariant::Double);
+    QCOMPARE(res.toDouble(), testDouble);
+}
+
+// TEST CASE: test reading Symbian UTF-16 string using "?string" parameter
+void ModuletestConfigurability::stringParameter1_data()
+{
+    QTest::addColumn<QString>("path");
+
+    QTest::newRow("numeric cenrep path") << QString("/cr/0xE056F50B/5?string");
+    QTest::newRow("qrml cenrep path") << QString("/publishsubscribe_mt/cenrep/string?string");
+}
+
+void ModuletestConfigurability::stringParameter1()
+{
+    QFETCH(QString, path);
+    
+    TUid uid;
+    uid.iUid = ownUid;
+    CRepository *repo = CRepository::NewL(uid);
+    
+    int err = repo->Set(5, _L("testString"));
+    QVERIFY(!err);
+
+    QtMobility::QValueSpaceSubscriber subscriber(path, this);
+
+    QVariant res = subscriber.value();
+    QCOMPARE(res.type(), QVariant::String);
+    QCOMPARE(res.toString(), QString("testString"));
+}
+
+// TEST CASE: test writing Symbian UTF-16 string using "?string" parameter
+void ModuletestConfigurability::stringParameter2_data()
+{
+    QTest::addColumn<QString>("path");
+    QTest::addColumn<QString>("key");
+
+    QTest::newRow("numeric cenrep path") << QString("/cr/0xE056F50B") << QString("5?string");
+    QTest::newRow("qrml cenrep path") << QString("/publishsubscribe_mt/cenrep") << QString("string?string");
+}
+
+void ModuletestConfigurability::stringParameter2()
+{
+    QFETCH(QString, path);
+    QFETCH(QString, key);
+
+    TUid uid;
+    uid.iUid = ownUid;
+    CRepository *repo = CRepository::NewL(uid);
+    
+    const QString testString("teststring");
+    
+    QtMobility::QValueSpacePublisher publisher(path, this);
+    publisher.setValue(key, QVariant(testString));
+
+    HBufC *res = HBufC::New(NCentralRepositoryConstants::KMaxUnicodeStringLength);
+    TPtr ptr = res->Des();
+    
+    int err = repo->Get(5, ptr);
+    QVERIFY(!err);
+    
+    QString result = QString::fromUtf16(ptr.Ptr(), ptr.Length());
+    QCOMPARE(result, testString);
+    delete res;
+}
+
+// TEST CASE: test Symbian UTF-16 strings stored in RProperty. write
+//            string through native API and read it through QValueSpaceSubscriber
+void ModuletestConfigurability::stringRProperty1_data()
+{
+    QTest::addColumn<QString>("path");
+
+    QTest::newRow("numeric pubsub path") << QString("/ps/0xE056F50B/3?string");
+    QTest::newRow("qrml pubsub path") << QString("/publishsubscribe_mt/pubsub/string?string");
+}
+
+void ModuletestConfigurability::stringRProperty1()
+{
+    QFETCH(QString, path);
+
+    // write string into RProperty through native API
+    TUid uid;
+    uid.iUid = ownUid;
+    int err = RProperty::Define(3, RProperty::EText,
+            TSecurityPolicy(TSecurityPolicy::EAlwaysPass),
+            TSecurityPolicy(TSecurityPolicy::EAlwaysPass));
+    QVERIFY(!err);
+    err = RProperty::Set(uid, 3, _L("testString"));
+    QVERIFY(!err);
+
+    // read it through QValueSpaceSubscriber
+    QtMobility::QValueSpaceSubscriber subscriber(path, this);
+    QVariant res = subscriber.value();
+    QCOMPARE(res.type(), QVariant::String);
+    QCOMPARE(res.toString(), QString("testString"));
+}
+
+// TEST CASE: test Symbian UTF-16 strings stored in RProperty. write
+//            string through QValueSpacePublisher and read it through native API
+void ModuletestConfigurability::stringRProperty2_data()
+{
+    QTest::addColumn<QString>("path");
+    QTest::addColumn<QString>("key");
+
+    QTest::newRow("numeric pubsub path") << QString("/ps/0xE056F50B") << QString("3?string");
+    QTest::newRow("qrml pubsub path") << QString("/publishsubscribe_mt/pubsub") << QString("string?string");
+}
+
+void ModuletestConfigurability::stringRProperty2()
+{
+    QFETCH(QString, path);
+    QFETCH(QString, key);
+
+    TUid uid;
+    uid.iUid = ownUid;
+    const QString testString("teststring2");
+    
+    QtMobility::QValueSpacePublisher publisher(path, this);
+    publisher.setValue(key, QVariant(testString));
+
+    HBufC *res = HBufC::New(NCentralRepositoryConstants::KMaxUnicodeStringLength);
+    TPtr ptr = res->Des();
+    
+    int err = RProperty::Get(uid, 3, ptr);
+    QVERIFY(!err);
+    
+    QString result = QString::fromUtf16(ptr.Ptr(), ptr.Length());
+    QCOMPARE(result, testString);
+    delete res;
 }
 
 void ModuletestConfigurability::featManagerSimpleSubscriber_data()
@@ -216,6 +574,7 @@ void ModuletestConfigurability::featManagerSimpleSubscriber_data()
     QTest::newRow("invalid 6.") << "/fm/zzz" << static_cast<int>(QVariant::Invalid);
 }
 
+// TEST CASE: feature manager support
 void ModuletestConfigurability::featManagerSimpleSubscriber()
 {
     QFETCH(QString, feature);
@@ -377,6 +736,7 @@ void ModuletestConfigurability::featManagerAdvSubscriber_data()
 
 }
 
+// TEST CASE: feature manager support
 void ModuletestConfigurability::featManagerAdvSubscriber()
 {
     QFETCH(QString, feature);
@@ -417,6 +777,7 @@ void ModuletestConfigurability::featManagerMapperCase_data()
 
 }
 
+// TEST CASE: feature manager support
 void ModuletestConfigurability::featManagerMapperCase()
 {
     QFETCH(QString, feature);
@@ -430,5 +791,14 @@ void ModuletestConfigurability::featManagerMapperCase()
     QCOMPARE(subscriber.value(), referenceSubscriber.value());
 }
 
+
+
+
+// Dummy slot for connecting QValueSpaceSubscriber::contentsChanged signal.
+// Subscriber doesn't start listening to change events before it is connected
+// to some slot.
+void ModuletestConfigurability::dummy()
+{
+}
 
 QTEST_MAIN(ModuletestConfigurability)

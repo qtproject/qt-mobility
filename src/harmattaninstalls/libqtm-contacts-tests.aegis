@@ -9,5 +9,6 @@
         <for path="/usr/tests/qtm/tst_qcontactmanagerfiltering" />
         <for path="/usr/tests/qtm/tst_bm_contactsoverhead" />
         <for path="/usr/tests/qtm/tst_bm_contacts" />
+        <for path="/usr/tests/qtm/tst_qdeclarativecontact" />
     </request>
 </aegis>

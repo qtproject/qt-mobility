@@ -291,7 +291,11 @@ int QAudioOutputPrivate::notifyInterval() const
 qint64 QAudioOutputPrivate::processedUSecs() const
 {
     int samplesPlayed = 0;
-    if (m_devSound && QAudio::SuspendedState != m_externalState)
+
+    if (!m_devSound)
+        return samplesPlayed;
+
+    if (QAudio::SuspendedState != m_externalState)
         samplesPlayed = getSamplesPlayed();
 
     // Protect against division by zero

@@ -87,7 +87,7 @@ public:
         SecPolicyAlwaysPass,
         SecPolicyUndefined
     };
-    
+
     enum Capability
     {
         CapabilityTCB,

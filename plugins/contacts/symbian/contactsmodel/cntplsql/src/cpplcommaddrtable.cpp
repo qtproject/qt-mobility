@@ -24,6 +24,12 @@
 #include <cntphonenumparser.h>
 #endif
 
+// Max number of extra digits that can be added in numbers matching when Dynamic Matching is used.
+// Example:
+//   If 8 digits are configured to be used, then another 1 or 2 (2 as max) extra digits are
+//   used if available in both numbers.
+const TInt KExtraDigitForNumberCompare = 2;
+
 /// Unnamed namespace for local definitions
 namespace {
 
@@ -726,13 +732,20 @@ match digits are specified.
 CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight)
 	{
     // We have to handle deprecated KBestMatchingPhoneNumbers argument, KBestMatchingPhoneNumbers = DM(7)
+  
+    // Minimum number of digits to compare the numbers
     const TInt KMatchLengthFromRight = aMatchLengthFromRight ? aMatchLengthFromRight : KLowerSevenDigits;
+
+    // Maximum number of digits (limit) to compare the numbers
+	// aMatchLengthFromRight + 2, or KLowerSevenDigits + 2 in case KBestMatchingPhoneNumbers is used
+    const TInt KMatchLengthFromRightLimit = KMatchLengthFromRight + KExtraDigitForNumberCompare;
+       
     const TInt KUpperMaxLength = KMaxPhoneMatchLength - KLowerSevenDigits;
     
     CContactIdArray* phoneMatchArray = CContactIdArray::NewLC();
 
     TMatch phoneDigits = CreatePaddedPhoneDigitsL(aNumber, KLowerSevenDigits, KUpperMaxLength);
-
+ 
     if (phoneDigits.iNumLowerDigits + phoneDigits.iNumUpperDigits > 0)
         {
         // build statement
@@ -758,27 +771,49 @@ CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, cons
             TPtrC extValString = stmnt.ColumnTextL(KExtraValueIdx);
             TInt32 storedUpperDigits;
             User::LeaveIfError(TLex(extValString).Val(storedUpperDigits));
-
             
-            TBool nonZeroInNumberFound = (numberUpperDigits % 10 != 0); // is last digit != 0
-            TBool nonZeroInStoredFound = (storedUpperDigits % 10 != 0); // is last digit != 0
-            
-            // Upper digits are in reverse order and padded (i.e. 21853000 for number +358 12 3456789).
-            // Loop cuts nonsignificant part of upper digits
-            for (TInt cutCount = KMatchLengthFromRight - KLowerSevenDigits; 
-                (cutCount < KUpperMaxLength)                        // all KMatchLengthFromRight digits are significant
-                && !(nonZeroInNumberFound && nonZeroInStoredFound); // DM:if there are more non zero digits they are significant 
-                cutCount++)
+            // If the length of number is < 7 (excluding leading 0s, the numbers must be equal to match,
+			// otherwis they do not match
+            // Example: number in DB = "3560 0123456" and matching number = "123456" should not match
+			// Note: Here the lower seven digits are the same for DB and matching numbers
+            if (!((((phoneDigits.iLowerSevenDigits % 10 == 0) && (numberUpperDigits == 0)) ||
+                   ((phoneDigits.iLowerSevenDigits % 10 == 0) && (storedUpperDigits == 0))) &&
+                (numberUpperDigits > 0 || storedUpperDigits > 0)))
                 {
-                numberUpperDigits /= 10;
-                storedUpperDigits /= 10;
-                nonZeroInNumberFound |= (numberUpperDigits % 10 != 0);
-                nonZeroInStoredFound |= (storedUpperDigits % 10 != 0);
-                }
+                TBool nonZeroInNumberFound = (numberUpperDigits % 10 != 0); // is last digit != 0
+                TBool nonZeroInStoredFound = (storedUpperDigits % 10 != 0); // is last digit != 0
+                
+                // Upper digits are in reverse order and padded (i.e. 21853000 for number +358 12 3456789).
+                // The loop cuts the upper digits of cutoffLengthOfUpperDigits, as they are not used for comparing
+                // Example: "35851234567" and aMatchLengthFromRight = 8 , upperdigit = 58530000
+                // and upperdigit left after loop = 585   (585|cutoffLengthOfUpperDigits|30000)
+                TInt cutoffLengthOfUpperDigits = KMaxPhoneMatchLength - KMatchLengthFromRightLimit;
+                for (TInt cutCount = 0; cutCount < cutoffLengthOfUpperDigits; cutCount++)
+                    {
+                    numberUpperDigits /= 10;
+                    storedUpperDigits /= 10;
+                    nonZeroInNumberFound |= (numberUpperDigits % 10 != 0);
+                    nonZeroInStoredFound |= (storedUpperDigits % 10 != 0);
+                    }
 
-            if (numberUpperDigits == storedUpperDigits)
-                {
-                phoneMatchArray->AddL(stmnt.ColumnInt(KContactIdIdx));
+                // The loop cuts the remaing upper digits to the Minimum limit to compare the numbers 
+                // if numbers are shorter then KMatchLengthFromRightLimit
+				// This loop is the core of Dynamic Matching (Dynamic number of digits are used for Matching)
+                for (TInt cutCount = KMatchLengthFromRight; 
+                    (cutCount < KMatchLengthFromRightLimit  )           // all KMatchLengthFromRight digits are significant
+                    && !(nonZeroInNumberFound && nonZeroInStoredFound); // DM:if there are more non zero digits they are significant 
+                    cutCount++)
+                    {
+                    numberUpperDigits /= 10;
+                    storedUpperDigits /= 10;
+                    nonZeroInNumberFound |= (numberUpperDigits % 10 != 0);
+                    nonZeroInStoredFound |= (storedUpperDigits % 10 != 0);
+                    }
+    
+                if (numberUpperDigits == storedUpperDigits)
+                    {
+                    phoneMatchArray->AddL(stmnt.ColumnInt(KContactIdIdx));
+                    }
                 }
             }
 

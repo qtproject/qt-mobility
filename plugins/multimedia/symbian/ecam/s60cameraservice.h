@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -47,24 +47,26 @@
 
 QT_USE_NAMESPACE
 
-class S60MediaContainerControl;
-class S60VideoEncoderControl;
-class S60AudioEncoderControl;
-class S60CameraControl;
-class S60VideoDeviceControl;
-class S60MediaRecorderControl;
-class S60ImageCaptureSession;
-class S60VideoCaptureSession;
-class S60CameraFocusControl;
-class S60CameraExposureControl;
-class S60CameraFlashControl;
-class S60CameraImageProcessingControl;
-class S60CameraImageCaptureControl;
-class S60VideoWidgetControl;
-class S60ImageEncoderControl;
-class S60CameraLocksControl;
-class S60VideoRendererControl;
-class S60VideoWindowControl;
+QT_FORWARD_DECLARE_CLASS(S60MediaContainerControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoEncoderControl)
+QT_FORWARD_DECLARE_CLASS(S60AudioEncoderControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoDeviceControl)
+QT_FORWARD_DECLARE_CLASS(S60MediaRecorderControl)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
+QT_FORWARD_DECLARE_CLASS(S60CameraFocusControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraExposureControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraFlashControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraImageProcessingControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraImageCaptureControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoWidgetControl)
+QT_FORWARD_DECLARE_CLASS(S60ImageEncoderControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraLocksControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoRendererControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoWindowControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraCaptureDestinationControl)
+QT_FORWARD_DECLARE_CLASS(S60CameraCaptureBufferFormatControl)
 
 class S60CameraService : public QMediaService
 {
@@ -106,6 +108,8 @@ private: // Data
     S60CameraLocksControl           *m_locksControl;
     S60VideoRendererControl         *m_rendererControl;
     S60VideoWindowControl           *m_windowControl;
+    S60CameraCaptureDestinationControl *m_captureDestinationControl;
+    S60CameraCaptureBufferFormatControl *m_bufferFormatControl;
 };
 
 #endif // S60CAMERASERVICE_H

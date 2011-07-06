@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -67,6 +67,8 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_error(KErrNone)
     , m_play_requested(false)
     , m_seekable(true)
+    , m_duration(0)
+    , m_progressduration(0)
 {
     DP0("S60MediaPlayerSession::S60MediaPlayerSession +++");
 
@@ -586,13 +588,14 @@ qint64 S60MediaPlayerSession::position() const
        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
        || mediaStatus() == QMediaPlayer::InvalidMedia)
         return 0;
-    
+
     qint64 pos = 0;
     TRAP_IGNORE(pos = doGetPositionL());
-    if (!m_play_requested && pos ==0
-        && mediaStatus() != QMediaPlayer::LoadedMedia)
+    if (pos >= m_progressduration)
+        return pos;
+    else if (pos < m_progressduration)
         return m_duration;
-    return pos;
+
 }
 
 /*!
@@ -611,7 +614,7 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
 
     QMediaPlayer::State originalState = state();
 
-    if (originalState == QMediaPlayer::PlayingState) 
+    if (originalState == QMediaPlayer::PlayingState)
         pause();
 
     TRAPD(err, doSetPositionL(pos * 1000));
@@ -629,7 +632,8 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
     if (originalState == QMediaPlayer::PlayingState)
         play();
 
-    emit positionChanged(position());
+    TRAP_IGNORE(m_progressduration = doGetPositionL());
+    emit positionChanged(m_progressduration);
 
     DP0("S60MediaPlayerSession::setPosition ---");
 }
@@ -903,7 +907,8 @@ void S60MediaPlayerSession::tick()
 {
     DP0("S60MediaPlayerSession::tick +++");
 
-    emit positionChanged(position());
+    m_progressduration = position();
+    emit positionChanged(m_progressduration);
 
     if (bufferStatus() < 100)
         emit bufferStatusChanged(bufferStatus());
@@ -932,6 +937,7 @@ void S60MediaPlayerSession::stopProgressTimer()
 {
     DP0("S60MediaPlayerSession::stopProgressTimer +++");
 
+    m_progressduration = 0;
     m_progressTimer->stop();
 
     DP0("S60MediaPlayerSession::stopProgressTimer ---");
