@@ -399,7 +399,7 @@ Note: 1) The \c service attribute must match the organization domain and applica
 
 Example qmake snippet to deploy the \c .context file
 \code
-maemo6|meego {
+meego {
     contextreg.sources = example.context
     contextreg.path = /usr/share/contextkit/providers
     INSTALLS += contextreg
