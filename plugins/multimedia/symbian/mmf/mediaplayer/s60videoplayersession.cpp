@@ -413,18 +413,18 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
         const QRect clipRect = m_videoOutputDisplay ? m_videoOutputDisplay->clipRect() : QRect();
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
         if (m_pendingChanges & WindowHandle) {
-            if (m_displayWindow) {
-                m_player->RemoveDisplayWindow(*m_displayWindow);
-                m_displayWindow = 0;
-            }
-            if (window) {
+            if (window && window != m_displayWindow ) {
                 TRAP(error, m_player->AddDisplayWindowL(*m_wsSession, *m_screenDevice,
                                                         *window,
                                                         QRect2TRect(extentRect),
                                                         QRect2TRect(clipRect)));
-                if (KErrNone == error)
-                    m_displayWindow = window;
             }
+            if (m_displayWindow && m_displayWindow != window && KErrNone == error){
+                m_player->RemoveDisplayWindow(*m_displayWindow);
+                m_displayWindow = 0;
+            }
+            if (KErrNone == error && window )
+                m_displayWindow = window;
             m_pendingChanges = ScaleFactors;
         }
         if (KErrNone == error && (m_pendingChanges & DisplayRect) && m_displayWindow) {
