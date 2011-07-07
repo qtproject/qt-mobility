@@ -172,7 +172,7 @@ unix:!simulator {
             HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
             DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER QT_NO_UDEV
 
-            contains(bme_enabled, yes): {
+            maemo6: {
                 LIBS += -lbmeipc
                 DEFINES += Q_USE_BME
             }
@@ -204,10 +204,10 @@ unix:!simulator {
 
                 !isEmpty(SDK6) {
                     LIBS += -framework CoreWLAN  -framework CoreLocation
-                }
-            } else {
-                DEFINES += MAC_SDK_10_5
-                CONFIG += no_keywords
+                }  else {
+                   DEFINES += MAC_SDK_10_5
+                  CONFIG += no_keywords
+               }
             }
 
             TEMPLATE = lib

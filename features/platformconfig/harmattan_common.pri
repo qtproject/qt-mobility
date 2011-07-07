@@ -4,6 +4,7 @@
 
 QMAKE_CFLAGS += -g1 -O2
 CONFIG += maemo_tests
+MAEMO_TEST_INSTALL_ROOT = $$[QT_INSTALL_PREFIX]/tests/qtm
 
 # Specify the config test that needs to be enabled/disabled 
 qmf_enabled = yes
