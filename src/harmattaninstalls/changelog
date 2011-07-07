@@ -1,3 +1,107 @@
+qt-mobility (1.2.0+746) unstable; urgency=low
+
+  * Fixes: NB#259006
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Fri, 1 Jul 2011 11:27:48 +1000
+
+qt-mobility (1.2.0+732) unstable; urgency=low
+
+  * Fixes: NB#230592
+  * Fixes: NB#266775
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 29 Jun 2011 08:43:48 +1000
+
+qt-mobility (1.2.0+677) unstable; urgency=low
+
+  * Temporaly disabled QContactDeclarative test case
+  * Fixes: NB#264557
+  * Fixes: NB#255843
+
+ -- Simo Fält <simo.falt@nokia.com>  Mon, 20 Jun 2011 11:49:48 +1000
+
+qt-mobility (1.2.0+651) unstable; urgency=low
+
+  * Fixes: NB#240747
+  * Fixes: NB#259673
+
+ -- Simo Fält <simo.falt@nokia.com>  Mon, 13 Jun 2011 11:49:48 +1000
+
+qt-mobility (1.2.0+610) unstable; urgency=low
+
+  * Fixes: NB#244943
+
+ -- Simo Fält <simo.falt@nokia.com>  Wed, 8 Jun 2011 11:49:48 +1000
+
+qt-mobility (1.2.0+577) unstable; urgency=low
+
+  * Fixes: NB#260431
+
+ -- Simo Fält <simo.falt@nokia.com>  Fri, 3 Jun 2011 11:49:48 +1000
+
+qt-mobility (1.2.0+555) unstable; urgency=low
+
+  * Fixes: NB#251525
+  * Fixes: NB#254170
+  * Fixes: NB#258485
+  * Fixes: NB#260885
+
+ -- Simo Fält <simo.falt@nokia.com>  Wed, 1 Jun 2011 11:49:48 +1000
+
+qt-mobility (1.2.0+375) unstable; urgency=low
+
+  * Temporaly disable screensaver test due to harmattan changes in harmattan
+  * Applied Versit autotest fix patch
+  * Fixes: NB#221126
+
+ -- Simo Fält <simo.falt@nokia.com>  Tue, 24 May 2011 11:49:48 +1000
+
+qt-mobility (1.2.0+339) unstable; urgency=low
+
+  * Fixes: NB#217621
+  * Fixes: NB#251462
+  * Fixes: NB#254018
+  * Fixes: NB#251918
+  * Fixes: NB#237883
+  * Fixes: NB#255190
+  * Fixes: NB#255324
+  * Fixes: NB#237919
+  * Fixes: NB#251525
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 18 May 2011 11:49:48 +1000
+
+qt-mobility (1.2.0-beta1+776) unstable; urgency=low
+
+  * Changed version number to correct one
+  * Fixes: NB#245823
+  * Fixes: NB#225297
+  * Fixes: NB#223444
+  * Fixes: NB#240747
+  * Fixes: NB#242069
+  * Fixes: NB#255174
+  * Fixes: NB#242937
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Mon, 16 May 2011 08:11:48 +1000
+
+qt-mobility (1.2.0-beta1+488) unstable; urgency=low
+
+  * Updated changelog
+  * Added missing connectivity test
+  * Fixes: NB#244943
+  * Fixes: NB#246713
+  * Fixes: NB#246422
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 5 May 2011 11:35:48 +1000
+
+qt-mobility (1.2.0-beta0+4402) unstable; urgency=low
+
+  * Added missing qml poster to install files
+  * Synced from master/src/harmattaninstalls
+  * Fixes: NB#229951
+  * Fixes: NB#171536
+  * Fixes: NB#246193
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 13 Apr 2011 14:21:48 +1000
+
 qt-mobility (1.2.0-beta0+4173) unstable; urgency=low
 
   * Fixes: NB#229951
