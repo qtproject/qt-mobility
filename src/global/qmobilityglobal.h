@@ -42,11 +42,11 @@
 #ifndef QMOBILITYGLOBAL_H
 #define QMOBILITYGLOBAL_H
 
-#define QTM_VERSION_STR   "1.2.0"
+#define QTM_VERSION_STR   "1.2.1"
 /*
    QTM_VERSION is (major << 16) + (minor << 8) + patch.
 */
-#define QTM_VERSION 0x010200
+#define QTM_VERSION 0x010201
 /*
    can be used like #if (QTM_VERSION >= QTM_VERSION_CHECK(1, 2, 0))
 */

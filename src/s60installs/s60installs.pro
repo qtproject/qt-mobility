@@ -9,7 +9,7 @@ isEmpty(QT_LIBINFIX):symbian {
     TARGET = "QtMobility"
     TARGET.UID3 = 0x2002ac89
 
-    VERSION = 1.2.0
+    VERSION = 1.2.1
 
     vendorinfo = \
         "; Localised Vendor name" \
