@@ -61,8 +61,10 @@ import QtMobility.serviceframework 1.1
 //---------------------------------
     
 Rectangle {
+    id: serviceListControl
     property variant dialService: 0
     signal signalSelected
+    property bool allowselction: true
     
     Text {
         id: title
@@ -109,13 +111,15 @@ Rectangle {
                     id: listItemMouseRegion
                     anchors.fill: parent
                     onClicked: {
-                        if(listFrame.nohighlightlistitem){
-                            serviceListView.highlight = highlight
-                            listFrame.nohighlightlistitem = false;
+                        if(serviceListControl.allowselction){
+                            if(listFrame.nohighlightlistitem){
+                                serviceListView.highlight = highlight
+                                listFrame.nohighlightlistitem = false;
+                            }
+                            serviceListView.currentIndex = index;
+                            dialService = model.modelData;
+                            signalSelected()
                         }
-                        serviceListView.currentIndex = index;
-                        dialService = model.modelData;
-                        signalSelected()
                     }
                 }
 

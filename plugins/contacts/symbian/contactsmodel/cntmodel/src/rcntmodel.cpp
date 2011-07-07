@@ -781,7 +781,7 @@ TContactItemId RCntModel::CreateContactL(CContactItem& aContact) const
 /**
 Delete a contact from the database.
 
-@param aContact The contact to be deleted.
+@param aCntId The contact to be deleted.
 @param aCntEventType The event type to pass on to the observers.
 @param aDecAccessCount If ETrue access count should be decremented prior to the
 deletion.
@@ -792,6 +792,25 @@ void RCntModel::DeleteContactL(TContactItemId aCntId, TCntSendEventAction aCntEv
 	{
 	TIpcArgs args(aCntId, aCntEventType, aDecAccessCount);
 	User::LeaveIfError(SendReceive(ECntItemDelete, args));
+	}
+
+/**
+Delete a contact from the database.
+
+@param aCntId The contact to be deleted.
+@param aCntEventType The event type to pass on to the observers.
+@param aDecAccessCount If ETrue access count should be decremented prior to the
+deletion.
+
+@return KErrNone if the function completed successfully, otherwise one of the 
+standard error codes.
+
+@capability WriteUserData
+*/
+TInt RCntModel::DeleteContact(TContactItemId aCntId, TCntSendEventAction aCntEventType, TBool aDecAccessCount) const
+	{
+	TIpcArgs args(aCntId, aCntEventType, aDecAccessCount);
+	return SendReceive(ECntItemDelete, args);
 	}
 
 /** 

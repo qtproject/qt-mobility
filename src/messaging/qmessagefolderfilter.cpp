@@ -245,7 +245,7 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     Returns a filter matching folders whose display name matches \a value, according to \a cmp.
 
-    Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
+    Not supported on Linux, Harmattan and Meego.com (use InclusionComparator).
 
     \since 1.0
     \sa QMessageFolder::name()
@@ -276,7 +276,7 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
 
     Returns a filter matching folders whose path matches \a value, according to \a cmp.
 
-    Not supported on Linux, Maemo 6 (Harmattan) and Meego.com (use InclusionComparator).
+    Not supported on Linux, Harmattan and Meego.com (use InclusionComparator).
 
     \since 1.0
     \sa QMessageFolder::path()

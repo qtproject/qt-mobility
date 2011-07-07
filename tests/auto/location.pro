@@ -51,6 +51,9 @@ SUBDIRS += qgeocoordinate \
 # Uses experimental qtest-qml library, cannot be enabled yet.
 # qmlmapsandnav
 
+# Not implemented yet
+# qgeomapobjectinfo
+
 # With MeeGo, by default use mock backend for autotesting.
 meego: {
     SUBDIRS += qgeopositioninfosource_mock \

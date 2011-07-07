@@ -5,7 +5,8 @@ CONFIG += testcase
 include (../../../common.pri)
 
 symbian*: {
-    PLAYLIST_TESTDATA.sources = testdata/*
+    PLAYLIST_TESTDATA.sources += testdata/testfile
+    PLAYLIST_TESTDATA.sources += testdata/test.m3u
     PLAYLIST_TESTDATA.path = testdata
     DEPLOYMENT += PLAYLIST_TESTDATA
 }

@@ -800,6 +800,52 @@ void tst_QVersitReader::testParseNextVersitProperty_data()
             << QByteArray("AGENT:\r\nBEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n")
             << expectedProperty;
     }
+
+    // Some MeeGo.com specific types (for roundtripping)
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("X-EDS-QTCONTACTS"));
+        QStringList values;
+        values << "This is a test";
+        values << "I have a ; in the middle";
+        values << "fini";
+        expectedProperty.setValue(values);
+        expectedProperty.setValueType(QVersitProperty::CompoundType);
+        QTest::newRow("org utf8")
+            << QVersitDocument::VCard21Type
+            << QByteArray("X-EDS-QTCONTACTS:This is a test;I have a \\; in the middle;fini\r\n")
+            << expectedProperty;
+    }
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("X-SYNCEVO-QTCONTACTS"));
+        QStringList values;
+        values << "This is a test";
+        values << "I have a ; in the middle";
+        values << "fini";
+        expectedProperty.setValue(values);
+        expectedProperty.setValueType(QVersitProperty::CompoundType);
+        QTest::newRow("org utf8")
+            << QVersitDocument::VCard21Type
+            << QByteArray("X-SYNCEVO-QTCONTACTS:This is a test;I have a \\; in the middle;fini\r\n")
+            << expectedProperty;
+    }
+    // This one should not be a compound type
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("X-NOT-A-COMPOUND"));
+        QStringList values;
+        values << "This is a test";
+        values << "I have a ; in the middle";
+        values << "fini";
+        expectedProperty.setValue(QString::fromAscii("This is a test;I have a \\; in the middle;fini"));
+        expectedProperty.setValueType(QVersitProperty::PlainType);
+        QTest::newRow("org utf8")
+            << QVersitDocument::VCard21Type
+            << QByteArray("X-NOT-A-COMPOUND:This is a test;I have a \\; in the middle;fini\r\n")
+            << expectedProperty;
+    }
+
 #endif
 }
 

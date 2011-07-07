@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -62,6 +62,8 @@
 #include "s60cameralockscontrol.h"
 #include "s60videorenderercontrol.h"
 #include "s60videowindowcontrol.h"
+#include "s60cameracapturedestinationcontrol.h"
+#include "s60cameracapturebufferformatcontrol.h"
 
 #include "s60cameraviewfinderengine.h" // ViewfinderOutputType
 
@@ -90,6 +92,8 @@ S60CameraService::S60CameraService(QObject *parent) :
         m_locksControl = new S60CameraLocksControl(this, m_imagesession, this);
         m_rendererControl = new S60VideoRendererControl(this);
         m_windowControl = new S60VideoWindowControl(this);
+        m_captureDestinationControl = new S60CameraCaptureDestinationControl(m_imagesession, this);
+        m_bufferFormatControl = new S60CameraCaptureBufferFormatControl(m_imagesession, this);
     }
 }
 
@@ -120,6 +124,10 @@ S60CameraService::~S60CameraService()
         delete m_imageEncoderControl;
     if (m_locksControl)
         delete m_locksControl;
+    if (m_captureDestinationControl)
+        delete m_captureDestinationControl;
+    if (m_bufferFormatControl)
+        delete m_bufferFormatControl;
 
     // CameraControl destroys:
     // * ViewfinderEngine
@@ -214,6 +222,12 @@ QMediaControl *S60CameraService::requestControl(const char *name)
 
     if (qstrcmp(name, QCameraLocksControl_iid) == 0)
         return m_locksControl;
+
+    if (qstrcmp(name, QCameraCaptureDestinationControl_iid) == 0)
+        return m_captureDestinationControl;
+
+    if (qstrcmp(name, QCameraCaptureBufferFormatControl_iid) == 0)
+        return m_bufferFormatControl;
 
     return 0;
 }

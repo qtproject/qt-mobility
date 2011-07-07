@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += scanner tennis poster
+SUBDIRS += scanner poster

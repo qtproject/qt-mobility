@@ -26,9 +26,9 @@ SOURCES += pathmapper_symbian.cpp \
     qcrmlparser.cpp \
     pspathmapperserver.cpp \
     pspathmappersession.cpp \
-    
+
 LIBS += -lefsrv
 
-#The ProtServ capability is needed for the server to reside in 
+#The ProtServ capability is needed for the server to reside in
 #protected namespace (server name starting with exclamation mark).
 TARGET.CAPABILITY = ProtServ

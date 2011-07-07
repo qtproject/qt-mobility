@@ -199,7 +199,7 @@ void TelepathyEngine::addAccount(const Tp::AccountPtr &acc)
 							       QMessageAddress(QMessageAddress::Phone, accountAddress),
 							       QMessage::Sms);
 	m_accounts.insert(accountId, AccountPair(acc, account));
-	qDebug() << "SMS account Id:" << accountId << "cmname:" << acc->cmName()  << "protocol:" << acc->protocolName() << "servicename" << acc->serviceName(); 
+        QPRETTYDEBUG("SMS account Id:" << accountId << "cmname:" << acc->cmName()  << "protocol:" << acc->protocolName() << "servicename" << acc->serviceName());
     } else { 
 	qWarning() << "Protocol " << acc->protocolName() << "with connectionmanager " << cm << "Is not yet supported";
     }
@@ -214,15 +214,18 @@ bool TelepathyEngine::sendMessage(QMessage &message, QMessageService *service)
     bool retVal(false);	
 
     QString id = message.parentAccountId().toString();
-    qDebug() << __FUNCTION__ << "accountId: " << id;
+    QPRETTYDEBUG("accountId: " << id);
 
     if (m_accounts.contains(id)) {
 	Tp::AccountPtr acc = m_accounts[id].first;
 	SendRequest *request = new SendRequest(message, service);
 	foreach (const QString &contactIdentifier, request->to()) {
+	    //qWarning() << "ID" << contactIdentifier;
 	    Tp::ContactMessengerPtr messenger = Tp::ContactMessenger::create(acc, contactIdentifier);
 	    if (messenger) {
-		Tp::PendingSendMessage *pendingMessage = messenger->sendMessage(request->text());
+		Tp::PendingSendMessage *pendingMessage = messenger->sendMessage(request->text(),
+										Tp::ChannelTextMessageTypeNormal, 
+										Tp::MessageSendingFlagReportDelivery);
 		connect(pendingMessage, SIGNAL(finished(Tp::PendingOperation *)),
 			request, SLOT(finished(Tp::PendingOperation *)));
 		request->addMessenger(messenger);
@@ -291,9 +294,7 @@ QMessageAccount TelepathyEngine::account(const QMessageAccountId &id)
 }
 
 QMessageAccountId TelepathyEngine::defaultAccount(QMessage::Type type)
-{
-    QDEBUG_FUNCTION_BEGIN
-
+{    
     QMessageAccountId result;	
     
     foreach (const AccountPair &pair, m_accounts) {
@@ -304,8 +305,6 @@ QMessageAccountId TelepathyEngine::defaultAccount(QMessage::Type type)
     }
 
     m_error = QMessageManager::NoError;
-
-    QDEBUG_FUNCTION_END
 	
     return result;
 }
@@ -347,7 +346,7 @@ SendRequest::SendRequest(const QMessage &message, QMessageService *service)
 
 SendRequest::~SendRequest()
 {
-    qDebug() << "SendRequest::~SendRequest()";
+    QPRETTYDEBUG("");
 }
 
 QStringList SendRequest::to() const
@@ -375,32 +374,35 @@ void SendRequest::setFinished(const QString &address, bool success)
     QTimer::singleShot(0, this, SLOT(down()));
 }
 
-void SendRequest::finished(Tp::PendingOperation *operation, bool processLater)
+void SendRequest::finished(Tp::PendingOperation *operation)
 {
     QDEBUG_FUNCTION_BEGIN
+
+    Tp::PendingSendMessage *msg = qobject_cast<Tp::PendingSendMessage *>(operation);
+
     if (operation->isError()) {
+	qWarning() << "SendRequest::finished() : " << msg->errorName() << ":" << msg->errorMessage();
 	_failCount++;
-	qWarning() << "SendRequest::finished() : " << operation->errorName() << ":" << operation->errorMessage(); 
+	down();
+    } else {
+	_tokenList << msg->sentMessageToken();
     }
 
-    if (processLater) {
-	QTimer::singleShot(0, this, SLOT(down()));
-    } else {
-	down();
-    }
     QDEBUG_FUNCTION_END
 }
 
 void SendRequest::onServiceDestroyed(QObject*)
 {
-    qDebug() << __PRETTY_FUNCTION__ ;
+    QDEBUG_FUNCTION_BEGIN
     _service = 0;
     // To be sure that instance is deleted
     deleteLater();
+    QDEBUG_FUNCTION_END
 }
 
 void SendRequest::down()
 {
+    QDEBUG_FUNCTION_BEGIN
     if (--_pendingRequestCount == 0) {
         bool success = (_failCount == 0);
 #ifdef TELEPATHY_ENGINE_STORE_MESSAGE
@@ -418,11 +420,30 @@ void SendRequest::down()
 
 	deleteLater();
     }
+    QDEBUG_FUNCTION_END
+}
+
+void SendRequest::messageReceived(const Tp::ReceivedMessage &message, const Tp::TextChannelPtr &channel)
+{
+    if (!message.isDeliveryReport())
+	return;
+
+    Tp::ReceivedMessage::DeliveryDetails details = message.deliveryDetails();
+    QString token = details.originalToken();
+    if (!_tokenList.contains(token))
+	return;
+    if (details.isError()) {
+	_failCount++;
+        qWarning() << __PRETTY_FUNCTION__ << "Failed to send message" << token << ":" << details.debugMessage();
+    }
+    down();
 }
 
 void SendRequest::addMessenger(const Tp::ContactMessengerPtr &messenger)
 {
     _messengerList.append(messenger);
+    connect(messenger.data(), SIGNAL(messageReceived(const Tp::ReceivedMessage &, const Tp::TextChannelPtr &)),
+	    this, SLOT(messageReceived(const Tp::ReceivedMessage &, const Tp::TextChannelPtr &)));
 }
 
 int SendRequest::requestCount() const

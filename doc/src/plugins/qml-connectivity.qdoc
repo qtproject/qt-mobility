@@ -1,0 +1,96 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms
+** and conditions contained in a signed written agreement between you
+** and Nokia.
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \group qml-connectivity
+    \title QML Connectivity API Plugin
+    QML Support for the QtMobility Project Connectivity API.
+*/
+
+/*!
+    \page qml-connectivity.html
+
+    \title Connectivity QML Plugin
+
+    \brief A QML plugin for the QtMobility Project Connectivity API including Bluetooth and NFC.
+
+    \section1 Overview
+
+    The Connectivity API enables developers to easily use the Bluetooth and NFC (Near Field Communication)
+    mobile technologies.
+
+    Bluetooth is often used for short range communication at FM radio frequencies. It has good transfer speeds but requires validation processes to verify the target and sender using a shared secret so that pairing can occur. Once paired the devices are then bonded and can transfer data freely.
+
+    NFC is used for very short range communications, less than a few centimeters and usually with the devices touching. For this reason it is not useful for transferring large chunks of data, but short bursts over a few seconds are achievable. Because there is no need for pairing this allows a form of validation that can be used to set up alternative communication channels such as Bluetooth.
+
+    \section1 Using the Bluetooth API
+
+    Bluetooth has a range of up to 100 meters depending on the class of the device. Class 1 is about 5 meters, Class 2 is about 10 meters and Class 3 about 100 meters.
+
+    The distances over which Bluetooth can operate means that there are risks of connecting to the wrong device or having another party eavesdropping on the channel. Bluetooth counters this risk by requiring that a shared secret is used to establish a "pairing" of the devices. Once the \i pairing is done and the devices are \i bonded then the devices will permanently remember each other until the \i {link key} (shared secret) is deleted.
+
+	We can illustrate some of the features of the Bluetooth QML Plugin if we examine some examples. A simple example is the \l {QML Bluetooth Scanner Example}, which searches for nearby Bluetooth devices and lists the device name and other details. No pairing is required so this represents a simple introduction to the API.
+
+    When the \l {QML Bluetooth Scanner Example}{Scanner example} starts the "Scanning" button at the top has a pulsing blueish background, this indicates that the startup state of the example is to run discovery with the \i minimalDiscovery mode set to true. The following code triggers the QBluetoothDiscoveryModel object creation and the creation of the platform appropriate 'agent'. This initiates the discovery process.
+
+	\snippet  ../../examples/declarative-connectivity/scanner/scanner.qml   discovery
+
+	If the bottom button with id \i fullButton (Full Discovery) is clicked the \i button_click() function is called. This toggles the value of the \i minimalDiscovery attribute and calls setDiscovery() with a \i true value.
+
+    \snippet  ../../examples/declarative-connectivity/scanner/scanner.qml   button-clicked
+
+    The results of the discovery are managed by a \l {ListView} which uses the \i del component as its delegate. Each list element displays as a Bluetooth icon and device details including the device name.
+
+    \snippet  ../../examples/declarative-connectivity/scanner/scanner.qml   scanner-listview
+
+	Other aspects of the Bluetooth component of the API are covered in the \l {QML Bluetooth Tennis Demo}. The demo comprises two bluetooth devices, previously paired, discovering each other and then playing a game of Pong with positional and other information being relayed live to the server device (the initiator of the game). The game uses the \l {BluetoothDiscoveryModel}, \l BluetoothSocket and \l BluetoothService elements.
+
+    \section1 Using the NFC API
+
+    \l {http://en.wikipedia.org/wiki/Near_field_communication}{Near Field Communication}(NFC) has a range of only about a centimeter. It can therefore be used as a contact based method of validation or discovery for other communications channels, often in the form "Touch to Play".
+
+	The NFC part of the Connectivity API provides QML elements to communicate peer-to-peer using LLCP sockets ( \l NearFieldSocket ), NDEF records of various types that encapsulate messages, a filtering mechanism on messages and The \l NearField element that starts the process.
+
+	Declaring a NearField element results in the creation of supporting objects include platform specific features. In the \l {QML Poster Example}, a \l NearField element is declared with id \i nearfield. This includes a \i filter constructed from two \l {NdefFilter}s. The filters have the type specified by a string such as "urn:nfc:wkt:U", which identifies the type as being an NFC \i {Well Known Type}, that is predefined, of "U" representing a URL. The other \l NdefFilter element is for a Well Known Type of "T" (Text).
+
+    \snippet  ../../examples/declarative-connectivity/poster/poster.qml   nfc-filter
+
+	The \l NearField element has the properties of \l {NearField::filter}{filter}, \l {NearField::messageRecords}{messageRecords} and \l {NearField::orderMatch}{orderMatch}. The filter is a list of \l NdefFilter elements. The \i orderMatch property is a boolean that indicates if the order of the records in the filter is important, in the example this property is not used. The \i messageRecords property is a list of \l {NdefRecord}s containing the results of the last read. When the signal \i messageRecordsChanged() is emitted the slot \i onMessageRecordsChanged can iterate through the \l {NearField::messageRecords}{messageRecords} list selecting particular types. In the example, after all records in the messageRecords list have been examined the state of the example is set to "Show" which displays the results.
+
+    \snippet ../../examples/declarative-connectivity/poster/poster.qml    nfc-onMessageRecordsChanged
+
+	We have not covered the \l NearFieldSocket element. This is not used in the poster example, however in the \l {QML Bluetooth Tennis Example}{QML Tennis Demo} we see the use of the element in the handover code from NFC to Bluetooth. The code here shows the socket element and the slot \i onDataAvailable which parses the text payload of the application message. The \i uri identifies the service that the client is connecting to or the service that the server is registering.
+
+    \snippet ../../demos/qmltennis/Handover.qml    tennis-handover
+
+
+
+    \section1 QML Elements
+    \annotatedlist connectivity-qml
+*/
+
+

@@ -16,12 +16,17 @@ symbian: {
 
     SOURCES += moduletest_configurability.cpp
 
-    LIBS += -lfeatdiscovery
+    LIBS += -lfeatdiscovery \
+            -lcentralrepository \
+            -lcommonengine
 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
-    crml.sources = moduletest_configurability.qcrml
+    crml.sources = moduletest_configurability.qcrml \
+                   moduletest_configurability_cr.qcrml \
+                   moduletest_configurability_ps.qcrml
+
     crml.path = c:/resource/qt/crml
 
     testcenrep.sources = e056f50b.cre

@@ -1270,6 +1270,90 @@ void tst_QContactFilter::testFilter_data()
                 << QContactEmailAddress::match("bar")
                 << false;
     }
+    {
+        QContact contact;
+        QContactOrganization org;
+        org.setDepartment(QStringList("one")); // Single department as a stringlist
+        contact.saveDetail(&org);
+        QContactDetailFilter df;
+        df.setDetailDefinitionName(QContactOrganization::DefinitionName, QContactOrganization::FieldDepartment);
+
+        // First case sensitive
+        df.setMatchFlags(QContactDetailFilter::MatchCaseSensitive);
+        df.setValue("one"); // this is a string
+        QTest::newRow("QContactOrganization::match single positive against string")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QStringList("one")); // this is a stringlist of the same length
+        QTest::newRow("QContactOrganization::match single positive against stringlist")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QString("two"));
+        QTest::newRow("QContactOrganization::match negative string")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QStringList("two"));
+        QTest::newRow("QContactOrganization::match negative stringlist")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QString("ONE"));
+        QTest::newRow("QContactOrganization::match negative case sensitive string")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QStringList("ONE"));
+        QTest::newRow("QContactOrganization::match negative case sensitive stringlist")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        // Now case insensitive
+        df.setMatchFlags(0);
+        df.setValue("one"); // this is a string
+        QTest::newRow("QContactOrganization::match positive insensitive against string")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QStringList("one")); // this is a stringlist of the same length
+        QTest::newRow("QContactOrganization::match positive insensitive against stringlist")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QString("two"));
+        QTest::newRow("QContactOrganization::match negative insensitive string")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QStringList("two"));
+        QTest::newRow("QContactOrganization::match negative insensitive stringlist")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QString("ONE"));
+        QTest::newRow("QContactOrganization::match positive case insensitive string 2")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QStringList("ONE"));
+        QTest::newRow("QContactOrganization::match positive case insensitive stringlist 2")
+                << contact
+                << QContactFilter(df)
+                << true;
+    }
 }
 
 void tst_QContactFilter::datastream()

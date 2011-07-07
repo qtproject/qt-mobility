@@ -9,12 +9,12 @@
 # so we put the test plugins into a separate dir, since we don't want
 # these test plugins available for all unit tests.
 #
-symbian{
+symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
     testplugin.sources = $${TARGET}.dll
-    testplugin.path = plugins/versit
+    testplugin.path = $${QT_PLUGINS_BASE_DIR}/versit
     DEPLOYMENT += testplugin
 
     target.path = plugins/versit

@@ -493,8 +493,8 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
     QContactGeoLocation geoLocation = static_cast<QContactGeoLocation>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
-    property.setValue(QStringList() << QString::number(geoLocation.longitude())
-                      << QString::number(geoLocation.latitude()));
+    property.setValue(QStringList() << QString::number(geoLocation.latitude())
+                      << QString::number(geoLocation.longitude()));
     property.setValueType(QVersitProperty::CompoundType);
     *generatedProperties << property;
     *processedFields << QContactGeoLocation::FieldLongitude
