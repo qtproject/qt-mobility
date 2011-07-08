@@ -1,5 +1,6 @@
-qt-mobility (1.2.1-44) unstable; urgency=low
+qt-mobility (1.2.1+44) unstable; urgency=low
 
+  * Fixed debian version number
   * Fixes: NB#237919
 
  -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 7 Jul 2011 13:50:48 +1000
