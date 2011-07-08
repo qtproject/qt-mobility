@@ -202,7 +202,15 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
 
         QRect maxBoundingRect(QPoint(viewport.left()+10+watermark.width(), viewport.top()), QPoint(viewport.right()-5, viewport.bottom()-5));
 
+        QFont font = painter->font();
+        font.setPixelSize(12);
+        font.setWeight(QFont::Bold);
+
+        painter->save();
+        painter->setFont(font);
         QRect textBoundingRect = painter->boundingRect(maxBoundingRect, Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap, copyrightText);
+        painter->restore();
+
         lastCopyrightRect = textBoundingRect.adjusted(-1, -1, 1, 1);
 
         lastCopyright = QPixmap(lastCopyrightRect.size());
@@ -211,6 +219,7 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
         {
             QPainter painter2(&lastCopyright);
 
+            painter2.setFont(font);
             painter2.drawText(
                 QRect(QPoint(1, 2), textBoundingRect.size()),
                 Qt::TextWordWrap,
