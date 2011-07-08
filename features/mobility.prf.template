@@ -125,6 +125,6 @@ symbian:contains(CONFIG, mobility)::contains(default_deployment.pkg_prerules, pk
     mobility_pkg_name = QtMobility
     mobility_default_deployment.pkg_prerules += \
         "; Default dependency to QtMobility libraries" \
-        "(0x2002AC89), 1, 2, 0, {$$addLanguageDependentPkgItem(mobility_pkg_name)}"
+        "(0x2002AC89), 1, 2, 1, {$$addLanguageDependentPkgItem(mobility_pkg_name)}"
     DEPLOYMENT += mobility_default_deployment
 }
