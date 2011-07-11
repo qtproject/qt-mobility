@@ -233,7 +233,7 @@ void S60MediaPlayerSession::load(const QMediaContent source)
         else
             doLoadL(QString2TPtrC(QDir::toNativeSeparators(source.canonicalUrl().toLocalFile()))));
     setError(err);
-
+    m_isaudiostream = false;
     DP0("S60MediaPlayerSession::load ---");
 }
 
