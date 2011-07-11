@@ -509,6 +509,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
                 nStatus = m_deviceInfo->networkInfo()->GetStatus();
             }
            switch (nStatus) {
+           case RMobilePhone::ERegistrationUnknown : return QSystemNetworkInfo::UndefinedStatus;
            case RMobilePhone::ENotRegisteredNoService : return QSystemNetworkInfo::NoNetworkAvailable;
            case RMobilePhone::ENotRegisteredEmergencyOnly : return QSystemNetworkInfo::EmergencyOnly;
            case RMobilePhone::ENotRegisteredSearching : return QSystemNetworkInfo::Searching;
@@ -516,7 +517,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
            case RMobilePhone::ERegisteredOnHomeNetwork : return QSystemNetworkInfo::HomeNetwork;
            case RMobilePhone::ERegistrationDenied : return QSystemNetworkInfo::Denied;
            case RMobilePhone::ERegisteredRoaming : return QSystemNetworkInfo::Roaming;
-           case RMobilePhone::ERegistrationUnknown : break;
            default:
              break;
            }
@@ -1183,9 +1183,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     }
 
     if (driveInfo.iDriveAtt & KDriveAttInternal) {
-        if (driveInfo.iType == EMediaHardDisk)
-            return QSystemStorageInfo::InternalFlashDrive;
-        else if (driveInfo.iType == EMediaNANDFlash)
+        if (driveInfo.iType == EMediaNANDFlash)
             return QSystemStorageInfo::RamDrive;
         else
             return QSystemStorageInfo::InternalDrive;

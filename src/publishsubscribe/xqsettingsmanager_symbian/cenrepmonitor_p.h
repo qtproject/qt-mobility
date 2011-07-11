@@ -63,16 +63,16 @@ class MSettingsHandlerObserver;
 class CRepository;
 
 class CCenRepMonitor : public CActive
-    { 
+    {
     public:
         CCenRepMonitor(CRepository& aRepository, const XQSettingsKey& aKey, XQSettingsManager::Type type, MSettingsHandlerObserver& aObserver);
         ~CCenRepMonitor();
         TInt StartMonitoring();
-        
+
     private:
         void RunL();
         void DoCancel();
-              
+
     private:
         CRepository& iRepository;
         XQSettingsKey iKey;

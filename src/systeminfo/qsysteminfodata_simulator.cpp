@@ -137,9 +137,10 @@ QDataStream &operator<<(QDataStream &out, const QSystemStorageInfoData::DriveInf
 QDataStream &operator>>(QDataStream &in, QSystemStorageInfoData::DriveInfo &s)
 {
     qint32 type, state;
-    in >> type >> state;
+    in >> type;
     s.type = static_cast<QSystemStorageInfo::DriveType>(type);
     in >> s.availableSpace >> s.totalSpace;
+    in >> state;
     s.state = static_cast<QSystemStorageInfo::StorageState>(state);
     in >> s.uri;
     return in;
@@ -198,13 +199,12 @@ QDataStream &operator<<(QDataStream &out, const QSystemDisplayInfoData &s)
 
 QDataStream &operator>>(QDataStream &in, QSystemDisplayInfoData &s)
 {
-    qint32 depth, brightness, colorDepth, orientation,
-            backlightStatus;
-    in >> depth >> brightness;
-    in >> colorDepth;
-    in >> orientation;
-    s.colorDepth = depth;
-    s.displayBrightness = brightness;
+    qint32 colorDepth, displayBrightness,
+            orientation, backlightStatus;
+    in >> colorDepth >> displayBrightness;
+    in >> orientation >> backlightStatus;
+    s.colorDepth = colorDepth;
+    s.displayBrightness = displayBrightness;
     s.orientation = static_cast<QSystemDisplayInfo::DisplayOrientation>(orientation);
     s.backlightStatus = static_cast<QSystemDisplayInfo::BacklightState>(backlightStatus);
 
@@ -225,17 +225,18 @@ QDataStream &operator<<(QDataStream &out, const QSystemBatteryInfoData &s)
 QDataStream &operator>>(QDataStream &in, QSystemBatteryInfoData &s)
 {
     qint32 batteryStatus, chargingState, chargerType, energyMeasurementUnit;
-    in >> batteryStatus >> chargingState >> chargerType >> energyMeasurementUnit;
+    in >> batteryStatus >> chargingState >> chargerType;
 
     s.batteryStatus = static_cast<QSystemBatteryInfo::BatteryStatus>(batteryStatus);
     s.chargingState = static_cast<QSystemBatteryInfo::ChargingState>(chargingState);
     s.chargerType = static_cast<QSystemBatteryInfo::ChargerType>(chargerType);
 
-    s.energyMeasurementUnit = static_cast<QSystemBatteryInfo::EnergyUnit>(energyMeasurementUnit);
-
     in >> s.nominalCapacity >> s.remainingCapacityPercent >> s.remainingCapacity;
     in >> s.voltage >> s.remainingChargingTime >> s.currentFlow;
     in >> s.cumulativeCurrentFlow >> s.remainingCapacityBars >> s.maxBars;
+
+    in >> energyMeasurementUnit;
+    s.energyMeasurementUnit = static_cast<QSystemBatteryInfo::EnergyUnit>(energyMeasurementUnit);
     return in;
 }
 

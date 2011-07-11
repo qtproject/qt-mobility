@@ -44,12 +44,15 @@ import QtMobility.connectivity 1.2
 Rectangle {
     id: top
 
+//! [properties]
     property BluetoothService currentService
     property alias minimalDiscovery: myModel.minimalDiscovery
     property alias uuidFilder: myModel.uuidFilter
+//! [properties]
 
     anchors.fill: parent
 
+//! [discovery]
     BluetoothDiscoveryModel {
         id: myModel
         minimalDiscovery: true
@@ -57,6 +60,7 @@ Rectangle {
 //        onNewServiceDiscovered: console.log("Found new service " + service.deviceAddress + " " + service.deviceName + " " + service.serviceName);
 //        uuidFilter: "e8e10f95-1a70-4b27-9ccf-02010264e9c9"
    }
+//! [discovery]
 
     Rectangle {
         id: busy
@@ -188,6 +192,7 @@ Rectangle {
 
     }
 
+//! [scanner-listview]
     ListView {
         id: mainList
         width: top.width
@@ -200,15 +205,18 @@ Rectangle {
         delegate: del
         focus: true
     }
+//! [scanner-listview]
 
     Rectangle {
         id: fullbutton
 
+//! [button-clicked]
         function button_clicked() {
             myModel.minimalDiscovery = !myModel.minimalDiscovery;
             fullbutton.state = fullbutton.state == "clicked" ? "" : "clicked";
             myModel.setDiscovery(true);
         }
+//! [button-clicked]
 
         anchors.bottom:  top.bottom
         anchors.margins: 3

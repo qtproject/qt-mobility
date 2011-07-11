@@ -47,6 +47,7 @@ Item {
     property BluetoothService bluetoothService
     property bool available : false
 
+//! [tennis-handover]
     NearFieldSocket {
         id: socket
 
@@ -70,4 +71,5 @@ Item {
             }
         }
     }
+//! [tennis-handover]
 }

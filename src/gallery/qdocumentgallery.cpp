@@ -118,8 +118,7 @@ QTM_BEGIN_NAMESPACE
     \section3 Common item properties
 
     Currently on Maemo, only the \l title property is available for the
-    categorical types. For Maemo 6, all these properties are supported for
-    file types.
+    categorical types. 
 
     For Maemo 5, \l comments is only supported for \l Document. The property of
     \l description is not supported by \l Document, \l Video, and \l Playlist.

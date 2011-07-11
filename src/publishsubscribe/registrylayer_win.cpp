@@ -514,7 +514,7 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
     DWORD regType;
 
     result = RegQueryValueEx(key,
-            reinterpret_cast<const wchar_t*>(value.utf16()), 
+            reinterpret_cast<const wchar_t*>(value.utf16()),
             0, &regType, regData, &regSize);
     if (result != ERROR_SUCCESS) {
         qDebug() << "real RegQueryValueEx failed with error" << result;
