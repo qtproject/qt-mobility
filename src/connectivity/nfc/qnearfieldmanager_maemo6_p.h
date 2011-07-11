@@ -55,6 +55,7 @@
 #include <QtDBus/QDBusConnection>
 
 QT_FORWARD_DECLARE_CLASS(QDBusObjectPath)
+QT_FORWARD_DECLARE_CLASS(QDBusServiceWatcher)
 
 class ComNokiaNfcManagerInterface;
 class ComNokiaNfcAdapterInterface;
@@ -127,11 +128,17 @@ private slots:
     void emitTargetDetected(const QString &targetPath);
     void _q_targetDetected(const QDBusObjectPath &targetPath);
     void _q_targetLost(const QDBusObjectPath &targetPath);
+    void _q_serviceOwnerChanged(const QString &serviceName, const QString &oldOwner,
+                                const QString &newOwner);
 
 private:
+    bool ensureConnection() const;
+
     QDBusConnection m_connection;
-    ComNokiaNfcManagerInterface *m_manager;
-    ComNokiaNfcAdapterInterface *m_adapter;
+    QDBusServiceWatcher *m_serviceWatcher;
+
+    mutable ComNokiaNfcManagerInterface *m_manager;
+    mutable ComNokiaNfcAdapterInterface *m_adapter;
 
     QList<QNearFieldTarget::Type> m_detectTargetTypes;
     QMap<QString, QWeakPointer<QNearFieldTarget> > m_targets;
