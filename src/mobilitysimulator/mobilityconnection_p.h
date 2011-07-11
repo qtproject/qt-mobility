@@ -57,9 +57,9 @@ QT_BEGIN_HEADER
 
 #define SIMULATOR_MOBILITY_SERVERNAME "QtSimulator_Mobility_ServerName"
 
-inline QString qt_mobilityServerName(qint64 pid)
+inline QString qt_mobilityServerName(const QString &simulatorVersion, qint64 pid)
 {
-    QString share = QLatin1String(SIMULATOR_MOBILITY_SERVERNAME);
+    QString share = QLatin1String(SIMULATOR_MOBILITY_SERVERNAME) + simulatorVersion;
     share += QString::number(pid);
     return share;
 }
