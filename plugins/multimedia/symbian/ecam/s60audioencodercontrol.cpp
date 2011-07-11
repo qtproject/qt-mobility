@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -76,30 +76,43 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 
 QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
-    // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
-    // Possible (codec specific) Options: None
     Q_UNUSED(codec);
-    return QStringList();
+
+    QStringList supportedOptions;
+    // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
+    // Possible (codec specific) Options: Audio Gain
+    supportedOptions << QLatin1String("gain");
+
+    return supportedOptions;
 }
 
 QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
     // Possible settings: EncodingMode, Codec, BitRate, ChannelCount, SampleRate, Quality
-    // Possible (codec specific) Options: None
+    // Possible (codec specific) Options: Audio Gain
     Q_UNUSED(codec);
-    Q_UNUSED(name);
+
+    if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
+        return QVariant(m_session->gain());
+
     return QVariant();
 }
 
 void S60AudioEncoderControl::setEncodingOption(
     const QString &codec, const QString &name, const QVariant &value)
 {
-    m_session->setError(KErrNotSupported, tr("Audio encoding option is not supported"));
-
-    // The audio settings can currently be set only using setAudioSettings() function
-    Q_UNUSED(value)
     Q_UNUSED(codec)
-    Q_UNUSED(name)
+
+    if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0) {
+        bool convSuccess = false;
+        int gain = value.toInt(&convSuccess);
+        if (convSuccess) {
+            m_session->setGain(gain);
+            return;
+        }
+    }
+
+    m_session->setError(KErrNotSupported, tr("Audio encoding option is not supported"));
 }
 
 QList<int> S60AudioEncoderControl::supportedSampleRates(

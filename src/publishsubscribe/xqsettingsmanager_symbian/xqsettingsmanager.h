@@ -80,7 +80,7 @@ public:
         TypeByteArray
     };
 
-    enum Error 
+    enum Error
     {
         NoError = 0,
         OutOfMemoryError,
@@ -99,7 +99,7 @@ public:
     bool writeItemValue(const XQSettingsKey& key, const QVariant& value);
     bool startMonitoring(const XQSettingsKey& key, XQSettingsManager::Type type = XQSettingsManager::TypeVariant);
     bool stopMonitoring(const XQSettingsKey& key);
-    
+
     XQSettingsManager::Error error() const;
 
 Q_SIGNALS:

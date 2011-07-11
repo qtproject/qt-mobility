@@ -455,7 +455,7 @@ testcase = {
         prompt(twiki('---+++ Zoom in and out the map
     Note that GPS and internet connection is required for this test case
     | *Step* | *Verification* |
-    | Run the qml_mapviewer application | |
+    | Run the testQtLocation application | |
     | Select the MapNavigation.qml | |
     | Tap on the Mode button | Verify that map is loaded |
     | Tap on Plus button | Verify that map is zoomed in |

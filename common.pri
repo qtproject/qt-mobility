@@ -94,7 +94,7 @@ contains(build_unit_tests, yes) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
             symbian:DEF_FILE=../s60installs
-            VERSION = 1.2.0
+            VERSION = 1.2.1
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }

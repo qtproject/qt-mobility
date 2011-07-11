@@ -49,11 +49,14 @@ Rectangle {
     NearField {
         id: nearfield
 
+//! [nfc-filter]
         filter: [
             NdefFilter { type: "urn:nfc:wkt:U"; minimum: 1; maximum: 1 },
             NdefFilter { type: "urn:nfc:wkt:T"; minimum: 1 }
         ]
+//! [nfc-filter]
 
+//! [nfc-onMessageRecordsChanged]
         onMessageRecordsChanged: {
             posterText.text = "";
             posterImage.source = "";
@@ -76,6 +79,7 @@ Rectangle {
 
             root.state = "show";
         }
+//! [nfc-onMessageRecordsChanged]
     }
 
     Text {

@@ -57,7 +57,7 @@ public:
     PathMapper();
     ~PathMapper();
 
-    enum Target {TargetCRepository, TargetRPropery};
+    enum Target {TargetCRepository, TargetRPropery, TargetFeatureManager};
 
     bool getChildren(const QString &path, QSet<QString> &children) const;
     QStringList childPaths(const QString &path) const;

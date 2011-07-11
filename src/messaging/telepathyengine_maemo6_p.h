@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -115,12 +115,13 @@ public:
     int requestCount() const;
 
 public slots:
-    void finished(Tp::PendingOperation *operation, bool processLater = false);
+    void finished(Tp::PendingOperation *operation);
     void onServiceDestroyed(QObject*);
 
 private slots:
     friend class QTimer;
     void down();
+    void messageReceived(const Tp::ReceivedMessage &, const Tp::TextChannelPtr &);
 
 private:
     QMessageService *_service;
@@ -128,6 +129,7 @@ private:
     int _pendingRequestCount;
     int _failCount;
     QList<Tp::ContactMessengerPtr> _messengerList;
+    QStringList _tokenList;
 };
 
 #endif // TELEPATHYENGINE_MAEMO_P_H

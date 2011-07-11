@@ -318,7 +318,12 @@ TInt RServiceSession::Connect()
         }
     }
     TPtrC serviceAddressPtr(reinterpret_cast<const TUint16*>(iServerAddress.utf16()));
-    err = CreateSession(serviceAddressPtr, Version());
+
+    for (int i = 0; (err != KErrNone) && (i < 1000); i++) {
+        err = CreateSession(serviceAddressPtr, Version());
+        if (err != KErrNone)
+            User::After(1000);
+    }
    
     return err;
 }
