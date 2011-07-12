@@ -40,16 +40,21 @@ _LIT8(KXmlFilePart2,
     
 EXPORT_C TPath TCntImageRescaleUtility::ImageDirectoryL()
 {
-    TInt drive;
-    #ifdef __WINS__
-        User::LeaveIfError(DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive));
-    #else
-        User::LeaveIfError(DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive));
-    #endif
-        
+    TInt drive = KErrNotFound;
     RFs fs;
     CleanupClosePushL( fs );
     User::LeaveIfError( fs.Connect() );
+        
+    #ifdef __WINS__
+        User::LeaveIfError(DriveInfo::GetDefaultDrive(DriveInfo::EDefaultPhoneMemory, drive));
+    #else
+        TInt errorCode = DriveInfo::GetDefaultDrive(DriveInfo::EDefaultMassStorage, drive);        
+        if ( KErrNone == errorCode )
+            {
+            errorCode = TCntImageRescaleUtility::IsDriveReady( fs, drive );               
+            }        
+        User::LeaveIfError( errorCode );
+    #endif
         
     // Get the root path in this drive to create the images directory
     TPath imagesDirPath;
@@ -57,7 +62,14 @@ EXPORT_C TPath TCntImageRescaleUtility::ImageDirectoryL()
     
     User::LeaveIfError(PathInfo::GetRootPath(imagesDirPath, drive));
     imagesDirPath.Append(KImagesFolder);
-
+    
+    if ( !BaflUtils::PathExists( fs, imagesDirPath ) )
+        {
+        BaflUtils::EnsurePathExistsL( fs, imagesDirPath );
+        TCntImageRescaleUtility::CreateBackupAndRestoreFileL( fs, imagesDirPath );
+        User::LeaveIfError(fs.SetAtt(imagesDirPath, KEntryAttHidden, KEntryAttNormal));
+        }    
+    
     CleanupStack::PopAndDestroy(); // RFs
     return imagesDirPath;
 }
@@ -65,35 +77,26 @@ EXPORT_C TPath TCntImageRescaleUtility::ImageDirectoryL()
 EXPORT_C TPath TCntImageRescaleUtility::CreateImageDirectoryL()
 {
     TPath imagePath;
-    TRAPD( err, imagePath = TCntImageRescaleUtility::ImageDirectoryL() );
-    if ( err == KErrNone )
-    {
-        RFs fs;
-        CleanupClosePushL( fs );
-        User::LeaveIfError( fs.Connect() );
-        
-        BaflUtils::EnsurePathExistsL( fs, imagePath );
-        TCntImageRescaleUtility::CreateBackupAndRestoreFileL( fs, imagePath );
-        User::LeaveIfError(fs.SetAtt(imagePath, KEntryAttHidden, KEntryAttNormal));
-        
-        CleanupStack::PopAndDestroy(); // close RFs
-    }
+    TRAP_IGNORE( imagePath = TCntImageRescaleUtility::ImageDirectoryL() );    
     return imagePath;
 }
 
 EXPORT_C void TCntImageRescaleUtility::DeleteImageDirectoryL()
 {
-    TPath dir = TCntImageRescaleUtility::ImageDirectoryL();
-    
-    RFs fs;
-    CleanupClosePushL( fs );
-    User::LeaveIfError( fs.Connect() );
-   
-    CFileMan* fileMan = CFileMan::NewL( fs );
-    fileMan->RmDir(dir); // err not used
-    delete fileMan;
-   
-    CleanupStack::PopAndDestroy(); // close RFs
+    TPath dir;
+    TRAPD( err, dir = TCntImageRescaleUtility::ImageDirectoryL() );
+    if ( err == KErrNone )
+        {
+        RFs fs;
+        CleanupClosePushL( fs );
+        User::LeaveIfError( fs.Connect() );
+       
+        CFileMan* fileMan = CFileMan::NewL( fs );
+        fileMan->RmDir(dir); // err not used
+        delete fileMan;
+       
+        CleanupStack::PopAndDestroy(); // close RFs
+        }
 }
 
 EXPORT_C void TCntImageRescaleUtility::DeleteImageL( const CContactItem& aItem )
@@ -221,5 +224,25 @@ void TCntImageRescaleUtility::CreateBackupAndRestoreFileL( RFs& aFs, const TPath
     User::LeaveIfError( aFs.SetSessionPath(aDir) );
     CleanupStack::PopAndDestroy(4, newFileName); // folderName, nameAndExt, file, newFileName
 }
+
+// ------------------------------------------------------------------------------------------------
+// TInt IsDriveReady( RFs& aRfs, TInt aDrive )
+// ------------------------------------------------------------------------------------------------
+TInt TCntImageRescaleUtility::IsDriveReady( RFs& aRfs, TInt aDrive )
+{  
+    TUint driveStatus( 0 );    
+    TInt ret( KErrNone );    
+    TInt driveErr = DriveInfo::GetDriveStatus( aRfs, aDrive, driveStatus );
+    
+    if( KErrNone != driveErr ||
+    !( driveStatus & DriveInfo::EDrivePresent ) ||
+    ( driveStatus & DriveInfo::EDriveInUse ) )
+    {
+        ret = KErrBadHandle;           
+    }
+
+return ret;
+}
+
 
 // End of File
