@@ -6,6 +6,7 @@ PLUGIN_TYPE=geoservices
 include(../../../common.pri)
 
 QT += network
+QT += xml
 
 CONFIG += mobility
 MOBILITY = location

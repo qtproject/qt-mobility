@@ -78,6 +78,9 @@ private:
 
     static QString sizeToStr(const QSize &size);
     static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
+
+    void setupServiceInfo();
+
 #if defined(Q_OS_SYMBIAN)
     QChar findFirstInternalFlashDrive();
 #endif //Q_OS_SYMBIAN

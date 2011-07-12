@@ -58,6 +58,9 @@
 #include <QSize>
 #include <QDir>
 #include <QUrl>
+#include <QEventLoop>
+#include <QDomDocument>
+#include <algorithm>
 
 #define LARGE_TILE_DIMENSION 256
 
@@ -100,6 +103,69 @@ QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
 }
 #endif //Q_OS_SYMBIAN
 
+namespace
+{
+    void getMapTypes(const QDomDocument &doc, QList<QGraphicsGeoMap::MapType> &mapTypes)
+    {
+        typedef std::map<QString, QGraphicsGeoMap::MapType> MapTypeRegistry;
+        static MapTypeRegistry registeredTypes;
+        if (registeredTypes.empty())
+        {
+
+            registeredTypes.insert(std::make_pair("terrain.day", QGraphicsGeoMap::TerrainMap));
+            registeredTypes.insert(std::make_pair("normal.day", QGraphicsGeoMap::StreetMap));
+            registeredTypes.insert(std::make_pair("satellite.day", QGraphicsGeoMap::SatelliteMapDay));
+
+            //registeredTypes.insert(std::make_pair("hybrid.day", QGraphicsGeoMap::));
+            //registeredTypes.insert(std::make_pair("normal.day.transit", QGraphicsGeoMap::));
+            //registeredTypes.insert(std::make_pair("normal.day.grey", QGraphicsGeoMap::));
+        }
+
+        QDomElement response  = doc.firstChildElement("response");
+        QDomNodeList schemes = response.firstChildElement("schemes").childNodes();
+        for (int i = 0; i < schemes.count(); ++i)
+        {
+            QString id = schemes.at(i).toElement().attribute("id");
+            MapTypeRegistry::const_iterator found = registeredTypes.find(id);
+            if (found != registeredTypes.end())
+            {
+                mapTypes << found->second;
+            }
+        }
+
+        if (mapTypes.empty())
+        {
+            mapTypes << QGraphicsGeoMap::NoMap;
+        }
+    }
+
+    void getResolutions(const QDomDocument &doc, QList<QSize> &sizes)
+    {
+        QDomElement response  = doc.firstChildElement("response");
+        QDomNodeList resolutions = response.firstChildElement("resolutions").childNodes();
+
+        for (int i = 0; i < resolutions.count(); ++i)
+        {
+           QDomElement size = resolutions.at(i).toElement();
+           sizes << QSize(size.attribute("width").toInt(), size.attribute("height").toInt());
+        }
+    }
+
+    void getZoomLevels(const QDomDocument &doc, double &minZoomLevel, double &maxZoomLevel)
+    {
+        QDomElement response  = doc.firstChildElement("response");
+
+        QDomElement zoomLevels = response.firstChildElement("zoomLevels");
+        minZoomLevel = zoomLevels.attribute("min").toDouble();
+        maxZoomLevel = zoomLevels.attribute("max").toDouble();
+    }
+
+    bool less(const QSize &first, const QSize &second)
+    {
+        return first.width() * first.height() < second.width() * second.height();
+    }
+}
+
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_cache(0),
@@ -109,16 +175,6 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
-
-    setTileSize(QSize(256, 256));
-    setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(18.0);
-
-    QList<QGraphicsGeoMap::MapType> types;
-    types << QGraphicsGeoMap::StreetMap;
-    types << QGraphicsGeoMap::SatelliteMapDay;
-    types << QGraphicsGeoMap::TerrainMap;
-    setSupportedMapTypes(types);
 
     QList<QGraphicsGeoMap::ConnectivityMode> modes;
     modes << QGraphicsGeoMap::OnlineMode;
@@ -139,6 +195,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
             }
         }
     }
+    setupServiceInfo();
 
     if (parameters.contains("mapping.host")) {
         QString host = parameters.value("mapping.host").toString();
@@ -300,3 +357,48 @@ QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType typ
         return "normal.day";
 }
 
+void QGeoMappingManagerEngineNokia::setupServiceInfo()
+{
+    QSize maxResolution(256, 256);
+    double minZoomLevel(0.0), maxZoomLevel(18.0);
+    QList<QGraphicsGeoMap::MapType> types;
+    types << QGraphicsGeoMap::StreetMap;
+    types << QGraphicsGeoMap::SatelliteMapDay;
+    types << QGraphicsGeoMap::TerrainMap;
+
+    QString path = "http://";
+    path += m_host;
+    path += "/maptiler/info";
+
+    std::auto_ptr<QNetworkReply> reply(m_networkManager->get(QNetworkRequest((QUrl(path)))));
+
+    QEventLoop loop;
+    connect(reply.get(), SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(reply.get(), SIGNAL(error(QNetworkReply::NetworkError)), &loop, SLOT(quit()));
+    loop.exec();
+
+    if (QNetworkReply::NoError == reply->error())
+    {
+        QDomDocument doc;
+        if (doc.setContent(reply->readAll()))
+        {           
+            getZoomLevels(doc, minZoomLevel, maxZoomLevel);
+
+            types.clear();
+            getMapTypes(doc, types);
+
+            QList<QSize> resolutions;
+            getResolutions(doc, resolutions);
+            QList<QSize>::const_iterator found = std::max_element(resolutions.begin(), resolutions.end(), &less);
+            if (found != resolutions.end())
+            {
+                maxResolution = *found;
+            }
+        }
+    }
+
+    setTileSize(maxResolution);
+    setMinimumZoomLevel(minZoomLevel);
+    setMaximumZoomLevel(maxZoomLevel);
+    setSupportedMapTypes(types);
+}
