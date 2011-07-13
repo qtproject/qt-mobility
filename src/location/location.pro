@@ -50,7 +50,11 @@ symbian {
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
                        notificationcallback_s60_p.h \
-                       notificationsatellitecallback_s60_p.h
+                       notificationsatellitecallback_s60_p.h \
+                       symbian_lbsfacade.h \
+                       symbian_lbstracker.h \
+                       symbian_lbsonetime.h \
+                       qgeopositioninfosource_symbian_p.h
 
     contains(lbt_enabled, yes) {
         PRIVATE_HEADERS += \
@@ -64,7 +68,11 @@ symbian {
 
     SOURCES += qgeopositioninfosource_s60.cpp \
                qgeosatelliteinfosource_s60.cpp \
-               qmlbackendao_s60.cpp
+               qmlbackendao_s60.cpp \
+               symbian_lbsfacade.cpp \
+               symbian_lbstracker.cpp \
+               symbian_lbsonetime.cpp \
+               qgeopositioninfosource_symbian.cpp
 
     contains(lbt_enabled, yes) {
         SOURCES += \
@@ -169,6 +177,7 @@ symbian {
                    $${EPOCROOT}epoc32/include/lbtheaders \
                    $${EPOCROOT}epoc32/include/platform
     LIBS += -llbs
+    LIBS += -leposmodset
     LIBS += -lefsrv
     contains(lbt_enabled, yes) {
         LIBS += -llbt
