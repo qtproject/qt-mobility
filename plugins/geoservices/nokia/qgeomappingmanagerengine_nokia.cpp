@@ -60,6 +60,8 @@
 #include <QUrl>
 #include <QEventLoop>
 #include <QDomDocument>
+#include <QScopedPointer>
+
 #include <algorithm>
 
 #define LARGE_TILE_DIMENSION 256
@@ -370,11 +372,11 @@ void QGeoMappingManagerEngineNokia::setupServiceInfo()
     path += m_host;
     path += "/maptiler/info";
 
-    std::auto_ptr<QNetworkReply> reply(m_networkManager->get(QNetworkRequest((QUrl(path)))));
+    QScopedPointer<QNetworkReply> reply(m_networkManager->get(QNetworkRequest((QUrl(path)))));
 
     QEventLoop loop;
-    connect(reply.get(), SIGNAL(finished()), &loop, SLOT(quit()));
-    connect(reply.get(), SIGNAL(error(QNetworkReply::NetworkError)), &loop, SLOT(quit()));
+    connect(reply.data(), SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(reply.data(), SIGNAL(error(QNetworkReply::NetworkError)), &loop, SLOT(quit()));
     loop.exec();
 
     if (QNetworkReply::NoError == reply->error())
