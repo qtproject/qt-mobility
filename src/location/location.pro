@@ -51,9 +51,9 @@ symbian {
                        qgeosatelliteinfosource_s60_p.h \
                        notificationcallback_s60_p.h \
                        notificationsatellitecallback_s60_p.h \
-                       symbian_lbsfacade.h \
-                       symbian_lbstracker.h \
-                       symbian_lbsonetime.h \
+                       symbian_lbsfacade_p.h \
+                       symbian_lbstracker_p.h \
+                       symbian_lbsonetime_p.h \
                        qgeopositioninfosource_symbian_p.h
 
     contains(lbt_enabled, yes) {

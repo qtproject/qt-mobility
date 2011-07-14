@@ -43,201 +43,186 @@
 #include <e32debug.h>
 
 
-#include "symbian_lbsonetime.h"
-#include "symbian_lbsfacade.h"
+#include "symbian_lbsonetime_p.h"
+#include "symbian_lbsfacade_p.h"
 
 
 QTM_BEGIN_NAMESPACE
 
-CSingleShotPsy* CSingleShotPsy::NewL(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback)
+CSingleShotPsy* CSingleShotPsy::NewL(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback)
 {
-	CSingleShotPsy *Psy = new CSingleShotPsy(aPsy, aContainer, aRequestCallback);
-	TRAPD(err,Psy->ConstructL());
-	
-	if(err != KErrNone)
-	{
-		delete Psy;	
-		return NULL;
-	}
-	return Psy;
+    CSingleShotPsy *Psy = new CSingleShotPsy(aPsy, aContainer, aRequestCallback);
+    TRAPD(err, Psy->ConstructL());
+
+    if (err != KErrNone) {
+        delete Psy;
+        return NULL;
+    }
+    return Psy;
 }
 
-CSingleShotPsy::CSingleShotPsy(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback) 
-    : CSelfManagingPsy (aPsy,aContainer,aRequestCallback,iPositionInfo)
-{}   
+CSingleShotPsy::CSingleShotPsy(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback)
+        : CSelfManagingPsy(aPsy, aContainer, aRequestCallback, iPositionInfo)
+{}
 void CSingleShotPsy::ConstructL()
 {
- 
-    CSelfManagingPsy::ConstructL();      
-    qDebug() << "CSingleShotPsy::ConstructL " <<iPsyName ;    
+
+    CSelfManagingPsy::ConstructL();
+    qDebug() << "CSingleShotPsy::ConstructL " << iPsyName ;
 }
 
 void CSingleShotPsy::IssueRequest(TTimeIntervalMicroSeconds aTimeOut)
 {
-    qDebug() << "CSingleShotPsy::IssueRequest " <<iPsyName ;		
-	
-	iClientRequestActive = ETrue;
-	TTimeIntervalMicroSeconds intr(60000000) ;//60 sec, doesn't matter
-	CSelfManagingPsy::IssueRequest(intr,aTimeOut);
-}	
-	
+    qDebug() << "CSingleShotPsy::IssueRequest " << iPsyName ;
+
+    iClientRequestActive = ETrue;
+    TTimeIntervalMicroSeconds intr(60000000) ;//60 sec, doesn't matter
+    CSelfManagingPsy::IssueRequest(intr, aTimeOut);
+}
+
 void CSingleShotPsy::RunL()
 {
-    qDebug() << "CSingleShotPsy::RunL " <<iPsyName <<" iStatus="<<iStatus.Int();    
+    qDebug() << "CSingleShotPsy::RunL " << iPsyName << " iStatus=" << iStatus.Int();
     HandlePositionCallback(iStatus);
     CancelPositionRequest();
-}	
+}
 
 CLbsSingleShotRequestor* CLbsSingleShotRequestor::NewL(CPsyContainer *aContainer,
-        MLbsSingleShotCallback *aObserver,SSType aSSType)
-    {
-    qDebug() << "CLbsSingleShotRequestor::NewL "<<aSSType; 
-    CLbsSingleShotRequestor *requestor = new (ELeave) CLbsSingleShotRequestor(aContainer,aObserver,aSSType);
-    TRAPD(err,requestor->ConstructL());
-    if(err == KErrNone)
+        MLbsSingleShotCallback *aObserver, SSType aSSType)
+{
+    qDebug() << "CLbsSingleShotRequestor::NewL " << aSSType;
+    CLbsSingleShotRequestor *requestor = new(ELeave) CLbsSingleShotRequestor(aContainer, aObserver, aSSType);
+    TRAPD(err, requestor->ConstructL());
+    if (err == KErrNone)
         return requestor;
-    
+
     delete requestor;
     return NULL;
-    }
-CLbsSingleShotRequestor::CLbsSingleShotRequestor(CPsyContainer *aContainer,MLbsSingleShotCallback *aObserver,
-        SSType aSSType):CTimer(CActive::EPriorityStandard),
-        iContainer(aContainer),iObserver(aObserver),iSSType(aSSType),iLatestQPosInfo(NULL)
-    {    
-    }
+}
+CLbsSingleShotRequestor::CLbsSingleShotRequestor(CPsyContainer *aContainer, MLbsSingleShotCallback *aObserver,
+        SSType aSSType): CTimer(CActive::EPriorityStandard),
+        iContainer(aContainer), iObserver(aObserver), iSSType(aSSType), iLatestQPosInfo(NULL)
+{
+}
 
 void CLbsSingleShotRequestor::ConstructL()
-    {
+{
     CTimer::ConstructL();
-    CActiveScheduler::Add(this);  
-    
+    CActiveScheduler::Add(this);
+
     //Initialize PSYs
     RArray<TPositionModuleInfo*>  modInfoArray;
-    switch(iSSType)
-        {
-        case SS_GPSOnly:
-            iContainer->GetAvailablePsys(EFalse,modInfoArray);
-            break;
-        case SS_NWOnly:
-            iContainer->GetAvailablePsys(ETrue,modInfoArray);
-            break;
-            
-        case SS_AllPsys: 
-            iContainer->GetAvailablePsys(EFalse,modInfoArray);
-            iContainer->GetAvailablePsys(ETrue,modInfoArray);
-            break;
-        }
-    
+    switch (iSSType) {
+    case SS_GPSOnly:
+        iContainer->GetAvailablePsys(EFalse, modInfoArray);
+        break;
+    case SS_NWOnly:
+        iContainer->GetAvailablePsys(ETrue, modInfoArray);
+        break;
+
+    case SS_AllPsys:
+        iContainer->GetAvailablePsys(EFalse, modInfoArray);
+        iContainer->GetAvailablePsys(ETrue, modInfoArray);
+        break;
+    }
+
     TInt insertCount = 0;
-    for(int i = 0; i < modInfoArray.Count(); i++)
-        {
-        if(modInfoArray[i]->IsAvailable())
-            {
-            CSingleShotPsy *psy = CSingleShotPsy::NewL(modInfoArray[i],iContainer,this);   
-            if(psy)
-                {
-                iSSPsys.Insert(psy,insertCount++);
+    for (int i = 0; i < modInfoArray.Count(); i++) {
+        if (modInfoArray[i]->IsAvailable()) {
+            CSingleShotPsy *psy = CSingleShotPsy::NewL(modInfoArray[i], iContainer, this);
+            if (psy) {
+                iSSPsys.Insert(psy, insertCount++);
                 qDebug() << "CLbsSingleShotRequestor::InitializePSYs inserted " << psy->iPsyName ;
-                }
             }
         }
-    qDebug() << "CLbsSingleShotRequestor::ConstructL "<<"insertCount="<<insertCount; 
     }
+    qDebug() << "CLbsSingleShotRequestor::ConstructL " << "insertCount=" << insertCount;
+}
 
 CLbsSingleShotRequestor::~CLbsSingleShotRequestor()
-    {
+{
     Cancel();
-    
-    for(int i = 0; i < iSSPsys.Count(); i++)
+
+    for (int i = 0; i < iSSPsys.Count(); i++)
         delete iSSPsys[i];
-                    
+
     iSSPsys.Close();
-    }
+}
 
 void CLbsSingleShotRequestor::Cancel()
-    {
-    for(int i = 0; i < iSSPsys.Count(); i++)
+{
+    for (int i = 0; i < iSSPsys.Count(); i++)
         iSSPsys[i]->Cancel();
     CTimer::Cancel();
-    }
+}
 
 void CLbsSingleShotRequestor::DoCancel()
-    {
-    
-    }
+{
+
+}
 void CLbsSingleShotRequestor::RunL()
-    {
-    qDebug() << "CLbsSingleShotRequestor::RunL "<<iSSType; 
-    
-    if(StartTimer())
-        {
-        if(iLatestQPosInfo)
-            iObserver->SSLocation(iLatestQPosInfo,this);
+{
+    qDebug() << "CLbsSingleShotRequestor::RunL " << iSSType;
+
+    if (StartTimer()) {
+        if (iLatestQPosInfo)
+            iObserver->SSLocation(iLatestQPosInfo, this);
         else
             iObserver->SSRequestTimedOut(this);
-        
+
         //Cancel all outstanding PSY requests
         Cancel();
-        }
     }
+}
 
-void CLbsSingleShotRequestor::LocationUpdate(TPositionInfoBase &aPosition,CSelfManagingPsy *aPsy)
-    {
-    qDebug() << "CLbsSingleShotRequestor::LocationUpdate from PSY "<<aPsy->iPsyName << "Type=" <<iSSType ; 
+void CLbsSingleShotRequestor::LocationUpdate(TPositionInfoBase &aPosition, CSelfManagingPsy *aPsy)
+{
+    qDebug() << "CLbsSingleShotRequestor::LocationUpdate from PSY " << aPsy->iPsyName << "Type=" << iSSType ;
     delete iLatestQPosInfo;
-    iLatestQPosInfo = new (ELeave) QGeoPositionInfo;
-    PsyUtils::TPositionInfo2QGeoPositionInfo(aPosition,*iLatestQPosInfo);
-    }
+    iLatestQPosInfo = new(ELeave) QGeoPositionInfo;
+    PsyUtils::TPositionInfo2QGeoPositionInfo(aPosition, *iLatestQPosInfo);
+}
 void CLbsSingleShotRequestor::RequestTimedOut(CSelfManagingPsy *aPsy)
-    {
-    qDebug() << "CLbsSingleShotRequestor::RequestTimedOut from PSY "<<aPsy->iPsyName << "Type=" <<iSSType ; 
+{
+    qDebug() << "CLbsSingleShotRequestor::RequestTimedOut from PSY " << aPsy->iPsyName << "Type=" << iSSType ;
     //Nothing to do, handled in RunL
-    }
+}
 
 void CLbsSingleShotRequestor::RequestLocation(TMilliSeconds &aMsec)
-    {
+{
     Cancel();
-    
-    TTimeIntervalMicroSeconds intr(aMsec*1000); 
 
-    if(intr.Int64() > MAX_TIMER )
-        {
-        iTimerInterval.itrMaxTimer = intr.Int64()/MAX_TIMER;
-        iTimerInterval.balanceDuration = intr.Int64()%MAX_TIMER;
-        }
-    else
-        {
+    TTimeIntervalMicroSeconds intr(aMsec*1000);
+
+    if (intr.Int64() > MAX_TIMER) {
+        iTimerInterval.itrMaxTimer = intr.Int64() / MAX_TIMER;
+        iTimerInterval.balanceDuration = intr.Int64() % MAX_TIMER;
+    } else {
         iTimerInterval.balanceDuration = intr.Int64();
         iTimerInterval.itrMaxTimer = 0;
-        }
-    
-    for(int i = 0; i < iSSPsys.Count(); i++)
-        {
-        iSSPsys[i]->IssueRequest(aMsec);
-        }
-    StartTimer();
     }
 
+    for (int i = 0; i < iSSPsys.Count(); i++) {
+        iSSPsys[i]->IssueRequest(aMsec);
+    }
+    StartTimer();
+}
+
 bool CLbsSingleShotRequestor::StartTimer()
-    {
-    
+{
+
     bool sendClientUpdate = EFalse;
-    
-    if(iTimerInterval.itrMaxTimer > 0)
-        {
+
+    if (iTimerInterval.itrMaxTimer > 0) {
         CTimer::After(MAX_TIMER);
         iTimerInterval.itrMaxTimer--;
-        }
-    else if(iTimerInterval.balanceDuration.Int() > 0)
-        {
+    } else if (iTimerInterval.balanceDuration.Int() > 0) {
         CTimer::After(iTimerInterval.balanceDuration);
         iTimerInterval.balanceDuration = 0;
-        }
-    else
-        {
+    } else {
         sendClientUpdate = ETrue;
-        }
-    return sendClientUpdate;
     }
+    return sendClientUpdate;
+}
 
 QTM_END_NAMESPACE

@@ -47,7 +47,7 @@
 #include "qmobilityglobal.h"
 #include "qgeopositioninfo.h"
 
-#include "symbian_lbsfacade.h"
+#include "symbian_lbsfacade_p.h"
 #include <QGeoPositionInfo>
 #include <QGeoPositionInfoSource>
 
@@ -65,66 +65,64 @@ class CLbsSingleShotRequestor;
 class MLbsSingleShotCallback
 {
 public:
-    virtual void SSLocation(QGeoPositionInfo *aPosition,CLbsSingleShotRequestor *aRequestor ) = 0;
+    virtual void SSLocation(QGeoPositionInfo *aPosition, CLbsSingleShotRequestor *aRequestor) = 0;
     virtual void SSRequestTimedOut(CLbsSingleShotRequestor *aRequestor) = 0;
 };
 
 class CLbsSingleShotRequestor : public CTimer , public MPsyRequestCallback
 {
 public:
-    enum SSType
-        {
-            SS_AllPsys = 1,
-            SS_GPSOnly,
-            SS_NWOnly
-        };
-    static CLbsSingleShotRequestor* NewL(CPsyContainer *aContainer,MLbsSingleShotCallback *aObserver,SSType aSSType);
+    enum SSType {
+        SS_AllPsys = 1,
+        SS_GPSOnly,
+        SS_NWOnly
+    };
+    static CLbsSingleShotRequestor* NewL(CPsyContainer *aContainer, MLbsSingleShotCallback *aObserver, SSType aSSType);
     ~CLbsSingleShotRequestor();
     void Cancel();
-    
+
     void RequestLocation(TMilliSeconds &aMsec);
     SSType GetSingleShotType() const;
-    
+
 private:
-    CLbsSingleShotRequestor(CPsyContainer *aContainer,MLbsSingleShotCallback *aObserver,SSType aSSType);
+    CLbsSingleShotRequestor(CPsyContainer *aContainer, MLbsSingleShotCallback *aObserver, SSType aSSType);
     void ConstructL();
 
     void RunL();
     void DoCancel();
-    
+
     bool StartTimer();
-    
+
     //MPsyRequestCallback
-    void LocationUpdate(TPositionInfoBase &aPosition,CSelfManagingPsy *aPsy);
+    void LocationUpdate(TPositionInfoBase &aPosition, CSelfManagingPsy *aPsy);
     void RequestTimedOut(CSelfManagingPsy *aPsy);
-    
+
     CPsyContainer *iContainer;
     MLbsSingleShotCallback *iObserver;
     RArray<CSingleShotPsy*> iSSPsys;
     SSType iSSType;
     QGeoPositionInfo  *iLatestQPosInfo;
-    
-    struct TimerInterval
-            {
-            TInt itrMaxTimer;
-            TTimeIntervalMicroSeconds32 balanceDuration;
-            };
-    TimerInterval iTimerInterval; 
+
+    struct TimerInterval {
+        TInt itrMaxTimer;
+        TTimeIntervalMicroSeconds32 balanceDuration;
+    };
+    TimerInterval iTimerInterval;
 };
 
 class CSingleShotPsy : public CSelfManagingPsy
 {
 public:
-	static CSingleShotPsy* NewL(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback);
-	void RunL();
-	
-	void IssueRequest(TTimeIntervalMicroSeconds aTimeOut);
+    static CSingleShotPsy* NewL(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback);
+    void RunL();
+
+    void IssueRequest(TTimeIntervalMicroSeconds aTimeOut);
 protected:
-	CSingleShotPsy(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback);
-	void ConstructL();
-	
-	TPositionInfo iPositionInfo;
-};	
+    CSingleShotPsy(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback);
+    void ConstructL();
+
+    TPositionInfo iPositionInfo;
+};
 
 
 QTM_END_NAMESPACE

@@ -66,7 +66,7 @@ class CPsyContainer;
 
 class MPsyStatusChangeCallback
 {
-public:    
+public:
     virtual void NotifyPsyStatusChange(TBool aAvailability) = 0;
 };
 
@@ -74,65 +74,65 @@ public:
 class MPsyRequestCallback
 {
 public:
-	virtual void LocationUpdate(TPositionInfoBase &aPosition,CSelfManagingPsy *aPsy) = 0;
-	virtual void RequestTimedOut(TInt aConsecutiveFailureCount, CSelfManagingPsy *aPsy) = 0;
-		
+    virtual void LocationUpdate(TPositionInfoBase &aPosition, CSelfManagingPsy *aPsy) = 0;
+    virtual void RequestTimedOut(TInt aConsecutiveFailureCount, CSelfManagingPsy *aPsy) = 0;
+
 };
 
 
 class CSelfManagingPsy : public CActive, public MPsyStatusChangeCallback
 {
 public:
-	QString iPsyName;//Only for debugging purposes
-	
-	TPositionModuleInfo* GetModInfo(); 
-	
-	void Cancel();
+    QString iPsyName;//Only for debugging purposes
+
+    TPositionModuleInfo* GetModInfo();
+
+    void Cancel();
 protected:
-	CSelfManagingPsy(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,
-	        MPsyRequestCallback* aRequestCallback);
-	virtual ~CSelfManagingPsy();
-	
-	void ConstructL();
-	void DoCancel();
-	
-	void IssueRequest();
-	
-	TBool InitPositioner();
-	
-	//MPsyStatusChangeCallback
-	void NotifyPsyStatusChange(TBool aAvailability);
-	
-	void HandlePositionCallback(TRequestStatus &aStatus);
-	
-	TPositionModuleInfo* iPsyModInfo;
-	CPsyContainer *iContainer;
-	RPositioner *iPositioner;
-	MPsyRequestCallback* iRequestCallback;
-	TPositionInfo iPosInfo;
-	TInt iConsequitiveFailureCount;
-	
-	TBool iClientRequestActive;
-	TBool iPsyAvailabilityStatus;
-	
-	TTimeIntervalMicroSeconds iUpdInterval;
-	TTimeIntervalMicroSeconds iTimeout;
-};	
-	
+    CSelfManagingPsy(TPositionModuleInfo* aPsy, CPsyContainer *aContainer,
+                     MPsyRequestCallback* aRequestCallback);
+    virtual ~CSelfManagingPsy();
+
+    void ConstructL();
+    void DoCancel();
+
+    void IssueRequest();
+
+    TBool InitPositioner();
+
+    //MPsyStatusChangeCallback
+    void NotifyPsyStatusChange(TBool aAvailability);
+
+    void HandlePositionCallback(TRequestStatus &aStatus);
+
+    TPositionModuleInfo* iPsyModInfo;
+    CPsyContainer *iContainer;
+    RPositioner *iPositioner;
+    MPsyRequestCallback* iRequestCallback;
+    TPositionInfo iPosInfo;
+    TInt iConsequitiveFailureCount;
+
+    TBool iClientRequestActive;
+    TBool iPsyAvailabilityStatus;
+
+    TTimeIntervalMicroSeconds iUpdInterval;
+    TTimeIntervalMicroSeconds iTimeout;
+};
+
 class CTrackingPsy : public CSelfManagingPsy
 {
-public:	
-	static CTrackingPsy* NewL(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,
-	        MPsyRequestCallback* aRequestCallback);
-	
-	void IssueRequest(TTimeIntervalMicroSeconds updateInterval);
-	void RunL();
-	
-	virtual ~CTrackingPsy();
-	
+public:
+    static CTrackingPsy* NewL(TPositionModuleInfo* aPsy, CPsyContainer *aContainer,
+                              MPsyRequestCallback* aRequestCallback);
+
+    void IssueRequest(TTimeIntervalMicroSeconds updateInterval);
+    void RunL();
+
+    virtual ~CTrackingPsy();
+
 protected:
-	CTrackingPsy(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback);
-	void ConstructL();
+    CTrackingPsy(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback);
+    void ConstructL();
 };
 
 //Special class for handling NW PSYs
@@ -140,13 +140,13 @@ protected:
 class CNWTrackingPsy : public CTrackingPsy
 {
 private:
-    CNWTrackingPsy(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback);
+    CNWTrackingPsy(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback);
     ~CNWTrackingPsy();
-    
+
     void DoCancel();
     void RunL();
-    
-   
+
+
     bool iRealRequest;
 
     RTimer iTimer;
@@ -156,23 +156,23 @@ private:
 class CSingleShotPsy : public CSelfManagingPsy
 {
 public:
-	static CSingleShotPsy* NewL(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback);
-	void RunL();
-	
-	void IssueRequest(TTimeIntervalMicroSeconds aTimeOut);
-protected:
-	CSingleShotPsy(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback);
-	void ConstructL();
-	
-};	
+    static CSingleShotPsy* NewL(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback);
+    void RunL();
 
-                                           
+    void IssueRequest(TTimeIntervalMicroSeconds aTimeOut);
+protected:
+    CSingleShotPsy(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback);
+    void ConstructL();
+
+};
+
+
 class MPsyCountChangeCallback
-    {
+{
 public:
     virtual void PsyUninstalled(TPositionModuleId &aModId) = 0;
     virtual void PsyInstalled(TPositionModuleInfo* aModInfo) = 0;
-    };
+};
 
 class MMWPsyChangeCallback
 {
@@ -187,69 +187,68 @@ class MGpsPsyChangeCallback
 class CPsyContainer : public CBase, public MPosModulesObserver
 {
 public:
-	static CPsyContainer* NewL();
-	
-	~CPsyContainer();
-		
-	void GetAvailablePsys(TBool aNWPsys, RArray<TPositionModuleInfo*> &aPsys);	
-	
-	
-	void SetNWPSYChangeCallback(MPsyCountChangeCallback *aNWCallback);
-	void SetGPSPSYChangeCallback(MPsyCountChangeCallback *aGPSCallback);
-	
-	void RegisterPsyStatusListenerL(MPsyStatusChangeCallback *aCallBack,TPositionModuleId aModId );
-	void DeRegisterPsyStatusListener(MPsyStatusChangeCallback *aCallBack);
-	
-	RPositionServer& PosServer();
-	
-	QGeoPositionInfo lastKnownPosition(bool aFromSatellitePositioningMethodsOnly = false) ;
+    static CPsyContainer* NewL();
+
+    ~CPsyContainer();
+
+    void GetAvailablePsys(TBool aNWPsys, RArray<TPositionModuleInfo*> &aPsys);
+
+
+    void SetNWPSYChangeCallback(MPsyCountChangeCallback *aNWCallback);
+    void SetGPSPSYChangeCallback(MPsyCountChangeCallback *aGPSCallback);
+
+    void RegisterPsyStatusListenerL(MPsyStatusChangeCallback *aCallBack, TPositionModuleId aModId);
+    void DeRegisterPsyStatusListener(MPsyStatusChangeCallback *aCallBack);
+
+    RPositionServer& PosServer();
+
+    QGeoPositionInfo lastKnownPosition(bool aFromSatellitePositioningMethodsOnly = false) ;
 
 private:
-	CPsyContainer();
-	void ConstructL();	
-	
-	
-	void InitAllPsysL();
-	
-	// from MPosModulesObserver
-	virtual void HandleSettingsChangeL( TPosModulesEvent aEvent );
-	
-	//MLbsLastKnownPosObserver
-	void NotifyLastKnownPosUpdate(TPositionInfo& aPositionInfo);
-	
-	TBool IsSatellitePsy(TPositionModuleInfo *aModInfo) const;
-	TBool IsNWPsy(TPositionModuleInfo *aModInfo) const;
-	
-private:
-	RPositionServer iPosServer;
-	
-	MPsyCountChangeCallback *iNWCallback;
-	MPsyCountChangeCallback *iGPSCallback;
-	
-	RArray<TPositionModuleInfo*> iAllPsys;
-	TPositionModuleStatusEvent iModuleStatusEvent;
-	
-	struct TPsyStatusListener
-	    {
-	    MPsyStatusChangeCallback *iCallBack;
-	    TPositionModuleId iModId; 
-	    };
-	
-	RArray<TPsyStatusListener*> iPsyStatusListeners;
-	CPosModules* iPsyModules;
+    CPsyContainer();
+    void ConstructL();
 
-	
-};	
+
+    void InitAllPsysL();
+
+    // from MPosModulesObserver
+    virtual void HandleSettingsChangeL(TPosModulesEvent aEvent);
+
+    //MLbsLastKnownPosObserver
+    void NotifyLastKnownPosUpdate(TPositionInfo& aPositionInfo);
+
+    TBool IsSatellitePsy(TPositionModuleInfo *aModInfo) const;
+    TBool IsNWPsy(TPositionModuleInfo *aModInfo) const;
+
+private:
+    RPositionServer iPosServer;
+
+    MPsyCountChangeCallback *iNWCallback;
+    MPsyCountChangeCallback *iGPSCallback;
+
+    RArray<TPositionModuleInfo*> iAllPsys;
+    TPositionModuleStatusEvent iModuleStatusEvent;
+
+    struct TPsyStatusListener {
+        MPsyStatusChangeCallback *iCallBack;
+        TPositionModuleId iModId;
+    };
+
+    RArray<TPsyStatusListener*> iPsyStatusListeners;
+    CPosModules* iPsyModules;
+
+
+};
 
 class PsyUtils
 {
 public:
     static void TPositionInfo2QGeoPositionInfo(TPositionInfoBase &aPosInfo, QGeoPositionInfo& aQPosInfo);
-    
+
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 #endif
 
- 
+

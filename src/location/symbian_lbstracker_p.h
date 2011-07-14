@@ -47,7 +47,7 @@
 #include "qmobilityglobal.h"
 #include "qgeopositioninfo.h"
 
-#include "symbian_lbsfacade.h"
+#include "symbian_lbsfacade_p.h"
 #include <QGeoPositionInfo>
 #include <QGeoPositionInfoSource>
 
@@ -66,8 +66,8 @@ class CTrackingPsy;
 class MLbsTrackingCallback
 {
 public:
-	virtual void TrackingLocation(QGeoPositionInfo *aPosition,CLbsPositionTrackerBase *aTracker ) = 0;
-	virtual void TrackingRequestTimedOut(CLbsPositionTrackerBase *aBase) = 0;
+    virtual void TrackingLocation(QGeoPositionInfo *aPosition, CLbsPositionTrackerBase *aTracker) = 0;
+    virtual void TrackingRequestTimedOut(CLbsPositionTrackerBase *aBase) = 0;
 };
 
 //Base class for all tracking requestors
@@ -75,26 +75,25 @@ class CLbsPositionTrackerBase : public CBase
 {
 public:
     QString iTrackerName;//Only for debugging purposes
-    enum TrackingType
-        {
-            AllPsys = 1,
-            GPSOnly,
-            NWOnly
-        };
+    enum TrackingType {
+        AllPsys = 1,
+        GPSOnly,
+        NWOnly
+    };
     virtual ~CLbsPositionTrackerBase();
-    virtual void StartUpdates() =0;
-    virtual void StopUpdates() =0;
-    virtual void SetUpdateInterval(TMilliSeconds mSec) =0;
+    virtual void StartUpdates() = 0;
+    virtual void StopUpdates() = 0;
+    virtual void SetUpdateInterval(TMilliSeconds mSec) = 0;
     void SetObserver(MLbsTrackingCallback *aObserver);
-    
+
     TMilliSeconds GetUpdateInterval() const;
     TMilliSeconds GetMinimumUpdateInterval() const;
     CLbsPositionTrackerBase::TrackingType GetTrackingType() const;
     QGeoPositionInfo* GetLastPosition() const;
-    
+
 protected:
-    CLbsPositionTrackerBase(TrackingType aType,CPsyContainer *aContainer,MLbsTrackingCallback *aObserver);
-    
+    CLbsPositionTrackerBase(TrackingType aType, CPsyContainer *aContainer, MLbsTrackingCallback *aObserver);
+
     TrackingType iTrackType;
     MLbsTrackingCallback *iObserver;
     CPsyContainer *iContainer;
@@ -111,35 +110,35 @@ class LbsTrackTimerTimedoutState;
 class LbsTrackTimerRunningState;
 
 class CLbsTrackTimerBase : public CLbsPositionTrackerBase, public CTimer
-                    ,public MPsyRequestCallback, public MPsyCountChangeCallback
+        , public MPsyRequestCallback, public MPsyCountChangeCallback
 {
 public:
     //CLbsPositionTrackerBase
-       void StartUpdates();
-       void StopUpdates();
-       void SetUpdateInterval(TMilliSeconds mSec);
-       
+    void StartUpdates();
+    void StopUpdates();
+    void SetUpdateInterval(TMilliSeconds mSec);
+
 protected:
-    CLbsTrackTimerBase(TrackingType aType,CPsyContainer *aContainer,
-            MLbsTrackingCallback *aObserver,TTimeIntervalMicroSeconds32 aTTFFTimeOut);
+    CLbsTrackTimerBase(TrackingType aType, CPsyContainer *aContainer,
+                       MLbsTrackingCallback *aObserver, TTimeIntervalMicroSeconds32 aTTFFTimeOut);
     void ConstructL();
     ~CLbsTrackTimerBase();
 
     //MPsyRequestCallback
-    void LocationUpdate(TPositionInfoBase &aPosition,CSelfManagingPsy *aPsy);
+    void LocationUpdate(TPositionInfoBase &aPosition, CSelfManagingPsy *aPsy);
     void RequestTimedOut(CSelfManagingPsy *aPsy);
     //CTimer
     void RunL();
     void DoCancel();
-    
+
     void CancelPsyRequests();
-    
+
     //MPsyCountChangeCallback
     void PsyUninstalled(TPositionModuleId &aModId);
     void PsyInstalled(TPositionModuleInfo* aModInfo);
-    
-    void InitializePSYs (RArray<TPositionModuleInfo*>  aModInfoArray, const TInt64 aDefaultMinInterval);
-    
+
+    void InitializePSYs(RArray<TPositionModuleInfo*>  aModInfoArray, const TInt64 aDefaultMinInterval);
+
     RArray<CTrackingPsy*> iTrackingPsys;
     TTimeIntervalMicroSeconds32 iTTFFTimeOut;
     LbsTrackTimerStateBase *iCurrentState;
@@ -149,7 +148,7 @@ protected:
     LbsTrackTimerStateBase *iRunningState;
 private:
     void SetNextState(LbsTrackTimerStateBase *aNextState);
-            
+
     friend class LbsTrackTimerStateBase;
     friend class LbsTrackTimerIdleState;
     friend class LbsTrackTimerFFState;
@@ -159,24 +158,24 @@ private:
 
 //Satellite based tracking requestor
 class CLbsSatellitePositionTracker : public CLbsTrackTimerBase
-    {
-public: 
-    static CLbsSatellitePositionTracker* NewL(CPsyContainer *aContainer,MLbsTrackingCallback *aObserver);
+{
+public:
+    static CLbsSatellitePositionTracker* NewL(CPsyContainer *aContainer, MLbsTrackingCallback *aObserver);
     ~CLbsSatellitePositionTracker();
 private:
-    CLbsSatellitePositionTracker(CPsyContainer *aContainer,MLbsTrackingCallback *aObserver);
+    CLbsSatellitePositionTracker(CPsyContainer *aContainer, MLbsTrackingCallback *aObserver);
     void ConstructL();
-    };
+};
 
 //Non Satellite based tracking requestor
 class CLbsNonSatellitePositionTracker : public CLbsTrackTimerBase
 {
-public: 
-    static CLbsNonSatellitePositionTracker* NewL(CPsyContainer *aContainer,MLbsTrackingCallback *aObserver);
-   
+public:
+    static CLbsNonSatellitePositionTracker* NewL(CPsyContainer *aContainer, MLbsTrackingCallback *aObserver);
+
     ~CLbsNonSatellitePositionTracker();
 private:
-    CLbsNonSatellitePositionTracker(CPsyContainer *aContainer,MLbsTrackingCallback *aObserver);
+    CLbsNonSatellitePositionTracker(CPsyContainer *aContainer, MLbsTrackingCallback *aObserver);
     void ConstructL();
 };
 
@@ -185,66 +184,66 @@ class CLbsAllPosProxyState;
 //Proxy which internally uses the satellite tracker and NW tracker
 class CLbsAllPosProxy : public CLbsPositionTrackerBase, public MLbsTrackingCallback
 {
-public:    
+public:
 
-    static CLbsAllPosProxy* NewL(CPsyContainer *aContainer,MLbsTrackingCallback *aObserver,
-            CLbsSatellitePositionTracker *aSatelliteTracker = NULL, CLbsNonSatellitePositionTracker *aNWTracker = NULL);
-    
+    static CLbsAllPosProxy* NewL(CPsyContainer *aContainer, MLbsTrackingCallback *aObserver,
+                                 CLbsSatellitePositionTracker *aSatelliteTracker = NULL, CLbsNonSatellitePositionTracker *aNWTracker = NULL);
+
     CLbsSatellitePositionTracker* ReleaseSatelliteTracker();
     CLbsNonSatellitePositionTracker* ReleaseNWTracker();
 
     ~CLbsAllPosProxy();
-    
+
 private:
-    
-    CLbsAllPosProxy(CPsyContainer *aContainer,MLbsTrackingCallback *aObserver,
-            CLbsSatellitePositionTracker *aSatelliteTracker = NULL, CLbsNonSatellitePositionTracker *aNWTracker = NULL);
-    
+
+    CLbsAllPosProxy(CPsyContainer *aContainer, MLbsTrackingCallback *aObserver,
+                    CLbsSatellitePositionTracker *aSatelliteTracker = NULL, CLbsNonSatellitePositionTracker *aNWTracker = NULL);
+
     void ConstructL(CLbsSatellitePositionTracker *aSatelliteTracker , CLbsNonSatellitePositionTracker *aNWTracker);
 
     //Should be propogated to the other Satellite and NW trackers
     void SetUpdateInterval(TMilliSeconds mSec);
     void StartUpdates();
     void StopUpdates();
-    
+
     //Used for listening to updates from satellite tracker and NW Tracker
-    void TrackingLocation(QGeoPositionInfo *aPosition,CLbsPositionTrackerBase *aTracker );
+    void TrackingLocation(QGeoPositionInfo *aPosition, CLbsPositionTrackerBase *aTracker);
     void TrackingRequestTimedOut(CLbsPositionTrackerBase *aBase);
-    
+
     void SetNextState(CLbsAllPosProxyState *nextState);
-    
+
     void NotifyFixToObserver(QGeoPositionInfo *aPosition);
     void NotifyTimeOutToObserver();
-    
+
     CLbsSatellitePositionTracker *iSatelliteTracker;
     CLbsNonSatellitePositionTracker *iNWTracker;
-    
+
     CLbsAllPosProxyState *iCurrentState;
-		//states
+    //states
     CLbsAllPosProxyState *iIdle;
     CLbsAllPosProxyState *iInitialHybrid;
     CLbsAllPosProxyState *iSatelliteOnly;
     CLbsAllPosProxyState *iRunningHybrid;
-    
+
     friend class CLbsAllPosIdle;
     friend class CLbsAllPosInitialHybrid;
     friend class CLbsAllPosSatelliteOnly;
     friend class CLbsAllPosRunningHybrid;
-};	
+};
 
 
 class CTrackingPsy : public CSelfManagingPsy
 {
-public:	
-	static CTrackingPsy* NewL(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,
-	        MPsyRequestCallback* aRequestCallback);
-	virtual ~CTrackingPsy();
-	void IssueRequest(TTimeIntervalMicroSeconds updateInterval);
+public:
+    static CTrackingPsy* NewL(TPositionModuleInfo* aPsy, CPsyContainer *aContainer,
+                              MPsyRequestCallback* aRequestCallback);
+    virtual ~CTrackingPsy();
+    void IssueRequest(TTimeIntervalMicroSeconds updateInterval);
 
 protected:
-	CTrackingPsy(TPositionModuleInfo* aPsy,CPsyContainer *aContainer,MPsyRequestCallback* aRequestCallback,TPositionInfoBase &aPos);
-	void ConstructL();
-	void RunL();
+    CTrackingPsy(TPositionModuleInfo* aPsy, CPsyContainer *aContainer, MPsyRequestCallback* aRequestCallback, TPositionInfoBase &aPos);
+    void ConstructL();
+    void RunL();
 };
 
 

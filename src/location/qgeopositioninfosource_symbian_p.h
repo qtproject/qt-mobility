@@ -74,9 +74,9 @@
 #include "qgeopositioninfo.h"
 
 //#include "clbstrackingtequestors_60_p.h"
-#include "symbian_lbsfacade.h"
-#include "symbian_lbstracker.h"
-#include "symbian_lbsonetime.h"
+#include "symbian_lbsfacade_p.h"
+#include "symbian_lbstracker_p.h"
+#include "symbian_lbsonetime_p.h"
 
 //#define MAX_SIZE 25
 
@@ -90,11 +90,11 @@ class CPsyContainer;
  *  CQGeoPositionInfoSourceSymbian
  *
  */
- 
 
-class CQGeoPositionInfoSourceSymbian : public QGeoPositionInfoSource, 
-                                       public MLbsTrackingCallback, 
-                                       public MLbsSingleShotCallback
+
+class CQGeoPositionInfoSourceSymbian : public QGeoPositionInfoSource,
+        public MLbsTrackingCallback,
+        public MLbsSingleShotCallback
 
 {
 public:
@@ -138,8 +138,8 @@ public:
     }
 
 
-    
-   
+
+
 
 public slots :
     // for request update
@@ -163,37 +163,37 @@ private:
      * EPOC default constructor for performing 2nd stage construction
      */
     void ConstructL();
-   
+
     void TPositionInfo2QGeoPositionInfo(HPositionGenericInfo *mPosInfo,
                                         QGeoPositionInfo& posUpdate);
-                                        
-	void TrackingLocation(QGeoPositionInfo *aPosition,CLbsPositionTrackerBase *aBase);
-	void TrackingRequestTimedOut(CLbsPositionTrackerBase *aBase); 
-	
-	void SSLocation(QGeoPositionInfo *aPosition,CLbsSingleShotRequestor *aRequestor );
-	void SSRequestTimedOut(CLbsSingleShotRequestor *aRequestor);
-   
+
+    void TrackingLocation(QGeoPositionInfo *aPosition, CLbsPositionTrackerBase *aBase);
+    void TrackingRequestTimedOut(CLbsPositionTrackerBase *aBase);
+
+    void SSLocation(QGeoPositionInfo *aPosition, CLbsSingleShotRequestor *aRequestor);
+    void SSRequestTimedOut(CLbsSingleShotRequestor *aRequestor);
+
 private:
-	
-	CLbsPositionTrackerBase *iTrackingRequestor;
-	CLbsSingleShotRequestor *iSSRequestor;
-	
-	QGeoPositionInfo mLastPosInfo;
-	
-	CPsyContainer *iPsyContainer;
-	
-	PositioningMethods mPreferredMethods;
-	
-	PositioningMethods mSupportedMethods;
-	
-	TBool iTrackingInProgress;
-	
-	TBool iTimeOutCanBeSent;
-	
+
+    CLbsPositionTrackerBase *iTrackingRequestor;
+    CLbsSingleShotRequestor *iSSRequestor;
+
+    QGeoPositionInfo mLastPosInfo;
+
+    CPsyContainer *iPsyContainer;
+
+    PositioningMethods mPreferredMethods;
+
+    PositioningMethods mSupportedMethods;
+
+    TBool iTrackingInProgress;
+
+    TBool iTimeOutCanBeSent;
+
 };
 
 
- 
+
 
 QTM_END_NAMESPACE
 
