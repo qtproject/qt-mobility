@@ -29,4 +29,10 @@ usr/tests/qtm/tst_qgraphicsvideoitem
 usr/tests/qtm/tst_qdeclarativeaudio
 usr/tests/qtm/tst_qmediaobject
 usr/tests/qtm/tst_qcamerabackend
+usr/tests/qtm/tst_qcameraimagecapture
+usr/tests/qtm/tst_qmetadatareadercontrol
+usr/tests/qtm/tst_qcameraviewfinder
+usr/tests/qtm/tst_qmetadatawritercontrol
+usr/tests/qtm/tst_qmediabindableinterface
+usr/tests/qtm/tst_qmediacontainercontrol
 usr/share/libqtm-multimedia-tests/tests.xml
