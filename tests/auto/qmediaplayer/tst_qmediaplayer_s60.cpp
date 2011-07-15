@@ -44,6 +44,8 @@
 #include "tst_qmediaplayer_s60.h"
 #include <qmediastreamscontrol.h>
 
+#include "mockprovider.h"
+
 static const QString TestFilePath = QLatin1String("c:/data/testfiles/");
 
 // Comment out the following line if the test device does not have network
@@ -663,7 +665,7 @@ void tst_QMediaPlayer_s60::testNullService()
 {
     if(runonce)
         return;
-    MockProvider_s60 provider(0);
+    MockMediaServiceProvider provider(0, true);
     QMediaPlayer player(0, 0, &provider);
 
     const QIODevice *nullDevice = 0;

@@ -18,6 +18,9 @@ SOURCES += main.cpp tst_qradiotuner.cpp
 
 include (../../../common.pri)
 
+include (../qmultimedia_common/mock.pri)
+include (../qmultimedia_common/mockradio.pri)
+
 CONFIG += mobility
 MOBILITY = multimedia
 
