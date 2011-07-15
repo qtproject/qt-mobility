@@ -49,7 +49,9 @@
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeopositioninfosource_s60_p.h"
-#		include "qgeopositioninfosource_symbian_p.h"
+#   if defined(LOCATION_FIX_QTM_1550)
+#       include "qgeopositioninfosource_symbian_p.h"
+#   endif
 #elif defined(QT_SIMULATOR)
 #   include "qgeopositioninfosource_simulator_p.h"
 #elif defined(Q_OS_WINCE)
@@ -387,10 +389,13 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 
 #if defined(Q_OS_SYMBIAN)
     QGeoPositionInfoSource *ret = NULL;
-    //TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceS60::NewL(parent)));
     
+#   if defined(LOCATION_FIX_QTM_1550)
     TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceSymbian::NewL(parent)));
-    
+#else
+    TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceS60::NewL(parent)));
+#endif
+
     if (error == KErrNone)
         return ret;
 #elif defined(QT_SIMULATOR)
