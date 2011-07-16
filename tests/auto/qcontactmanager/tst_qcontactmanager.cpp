@@ -116,6 +116,29 @@ QTM_USE_NAMESPACE
 #define QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(params)  params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME)); \
                                                           params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))
 
+#define QTRY_COMPARE_SIGNALS_LOCALID_COUNT(__signalSpy, __expectedCount) \
+    do { \
+        int __spiedSigCount = 0; \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        for (int __i = 0; __i < __timeout; __i+=__step) { \
+            /* accumulate added from signals */ \
+            __spiedSigCount = 0; \
+            const QList<QList<QVariant> > __spiedSignals = __signalSpy; \
+            foreach (const QList<QVariant> &__arguments, __spiedSignals) { \
+                foreach (QContactLocalId __localId, __arguments.first().value<QList<QContactLocalId> >()) { \
+                    QVERIFY(__localId!=0); \
+                    __spiedSigCount++; \
+                } \
+            } \
+            if(__spiedSigCount == __expectedCount) { \
+                break; \
+            } \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__spiedSigCount, __expectedCount); \
+    } while(0)
+
 //TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -2405,8 +2428,14 @@ void tst_QContactManager::signalEmission()
     addSigCount += 1;
     QVERIFY(m1->saveContact(&c3));
     addSigCount += 1;
-    QTRY_COMPARE(spyCM.count(), modSigCount);
-    QTRY_COMPARE(spyCA.count(), addSigCount);
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCM, modSigCount);
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCA, addSigCount);
+    } else {
+        QTRY_COMPARE(spyCM.count(), modSigCount);
+        QTRY_COMPARE(spyCA.count(), addSigCount);
+    }
 
     spyCOM1->clear();
     spyCOR1->clear();
@@ -2421,13 +2450,22 @@ void tst_QContactManager::signalEmission()
     saveContactName(&c2, nameDef, &nc2, "M.");
     QVERIFY(m1->saveContact(&c2));
     modSigCount += 1;
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons, so wait a little
+         QTest::qWait(1000);
+    }
     saveContactName(&c2, nameDef, &nc2, "Mark");
     saveContactName(&c3, nameDef, &nc3, "G.");
     QVERIFY(m1->saveContact(&c2));
     modSigCount += 1;
     QVERIFY(m1->saveContact(&c3));
     modSigCount += 1;
-    QTRY_COMPARE(spyCM.count(), modSigCount);
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCM, modSigCount);
+    } else {
+        QTRY_COMPARE(spyCM.count(), modSigCount);
+    }
     QTRY_COMPARE(spyCOM2->count(), 2);
     QTRY_COMPARE(spyCOM3->count(), 1);
     QCOMPARE(spyCOM1->count(), 0);
@@ -2437,7 +2475,12 @@ void tst_QContactManager::signalEmission()
     remSigCount += 1;
     m1->removeContact(c2.id().localId());
     remSigCount += 1;
-    QTRY_COMPARE(spyCR.count(), remSigCount);
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCR, remSigCount);
+    } else {
+        QTRY_COMPARE(spyCR.count(), remSigCount);
+    }
     QTRY_COMPARE(spyCOR2->count(), 1);
     QTRY_COMPARE(spyCOR3->count(), 1);
     QCOMPARE(spyCOR1->count(), 0);
