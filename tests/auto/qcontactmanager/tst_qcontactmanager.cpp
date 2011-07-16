@@ -1050,7 +1050,7 @@ void tst_QContactManager::add()
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
     QContact retrievedMegacontact = cm->contact(megacontact.id().localId());
     if (!isSuperset(retrievedMegacontact, megacontact)) {
-        dumpContactDifferences(megacontact, retrievedMegacontact);
+        dumpContactDifferences(retrievedMegacontact, megacontact);
         QEXPECT_FAIL("mgr='wince'", "Address Display Label mismatch", Continue);
         QCOMPARE(megacontact, retrievedMegacontact);
     }
