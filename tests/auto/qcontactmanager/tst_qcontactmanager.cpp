@@ -1000,6 +1000,23 @@ void tst_QContactManager::add()
 	    if (def.name() == QContactPresence::DefinitionName)
                 continue;
         }
+        if (cm->managerName() == QLatin1String("tracker")) {
+            // Some subtypes automatically imply/add other subtypes, due to the RDF nature of the tracker database
+            if (def.name() == QContactPhoneNumber::DefinitionName)
+                continue;
+            // OnlineAccount and Presence details get corrected on non-conforming data
+            // or are readonly because the content is feeded to the database by another process.
+            if (def.name() == QContactOnlineAccount::DefinitionName)
+                continue;
+            if (def.name() == QContactPresence::DefinitionName)
+                continue;
+            if (def.name() == QContactGlobalPresence::DefinitionName)
+                continue;
+            // The tracker specific detail relevance is changed by another process usually.
+            if (def.name() == QLatin1String("Relevance")) {
+                continue;
+            }
+        }
 
         // This is probably read-only
         if (def.name() == QContactTimestamp::DefinitionName)
