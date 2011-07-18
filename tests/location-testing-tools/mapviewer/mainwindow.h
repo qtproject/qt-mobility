@@ -69,6 +69,8 @@ public:
     MainWindow(const QVariantHash &programOptions, QWidget * parent = 0);
     ~MainWindow();
 
+    const QVariantHash & programOptions() const;
+
 private slots:
     void networkSessionOpened();
     void networkSessionError(QNetworkSession::SessionError error);

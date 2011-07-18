@@ -65,6 +65,13 @@ struct CopyrightDescriptor
     QList<QGeoBoundingBox> boxes;
 };
 
+enum LogoPosition
+{
+    TopLeft = 0,
+    ShiftedRight = 1,
+    ShiftedDown = 2
+};
+
 class QGeoTiledMapDataNokia: public QGeoTiledMapData
 {
 Q_OBJECT
@@ -87,6 +94,7 @@ private:
     QNetworkAccessManager *m_networkManager;
 
     QHash<QString, QList<CopyrightDescriptor> > copyrights;
+    int m_logoPosition;
 
 private slots:
     void copyrightReplyFinished(QNetworkReply*);

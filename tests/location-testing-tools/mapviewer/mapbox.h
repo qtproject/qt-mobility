@@ -49,6 +49,7 @@
 #include <qgraphicsgeomap.h>
 
 class GeoMap;
+class MainWindow;
 
 class QGraphicsView;
 class QGraphicsScene;
@@ -78,7 +79,7 @@ class MapBox : public QWidget
     Q_PROPERTY(DisplayMode displayMode READ displayMode WRITE setDisplayMode);
 
 public:
-    explicit MapBox(QWidget * parent = 0);
+    explicit MapBox(MainWindow * parent = 0);
     ~MapBox();
 
     GeoMap * map() { return m_mapWidget; }

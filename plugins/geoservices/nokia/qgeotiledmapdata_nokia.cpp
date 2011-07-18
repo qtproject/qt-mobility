@@ -57,13 +57,31 @@
 
 QTM_USE_NAMESPACE
 
+namespace
+{
+    void AdjustLogo(const QRect &windowRect, QRect &logoRect, int position)
+    {
+        logoRect.moveTo(windowRect.topLeft());
+        if (position & ShiftedRight)
+        {
+            logoRect.moveRight(windowRect.x() + windowRect.width());
+        }
+
+        if (position & ShiftedDown)
+        {
+            logoRect.moveBottom(windowRect.y() + windowRect.height());
+        }
+    }
+}
+
 /*!
  Constructs a new tiled map data object, which stores the map data required by
  \a geoMap and makes use of the functionality provided by \a engine.
  */
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engine) :
     QGeoTiledMapData(engine),
-    watermark(":/images/watermark.png")
+    watermark(":/images/watermark.png"),
+    m_logoPosition(engine->logoPosition())
 {
     m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(copyrightReplyFinished(QNetworkReply*)));
@@ -185,22 +203,18 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
 /*!
  \reimp
  */
-void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *)
 {
-    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
+    const int offset = 5;
 
-    painter->drawPixmap(
-        viewport.bottomLeft()+QPoint(5,-5-watermark.height()),
-        watermark
-    );
-
+    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());        
     QString copyrightText = getViewCopyright();
 
     if (copyrightText != lastCopyrightText || lastViewport != viewport) {
         lastCopyrightText = copyrightText;
         lastViewport = viewport;
 
-        QRect maxBoundingRect(QPoint(viewport.left()+10+watermark.width(), viewport.top()), QPoint(viewport.right()-5, viewport.bottom()-5));
+        QRect maxBoundingRect(QPoint(viewport.left()+10+watermark.width(), viewport.top()), QPoint(viewport.right()-offset, viewport.bottom()-offset));
 
         QFont font = painter->font();
         font.setPixelSize(12);
@@ -237,9 +251,16 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
             );
         }
     }
+    viewport.adjust(offset, offset, -offset, -offset);
 
-    painter->drawPixmap(
-        lastCopyrightRect,
-        lastCopyright
-    );
+    QRect watermarkViewRect(viewport), copyrightViewRect(viewport);
+    watermarkViewRect.setWidth(watermarkViewRect.width() - lastCopyrightRect.width());
+    copyrightViewRect.adjust(watermark.width(), 0, 0, 0);
+
+    QRect watermarkRect(watermark.rect()), copyrightRect(lastCopyrightRect);
+    AdjustLogo(watermarkViewRect, watermarkRect, m_logoPosition);
+    AdjustLogo(copyrightViewRect, copyrightRect, m_logoPosition);
+
+    painter->drawPixmap(watermarkRect, watermark);
+    painter->drawPixmap(copyrightRect, lastCopyright);
 }

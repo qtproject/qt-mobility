@@ -167,6 +167,26 @@ namespace
     {
         return first.width() * first.height() < second.width() * second.height();
     }
+
+    int GetLogoPosition(QString positionName)
+    {
+        typedef std::map<QString, int> KnownPositionsType;
+        static KnownPositionsType knownPositions;
+        if (knownPositions.empty())
+        {
+            knownPositions.insert(std::make_pair("top.left", TopLeft));
+            knownPositions.insert(std::make_pair("left.top", TopLeft));
+            knownPositions.insert(std::make_pair("top.right", ShiftedRight));
+            knownPositions.insert(std::make_pair("right.top", ShiftedRight));
+            knownPositions.insert(std::make_pair("bottom.left", ShiftedRight | ShiftedDown));
+            knownPositions.insert(std::make_pair("left.bottom", ShiftedRight | ShiftedDown));
+            knownPositions.insert(std::make_pair("bottom.right", ShiftedDown));
+            knownPositions.insert(std::make_pair("right.bottom", ShiftedDown));
+        }
+
+        KnownPositionsType::const_iterator found = knownPositions.find(positionName);
+        return found == knownPositions.end() ? ShiftedDown : found->second;
+    }
 }
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
@@ -174,7 +194,8 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         m_cache(0),
         m_host("maptile.maps.svc.ovi.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
+        m_logoPosition(ShiftedDown)
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
@@ -216,6 +237,12 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     else if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
     }
+
+    if (parameters.contains("logo.position"))
+    {
+        m_logoPosition =  GetLogoPosition(parameters.value("logo.position").toString());
+    }
+
 #ifdef DISK_CACHE_ENABLED
     QString cacheDir;
     if (parameters.contains("mapping.cache.directory"))
@@ -405,4 +432,9 @@ void QGeoMappingManagerEngineNokia::setupServiceInfo()
     setMinimumZoomLevel(minZoomLevel);
     setMaximumZoomLevel(maxZoomLevel);
     setSupportedMapTypes(types);
+}
+
+int QGeoMappingManagerEngineNokia::logoPosition() const
+{
+    return m_logoPosition;
 }

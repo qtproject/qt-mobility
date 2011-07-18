@@ -71,6 +71,8 @@ public:
     QGeoMapData* createMapData();
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
+    int logoPosition() const;
+
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
 
@@ -90,6 +92,7 @@ private:
     QString m_host;
     QString m_token;
     QString m_referer;
+    int m_logoPosition;
 };
 
 #endif
