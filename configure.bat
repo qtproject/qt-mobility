@@ -589,6 +589,7 @@ goto windowsTests
 :symbianTests
 
 call :compileTest LBT lbt
+call :compileTest location_fix location_fix
 call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianENote symbianenote
