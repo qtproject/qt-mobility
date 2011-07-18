@@ -215,7 +215,7 @@ private:
 
     void ConstructL(CLbsSatelliteTracker *aSatelliteTracker , CLbsNetworkTracker *aNWTracker);
 
-    //Should be propogated to the other Satellite and NW trackers
+    //Should be propagated to the other Satellite and NW trackers
     void SetUpdateInterval(TMilliSeconds mSec);
     void StartUpdates();
     void StopUpdates();
