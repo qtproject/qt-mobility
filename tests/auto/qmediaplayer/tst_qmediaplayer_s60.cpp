@@ -44,7 +44,7 @@
 #include "tst_qmediaplayer_s60.h"
 #include <qmediastreamscontrol.h>
 
-#include "mockprovider.h"
+#include "mockmediaserviceprovider.h"
 
 static const QString TestFilePath = QLatin1String("c:/data/testfiles/");
 
