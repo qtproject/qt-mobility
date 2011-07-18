@@ -207,7 +207,7 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
 {
     const int offset = 5;
 
-    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());        
+    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
     QString copyrightText = getViewCopyright();
 
     if (copyrightText != lastCopyrightText || lastViewport != viewport) {
