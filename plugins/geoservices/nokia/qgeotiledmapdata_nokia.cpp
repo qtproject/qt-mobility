@@ -86,7 +86,8 @@ QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engi
     m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(copyrightReplyFinished(QNetworkReply*)));
 
-    m_networkManager->get(QNetworkRequest(QUrl("http://maptile.maps.svc.ovi.com/maptiler/v2/copyright/newest")));
+    QString copirightUrl = "http://" + engine->host() + "/maptiler/v2/copyright/newest";
+    m_networkManager->get(QNetworkRequest(QUrl(copirightUrl)));
 }
 
 QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia()

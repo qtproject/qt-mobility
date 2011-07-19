@@ -219,7 +219,6 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
             }
         }
     }
-    setupServiceInfo();
 
     if (parameters.contains("mapping.host")) {
         QString host = parameters.value("mapping.host").toString();
@@ -243,6 +242,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         m_logoPosition =  GetLogoPosition(parameters.value("logo.position").toString());
     }
 
+     setupServiceInfo();
 #ifdef DISK_CACHE_ENABLED
     QString cacheDir;
     if (parameters.contains("mapping.cache.directory"))
@@ -321,6 +321,7 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
 {
     const int maxDomains = 11; // TODO: hmmm....
     const char subdomain = 'a' + (request.row() + request.column()) % maxDomains; // a...k
+
     static const QString http("http://");
     static const QString path("/maptiler/maptile/newest/");
     static const QChar dot('.');
@@ -437,4 +438,9 @@ void QGeoMappingManagerEngineNokia::setupServiceInfo()
 int QGeoMappingManagerEngineNokia::logoPosition() const
 {
     return m_logoPosition;
+}
+
+const QString & QGeoMappingManagerEngineNokia::host() const
+{
+    return m_host;
 }

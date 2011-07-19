@@ -72,6 +72,7 @@ public:
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
     int logoPosition() const;
+    const QString & host() const;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
