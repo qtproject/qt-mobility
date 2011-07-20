@@ -456,11 +456,11 @@ bool QGeoCodeXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
 
     QGeoCoordinate nw;
 
-    if (m_reader->name() == "northWest") {
-        if (!parseCoordinate(&nw, "northWest"))
+    if (m_reader->name() == "topLeft") {
+        if (!parseCoordinate(&nw, "topLeft"))
             return false;
     } else {
-        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"northWest\" (found an element named \"%1\")").arg(m_reader->name().toString()));
+        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"topLeft\" (found an element named \"%1\")").arg(m_reader->name().toString()));
         return false;
     }
 
@@ -471,11 +471,11 @@ bool QGeoCodeXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
 
     QGeoCoordinate se;
 
-    if (m_reader->name() == "southEast") {
-        if (!parseCoordinate(&se, "southEast"))
+    if (m_reader->name() == "bottomRight") {
+        if (!parseCoordinate(&se, "bottomRight"))
             return false;
     } else {
-        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"southEast\" (found an element named \"%1\")").arg(m_reader->name().toString()));
+        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"bottomRight\" (found an element named \"%1\")").arg(m_reader->name().toString()));
         return false;
     }
 

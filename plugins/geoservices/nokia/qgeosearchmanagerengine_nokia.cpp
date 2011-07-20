@@ -128,7 +128,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+    requestString += "/geocoder/gc/2.0?referer=" + m_referer;
 
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
@@ -184,7 +184,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/rgc/1.0?referer=" + m_referer;
+    requestString += "/geocoder/rgc/2.0?referer=" + m_referer;
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
     requestString += "&long=";
@@ -216,7 +216,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+    requestString += "/geocoder/gc/2.0?referer=" + m_referer;
 
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
