@@ -280,6 +280,11 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         m_networkManager->setCache(m_cache);
     }
 #endif
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(const QString&)), SLOT(currentMobileCountryCodeChanged(const QString&)));
+    currentMobileCountryCodeChanged(m_networkInfo.currentMobileCountryCode());
+#endif
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
@@ -443,4 +448,13 @@ int QGeoMappingManagerEngineNokia::logoPosition() const
 const QString & QGeoMappingManagerEngineNokia::host() const
 {
     return m_host;
+}
+
+void QGeoMappingManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
+{
+    if (mcc == "460" || mcc == "461") {
+        m_host ="maptile.maps.svc.ovi.com.cn";
+    } else {
+        m_host ="maptile.maps.svc.ovi.com";
+    }
 }

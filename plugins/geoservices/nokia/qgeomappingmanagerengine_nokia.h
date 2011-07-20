@@ -57,6 +57,10 @@
 class QNetworkAccessManager;
 class QNetworkDiskCache;
 
+#ifdef  USE_CHINA_NETWORK_REGISTRATION
+#include "../../../src/systeminfo/qsystemnetworkinfo.h"
+#endif
+
 QTM_USE_NAMESPACE
 
 class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
@@ -88,12 +92,20 @@ private:
     QChar findFirstInternalFlashDrive();
 #endif //Q_OS_SYMBIAN
 
+private slots:
+    void currentMobileCountryCodeChanged(const QString& mcc);
+
+private:
     QNetworkAccessManager *m_networkManager;
     QNetworkDiskCache *m_cache;
     QString m_host;
     QString m_token;
     QString m_referer;
     int m_logoPosition;
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    QSystemNetworkInfo m_networkInfo;
+#endif
 };
 
 #endif

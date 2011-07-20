@@ -53,3 +53,9 @@ symbian {
 }
 
 RESOURCES += resource.qrc
+
+symbian|maemo5|maemo6:{
+    message("Building for mobile platform...")
+    MOBILITY +=systeminfo
+    DEFINES +=USE_CHINA_NETWORK_REGISTRATION
+}
