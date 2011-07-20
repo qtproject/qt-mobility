@@ -178,10 +178,10 @@ namespace
             knownPositions.insert(std::make_pair("left.top", TopLeft));
             knownPositions.insert(std::make_pair("top.right", ShiftedRight));
             knownPositions.insert(std::make_pair("right.top", ShiftedRight));
-            knownPositions.insert(std::make_pair("bottom.left", ShiftedRight | ShiftedDown));
-            knownPositions.insert(std::make_pair("left.bottom", ShiftedRight | ShiftedDown));
-            knownPositions.insert(std::make_pair("bottom.right", ShiftedDown));
-            knownPositions.insert(std::make_pair("right.bottom", ShiftedDown));
+            knownPositions.insert(std::make_pair("bottom.left", ShiftedDown));
+            knownPositions.insert(std::make_pair("left.bottom", ShiftedDown));
+            knownPositions.insert(std::make_pair("bottom.right", ShiftedRight | ShiftedDown));
+            knownPositions.insert(std::make_pair("right.bottom", ShiftedRight | ShiftedDown));
         }
 
         KnownPositionsType::const_iterator found = knownPositions.find(positionName);
