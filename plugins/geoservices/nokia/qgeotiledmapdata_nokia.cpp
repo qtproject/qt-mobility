@@ -219,7 +219,8 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
        fontColor.setAlphaF(0.5);
     }
 
-    QFont font("Arial", 6);
+    QFont font("Arial");
+    font.setPixelSize(10);
     font.setStyleHint(QFont::SansSerif);
 
     painter->save();
