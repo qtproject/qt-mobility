@@ -207,68 +207,42 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
  */
 void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *)
 {
-    const int offset = 5;
+    bool whiteLogo = mapType() == QGraphicsGeoMap::SatelliteMapDay
+            || mapType() == QGraphicsGeoMap::SatelliteMapNight
+            || mapType() == QGraphicsGeoMap::TerrainMap;
 
-    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
-    QString copyrightText = getViewCopyright();
+    const QPixmap & currentWatermark = whiteLogo ? watermark : watermarkDark;
 
-    if (copyrightText != lastCopyrightText || lastViewport != viewport) {
-        lastCopyrightText = copyrightText;
-        lastViewport = viewport;
-
-        QRect maxBoundingRect(QPoint(viewport.left()+10+watermark.width(), viewport.top()), QPoint(viewport.right()-offset, viewport.bottom()-offset));
-
-        QFont font = painter->font();
-        font.setPixelSize(12);
-        font.setWeight(QFont::Bold);
-
-        painter->save();
-        painter->setFont(font);
-        QRect textBoundingRect = painter->boundingRect(maxBoundingRect, Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap, copyrightText);
-        painter->restore();
-
-        lastCopyrightRect = textBoundingRect.adjusted(-1, -1, 1, 1);
-
-        lastCopyright = QPixmap(lastCopyrightRect.size());
-        lastCopyright.fill(QColor(Qt::transparent));
-
-        {
-            QPainter painter2(&lastCopyright);
-
-            painter2.setFont(font);
-            painter2.drawText(
-                QRect(QPoint(1, 2), textBoundingRect.size()),
-                Qt::TextWordWrap,
-                copyrightText
-            );
-
-            painter2.drawPixmap(QRect(QPoint(-1, -1), lastCopyrightRect.size()), lastCopyright);
-            painter2.drawPixmap(QRect(QPoint(1, -1), lastCopyrightRect.size()), lastCopyright);
-
-            painter2.setPen(QColor(Qt::white));
-            painter2.drawText(
-                QRect(QPoint(1, 1), textBoundingRect.size()),
-                Qt::TextWordWrap,
-                copyrightText
-            );
-        }
+    QColor fontColor = whiteLogo ? Qt::white : Qt::black;
+    if (!whiteLogo)
+    {
+       fontColor.setAlphaF(0.5);
     }
 
-    const QPixmap & currentWatermark =
-               mapType() == QGraphicsGeoMap::SatelliteMapDay
-            || mapType() == QGraphicsGeoMap::SatelliteMapNight
-            || mapType() == QGraphicsGeoMap::TerrainMap ? watermark : watermarkDark;
+    QFont font("Arial", 6);
+    font.setStyleHint(QFont::SansSerif);
 
+    painter->save();
+    painter->setFont(font);
+    painter->setPen(fontColor);
+
+    const int offset = 5;
+    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
     viewport.adjust(offset, offset, -offset, -offset);
 
+    QString copyrightText = getViewCopyright();
+    QRect copyrightRect = painter->boundingRect(viewport, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, copyrightText);
+
     QRect watermarkViewRect(viewport), copyrightViewRect(viewport);
-    watermarkViewRect.setHeight(watermarkViewRect.height() - lastCopyrightRect.height());
+    watermarkViewRect.setHeight(watermarkViewRect.height() - copyrightRect.height());
     copyrightViewRect.adjust(0, currentWatermark.height(), 0, 0);
 
-    QRect watermarkRect(currentWatermark.rect()), copyrightRect(lastCopyrightRect);
+    QRect watermarkRect(currentWatermark.rect());
     AdjustLogo(watermarkViewRect, watermarkRect, m_logoPosition);
     AdjustLogo(copyrightViewRect, copyrightRect, m_logoPosition);
 
     painter->drawPixmap(watermarkRect, currentWatermark);
-    painter->drawPixmap(copyrightRect, lastCopyright);
+    painter->drawText(copyrightRect, Qt::TextWordWrap, copyrightText);
+
+    painter->restore();
 }

@@ -88,10 +88,6 @@ private:
     QPixmap watermark;
     QPixmap watermarkDark;
 
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
     QNetworkAccessManager *m_networkManager;
 
     QHash<QString, QList<CopyrightDescriptor> > copyrights;
