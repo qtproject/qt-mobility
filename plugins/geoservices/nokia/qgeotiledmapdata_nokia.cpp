@@ -255,8 +255,8 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
     viewport.adjust(offset, offset, -offset, -offset);
 
     QRect watermarkViewRect(viewport), copyrightViewRect(viewport);
-    watermarkViewRect.setWidth(watermarkViewRect.width() - lastCopyrightRect.width());
-    copyrightViewRect.adjust(watermark.width(), 0, 0, 0);
+    watermarkViewRect.setHeight(watermarkViewRect.height() - lastCopyrightRect.height());
+    copyrightViewRect.adjust(0, watermark.height(), 0, 0);
 
     QRect watermarkRect(watermark.rect()), copyrightRect(lastCopyrightRect);
     AdjustLogo(watermarkViewRect, watermarkRect, m_logoPosition);
