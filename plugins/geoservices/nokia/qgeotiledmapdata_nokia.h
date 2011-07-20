@@ -86,6 +86,7 @@ private:
     Q_DISABLE_COPY(QGeoTiledMapDataNokia)
 
     QPixmap watermark;
+    QPixmap watermarkDark;
 
     QPixmap lastCopyright;
     QString lastCopyrightText;

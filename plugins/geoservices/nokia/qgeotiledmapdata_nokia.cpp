@@ -81,6 +81,7 @@ namespace
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engine) :
     QGeoTiledMapData(engine),
     watermark(":/images/watermark.png"),
+    watermarkDark(":/images/watermark_dark.png"),
     m_logoPosition(engine->logoPosition())
 {
     m_networkManager = new QNetworkAccessManager(this);
@@ -252,16 +253,22 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
             );
         }
     }
+
+    const QPixmap & currentWatermark =
+               mapType() == QGraphicsGeoMap::SatelliteMapDay
+            || mapType() == QGraphicsGeoMap::SatelliteMapNight
+            || mapType() == QGraphicsGeoMap::TerrainMap ? watermark : watermarkDark;
+
     viewport.adjust(offset, offset, -offset, -offset);
 
     QRect watermarkViewRect(viewport), copyrightViewRect(viewport);
     watermarkViewRect.setHeight(watermarkViewRect.height() - lastCopyrightRect.height());
-    copyrightViewRect.adjust(0, watermark.height(), 0, 0);
+    copyrightViewRect.adjust(0, currentWatermark.height(), 0, 0);
 
-    QRect watermarkRect(watermark.rect()), copyrightRect(lastCopyrightRect);
+    QRect watermarkRect(currentWatermark.rect()), copyrightRect(lastCopyrightRect);
     AdjustLogo(watermarkViewRect, watermarkRect, m_logoPosition);
     AdjustLogo(copyrightViewRect, copyrightRect, m_logoPosition);
 
-    painter->drawPixmap(watermarkRect, watermark);
+    painter->drawPixmap(watermarkRect, currentWatermark);
     painter->drawPixmap(copyrightRect, lastCopyright);
 }
