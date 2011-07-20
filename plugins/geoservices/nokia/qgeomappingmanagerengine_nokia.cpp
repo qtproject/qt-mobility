@@ -333,8 +333,12 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
     static const QChar slash('/');
 
     QString requestString = http;
-    requestString += subdomain;
-    requestString += dot;
+    if ("maptile.maps.svc.ovi.com" == m_host) // TODO: temporay solution while china DNS does not work
+    {
+        requestString += subdomain;
+        requestString += dot;
+    }
+
     requestString += m_host;
     requestString += path;
     requestString += mapTypeToStr(request.mapType());
@@ -453,7 +457,7 @@ const QString & QGeoMappingManagerEngineNokia::host() const
 void QGeoMappingManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
 {
     if (mcc == "460" || mcc == "461") {
-        m_host ="maptile.maps.svc.ovi.com.cn";
+        m_host ="211.151.53.179";
     } else {
         m_host ="maptile.maps.svc.ovi.com";
     }
