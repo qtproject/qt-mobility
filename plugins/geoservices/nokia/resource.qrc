@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/images">
         <file>watermark.png</file>
-        <file>watermark_dark.png</file>
     </qresource>
 </RCC>

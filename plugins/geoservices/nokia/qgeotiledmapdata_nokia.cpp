@@ -81,7 +81,6 @@ namespace
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engine) :
     QGeoTiledMapData(engine),
     watermark(":/images/watermark.png"),
-    watermarkDark(":/images/watermark_dark.png"),
     m_logoPosition(engine->logoPosition())
 {
     m_networkManager = new QNetworkAccessManager(this);
@@ -207,15 +206,10 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
  */
 void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *)
 {
-    bool whiteLogo = mapType() == QGraphicsGeoMap::SatelliteMapDay
-            || mapType() == QGraphicsGeoMap::SatelliteMapNight
-            || mapType() == QGraphicsGeoMap::TerrainMap;
-
-    const QPixmap & currentWatermark = whiteLogo ? watermark : watermarkDark;
-
-    QColor fontColor = whiteLogo ? Qt::white : Qt::black;
-    if (!whiteLogo)
+    QColor fontColor(Qt::white);
+    if (mapType() == QGraphicsGeoMap::StreetMap)
     {
+       fontColor = Qt::black;
        fontColor.setAlphaF(0.5);
     }
 
@@ -227,8 +221,8 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
     painter->setFont(font);
     painter->setPen(fontColor);
 
-    const int offset = 5;
     QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
+    const int offset = 5;
     viewport.adjust(offset, offset, -offset, -offset);
 
     QString copyrightText = getViewCopyright();
@@ -236,13 +230,13 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
 
     QRect watermarkViewRect(viewport), copyrightViewRect(viewport);
     watermarkViewRect.setHeight(watermarkViewRect.height() - copyrightRect.height());
-    copyrightViewRect.adjust(0, currentWatermark.height(), 0, 0);
+    copyrightViewRect.adjust(0, watermark.height(), 0, 0);
 
-    QRect watermarkRect(currentWatermark.rect());
+    QRect watermarkRect(watermark.rect());
     AdjustLogo(watermarkViewRect, watermarkRect, m_logoPosition);
     AdjustLogo(copyrightViewRect, copyrightRect, m_logoPosition);
 
-    painter->drawPixmap(watermarkRect, currentWatermark);
+    painter->drawPixmap(watermarkRect, watermark);
     painter->drawText(copyrightRect, Qt::TextWordWrap, copyrightText);
 
     painter->restore();
