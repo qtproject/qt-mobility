@@ -101,6 +101,7 @@ private:
     QString m_host;
     QString m_token;
     QString m_referer;
+    QString m_applicationId;
     int m_logoPosition;
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION

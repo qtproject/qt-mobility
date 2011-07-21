@@ -94,6 +94,13 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         m_token = parameters.value("token").toString();
     }
 
+    if (parameters.contains("routing.app_id")) {
+        m_applicationId = parameters.value("routing.app_id").toString();
+    }
+    else if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
+    }
+
     setSupportsRouteUpdates(true);
     setSupportsAlternativeRoutes(true);
     setSupportsExcludeAreas(true);
@@ -436,6 +443,11 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 
     requestString += "&language=";
     requestString += locale().name();
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
 
     return requestString;
 }

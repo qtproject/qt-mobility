@@ -97,6 +97,8 @@ private:
     QString m_host;
     QString m_token;
     QString m_referer;
+    QString m_applicationId;
+
 #ifdef USE_CHINA_NETWORK_REGISTRATION
     QSystemNetworkInfo m_networkInfo;
 #endif

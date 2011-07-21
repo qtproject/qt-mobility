@@ -242,6 +242,13 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         m_logoPosition =  GetLogoPosition(parameters.value("logo.position").toString());
     }
 
+    if (parameters.contains("mapping.app_id")) {
+        m_applicationId = parameters.value("mapping.app_id").toString();
+    }
+    else if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
+    }
+
      setupServiceInfo();
 #ifdef DISK_CACHE_ENABLED
     QString cacheDir;
@@ -369,6 +376,11 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
 
         requestString += "&referer=";
         requestString += m_referer;
+    }
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
     }
 
     return requestString;

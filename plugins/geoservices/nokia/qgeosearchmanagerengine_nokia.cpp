@@ -95,6 +95,12 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
         m_token = parameters.value("token").toString();
     }
 
+    if (parameters.contains("places.app_id")) {
+        m_applicationId = parameters.value("places.app_id").toString();
+    }
+    else if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
+    }
 
     setSupportsGeocoding(true);
     setSupportsReverseGeocoding(true);
@@ -133,6 +139,11 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
 
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
+
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
 
@@ -157,7 +168,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     if (!address.street().isEmpty()) {
         requestString += "&street=";
         requestString += address.street();
-    }
+    }    
 
     // TODO?
     // street number has been removed from QGeoAddress
@@ -187,6 +198,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     requestString += "/geocoder/rgc/2.0?referer=" + m_referer;
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
+
     requestString += "&long=";
     requestString += trimDouble(coordinate.longitude());
     requestString += "&lat=";
@@ -220,6 +237,11 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
 
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
