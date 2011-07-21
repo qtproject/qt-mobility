@@ -7,8 +7,8 @@ QT = core
 INCLUDEPATH += ../../../src/connectivity/bluetooth
 DEPENDPATH += ../../../src/connectivity/bluetooth
 
-INCLUDEPATH += ../../../tests/btclient
-DEPENDPATH += ../../../tests/btclient
+INCLUDEPATH += ../../tools/btclient
+DEPENDPATH += ../../tools/btclient
 
 include(../../../common.pri)
 

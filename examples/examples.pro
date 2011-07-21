@@ -103,7 +103,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5|maemo6 {
             }
 
             # MessagingEx lives in tests for some reason
-            maemo5|maemo6:SUBDIRS += ../tests/messagingex
+            maemo5|maemo6:SUBDIRS += ../tests/manual/messagingex
 
             contains(QT_CONFIG, declarative) {
                 SUBDIRS += \
