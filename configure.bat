@@ -642,6 +642,7 @@ call :compileTest DirectShow directshow
 call :compileTest WindowsMediaSDK wmsdk
 call :compileTest WindowMediaPlayer wmp
 call :compileTest EnhancedVideoRenderer evr
+call :compileTest WindowsMediaFoundation wmf
 
 :noTests
 
