@@ -83,6 +83,9 @@
     \endtable
 
 
+    \section1 \l {QtMobility QML Elements}{List of Mobility QML Elements}
+
+    The QtMobility QML Elements ordered by API.
 
     \section1 Platform Issues
     \section2 Symbian
