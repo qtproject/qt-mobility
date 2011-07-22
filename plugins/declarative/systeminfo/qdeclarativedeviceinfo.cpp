@@ -538,6 +538,13 @@ Gets the current bluetooth power state.
   The LockType must be currently active not just enabled.
   */
 
+/*!
+    \qmlproperty ThermalState DeviceInfo::currentThermalState
+    Returns the current thermal state of the device.
+
+    \since 1.2
+    \sa QSystemDeviceInfo::ThermalState
+*/
 
 
 /*!
