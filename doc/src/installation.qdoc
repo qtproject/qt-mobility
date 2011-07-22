@@ -32,8 +32,9 @@
 \tableofcontents
 
 \section1 Get the QtMobility API Package
-To begin, obtain the most recent distribution package from
-\l {http://get.qt.nokia.com}
+You can get the most recent distribution package, which is now part of the Qt SDK, from
+\l {http://get.qt.nokia.com}. You can also get the Mobility source code from
+\l {http://qt.nokia.com/products/qt-addons/mobility/}.
 
 \section1 Pre-requisites & Dependencies
 To install QtMobility you must already have installed
