@@ -54,6 +54,9 @@
 #include <qgeoserviceprovider.h>
 #include <qgeoroutingmanagerengine.h>
 #include <QNetworkAccessManager>
+#ifdef  USE_CHINA_NETWORK_REGISTRATION
+#include "../../../src/systeminfo/qsystemnetworkinfo.h"
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -72,6 +75,7 @@ public:
 private slots:
     void routeFinished();
     void routeError(QGeoRouteReply::Error error, const QString &errorString);
+    void currentMobileCountryCodeChanged(const QString& mcc);
 
 private:
     QString calculateRouteRequestString(const QGeoRouteRequest &request);
@@ -87,6 +91,13 @@ private:
     QString m_host;
     QString m_token;
     QString m_referer;
+    QString m_applicationId;
+
+    bool m_serviceDisabled;
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    QSystemNetworkInfo m_networkInfo;
+#endif
+
 };
 
 #endif

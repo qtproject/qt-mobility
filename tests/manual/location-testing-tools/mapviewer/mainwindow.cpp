@@ -189,3 +189,8 @@ void MainWindow::networkSessionError(QNetworkSession::SessionError error){
     }
 
 }
+
+const QVariantHash & MainWindow::programOptions() const
+{
+    return m_programOptions;
+}
