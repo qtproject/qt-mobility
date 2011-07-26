@@ -567,20 +567,20 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
         case DegreesMinutesWithHemisphere:
         case DegreesMinutesSecondsWithHemisphere: {
             if (d->lat < 0)
-                latStr.append(" S");
+                latStr.append(QString(" S"));
             else if (d->lat > 0)
-                latStr.append(" N");
+                latStr.append(QString(" N"));
             if (d->lng < 0)
-                longStr.append(" W");
+                longStr.append(QString(" W"));
             else if (d->lng > 0)
-                longStr.append(" E");
+                longStr.append(QString(" E"));
             break;
         }
     }
 
     if (qIsNaN(d->alt))
         return QString("%1, %2").arg(latStr, longStr);
-    return QString("%1, %2, %3m").arg(latStr, longStr, QString::number(d->alt));
+    return QString("%1, %2, %3m").arg(latStr).arg(longStr).arg(QString::number(d->alt));
 }
 
 #ifndef QT_NO_DEBUG_STREAM

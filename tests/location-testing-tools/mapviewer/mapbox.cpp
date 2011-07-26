@@ -40,6 +40,7 @@
 
 #include "mapbox.h"
 #include "geomap.h"
+#include "mainwindow.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
@@ -73,7 +74,7 @@
 #include <QSignalMapper>
 #include <QLabel>
 
-MapBox::MapBox(QWidget * parent) :
+MapBox::MapBox(MainWindow * parent) :
     QWidget(parent),
     m_qgv(0),
     m_scene(0),
@@ -86,6 +87,11 @@ MapBox::MapBox(QWidget * parent) :
     m_displayMode(DisplayNone),
     m_optionsWidget(0)
 {
+    for (QVariantHash::const_iterator it = parent->programOptions().begin(); it != parent->programOptions().end(); ++it)
+    {
+        m_parameters.insert(it.key(), it.value());
+    }
+
     m_scene = new QGraphicsScene(this);
 
     m_qgv = new QGraphicsView(m_scene, this);

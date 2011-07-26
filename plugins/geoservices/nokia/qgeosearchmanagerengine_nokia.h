@@ -57,6 +57,10 @@
 #include <QNetworkAccessManager>
 #include <QLocale>
 
+#ifdef  USE_CHINA_NETWORK_REGISTRATION
+#include "../../../src/systeminfo/qsystemnetworkinfo.h"
+#endif
+
 
 QTM_USE_NAMESPACE
 
@@ -83,16 +87,21 @@ public:
 private slots:
     void placesFinished();
     void placesError(QGeoSearchReply::Error error, const QString &errorString);
+    void currentMobileCountryCodeChanged(const QString& mcc);
 
 private:
     static QString trimDouble(double degree, int decimalDigits = 10);
     QGeoSearchReply* search(QString requestString, QGeoBoundingArea *bounds, int limit = -1, int offset = 0);
-    QString languageToMarc(QLocale::Language language);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
     QString m_token;
     QString m_referer;
+    QString m_applicationId;
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    QSystemNetworkInfo m_networkInfo;
+#endif
 };
 
 #endif
