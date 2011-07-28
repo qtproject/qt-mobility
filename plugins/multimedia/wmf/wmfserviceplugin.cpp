@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,59 @@
 **
 ****************************************************************************/
 
-#include <dshow.h>
-#include <d3d9.h>
-#include <vmr9.h>
-#include <qedit.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
+#include <QtCore/QFile>
 
-int main(int, char**)
+#include "wmfserviceplugin.h"
+#ifdef QMEDIA_MEDIAFOUNDATION_PLAYER
+#include "mfplayerservice.h"
+#endif
+#include <qmediaserviceprovider.h>
+
+QStringList WMFServicePlugin::keys() const
 {
+    return QStringList()
+#ifdef QMEDIA_MEDIAFOUNDATION_PLAYER
+            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
+#endif
+            ;
+}
+
+QMediaService* WMFServicePlugin::create(QString const& key)
+{
+#ifdef QMEDIA_MEDIAFOUNDATION_PLAYER
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
+        return new MFPlayerService;
+#endif
+
+    //qDebug() << "unsupported key:" << key;
     return 0;
 }
+
+void WMFServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
+QMediaServiceProviderHint::Features WMFServicePlugin::supportedFeatures(
+        const QByteArray &service) const
+{
+    if (service == Q_MEDIASERVICE_MEDIAPLAYER)
+        return QMediaServiceProviderHint::StreamPlayback;
+    else
+        return QMediaServiceProviderHint::Features();
+}
+
+QList<QByteArray> WMFServicePlugin::devices(const QByteArray &service) const
+{
+    return QList<QByteArray>();
+}
+
+QString WMFServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
+{
+    return QString();
+}
+
+Q_EXPORT_PLUGIN2(qtmedia_wmfengine, WMFServicePlugin);
+

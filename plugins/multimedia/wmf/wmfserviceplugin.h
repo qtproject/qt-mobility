@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,30 @@
 **
 ****************************************************************************/
 
-#include <dshow.h>
-#include <d3d9.h>
-#include <vmr9.h>
-#include <qedit.h>
+#ifndef WMFSERVICEPLUGIN_H
+#define WMFSERVICEPLUGIN_H
 
-int main(int, char**)
+#include "qmediaserviceproviderplugin.h"
+
+QT_USE_NAMESPACE
+
+class WMFServicePlugin
+    : public QMediaServiceProviderPlugin
+    , public QMediaServiceSupportedDevicesInterface
+    , public QMediaServiceFeaturesInterface
 {
-    return 0;
-}
+    Q_OBJECT
+    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QMediaServiceFeaturesInterface)
+public:
+    QStringList keys() const;
+    QMediaService* create(QString const& key);
+    void release(QMediaService *service);
+
+    QMediaServiceProviderHint::Features supportedFeatures(const QByteArray &service) const;
+
+    QList<QByteArray> devices(const QByteArray &service) const;
+    QString deviceDescription(const QByteArray &service, const QByteArray &device);
+};
+
+#endif // DSSERVICEPLUGIN_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,46 @@
 **
 ****************************************************************************/
 
-#include <dshow.h>
-#include <d3d9.h>
-#include <vmr9.h>
-#include <qedit.h>
+#ifndef MFAUDIOENDPOINTCONTROL_H
+#define MFAUDIOENDPOINTCONTROL_H
 
-int main(int, char**)
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mmdeviceapi.h>
+
+#include "../../src/multimedia/qaudioendpointselector.h"
+
+class MFPlayerService;
+
+QT_USE_NAMESPACE
+
+class MFAudioEndpointControl : public QAudioEndpointSelector
 {
-    return 0;
-}
+    Q_OBJECT
+public:
+    MFAudioEndpointControl(QObject *parent = 0);
+    ~MFAudioEndpointControl();
+
+    QList<QString> availableEndpoints() const;
+
+    QString endpointDescription(const QString &name) const;
+
+    QString defaultEndpoint() const;
+    QString activeEndpoint() const;
+
+    void setActiveEndpoint(const QString& name);
+
+    IMFActivate* currentActivate() const;
+
+private:
+    void updateEndpoints();
+
+    QString m_defaultEndpoint;
+    QString m_activeEndpoint;
+    QMap<QString, LPWSTR> m_devices;
+    IMFActivate *m_currentActivate;
+
+};
+
+#endif
+

@@ -1,7 +1,7 @@
 TEMPLATE = lib
 
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(dsengine)
+TARGET = $$qtLibraryTarget(wmfengine)
 
 PLUGIN_TYPE=mediaservice
 
@@ -15,11 +15,7 @@ MOBILITY = multimedia
 
 DEPENDPATH += .
 
-HEADERS += dsserviceplugin.h
-SOURCES += dsserviceplugin.cpp
+HEADERS += wmfserviceplugin.h
+SOURCES += wmfserviceplugin.cpp
 
-!contains(wmsdk_enabled, yes): DEFINES += QT_NO_WMSDK
-
-contains(wmf_enabled, no): include (player/player.pri)
-
-include (camera/camera.pri)
+include (player/player.pri)

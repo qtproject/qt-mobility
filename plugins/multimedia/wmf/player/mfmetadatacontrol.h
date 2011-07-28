@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,42 @@
 **
 ****************************************************************************/
 
-#include <dshow.h>
-#include <d3d9.h>
-#include <vmr9.h>
-#include <qedit.h>
+#ifndef MFMETADATACONTROL_H
+#define MFMETADATACONTROL_H
 
-int main(int, char**)
+#include <qmetadatareadercontrol.h>
+#include "Mfidl.h"
+
+QT_USE_NAMESPACE
+
+class MFMetaDataControl : public QMetaDataReaderControl
 {
-    return 0;
-}
+    Q_OBJECT
+public:
+    MFMetaDataControl(QObject *parent = 0);
+    ~MFMetaDataControl();
+
+    bool isMetaDataAvailable() const;
+
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
+
+    QVariant extendedMetaData(const QString &key) const;
+    QStringList availableExtendedMetaData() const;
+
+    void updateSource(IMFPresentationDescriptor* sourcePD, IMFMediaSource* mediaSource);
+
+private:
+    QVariant convertValue(const PROPVARIANT& var) const;
+    IPropertyStore  *m_content;  //for Windows7
+    IMFMetadata        *m_metaData; //for Vista
+
+    QList<QtMultimediaKit::MetaData> m_availableMetaDatas;
+    QList<PROPERTYKEY> m_commonKeys; //for Windows7
+    QStringList        m_commonNames; //for Vista
+
+    QStringList m_extendedMetaDatas;
+    QList<PROPERTYKEY> m_extendedKeys; //for Windows7
+};
+
+#endif

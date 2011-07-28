@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,73 @@
 **
 ****************************************************************************/
 
-#include <dshow.h>
-#include <d3d9.h>
-#include <vmr9.h>
-#include <qedit.h>
+#ifndef EVR9VIDEOWINDOWCONTROL_H
+#define EVR9VIDEOWINDOWCONTROL_H
 
-int main(int, char**)
+#include "../../src/multimedia/qvideowindowcontrol.h"
+
+#include <Mfidl.h>
+#include <d3d9.h>
+#include <Evr9.h>
+
+QT_USE_NAMESPACE
+
+class Evr9VideoWindowControl : public QVideoWindowControl
 {
-    return 0;
-}
+    Q_OBJECT
+public:
+    Evr9VideoWindowControl(QObject *parent = 0);
+    ~Evr9VideoWindowControl();
+
+    WId winId() const;
+    void setWinId(WId id);
+
+    QRect displayRect() const;
+    void setDisplayRect(const QRect &rect);
+
+    bool isFullScreen() const;
+    void setFullScreen(bool fullScreen);
+
+    void repaint();
+
+    QSize nativeSize() const;
+
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
+
+    int brightness() const;
+    void setBrightness(int brightness);
+
+    int contrast() const;
+    void setContrast(int contrast);
+
+    int hue() const;
+    void setHue(int hue);
+
+    int saturation() const;
+    void setSaturation(int saturation);
+
+    IMFActivate* currentActivate() const;
+
+private:
+    void setProcAmpValues();
+    DXVA2_Fixed32 scaleProcAmpValue(DWORD prop, int value) const;
+
+    WId m_windowId;
+    COLORREF m_windowColor;
+    DWORD m_dirtyValues;
+    Qt::AspectRatioMode m_aspectRatioMode;
+    QRect m_displayRect;
+    int m_brightness;
+    int m_contrast;
+    int m_hue;
+    int m_saturation;
+    bool m_fullScreen;
+
+    IMFActivate *m_currentActivate;
+    IMFMediaSink *m_evrSink;
+    IMFVideoDisplayControl *m_displayControl;
+    IMFVideoProcessor *m_processor;
+};
+
+#endif

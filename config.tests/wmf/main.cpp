@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,18 @@
 **
 ****************************************************************************/
 
-#include <dshow.h>
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mferror.h>
 #include <d3d9.h>
-#include <vmr9.h>
-#include <qedit.h>
+#include <evr9.h>
+#include <mmdeviceapi.h>
 
 int main(int, char**)
 {
+    HRESULT hr = MENonFatalError;
+    if (SUCCEEDED(hr)) {
+        return 1;
+    }
     return 0;
 }

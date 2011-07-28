@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,58 @@
 **
 ****************************************************************************/
 
-#include <dshow.h>
-#include <d3d9.h>
-#include <vmr9.h>
-#include <qedit.h>
+#ifndef MFPLAYERSERVICE_H
+#define MFPLAYERSERVICE_H
 
-int main(int, char**)
+#include <mfapi.h>
+#include <mfidl.h>
+
+#include "qmediaplayer.h"
+#include "qmediaresource.h"
+#include "qmediaservice.h"
+#include "qmediatimerange.h"
+
+QT_BEGIN_NAMESPACE
+class QMediaContent;
+QT_END_NAMESPACE
+
+QT_USE_NAMESPACE
+
+#ifndef Q_WS_SIMULATOR
+class Evr9VideoWindowControl;
+#endif
+class MFAudioEndpointControl;
+class MFVideoRendererControl;
+class MFPlayerControl;
+class MFMetaDataControl;
+class MFPlayerSession;
+
+class MFPlayerService : public QMediaService
 {
-    return 0;
-}
+    Q_OBJECT
+public:
+    MFPlayerService(QObject *parent = 0);
+    ~MFPlayerService();
+
+    QMediaControl* requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
+
+    MFAudioEndpointControl* audioEndpointControl() const;
+    MFVideoRendererControl* videoRendererControl() const;
+#ifndef Q_WS_SIMULATOR
+    Evr9VideoWindowControl* videoWindowControl() const;
+#endif
+    MFMetaDataControl* metaDataControl() const;
+
+private:
+    MFPlayerSession *m_session;
+    MFVideoRendererControl *m_videoRendererControl;
+    MFAudioEndpointControl *m_audioEndpointControl;
+#ifndef Q_WS_SIMULATOR
+    Evr9VideoWindowControl *m_videoWindowControl;
+#endif
+    MFPlayerControl        *m_player;
+    MFMetaDataControl      *m_metaDataControl;
+};
+
+#endif

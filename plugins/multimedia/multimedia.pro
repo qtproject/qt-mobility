@@ -16,6 +16,7 @@ win32 {
 
 win32:!wince* {
     contains(directshow_enabled, yes): SUBDIRS += directshow
+    contains(wmf_enabled, yes) : SUBDIRS += wmf
 }
 
 simulator: SUBDIRS += simulator
