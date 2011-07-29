@@ -123,6 +123,7 @@ private Q_SLOTS:
 
     void handleResourcesGranted();
     void handleResourcesLost();
+    void handleResourcesDenied();
 
 private:
     bool openFifo();
