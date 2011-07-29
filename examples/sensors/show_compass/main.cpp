@@ -51,10 +51,12 @@ public:
         int diff = ( reading->timestamp() - stamp );
         stamp = reading->timestamp();
         QTextStream out(stdout);
+//! [compass-read]
         out << QString("Compass heading: %1").arg(reading->azimuth(), 3, 'f', 0)
             << QString(" calibration: %1").arg(reading->calibrationLevel(), 3, 'f', 1)
             << QString(" (%1 ms since last, %2 Hz)").arg(diff / 1000, 4).arg( 1000000.0 / diff, 4, 'f', 1) << endl;
-        return true;
+//! [compass-read]
+            return true;
     }
 private:
     qtimestamp stamp;
@@ -68,6 +70,7 @@ int main(int argc, char **argv)
     int rate_val = 0;
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
+//! [compass-init]
     QCompass sensor;
     sensor.connectToBackend();
 
@@ -78,8 +81,10 @@ int main(int argc, char **argv)
     sensor.addFilter(&filter);
     sensor.start();
     if (!sensor.isActive()) {
-        qWarning("Compasssensor didn't start!");
+        qWarning("Compass sensor didn't start!");
         return 1;
     }
+//! [compass-init]
+
     return app.exec();
 }

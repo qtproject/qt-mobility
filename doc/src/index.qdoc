@@ -278,6 +278,12 @@
 
     For more details, see the \l {Feedback}{Feedback API Overview}.
 
+    \section1 \l {QtMobility QML Plugins}
+
+    The various APIs that constitute QtMobility are have QML interfaces to
+    give non-C++ developers the opportunity to produce applications that utilize
+    the power of Qt and QtMobility.
+
     \section1 The QtMobility Namespace
 
     The QtMobility APIs are placed into the QtMobility namespace. This is
