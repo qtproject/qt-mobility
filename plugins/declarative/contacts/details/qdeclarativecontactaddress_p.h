@@ -59,6 +59,7 @@ class QDeclarativeContactAddress : public QDeclarativeContactDetail
     Q_PROPERTY(QString country READ country WRITE setCountry  NOTIFY fieldsChanged)
     Q_PROPERTY(QVariant subTypes READ subTypes WRITE setSubTypes NOTIFY fieldsChanged)
     Q_PROPERTY(QString postOfficeBox READ postOfficeBox WRITE setPostOfficeBox  NOTIFY fieldsChanged)
+    Q_PROPERTY(QString extendedAddress READ extendedAddress WRITE setExtendedAddress  NOTIFY fieldsChanged)
     Q_ENUMS(FieldType)
     Q_ENUMS(AddressSubType)
 public:
@@ -69,7 +70,8 @@ public:
         Postcode,
         Country,
         SubTypes,
-        PostOfficeBox
+        PostOfficeBox,
+        ExtendedAddress
     };
 
     enum AddressSubType {
@@ -108,6 +110,8 @@ public:
             return QContactAddress::FieldSubTypes;
         case PostOfficeBox:
             return QContactAddress::FieldPostOfficeBox;
+        case ExtendedAddress:
+            return QContactAddress::FieldExtendedAddress;
         default:
             break;
         }
@@ -162,6 +166,14 @@ public:
         }
     }
     QString postOfficeBox() const {return detail().value(QContactAddress::FieldPostOfficeBox);}
+    void setExtendedAddress(const QString& v)
+    {
+        if (!readOnly() && v != extendedAddress()) {
+            detail().setValue(QContactAddress::FieldExtendedAddress, v);
+            emit fieldsChanged();
+        }
+    }
+    QString extendedAddress() const {return detail().value(QContactAddress::FieldExtendedAddress);}
 
     void setSubTypes(const QVariant& subTypes)
     {

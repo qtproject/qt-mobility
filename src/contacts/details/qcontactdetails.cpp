@@ -612,6 +612,16 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldCountry, "Country");
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostOfficeBox, "PostOfficeBox");
 
 /*!
+   \variable QContactAddress::FieldExtendedAddress
+
+   The field key constant for the value containing the extended address segment.
+   The extended address segment is optional; could contain a note, floor or room
+   number - in general a data that is not needed for a postal letter to arrive.
+   \sa extendedAddress(), setExtendedAddress()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldExtendedAddress, "ExtendedAddress");
+
+/*!
    \variable QContactAddress::FieldSubTypes
 
    The field key constant for the field that stores the sub types of a QContactAddress.
@@ -665,6 +675,18 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International")
    \fn QContactAddress::setPostOfficeBox(const QString& postOfficeBox)
    Sets the post office box segment of the address stored in this detail to \a postOfficeBox.
    \since 1.0
+ */
+
+/*!
+   \fn QContactAddress::extendedAddress() const
+   Returns the extended address segment of the address stored in this detail.
+   \since 1.2.2
+ */
+
+/*!
+   \fn QContactAddress::setExtendedAddress(const QString& extendedAddress)
+   Sets the extended address segment of the address stored in this detail to \a extendedAddress.
+   \since 1.2.2
  */
 
 /*!
@@ -785,6 +807,12 @@ QContactFilter QContactAddress::match(const QString &subString)
                                QContactAddress::FieldPostOfficeBox);
     f6.setValue(subString);
     f6.setMatchFlags(QContactFilter::MatchContains);
+
+    QContactDetailFilter f7;
+    f7.setDetailDefinitionName(QContactAddress::DefinitionName,
+                               QContactAddress::FieldExtendedAddress);
+    f7.setValue(subString);
+    f7.setMatchFlags(QContactFilter::MatchContains);
 
     return (f1 | f2 | f3 | f4 | f5 | f6);
 }

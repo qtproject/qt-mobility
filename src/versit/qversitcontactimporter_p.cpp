@@ -339,9 +339,9 @@ bool QVersitContactImporterPrivate::createAddress(
     QString value(takeFirst(addressParts));
     if (!value.isEmpty())
         address.setPostOfficeBox(value);
-    // There is no setter for the Extended Address in QContactAddress:
-    if (!addressParts.isEmpty())
-        addressParts.removeFirst();
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setExtendedAddress(value);
     value = takeFirst(addressParts);
     if (!value.isEmpty())
         address.setStreet(value);
