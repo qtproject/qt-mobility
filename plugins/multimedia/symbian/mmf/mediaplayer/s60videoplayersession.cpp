@@ -360,19 +360,21 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
         if (videoOutput) {
             if (S60VideoWidgetControl *control = qobject_cast<S60VideoWidgetControl *>(videoOutput))
                 m_videoOutputDisplay = control->display();
-            if (!m_videoOutputDisplay)
-                return;
-            m_videoOutputDisplay->setHasContent(QMediaPlayer::PlayingState == state());
-            m_videoOutputDisplay->setNativeSize(m_nativeSize);
-            connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
-            connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
-            connect(m_videoOutputDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(displayRectChanged()));
-            connect(m_videoOutputDisplay, SIGNAL(aspectRatioModeChanged(Qt::AspectRatioMode)), this, SLOT(aspectRatioChanged()));
-            connect(m_videoOutputDisplay, SIGNAL(rotationChanged(qreal)), this, SLOT(rotationChanged()));
+            else if (S60VideoWindowControl *control = qobject_cast<S60VideoWindowControl *>(videoOutput))
+                m_videoOutputDisplay = control->display();
+            if (m_videoOutputDisplay) {
+                m_videoOutputDisplay->setHasContent(QMediaPlayer::PlayingState == state());
+                m_videoOutputDisplay->setNativeSize(m_nativeSize);
+                connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
+                connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
+                connect(m_videoOutputDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(displayRectChanged()));
+                connect(m_videoOutputDisplay, SIGNAL(aspectRatioModeChanged(Qt::AspectRatioMode)), this, SLOT(aspectRatioChanged()));
+                connect(m_videoOutputDisplay, SIGNAL(rotationChanged(qreal)), this, SLOT(rotationChanged()));
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
-            connect(m_videoOutputDisplay, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
-            connect(m_videoOutputDisplay, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
+                connect(m_videoOutputDisplay, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
+                connect(m_videoOutputDisplay, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
 #endif
+            }
         }
         m_videoOutputControl = videoOutput;
         windowHandleChanged();
