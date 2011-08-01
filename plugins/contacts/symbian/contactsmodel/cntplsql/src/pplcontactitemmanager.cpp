@@ -34,6 +34,8 @@
 #include <sqldb.h>
 #include <cntdb.h>
 
+//uncomment for commonly required debug printing
+//#define __VERBOSE_DEBUG__
 
 
 /**
@@ -472,7 +474,9 @@ Sets the CCntSqlStatement to be used for reading contact item.
 */
 void CPplContactItemManager::ConstructL()
 	{
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::ConstructL"));
+#endif	
 	TCntSqlStatementType statementType(ESelect, KSqlContactTableName);
 	
 	iSelectStatement = TSqlProvider::GetSqlStatementL(statementType);
@@ -509,8 +513,9 @@ void CPplContactItemManager::ConstructL()
 	iPreferencePersistor = CPplPreferencesPersistor::NewL(iDatabase);
 	// Connect to metadata server
 	//User::LeaveIfError(iColSession.Connect());
-
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::ConstructL ends"));
+#endif
 	}
 
 /**
@@ -573,8 +578,9 @@ Utility method used to create tables in a newly create database
 */	
 void CPplContactItemManager::CreateTablesL()
 	{
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::CreateTablesL"));	
-
+#endif
 	TBool controlTransaction = !(iTransactionManager.IsTransactionActive());
 	
 	if (controlTransaction)
@@ -591,8 +597,9 @@ void CPplContactItemManager::CreateTablesL()
 		{
 		CommitTransactionL();
 		}			
-
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::CreateTablesL ends"));	
+#endif
 	}
 	
 /**
