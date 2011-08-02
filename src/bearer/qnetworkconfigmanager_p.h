@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QNETWORKCONFIGURATIONMANAGERPRIVATE_H
-#define QNETWORKCONFIGURATIONMANAGERPRIVATE_H
+#ifndef QTM_NETWORKCONFIGURATIONMANAGERPRIVATE_H
+#define QTM_NETWORKCONFIGURATIONMANAGERPRIVATE_H
 
 //
 //  W A R N I N G
@@ -54,125 +54,31 @@
 //
 
 #include "qnetworkconfigmanager.h"
-#include "qnetworkconfiguration_p.h"
+#include "qnetworkconfiguration.h"
+#include "qnetworkconfigmanageradaptor_p.h"
 
-#include <QHash>
-#include <QStringList>
+#include <QtNetwork/qnetworkconfigmanager.h>
 
 QTM_BEGIN_NAMESPACE
 
-#ifdef BEARER_ENGINE
-class QNetworkSessionEngine;
-class QGenericEngine;
-class QNlaEngine;
-class QNativeWifiEngine;
-class QNmWifiEngine;
-class QCoreWlanEngine;
-#endif
-
-
-class QNetworkConfigurationManagerPrivate : public QObject
+class QNetworkConfigurationManagerPrivate : public QNetworkConfigurationManagerAdaptor
 {
     Q_OBJECT
 public:
-    QNetworkConfigurationManagerPrivate()
-    :   QObject(0), capFlags(0), firstUpdate(true)
-    {
-        registerPlatformCapabilities();
-        updateConfigurations();
-    }
-
-    virtual ~QNetworkConfigurationManagerPrivate() 
-    {
-        QList<QString> configIdents = snapConfigurations.keys();
-        foreach(const QString oldIface, configIdents) {
-            QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = snapConfigurations.take(oldIface);
-            priv->isValid = false;
-            priv->id.clear();
-        }
-
-        configIdents = accessPointConfigurations.keys();
-        foreach(const QString oldIface, configIdents) {
-            QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(oldIface);
-            priv->isValid = false;
-            priv->id.clear();
-        }
-    }
-
-    QNetworkConfiguration defaultConfiguration();
-
-    QNetworkConfigurationManager::Capabilities capFlags;
-    void registerPlatformCapabilities();
-
-    void performAsyncConfigurationUpdate();
-
-    //this table contains an up to date list of all configs at any time.
-    //it must be updated if configurations change, are added/removed or
-    //the members of ServiceNetworks change
-    QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > accessPointConfigurations;
-    QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > snapConfigurations;
-    QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > userChoiceConfigurations;
-#ifdef BEARER_ENGINE
-    QHash<QString, QNetworkSessionEngine *> configurationEngine;
-#endif
-    bool firstUpdate;
-
-public slots:
-    void updateConfigurations();
+    QNetworkConfigurationManagerPrivate();
+    QT_PREPEND_NAMESPACE(QNetworkConfigurationManager) impl;
 
 Q_SIGNALS:
     void configurationAdded(const QNetworkConfiguration& config);
     void configurationRemoved(const QNetworkConfiguration& config);
-    void configurationUpdateComplete();
     void configurationChanged(const QNetworkConfiguration& config);
-    void onlineStateChanged(bool isOnline);
 
-private:
-#ifdef BEARER_ENGINE
-    void updateInternetServiceConfiguration();
-
-    void abort();
-#endif
-
-#ifdef BEARER_ENGINE
-    QGenericEngine *generic;
-#ifdef Q_OS_WIN
-    QNlaEngine *nla;
-#ifndef Q_OS_WINCE
-    QNativeWifiEngine *nativeWifi;
-#endif
-#endif
-#ifdef BACKEND_NM
-    QNmWifiEngine *nmWifi;
-#endif
-#ifdef Q_OS_DARWIN
-    QCoreWlanEngine *coreWifi;
-#endif
-
-    uint onlineConfigurations;
-
-    enum EngineUpdate {
-        NotUpdating = 0x00,
-        Updating = 0x01,
-        GenericUpdating = 0x02,
-        NlaUpdating = 0x04,
-        NativeWifiUpdating = 0x08,
-        NmUpdating = 0x20,
-        CoreWifiUpdating = 0x40,
-    };
-    Q_DECLARE_FLAGS(EngineUpdateState, EngineUpdate)
-
-    EngineUpdateState updateState;
-#endif
-
-private Q_SLOTS:
-#ifdef BEARER_ENGINE
-    void configurationAdded(QNetworkConfigurationPrivate *cpPriv, QNetworkSessionEngine *engine);
-    void configurationRemoved(const QString &id);
-    void configurationChanged(QNetworkConfigurationPrivate *cpPriv);
-#endif
+protected:
+    void _q_configurationAdded(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config);
+    void _q_configurationRemoved(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config);
+    void _q_configurationChanged(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config);
 };
 
 QTM_END_NAMESPACE
 
-#endif //QNETWORKCONFIGURATIONMANAGERPRIVATE_H
+#endif //QTM_NETWORKCONFIGURATIONMANAGERPRIVATE_H

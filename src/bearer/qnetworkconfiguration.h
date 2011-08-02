@@ -39,26 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QNETWORKCONFIGURATION_H
-#define QNETWORKCONFIGURATION_H
+#ifndef QTM_NETWORKCONFIGURATION_H
+#define QTM_NETWORKCONFIGURATION_H
 
 #include "qmobilityglobal.h"
 
 #include <QtCore/qshareddata.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qlist.h>
+#include <QtNetwork/qnetworkconfiguration.h>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
-class Q_BEARER_EXPORT QNetworkConfiguration
+class Q_BEARER_EXPORT QNetworkConfiguration : public QT_PREPEND_NAMESPACE(QNetworkConfiguration)
 {
 public:
     QNetworkConfiguration();
     QNetworkConfiguration(const QNetworkConfiguration& other);
     QNetworkConfiguration &operator=(const QNetworkConfiguration& other);
+    QNetworkConfiguration(const QT_PREPEND_NAMESPACE(QNetworkConfiguration) &); //internal
     ~QNetworkConfiguration();
 
     bool operator==(const QNetworkConfiguration& cp) const;
@@ -100,15 +102,12 @@ public:
     bool isValid() const;
 
 private:
-    friend class QNetworkConfigurationPrivate;
-    friend class QNetworkConfigurationManager;
-    friend class QNetworkConfigurationManagerPrivate;
-    friend class QNetworkSessionPrivate;
-    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> d;
+    //'d' is removed, but the base class has the same 'd' so class size remains the same.
+    //QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> d;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //QNETWORKCONFIGURATION_H
+#endif //QTM_NETWORKCONFIGURATION_H

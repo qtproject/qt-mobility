@@ -39,18 +39,7 @@
 **
 ****************************************************************************/
 
-#include <QEventLoop>
-#include <QTimer>
-
-#include "qnetworksession.h"
-
-#ifdef Q_OS_SYMBIAN
-#include "qnetworksession_s60_p.h"
-#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
-#include "qnetworksession_maemo_p.h"
-#else
 #include "qnetworksession_p.h"
-#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -229,12 +218,18 @@ QTM_BEGIN_NAMESPACE
 QNetworkSession::QNetworkSession(const QNetworkConfiguration& connectionConfig, QObject* parent)
     : QObject(parent)
 {
-    d = new QNetworkSessionPrivate;
+    d = new QNetworkSessionPrivate(connectionConfig);
     d->q = this;
-    d->publicConfig = connectionConfig;
-    d->syncStateWithInterface();
-    QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()),
-                this, SIGNAL(opened()));
+    //connect implementation signals to ours...
+    QObject::connect(&(d->impl), SIGNAL(opened()), this, SIGNAL(opened()));
+    QObject::connect(&(d->impl), SIGNAL(closed()), this, SIGNAL(closed()));
+    QObject::connect(&(d->impl), SIGNAL(newConfigurationActivated()), this, SIGNAL(newConfigurationActivated()));
+    //and ones requiring translation
+    QObject::connect(&(d->impl), SIGNAL(stateChanged(QNetworkSession::State)),
+        d, SLOT(_q_stateChanged(QNetworkSession::State)));
+    QObject::connect(&(d->impl), SIGNAL(error(QNetworkSession::SessionError)),
+        d, SLOT(_q_error(QNetworkSession::SessionError)));
+    //preferredConfigurationChanged is not connected here because it has side effects, see connectNotify
 }
 
 /*!
@@ -264,7 +259,7 @@ QNetworkSession::~QNetworkSession()
 */
 void QNetworkSession::open()
 {
-    d->open();
+    d->impl.open();
 }
 
 /*!
@@ -286,27 +281,7 @@ void QNetworkSession::open()
 */
 bool QNetworkSession::waitForOpened(int msecs)
 {
-    if (d->isOpen)
-        return true;
-
-    if (d->state != Connecting)
-        return false;
-
-    QEventLoop* loop = new QEventLoop(this);
-    QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()),
-                     loop, SLOT(quit()));
-    QObject::connect(this, SIGNAL(error(QNetworkSession::SessionError)),
-                     loop, SLOT(quit()));
-
-    //final call
-    if (msecs>=0)
-        QTimer::singleShot(msecs, loop, SLOT(quit()));
-
-    loop->exec();
-    loop->disconnect();
-    loop->deleteLater();
-
-    return d->isOpen;
+    return d->impl.waitForOpened(msecs);
 }
 
 /*!
@@ -325,7 +300,7 @@ bool QNetworkSession::waitForOpened(int msecs)
 */
 void QNetworkSession::close()
 {
-    d->close();
+    d->impl.close();
 }
 
 /*!
@@ -340,7 +315,7 @@ void QNetworkSession::close()
 */
 void QNetworkSession::stop()
 {
-    d->stop();
+    d->impl.stop();
 }
 
 /*!
@@ -350,7 +325,7 @@ void QNetworkSession::stop()
 */
 QNetworkConfiguration QNetworkSession::configuration() const
 {
-    return d->publicConfig;
+    return d->impl.configuration();
 }
 
 /*
@@ -419,7 +394,7 @@ QNetworkConfiguration QNetworkSession::configuration() const
 */
 QNetworkInterface QNetworkSession::interface() const
 {
-    return d->currentInterface();
+    return d->impl.interface();
 }
 
 /*!
@@ -430,7 +405,7 @@ QNetworkInterface QNetworkSession::interface() const
 */
 bool QNetworkSession::isOpen() const
 {
-    return d->isOpen;
+    return d->impl.isOpen();
 }
 
 /*!
@@ -452,7 +427,7 @@ bool QNetworkSession::isOpen() const
 */
 QNetworkSession::State QNetworkSession::state() const
 {
-    return d->state;
+    return (QNetworkSession::State)d->impl.state();
 }
 
 /*!
@@ -462,7 +437,7 @@ QNetworkSession::State QNetworkSession::state() const
 */
 QNetworkSession::SessionError QNetworkSession::error() const
 {
-    return d->error();
+    return (QNetworkSession::SessionError)d->impl.error();
 }
 
 /*!
@@ -473,7 +448,7 @@ QNetworkSession::SessionError QNetworkSession::error() const
 */
 QString QNetworkSession::errorString() const
 {
-    return d->errorString();
+    return d->impl.errorString();
 }
 
 /*!
@@ -531,27 +506,8 @@ QString QNetworkSession::errorString() const
 */
 QVariant QNetworkSession::sessionProperty(const QString& key) const
 {
-    if (!d->publicConfig.isValid())
-        return QVariant();
-
-    if (key == "ActiveConfiguration") {
-        if (!d->isOpen)
-            return QString();
-        else
-            return d->activeConfig.identifier();
-    }
-
-    if (key == "UserChoiceConfiguration") {
-        if (!d->isOpen || d->publicConfig.type() != QNetworkConfiguration::UserChoice)
-            return QString();
-
-        if (d->serviceConfig.isValid())
-            return d->serviceConfig.identifier();
-        else
-            return d->activeConfig.identifier();
-    }
-
-    return d->sessionProperty(key);
+    //all the public documented properties are string/bool so this should be safe
+    return d->impl.sessionProperty(key);
 }
 
 /*!
@@ -564,11 +520,7 @@ QVariant QNetworkSession::sessionProperty(const QString& key) const
 */
 void QNetworkSession::setSessionProperty(const QString& key, const QVariant& value)
 {
-    if (key == "ActiveConfiguration"
-            || key == "UserChoiceConfiguration")
-        return;
-
-    d->setSessionProperty(key, value);
+    d->impl.setSessionProperty(key, value);
 }
 
 /*!
@@ -581,7 +533,7 @@ void QNetworkSession::setSessionProperty(const QString& key, const QVariant& val
 */
 void QNetworkSession::migrate()
 {
-    d->migrate();
+    d->impl.migrate();
 }
 
 /*!
@@ -593,7 +545,7 @@ void QNetworkSession::ignore()
 {
     // Needed on at least Symbian platform: the roaming must be explicitly
     // ignore()'d or migrate()'d
-    d->ignore();
+    d->impl.ignore();
 }
 
 /*!
@@ -606,7 +558,7 @@ void QNetworkSession::ignore()
 */
 void QNetworkSession::accept()
 {
-    d->accept();
+    d->impl.accept();
 }
 
 /*!
@@ -618,7 +570,7 @@ void QNetworkSession::accept()
 */
 void QNetworkSession::reject()
 {
-    d->reject();
+    d->impl.reject();
 }
 
 
@@ -638,7 +590,7 @@ void QNetworkSession::reject()
 */
 quint64 QNetworkSession::bytesWritten() const
 {
-    return d->bytesWritten();
+    return d->impl.bytesWritten();
 }
 
 /*!
@@ -657,7 +609,7 @@ quint64 QNetworkSession::bytesWritten() const
 */
 quint64 QNetworkSession::bytesReceived() const
 {
-    return d->bytesReceived();
+    return d->impl.bytesReceived();
 }
 
 /*!
@@ -665,7 +617,7 @@ quint64 QNetworkSession::bytesReceived() const
 */
 quint64 QNetworkSession::activeTime() const
 {
-    return d->activeTime();
+    return d->impl.activeTime();
 }
 
 /*!
@@ -683,12 +635,11 @@ void QNetworkSession::connectNotify(const char *signal)
 {
     QObject::connectNotify(signal);
     //check for preferredConfigurationChanged() signal connect notification
-    //This is not required on all platforms
-#ifdef Q_OS_SYMBIAN
     if (qstrcmp(signal, SIGNAL(preferredConfigurationChanged(QNetworkConfiguration,bool))) == 0) {
-        d->setALREnabled(true);
+        //connecting the implementation signal here allows implementation's connectNotify trigger to enable app level roaming
+        QObject::connect(&(d->impl), SIGNAL(preferredConfigurationChanged(const QNetworkConfiguration&, bool)),
+            d, SLOT(_q_preferredConfigurationChanged(const QNetworkConfiguration&, bool)));
     }
-#endif
 }
 
 /*!
@@ -703,14 +654,34 @@ void QNetworkSession::disconnectNotify(const char *signal)
 {
     QObject::disconnectNotify(signal);
     //check for preferredConfigurationChanged() signal disconnect notification
-    //This is not required on all platforms
-#ifdef Q_OS_SYMBIAN
     if (qstrcmp(signal, SIGNAL(preferredConfigurationChanged(QNetworkConfiguration,bool))) == 0) {
-        d->setALREnabled(false);
+        //disconnecting the implementation signal here allows implementation's connectNotify trigger to disable app level roaming
+        QObject::disconnect(&(d->impl), SIGNAL(preferredConfigurationChanged(const QNetworkConfiguration&, bool)),
+            d, SLOT(_q_preferredConfigurationChanged(const QNetworkConfiguration&, bool)));
     }
-#endif
+}
+
+QNetworkSessionPrivate::QNetworkSessionPrivate(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config)
+    : impl(config)
+{
+}
+
+void QNetworkSessionPrivate::_q_stateChanged(QT_PREPEND_NAMESPACE(QNetworkSession::State) state)
+{
+    emit q->stateChanged((QNetworkSession::State)state);
+}
+
+void QNetworkSessionPrivate::_q_error(QT_PREPEND_NAMESPACE(QNetworkSession::SessionError) err)
+{
+    emit q->error(QNetworkSession::SessionError(err));
+}
+
+void QNetworkSessionPrivate::_q_preferredConfigurationChanged(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config, bool isSeamless)
+{
+    emit q->preferredConfigurationChanged(config, isSeamless);
 }
 
 #include "moc_qnetworksession.cpp"
+#include "moc_qnetworksession_p.cpp"
 
 QTM_END_NAMESPACE
