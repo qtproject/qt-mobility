@@ -41,86 +41,120 @@
 
 //TESTED_COMPONENT=src/serviceframework
 
-function startTestApp()
-{
-    prompt('Start application \'declarative-sfw-notes\'
-    Verify test application started and closed without issue');
-}
-
-
 testcase = {
-
-    // prove that the test application starts before anything else is tested.
-    Run_Test_Application: function()
-    {
-        startTestApp();
-        if (!runAsManualTest()){
-            // ensure we have a widget to work with, dump its details
-            // TODO when run this test case 'automaticly' then enable this following code
-            //print('Focus widget is' + focusWidget());
-        }
-    },
 
     Add_Note_With_Date: function()
     {
-        prompt(twiki('*Add Note with date*
+        // Test meta data
+        testApplication = "SFW - Add Note With Date";
+        testBinary = "declarative-sfw-notes";
+        testGoal = "Verify that ";
+        testPreconditions = "notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*";
+        testGroups = "BAT";
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
-    1 Click \"+\" button
-    1 Enter a note in the form *Note1#2010-10-01#10:30*
-    1 Click *Ok* button
-    1 Verify that note entered is listed with date mentioned
-        '));
+        // Test steps
+        prompt(twiki("---+++ " + testApplication + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Click '+' button | |
+            | Enter a note in the form *Note1#2010-10-01#10:30* | |
+            | Click *Ok* button | Verify that note entered is listed with date mentioned |
+        "));
     },
 
     Add_Note_Without_Date: function()
     {
-        prompt(twiki('*Add Note without date*
+        // Test meta data
+        testApplication = "SFW - Add Note Without Date";
+        testBinary = "declarative-sfw-notes";
+        testGoal = "Verify that a note entered without a date gets the current date appended to it";
+        testPreconditions = "notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*";
+        testGroups = "BAT";
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
-    1 Click \"+\" button
-    1 Enter a note in the form *My Note*
-    1 Click *Ok* button
-    1 Verify that note entered has the current date
-       '));
+        // Test steps
+        prompt(twiki("---+++ " + testApplication + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | Click '+' button | |
+           | Enter a note in the form *My Note* | |
+           | Click *Ok* button | Verify that note entered has the current date |
+       "));
     },
 
     Browse_Notes: function()
     {
-        prompt(twiki('*Browse Notes*
+          // Test meta data
+          testApplication = "SFW - Browse Notes";
+          testBinary = "declarative-sfw-notes";
+          testGoal = "Verify that the user can browse through all notes in the system.";
+          testPreconditions = "notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*";
+          testGroups = "BAT";
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
-    1 If not done so enter at least three notes see in this System Test the functions *Add_Note_With_Date* and *Add_Note_Without_Date*
-    1 Verify that *right* arrow button on dialog can be used to navigate to last note
-    1 Verify that the *left* arrow button on dialog can be used to navigate to first note
-        '));
+          // Test steps
+          prompt(twiki("---+++ " + testApplication + "<br><br>
+              *Goal:* " + testGoal + "<br>
+              *Pre-Requisites:* " + testPreconditions + "<br>
+              *Tested Binary:* " + testBinary + "<br>
+
+              | *Step* | *Verification* |
+              | Launch " + testBinary + " | App launches normally |
+              | Ensure at least three notes exist in the system | Verify that *right* arrow button on dialog can be used to navigate to last note |
+              | | Verify that the *left* arrow button on dialog can be used to navigate to first note |
+        "));
     },
 
     Find_Note: function()
     {
-        prompt(twiki('*Find Note*
+       // Test meta data
+       testApplication = "SFW - Find Note";
+       testBinary = "declarative-sfw-notes";
+       testGoal = "Verify that notes can be found using the search function.";
+       testPreconditions = "1. notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*<br>
+   1. at least three notes have been entered in the system.";
+       testGroups = "BAT";
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
-    1 Click *Search* button ( looking glass )
-    1 Enter text from previously entered note, eg *My Note*
-    1 Click *OK* button
-    1 Verify that expected note is displayed
-        '));
+       // Test steps
+       prompt(twiki("---+++ " + testApplication + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | Click *Search* button ( looking glass ) | |
+           | Enter text from previously entered note, eg *My Note* | |
+           | Click *OK* button | Verify that expected note is displayed |
+        "));
    },
 
     Delete_Note: function()
     {
-        prompt(twiki('*Delete Note*
+         // Test meta data
+         testApplication = "SFW - Delete Note";
+         testBinary = "declarative-sfw-notes";
+         testGoal = "Verify that notes can be deleted.";
+         testPreconditions = "1. notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*<br>
+   1. at least three notes have been entered in the system.";
+         testGroups = "BAT";
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
-    1 Click the *Delete* button ( in between Add and Search buttons )
-    1 Verify that the current note was deleted, ie use left and right arrow buttons to browse notes.
-        '));
+         // Test steps
+         prompt(twiki("---+++ " + testApplication + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+             | *Step* | *Verification* |
+             | Launch " + testBinary + " | App launches normally |
+             | Click the *Delete* button ( in between Add and Search buttons ) | Verify that the current note was deleted, ie use left and right arrow buttons to browse notes. |
+        "));
     },
 
 }
