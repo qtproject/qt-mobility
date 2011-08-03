@@ -56,76 +56,111 @@ testcase = {
 
     enumeration: function()
     {
-    prompt(twiki("---++++ Enumeration of connections
+        // Test meta data
+        testApplication = "Bearer - Enumeration of Connections";
+        testBinary = "bearermonitor";
+        testGoal = "Verify the system can detect and display all available networks";
+        testPreconditions = "Work out the list of available networks:<br>
+   1. On S60 device: use Menu->Settings->Connectivity settings application.<br>
+   1. linux/Mac: ifconfig (as superuser)<br>
+   1. Windows: ipconfig<br><br>";
+        testGroups = "BAT";
 
-                 1. Work out the list of available networks:
-                    1. On S60 device, use Menu->Settings->Connectivity settings application.
-                    1. ifconfig (as superuser on linux/Mac)
-                    1. ipconfig (on Windows)
-                 1. Run the bearermonitor example application
-                 1. Press 'Scan'
-                 1. Verify all previously listed networks are shown in the application view
-"));
+         // Test Steps
+        prompt(twiki("---+++ " + testApplication + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App starts correctly |
+            | Press 'Scan' | Verify all available networks are shown in the application view |
+        "));
     },
 
     added_interfaces: function()
     {
-    prompt(twiki("---++++ Added network interfaces
+          // Test meta data
+          testApplication = "Bearer - Added network interfaces";
+          testBinary = "bearermonitor";
+          testGoal = "Verify that network interfaces can be added";
+          testPreconditions = "No network access points are defined on the device; a WLAN is available";
+          testGroups = "BAT";
 
-                 1. Pre: no network access points are defined on the device; a WLAN is available
-                 1. Run the bearercloud application
-                 1. Verify the cloud space is clear of networks
-                 1. Press the Menu key to background the application
-                 1. Open Settings -> Connectivity -> Wireless networks
-                 1. Select the WLAN from the list
-                 1. Press Connect
-                 1. Press the Menu key
-                 1. Select the bearercloud application to foreground it
-                 1. Verify the new network is displayed in the circle
-"));
+          // Test steps
+          prompt(twiki("---+++ " + testApplication + "<br><br>
+              *Goal:* " + testGoal + "<br>
+              *Pre-Requisites:* " + testPreconditions + "<br>
+              *Tested Binary:* " + testBinary + "<br>
+
+              | *Step* | *Verification* |
+              | Launch " + testBinary + " | Verify the cloud space is clear of networks |
+              | Press the Menu key to background the application | |
+              | Open Settings -> Connectivity -> Wireless networks | |
+              | Select the WLAN from the list | |
+              | Press Connect | |
+              | Press the Menu key | |
+              | Select the bearercloud application to foreground it | Verify the new network is displayed in the circle |
+          "));
     },
 
     removed_interfaces: function()
     {
-    prompt(twiki("---++++ Removed network interfaces
+        // Test meta data
+        testApplication = "Bearer - Removed network interfaces";
+        testBinary = "bearercloud";
+        testGoal = "Verify that removal of a network connection is detected correctly";
+        testPreconditions = "A connection to a WLAN exists";
+        testGroups = "BAT";
 
-                 1. Pre: Added network interfaces has been executed successfully
-                 1. Run the bearercloud application
-                 1. Verify the cloud space shows a network in the green circle
-                 1. Press the Menu key to background the application
-                 1. Open Settings -> Connectivity -> Destinations -> Uncategorised
-                 1. Select the WLAN from the list
-                 1. Press Options -> Delete, and then Yes in the confirm dialog
-                 1. Press the Menu key
-                 1. Select the bearercloud application to foreground it
-                 1. Verify the new network is not displayed in the circle
-"));
+        // Test steps
+        prompt(twiki("---+++ " + testApplication + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify the cloud space shows a network in the green circle |
+            | Press the Menu key to background the application | |
+            | Open Settings -> Connectivity -> Destinations -> Uncategorised | |
+            | Select the WLAN from the list | |
+            | Press Options -> Delete, and then Yes in the confirm dialog | |
+            | Press the Menu key | |
+            | Select the bearercloud application to foreground it | Verify the new network is not displayed in the circle |
+        "));
     },
 
     change_status: function()
     {
-        prompt(twiki("---++++ Changing the status of a network
+       // Test meta data
+       testApplication = "Bearer - Changing the status of a network";
+       testBinary = "bearercloud";
+       testGoal = "Verify that network status changes are detected correctly.";
+       testPreconditions = "no network access points are defined on the device; a WLAN is available";
+       testGroups = "BAT";
 
-                 1. Pre: no network access points are defined on the device; a WLAN is available
-                 1. Run the bearercloud application
-                 1. Verify the cloud space is clear of networks
-                 1. Press the Menu key to background the application
-                 1. Open Settings -> Connectivity -> Wireless networks
-                 1. Select the WLAN from the list
-                 1. Press Connect
-                 1. Press the Menu key
-                 1. Select the bearercloud application to foreground it
-                 1. Verify the new network is displayed in the green circle (connected)
-                 1. Press the Menu key to background the application
-                 1. Open Settings -> Connectivity -> Connection Mgr
-                 1. Select the WLAN from the list
-                 1. Press Options -> Disconnect
-                 1. Press the Menu key
-                 1. Select the bearercloud application to foreground it
-                 1. Verify the new network is now displayed in the blue circle (disconnected)
-                 1. Disable the network device (eg. unplug the access point)
-                 1. Verify that bearercloud shows the network moves to the grey circle (unavailable)
-"));
+       // Test steps
+       prompt(twiki("---+++ " + testApplication + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | Verify the cloud space is clear of networks |
+           | Press the Menu key to background the application | |
+           | Open Settings -> Connectivity -> Wireless networks | |
+           | Select the WLAN from the list | |
+           | Press Connect | |
+           | Press the Menu key | |
+           | Select the bearercloud application to foreground it | Verify the new network is displayed in the green circle (connected) |
+           | Press the Menu key to background the application | |
+           | Open Settings -> Connectivity -> Connection Mgr | |
+           | Select the WLAN from the list | |
+           | Press Options -> Disconnect | |
+           | Press the Menu key | |
+           | Select the bearercloud application to foreground it | Verify the new network is now displayed in the blue circle (disconnected) |
+           | Disable the network device (eg. unplug the access point) | Verify that bearercloud shows the network moves to the grey circle (unavailable) |
+        "));
     },
 
     interface_priority: function()
@@ -133,38 +168,44 @@ testcase = {
         if (testcase.platform != "symbian" && testcase.platform != "maemo") {
             skip("This test only applies to Symbian platform");
         }
-        prompt(twiki('---++++ Interfaces are used in order of priority
 
-    1. Pre: GPRS is available to the device
-    1. Pre: WLAN is available to the device
+        // Test meta data
+        testApplication = "Bearer - Interfaces are used in order of priority";
+        testBinary = "";
+        testGoal = "Verify that network interfaces are used in order of priority";
+        testPreconditions = "   1. GPRS is available to the device<br>
+   1. WLAN is available to the device";
+        testGroups = "BAT";
 
-    1. Press the Menu key
-    1. Select Settings->Connectivity->Destinations
-    1. Select Option->New Destination, enter a name
-    1. Select a picture
-    1. Select the destination
-    1. Select Option->New access point
-    1. Select Yes
-    1. Verify that the WLAN "x networks avail." is greater than 0
-    1. Select Wireless LAN
-    1. Select the test WLAN (and enter a key if necessary)
-    1. Select Option->New access point
-    1. Select Yes
-    1. Select Packet data
-    1. Enter a name and commit
-    1. Press Back
-    1. Select Options->Default connection
-    1. Select the new Destination
-    1. Verify the Destination has a check mark
-    1. Start the bearermonitor example application
-    1. In the list, select the new Destination
-    1. Verify "Roaming" is shown as "Available"
-    1. Move the device into an area not covered by the WLAN or simulate an uncovered environment
-    1. Verify the application indicates loss of WLAN network (may take 1 - 2 minutes)
-    1. Verify the application indicates a change of bearer to the GPRS network - may take 1 - 2 minutes
-    1. Move the device into or simulate the area covered by both networks
-    1. Verify the device connects to the network using the WLAN bearer
-    '));
+        // Test steps
+        prompt(twiki("---+++ " + testApplication + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+
+            | *Step* | *Verification* |
+            | Press the Menu key | |
+            | Select Settings->Connectivity->Destinations | |
+            | Select Option->New Destination, enter a name | |
+            | Select a picture | |
+            | Select the destination | |
+            | Select Option->New access point | |
+            | Select Yes | Verify that the WLAN 'x networks avail' is greater than 0 |
+            | Select Wireless LAN | |
+            | Select the test WLAN (and enter a key if necessary) | |
+            | Select Option->New access point | |
+            | Select Yes | |
+            | Select Packet data | |
+            | Enter a name and commit | |
+            | Press Back | |
+            | Select Options->Default connection | |
+            | Select the new Destination | Verify the Destination has a check mark |
+            | Start the bearermonitor example application | |
+            | In the list, select the new Destination | Verify 'Roaming' is shown as 'Available' |
+            | Move the device into an area not covered by the WLAN or simulate an uncovered environment | Verify the application indicates loss of WLAN network (may take 1 - 2 minutes) |
+            | Wait a bit longer (1 - 2 minutes) | Verify the application indicates a change of bearer to the GPRS network |
+            | Move the device into or simulate the area covered by both networks | Verify the device connects to the network using the WLAN bearer |
+    "));
     }
 
 }
