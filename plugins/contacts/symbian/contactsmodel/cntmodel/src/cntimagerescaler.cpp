@@ -353,7 +353,7 @@ void CImageRescaler::DecodeL()
             }
         }
 
-    User::LeaveIfError( iBitmap->Create( loadSize, iImageDecoder->FrameInfo().iFrameDisplayMode ));
+    User::LeaveIfError( iBitmap->Create( loadSize, EColor16M ));
 
     iState = EDecoding;
     iImageDecoder->Convert( &iStatus, *iBitmap );
