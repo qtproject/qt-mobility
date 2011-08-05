@@ -1,5 +1,6 @@
 qt-mobility (1.2.1+192) unstable; urgency=low
 
+  * Remaining version number issues fixed in src/harmattaninstalls
   * Fixes: NB#275362
 
  -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Fri, 5 Aug 2011 13:27:48 +1000
