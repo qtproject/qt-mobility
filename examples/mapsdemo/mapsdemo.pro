@@ -26,6 +26,7 @@ symbian: {
                         NetworkServices \
                         ReadUserData \
                         WriteUserData
+    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
 
 HEADERS += \
