@@ -43,7 +43,7 @@
 
 function startTestApp()
 {
-    prompt('Start application \'declarative-sfw-notes\'
+    prompt('Start application \'qmlnotes\'
     Verify test application started and closed without issue');
 }
 
@@ -65,8 +65,7 @@ testcase = {
     {
         prompt(twiki('*Add Note with date*
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
+    1 Start application *qmlnotes*
     1 Click \"+\" button
     1 Enter a note in the form *Note1#2010-10-01#10:30*
     1 Click *Ok* button
@@ -78,8 +77,7 @@ testcase = {
     {
         prompt(twiki('*Add Note without date*
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
+    1 Start application *qmlnotes*
     1 Click \"+\" button
     1 Enter a note in the form *My Note*
     1 Click *Ok* button
@@ -91,8 +89,7 @@ testcase = {
     {
         prompt(twiki('*Browse Notes*
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
+    1 Start application *qmlnotes*
     1 If not done so enter at least three notes see in this System Test the functions *Add_Note_With_Date* and *Add_Note_Without_Date*
     1 Verify that *right* arrow button on dialog can be used to navigate to last note
     1 Verify that the *left* arrow button on dialog can be used to navigate to first note
@@ -103,8 +100,7 @@ testcase = {
     {
         prompt(twiki('*Find Note*
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
+    1 Start application *qmlnotes*
     1 Click *Search* button ( looking glass )
     1 Enter text from previously entered note, eg *My Note*
     1 Click *OK* button
@@ -116,8 +112,7 @@ testcase = {
     {
         prompt(twiki('*Delete Note*
 
-    1 If not done so register the notes manager service: eg run *servicefw add xmldata/notesmanagerservice.xml*
-    1 Start application *declarative-sfw-notes*
+    1 Start application *qmlnotes*
     1 Click the *Delete* button ( in between Add and Search buttons )
     1 Verify that the current note was deleted, ie use left and right arrow buttons to browse notes.
         '));
