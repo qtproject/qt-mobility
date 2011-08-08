@@ -57,49 +57,52 @@ testcase = {
     {
         prompt(twiki('*Dial Landline number*
 
-   * select the first LandLineDialer in the Select dial service: list box
-   * confirm that a status message is seen "Landlineservice... (1.0)"
+   * select the LandLineDialer in the Select dial service: list box
+   * confirm that a status message is seen "LandlineDialer... (1.0)"
    * use number pad on dialog to enter number , eg 0123
    * press the call button on dialog
    * confirm that new messages seen reflect the dialing states:
       * Dialing 0123
       * Ringing
-      * Connected"
-   * clicking the hangup button
+      * Connected
+   * click the hangup button
    * confirm that new message seen is reflects the dialing state
       * Hangup
         '));
     },
 
-    Dial_Second_Landline_Number: function()
+    Dial_First_Voip_Number: function()
     {
-        prompt(twiki('*Dial Second Landline number*
+        prompt(twiki('*Dial Voip 1.1 number*
 
-   * select the second LandLineDialer in the Select dial service: list box
-   * confirm that a status message is seen "Landlineservice... (2.0)"
+   * select VoipDialer (1.1) in the Select dial service: list box
+   * confirm that a status message is seen "VoipDialer (1.1)"
    * use number pad on dialog to enter number , eg 0123
    * press the "call" button on dialog
    * confirm that new messages seen reflect the dialing states:
       * Dialing 0123
-   * clicking the "hangup" button
+      * Ringing
+      * Connected
+   * click the "hangup" button
    * confirm that new message seen is reflects the dialing state
-      * Hangup
+      * Hang up
+      * Connection terminated
 
        '));
     },
 
-    Dial_Voip_Number: function()
+    Dial_Second_Voip_Number: function()
     {
-        prompt(twiki('*Dial Voip number*
+        prompt(twiki('*Dial Voip 1.0 number*
 
-   * select the VoipDialer in the Select dial service: list box
-   * confirm that a status message is seen "Voipservice... (1.0)"
+   * select the VoipDialer (1.0) in the Select dial service: list box
+   * confirm that a status message is seen "VoipDialer (1.0)"
    * use number pad on dialog to enter number , eg 0123
    * press the call button on dialog
    * confirm that new messages seen reflect the dialing states:
       * Dialing 0123
       * Ringing
-      * Connected"
+      * Connected
    * clicking the hangup button
    * confirm that new message seen is reflects the dialing state
       * Hangup
