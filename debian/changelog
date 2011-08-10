@@ -1,3 +1,9 @@
+qt-mobility (1.2.1+193) unstable; urgency=low
+
+  * Removed LICENSE.PREVIEW.COMMERCIAL file
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 10 Aug 2011 08:56:48 +1000
+
 qt-mobility (1.2.1+192) unstable; urgency=low
 
   * Remaining version number issues fixed in src/harmattaninstalls
