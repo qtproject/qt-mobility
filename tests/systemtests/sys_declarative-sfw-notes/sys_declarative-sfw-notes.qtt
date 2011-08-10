@@ -47,9 +47,9 @@ testcase = {
     {
         // Test meta data
         testApplication = "SFW - Add Note With Date";
-        testBinary = "declarative-sfw-notes";
+        testBinary = "qmlnotes";
         testGoal = "Verify that ";
-        testPreconditions = "notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*";
+        testPreconditions = "Nil.";
         testGroups = "BAT";
 
         // Test steps
@@ -70,9 +70,9 @@ testcase = {
     {
         // Test meta data
         testApplication = "SFW - Add Note Without Date";
-        testBinary = "declarative-sfw-notes";
+        testBinary = "qmlnotes";
         testGoal = "Verify that a note entered without a date gets the current date appended to it";
-        testPreconditions = "notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*";
+        testPreconditions = "Nil.";
         testGroups = "BAT";
 
         // Test steps
@@ -93,9 +93,9 @@ testcase = {
     {
           // Test meta data
           testApplication = "SFW - Browse Notes";
-          testBinary = "declarative-sfw-notes";
+          testBinary = "qmlnotes";
           testGoal = "Verify that the user can browse through all notes in the system.";
-          testPreconditions = "notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*";
+          testPreconditions = "Nil.";
           testGroups = "BAT";
 
           // Test steps
@@ -115,10 +115,9 @@ testcase = {
     {
        // Test meta data
        testApplication = "SFW - Find Note";
-       testBinary = "declarative-sfw-notes";
+       testBinary = "qmlnotes";
        testGoal = "Verify that notes can be found using the search function.";
-       testPreconditions = "1. notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*<br>
-   1. at least three notes have been entered in the system.";
+       testPreconditions = "1. at least three notes have been entered in the system.";
        testGroups = "BAT";
 
        // Test steps
@@ -139,10 +138,9 @@ testcase = {
     {
          // Test meta data
          testApplication = "SFW - Delete Note";
-         testBinary = "declarative-sfw-notes";
+         testBinary = "qmlnotes";
          testGoal = "Verify that notes can be deleted.";
-         testPreconditions = "1. notes manager service must be registered: eg run *servicefw add xmldata/notesmanagerservice.xml*<br>
-   1. at least three notes have been entered in the system.";
+         testPreconditions = "1. at least three notes have been entered in the system.";
          testGroups = "BAT";
 
          // Test steps
