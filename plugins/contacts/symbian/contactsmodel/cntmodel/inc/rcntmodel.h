@@ -219,6 +219,9 @@ private:
 	
 	// Image rescaling
 	CImageRescaler* iRescaler;
+	
+	//For tracking connection status
+	TBool iServerRunning;
 	};
 	
 #endif // RCNTMODEL_H

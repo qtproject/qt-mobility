@@ -84,6 +84,7 @@ private:
 	TInt iCurrentProcessedObserver;
 	CCntPackager* iPackager;
 	TDes8* iPackagerBuffer;
+	TBool iIsConnected;
 };
 
 

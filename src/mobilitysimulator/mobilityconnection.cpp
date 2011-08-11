@@ -127,7 +127,8 @@ void MobilityConnection::connectToSimulator()
 {
     // 1. check availability
     QLocalSocket *socket = new QLocalSocket;
-    socket->connectToServer(QLatin1String(SIMULATOR_MOBILITY_SERVERNAME), QLocalSocket::ReadWrite);
+    QString simVersion = SimulatorConnection::instance()->simulatorVersion().toString();
+    socket->connectToServer(QLatin1String(SIMULATOR_MOBILITY_SERVERNAME) + simVersion, QLocalSocket::ReadWrite);
     if (!socket->waitForConnected(1000)) {
         qFatal("Could not connect to mobility server");
         socket->deleteLater();
@@ -138,7 +139,7 @@ void MobilityConnection::connectToSimulator()
     // 2. Create the local server used for initiating the backchannel.
     const qint64 pid = QCoreApplication::applicationPid();
     QLocalServer *server = new QLocalServer(this);
-    if (!server->listen(qt_mobilityServerName(pid)))
+    if (!server->listen(qt_mobilityServerName(simVersion, pid)))
         qFatal("Can't create local mobility server for this application.");
 
     // 3. Send initial application connect command.

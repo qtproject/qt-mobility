@@ -108,7 +108,7 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SLOT(applyPendingSeek(bool)));
 
     connect(m_resources, SIGNAL(resourcesGranted()), SLOT(handleResourcesGranted()));
-    connect(m_resources, SIGNAL(resourcesDenied()), SLOT(handleResourcesLost()));
+    connect(m_resources, SIGNAL(resourcesDenied()), SLOT(handleResourcesDenied()));
     connect(m_resources, SIGNAL(resourcesLost()), SLOT(handleResourcesLost()));
 }
 
@@ -702,6 +702,19 @@ void QGstreamerPlayerControl::handleResourcesLost()
     m_pendingSeekPosition = pos;
 
     if (oldState != QMediaPlayer::StoppedState )
+        m_state = QMediaPlayer::PausedState;
+
+    popAndNotifyState();
+}
+
+void QGstreamerPlayerControl::handleResourcesDenied()
+{
+    //on resource lost the pipeline should stay stopped
+    //player status is changed to paused with
+    //pending seek position preserved.
+    pushState();
+
+    if (m_state != QMediaPlayer::StoppedState )
         m_state = QMediaPlayer::PausedState;
 
     popAndNotifyState();

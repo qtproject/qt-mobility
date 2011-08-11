@@ -84,6 +84,18 @@ static QStringList accessModesToKind(QNearFieldManager::TargetAccessModes access
     return kind;
 }
 
+static QNearFieldManager::TargetAccessMode kindToAccessMode(const QString &kind)
+{
+    if (kind == QLatin1String("tag.ndef.read"))
+        return QNearFieldManager::NdefReadTargetAccess;
+    if (kind == QLatin1String("tag.ndef.write"))
+        return QNearFieldManager::NdefWriteTargetAccess;
+    if (kind == QLatin1String("tag.raw"))
+        return QNearFieldManager::TagTypeSpecificTargetAccess;
+
+    return QNearFieldManager::NoTargetAccess;
+}
+
 NdefHandler::NdefHandler(QNearFieldManagerPrivateImpl *manager, const QString &serviceName,
                          const QString &path, QObject *object, const QMetaMethod &method)
 :   m_manager(manager), m_adaptor(0), m_object(object), m_method(method),
@@ -464,12 +476,18 @@ void QNearFieldManagerPrivateImpl::AccessGranted(const QDBusObjectPath &target,
 {
     Q_UNUSED(kind);
 
-    if (m_pendingDetectedTargets.contains(target.path())) {
-        m_pendingDetectedTargets[target.path()].stop();
-        m_pendingDetectedTargets.remove(target.path());
-    }
+    m_grantedModesForTarget[target.path()] |= kindToAccessMode(kind);
 
-    emitTargetDetected(target.path());
+    if (m_grantedModesForTarget.value(target.path()) == m_requestedModes) {
+        m_grantedModesForTarget.remove(target.path());
+
+        if (m_pendingDetectedTargets.contains(target.path())) {
+            m_pendingDetectedTargets[target.path()].stop();
+            m_pendingDetectedTargets.remove(target.path());
+        }
+
+        emitTargetDetected(target.path());
+    }
 }
 
 void QNearFieldManagerPrivateImpl::timerEvent(QTimerEvent *event)
@@ -484,6 +502,7 @@ void QNearFieldManagerPrivateImpl::timerEvent(QTimerEvent *event)
             const QString target = i.key();
 
             i.remove();
+            m_grantedModesForTarget.remove(i.key());
 
             emitTargetDetected(target);
 
@@ -501,10 +520,12 @@ void QNearFieldManagerPrivateImpl::emitTargetDetected(const QString &targetPath)
 
 void QNearFieldManagerPrivateImpl::_q_targetDetected(const QDBusObjectPath &targetPath)
 {
-    if (!m_requestedModes)
+    if (!m_requestedModes) {
         emitTargetDetected(targetPath.path());
-    else
+    } else {
         m_pendingDetectedTargets[targetPath.path()].start(500, this);
+        m_grantedModesForTarget[targetPath.path()] = QNearFieldManager::NoTargetAccess;
+    }
 }
 
 void QNearFieldManagerPrivateImpl::_q_targetLost(const QDBusObjectPath &targetPath)

@@ -69,7 +69,7 @@ Q_GLOBAL_STATIC(QSystemDisplayInfo, displayInfo)
 */
 
 /*!
-  Constructs the DeviceInfo
+  Constructs the DisplayInfo
   */
 QDeclarativeDisplayInfo::QDeclarativeDisplayInfo(QObject *parent) :
     QSystemDisplayInfo(parent),currentScreen(0)
@@ -77,7 +77,7 @@ QDeclarativeDisplayInfo::QDeclarativeDisplayInfo(QObject *parent) :
 }
 
 /*!
-    \qmlproperty int DeviceInfo::screen
+    \qmlproperty int DisplayInfo::screen
 
     Contains the display number of this screen.
 */

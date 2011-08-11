@@ -210,6 +210,7 @@ public:
     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
+    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
     bool isDeviceLocked();
     bool isKeyboardFlippedOpen(); //1.2
     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2

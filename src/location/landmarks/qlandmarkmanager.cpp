@@ -1389,14 +1389,14 @@ void QLandmarkManager::connectNotify(const char *signal)
 
     if (!d_ptr->isConnected) {
         if (d_ptr->engine) {
-            if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))
-                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(dataChanged()))) {
+            if (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksAdded(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksChanged(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksRemoved(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksChanged(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(dataChanged())))) {
                 connect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
                         this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
                 connect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
@@ -1426,13 +1426,13 @@ void QLandmarkManager::disconnectNotify(const char *signal)
 {
     if (d_ptr->isConnected) {
         if (d_ptr->engine) {
-            if ((QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(dataChanged()))) {
+            if ((QLatin1String(signal) == QLatin1String(SIGNAL(landmarksAdded(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksChanged(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksRemoved(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(dataChanged())))) {
                 disconnect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
                            this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
                 disconnect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),

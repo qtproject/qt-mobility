@@ -46,13 +46,13 @@
     \ingroup qml-feedback-api
     \inherits FeedbackEffect
 
-    This element is part of the \bold{QtMobility.feedback 1.1} module.
+    This element is part of the \bold {QtMobility.feedback 1.1} module.
 
     This class closely corresponds to the C++ \l QFeedbackHapticsEffect class.
 
     \snippet doc/src/snippets/declarative/declarative-feedback.qml Haptics Effect
 
-    \sa Actuator, {QFeedbackHapticsEffect}
+    \sa Actuator, QFeedbackHapticsEffect
 */
 QDeclarativeHapticsEffect::QDeclarativeHapticsEffect(QObject *parent)
     : QDeclarativeFeedbackEffect(parent), m_actuator(0)

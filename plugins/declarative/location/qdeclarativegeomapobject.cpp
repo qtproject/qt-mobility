@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,7 @@
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativelandmark_p.h"
+#include "qdeclarativegeomapgroupobject_p.h"
 #include "qgeomapdata.h"
 
 #include <QDeclarativeParserStatus>
@@ -347,7 +348,10 @@ void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
     if (!mapObjects.isEmpty()) {
         for (int i = 0; i < mapObjects.size(); i++) {
             group_.removeChildObject(mapObjects.at(i));
-            delete map_->objectMap_.take(mapObjects.at(i));
+
+            QDeclarativeGeoMapObject *mapObject = map_->objectMap_.value(mapObjects.at(i));
+            map_->recursiveRemoveFromObjectMap(mapObjects.at(i));
+            delete mapObject;
         }
     }
     declarativeObjectList_.clear();
@@ -375,7 +379,7 @@ void QDeclarativeGeoMapObjectView::repopulate()
         mapObject->setMap(map_);
         group_.addChildObject(mapObject->mapObject());
         // Needed in order for mouse areas to work.
-        map_->objectMap_.insert(mapObject->mapObject(), mapObject);
+        map_->recursiveAddToObjectMap(mapObject);
     }
 }
 

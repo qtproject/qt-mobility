@@ -164,6 +164,7 @@ protected:
     
 private:
     TInt StartServer();
+    TInt doStartServer();
     /* Re-Sizes IPC buffer if needed */
     void updateIpcBufferSize();
 
