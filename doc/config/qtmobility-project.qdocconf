@@ -97,7 +97,8 @@ sourcedirs = ../../src/global \
              ../src
 
 excludedirs = ../../src/messaging/win32wce \
-              ../../src/publishsubscribe/symbian
+              ../../src/publishsubscribe/symbian \
+              ../../src/serviceframework/ipc/metaobjectbuilder47
 
 exampledirs = ../../examples \
               ../../demos \
@@ -119,9 +120,9 @@ qhp.QtMobility.virtualFolder      = mobility
 qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.QtMobility.indexRoot          =
 
-qhp.QtMobility.filterAttributes   = qtmobility 1.2.0
-qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.2.0
-qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.2.0
+qhp.QtMobility.filterAttributes   = qtmobility 1.2.1
+qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility 1.2.1
+qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility 1.2.1
 qhp.QtMobility.subprojects = classes overviews examples
 qhp.QtMobility.subprojects.classes.title = Classes
 qhp.QtMobility.subprojects.classes.indexTitle = All Qt Mobility Project Classes

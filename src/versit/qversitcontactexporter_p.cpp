@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -414,7 +414,10 @@ void QVersitContactExporterPrivate::encodeRev(
 
     if ( rev.lastModified().toString(Qt::ISODate).size() ) {
         if ( rev.lastModified().timeSpec() == Qt::UTC ) {
-            value = rev.lastModified().toString(Qt::ISODate) + QLatin1Char('Z');
+            value = rev.lastModified().toString(Qt::ISODate);
+            if( !value.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive) ) {
+                value += QLatin1Char('Z');
+            }
         }
         else {
             value = rev.lastModified().toString(Qt::ISODate);
@@ -424,7 +427,10 @@ void QVersitContactExporterPrivate::encodeRev(
         *processedFields << QContactTimestamp::FieldModificationTimestamp;
     } else if ( rev.created().toString(Qt::ISODate).size()) {
         if ( rev.created().timeSpec() == Qt::UTC ) {
-            value = rev.created().toString(Qt::ISODate) + QLatin1Char('Z');
+            value = rev.created().toString(Qt::ISODate);
+            if( !value.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive) ) {
+                value += QLatin1Char('Z');
+            }
         }
         else {
             value = rev.created().toString(Qt::ISODate);
@@ -487,8 +493,8 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
     QContactGeoLocation geoLocation = static_cast<QContactGeoLocation>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
-    property.setValue(QStringList() << QString::number(geoLocation.longitude())
-                      << QString::number(geoLocation.latitude()));
+    property.setValue(QStringList() << QString::number(geoLocation.latitude())
+                      << QString::number(geoLocation.longitude()));
     property.setValueType(QVersitProperty::CompoundType);
     *generatedProperties << property;
     *processedFields << QContactGeoLocation::FieldLongitude
@@ -815,7 +821,7 @@ bool QVersitContactExporterPrivate::encodeContentFromFile(const QString& resourc
     if (isValidRemoteUrl( resourcePath )) {
         encodeContent = true;
         value.setValue(resourcePath);
-        property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("uri"));
     } else if (mResourceHandler
                && mResourceHandler->loadResource(resourcePath, &imageData, &mimeType)) {
         value.setValue(imageData);

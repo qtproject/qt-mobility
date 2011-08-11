@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -39,8 +39,11 @@
 **
 ****************************************************************************/
 
+#define QT_STATICPLUGIN
+
 #include <QtTest/QtTest>
 #include <QtGlobal>
+#include <QtCore/qnumeric.h>
 
 #include "qtcontacts.h"
 #include "qcontactchangeset.h"
@@ -113,6 +116,29 @@ QTM_USE_NAMESPACE
 #define QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(params)  params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME)); \
                                                           params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))
 
+#define QTRY_COMPARE_SIGNALS_LOCALID_COUNT(__signalSpy, __expectedCount) \
+    do { \
+        int __spiedSigCount = 0; \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        for (int __i = 0; __i < __timeout; __i+=__step) { \
+            /* accumulate added from signals */ \
+            __spiedSigCount = 0; \
+            const QList<QList<QVariant> > __spiedSignals = __signalSpy; \
+            foreach (const QList<QVariant> &__arguments, __spiedSignals) { \
+                foreach (QContactLocalId __localId, __arguments.first().value<QList<QContactLocalId> >()) { \
+                    QVERIFY(__localId!=0); \
+                    __spiedSigCount++; \
+                } \
+            } \
+            if(__spiedSigCount == __expectedCount) { \
+                break; \
+            } \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__spiedSigCount, __expectedCount); \
+    } while(0)
+
 //TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -129,6 +155,7 @@ class UnsupportedMetatype {
 Q_DECLARE_METATYPE(UnsupportedMetatype)
 Q_DECLARE_METATYPE(QContact)
 Q_DECLARE_METATYPE(QContactManager::Error)
+Q_DECLARE_METATYPE(Qt::CaseSensitivity)
 
 class tst_QContactManager : public QObject
 {
@@ -190,6 +217,7 @@ private slots:
     void relationships();
     void contactType();
     void lateDeletion();
+    void compareVariant();
 
 #if defined(USE_VERSIT_PLZ)
     void partialSave();
@@ -206,11 +234,13 @@ private slots:
     void fetchHint();
     void engineDefaultSchema();
     void errorSemantics();
+    void lazyConnections();
 
     /* Special test with special data */
     void uriParsing_data();
     void nameSynthesis_data();
     void compatibleContact_data();
+    void compareVariant_data();
 
     /* Tests that are run on all managers */
     void metadata_data() {addManagers();}
@@ -253,6 +283,101 @@ private:
     QObject *mObject;
     const char * const mSignal;
 };
+
+
+/* Two backends for testing lazy signal connections */
+class QContactLazyEngine2 : public QContactManagerEngineV2
+{
+public:
+    QContactLazyEngine2() {}
+    QString managerName() const {return "lazy2";}
+
+    /*! \reimp */
+    int managerVersion() const {return 0;}
+
+    /*! \reimp */
+    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QString();
+    }
+
+    /*! \reimp */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
+    void connectNotify(const char *signal)
+    {
+        connectionCounts[signal]++;
+    }
+    void disconnectNotify(const char *signal)
+    {
+        connectionCounts[signal]--;
+    }
+
+    static QMap<QString, int> connectionCounts; // signal name to count
+};
+QMap<QString, int> QContactLazyEngine2::connectionCounts;
+
+class QContactLazyEngine : public QContactManagerEngine
+{
+public:
+    QContactLazyEngine() {}
+    QString managerName() const {return "lazy";}
+
+    /*! \reimp */
+    int managerVersion() const {return 0;}
+
+    /*! \reimp */
+    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QString();
+    }
+
+    /*! \reimp */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
+    void connectNotify(const char *signal)
+    {
+        connectionCounts[signal]++;
+    }
+    void disconnectNotify(const char *signal)
+    {
+        connectionCounts[signal]--;
+    }
+    static QMap<QString, int> connectionCounts; // signal name to count
+};
+QMap<QString, int> QContactLazyEngine::connectionCounts;
+
+/* Static lazy engine factory */
+class LazyEngineFactory : public QObject, public QContactManagerEngineFactory
+{
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
+    public:
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
+        QString managerName() const {return "testlazy";}
+};
+
+QContactManagerEngine* LazyEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
+{
+    // Return one or the other
+    if (parameters.value("version") == QString("1"))
+        return new QContactLazyEngine();
+    else
+        return new QContactLazyEngine2();
+}
+
+Q_EXPORT_PLUGIN2(contacts_testlazy, LazyEngineFactory)
+Q_IMPORT_PLUGIN(contacts_testlazy)
 
 tst_QContactManager::tst_QContactManager()
 {
@@ -481,6 +606,7 @@ void tst_QContactManager::addManagers()
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
+    managers.removeAll("testlazy");
 
     // "internal" engines
     managers.removeAll("social");
@@ -832,6 +958,11 @@ void tst_QContactManager::add()
     if (cm->managerName() == "symbiansim") {
         // TODO: symbiansim backend fails this test currently. Will be fixed later.
         QWARN("This manager has a known issue with saving a non-zero id contact. Skipping this test step.");
+    } else if (cm->managerName() == QLatin1String("tracker")) {
+        // tracker backend does not support checking if a contact exists.
+        // The tracker database is shared, and there is no way to check if a contact exists and then overwrite it
+        // in a single transaction.
+        QWARN("The tracker backend does not support checking for existance of a contact. Skipping this test step.");
     } else {
         QContact nonexistent = createContact(nameDef, "nonexistent", "contact", "");
         QVERIFY(cm->saveContact(&nonexistent));       // should work
@@ -868,6 +999,23 @@ void tst_QContactManager::add()
                 continue;
 	    if (def.name() == QContactPresence::DefinitionName)
                 continue;
+        }
+        if (cm->managerName() == QLatin1String("tracker")) {
+            // Some subtypes automatically imply/add other subtypes, due to the RDF nature of the tracker database
+            if (def.name() == QContactPhoneNumber::DefinitionName)
+                continue;
+            // OnlineAccount and Presence details get corrected on non-conforming data
+            // or are readonly because the content is feeded to the database by another process.
+            if (def.name() == QContactOnlineAccount::DefinitionName)
+                continue;
+            if (def.name() == QContactPresence::DefinitionName)
+                continue;
+            if (def.name() == QContactGlobalPresence::DefinitionName)
+                continue;
+            // The tracker specific detail relevance is changed by another process usually.
+            if (def.name() == QLatin1String("Relevance")) {
+                continue;
+            }
         }
 
         // This is probably read-only
@@ -947,7 +1095,7 @@ void tst_QContactManager::add()
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
     QContact retrievedMegacontact = cm->contact(megacontact.id().localId());
     if (!isSuperset(retrievedMegacontact, megacontact)) {
-        dumpContactDifferences(megacontact, retrievedMegacontact);
+        dumpContactDifferences(retrievedMegacontact, megacontact);
         QEXPECT_FAIL("mgr='wince'", "Address Display Label mismatch", Continue);
         QCOMPARE(megacontact, retrievedMegacontact);
     }
@@ -1166,6 +1314,10 @@ void tst_QContactManager::update()
     //QCOMPARE(detailCount, alice.details().size()); // removing a detail should cause the detail count to decrease by one.
 
     if (cm->hasFeature(QContactManager::Groups)) {
+        if (cm->managerName() == QLatin1String("tracker")) {
+            QWARN("The tracker backend does not support checking for existance of a contact. Skipping rest of test .");
+            return;
+        }
         // Try changing types - not allowed
         // from contact -> group
         alice.setType(QContactType::TypeGroup);
@@ -1376,6 +1528,11 @@ void tst_QContactManager::batch()
     QVERIFY(cm->contact(c.id().localId()).id() == QContactId());
     QVERIFY(cm->contact(c.id().localId()).isEmpty());
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
+
+    if (cm->managerName() == QLatin1String("tracker")) {
+        QWARN("The tracker backend does not support checking for existance of a contact. Skipping rest of test .");
+        return;
+    }
 
     /* Now try removing with all invalid ids (e.g. the ones we just removed) */
     ids.clear();
@@ -2302,8 +2459,14 @@ void tst_QContactManager::signalEmission()
     addSigCount += 1;
     QVERIFY(m1->saveContact(&c3));
     addSigCount += 1;
-    QTRY_COMPARE(spyCM.count(), modSigCount);
-    QTRY_COMPARE(spyCA.count(), addSigCount);
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCM, modSigCount);
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCA, addSigCount);
+    } else {
+        QTRY_COMPARE(spyCM.count(), modSigCount);
+        QTRY_COMPARE(spyCA.count(), addSigCount);
+    }
 
     spyCOM1->clear();
     spyCOR1->clear();
@@ -2318,13 +2481,22 @@ void tst_QContactManager::signalEmission()
     saveContactName(&c2, nameDef, &nc2, "M.");
     QVERIFY(m1->saveContact(&c2));
     modSigCount += 1;
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons, so wait a little
+         QTest::qWait(1000);
+    }
     saveContactName(&c2, nameDef, &nc2, "Mark");
     saveContactName(&c3, nameDef, &nc3, "G.");
     QVERIFY(m1->saveContact(&c2));
     modSigCount += 1;
     QVERIFY(m1->saveContact(&c3));
     modSigCount += 1;
-    QTRY_COMPARE(spyCM.count(), modSigCount);
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCM, modSigCount);
+    } else {
+        QTRY_COMPARE(spyCM.count(), modSigCount);
+    }
     QTRY_COMPARE(spyCOM2->count(), 2);
     QTRY_COMPARE(spyCOM3->count(), 1);
     QCOMPARE(spyCOM1->count(), 0);
@@ -2334,12 +2506,20 @@ void tst_QContactManager::signalEmission()
     remSigCount += 1;
     m1->removeContact(c2.id().localId());
     remSigCount += 1;
-    QTRY_COMPARE(spyCR.count(), remSigCount);
+    if(uri.contains(QLatin1String("tracker"))) {
+        // tracker backend coalesces signals for performance reasons
+        QTRY_COMPARE_SIGNALS_LOCALID_COUNT(spyCR, remSigCount);
+    } else {
+        QTRY_COMPARE(spyCR.count(), remSigCount);
+    }
     QTRY_COMPARE(spyCOR2->count(), 1);
     QTRY_COMPARE(spyCOR3->count(), 1);
     QCOMPARE(spyCOR1->count(), 0);
 
-    QVERIFY(!m1->removeContact(c.id().localId())); // not saved.
+    if(! uri.contains(QLatin1String("tracker"))) {
+        // The tracker backend does not support checking for existance of a contact.
+        QVERIFY(!m1->removeContact(c.id().localId())); // not saved.
+    }
 
     /* Now test the batch equivalents */
     spyCA.clear();
@@ -3565,6 +3745,11 @@ void tst_QContactManager::relationships()
     source = cm->contact(source.localId());
     QVERIFY(!source.relatedContacts().contains(dest2.id())); // and it shouldn't appear in cache.
 
+    if (cm->managerName() == QLatin1String("tracker")) {
+        QWARN("The tracker backend does not support checking for existance of a contact. Skipping rest of test.");
+        return;
+    }
+
     // now clean up and remove our dests.
     QVERIFY(cm->removeContact(source.localId()));
     QVERIFY(cm->removeContact(dest3.localId()));
@@ -3859,6 +4044,352 @@ void tst_QContactManager::errorSemantics()
     QVERIFY(t.slotErrorWasBadArgument);
     QVERIFY(m.error() == QContactManager::NoError);
 }
+
+void tst_QContactManager::lazyConnections()
+{
+    QMap<QString, QString> parameters;
+    parameters["version"] = QString("1");
+    QContactManager lazy1("testlazy", parameters);
+    QContactManager lazy2("testlazy");
+
+    QCOMPARE(lazy1.managerName(), QString("lazy"));
+    QCOMPARE(lazy2.managerName(), QString("lazy2"));
+
+    // Make sure the initial connection counts are empty
+    QCOMPARE(QContactLazyEngine::connectionCounts.count(), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 0);
+
+    // Lazy 1 first
+    {
+        QTestSignalSink casink(&lazy1, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+
+        // See if we got one connection
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.count(), 1);
+
+        // Go out of scope, and see if disconnect is called
+    }
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.count(), 1);
+
+    // Lazy2 second
+    {
+        QTestSignalSink casink(&lazy2, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+
+        // See if we got one connection
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 1);
+
+        // Go out of scope, and see if disconnect is called
+    }
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 1);
+
+    // Just make sure all the signals get connected correctly
+    {
+        QTestSignalSink casink(&lazy1, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+        QTestSignalSink crsink(&lazy1, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink cmsink(&lazy1, SIGNAL(contactsChanged(QList<QContactLocalId>)));
+        QTestSignalSink dcsink(&lazy1, SIGNAL(dataChanged()));
+        QTestSignalSink rasink(&lazy1, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
+        QTestSignalSink rrsink(&lazy1, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink scsink(&lazy1, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+
+        // See if we got all the connections
+        QCOMPARE(QContactLazyEngine::connectionCounts.count(), 7);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(dataChanged())), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 1);
+    }
+    QCOMPARE(QContactLazyEngine::connectionCounts.count(), 7);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(dataChanged())), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 0);
+
+    // and for lazy2
+    {
+        QTestSignalSink casink(&lazy2, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+        QTestSignalSink crsink(&lazy2, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink cmsink(&lazy2, SIGNAL(contactsChanged(QList<QContactLocalId>)));
+        QTestSignalSink dcsink(&lazy2, SIGNAL(dataChanged()));
+        QTestSignalSink rasink(&lazy2, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
+        QTestSignalSink rrsink(&lazy2, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+        QTestSignalSink scsink(&lazy2, SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId)));
+
+        // See if we got all the connections
+        QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 7);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(dataChanged())), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 1);
+        QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 1);
+    }
+    QCOMPARE(QContactLazyEngine2::connectionCounts.count(), 7);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsChanged(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(contactsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(dataChanged())), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsAdded(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(relationshipsRemoved(QList<QContactLocalId>))), 0);
+    QCOMPARE(QContactLazyEngine2::connectionCounts.value(SIGNAL(selfContactIdChanged(QContactLocalId,QContactLocalId))), 0);
+}
+
+void tst_QContactManager::compareVariant()
+{
+    // Exercise this function a bit
+    QFETCH(QVariant, a);
+    QFETCH(QVariant, b);
+    QFETCH(Qt::CaseSensitivity, cs);
+    QFETCH(int, expected);
+
+    int comparison = QContactManagerEngine::compareVariant(a, b, cs);
+    // Since compareVariant is a little imprecise (just sign matters)
+    // convert that here.
+    if (comparison < 0)
+        comparison = -1;
+    else if (comparison > 0)
+        comparison = 1;
+
+    QCOMPARE(comparison, expected);
+
+    comparison = QContactManagerEngine::compareVariant(b, a, cs);
+    if (comparison < 0)
+        comparison = -1;
+    else if (comparison > 0)
+        comparison = 1;
+
+    // The sign should be flipped now
+    QVERIFY((comparison + expected) == 0);
+}
+
+void tst_QContactManager::compareVariant_data()
+{
+    QTest::addColumn<QVariant>("a");
+    QTest::addColumn<QVariant>("b");
+
+    QTest::addColumn<Qt::CaseSensitivity>("cs");
+    QTest::addColumn<int>("expected");
+
+    // bool
+    QTest::newRow("bool <") << QVariant(false) << QVariant(true) << Qt::CaseInsensitive << -1;
+    QTest::newRow("bool =") << QVariant(false) << QVariant(false) << Qt::CaseInsensitive << -0;
+    QTest::newRow("bool >") << QVariant(true) << QVariant(false) << Qt::CaseInsensitive << 1;
+
+    // char (who uses these??)
+    QTest::newRow("char <") << QVariant(QChar('a')) << QVariant(QChar('b')) << Qt::CaseInsensitive << -1;
+    QTest::newRow("char < ci") << QVariant(QChar('A')) << QVariant(QChar('b')) << Qt::CaseInsensitive << -1;
+    QTest::newRow("char < ci 2") << QVariant(QChar('a')) << QVariant(QChar('B')) << Qt::CaseInsensitive << -1;
+    QTest::newRow("char < cs") << QVariant(QChar('a')) << QVariant(QChar('b')) << Qt::CaseSensitive << -1;
+    QTest::newRow("char < cs") << QVariant(QChar('A')) << QVariant(QChar('b')) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("char = ci") << QVariant(QChar('a')) << QVariant(QChar('a')) << Qt::CaseInsensitive << 0;
+    QTest::newRow("char = ci 2") << QVariant(QChar('a')) << QVariant(QChar('A')) << Qt::CaseInsensitive << 0;
+    QTest::newRow("char = ci 3") << QVariant(QChar('A')) << QVariant(QChar('a')) << Qt::CaseInsensitive << 0;
+    QTest::newRow("char = ci 4") << QVariant(QChar('A')) << QVariant(QChar('A')) << Qt::CaseInsensitive << 0;
+    QTest::newRow("char = cs") << QVariant(QChar('a')) << QVariant(QChar('a')) << Qt::CaseSensitive << 0;
+    QTest::newRow("char = cs 2") << QVariant(QChar('A')) << QVariant(QChar('A')) << Qt::CaseSensitive << 0;
+
+    QTest::newRow("char >") << QVariant(QChar('b')) << QVariant(QChar('a')) << Qt::CaseInsensitive << 1;
+    QTest::newRow("char > ci") << QVariant(QChar('b')) << QVariant(QChar('A')) << Qt::CaseInsensitive << 1;
+    QTest::newRow("char > ci 2") << QVariant(QChar('B')) << QVariant(QChar('a')) << Qt::CaseInsensitive << 1;
+    QTest::newRow("char > cs") << QVariant(QChar('b')) << QVariant(QChar('a')) << Qt::CaseSensitive << 1;
+    QTest::newRow("char > cs") << QVariant(QChar('b')) << QVariant(QChar('A')) << Qt::CaseSensitive << 1;
+
+    // Some numeric types
+    // uint
+    QTest::newRow("uint < boundary") << QVariant(uint(1)) << QVariant(uint(-1)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("uint <") << QVariant(uint(1)) << QVariant(uint(2)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("uint =") << QVariant(uint(2)) << QVariant(uint(2)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("uint = 0") << QVariant(uint(0)) << QVariant(uint(0)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("uint = boundary") << QVariant(uint(-1)) << QVariant(uint(-1)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("uint >") << QVariant(uint(5)) << QVariant(uint(2)) << Qt::CaseInsensitive << 1;
+    QTest::newRow("uint > boundary") << QVariant(uint(-1)) << QVariant(uint(2)) << Qt::CaseInsensitive << 1; // boundary
+
+    // int (hmm, signed 32 bit assumed)
+    QTest::newRow("int < boundary") << QVariant(int(0x80000000)) << QVariant(int(0x7fffffff)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("int <") << QVariant(int(1)) << QVariant(int(2)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("int =") << QVariant(int(2)) << QVariant(int(2)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("int = 0") << QVariant(int(0)) << QVariant(int(0)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("int = boundary") << QVariant(int(0x80000000)) << QVariant(int(0x80000000)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("int >") << QVariant(int(5)) << QVariant(int(2)) << Qt::CaseInsensitive << 1;
+    QTest::newRow("int > boundary") << QVariant(int(0x7fffffff)) << QVariant(int(0x80000000)) << Qt::CaseInsensitive << 1; // boundary
+
+    // ulonglong
+    QTest::newRow("ulonglong < boundary") << QVariant(qulonglong(1)) << QVariant(qulonglong(-1)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("ulonglong <") << QVariant(qulonglong(1)) << QVariant(qulonglong(2)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("ulonglong =") << QVariant(qulonglong(2)) << QVariant(qulonglong(2)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("ulonglong = 0") << QVariant(qulonglong(0)) << QVariant(qulonglong(0)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("ulonglong = boundary") << QVariant(qulonglong(-1)) << QVariant(qulonglong(-1)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("ulonglong >") << QVariant(qulonglong(5)) << QVariant(qulonglong(2)) << Qt::CaseInsensitive << 1;
+    QTest::newRow("ulonglong > boundary") << QVariant(qulonglong(-1)) << QVariant(qulonglong(2)) << Qt::CaseInsensitive << 1; // boundary
+
+    // longlong
+    QTest::newRow("longlong < boundary") << QVariant(qlonglong(0x8000000000000000LL)) << QVariant(qlonglong(0x7fffffffffffffffLL)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("longlong <") << QVariant(qlonglong(1)) << QVariant(qlonglong(2)) << Qt::CaseInsensitive << -1;
+    QTest::newRow("longlong =") << QVariant(qlonglong(2)) << QVariant(qlonglong(2)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("longlong = 0") << QVariant(qlonglong(0)) << QVariant(qlonglong(0)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("longlong = boundary") << QVariant(qlonglong(0x8000000000000000LL)) << QVariant(qlonglong(0x8000000000000000LL)) << Qt::CaseInsensitive << 0;
+    QTest::newRow("longlong >") << QVariant(qlonglong(5)) << QVariant(qlonglong(2)) << Qt::CaseInsensitive << 1;
+    QTest::newRow("longlong > boundary") << QVariant(qlonglong(0x7fffffffffffffffLL)) << QVariant(qlonglong(0x8000000000000000LL)) << Qt::CaseInsensitive << 1; // boundary
+
+    // double (hmm, skips NaNs etc)
+    QTest::newRow("double < inf 2") << QVariant(-qInf()) << QVariant(qInf()) << Qt::CaseInsensitive << -1;
+    QTest::newRow("double < inf") << QVariant(1.0) << QVariant(qInf()) << Qt::CaseInsensitive << -1;
+    QTest::newRow("double <") << QVariant(1.0) << QVariant(2.0) << Qt::CaseInsensitive << -1;
+    QTest::newRow("double =") << QVariant(2.0) << QVariant(2.0) << Qt::CaseInsensitive << 0;
+    QTest::newRow("double = 0") << QVariant(0.0) << QVariant(0.0) << Qt::CaseInsensitive << 0;
+    QTest::newRow("double = inf") << QVariant(qInf()) << QVariant(qInf()) << Qt::CaseInsensitive << 0;
+    QTest::newRow("double >") << QVariant(5.0) << QVariant(2.0) << Qt::CaseInsensitive << 1;
+    QTest::newRow("double > inf") << QVariant(qInf()) << QVariant(5.0) << Qt::CaseInsensitive << 1;
+    QTest::newRow("double > inf 2") << QVariant(0.0) << QVariant(-qInf()) << Qt::CaseInsensitive << 1;
+    QTest::newRow("double > inf 3") << QVariant(qInf()) << QVariant(-qInf()) << Qt::CaseInsensitive << 1;
+
+    // strings
+    QTest::newRow("string <") << QVariant(QString("a")) << QVariant(QString("b")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string <") << QVariant(QString("a")) << QVariant(QString("B")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string <") << QVariant(QString("A")) << QVariant(QString("b")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string <") << QVariant(QString("A")) << QVariant(QString("B")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string < cs") << QVariant(QString("a")) << QVariant(QString("b")) << Qt::CaseSensitive << -1;
+    QTest::newRow("string < cs 2") << QVariant(QString("A")) << QVariant(QString("b")) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("string < length") << QVariant(QString("a")) << QVariant(QString("aa")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string < length cs") << QVariant(QString("a")) << QVariant(QString("aa")) << Qt::CaseSensitive << -1;
+    QTest::newRow("string < length 2") << QVariant(QString("a")) << QVariant(QString("ba")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string < length cs 2") << QVariant(QString("a")) << QVariant(QString("ba")) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("string aa < b") << QVariant(QString("aa")) << QVariant(QString("b")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string aa < b cs") << QVariant(QString("aa")) << QVariant(QString("b")) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("string '' < a") << QVariant(QString("")) << QVariant(QString("aa")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string '' < aa cs") << QVariant(QString("")) << QVariant(QString("aa")) << Qt::CaseSensitive << -1;
+    QTest::newRow("string 0 < a") << QVariant(QString()) << QVariant(QString("aa")) << Qt::CaseInsensitive << -1;
+    QTest::newRow("string 0 < aa cs") << QVariant(QString()) << QVariant(QString("aa")) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("string '' = ''") << QVariant(QString("")) << QVariant(QString("")) << Qt::CaseInsensitive << 0;
+    QTest::newRow("string '' = '' cs") << QVariant(QString("")) << QVariant(QString("")) << Qt::CaseSensitive << 0;
+    QTest::newRow("string 0 = 0") << QVariant(QString()) << QVariant(QString()) << Qt::CaseInsensitive << 0;
+    QTest::newRow("string 0 = 0 cs") << QVariant(QString()) << QVariant(QString()) << Qt::CaseSensitive << 0;
+    QTest::newRow("string a = a") << QVariant(QString("a")) << QVariant(QString("a")) << Qt::CaseInsensitive << 0;
+    QTest::newRow("string a = a cs") << QVariant(QString("a")) << QVariant(QString("a")) << Qt::CaseSensitive << 0;
+
+    // Stringlists
+    // {} < {"a"} < {"aa"} < {"aa","bb"} < {"aa", "cc"} < {"bb"}
+
+    QStringList empty;
+    QStringList listA("a");
+    QStringList listAA("aa");
+    QStringList listAABB;
+    listAABB << "aa" << "bb";
+    QStringList listAACC;
+    listAACC << "aa" << "cc";
+    QStringList listBB;
+    listBB << "bb";
+    QStringList listCCAA;
+    listCCAA << "cc" << "aa";
+    QStringList listA2("A");
+    QStringList listAA2("AA");
+
+    QTest::newRow("stringlist {} < {a}") << QVariant(empty) << QVariant(listA) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {} < {a} cs") << QVariant(empty) << QVariant(listA) << Qt::CaseSensitive << -1;
+    QTest::newRow("stringlist {} < {A}") << QVariant(empty) << QVariant(listA2) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {} < {A} cs") << QVariant(empty) << QVariant(listA2) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("stringlist {a} < {aa}") << QVariant(listA) << QVariant(listAA) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {a} < {aa} cs") << QVariant(listA) << QVariant(listAA) << Qt::CaseSensitive << -1;
+    QTest::newRow("stringlist {a} < {AA}") << QVariant(listA) << QVariant(listAA2) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {a} < {AA} cs") << QVariant(listA) << QVariant(listAA2) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("stringlist {A} < {aa,bb}") << QVariant(listA2) << QVariant(listAABB) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {A} < {aa,bb} cs") << QVariant(listA2) << QVariant(listAABB) << Qt::CaseSensitive << -1;
+    QTest::newRow("stringlist {aa} < {aa,bb}") << QVariant(listAA) << QVariant(listAABB) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {aa} < {aa,bb} cs") << QVariant(listAA) << QVariant(listAABB) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("stringlist {aa,bb} < {aa,cc}") << QVariant(listAABB) << QVariant(listAACC) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {aa,bb} < {aa,cc} cs") << QVariant(listAABB) << QVariant(listAACC) << Qt::CaseSensitive << -1;
+
+    QTest::newRow("stringlist {aa,cc} < {bb}") << QVariant(listAACC) << QVariant(listBB) << Qt::CaseInsensitive << -1;
+    QTest::newRow("stringlist {aa,cc} < {bb} cs") << QVariant(listAACC) << QVariant(listBB) << Qt::CaseSensitive << -1;
+
+    // equality
+    QTest::newRow("stringlist {} = {}") << QVariant(empty) << QVariant(empty) << Qt::CaseInsensitive << 0;
+    QTest::newRow("stringlist {} = {} cs") << QVariant(empty) << QVariant(empty) << Qt::CaseSensitive << 0;
+    QTest::newRow("stringlist {aa} = {aa}") << QVariant(listAA) << QVariant(listAA) << Qt::CaseInsensitive << 0;
+    QTest::newRow("stringlist {aa} = {AA}") << QVariant(listAA) << QVariant(listAA2) << Qt::CaseInsensitive << 0;
+    QTest::newRow("stringlist {aa} = {aa} cs") << QVariant(listAA) << QVariant(listAA) << Qt::CaseSensitive << 0;
+
+    // Times
+    QTime t0;
+    QTime t1(0,0,0,0);
+    QTime t2(0,59,0,0);
+    QTime t3(1,0,0,0);
+    QTime t4(23,59,59,999);
+
+    QTest::newRow("times t0 < t1") << QVariant(t0) << QVariant(t1) << Qt::CaseInsensitive << -1;
+    QTest::newRow("times t1 < t2") << QVariant(t1) << QVariant(t2) << Qt::CaseInsensitive << -1;
+    QTest::newRow("times t2 < t3") << QVariant(t2) << QVariant(t3) << Qt::CaseInsensitive << -1;
+    QTest::newRow("times t3 < t4") << QVariant(t3) << QVariant(t4) << Qt::CaseInsensitive << -1;
+    QTest::newRow("times t0 = t0") << QVariant(t0) << QVariant(t0) << Qt::CaseInsensitive << 0;
+    QTest::newRow("times t4 = t4") << QVariant(t4) << QVariant(t4) << Qt::CaseInsensitive << 0;
+
+    // Dates
+    QDate d0;
+    QDate d1 = QDate::fromJulianDay(1);
+    QDate d2(1,1,1);
+    QDate d3(2011,6,9);
+    QDate d4 = QDate::fromJulianDay(0x7fffffff);
+    QDate d5 = QDate::fromJulianDay(0x80000000);
+    QDate d6 = QDate::fromJulianDay(0xffffffff);
+
+    QTest::newRow("dates d0 < d1") << QVariant(d0) << QVariant(d1) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d1 < d2") << QVariant(d1) << QVariant(d2) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d2 < d3") << QVariant(d2) << QVariant(d3) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d3 < d4") << QVariant(d3) << QVariant(d4) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d4 < d5") << QVariant(d4) << QVariant(d5) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d5 < d6") << QVariant(d5) << QVariant(d6) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d0 < d6") << QVariant(d0) << QVariant(d6) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d1 < d6") << QVariant(d1) << QVariant(d6) << Qt::CaseInsensitive << -1;
+    QTest::newRow("dates d0 = d0") << QVariant(d0) << QVariant(d0) << Qt::CaseInsensitive << 0;
+    QTest::newRow("dates d1 = d1") << QVariant(d1) << QVariant(d1) << Qt::CaseInsensitive << 0;
+    QTest::newRow("dates d2 = d2") << QVariant(d2) << QVariant(d2) << Qt::CaseInsensitive << 0;
+    QTest::newRow("dates d3 = d3") << QVariant(d3) << QVariant(d3) << Qt::CaseInsensitive << 0;
+    QTest::newRow("dates d4 = d4") << QVariant(d4) << QVariant(d4) << Qt::CaseInsensitive << 0;
+    QTest::newRow("dates d5 = d5") << QVariant(d5) << QVariant(d5) << Qt::CaseInsensitive << 0;
+    QTest::newRow("dates d6 = d6") << QVariant(d6) << QVariant(d6) << Qt::CaseInsensitive << 0;
+
+    // DateTimes
+    // Somewhat limited testing here
+    QDateTime dt0;
+    QDateTime dt1(d1, t1);
+    QDateTime dt2(d1, t2);
+    QDateTime dt3(d4, t4);
+    QDateTime dt4(d5, t1);
+    QDateTime dt5(d6, t4); // end of the universe
+
+    QTest::newRow("datetimes dt0 < dt1") << QVariant(dt0) << QVariant(dt1) << Qt::CaseInsensitive << -1;
+    QTest::newRow("datetimes dt1 < dt2") << QVariant(dt1) << QVariant(dt2) << Qt::CaseInsensitive << -1;
+    QTest::newRow("datetimes dt2 < dt3") << QVariant(dt2) << QVariant(dt3) << Qt::CaseInsensitive << -1;
+    QTest::newRow("datetimes dt3 < dt4") << QVariant(dt3) << QVariant(dt4) << Qt::CaseInsensitive << -1;
+    QTest::newRow("datetimes dt4 < dt5") << QVariant(dt4) << QVariant(dt5) << Qt::CaseInsensitive << -1;
+    QTest::newRow("datetimes dt0 < dt5") << QVariant(dt0) << QVariant(dt5) << Qt::CaseInsensitive << -1;
+    QTest::newRow("datetimes dt1 < dt5") << QVariant(dt1) << QVariant(dt5) << Qt::CaseInsensitive << -1;
+    QTest::newRow("datetimes dt0 = dt0") << QVariant(dt0) << QVariant(dt0) << Qt::CaseInsensitive << 0;
+    QTest::newRow("datetimes dt1 = dt1") << QVariant(dt1) << QVariant(dt1) << Qt::CaseInsensitive << 0;
+    QTest::newRow("datetimes dt2 = dt2") << QVariant(dt2) << QVariant(dt2) << Qt::CaseInsensitive << 0;
+    QTest::newRow("datetimes dt3 = dt3") << QVariant(dt3) << QVariant(dt3) << Qt::CaseInsensitive << 0;
+    QTest::newRow("datetimes dt4 = dt4") << QVariant(dt4) << QVariant(dt4) << Qt::CaseInsensitive << 0;
+    QTest::newRow("datetimes dt5 = dt5") << QVariant(dt5) << QVariant(dt5) << Qt::CaseInsensitive << 0;
+}
+
 
 QTEST_MAIN(tst_QContactManager)
 #include "tst_qcontactmanager.moc"

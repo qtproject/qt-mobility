@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -58,7 +58,8 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         : QGeoRoutingManagerEngine(parameters),
         m_host("prd.lbsp.navteq.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
+        m_serviceDisabled(false)
 {
     m_networkManager = new QNetworkAccessManager(this);
 
@@ -91,6 +92,13 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     }
     else if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
+    }
+
+    if (parameters.contains("routing.app_id")) {
+        m_applicationId = parameters.value("routing.app_id").toString();
+    }
+    else if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
     }
 
     setSupportsRouteUpdates(true);
@@ -128,12 +136,16 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     QGeoRouteRequest::SegmentDetails segmentDetails;
     segmentDetails |= QGeoRouteRequest::BasicSegmentData;
     setSupportedSegmentDetails(segmentDetails);
-
     if (error)
         *error = QGeoServiceProvider::NoError;
 
     if (errorString)
         *errorString = "";
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(const QString&)), SLOT(currentMobileCountryCodeChanged(const QString&)));
+    currentMobileCountryCodeChanged(m_networkInfo.currentMobileCountryCode());
+#endif
+
 }
 
 QGeoRoutingManagerEngineNokia::~QGeoRoutingManagerEngineNokia() {}
@@ -142,7 +154,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 {
     QString reqString = calculateRouteRequestString(request);
 
-    if (reqString.isEmpty()) {
+    if (reqString.isEmpty() || m_serviceDisabled) {
         QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
@@ -168,7 +180,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
 {
     QString reqString = updateRouteRequestString(route, position);
 
-    if (reqString.isEmpty()) {
+    if (reqString.isEmpty() ||  m_serviceDisabled) {
         QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
@@ -365,6 +377,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
         if (featureStrings.count())
             requestString += ";" + featureStrings.join(",");
     }
+
     return requestString;
 }
 
@@ -431,10 +444,15 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     requestString += "&language=";
     requestString += locale().name();
 
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
+
     return requestString;
 }
 
-QString QGeoRoutingManagerEngineNokia::trimDouble(qreal degree, int decimalDigits)
+QString QGeoRoutingManagerEngineNokia::trimDouble(double degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 
@@ -474,4 +492,14 @@ void QGeoRoutingManagerEngineNokia::routeError(QGeoRouteReply::Error error, cons
     }
 
     emit this->error(reply, error, errorString);
+}
+
+void QGeoRoutingManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
+{
+    if(mcc == "460" || mcc == "461"){
+        m_serviceDisabled=true;
+    }
+     else{
+        m_serviceDisabled=false;
+    }
 }

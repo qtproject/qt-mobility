@@ -52,3 +52,4 @@ symbian|wince* {
     DEFINES += SRCDIR=\\\"$$PWD\\\"
 }
 
+maemo*:CONFIG += insignificant_test

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -46,10 +46,12 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
+#ifndef Q_OS_SYMBIAN
+Q_GLOBAL_STATIC(QSystemInfoPrivate, infoPrivateSingleton)
+#endif
 
 #ifdef QT_SIMULATOR
-QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
+QSystemInfoPrivate *getSystemInfoPrivate() { return infoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!
@@ -58,6 +60,12 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \inmodule QtSystemInfo
     \since 1.0
     \brief The QSystemInfo class provides access to various general information from the system.
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
 */
 
 /*!
@@ -67,7 +75,7 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \value Os                    Operating system version / platform ID.
     \value QtCore                Qt library version.
     \value Firmware              Version of (flashable) system as a whole.
-    \value QtMobility            QtMobility library version.
+    \value QtMobility            QtMobility library version. Since 1.1
 */
 
 /*!
@@ -87,7 +95,7 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
     \value LocationFeature        Global Positioning System (GPS) and/or other location feature available.
     \value VideoOutFeature        Video out feature available.
     \value HapticsFeature         Haptics feature available.
-    \value FmTransmitterFeature   FM Radio transmitter available.
+    \value FmTransmitterFeature   FM Radio transmitter available. Since 1.2
 */
 
 /*!
@@ -95,6 +103,8 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
 
     This signal is emitted whenever the current language changes, specified by \a lang,
     which is in 2 letter, ISO 639-1 specification form.
+
+    \since 1.0
 */
 
 /*!
@@ -102,8 +112,12 @@ QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
 */
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent)
-    , d(sysinfoPrivate())
 {
+#ifdef Q_OS_SYMBIAN
+    d = new QSystemInfoPrivate();
+#else
+    d = infoPrivateSingleton();
+#endif
     qRegisterMetaType<QSystemInfo::Version>("QSystemInfo::Version");
     qRegisterMetaType<QSystemInfo::Feature>("QSystemInfo::Feature");
 }
@@ -113,6 +127,9 @@ QSystemInfo::QSystemInfo(QObject *parent)
 */
 QSystemInfo::~QSystemInfo()
 {
+#ifdef Q_OS_SYMBIAN
+    delete d;
+#endif
 }
 
 /*!
@@ -147,10 +164,11 @@ void QSystemInfo::disconnectNotify(const char *signal)
     \brief The current Language
 
     Returns the current language in 2 letter ISO 639-1 format.
+   \since 1.0
  */
 QString QSystemInfo::currentLanguage()
 {
-    return sysinfoPrivate()->currentLanguage();
+    return d->currentLanguage();
 }
 /*!
     \property QSystemInfo::availableLanguages
@@ -158,10 +176,11 @@ QString QSystemInfo::currentLanguage()
 
     Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format.
     If the Qt translations cannot be found, returns the current system language.
+    \since 1.0
 */
 QStringList QSystemInfo::availableLanguages()
 {
-    return sysinfoPrivate()->availableLanguages();
+    return d->availableLanguages();
 }
 
 /*!
@@ -169,6 +188,7 @@ QStringList QSystemInfo::availableLanguages()
     \a parameter as a string.
 
     In case of error or not available, an empty string is returned.
+    \since 1.0
 */
 QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter)
 {
@@ -178,7 +198,7 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
     case QSystemInfo::QtCore:
         return QString(qVersion());
     default:
-        return sysinfoPrivate()->version(type, parameter);
+        return d->version(type, parameter);
     }
 }
 
@@ -187,18 +207,20 @@ QString QSystemInfo::version(QSystemInfo::Version type, const QString &parameter
     \brief The current locale country code.
 
     Returns the 2 letter ISO 3166-1 for the current country code.
+    \since 1.0
 */
 QString QSystemInfo::currentCountryCode()
 {
-    return sysinfoPrivate()->currentCountryCode();
+    return d->currentCountryCode();
 }
 
 /*!
     Returns true if the QSystemInfo::Feature \a feature is supported, otherwise false.
+    \since 1.0
 */
 bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 {
-    return sysinfoPrivate()->hasFeatureSupported(feature);
+    return d->hasFeatureSupported(feature);
 }
 
 #include "moc_qsystemgeneralinfo.cpp"

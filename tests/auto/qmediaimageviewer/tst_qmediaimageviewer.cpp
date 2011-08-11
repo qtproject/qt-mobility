@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -84,6 +84,8 @@ private slots:
     void rendererControl();
     void setVideoOutput();
     void debugEnums();
+
+    void mediaChanged_signal();
 
 public:
     tst_QMediaImageViewer() : m_network(0) {}
@@ -386,7 +388,17 @@ void tst_QMediaImageViewer::setConsecutiveMedia()
     QMediaImageViewerService *service = qobject_cast<QMediaImageViewerService *>(viewer.service());
     service->setNetworkManager(m_network);
 
+    viewer.setMedia(networkMedia2);
     viewer.setMedia(networkMedia1);
+
+    QCOMPARE(viewer.media(), networkMedia1);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
+
+    QTestEventLoop::instance().enterLoop(2);
+    QCOMPARE(viewer.media(), networkMedia1);
+    QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
+
+    viewer.setMedia(fileMedia1);
     viewer.setMedia(networkMedia2);
 
     QCOMPARE(viewer.media(), networkMedia2);
@@ -420,6 +432,7 @@ void tst_QMediaImageViewer::setConsecutiveMedia()
 void tst_QMediaImageViewer::setInvalidMedia()
 {
     QMediaImageViewer viewer;
+    viewer.setTimeout(250);
 
     QMediaImageViewerService *service = qobject_cast<QMediaImageViewerService *>(viewer.service());
     service->setNetworkManager(m_network);
@@ -1029,6 +1042,20 @@ void tst_QMediaImageViewer::debugEnums()
     qDebug() << QMediaImageViewer::PlayingState;
     QTest::ignoreMessage(QtDebugMsg, "QMediaImageViewer::NoMedia ");
     qDebug() << QMediaImageViewer::NoMedia;
+}
+
+void tst_QMediaImageViewer::mediaChanged_signal()
+{
+    QMediaContent imageMedia(imageUrl("image.png"));
+    QMediaImageViewer viewer;
+    viewer.setTimeout(250);
+    viewer.setNotifyInterval(150);
+
+    QSignalSpy spy(&viewer, SIGNAL(mediaChanged(QMediaContent)));
+    QVERIFY(spy.size() == 0);
+
+    viewer.setMedia(imageMedia);
+    QVERIFY(spy.size() == 1);
 }
 
 QTEST_MAIN(tst_QMediaImageViewer)

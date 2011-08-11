@@ -98,7 +98,8 @@ RCntModel::RCntModel()
 	iPackager(NULL),
 	iConnectionId(0),
 	iNoOfSvrStartAttempts(0),
-    iRescaler(NULL)
+    iRescaler(NULL),
+    iServerRunning(EFalse)
 	{
 	}
 
@@ -125,6 +126,7 @@ Open a Contacts server session.
 */
 void RCntModel::ConnectL()
 	{
+    iServerRunning = EFalse;
 	// Assume the server is already running and attempt to create a session
 	// with a maximum of KAsyncMessageSlots message slots.
 	TInt err = CreateSession(KCntServerName,Version(),KAsyncMessageSlots);
@@ -158,6 +160,9 @@ void RCntModel::ConnectL()
 		{
 		User::LeaveIfError(err);
 		}
+	
+	// Connection successful
+	iServerRunning = ETrue;
 
 	// Create object packer/unpacker if it doesn't already exist.
 	if (iPackager == NULL)	
@@ -209,6 +214,10 @@ KCntDefaultDrive.
 */
 TInt RCntModel::OpenDatabase(const TDesC& aCntFile) const
     {
+    if (!iServerRunning )
+        {
+        return KErrServerTerminated;
+        }
     TInt err = SetFileName(aCntFile);
     if (err == KErrNone)
         {
@@ -236,6 +245,10 @@ Defaults to KCntDefaultDrive.
 */
 void RCntModel::OpenDatabaseAsyncL(TRequestStatus& aStatus, const TDesC& aCntFile)
     {
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
     User::LeaveIfError(SetFileName(aCntFile));
 
     TIpcArgs args;
@@ -251,6 +264,10 @@ Cancel last asynchronous database open request.
 */
 void RCntModel::CancelAsyncOpen() 
 	{
+    if (!iServerRunning)
+        {
+        return;
+        }
 	SendReceive(ECntCancelAsyncOpenDatabase);		
 	}
 
@@ -300,6 +317,10 @@ Close currently open database.
 */
 void RCntModel::CloseDatabase() const
 	{
+    if (!iServerRunning)
+        {
+        return;
+        }
 	(void)SendReceive(ECntCloseDataBase);
 	}
 
@@ -321,6 +342,10 @@ Note: This function can leave.
 */
 TInt64 RCntModel::MachineId() const
 	{
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	TIpcArgs args;
 	TPckgBuf<TInt64> machineID;
 	args.Set(0, &machineID);
@@ -338,6 +363,10 @@ Set the machine ID (debug only).
 */
 void RCntModel::OverrideMachineUniqueId(TInt64 aMachineUniqueId)
 	{
+    if (!iServerRunning)
+        {
+        return;
+        }
 	TIpcArgs args;
 	TPckgBuf<TInt64> machineID(aMachineUniqueId);
 	args.Set(0, &machineID);
@@ -362,6 +391,10 @@ Defaults to KCntDefaultDrive.
 */
 TInt RCntModel::ReplaceDatabase(const TDesC& aCntFile) const
     {
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
     TInt err = SetFileName(aCntFile);
     if (err == KErrNone)
         {
@@ -392,6 +425,11 @@ match digits are specified.
 */
 CContactIdArray* RCntModel::MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight)
 	{
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iPackager->GetReceivingBufferL());
 	args.Set(1, MLplCollection::EMatchPhoneNos);
@@ -434,6 +472,11 @@ Defaults to KCntDefaultDrive.
 */
 TInt RCntModel::CreateDatabase(const TDesC& aCntFile) const
     {
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
+    
     TInt err = SetFileName(aCntFile);
     if (err == KErrNone)
         {
@@ -454,6 +497,10 @@ Create the system template.
 */
 TInt RCntModel::ReCreateTemplate() const
 	{
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	return SendReceive(ECntReCreateTemplate);
 	}
 
@@ -467,6 +514,11 @@ Get the database file UID.
 */
 TPtrC RCntModel::FileUidL() const
 	{
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iFileUid);
 	User::LeaveIfError (SendReceive(ECntFileUniqueId, args));
@@ -485,6 +537,10 @@ CStateWritable).
 */
 TBool RCntModel::DatabaseReadyL() const
     {
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
     TBool retVal = EFalse;
 
     // Although the ECntGetDatabaseReady msg. is completed with TBool values,
@@ -512,6 +568,11 @@ conditions are not met.
 */
 TBool RCntModel::ContactMatchesHintFieldL(TInt aBitWiseFilter, TContactItemId aContactId)
     {
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
     TIpcArgs args;
     args.Set(0, aBitWiseFilter);
     args.Set(1, aContactId);
@@ -545,6 +606,11 @@ Defaults to KCntDefaultDrive.
 */
 TInt RCntModel::DeleteDatabase(const TDesC& aCntFile) const
 	{
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
+    
 	if(aCntFile.Length() > KCntMaxFilePath)
 		{
 		return KErrArgument;
@@ -570,6 +636,11 @@ The given descriptor must have room for minimum of KCntMaxFilePath characters.
 */
 TInt RCntModel::DefaultDatabase(TDes& aCntFile) const
 	{
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
+    
 	TIpcArgs args;
 	args.Set(0,&aCntFile);
 	return SendReceive(ECntGetDefaultDatabaseName,args);
@@ -587,6 +658,11 @@ Retrieve the current contact database drive.
 */
 TInt RCntModel::DatabaseDrive(TDriveUnit& aDriveUnit) const
 	{
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
+    
 	TInt ret = SendReceive(ECntDatabaseDrive);
 	if (ret >= KErrNone)
 		{
@@ -615,6 +691,11 @@ KErrAlreadyExists if the destination contact database file exists.
 */
 void RCntModel::SetDatabaseDriveL(TDriveUnit aDriveUnit, TBool aCopy)
 	{
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0,aDriveUnit);
 	args.Set(1,aCopy);
@@ -630,6 +711,10 @@ Gets the size of the database file in bytes.
 */
 TInt RCntModel::FileSize() const
 	{
+    if (!iServerRunning )
+        {
+        return KErrServerTerminated;
+        }
 	return SendReceive(ECntFilesSize);	
 	}
 
@@ -647,6 +732,11 @@ file exists.
 */
 TBool RCntModel::DatabaseExistsL(const TDesC& aCntFile) const
     {
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
     if(aCntFile.Length() > KCntMaxFilePath)
         {
         User::Leave(KErrArgument);
@@ -682,6 +772,11 @@ otherwise one of the System error codes.
 */
 CDesCArray* RCntModel::ListDatabasesL(TDriveUnit* aDriveUnit) const
 	{
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	// Convert the drive unit to an integer for IPC.  The TDriveUnit constructor
 	// does not allow values outside 0 - 25.
 	TInt driveNumber;
@@ -760,6 +855,11 @@ Add a new contact to the database.
 */
 TContactItemId RCntModel::CreateContactL(CContactItem& aContact) const
 	{
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
     // Process the image field
     if (iRescaler)
         {
@@ -781,7 +881,7 @@ TContactItemId RCntModel::CreateContactL(CContactItem& aContact) const
 /**
 Delete a contact from the database.
 
-@param aContact The contact to be deleted.
+@param aCntId The contact to be deleted.
 @param aCntEventType The event type to pass on to the observers.
 @param aDecAccessCount If ETrue access count should be decremented prior to the
 deletion.
@@ -790,25 +890,36 @@ deletion.
 */
 void RCntModel::DeleteContactL(TContactItemId aCntId, TCntSendEventAction aCntEventType, TBool aDecAccessCount) const
 	{
+    if (!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args(aCntId, aCntEventType, aDecAccessCount);
 	User::LeaveIfError(SendReceive(ECntItemDelete, args));
 	}
 
 /**
-Delete contacts from the database.
+Delete a contact from the database.
 
-@param aContactIds The contacts to be deleted.
+@param aCntId The contact to be deleted.
+@param aCntEventType The event type to pass on to the observers.
+@param aDecAccessCount If ETrue access count should be decremented prior to the
+deletion.
+
+@return KErrNone if the function completed successfully, otherwise one of the 
+standard error codes.
 
 @capability WriteUserData
 */
-void RCntModel::DeleteContactsL(const CContactIdArray& aContactIds) const
-    {
-    // Pack the contact ids into the first IPC argument.
-    TIpcArgs args;
-    TPtr8 ptr(iPackager->PackL(aContactIds));
-    args.Set(0,&ptr);
-    User::LeaveIfError(SendReceive(ECntItemsDelete, args));
-    }
+TInt RCntModel::DeleteContact(TContactItemId aCntId, TCntSendEventAction aCntEventType, TBool aDecAccessCount) const
+	{
+    if (!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
+	TIpcArgs args(aCntId, aCntEventType, aDecAccessCount);
+	return SendReceive(ECntItemDelete, args);
+	}
 
 /** 
 Open the database tables.
@@ -817,6 +928,10 @@ Open the database tables.
 */
 void RCntModel::OpenTablesL()
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	User::LeaveIfError(SendReceive(ECntReOpenDbTables));
 	}
 
@@ -828,6 +943,10 @@ Close the database tables.
 */
 void RCntModel::CloseTablesL()
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	User::LeaveIfError(SendReceive(ECntCloseDbTables));
 	}
 
@@ -843,6 +962,10 @@ update/unlock.
 */
 void RCntModel::CommitContactL(const CContactItem& aContact, TBool aSendChangedEvent) const
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
     //check what contacts were added/removed to a group
     if (aContact.Type() == KUidContactGroup)
         {
@@ -927,6 +1050,10 @@ the server.
 */
 CContactItem* RCntModel::UnPackContactLC(TInt aBufferSize, TIpcArgs& aArgs) const
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	if(aBufferSize > 0) // Packager's internal buffer is not large enough.
 		{
 		// Set new extended receiving buffer.
@@ -948,6 +1075,10 @@ Read an existing contact in the database.
 */
 CContactItem* RCntModel::ReadContactL(const CContactItemViewDef* aCntItemVDef, TContactItemId aCntId) const
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args;
 
 	if (aCntItemVDef) 
@@ -989,6 +1120,10 @@ pushed onto the cleanup stack.
 */
 CContactItem* RCntModel::OpenContactLX(const CContactItemViewDef* aCntItemVDef, TContactItemId aCntId) const
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args;
 	if (aCntItemVDef) 
 		{
@@ -1045,6 +1180,10 @@ EFalse if there was no need to close the contact.
 */
 TBool RCntModel::CloseContact(TContactItemId aCntId)
 	{
+    if(!iServerRunning)
+        {
+        return EFalse;
+        }
 	TInt res = SendReceive(ECntItemClose, TIpcArgs(aCntId));
 	if (res == KErrNone)
 		{
@@ -1059,6 +1198,10 @@ Start a database transaction.
 */
 TInt RCntModel::BeginDbTransaction() const
 	{
+    if(!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	return SendReceive(EBeginDbTransaction);
 	}
 
@@ -1068,15 +1211,36 @@ Commit a database transaction.
 */
 TInt RCntModel::CommitDbTransaction() const
 	{
+    if(!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	return SendReceive(EEndDbTransaction);
 	}
 
+/**
+Asychrounous commit of a database transaction.
+
+@param aStatus Request status variable that will contain the completion value
+*/
+void RCntModel::CommitDbTransaction(TRequestStatus*& aStatus) const
+    {
+    if(!iServerRunning)
+        {
+        return;
+        }
+    SendReceive(EEndDbTransaction, *aStatus);
+    }
 	
 /**
 Rollback a database transaction.
 */
 TInt RCntModel::RollbackDbTransaction() const
 	{
+    if(!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	return SendReceive(ERollbackDbTransaction);
 	}
 
@@ -1092,6 +1256,10 @@ time.
 */
 void RCntModel::SetOperationTimeOutL(const TInt aMicroSeconds) const
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args;
 	args.Set(0, aMicroSeconds);
 	User::LeaveIfError(SendReceive(ECntOpsTimeOut, args));		
@@ -1105,6 +1273,10 @@ Change the existing contact view definition on the server.
 */
 void RCntModel::SetViewDefinitionL(const CContactViewDef& aView)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TPtr8 ptr(iPackager->PackL(aView));
 	User::LeaveIfError(SendReceive(ECntChangeViewDef, TIpcArgs(&ptr)));	
 	}
@@ -1192,6 +1364,10 @@ Request a database event from the server.
 */
 void RCntModel::StartNotificationTransfer(TRequestStatus& aStatus, TDes8& aEvent, TDes8& aIdArray)
 	{	
+    if(!iServerRunning)
+        {
+        return;
+        }
 	SendReceive(ECntRequestEvent, TIpcArgs(&aEvent, &aIdArray), aStatus);	
 	}
 
@@ -1201,6 +1377,10 @@ End (cancel) request for database event from server.
 */
 void RCntModel::EndNotificationTransfer()
 	{	
+    if(!iServerRunning)
+        {
+        return;
+        }
 	SendReceive(ECntCancelEventRequest);	
 	}
 	
@@ -1215,6 +1395,10 @@ database as the currently selected item.
 */
 void RCntModel::SetCurrentItem(TContactItemId aContactId) const
 	{
+    if(!iServerRunning)
+        {
+        return;
+        }
 	TIpcArgs args(aContactId);
 	(void)SendReceive(ECntSetCurrentItem, args);	
 	}
@@ -1230,15 +1414,19 @@ ID is initialised to KNullContactId when the database is opened.
 */
 TContactItemId RCntModel::CurrentItem() const
 	{		
-	 TContactItemId id = SendReceive(ECntGetCurrentItem);
-	 if (id < 0)
-	 	{
-		return KNullContactId;
-		}
-	 else
-	 	{
-		return id;
-		}
+    if(!iServerRunning)
+        {
+        return KNullContactId;
+        }
+    TContactItemId id = SendReceive(ECntGetCurrentItem);
+    if (id < 0)
+        {
+        return KNullContactId;
+        }
+    else
+        {
+        return id;
+        }
 	}
 
 
@@ -1264,6 +1452,10 @@ if no current database has been set.
 */
 TInt RCntModel::GetCurrentDatabase(TDes& aDatabase) const
 	{
+    if(!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	TIpcArgs args(&aDatabase);
 	return SendReceive(ECntGetCurrentDb, args);
 	}
@@ -1290,6 +1482,10 @@ the receiving client needs to be using the same database.
 */
 TInt RCntModel::SetCurrentDatabase(const TDesC& aDatabase) const
 	{
+    if(!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	TIpcArgs args(&aDatabase);
 	return SendReceive(ECntSetCurrentDb, args);
 	}
@@ -1317,6 +1513,10 @@ requested has not been set.
 */
 TContactItemId RCntModel::GetSpeedDialFieldL(TInt aSpeedDialPosition, TDes& aPhoneNumber)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	__ASSERT_ALWAYS(aSpeedDialPosition >= KCntMinSpeedDialIndex && aSpeedDialPosition <= KCntMaxSpeedDialIndex , User::Leave(KErrArgument));	
 	TPckgBuf<TContactItemId> contact(KNullContactId);
 	TIpcArgs args(aSpeedDialPosition,&aPhoneNumber);
@@ -1364,6 +1564,10 @@ operation.
 */
 void RCntModel::SetFieldAsSpeedDialL(TContactItemId aContactId, TInt aFieldIndex, TInt aSpeedDialPosition)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	__ASSERT_ALWAYS(aSpeedDialPosition >= KCntMinSpeedDialIndex && aSpeedDialPosition <= KCntMaxSpeedDialIndex , User::Leave(KErrArgument));
 	TIpcArgs args(aSpeedDialPosition, aContactId, aFieldIndex);
 	User::LeaveIfError(SendReceive(ECntSetSpeedDialIdForPosition, args));
@@ -1388,6 +1592,10 @@ KErrArgument.
 */
 void RCntModel::RemoveSpeedDialFieldL(TContactItemId aContactId, TInt aSpeedDialPosition)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	__ASSERT_ALWAYS(aSpeedDialPosition >= KCntMinSpeedDialIndex && aSpeedDialPosition <= KCntMaxSpeedDialIndex , User::Leave(KErrArgument));
 	// Tell the server that this speed dial slot is now free.  Third argument
 	// (i.e. field index) is not used.
@@ -1407,6 +1615,10 @@ TUid aPhonebookUid is returned.
 */
 TContactItemId RCntModel::ICCTemplateIdL(TUid aPhonebookUid)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args(aPhonebookUid.iUid);
 	return SendReceive(ECntICCTemplateId, args);
 	}
@@ -1419,6 +1631,10 @@ Returns the ID of the contacts model group which represents the ADN phonebook.
 */ 
 TContactItemId RCntModel::PhonebookGroupIdL()
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	return SendReceive(ECntPhonebookGroupId);
 	}
 
@@ -1437,6 +1653,10 @@ operation.
 */
 void RCntModel::SetOwnCardL(const CContactItem& aContact)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args; 
 	TPtr8 ptr(iPackager->PackL(aContact));
 	args.Set(0,&ptr);
@@ -1455,6 +1675,10 @@ card has been deleted or has not yet been set.
 */
 TContactItemId RCntModel::OwnCard() const
 	{
+    if(!iServerRunning)
+        {
+        return KNullContactId;
+        }
 	return static_cast<TContactItemId>(SendReceive(ECntGetOwnCard));
 	}
 
@@ -1466,6 +1690,10 @@ Returns the connection ID of the current client session.
 */
 TInt RCntModel::ConnectionId() const
 	{
+    if(!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	// If asking for the connection ID the first time, then we ask the server
 	// about the session id (lazy initialisation).
 	if (!iConnectionId)
@@ -1483,6 +1711,10 @@ Debug only.
 */
 void RCntModel::SetHeapFailure(RHeap::TAllocFail aType, TInt aRate)
 	{	
+    if(!iServerRunning)
+        {
+        return;
+        }
 	TIpcArgs args(aType,aRate);
 	SendReceive(ECntSetHeapFailure,args);
 	}
@@ -1497,6 +1729,10 @@ Debug only.
 */
 TInt RCntModel::ResourceCount()
 	{
+    if(!iServerRunning)
+        {
+        return KErrServerTerminated;
+        }
 	return(SendReceive(ECntResourceCount));
 	}	
 
@@ -1511,6 +1747,10 @@ not set.
 */
 TContactItemId RCntModel::PrefTemplateId() const
 	{
+    if(!iServerRunning)
+        {
+        return KNullContactId;
+        }
 	return(SendReceive(ECntGetPrefTemplateId));	
 	}
 
@@ -1534,6 +1774,10 @@ operation.
 */
 void RCntModel::SetPrefTemplateL(const TContactItemId aContactId)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args(aContactId);
 	User::LeaveIfError(SendReceive(ECntSetPrefTemplateId, args));
 	}
@@ -1546,6 +1790,11 @@ Get a list of template IDs from the server.
 */
 CContactIdArray* RCntModel::FetchTemplateListIdsL()
 {
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iPackager->GetReceivingBufferL());
 
@@ -1571,6 +1820,11 @@ Get a list of group IDs from the server.
 */
 CContactIdArray* RCntModel::FetchGroupListIdsL()
 {
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iPackager->GetReceivingBufferL());
 
@@ -1600,6 +1854,11 @@ parameters.
 */
 CContactIdArray* RCntModel::CollectionL(TInt aCollectionType, TTime aTime,const TDesC& aGuid)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	CContactIdArray* idArray = NULL;
 	switch(aCollectionType)
 	{
@@ -1639,6 +1898,11 @@ time.
 */
 CContactIdArray* RCntModel::DoGetCollectionChangedSinceL(TTime aTime)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iPackager->GetReceivingBufferL());
 	args.Set(1,MLplCollection::EChangedSince);
@@ -1670,6 +1934,11 @@ criteria.
 */
 CContactIdArray* RCntModel::DoGetCollectionL(TInt aCollectionType)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iPackager->GetReceivingBufferL());
 	args.Set(1,aCollectionType);
@@ -1700,6 +1969,11 @@ one contact ID in this collection.
 */
 CContactIdArray* RCntModel::DoGetCollectionGuidL(const TDesC& aGuid)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iPackager->GetReceivingBufferL());
 	args.Set(1,MLplCollection::EFindGuid);
@@ -1727,6 +2001,10 @@ Set the sort preferences in the server.
 */
 void RCntModel::SetSortPreferenceL(const CArrayFix<CContactDatabase::TSortPref>& aSortOrder)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TPtr8 ptr(iPackager->PackL(aSortOrder));
 	TIpcArgs args;
 	args.Set(0,&ptr);
@@ -1741,6 +2019,11 @@ Get the sort preferences from the server.
 */
 CArrayFix<CContactDatabase::TSortPref>* RCntModel::GetSortPreferenceL() const
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0, &iPackager->GetReceivingBufferL());
 
@@ -1766,6 +2049,10 @@ Get the number of contacts in the database.
 */
 TInt RCntModel::ContactCountL() const
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
     TInt numContacts = SendReceive( ECntDbContactCount );
     User::LeaveIfError( numContacts );
     return numContacts;
@@ -1786,6 +2073,11 @@ deleted, EFalse otherwise.
 */
 TBool RCntModel::SeekContactL(TContactItemId aContactId,TContactItemId& aId,TUid& aContactType, TBool& aDeleted)
     {
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
     TPckgBuf<TInt> id;
     TPckgBuf<TUid> type;
     TPckgBuf<TBool> deleted;
@@ -1814,6 +2106,10 @@ TBool RCntModel::SeekContactL(TContactItemId aContactId,TContactItemId& aId,TUid
 
 void RCntModel::TextFieldL(TInt aCntItemId,TFieldType aFieldType, TDes& aText)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TPckgBuf<TFieldType> fieldType(aFieldType);
 	TIpcArgs args(aCntItemId,&fieldType,&aText);
 	User::LeaveIfError(SendReceive(ECntTextField,args));
@@ -1822,6 +2118,10 @@ void RCntModel::TextFieldL(TInt aCntItemId,TFieldType aFieldType, TDes& aText)
 
 void RCntModel::ReadContactTextDefL(TContactItemId aContactId, TDes &aResult,const CContactTextDef& aTextDef)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	iPackager->PackL( const_cast<CContactTextDef&>(aTextDef));
 	TIpcArgs args(&iPackager->GetTransmittingBuffer(), &aResult,aContactId);
 	User::LeaveIfError(SendReceive(ECntReadContactTextDef, args));
@@ -1830,6 +2130,11 @@ void RCntModel::ReadContactTextDefL(TContactItemId aContactId, TDes &aResult,con
 
 CContactIdArray* RCntModel::FindL(const TDesC& aText,const CContactItemFieldDef* aFieldDef)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 
 	// Parameter can be NULL so send down an empty descriptor to the server.
@@ -1873,6 +2178,10 @@ CContactIdArray* RCntModel::FindL(const TDesC& aText,const CContactItemFieldDef*
 
 void RCntModel::SetDbViewContactType(const TUid aUid)
 	{
+    if(!iServerRunning)
+        {
+        return;
+        }
 	TIpcArgs args(aUid.iUid);
 	(void)SendReceive(ECntSetDbViewContactType,args);
 	}
@@ -1880,6 +2189,10 @@ void RCntModel::SetDbViewContactType(const TUid aUid)
 
 TUid RCntModel::GetDbViewContactType() const
 	{
+    if(!iServerRunning)
+        {
+        return KNullUid;
+        }
 	TPckgBuf<TUid> type;
 	TIpcArgs args(&type);
 	(void)SendReceive(ECntSetDbViewContactType,args);
@@ -1897,6 +2210,11 @@ find which uses a text definition and an array of "find words".
 */
 void RCntModel::FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	if(aTextDef != NULL)
 		{
@@ -1947,6 +2265,11 @@ find which uses text and a field definition.
 */
 void RCntModel::FindAsyncInitL(const TDesC& aText,CContactItemFieldDef* aFieldDef)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args;
 	args.Set(0,&aText);
 	if(aFieldDef != NULL)
@@ -1976,6 +2299,11 @@ Will be NULL if this is the first iteration.
 */
 TBool RCntModel::FindAsyncL(CContactIdArray*& aOrigIdArray)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TBool moreToGo;
 	TPckg<TBool> pckg(moreToGo);
 	// Iterations can't fail so expand buffer to 4Kb.  4096 contacts should be
@@ -2018,6 +2346,10 @@ no asynchronous activities.
 */
 void RCntModel::SetAsyncActivityL(TBool aAsyncActivity)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args;
 	args.Set(0,aAsyncActivity);
 	User::LeaveIfError(SendReceive(ECntSetAsyncActivity,args));
@@ -2032,6 +2364,11 @@ augmented with those contact IDs which match the given filter.
 */
 void RCntModel::FilterDatabaseL(CCntFilter& aFilter)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	CContactIdArray* origIdArray = aFilter.iIds;
 	aFilter.iIds = NULL;
 
@@ -2069,6 +2406,11 @@ void RCntModel::FilterDatabaseL(CCntFilter& aFilter)
 	
 TInt RCntModel::OpenViewL(const CContactTextDef& aTextDef, const TInt aViewPrefs)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TPckgBuf<TInt> viewSessionId;
 	iPackager->PackL(const_cast<CContactTextDef&>(aTextDef));
 	TIpcArgs args(&iPackager->GetTransmittingBuffer(), aViewPrefs, &viewSessionId);
@@ -2082,6 +2424,10 @@ TInt RCntModel::OpenViewL(const CContactTextDef& aTextDef, const TInt aViewPrefs
 	
 void RCntModel::CloseView(TInt aViewId)
 	{
+    if(!iServerRunning)
+        {
+        return;
+        }
 	TIpcArgs args(aViewId);
 	SendReceive(ECntCloseViewSession,args);
 	}
@@ -2089,6 +2435,11 @@ void RCntModel::CloseView(TInt aViewId)
 	
 void RCntModel::ChangeSortOrderL(TInt aViewId, const CContactTextDef& aTextDef)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	// Serialize the text def using packager overload.
 	iPackager->PackL( const_cast<CContactTextDef&>(aTextDef));
 	
@@ -2102,6 +2453,10 @@ void RCntModel::ChangeSortOrderL(TInt aViewId, const CContactTextDef& aTextDef)
 	
 void RCntModel::BeginIterateL(TInt aViewId)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args(aViewId);
 	TInt ret = SendReceive(ECntViewBeginIterate,args);
 	User::LeaveIfError(ret);
@@ -2110,6 +2465,10 @@ void RCntModel::BeginIterateL(TInt aViewId)
 	
 void RCntModel::EndIterateL(TInt aViewId)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
 	TIpcArgs args(aViewId);
 	TInt ret = SendReceive(ECntViewEndIterate,args);
 	User::LeaveIfError(ret);
@@ -2118,6 +2477,11 @@ void RCntModel::EndIterateL(TInt aViewId)
 	
 CViewContact* RCntModel::NextItemL(TInt aViewId, const TInt aViewPrefs)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args(aViewId, aViewPrefs, &iPackager->GetReceivingBufferL());
 	TInt size = SendReceive(ECntViewNextItemL, args);
 
@@ -2157,6 +2521,11 @@ CViewContact* RCntModel::NextItemL(TInt aViewId, const TInt aViewPrefs)
 	
 CViewContact* RCntModel::ItemAtL(TContactItemId aContactId, TInt aViewId)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	TIpcArgs args(aContactId, aViewId, &iPackager->GetReceivingBufferL());
 	TInt size = SendReceive(ECntItemAtL, args);
 
@@ -2197,6 +2566,11 @@ CViewContact* RCntModel::ItemAtL(TContactItemId aContactId, TInt aViewId)
 #if defined(_DEBUG)	
 void RCntModel::GetDefinitionsOfExistingViewsL(const TDesC& aDbName, RPointerArray<CContactDefaultViewDefinition>& aViewDefs)
 	{
+    if(!iServerRunning)
+        {
+        User::Leave(KErrServerTerminated);
+        }
+    
 	RBuf8 buf;
 	CleanupClosePushL(buf);
 	buf.CreateL(256);

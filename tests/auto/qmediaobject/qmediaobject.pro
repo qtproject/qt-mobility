@@ -1,5 +1,6 @@
 TARGET = tst_qmediaobject
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia \
+               ../../../src/multimedia/audio
 CONFIG += testcase
 
 symbian {
@@ -21,6 +22,7 @@ symbian {
 }
 
 include (../../../common.pri)
+include (../qmultimedia_common/mockrecorder.pri)
 
 HEADERS+= tst_qmediaobject.h
 SOURCES += main.cpp tst_qmediaobject.cpp

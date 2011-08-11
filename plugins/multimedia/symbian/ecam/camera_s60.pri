@@ -131,7 +131,9 @@ HEADERS += $$PWD/s60cameraconstants.h \
     $$PWD/s60cameraengine.h \
     $$PWD/s60cameraviewfinderengine.h \
     $$PWD/s60cameraengineobserver.h \
-    $$PWD/s60videorenderercontrol.h
+    $$PWD/s60videorenderercontrol.h \
+    $$PWD/s60cameracapturedestinationcontrol.h \
+    $$PWD/s60cameracapturebufferformatcontrol.h
 
 SOURCES += $$PWD/s60cameralockscontrol.cpp \
     $$PWD/s60camerafocuscontrol.cpp \
@@ -152,6 +154,8 @@ SOURCES += $$PWD/s60cameralockscontrol.cpp \
     $$PWD/s60camerasettings.cpp \
     $$PWD/s60cameraengine.cpp \
     $$PWD/s60cameraviewfinderengine.cpp \
-    $$PWD/s60videorenderercontrol.cpp
+    $$PWD/s60videorenderercontrol.cpp \
+    $$PWD/s60cameracapturedestinationcontrol.cpp \
+    $$PWD/s60cameracapturebufferformatcontrol.cpp
 
 # End of file

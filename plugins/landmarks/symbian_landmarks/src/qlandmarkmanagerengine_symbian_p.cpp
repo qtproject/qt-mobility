@@ -7,29 +7,29 @@
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
- ** No Commercial Usage
- ** This file contains pre-release code and may not be distributed.
- ** You may use this file in accordance with the terms and conditions
- ** contained in the Technology Preview License Agreement accompanying
- ** this package.
- **
  ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
- ** General Public License version 2.1 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.LGPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU Lesser General Public License version 2.1 requirements
- ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ ** This file may be used under the terms of the GNU Lesser General Public
+ ** License version 2.1 as published by the Free Software Foundation and
+ ** appearing in the file LICENSE.LGPL included in the packaging of this
+ ** file. Please review the following information to ensure the GNU Lesser
+ ** General Public License version 2.1 requirements will be met:
+ ** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  **
  ** In addition, as a special exception, Nokia gives you certain additional
- ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** rights. These rights are described in the Nokia Qt LGPL Exception
  ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
  **
- ** If you have questions regarding the use of this file, please contact
- ** Nokia at qt-info@nokia.com.
+ ** GNU General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU General
+ ** Public License version 3.0 as published by the Free Software Foundation
+ ** and appearing in the file LICENSE.GPL included in the packaging of this
+ ** file. Please review the following information to ensure the GNU General
+ ** Public License version 3.0 requirements will be met:
+ ** http://www.gnu.org/copyleft/gpl.html.
  **
- **
- **
+ ** Other Usage
+ ** Alternatively, this file may be used in accordance with the terms and
+ ** conditions contained in a signed written agreement between you and Nokia.
  **
  **
  **
@@ -82,6 +82,7 @@
 #include <qnumeric.h>
 #include <QSysInfo>
 #include <qglobal.h>
+#include <QCoreApplication>
 // symbian landmarks apis includes
 #include <EPos_Landmarks.h>
 #include <EPos_CPosLandmark.h>
@@ -3922,18 +3923,14 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
         }
         else if (aData->iLandmarkSearch) {
 
+            //qDebug() << " Fetching landmarks from search ";
+            aData->iLandmarkIds.clear();
+            TPosLmItemId lmId;
             CPosLmItemIterator *iterator = aData->iLandmarkSearch->MatchIteratorL();
-            RArray<TPosLmItemId> symbianLmIds;
-
-            int lmcount = iterator->NumOfItemsL();
-
-            if (lmcount > 0 && offset < lmcount) {
-                iterator->GetItemIdsL(symbianLmIds, 0, iterator->NumOfItemsL());
-
-                aData->iLandmarkIds = LandmarkUtility::convertToQtLandmarkIds(managerUri(),
-                    symbianLmIds);
-                symbianLmIds.Close();
-
+            while ((lmId = iterator->NextL()) != KPosLmNullItemId) {
+                aData->iLandmarkIds.append(
+                    LandmarkUtility::convertToQtLandmarkId(managerUri(), lmId));
+                QCoreApplication::processEvents();
             }
         }
 
@@ -3954,6 +3951,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
 
                         break;
                     }
+                    QCoreApplication::processEvents();
                 }
 
                 if (haveProximityFilter) {
@@ -4037,6 +4035,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                         if (error == QLandmarkManager::NoError) {
                             aData->iLandmarks.append(qtLandmark);
                         }
+                        QCoreApplication::processEvents();
                     }
 
                 error = QLandmarkManager::NoError;
@@ -4118,6 +4117,7 @@ void LandmarkManagerEngineSymbianPrivate::HandleCompletionL(CLandmarkRequestData
                         break;
                     }
                     aData->iCategories.append(qtLmCategory);
+
                 }
         }
 
@@ -4873,11 +4873,17 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
         return true;
     }
 
-    //fetchRequired will prevent multiple fetches from database
-    bool sortRequired = true; //TODO: optimize
+    if (filterType == QLandmarkFilter::LandmarkIdFilter && sortOrders.size() <= 0) {
+        qDebug() << "LandmarkIdFilter with no sorting preference";
+    }
 
-    // do sorting if required
-    if (sortRequired) {
+        // sort landmarks only for intersection and union filter type
+    if ((filterType == QLandmarkFilter::LandmarkIdFilter) || ((filterType
+        == QLandmarkFilter::IntersectionFilter || filterType == QLandmarkFilter::UnionFilter)
+        && sortOrders.size() > 0)) {
+
+        qDebug() << "filterType = " << filterType << "\t with sortOrders = " << sortOrders.size();
+
         // get all landmark data
         QList<QLandmark> landmarks;
         QLandmark qtLandmark;
@@ -4888,6 +4894,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
                 if (*error == QLandmarkManager::NoError) {
                     landmarks.append(qtLandmark);
                 }
+                QCoreApplication::processEvents();
             }
 
         *error = QLandmarkManager::NoError;
@@ -4895,6 +4902,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
 
         landmarkIds.clear();
         landmarkIds = QLandmarkManagerEngineSymbian::sortLandmarks(landmarks, sortOrders);
+        QCoreApplication::processEvents();
     }
 
     int resultcount = landmarkIds.size();
@@ -4907,6 +4915,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
 
     landmarkIds = landmarkIds.mid(offset, limit);
 
+    /*
     if ((filterType == QLandmarkFilter::IntersectionFilter || filterType
         == QLandmarkFilter::UnionFilter) && sortOrders.size() > 0) {
         QLandmarkIdFilter tmpFilter;
@@ -4914,6 +4923,7 @@ bool LandmarkManagerEngineSymbianPrivate::sortFetchedLmIds(int limit, int offset
         landmarkIds = this->landmarkIds(tmpFilter, KAllLandmarks, KDefaultIndex, sortOrders, error,
             errorString);
     }
+    */
 
     //qDebug() << "result size = " << resultcount << " limit = " << limit << " offset = " << offset;
     return true;

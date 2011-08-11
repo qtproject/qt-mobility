@@ -3,6 +3,7 @@
         <credential name="TrackerReadAccess" />
         <for path="/usr/lib/qtmobility/examples/declarative-music-browser" />
         <for path="/usr/lib/qtmobility/examples/documentproperties" />
+        <for path="/usr/lib/qtmobility/examples/mediabrowser" />
     </request>
     <request>
         <credential name="TrackerReadAccess" />
@@ -42,5 +43,12 @@
     <request>
         <credential name="mce::TKLockControl" />
         <for path="/usr/lib/qtmobility/examples/qsysinfo" />
+    </request>
+    <request>
+        <credential name="GRP::video" />
+        <credential name="GRP::pulse-access" />
+        <for path="/usr/lib/qtmobility/demos/player" />
+        <for path="/usr/lib/qtmobility/examples/camera" />
+        <for path="/usr/lib/qtmobility/examples/qml_camera" />
     </request>
 </aegis>

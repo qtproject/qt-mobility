@@ -34,7 +34,9 @@ symbian|wince* {
         DEPLOYMENT_PLUGIN += qsqlite
     }
     
-    addFiles.sources = ../../testservice2/xml/testserviceplugin.xml
+    addFiles.sources = ../../tools/testservice2/xml/testserviceplugin.xml
     addFiles.path = plugins/xmldata
     DEPLOYMENT += addFiles
 }
+
+maemo*:CONFIG += insignificant_test

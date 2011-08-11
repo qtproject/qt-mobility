@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -81,8 +81,8 @@ bool QLlcpServerPrivate::listen(const QString &serviceUri)
                 this, SLOT(Accept(QDBusVariant,QDBusVariant,int,QVariantMap)));
         connect(m_socketRequestor, SIGNAL(connect(QDBusVariant,QDBusVariant,int,QVariantMap)),
                 this, SLOT(Connect(QDBusVariant,QDBusVariant,int,QVariantMap)));
-        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,QDBusVariant,int,QVariantMap)),
-                this, SLOT(Socket(QDBusVariant,QDBusVariant,int,QVariantMap)));
+        connect(m_socketRequestor, SIGNAL(socket(QDBusVariant,int,QVariantMap)),
+                this, SLOT(Socket(QDBusVariant,int,QVariantMap)));
     }
 
     if (m_socketRequestor) {
@@ -133,10 +133,10 @@ QLlcpSocket *QLlcpServerPrivate::nextPendingConnection()
     if (m_pendingSockets.isEmpty())
         return 0;
 
-    int fd = m_pendingSockets.takeFirst();
+    QPair<int, QVariantMap> parameters = m_pendingSockets.takeFirst();
 
     QLlcpSocketPrivate *socketPrivate =
-        new QLlcpSocketPrivate(m_connection, fd);
+        new QLlcpSocketPrivate(m_connection, parameters.first, parameters.second);
 
     QLlcpSocket *socket = new QLlcpSocket(socketPrivate, 0);
 
@@ -168,7 +168,7 @@ void QLlcpServerPrivate::AccessGranted(const QDBusObjectPath &targetPath,
 }
 
 void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+                                int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
     Q_UNUSED(rsap);
@@ -176,7 +176,7 @@ void QLlcpServerPrivate::Accept(const QDBusVariant &lsap, const QDBusVariant &rs
 
     Q_Q(QLlcpServer);
 
-    m_pendingSockets.append(readFd);
+    m_pendingSockets.append(qMakePair(fd, properties));
 
     emit q->newConnection();
 }
@@ -190,12 +190,10 @@ void QLlcpServerPrivate::Connect(const QDBusVariant &lsap, const QDBusVariant &r
     Q_UNUSED(properties);
 }
 
-void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, const QDBusVariant &rsap,
-                                int readFd, const QVariantMap &properties)
+void QLlcpServerPrivate::Socket(const QDBusVariant &lsap, int fd, const QVariantMap &properties)
 {
     Q_UNUSED(lsap);
-    Q_UNUSED(rsap);
-    Q_UNUSED(readFd);
+    Q_UNUSED(fd);
     Q_UNUSED(properties);
 }
 

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -45,10 +45,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivateSingleton)
 
 #ifdef QT_SIMULATOR
-QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivate(); }
+QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!
@@ -56,7 +56,13 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemDeviceInfo class provides access to device information from the system.
-    \since 1.2
+    \since 1.0
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
 */
 
 /*!
@@ -65,37 +71,46 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \inmodule QtSystemInfo
     \brief The ProfileDetails class provides access to details of the currently active phone profile.
     \since 1.2
+
+    \reentrant
+
+    \note All functions in this class are reentrant.
 */
 
 /*!
     \fn void QSystemDeviceInfo::batteryLevelChanged(int level)
 
     This signal is emitted when battery level has changed to \a level.
+    \since 1.1
 */
 
 /*!
     \fn void QSystemDeviceInfo::batteryStatusChanged(QSystemDeviceInfo::BatteryStatus status)
 
     This signal is emitted when battery status has changed to \a status.
+    \since 1.1
 */
 
 /*!
     \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
     This signal is emitted when the power state has changed to \a state, such as when a phone gets
-    plugged in to the wall.
+    plugged in to the wall
+    \since 1.1
 */
 
 /*!
     \fn void QSystemDeviceInfo::thermalStateChanged(QSystemDeviceInfo::ThermalState state)
 
     This signal is emitted when the thermal state has changed to \a state.
+    \since 1.2
 */
 
 /*!
     \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
     This signal is emitted whenever the users active profile changes to \a profile.
+    \since 1.2
 */
 
 /*!
@@ -201,30 +216,35 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
 
     This signal is emitted whenever bluetooth state changes to \a on.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemDeviceInfo::wirelessKeyboardConnected(bool connected)
 
     This signal is emitted whenever a wireless keyboard is connected, specified by \a connected
+    \since 1.2
 */
 
 /*!
     \fn void QSystemDeviceInfo::keyboardFlipped(bool open)
 
     This signal is emitted whenever a phone flips open, specified by \a open.
+    \since 1.2
 */
 
 /*!
     \fn void QSystemDeviceInfo::lockStatusChanged(QSystemDeviceInfo::LockTypeFlags type)
 
     This signal is emitted whenever the lock state changes, with LockType \a type.
+    \since 1.2
 */
 
 /*!
     \fn void QSystemDeviceInfo::deviceLocked(bool isLocked)
 
     This signal is emitted whenever the device lock state changes to \a isLocked.
+   \since 1.2
 */
 
 /*!
@@ -236,8 +256,12 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 */
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent)
-    , d(deviceInfoPrivate())
 {
+#ifdef Q_OS_SYMBIAN
+    d = new QSystemDeviceInfoPrivate();
+#else
+    d = deviceInfoPrivateSingleton();
+#endif
     qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
     qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
     qRegisterMetaType<QSystemDeviceInfo::ThermalState>("QSystemDeviceInfo::ThermalState");
@@ -254,6 +278,9 @@ QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
  */
 QSystemDeviceInfo::~QSystemDeviceInfo()
 {
+#ifdef Q_OS_SYMBIAN
+    delete d;
+#endif
 }
 
 /*!
@@ -351,10 +378,11 @@ void QSystemDeviceInfo::disconnectNotify(const char *signal)
     \brief The supported inputmethods.
 
     Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.
+    \since 1.0
 */
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
 {
-    return deviceInfoPrivate()->inputMethodType();
+    return d->inputMethodType();
 }
 
 /*!
@@ -362,10 +390,11 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfo::inputMethodType()
     \brief The IMEI.
 
     Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
+    \since 1.0
 */
 QString QSystemDeviceInfo::imei()
 {
-    return deviceInfoPrivate()->imei();
+    return d->imei();
 }
 
 /*!
@@ -373,10 +402,11 @@ QString QSystemDeviceInfo::imei()
     \brief The IMSI.
 
     Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none.
+    \since 1.0
 */
 QString QSystemDeviceInfo::imsi()
 {
-    return deviceInfoPrivate()->imsi();
+    return d->imsi();
 }
 
 /*!
@@ -385,44 +415,49 @@ QString QSystemDeviceInfo::imsi()
 
     Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor
     of the motherboard.
+    \since 1.0
 */
 QString QSystemDeviceInfo::manufacturer()
 {
-    return deviceInfoPrivate()->manufacturer();
+    return d->manufacturer();
 }
 
 /*!
     \property QSystemDeviceInfo::model
     \brief The model name.
 
-    Returns the model information of the device. In the case of desktops where no
-    model information is present, the CPU architect, such as i686, and machine type, such as Server,
+    Returns the public-known model information of the device, e.g. N8, E7, etc. In the case where no
+    model information is present, the CPU architect, such as i686, or machine type, such as Server,
     Desktop or Laptop.
+    \since 1.0
 */
 QString QSystemDeviceInfo::model()
 {
-    return deviceInfoPrivate()->model();
+    return d->model();
 }
 
 /*!
     \property QSystemDeviceInfo::productName
     \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
+    Returns the internal product name of the device, e.g. RM-774. In the case where no product name
+    is available, an empty string is returned.
+    \since 1.0
 */
 QString QSystemDeviceInfo::productName()
 {
-    return deviceInfoPrivate()->productName();
+    return d->productName();
 }
 /*!
     \property QSystemDeviceInfo::batteryLevel
     \brief The battery level.
 
     Returns the battery charge level as percentage 1 - 100 scale.
+    \since 1.0
 */
 int QSystemDeviceInfo::batteryLevel() const
 {
-    return deviceInfoPrivate()->batteryLevel();
+    return d->batteryLevel();
 }
 
 /*!
@@ -430,6 +465,7 @@ int QSystemDeviceInfo::batteryLevel() const
     \brief The battery status.
 
     Returns the battery charge status.
+    \since 1.0
 */
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
 {
@@ -451,10 +487,11 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfo::batteryStatus()
     \brief the status of the sim card.
 
     Returns the QSystemDeviceInfo::simStatus status of SIM card.
+    \since 1.0
 */
 QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
 {
-    return deviceInfoPrivate()->simStatus();
+    return d->simStatus();
 }
 
 /*!
@@ -462,10 +499,11 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfo::simStatus()
     \brief Device lock.
 
     Returns true if the device is locked, otherwise false.
+    \since 1.0
 */
 bool QSystemDeviceInfo::isDeviceLocked()
 {
-    return deviceInfoPrivate()->isDeviceLocked();
+    return d->isDeviceLocked();
 }
 
 /*!
@@ -473,10 +511,11 @@ bool QSystemDeviceInfo::isDeviceLocked()
     \brief the device profile
 
     Gets the current QSystemDeviceInfo::currentProfile device profile.
+    \since 1.2
 */
 QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 {
-    return deviceInfoPrivate()->currentProfile();
+    return d->currentProfile();
 }
 
 /*!
@@ -484,10 +523,11 @@ QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
     \brief the power state.
 
     Gets the current QSystemDeviceInfo::currentPowerState state.
+    \since 1.2
 */
 QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 {
-    return deviceInfoPrivate()->currentPowerState();
+    return d->currentPowerState();
 }
 
 /*!
@@ -495,10 +535,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
     \brief the thermal state.
 
     Gets the current QSystemDeviceInfo::currentThermalState state.
+    \since 1.2
 */
 QSystemDeviceInfo::ThermalState QSystemDeviceInfo::currentThermalState()
 {
-    return deviceInfoPrivate()->currentThermalState();
+    return d->currentThermalState();
 }
 
 /*!
@@ -506,10 +547,11 @@ QSystemDeviceInfo::ThermalState QSystemDeviceInfo::currentThermalState()
     \brief bluetooth power state.
 
     Gets the current bluetooth power state.
+    \since 1.1
 */
 bool QSystemDeviceInfo::currentBluetoothPowerState()
 {
-    return deviceInfoPrivate()->currentBluetoothPowerState();
+    return d->currentBluetoothPowerState();
 }
 
 /*!
@@ -517,10 +559,11 @@ bool QSystemDeviceInfo::currentBluetoothPowerState()
     \brief The Keyboard Type
 
     Returns the type of keyboards found.
+    \since 1.2
 */
 QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardTypes()
 {
-    return deviceInfoPrivate()->keyboardTypes();
+    return d->keyboardTypes();
 }
 
 /*!
@@ -528,10 +571,11 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfo::keyboardTypes()
     \brief wireless keyboard connected
 
     Returns true if a wireless keyboard is connected, otherwise false;
+    \since 1.2
 */
 bool QSystemDeviceInfo::isWirelessKeyboardConnected()
 {
-    return deviceInfoPrivate()->isWirelessKeyboardConnected();
+    return d->isWirelessKeyboardConnected();
 }
 
 /*!
@@ -539,18 +583,20 @@ bool QSystemDeviceInfo::isWirelessKeyboardConnected()
     \brief Flip keyboard open.
 
     Returns true if the flip keyboard is open, otherwise false;
+    \since 1.2
 */
 bool QSystemDeviceInfo::isKeyboardFlippedOpen()
 {
-    return deviceInfoPrivate()->isKeyboardFlippedOpen();
+    return d->isKeyboardFlippedOpen();
 }
 
 /*!
     Returns true if the key pad, indicated by \a type, light is on, otherwise false;
+    \since 1.2
 */
 bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 {
-    return deviceInfoPrivate()->keypadLightOn(type);
+    return d->keypadLightOn(type);
 }
 
 /*!
@@ -558,10 +604,11 @@ bool QSystemDeviceInfo::keypadLightOn(QSystemDeviceInfo::KeypadType type)
 
     Depending on security enforcement on platform, this may return a non unique number, or 0.
     This will be a 160 bit hex QByteArray unique ID constant to this device.
+    \since 1.2
 */
 QByteArray QSystemDeviceInfo::uniqueDeviceID()
 {
-    return deviceInfoPrivate()->uniqueDeviceID();
+    return d->uniqueDeviceID();
 }
 
 /*!
@@ -570,18 +617,20 @@ QByteArray QSystemDeviceInfo::uniqueDeviceID()
 
     Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
     The LockType must be currently active not just enabled.
+    \since 1.2
 */
 QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 {
-    return deviceInfoPrivate()->lockStatus();
+    return d->lockStatus();
 }
 
 /*!
     Returns a QSystemDeviceInfo::ProfileDetails for the currently active profile.
+    \since 1.2
 */
 QSystemDeviceInfo::ProfileDetails QSystemDeviceInfo::activeProfileDetails()
 {
-    return currentProfileDetails;
+    return d->currentProfileDetails;
 }
 
 
@@ -621,7 +670,7 @@ QSystemDeviceInfo::ProfileDetails::~ProfileDetails()
 */
 int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
 {
-    return deviceInfoPrivate()->messageRingtoneVolume();
+    return deviceInfoPrivateSingleton()->messageRingtoneVolume();
 }
 
 /*!
@@ -630,7 +679,7 @@ int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
 */
 int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 {
-    return deviceInfoPrivate()->voiceRingtoneVolume();
+    return deviceInfoPrivateSingleton()->voiceRingtoneVolume();
 }
 
 /*!
@@ -639,7 +688,7 @@ int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 */
 bool QSystemDeviceInfo::ProfileDetails::vibrationActive() const
 {
-    return deviceInfoPrivate()->vibrationActive();
+    return deviceInfoPrivateSingleton()->vibrationActive();
 }
 
 #include "moc_qsystemdeviceinfo.cpp"

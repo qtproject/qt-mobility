@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -45,6 +45,7 @@
 #include <QtCore/qdebug.h>
 
 #include <qmediatimerange.h>
+#include <qmediatimerange.h>
 
 QT_USE_NAMESPACE
 
@@ -56,10 +57,12 @@ public slots:
 
 private slots:
     void testCtor();
+    void testIntervalCtor();
     void testGetters();
     void testAssignment();
-    void testNormalize();
-    void testTranslated();
+    void testIntervalNormalize();
+    void testIntervalTranslate();
+    void testIntervalContains();
     void testEarliestLatest();
     void testContains();
     void testAddInterval();
@@ -70,6 +73,59 @@ private slots:
     void testComparisons();
     void testArithmetic();
 };
+
+void tst_QMediaTimeRange::testIntervalCtor()
+{
+    //Default Ctor for Time Interval
+    /* create an instance for the time interval and verify the default cases */
+    QMediaTimeInterval tInter;
+    QVERIFY(tInter.isNormal());
+    QVERIFY(tInter.start() == 0);
+    QVERIFY(tInter.end() == 0);
+
+    // (qint, qint) Ctor time interval
+    /* create an instace of QMediaTimeInterval passing start and end times and verify the all possible scenario's*/
+    QMediaTimeInterval time(20,50);
+    QVERIFY(time.isNormal());
+    QVERIFY(time.start() == 20);
+    QVERIFY(time.end() == 50);
+
+    // Copy Ctor Time interval
+    QMediaTimeInterval other(time);
+    QVERIFY(other.isNormal() == time.isNormal());
+    QVERIFY(other.start() == time.start());
+    QVERIFY(other.end() == time.end());
+    QVERIFY(other.contains(20) == time.contains(20));
+    QVERIFY(other == time);
+}
+
+void tst_QMediaTimeRange::testIntervalContains()
+{
+    QMediaTimeInterval time(20,50);
+
+    /* start() <= time <= end(). Returns true if the time interval contains the specified time. */
+    QVERIFY(!time.contains(10));
+    QVERIFY(time.contains(20));
+    QVERIFY(time.contains(30));
+    QVERIFY(time.contains(50));
+    QVERIFY(!time.contains(60));
+
+    QMediaTimeInterval x(20, 10); // denormal
+
+    // Check denormal ranges
+    QVERIFY(!x.contains(5));
+    QVERIFY(x.contains(10));
+    QVERIFY(x.contains(15));
+    QVERIFY(x.contains(20));
+    QVERIFY(!x.contains(25));
+
+    QMediaTimeInterval y = x.normalized();
+    QVERIFY(!y.contains(5));
+    QVERIFY(y.contains(10));
+    QVERIFY(y.contains(15));
+    QVERIFY(y.contains(20));
+    QVERIFY(!y.contains(25));
+}
 
 void tst_QMediaTimeRange::testCtor()
 {
@@ -105,6 +161,8 @@ void tst_QMediaTimeRange::testCtor()
     QVERIFY(e.isContinuous());
     QVERIFY(e.earliestTime() == 10);
     QVERIFY(e.latestTime() == 20);
+
+    QVERIFY(e == b);
 }
 
 void tst_QMediaTimeRange::testGetters()
@@ -164,26 +222,35 @@ void tst_QMediaTimeRange::testAssignment()
     QVERIFY(x.latestTime() == 40);
 }
 
-void tst_QMediaTimeRange::testNormalize()
+void tst_QMediaTimeRange::testIntervalNormalize()
 {
     QMediaTimeInterval x(20, 10);
 
     QVERIFY(!x.isNormal());
+    QVERIFY(x.start() == 20);
+    QVERIFY(x.end() == 10);
 
-    x = x.normalized();
+    QMediaTimeInterval y = x.normalized();
 
-    QVERIFY(x.isNormal());
-    QVERIFY(x.start() == 10);
-    QVERIFY(x.end() == 20);
+    QVERIFY(y.isNormal());
+    QVERIFY(y.start() == 10);
+    QVERIFY(y.end() == 20);
+    QVERIFY(x != y);
 }
 
-void tst_QMediaTimeRange::testTranslated()
+void tst_QMediaTimeRange::testIntervalTranslate()
 {
     QMediaTimeInterval x(10, 20);
     x = x.translated(10);
 
     QVERIFY(x.start() == 20);
     QVERIFY(x.end() == 30);
+
+    /* verifying the backward through time with a negative offset.*/
+    x = x.translated(-10);
+
+    QVERIFY(x.start() == 10);
+    QVERIFY(x.end() == 20);
 }
 
 void tst_QMediaTimeRange::testEarliestLatest()

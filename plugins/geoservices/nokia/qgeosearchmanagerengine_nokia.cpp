@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -95,6 +95,12 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
         m_token = parameters.value("token").toString();
     }
 
+    if (parameters.contains("places.app_id")) {
+        m_applicationId = parameters.value("places.app_id").toString();
+    }
+    else if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
+    }
 
     setSupportsGeocoding(true);
     setSupportsReverseGeocoding(true);
@@ -108,6 +114,11 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
 
     if (errorString)
         *errorString = "";
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(const QString&)), SLOT(currentMobileCountryCodeChanged(const QString&)));
+    currentMobileCountryCodeChanged(m_networkInfo.currentMobileCountryCode());
+#endif
+
 }
 
 QGeoSearchManagerEngineNokia::~QGeoSearchManagerEngineNokia() {}
@@ -123,10 +134,15 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+    requestString += "/geocoder/gc/2.0?referer=" + m_referer;
 
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
 
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
@@ -152,7 +168,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     if (!address.street().isEmpty()) {
         requestString += "&street=";
         requestString += address.street();
-    }
+    }    
 
     // TODO?
     // street number has been removed from QGeoAddress
@@ -179,9 +195,15 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/rgc/1.0?referer=" + m_referer;
+    requestString += "/geocoder/rgc/2.0?referer=" + m_referer;
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
+
     requestString += "&long=";
     requestString += trimDouble(coordinate.longitude());
     requestString += "&lat=";
@@ -211,10 +233,15 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchStrin
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/1.0?referer=" + m_referer;
+    requestString += "/geocoder/gc/2.0?referer=" + m_referer;
 
     if (!m_token.isNull())
         requestString += "&token=" + m_token;
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
 
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
@@ -256,7 +283,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(QString requestString,
     return reply;
 }
 
-QString QGeoSearchManagerEngineNokia::trimDouble(qreal degree, int decimalDigits)
+QString QGeoSearchManagerEngineNokia::trimDouble(double degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 
@@ -298,20 +325,12 @@ void QGeoSearchManagerEngineNokia::placesError(QGeoSearchReply::Error error, con
     emit this->error(reply, error, errorString);
 }
 
-QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
+void QGeoSearchManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
 {
-    uint offset = 3 * (uint(language));
-    if (language == QLocale::C || offset + 3 > sizeof(marc_language_code_list))
-        return QLatin1String("eng");
-
-    const unsigned char *c = marc_language_code_list + offset;
-    if (c[0] == 0)
-        return QLatin1String("eng");
-
-    QString code(3, Qt::Uninitialized);
-    code[0] = ushort(c[0]);
-    code[1] = ushort(c[1]);
-    code[2] = ushort(c[2]);
-
-    return code;
+    if(mcc == "460" || mcc == "461"){
+        m_host="pr.geo.maps.svc.nokia.com.cn";
+    }
+     else{
+        m_host ="loc.desktop.maps.svc.ovi.com";
+    }
 }

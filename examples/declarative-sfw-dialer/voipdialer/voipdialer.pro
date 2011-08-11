@@ -27,6 +27,7 @@ symbian {
     DEPLOYMENT += xmlautoimport
 
     TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData WriteUserData UserEnvironment
     load(armcc_warnings)
 }
 

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -49,6 +49,7 @@
 #include "qgeomappingmanagerengine_nokia.h"
 #include "qgeomapreply_nokia.h"
 #include "qgeotiledmapdata_nokia.h"
+#include "marclanguagecodes.h"
 
 #include <qgeotiledmaprequest.h>
 
@@ -58,6 +59,11 @@
 #include <QSize>
 #include <QDir>
 #include <QUrl>
+#include <QEventLoop>
+#include <QDomDocument>
+#include <QScopedPointer>
+
+#include <algorithm>
 
 #define LARGE_TILE_DIMENSION 256
 
@@ -100,25 +106,99 @@ QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
 }
 #endif //Q_OS_SYMBIAN
 
+namespace
+{
+    void getMapTypes(const QDomDocument &doc, QList<QGraphicsGeoMap::MapType> &mapTypes)
+    {
+        typedef std::map<QString, QGraphicsGeoMap::MapType> MapTypeRegistry;
+        static MapTypeRegistry registeredTypes;
+        if (registeredTypes.empty())
+        {
+
+            registeredTypes.insert(std::make_pair("terrain.day", QGraphicsGeoMap::TerrainMap));
+            registeredTypes.insert(std::make_pair("normal.day", QGraphicsGeoMap::StreetMap));
+            registeredTypes.insert(std::make_pair("satellite.day", QGraphicsGeoMap::SatelliteMapDay));
+
+            //registeredTypes.insert(std::make_pair("hybrid.day", QGraphicsGeoMap::));
+            //registeredTypes.insert(std::make_pair("normal.day.transit", QGraphicsGeoMap::));
+            //registeredTypes.insert(std::make_pair("normal.day.grey", QGraphicsGeoMap::));
+        }
+
+        QDomElement response  = doc.firstChildElement("response");
+        QDomNodeList schemes = response.firstChildElement("schemes").childNodes();
+        for (int i = 0; i < schemes.count(); ++i)
+        {
+            QString id = schemes.at(i).toElement().attribute("id");
+            MapTypeRegistry::const_iterator found = registeredTypes.find(id);
+            if (found != registeredTypes.end())
+            {
+                mapTypes << found->second;
+            }
+        }
+
+        if (mapTypes.empty())
+        {
+            mapTypes << QGraphicsGeoMap::NoMap;
+        }
+    }
+
+    void getResolutions(const QDomDocument &doc, QList<QSize> &sizes)
+    {
+        QDomElement response  = doc.firstChildElement("response");
+        QDomNodeList resolutions = response.firstChildElement("resolutions").childNodes();
+
+        for (int i = 0; i < resolutions.count(); ++i)
+        {
+           QDomElement size = resolutions.at(i).toElement();
+           sizes << QSize(size.attribute("width").toInt(), size.attribute("height").toInt());
+        }
+    }
+
+    void getZoomLevels(const QDomDocument &doc, double &minZoomLevel, double &maxZoomLevel)
+    {
+        QDomElement response  = doc.firstChildElement("response");
+
+        QDomElement zoomLevels = response.firstChildElement("zoomLevels");
+        minZoomLevel = zoomLevels.attribute("min").toDouble();
+        maxZoomLevel = zoomLevels.attribute("max").toDouble();
+    }
+
+    bool less(const QSize &first, const QSize &second)
+    {
+        return first.width() * first.height() < second.width() * second.height();
+    }
+
+    int GetLogoPosition(QString positionName)
+    {
+        typedef std::map<QString, int> KnownPositionsType;
+        static KnownPositionsType knownPositions;
+        if (knownPositions.empty())
+        {
+            knownPositions.insert(std::make_pair("top.left", TopLeft));
+            knownPositions.insert(std::make_pair("left.top", TopLeft));
+            knownPositions.insert(std::make_pair("top.right", ShiftedRight));
+            knownPositions.insert(std::make_pair("right.top", ShiftedRight));
+            knownPositions.insert(std::make_pair("bottom.left", ShiftedDown));
+            knownPositions.insert(std::make_pair("left.bottom", ShiftedDown));
+            knownPositions.insert(std::make_pair("bottom.right", ShiftedRight | ShiftedDown));
+            knownPositions.insert(std::make_pair("right.bottom", ShiftedRight | ShiftedDown));
+        }
+
+        KnownPositionsType::const_iterator found = knownPositions.find(positionName);
+        return found == knownPositions.end() ? ShiftedDown : found->second;
+    }
+}
+
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_cache(0),
         m_host("maptile.maps.svc.ovi.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
+        m_logoPosition(ShiftedDown)
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
-
-    setTileSize(QSize(256, 256));
-    setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(18.0);
-
-    QList<QGraphicsGeoMap::MapType> types;
-    types << QGraphicsGeoMap::StreetMap;
-    types << QGraphicsGeoMap::SatelliteMapDay;
-    types << QGraphicsGeoMap::TerrainMap;
-    setSupportedMapTypes(types);
 
     QList<QGraphicsGeoMap::ConnectivityMode> modes;
     modes << QGraphicsGeoMap::OnlineMode;
@@ -156,6 +236,20 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     else if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
     }
+
+    if (parameters.contains("logo.position"))
+    {
+        m_logoPosition =  GetLogoPosition(parameters.value("logo.position").toString());
+    }
+
+    if (parameters.contains("mapping.app_id")) {
+        m_applicationId = parameters.value("mapping.app_id").toString();
+    }
+    else if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
+    }
+
+     setupServiceInfo();
 #ifdef DISK_CACHE_ENABLED
     QString cacheDir;
     if (parameters.contains("mapping.cache.directory"))
@@ -192,6 +286,11 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
         m_networkManager->setCache(m_cache);
     }
+#endif
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(const QString&)), SLOT(currentMobileCountryCodeChanged(const QString&)));
+    currentMobileCountryCodeChanged(m_networkInfo.currentMobileCountryCode());
 #endif
 }
 
@@ -234,14 +333,19 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
 {
     const int maxDomains = 11; // TODO: hmmm....
     const char subdomain = 'a' + (request.row() + request.column()) % maxDomains; // a...k
+
     static const QString http("http://");
     static const QString path("/maptiler/maptile/newest/");
     static const QChar dot('.');
     static const QChar slash('/');
 
     QString requestString = http;
-    requestString += subdomain;
-    requestString += dot;
+    if ("maptile.maps.svc.ovi.com" == m_host) // TODO: temporay solution while china DNS does not work
+    {
+        requestString += subdomain;
+        requestString += dot;
+    }
+
     requestString += m_host;
     requestString += path;
     requestString += mapTypeToStr(request.mapType());
@@ -260,17 +364,23 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
 //#endif
     requestString += slashpng;
 
-    if (!m_token.isEmpty()) {
-        requestString += "?token=";
-        requestString += m_token;
+    requestString += "?lg=";
+    requestString += languageToMarc(locale().language());
 
-        if (!m_referer.isEmpty()) {
-            requestString += "&referer=";
-            requestString += m_referer;
-        }
-    } else if (!m_referer.isEmpty()) {
-        requestString += "?referer=";
+    if (!m_token.isEmpty()) {
+        requestString += "&token=";
+        requestString += m_token;
+    }
+
+    if (!m_referer.isEmpty()) {
+
+        requestString += "&referer=";
         requestString += m_referer;
+    }
+
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
     }
 
     return requestString;
@@ -300,3 +410,67 @@ QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType typ
         return "normal.day";
 }
 
+void QGeoMappingManagerEngineNokia::setupServiceInfo()
+{
+    QSize maxResolution(256, 256);
+    double minZoomLevel(0.0), maxZoomLevel(18.0);
+    QList<QGraphicsGeoMap::MapType> types;
+    types << QGraphicsGeoMap::StreetMap;
+    types << QGraphicsGeoMap::SatelliteMapDay;
+    types << QGraphicsGeoMap::TerrainMap;
+
+    QString path = "http://";
+    path += m_host;
+    path += "/maptiler/info";
+
+    QScopedPointer<QNetworkReply> reply(m_networkManager->get(QNetworkRequest((QUrl(path)))));
+
+    QEventLoop loop;
+    connect(reply.data(), SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(reply.data(), SIGNAL(error(QNetworkReply::NetworkError)), &loop, SLOT(quit()));
+    loop.exec();
+
+    if (QNetworkReply::NoError == reply->error())
+    {
+        QDomDocument doc;
+        if (doc.setContent(reply->readAll()))
+        {           
+            getZoomLevels(doc, minZoomLevel, maxZoomLevel);
+
+            types.clear();
+            getMapTypes(doc, types);
+
+            QList<QSize> resolutions;
+            getResolutions(doc, resolutions);
+            QList<QSize>::const_iterator found = std::max_element(resolutions.begin(), resolutions.end(), &less);
+            if (found != resolutions.end())
+            {
+                maxResolution = *found;
+            }
+        }
+    }
+
+    setTileSize(maxResolution);
+    setMinimumZoomLevel(minZoomLevel);
+    setMaximumZoomLevel(maxZoomLevel);
+    setSupportedMapTypes(types);
+}
+
+int QGeoMappingManagerEngineNokia::logoPosition() const
+{
+    return m_logoPosition;
+}
+
+const QString & QGeoMappingManagerEngineNokia::host() const
+{
+    return m_host;
+}
+
+void QGeoMappingManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
+{
+    if (mcc == "460" || mcc == "461") {
+        m_host ="maptile.maps.svc.nokia.com.cn";
+    } else {
+        m_host ="maptile.maps.svc.ovi.com";
+    }
+}

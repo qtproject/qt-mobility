@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -43,13 +43,14 @@
 
 testcase = {
 
+    // \groups BAT,1.1,MOBILITY-65
     current_position: function()
     {
         // Test meta data
         testApplication = "Location - Current Position";
         testBinary = "weatherinfo_with_location";
         testGoal = "Verify that current position is detected and displayed.";
-        testPreconditions = "None";
+        testPreconditions = "Note that GPS connection is required for this test case";
         testGroups = "BAT";
 
         // Test steps
@@ -63,11 +64,12 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-65
     location_is_updated: function()
     {
         // Test meta data
         testApplication = "Location - Location Updates";
-        testBinary = "lightmaps_with_location (sources are in demos\lightmaps)";
+        testBinary = "lightmaps_with_location (sources are in demos/lightmaps)";
         testGoal = "Verify that location data is received and map is updated and centered after changing location.";
         testPreconditions = "GPS and internet connection is required for this test case";
         testGroups = "BAT";
@@ -84,6 +86,7 @@ testcase = {
        ));
     },
 
+    // \groups BAT,1.2,QTMOBILITY-873
     third_party_position_source: function()
     {
         // Test meta data
@@ -107,6 +110,7 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.2,QTMOBILITY-658
     shift_to_the_given_offset: function()
     {
         // Test meta data
@@ -130,17 +134,17 @@ testcase = {
          | Select the MapNavigation | |
          | Fill in '0' in to Start Latitude field | |
          | Fill in '100' in to Start Longitude field | |
-         | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
          | Fill '1000000, 90' in to the given field | |
          | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
          | Fill in '60' in to Start Latitude field | |
          | Fill in '100' in to Start Longitude field | |
-         | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
          | Fill '1000000, 180' in to the given field | |
          | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
          | Fill in '60' in to Start Latitude field | |
          | Fill in '100' in to Start Longitude field | |
-         | Select Distance/Bearing from *Pre-defined* dropdown list | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
          | Fill '1000000, 20' in to the given field | |
          | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |"
         ));
@@ -151,6 +155,7 @@ testcase = {
         landmark : ["landmark", "20", "120"]
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     store_and_load_a_landmark: function(name, latitude, longitude)
     {
         // Test meta data
@@ -177,6 +182,7 @@ testcase = {
         bad_landmark_long : ["bad_landmark", "80", "300"]
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     negative_store_and_load_a_landmark: function(name, latitude, longitude)
     {
         // Test meta data
@@ -198,6 +204,7 @@ testcase = {
         select("Cancel");
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     sorted_search_based_on_category: function()
     {
         // Test meta data
@@ -231,6 +238,7 @@ testcase = {
        ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     sort_landmarks_in_alphabetical_and_nearest: function()
     {
         // Test meta data
@@ -255,7 +263,7 @@ testcase = {
           | Press Set Filter button | |
           | Select Proximity checkbox | |
           | Fill in 0 in to Lat field | |
-          | Fill in 0 in to Long field |
+          | Fill in 0 in to Long field | |
           | Fill in 10000000 in to Radius field| |
           | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
           | Press Set Filter button | |
@@ -267,6 +275,7 @@ testcase = {
        ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     landmarks_within_range_of_a_position: function()
     {
         // Test meta data
@@ -297,7 +306,8 @@ testcase = {
         | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |"
        ));
     },
-
+    
+    // \groups BAT,1.1,MOBILITY-66
     create_edit_and_delete_a_landmark: function()
     {
         // Test meta data
@@ -338,6 +348,7 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     enumerate_categories: function()
     {
         // Test meta data
@@ -361,6 +372,7 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-66
     add_and_delete_a_category: function()
     {
         //Landmark manager provides notifications whenever categories are added, updated or deleted
@@ -404,6 +416,7 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-538
     select_service_provider: function()
     {
         // Test meta data
@@ -432,6 +445,7 @@ testcase = {
         route1:["-27.575", "153.088", "-27.465", "153.023", "15901", "15987"]
     },
 
+    // \groups BAT,1.1,MOBILITY-538
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
     {
         // Test meta data
@@ -481,7 +495,8 @@ testcase = {
 
         compare(getText("distance"), distance2);
     },
-
+    
+    // \groups BAT,1.1,MOBILITY-538
     geocoding: function()
     {
         // Test meta data
@@ -511,7 +526,8 @@ testcase = {
         ));
 
     },
-
+    
+    // \groups BAT,1.1,MOBILITY-538
     reverse_geocoding: function()
     {
         // Test meta data
@@ -539,7 +555,18 @@ testcase = {
         ));
    },
 
+    // \groups BAT,1.1,MOBILITY-538
     displaying_a_map: function()
+    {
+        prompt(twiki('---+++ Different views are displayed
+    Note that  internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the mapsdemo application (sources are /examples/mapsdemo) | Map for current location is displayed on the screen |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-538
+    different_map_types: function()
     {
         // Test meta data
         testApplication = "Maps and Navigation - Map View Options";
@@ -565,11 +592,12 @@ testcase = {
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-538
     zooming_support:function()
     {
         // Test meta data
         testApplication = "Maps and Navigation - Zooming";
-        testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
+        testBinary = "mapsdemo"; // (sources are /tests/location-testing-tools/mapviewer)
         testGoal = "Verify that maps can be zoomed in and out.";
         testPreconditions = "internet connection is required for this test case.";
         testGroups = "BAT";
@@ -582,13 +610,13 @@ testcase = {
 
           | *Step* | *Verification* |
           | Launch " + testBinary + " | App launches normally |
-          | Run the MapView application | Map is displayed on the screen |
-          | Scroll mouse wheel down | Map is zoomed out correctly |
-          | Scroll mouse wheel up | Map is zoomed in correctly|
-          | Double click on the map | Map is zoomed in correctly, step of zooming is consistent|"
+          | Run the mapsdemo application | Map is displayed on the screen |
+          | Press - button | Map is zoomed out correctly |
+          | Press + button | Map is zoomed in correctly |'
         ));
     },
 
+    // \groups BAT,1.1,MOBILITY-538
     capturing_coordinates:function()
     {
         // Test meta data
@@ -606,13 +634,14 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
-        | Zoom in the map to see Brisbane | |
+        | Navigate and/or zoom in the map to see Brisbane | |
         | Right mouse click on the square which represents Brisbane | |
         | Select Coordinates menu item | |
         | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |"
         ));
     },
 
+    // \groups BAT,1.2,QTMOBILITY-757,QTMOBILITY-701
     pixmap_object_zooming: function()
     {
         //Test application testqtLocation covers just one use case meanwhile we have 8 different situation
@@ -672,13 +701,14 @@ testcase = {
 
     //TESTED_COMPONENT=plugins/declarative/location
 
+    // \groups BAT,1.2,QTMOBILITY-796
     qml_display_map: function()
     {
         // Test meta data
         testApplication = "Location - Map Display";
         testBinary = "testqtlocation";
         testGoal = "Verify that a map can be loaded for a given position.";
-        testPreconditions = "GPS and internet connection is required for this test case.";
+        testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT";
         testRequirements = "QTMOBILITY-796: QML for Maps & Navigation:mapping";
 
@@ -689,13 +719,12 @@ testcase = {
          *Tested Binary:* " + testBinary + "<br>
 
          | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select the MapNavigation.qml | |
-         | Tap on Mode button | Verify that map is loaded for current position |"
+         | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
         ));
     },
 
-    qml_zoom_map: function()
+    // \groups BAT,1.2,QTMOBILITY-796
+    qml_zoom_a_map: function()
     {
         // Test meta data
         testApplication = "Location - Zoom In and Out";

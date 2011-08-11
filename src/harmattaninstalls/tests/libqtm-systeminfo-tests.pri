@@ -1,4 +1,0 @@
-SUBDIRS +=  qsystemstorageinfo \
-	qsystemnetworkinfo \
-	qsystemscreensaver
-

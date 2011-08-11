@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -115,6 +115,7 @@ QCameraImageProcessing::~QCameraImageProcessing()
 
 /*!
     Returns true if image processing related settings are supported by this camera.
+    \since 1.1
 */
 bool QCameraImageProcessing::isAvailable() const
 {
@@ -124,6 +125,7 @@ bool QCameraImageProcessing::isAvailable() const
 
 /*!
     Returns the white balance mode being used.
+    \since 1.1
 */
 
 QCameraImageProcessing::WhiteBalanceMode QCameraImageProcessing::whiteBalanceMode() const
@@ -133,6 +135,7 @@ QCameraImageProcessing::WhiteBalanceMode QCameraImageProcessing::whiteBalanceMod
 
 /*!
     Sets the white balance to \a mode.
+    \since 1.1
 */
 
 void QCameraImageProcessing::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
@@ -143,6 +146,7 @@ void QCameraImageProcessing::setWhiteBalanceMode(QCameraImageProcessing::WhiteBa
 
 /*!
     Returns true if the white balance \a mode is supported.
+    \since 1.1
 */
 
 bool QCameraImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
@@ -154,6 +158,7 @@ bool QCameraImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessing:
     Returns the current color temperature if the
     manual white balance is active, otherwise the
     return value is undefined.
+    \since 1.1
 */
 
 int QCameraImageProcessing::manualWhiteBalance() const
@@ -168,6 +173,7 @@ int QCameraImageProcessing::manualWhiteBalance() const
 
 /*!
     Sets manual white balance to \a colorTemperature
+    \since 1.1
 */
 
 void QCameraImageProcessing::setManualWhiteBalance(int colorTemperature)
@@ -181,6 +187,7 @@ void QCameraImageProcessing::setManualWhiteBalance(int colorTemperature)
 
 /*!
     Return the contrast.
+    \since 1.1
 */
 int QCameraImageProcessing::contrast() const
 {
@@ -196,6 +203,7 @@ int QCameraImageProcessing::contrast() const
     Set the contrast to \a value.
 
     Valid contrast values range between -100 and 100, the default is 0.
+    \since 1.1
 */
 void QCameraImageProcessing::setContrast(int value)
 {
@@ -206,6 +214,7 @@ void QCameraImageProcessing::setContrast(int value)
 
 /*!
     Returns the saturation value.
+    \since 1.1
 */
 int QCameraImageProcessing::saturation() const
 {
@@ -221,6 +230,7 @@ int QCameraImageProcessing::saturation() const
     Sets the saturation value to \a value.
 
     Valid saturation values range between -100 and 100, the default is 0.
+    \since 1.1
 */
 
 void QCameraImageProcessing::setSaturation(int value)
@@ -234,6 +244,7 @@ void QCameraImageProcessing::setSaturation(int value)
     Identifies if sharpening is supported.
 
     Returns true if sharpening is supported; and false if it is not.
+    \since 1.1
 */
 bool QCameraImageProcessing::isSharpeningSupported() const
 {
@@ -245,6 +256,7 @@ bool QCameraImageProcessing::isSharpeningSupported() const
 
 /*!
     Returns the sharpening level.
+    \since 1.1
 */
 int QCameraImageProcessing::sharpeningLevel() const
 {
@@ -264,6 +276,7 @@ int QCameraImageProcessing::sharpeningLevel() const
 
     Valid sharpening level values range between -1 for default sharpening level,
     0 for sharpening disabled and 100 for maximum sharpening applied.
+    \since 1.1
 */
 
 void QCameraImageProcessing::setSharpeningLevel(int level)
@@ -276,6 +289,7 @@ void QCameraImageProcessing::setSharpeningLevel(int level)
 
 /*!
     Returns true if denoising is supported.
+    \since 1.1
 */
 bool QCameraImageProcessing::isDenoisingSupported() const
 {
@@ -287,6 +301,7 @@ bool QCameraImageProcessing::isDenoisingSupported() const
 
 /*!
     Returns the denoising level.
+    \since 1.1
 */
 int QCameraImageProcessing::denoisingLevel() const
 {
@@ -306,6 +321,7 @@ int QCameraImageProcessing::denoisingLevel() const
 
     Valid denoising level values range between -1 for default denoising level,
     0 for denoising disabled and 100 for maximum denoising applied.
+    \since 1.1
 */
 void QCameraImageProcessing::setDenoisingLevel(int level)
 {

@@ -34,6 +34,8 @@
 #include <sqldb.h>
 #include <cntdb.h>
 
+//uncomment for commonly required debug printing
+//#define __VERBOSE_DEBUG__
 
 
 /**
@@ -421,35 +423,6 @@ CContactItem* CPplContactItemManager::DeleteLC(TContactItemId  aItemId, TUint aS
 	}
 
 /**
-Deletes the given contacts from the database.Forward the call to CPplTableBase
-based classes representing the tables in the contact database. In low disk condition
-a KErrDiskFull will be thrown.
-
-@param aIdArray The contact IDs of the contact items to be deleted.
-@param aSessionId The ID of the session that issued the request.  Used to
-prevent Phonebook Synchroniser deadlock.
-
-@leave KErrDiskFull if a full disk error appears
-*/  
-void CPplContactItemManager::DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction /*aEventType*/)
-    {
-    TBool controlTransaction = !(iTransactionManager.IsTransactionActive());
-    if(controlTransaction)
-        {
-        StartTransactionL(aSessionId);
-        }
-    
-    static_cast<CPplContactTable*>(iContactTable)->DeleteMultipleContactsL(aIdArray);
-    static_cast<CPplGroupsTable*>(iGroupTable)->DeleteMultipleContactsL(aIdArray);
-    static_cast<CPplCommAddrTable*>(iCommAddrTable)->DeleteMultipleContactsL(aIdArray);
-    
-    if(controlTransaction)
-        {
-        CommitTransactionL();
-        }
-    }
-
-/**
 Perform a deletion in low disk condition
 
 @param aTable CPplTableBase on which the deletion will be done
@@ -501,7 +474,9 @@ Sets the CCntSqlStatement to be used for reading contact item.
 */
 void CPplContactItemManager::ConstructL()
 	{
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::ConstructL"));
+#endif	
 	TCntSqlStatementType statementType(ESelect, KSqlContactTableName);
 	
 	iSelectStatement = TSqlProvider::GetSqlStatementL(statementType);
@@ -538,8 +513,9 @@ void CPplContactItemManager::ConstructL()
 	iPreferencePersistor = CPplPreferencesPersistor::NewL(iDatabase);
 	// Connect to metadata server
 	//User::LeaveIfError(iColSession.Connect());
-
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::ConstructL ends"));
+#endif
 	}
 
 /**
@@ -602,8 +578,9 @@ Utility method used to create tables in a newly create database
 */	
 void CPplContactItemManager::CreateTablesL()
 	{
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::CreateTablesL"));	
-
+#endif
 	TBool controlTransaction = !(iTransactionManager.IsTransactionActive());
 	
 	if (controlTransaction)
@@ -620,8 +597,9 @@ void CPplContactItemManager::CreateTablesL()
 		{
 		CommitTransactionL();
 		}			
-
+#if defined(__VERBOSE_DEBUG__)
 	RDebug::Print(_L("CPplContactItemManager::CreateTablesL ends"));	
+#endif
 	}
 	
 /**
@@ -634,17 +612,11 @@ TBool CPplContactItemManager::IsDatabaseEmptyL()
 	return static_cast<CPplContactTable*>(iContactTable)->IsTableEmptyL();
 	}
 
+
 CContactIdArray* CPplContactItemManager::MatchPhoneNumberL(const TDesC& aNumber, TInt aMatchLengthFromRight)
 	{
 	// Call comm address table
-	if (aMatchLengthFromRight == KBestMatchingPhoneNumbers)
-        {
-        return  static_cast<CPplCommAddrTable*>(iCommAddrTable)->BestMatchingPhoneNumberL(aNumber);
-        }
-    else
-        {
-        return  static_cast<CPplCommAddrTable*>(iCommAddrTable)->MatchPhoneNumberL(aNumber, aMatchLengthFromRight);
-        }
+    return  static_cast<CPplCommAddrTable*>(iCommAddrTable)->MatchPhoneNumberL(aNumber, aMatchLengthFromRight);
 	}
 
 /**

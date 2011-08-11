@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -765,21 +765,39 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << ( QMessageAccountIdList() << accountIds[1] );
 
     // Test matchFlags
+
+    // In Maemo6 QMF account filtering is case sensitive. It is not possible to make the filtering case-insensitive.
+#if !defined(Q_WS_MAEMO_6)
     QMessageAccountFilter caseInsensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
     QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageAccountIdList() << accountIds[0] )
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
+#endif
 
     QMessageAccountFilter caseSensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
+    /*
+       In Maemo6 QMF account filtering is case sensitive. It is not possible to make the filtering case-insensitive.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageAccountIdList()
         << accountIds;
 
     QMessageAccountFilter caseSensitive2(QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal));
+    /*
+       In Maemo6 QMF account filtering is case sensitive. It is not possible to make the filtering case-insensitive.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageAccountIdList() << accountIds[0] )
@@ -1592,6 +1610,8 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
 #endif
 
+    // In Maemo6 QMF does not support case sensitive search.
+#if !defined(Q_WS_MAEMO_6)
 #ifdef FREESTYLEMAILUSED
     QMessageFolderFilter caseSensitive1(QMessageFolderFilter::byName("dra", QMessageDataComparator::Includes));
 #else
@@ -1602,9 +1622,10 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << caseSensitive1
         << QMessageFolderIdList()
         << folderIds;
+#endif
 
 #ifdef FREESTYLEMAILUSED
-    QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byName("Dra", QMessageDataComparator::Includes));
+    QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byName("Dra", QMessageDataComparator::Includes));    
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
@@ -1612,7 +1633,14 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 #else
     QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byName("X-A", QMessageDataComparator::Includes));
+    /*
+       In Maemo6 QMF does not support case sensitive search.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
@@ -3212,6 +3240,8 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 
+    // In Maemo6 QMF does not support case sensitive search.
+#if !defined(Q_WS_MAEMO_6)
     QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
     caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
     QTest::newRow("matchFlags:caseSensitive 1")
@@ -3219,9 +3249,17 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << messageIds
         << "";
+#endif
 
     QMessageFilter caseSensitive2(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Equal));
+    /*
+       In Maemo6 QMF does not support case sensitive search.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageIdList() << messageIds[4] )
@@ -3263,12 +3301,15 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 
+    // Not yet implemented under Maemo6
+#if !defined(Q_WS_MAEMO_6)
     QMessageFilter senderNotLike(QMessageFilter::bySubject("Free beer", QMessageDataComparator::NotLike));
     QTest::newRow("senderNotLike")
         << senderNotLike
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] )
         << "";
+#endif
 
     QMessageFilter recipientsLike1(QMessageFilter::byRecipients("Super%B_b_", QMessageDataComparator::Like));
     QTest::newRow("recipientsLike1")

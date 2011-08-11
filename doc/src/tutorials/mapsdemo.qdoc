@@ -7,20 +7,20 @@
 ** This file is part of the documentation of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:FDL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Free Documentation License
 ** Alternatively, this file may be used under the terms of the GNU Free
 ** Documentation License version 1.3 as published by the Free Software
-** Foundation and appearing in the file included in the packaging of this
-** file.
+** Foundation and appearing in the file included in the packaging of
+** this file.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms
+** and conditions contained in a signed written agreement between you
+** and Nokia.
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -28,7 +28,6 @@
 /*!
     \page tutorials-mapsdemo.html
 
-    \example tutorials/mapsdemo
 
     \contentspage Maps Demo Tutorial
     \startpage Maps Demo Tutorial
@@ -55,23 +54,22 @@
     Tutorial contents:
 
     \list 1
-    \o \l{tutorials/mapsdemo/part1}{The Map Widget}
-    \o \l{tutorials/mapsdemo/part2}{Searching for locations}
-    \o \l{tutorials/mapsdemo/part3}{Listening to satellites}
-    \o \l{tutorials/mapsdemo/part4}{Stopping for directions}
-    \o \l{tutorials/mapsdemo/part5}{Tuning for mobile devices}
+    \o \l{Part 1 - The Map Widget}
+    \o \l{Part 2 - Searching for locations}
+    \o \l{Part 3 - Listening to satellites}
+    \o \l{Part 4 - Stopping for directions}
+    \o \l{Part 5 - Tuning for mobile devices}
     \endlist
 */
 
 /*!
     \page tutorials-mapsdemo-part1.html
 
-    \previouspage tutorials/mapsdemo
-    \contentspage {tutorials/mapsdemo} {Contents}
-    \nextpage tutorials/mapsdemo/part2
-    \startpage tutorials/mapsdemo
+    \previouspage {Maps Demo Tutorial}
+    \contentspage {Maps Demo Tutorial} {Contents}
+    \nextpage Part 2 - Searching for locations
+    \startpage Maps Demo Tutorial
 
-    \example tutorials/mapsdemo/part1
     \title Part 1 - The Map Widget
 
     To begin with, we will start defining the map widget, which is the central part of
@@ -282,7 +280,7 @@ void GeoMap::wheelEvent(QGraphicsSceneWheelEvent *event)
     \o End points for directions
     \o "Path" markers for individual steps in the direction route
     \endlist
-    
+
     Once again we make use of the Pimpl idiom to separate the private data
     members from the interface:
 
@@ -401,12 +399,11 @@ geoMap->addMapObject(me);
 /*!
     \page tutorials-mapsdemo-part2.html
 
-    \previouspage tutorials/mapsdemo/part1
-    \contentspage {tutorials/mapsdemo} {Contents}
-    \nextpage tutorials/mapsdemo/part3
-    \startpage tutorials/mapsdemo
+    \previouspage Part 1 - The Map Widget
+    \contentspage {Maps Demo Tutorial} {Contents}
+    \nextpage Part 3 - Listening to satellites
+    \startpage Maps Demo Tutorial
 
-    \example tutorials/mapsdemo/part2
     \title Part 2 - Searching for locations
 
     Now that we have a basic map widget, we want to add the capability
@@ -518,7 +515,7 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
 void MarkerManager::search(QString query)
 {
     QGeoSearchReply *reply = d->searchManager->search(query);
-    
+
     d->forwardReplies.insert(reply);
     if (reply->isFinished()) {
         replyFinished(reply);
@@ -934,7 +931,7 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
     d->myLocation->setName("Me");
 
     ...
-    
+
     // hook the coordinateChanged() signal for reverse geocoding
     connect(d->myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
             this, SLOT(myLocationChanged(QGeoCoordinate)));
@@ -949,7 +946,7 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
 void MarkerManager::myLocationChanged(QGeoCoordinate location)
 {
     QGeoSearchReply *reply = d->searchManager->reverseGeocode(location);
-    
+
     d->reverseReplies.insert(reply);
     if (reply->isFinished())
         reverseReplyFinished(reply);
@@ -994,9 +991,9 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
     } else {
         QGeoSearchReply *reply = d->searchManager->reverseGeocode(location);
         d->reverseReplies.insert(reply);
-	
+
         d->myLocHasMoved = false;
-	
+
         if (reply->isFinished()) {
             d->revGeocodeRunning = false;
             reverseReplyFinished(reply);
@@ -1035,19 +1032,18 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
 
     In part 3, we will add support for using platform positioning methods such
     as GPS, and in part 4 we will add the ability to fetch directions to a given
-    destination. Finally, in part 5 we will cover a number of points about 
+    destination. Finally, in part 5 we will cover a number of points about
     means for achieving a better user experience on mobile platforms.
 */
 
 /*!
     \page tutorials-mapsdemo-part3.html
- 
-    \previouspage tutorials/mapsdemo/part2
-    \contentspage {tutorials/mapsdemo} {Contents}
-    \nextpage tutorials/mapsdemo/part4
-    \startpage tutorials/mapsdemo
 
-    \example tutorials/mapsdemo/part3
+    \previouspage Part 2 - Searching for locations
+    \contentspage {Maps Demo Tutorial} {Contents}
+    \nextpage Part 4 - Stopping for directions
+    \startpage Maps Demo Tutorial
+
     \title Part 3 - Listening to satellites
 
     Another useful part of the Location API is the ability to receive updates
@@ -1055,15 +1051,15 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     network positioning. We're going to add support to our MapsDemo for
     using these methods to update the "my location" marker we've already
     added in parts 1 and 2 of this tutorial.
-    
+
     But first we need an attractive way to present status messages to the user
     while they are busy looking at the map. We're going to do this using an
     animated translucent rectangle at the bottom of the display.
-    
+
     \section2 Animated status bar
-    
+
     First, set up the map to resize automatically:
-    
+
     \code
 class MapsWidget : public QWidget
 {
@@ -1091,9 +1087,9 @@ void MapsWidget::showEvent(QShowEvent *event)
     }
 }
     \endcode
-    
+
     And now we add our new StatusBarItem class:
-    
+
     \code
 class StatusBarItemPrivate;
 class StatusBarItem : public QObject, public QGraphicsRectItem
@@ -1121,21 +1117,21 @@ private:
     StatusBarItemPrivate *d;
 };
     \endcode
-    
+
     Note that the order of base classes here is very important: QObject
     and then QGraphicsRectItem. Re-ordering the base classes will cause
     the code not to compile, as QGraphicsRectItem does not have a
     meta-object (for more details consult the documentation in Qt).
-    
+
     The \a offset property here is added so that when we come to animating
     our status bar, we can handle the case where the bar is sliding in
     and the window is being resized simultaneously. If we simply animated
     the \a y property of the GraphicsItem instead we would have difficulty
     handling this case.
-    
+
     Now add a pointer to one of these in MapsWidgetPrivate (and matching
     accessor methods):
-    
+
     \code
 class MapsWidgetPrivate
 {
@@ -1144,10 +1140,10 @@ public:
     StatusBarItem *statusBarItem;
 };
     \endcode
-    
+
     And we're ready for the implementation. The constructor is not terribly
     exciting, but sets the defaults for everything:
-    
+
     \code
 class StatusBarItemPrivate
 {
@@ -1170,9 +1166,9 @@ StatusBarItem::StatusBarItem() :
     setText("");
 }
     \endcode
-    
+
     The \a setText function, however, is more interesting;
-    
+
     \code
 void StatusBarItem::setText(QString text)
 {
@@ -1182,13 +1178,13 @@ void StatusBarItem::setText(QString text)
     d->textItem->setPos(delta.x(), delta.y());
 }
     \endcode
-    
+
     This re-centers the \a textItem inside its parent (the StatusBarItem)
     every time the text changes.
-    
+
     Also, the \a setRect method is used to update the size and position of
     the status bar:
-    
+
     \code
 void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
 {
@@ -1196,15 +1192,15 @@ void StatusBarItem::setRect(qreal x, qreal y, qreal w, qreal h)
     setText(d->textItem->text());
 }
     \endcode
-    
+
     Here we see the use of the \a offset property for the first time. The
     idea is to call \a setRect to specify a rectangle that is below
     the bottom of the visible area in the QGraphicsView. Then \a offset
     is used to bump the status bar up into the visible area when needed.
-    
+
     Whenever we change the offset we should re-calculate our own \a y
     value using the rect and the offset together:
-    
+
     \code
 void StatusBarItem::setOffset(int offset)
 {
@@ -1212,9 +1208,9 @@ void StatusBarItem::setOffset(int offset)
     d->offset = offset;
 }
     \endcode
-   
+
     And now finally, the animations:
-    
+
     \code
 void StatusBarItem::show()
 {
@@ -1234,13 +1230,13 @@ void StatusBarItem::hide()
     anim->start(QAbstractAnimation::DeleteWhenStopped);
 }
     \endcode
-    
+
     You can see here that we simply use QPropertyAnimations on the \a offset
     property we just defined. This produces a nice linear slide in and out
     whenever \a show() or \a hide() are called.
-    
+
     Lastly, one convenience method:
-    
+
     \code
 void StatusBarItem::showText(QString text, quint32 timeout)
 {
@@ -1249,12 +1245,12 @@ void StatusBarItem::showText(QString text, quint32 timeout)
     QTimer::singleShot(timeout, this, SLOT(hide()));
 }
     \endcode
-    
+
     This lets us more easily display a status message when we only want it
     to appear and disappear soon afterwards.
-    
+
     Then we have only to add this into our MapsWidget:
-    
+
     \code
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {
@@ -1276,29 +1272,29 @@ void MapsWidget::resizeEvent(QResizeEvent *event)
     \endcode
 
     \section2 Getting GPS data
-    
+
     Now we move on to the focus of this section: GPS data and how to get it.
     The QGeoPositionInfoSource class gives a convenient interface to
     receive position updates. We're going to add one to our MainWindow:
-    
+
     \code
 class MainWindow : public QMainWindow
 {
 private:
     QGeoPositionInfoSource *positionSource;
-    
+
 private slots:
     // slot to receive updates
     void updateMyPosition(QGeoPositionInfo info);
 };
     \endcode
-    
+
     And in \a initialize() we'll set it up. We're just using whatever the
     default position source for the platform happens to be, at an update
     interval of 1000ms, which is plenty for a basic maps application. Once
     set up, we call the source's \a startUpdates() method to begin receiving
     position updates.
-    
+
     \code
 void MainWindow::initialize()
 {
@@ -1320,13 +1316,13 @@ void MainWindow::initialize()
     }
 }
     \endcode
-    
+
     Here we also make use of the StatusBarItem to display a message when
     we are able or unable to open the QGeoPositionInfoSource.
-    
+
     And then in the slot \a updateMyPosition, we use this to set the
     myLocation marker.
-    
+
     \code
 void MainWindow::updateMyPosition(QGeoPositionInfo info)
 {
@@ -1335,23 +1331,23 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     }
 }
     \endcode
-    
+
     So, running the code as is, we have a moving marker for "My Location"
     that follows our actual GPS or network-sourced location. If you start
     driving your car with this app running however, you'll quickly notice
     the fact that the viewport does not pan to follow you as you leave
     the map area.
-    
+
     We could simply add a call to \a setCenter() on the map object in the
     \a updateMyPosition slot, but in the interests of prettiness, we are
     going to make a nice smoothly animated transition instead.
-    
+
     \section2 Following and animated panning
-    
+
     First, add a new boolean member variable to MainWindow, called
     \a tracking, to keep track of whether the viewport is currently
     following the My Location marker:
-    
+
     \code
 class MainWindow : public QMainWindow
 {
@@ -1360,17 +1356,17 @@ private:
     ...
 };
     \endcode
-    
+
     Our intended design is that initially, the viewport will be in tracking
     mode. It will continue this way until the view is manually panned by
     the user, at which point tracking will stop. Then, if the user clicks
     the "My Location" menu option to re-center the map, we resume tracking
     once again.
-    
+
     So we will need a way to notify the MainWindow that the user has panned
     the view. Add a new signal \a mapPanned() to MapsWidget, and a
     corresponding signal \a panned() to GeoMap, as we did for \a clicked().
-    
+
     \code
 class MapsWidget : public QWidget
 {
@@ -1394,9 +1390,9 @@ void MapsWidget::initialize(QGeoMappingManager *manager)
     ...
 }
     \endcode
-    
+
     And now we simply emit it when a user pan takes place:
-    
+
     \code
 void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -1407,10 +1403,10 @@ void GeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     ...
 }
     \endcode
-    
+
     Back up in MainWindow, we create a slot \a disableTracking and hook up the
     new signal to it:
-    
+
     \code
 class MainWindow : public QMainWindow
 {
@@ -1429,19 +1425,19 @@ void MainWindow::initialize()
     ...
 }
     \endcode
-    
+
     And finally in the slot itself we simply set the flag we created earlier:
-    
+
     \code
 void MainWindow::disableTracking()
 {
     tracking = false;
 }
     \endcode
-    
+
     Next we want animated panning to be available. Add a new method on
     MapsWidget:
-    
+
     \code
 class MapsWidget : public QWidget
 {
@@ -1451,12 +1447,12 @@ public:
     ...
 };
     \endcode
-    
+
     To do animations in Qt, it's always easiest if we can make use of a
     QPropertyAnimation, and to do this you need a Q_PROPERTY to act upon.
     We'll use two animations in parallel, one moving latitude and one moving
     longitude, so we need two Q_PROPERTIES:
-    
+
     \code
 class GeoMap : public QGraphicsGeoMap
 {
@@ -1474,12 +1470,12 @@ public:
     ...
 };
     \endcode
-    
+
     These functions simply adjust the corresponding value on \a center() and
     then call \a setCenter() with the new \a QGeoCoordinate.
-    
+
     Now we can implement our \a animatedPanTo() method:
-    
+
     \code
 void MapsWidget::animatedPanTo(QGeoCoordinate center)
 {
@@ -1499,9 +1495,9 @@ void MapsWidget::animatedPanTo(QGeoCoordinate center)
     group->start(QAbstractAnimation::DeleteWhenStopped);
 }
     \endcode
-    
+
     To bring it all together, we make the last few changes in MainWindow:
-    
+
     \code
 void MainWindow::goToMyLocation()
 {
@@ -1518,7 +1514,7 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
     }
 }
     \endcode
-    
+
     And now we have the simple location tracking functionality we set out to
     implement.
 */
@@ -1526,12 +1522,11 @@ void MainWindow::updateMyPosition(QGeoPositionInfo info)
 /*!
     \page tutorials-mapsdemo-part4.html
 
-    \previouspage tutorials/mapsdemo/part3
-    \contentspage {tutorials/mapsdemo} {Contents}
-    \nextpage tutorials/mapsdemo/part5
-    \startpage tutorials/mapsdemo
+    \previouspage Part 3 - Listening to satellites
+    \contentspage {Maps Demo Tutorial} {Contents}
+    \nextpage Part 5 - Tuning for mobile devices
+    \startpage Maps Demo Tutorial
 
-    \example tutorials/mapsdemo/part4
     \title Part 4 - Stopping for directions
 
     To complete our tour of the Maps API, we're going to add some very basic
@@ -1806,7 +1801,7 @@ void MainWindow::showNavigateDialog()
 
     And now we have basic support for calculating and displaying
     routes on the map. In addition to this, we could quite easily
-    use the QGeoRoute object to show a list of directions and 
+    use the QGeoRoute object to show a list of directions and
     overall statistics about the journey. For more information see
     the documentation about QGeoRoute.
 
@@ -1817,12 +1812,11 @@ void MainWindow::showNavigateDialog()
 
 /*!
     \page tutorials-mapsdemo-part5.html
- 
-    \previouspage tutorials/mapsdemo/part4
-    \contentspage {tutorials/mapsdemo} {Contents}
-    \startpage tutorials/mapsdemo
 
-    \example tutorials/mapsdemo/part5
+    \previouspage Part 4 - Stopping for directions
+    \contentspage {Maps Demo Tutorial} {Contents}
+    \startpage Maps Demo Tutorial
+
     \title Part 5 - Tuning for mobile devices
 
     So far in this tutorial we've been mainly aiming at desktop use
@@ -1832,21 +1826,21 @@ void MainWindow::showNavigateDialog()
     now address these one by one.
 
     \section2 Network connection management
-    
+
     Most mobile platforms have multiple network connections, which
     are not connected all the time, and change regularly in
     operation. Qt provides the Bearer API for managing these
     and the events that occur with them.
-    
+
     At present when our application starts it simply assumes that
     a network link is available and that a mapping plugin will
     load. This could quite easily not be the case, so we will use
     the Bearer API to verify the state of the network and ensure
     that it is running before we call \a initialize().
-    
-    First up, we need a QNetworkConfigurationManager in order to 
+
+    First up, we need a QNetworkConfigurationManager in order to
     get at the default configuration of our environment:
-    
+
     \code
 class MainWindow : public QMainWindow
 {
@@ -1855,13 +1849,13 @@ private:
     QNetworkConfigurationManager *netConfigManager;
 };
     \endcode
-    
+
     We create it in the constructor of \a MainWindow. As mentioned
     in the documentation for QNetworkConfigurationManager, we should
     make a call to \a updateConfigurations() before actually making
     use of the instance. So we'll also need a slot to be called
     when this completes (we name this \a openNetworkSession()).
-    
+
     \code
 MainWindow::MainWindow() :
     ...
@@ -1873,15 +1867,15 @@ MainWindow::MainWindow() :
     netConfigManager->updateConfigurations();
 }
     \endcode
-    
+
     And in the slot itself we use the \a defaultConfiguration() method
     as the parameter to construct a new QNetworkSession to represent
     our default connection to the network.
-    
+
     We first check to see if this session is open, and if so, call
     initialize() right away. Otherwise, we hook up an appropriate
     signal and wait for the network to be available.
-    
+
     \code
 void MainWindow::openNetworkSession()
 {
@@ -1895,27 +1889,27 @@ void MainWindow::openNetworkSession()
     }
 }
     \endcode
-    
+
     So now our \a initialize() method will be called once a network
     connection is available.
-    
+
     \section2 Zoom buttons and panning keys
-    
+
     In our current implementation we depend upon the presence of a mouse
     wheel in order to zoom in and out on the map. This is not terribly
     useful in environments that lack a mouse (ie, anything except a desktop
     or laptop computer). To address this, we will implement a simple pair
     of zoom buttons on the right-hand side of the map display.
-    
+
     We also currently assume that panning the map using a mouse or touch
     screen is possible, which is not the case on, for example, many
     Symbian devices, which lack touch input. To rectify this, we will
     add support for handling arrow key events in \a GeoMap.
-    
+
     First up, our zoom buttons. We're going to use a very similar setup
     to that which we used for the sliding status bar previously, and
     create a new subclass of QGraphicsRectItem:
-    
+
     \code
 class ZoomButtonItemPrivate;
 class ZoomButtonItem : public QGraphicsRectItem
@@ -1936,12 +1930,12 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
     \endcode
-    
+
     Our button is going to simply be a translucent rectangle, with the top
     half containing a "+" symbol, which zooms in when clicked, and the
     bottom half containing a "-" symbol, which zooms out. In the constructor
     we create the two text items:
-    
+
     \code
 class ZoomButtonItemPrivate
 {
@@ -1974,10 +1968,10 @@ ZoomButtonItem::ZoomButtonItem(GeoMap *map) :
     d->minusText->setBrush(QBrush(Qt::white));
 }
     \endcode
-    
+
     And in \a setRect() we manage sizing and aligning the text items so
     that they each occupy roughly half the space.
-    
+
     \code
 void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
 {
@@ -2000,11 +1994,11 @@ void ZoomButtonItem::setRect(qreal x, qreal y, qreal w, qreal h)
     d->minusText->setPos(minusDelta);
 }
     \endcode
-    
+
     Finally, we use the boolean flags in ZoomButtonItemPrivate, above, to
     manage click detection in the \a mousePressEvent and \a mouseReleaseEvent
     functions:
-    
+
     \code
 void ZoomButtonItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -2032,18 +2026,18 @@ void ZoomButtonItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
     \endcode
-    
+
     In this way, if the mouse (or finger for touch screens) is pressed
     and then released over the same half of the ZoomButtonItem, we
     perform the zoom action appropriately. We could have simply hooked
     the corresponding events on the children items, \a plusText and
     \a minusText, but as they occupy less space and their size/shape vary
-    depending on the default font, users may find it difficult to target 
+    depending on the default font, users may find it difficult to target
     the active portion of the button (especially in a touch environment).
-    
+
     Adding the new button item to the MapsWidget also happens similarly
     to before:
-    
+
     \code
 void MapsWidget::initialize(QGeoMappingManager *manager)
 {

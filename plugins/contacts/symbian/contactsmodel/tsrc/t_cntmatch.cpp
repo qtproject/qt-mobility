@@ -100,13 +100,14 @@ LOCAL_C void PerfectMatchL()
 	{
 	//Database contains the only phone number.
 	//We search for exactly the same number.
-	//The matching must return one for all the rage of digits.
+	//The matching must return one for all the range of digits.
 
 	ResetDatabaseL();
 
 	_LIT(KTestNumber2,"4362 5120 7000 0001");
 	CreateContactL(KCntName,KCntSurname,KTestNumber2,KNullDesC);
 
+	TESTTRUE(CheckPhoneMatchL(KTestNumber2,KBestMatchingPhoneNumbers) == 1); // KBestMatchingPhoneNumbers defaults to Dynamic Matching.
 	TESTTRUE(CheckPhoneMatchL(KTestNumber2,1) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber2,2) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber2,3) == 1);
@@ -122,20 +123,20 @@ LOCAL_C void PerfectMatchL()
 	TESTTRUE(CheckPhoneMatchL(KTestNumber2,13) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber2,14) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber2,15) == 1);
-	TESTTRUE(CheckPhoneMatchL(KTestNumber2,16) == 0);	// AB - only 15 digits..
-	//Here it works...
+	TESTTRUE(CheckPhoneMatchL(KTestNumber2,16) == 1);
 
 
-	//The same story - match on itself must happen for all the rage of digits.
+	//The same story - match on itself must happen for all the range of digits.
 	_LIT(KTestNumber,"789543625 120 7582 2381");
 	CreateContactL(KCntName,KCntSurname,KTestNumber,KNullDesC);
 
+    TESTTRUE(CheckPhoneMatchL(KTestNumber,KBestMatchingPhoneNumbers) == 1); // KBestMatchingPhoneNumbers defaults to Dynamic Matching.
 	TESTTRUE(CheckPhoneMatchL(KTestNumber,1) == 1);
-	TESTTRUE(CheckPhoneMatchL(KTestNumber,2) == 0);
-	TESTTRUE(CheckPhoneMatchL(KTestNumber,3) == 0);
-	TESTTRUE(CheckPhoneMatchL(KTestNumber,4) == 0);
-	TESTTRUE(CheckPhoneMatchL(KTestNumber,5) == 0);
-	TESTTRUE(CheckPhoneMatchL(KTestNumber,6) == 0);
+	TESTTRUE(CheckPhoneMatchL(KTestNumber,2) == 1);
+	TESTTRUE(CheckPhoneMatchL(KTestNumber,3) == 1);
+	TESTTRUE(CheckPhoneMatchL(KTestNumber,4) == 1);
+	TESTTRUE(CheckPhoneMatchL(KTestNumber,5) == 1);
+	TESTTRUE(CheckPhoneMatchL(KTestNumber,6) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber,7) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber,8) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber,9) == 1);
@@ -145,7 +146,7 @@ LOCAL_C void PerfectMatchL()
 	TESTTRUE(CheckPhoneMatchL(KTestNumber,13) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber,14) == 1);
 	TESTTRUE(CheckPhoneMatchL(KTestNumber,15) == 1);
-	TESTTRUE(CheckPhoneMatchL(KTestNumber,16) == 0);	// AB - not 16 digits, 15 is max.
+	TESTTRUE(CheckPhoneMatchL(KTestNumber,16) == 1);
 	//Here it doesn't
 
 	/*  At the moment, the function simply returns "no matches" if the
@@ -155,10 +156,6 @@ LOCAL_C void PerfectMatchL()
 		leave. Whilst leaving with KErrArgument is a laudable aspiration, it
 		should not be changed here without going through the appropriate
 		assessment process. Suggest raising a CR.
-
-	//We shouldn't be able to match on less than 1 digit...
-	TRAPD(err,CheckPhoneMatchL(KTestNumber,0));
-	TESTVALUE(err, KErrArgument);
 
 	TRAP(err,CheckPhoneMatchL(KTestNumber,-15));
 	TESTVALUE(err, KErrArgument);
@@ -177,8 +174,7 @@ LOCAL_C void DontUnderestimateTheMeaningOfZeroL()
 	//Database contains only this number 228 876 5324;
 	CreateContactL(KCntName,KCntSurname,_L("228 876 5324"),KNullDesC);
 	//Trying to search on that exact number by 6 digits...
-		TESTVALUE(CheckPhoneMatchL(		_L("228 876 5324"), 6),0);
-	//No matches, well I kind of expected it... :-(
+		TESTVALUE(CheckPhoneMatchL(		_L("228 876 5324"), 6),1);
 
 	//Now we add a number that differs from the first one by one digit..
 	CreateContactL(KCntName,KCntSurname,_L("228 076 5324"),KNullDesC);
@@ -201,8 +197,8 @@ LOCAL_C void Test2L()
 
 	//it shouldn't match to 228 000 5324 as well, but... it does
 	CreateContactL(KCntName,KCntSurname,_L("228 000 5324"),KNullDesC);
-	TESTVALUE(CheckPhoneMatchL(					_L("5324"),11),1);	// AB
-	TESTVALUE(CheckPhoneMatchL(					_L("5324"), 4),1);
+	TESTVALUE(CheckPhoneMatchL(					_L("5324"),11),0);
+	TESTVALUE(CheckPhoneMatchL(					_L("5324"), 4),0);
 	}
 
 
@@ -255,7 +251,7 @@ LOCAL_C void Test3L()
 	//it definetly should match on itself....
 	TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 7),2); //Both numbers match by 7 digits..
     TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 8),1); //But they must differ for more digits
-    TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 9),1); // AB - all these should match both...
+    TESTVALUE(CheckPhoneMatchL(_L("123 4567"), 9),1);
     TESTVALUE(CheckPhoneMatchL(_L("123 4567"),10),1);
     TESTVALUE(CheckPhoneMatchL(_L("123 4567"),11),1);
     TESTVALUE(CheckPhoneMatchL(_L("123 4567"),12),1);
@@ -709,9 +705,9 @@ LOCAL_C void TestBestMatchingStrategyL()
     
     ResetDatabaseL();
     CreateContactL(KCntName,KCntSurname,_L("3560 0123456"),KNullDesC);
-    TESTVALUE(CheckPhoneMatchL(_L("0000 0123456"),KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("0000 0123456"),KBestMatchingPhoneNumbers),0);
     // false positive?
-    TESTVALUE(CheckPhoneMatchL(_L("123456"), KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("123456"), KBestMatchingPhoneNumbers),0);
     
     ResetDatabaseL();
     CreateContactL(KCntName,KCntSurname,_L("1234567"),KNullDesC);
@@ -745,12 +741,12 @@ LOCAL_C void TestBestMatchingStrategyL()
     CreateContactL(KCntName,KCntSurname,_L("9 9000 000"),KNullDesC);
     CreateContactL(KCntName,KCntSurname,_L("9000 000"),KNullDesC);
     TESTVALUE(CheckPhoneMatchL(_L("9999 9990 0999 999"), KBestMatchingPhoneNumbers),1);
-    TESTVALUE(CheckPhoneMatchL(_L("9000 0000 0000 000"), KBestMatchingPhoneNumbers),2);
-    TESTVALUE(CheckPhoneMatchL(_L("0000 0000 0000 000"), KBestMatchingPhoneNumbers),2);
+    TESTVALUE(CheckPhoneMatchL(_L("9000 0000 0000 000"), KBestMatchingPhoneNumbers),1);
+    TESTVALUE(CheckPhoneMatchL(_L("0000 0000 0000 000"), KBestMatchingPhoneNumbers),1);
     TESTVALUE(CheckPhoneMatchL(_L("0000 0000 0000 009"), KBestMatchingPhoneNumbers),1);
     TESTVALUE(CheckPhoneMatchL(_L("9 9000 000"), KBestMatchingPhoneNumbers),2);
     TESTVALUE(CheckPhoneMatchL(_L("9000 000"), KBestMatchingPhoneNumbers),2);
-    TESTVALUE(CheckPhoneMatchL(_L("0000 000"), KBestMatchingPhoneNumbers),2);
+    TESTVALUE(CheckPhoneMatchL(_L("0000 000"), KBestMatchingPhoneNumbers),1);
     
     ResetDatabaseL();
     CreateContactL(KCntName,KCntSurname,_L("443049607"),KNullDesC);

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -1783,7 +1783,6 @@ static inline int compareStrings(const QString& left, const QString& right, Qt::
   CaseSensitive, strings that are identical under a case insensitive
   sort are then sorted case sensitively within that context.
 
-
   For example:
 
   aaron
@@ -1813,20 +1812,36 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
 {
     switch(first.type()) {
         case QVariant::Int:
-            return first.toInt() - second.toInt();
+            {
+                const int a = first.toInt();
+                const int b = second.toInt();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::LongLong:
-            return first.toLongLong() - second.toLongLong();
+            {
+                const qlonglong a = first.toLongLong();
+                const qlonglong b = second.toLongLong();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::Bool:
-        case QVariant::Char:
         case QVariant::UInt:
-            return first.toUInt() - second.toUInt();
+            {
+                const uint a = first.toUInt();
+                const uint b = second.toUInt();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::ULongLong:
-            return first.toULongLong() - second.toULongLong();
+            {
+                const qulonglong a = first.toULongLong();
+                const qulonglong b = second.toULongLong();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
-       case QVariant::String:
+        case QVariant::Char: // Needs to do proper string comparison
+        case QVariant::String:
             return compareStrings(first.toString(), second.toString(), sensitivity);
 
         case QVariant::Double:
@@ -1844,13 +1859,41 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             }
 
         case QVariant::Date:
-            return first.toDate().toJulianDay() - second.toDate().toJulianDay();
+            {
+                const QDate a = first.toDate();
+                const QDate b = second.toDate();
+                return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
 
         case QVariant::Time:
             {
                 const QTime a = first.toTime();
                 const QTime b = second.toTime();
                 return (a < b) ? -1 : ((a == b) ? 0 : 1);
+            }
+
+        case QVariant::StringList:
+            {
+                // We don't actually sort on these, I hope
+                // {} < {"aa"} < {"aa","bb"} < {"aa", "cc"} < {"bb"}
+
+                int i;
+                const QStringList a = first.toStringList();
+                const QStringList b = second.toStringList();
+                for (i = 0; i < a.size(); i++) {
+                    if (b.size() <= i)
+                        return 1; // first is longer
+                    int memberComp = compareStrings(a.at(i), b.at(i), sensitivity);
+                    if (memberComp != 0)
+                        return memberComp;
+                    // this element is the same, so loop again
+                }
+
+                // Either a.size() < b.size() and they are equal all
+                // the way, or a == b
+                if (a.size() < b.size())
+                    return -1; // a is less than b;
+                return 0; // they are equal
             }
 
         default:

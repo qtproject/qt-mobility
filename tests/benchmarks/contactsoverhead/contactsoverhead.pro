@@ -20,10 +20,11 @@ MOBILITY = contacts
 EXTRAPLUGINS = \
     $$mobilityDeployFilename(qtcontacts_symbian)
 
-symbian:QCONTACT_PLUGINS_DEPLOY.sources = $$join(EXTRAPLUGINS, ".dll ", " ", ".dll")
-QCONTACT_PLUGINS_DEPLOY.path = ./plugins/contacts
-DEPLOYMENT += QCONTACT_PLUGINS_DEPLOY
-
+symbian|wince* {
+    symbian:QCONTACT_PLUGINS_DEPLOY.sources = $$join(EXTRAPLUGINS, ".dll ", " ", ".dll")
+    QCONTACT_PLUGINS_DEPLOY.path = ./plugins/contacts
+    DEPLOYMENT += QCONTACT_PLUGINS_DEPLOY
+}
 
 symbian {
     LIBS += -lcntmodel
@@ -33,3 +34,5 @@ symbian {
 maemo {
     QT += dbus xml gui
 }
+
+maemo*:CONFIG += insignificant_test

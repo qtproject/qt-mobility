@@ -92,9 +92,6 @@ public:
 	and the object is returned.  This is useful for the analysis of the deleted contact. */
 	virtual CContactItem* DeleteLC(TContactItemId  aItemId, TUint aSessionId, TCntSendEventAction aEventType) = 0;
 	
-    /** Delete multiple contacts. */
-    virtual void DeleteMultipleContactsL(const CContactIdArray* aIdArray, TUint aSessionId, TCntSendEventAction aEventType) = 0;	
-
 	/** Change type for the current contact item. */
 	virtual void ChangeTypeL(TContactItemId aItemId, TUid aNewType) = 0;
 

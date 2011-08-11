@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -77,8 +77,11 @@ QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPri
     \class QSystemDisplayInfo
     \ingroup systeminfo
     \inmodule QtSystemInfo
-    \since 1.1
+    \since 1.0
     \brief The QSystemDisplayInfo class provides access to display information from the system.
+
+    \warning This class can only be used from the main thread, since it has been implemented using
+     GUI functionality.
 */
 
 /*!
@@ -111,6 +114,7 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
     -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.0
 */
 int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
@@ -126,6 +130,7 @@ int QSystemDisplayInfo::displayBrightness(int screenNumber)
     -1 is returned if not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.0
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
@@ -140,6 +145,7 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
     Returns the orientation of the UI QDesktopWidget for \a screen.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int screen)
 {
@@ -151,6 +157,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::orientation(int scree
     not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 float QSystemDisplayInfo::contrast(int screen)
 {
@@ -162,6 +169,7 @@ float QSystemDisplayInfo::contrast(int screen)
     not available or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::getDPIWidth(int screen)
 {
@@ -173,6 +181,7 @@ int QSystemDisplayInfo::getDPIWidth(int screen)
     or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::getDPIHeight(int screen)
 {
@@ -184,6 +193,7 @@ int QSystemDisplayInfo::getDPIHeight(int screen)
     or on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::physicalHeight(int screen)
 {
@@ -195,6 +205,7 @@ int QSystemDisplayInfo::physicalHeight(int screen)
     on error.
 
     \sa QDesktopWidget::screenCount()
+    \since 1.2
 */
 int QSystemDisplayInfo::physicalWidth(int screen)
 {
@@ -203,6 +214,7 @@ int QSystemDisplayInfo::physicalWidth(int screen)
 
 /*!
     Returns whether the QSystemDisplayInfo::BacklightState for the screen \a screen.
+    \since 1.2
 */
 QSystemDisplayInfo::BacklightState QSystemDisplayInfo::backlightStatus(int screen)
 {

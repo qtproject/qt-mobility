@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -85,14 +85,34 @@
 #include "thermalstatus_s60.h"
 #endif
 
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+#include "networkoperatornamelistener_s60.h"
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 const int KMaxBatteryBars = 7; //Max number of battery bars (7 is fixed for all symbian devices now)
 
+class DeviceInfo;
+
+//////// QSystemInfoPrivateBase
+class QSystemInfoPrivateBase : public QObject
+{
+    Q_OBJECT
+
+public:
+
+    QSystemInfoPrivateBase(QObject *parent = 0);
+    virtual ~QSystemInfoPrivateBase();
+
+protected:
+    DeviceInfo* m_deviceInfo;
+};
+
 //////// QSystemInfo
-class QSystemInfoPrivate : public QObject
+class QSystemInfoPrivate : public QSystemInfoPrivateBase
 {
     Q_OBJECT
 
@@ -117,7 +137,10 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
+class QSystemNetworkInfoPrivate : public QSystemInfoPrivateBase, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+, public MNetworkOperatorNameObserver
+#endif
 {
     Q_OBJECT
 
@@ -127,17 +150,17 @@ public:
     virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    static int cellId();
-    static int locationAreaCode();
+    int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    int cellId();
+    int locationAreaCode();
 
-    static QString currentMobileCountryCode();
-    static QString currentMobileNetworkCode();
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
-    static QString homeMobileCountryCode();
-    static QString homeMobileNetworkCode();
+    QString homeMobileCountryCode();
+    QString homeMobileNetworkCode();
 
-    static QString networkName(QSystemNetworkInfo::NetworkMode mode); //signal
+    QString networkName(QSystemNetworkInfo::NetworkMode mode); //signal
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
@@ -175,6 +198,11 @@ protected:  //from MTelephonyInfoObserver
     void wlanNetworkNameChanged();
     void wlanNetworkSignalStrengthChanged();
     void wlanNetworkStatusChanged();
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+    //from MNetworkOperatorNameObserver
+    void OperatorNameChanged();
+#endif
 
 //public slots:
     //void wlanNetworkNameChanged();
@@ -217,7 +245,7 @@ private:
 };
 
 //////// QSystemStorageInfo
-class QSystemStorageInfoPrivate : public QObject,
+class QSystemStorageInfoPrivate : public QSystemInfoPrivateBase,
     public MStorageStatusObserver
 #ifdef DISKNOTIFY_SUPPORTED
     ,public MStorageSpaceNotifyObserver
@@ -257,7 +285,6 @@ Q_SIGNALS:
 //////// QSystemDeviceInfo
 
 
-class DeviceInfo;
 QTM_END_NAMESPACE
 
 #include <mproengprofileactivationobserver.h>
@@ -268,7 +295,7 @@ class MProEngNotifyHandler;
 
 QTM_BEGIN_NAMESPACE
 
-class QSystemDeviceInfoPrivate : public QObject,
+class QSystemDeviceInfoPrivate : public QSystemInfoPrivateBase,
     public MTelephonyInfoObserver,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
@@ -290,18 +317,19 @@ public:
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
     // device
-    static QString imei();
-    static QString imsi();
-    static QString manufacturer();
-    static QString model();
-    static QString productName();
+    QString imei();
+    QString imsi();
+    QString manufacturer();
+    QString model();
+    QString productName();
 
     int batteryLevel() const;
     QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     bool isDeviceLocked();
-    static QSystemDeviceInfo::SimStatus simStatus();
+    QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
+    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
 
     QSystemDeviceInfo::PowerState currentPowerState();
     QSystemDeviceInfo::ThermalState currentThermalState();
@@ -407,15 +435,6 @@ private:    //data
 class DeviceInfo
 {
 public:
-    static DeviceInfo *instance()
-    {
-        if (!m_instance)
-        {
-            m_instance = new DeviceInfo;
-        }
-        return m_instance;
-    }
-
     CPhoneInfo *phoneInfo()
     {
         if (!m_phoneInfo) {
@@ -527,6 +546,17 @@ public:
         }
 #endif
 
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+     CNetworkOperatorNameListener *networkInfoListener()
+        {
+         if (!m_networkinfolistener)
+          {
+           m_networkinfolistener = CNetworkOperatorNameListener::NewL();
+          }
+          return m_networkinfolistener;
+        }
+#endif
+
     CBatteryCommonInfo *batteryCommonInfo ()
     {
         if (!m_batteryCommonInfo) {
@@ -543,7 +573,6 @@ public:
         return m_networkInfo;
     }
 
-private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
         m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL), m_mmcStorageStatus(NULL), m_batteryCommonInfo(NULL), m_networkInfo(NULL)
@@ -555,6 +584,9 @@ private:
 #endif
 #ifdef THERMALSTATUS_SUPPORTED
         ,m_thermalStatus(NULL)
+#endif
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+        ,m_networkinfolistener(NULL)
 #endif
     {
         TRACES(qDebug() << "DeviceInfo():Constructor");
@@ -587,11 +619,14 @@ private:
 #ifdef THERMALSTATUS_SUPPORTED
         delete m_thermalStatus;
 #endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+        delete m_networkinfolistener;
+#endif
     }
 
+private:
     DeviceInfo(const DeviceInfo &);
-
-    static DeviceInfo *m_instance;
 
     CTelephony *m_telephony;
     CPhoneInfo *m_phoneInfo;
@@ -616,9 +651,14 @@ private:
 #ifdef THERMALSTATUS_SUPPORTED
     CThermalStatus* m_thermalStatus;
 #endif
+
+#ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
+   CNetworkOperatorNameListener* m_networkinfolistener;
+#endif
+
 };
 
-class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver
+class QSystemBatteryInfoPrivate : public QSystemInfoPrivateBase, public MBatteryInfoObserver, public MBatteryHWRMObserver
 {
     Q_OBJECT
 public:

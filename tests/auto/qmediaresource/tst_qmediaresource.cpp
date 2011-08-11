@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -57,6 +57,9 @@ private slots:
     void equality();
     void copy();
     void assign();
+
+    void constructorRequest();
+    void copyConstructor();
 };
 
 void tst_QMediaResource::constructNull()
@@ -447,6 +450,61 @@ void tst_QMediaResource::equality()
     // Equal
     QCOMPARE(resource1 == resource2, true);
     QCOMPARE(resource1 != resource2, false);
+
+    /* equality tests for constructor of QMediaresource(QNetworkrequest,mimeType)*/
+    QNetworkRequest request2(QUrl(QString::fromLatin1("http://test.com/test.mp4")));
+    QUrl url(QString::fromLatin1("http://test.com/test.mp4"));
+    QString mimeType(QLatin1String("video/mp4"));
+
+    QMediaResource resource6(request2,mimeType);
+    QMediaResource resource7(request2,mimeType);
+
+
+    QVERIFY(resource6.request()==request2);
+    QVERIFY(resource6.mimeType()==mimeType);
+
+
+    QVERIFY(resource7.request()==request2);
+    QVERIFY(resource7.mimeType()==mimeType);
+
+    QVERIFY(resource6.request()==resource7.request());
+    QVERIFY(resource6.mimeType()==resource7.mimeType());
+
+    QVERIFY(resource6==resource7);
+
+    /*for copy constructor*/
+    QMediaResource resource8(resource7);
+
+    QVERIFY(resource8.request()==request2);
+    QVERIFY(resource8.mimeType()==mimeType);
+
+
+    QVERIFY(resource7.request()==request2);
+    QVERIFY(resource7.mimeType()==mimeType);
+
+    QVERIFY(resource8.request()==resource7.request());
+    QVERIFY(resource8.mimeType()==resource7.mimeType());
+
+
+    QVERIFY(resource8==resource7);
+
+    /*for assign constructor*/
+
+    QMediaResource resource9(request2,mimeType);
+
+    QMediaResource resource10=resource9;
+
+    QVERIFY(resource10.request()==request2);
+    QVERIFY(resource10.mimeType()==mimeType);
+
+
+    QVERIFY(resource9.request()==request2);
+    QVERIFY(resource9.mimeType()==mimeType);
+
+    QVERIFY(resource8.request()==resource7.request());
+    QVERIFY(resource8.mimeType()==resource7.mimeType());
+
+    QVERIFY(resource8==resource7);
 }
 
 void tst_QMediaResource::copy()
@@ -494,6 +552,12 @@ void tst_QMediaResource::assign()
     const QString aacCodec(QLatin1String("aac"));
     const QString h264Codec(QLatin1String("h264"));
 
+    QNetworkRequest request(QUrl(QString::fromLatin1("http://test.com/test.mp4")));
+    const qint64 dataSize(23600);
+    int audioBitRate = 1, sampleRate = 2, channelCount = 3, videoBitRate = 4;
+    QSize resolution(QSize(640, 480));
+    QString language("eng");
+
     QMediaResource copy(QUrl(QString::fromLatin1("file:///thumbs/test.jpg")));
 
     QMediaResource original(url, mimeType);
@@ -521,6 +585,114 @@ void tst_QMediaResource::assign()
     QCOMPARE(copy.mimeType(), mimeType);
 
     QCOMPARE(original.audioCodec(), mp3Codec);
+
+    /* for constructor of QMediaresource(QNetworkrequest,mimeType)*/
+
+    QMediaResource copy1(QNetworkRequest(QUrl(QString::fromLatin1("file:///thumbs/test.jpg"))));
+
+    QMediaResource original1(request, mimeType);
+
+    original1.setAudioCodec(amrCodec);
+    original1.setLanguage(QString("eng"));
+    original1.setVideoCodec(h264Codec);
+    original1.setDataSize(dataSize);
+    original1.setAudioBitRate(audioBitRate);
+    original1.setSampleRate(sampleRate);
+    original1.setChannelCount(channelCount);
+    original1.setVideoBitRate(videoBitRate);
+    original1.setResolution(resolution);
+
+    copy1 = original1;
+
+    QCOMPARE(original1 == copy1, true);
+}
+
+// Constructor for request without passing mimetype.
+void tst_QMediaResource::constructorRequest()
+{
+    //Initialise the request and url.
+    QNetworkRequest request(QUrl(QString::fromLatin1("http:://test.com/test.mp3")));
+    QUrl url(QString::fromLatin1("http:://test.com/test.mp3"));
+
+    // Create the instance with request as parameter.
+    QMediaResource resource(request);
+
+    // Verify all the parameters of objects.
+    QCOMPARE(resource.isNull(), false);
+    QCOMPARE(resource.url(), url);
+    QCOMPARE(resource.request(), request);
+    QCOMPARE(resource.mimeType(), QString());
+    QCOMPARE(resource.language(), QString());
+    QCOMPARE(resource.audioCodec(), QString());
+    QCOMPARE(resource.videoCodec(), QString());
+    QCOMPARE(resource.dataSize(), qint64(0));
+    QCOMPARE(resource.audioBitRate(), 0);
+    QCOMPARE(resource.sampleRate(), 0);
+    QCOMPARE(resource.channelCount(), 0);
+    QCOMPARE(resource.videoBitRate(), 0);
+    QCOMPARE(resource.resolution(), QSize());
+}
+
+// Copy constructor with all the parameter and copy constructor for constructor with request and mimetype as parameter.
+void tst_QMediaResource::copyConstructor()
+{
+    // Initialise all the parameters.
+    const QUrl url(QString::fromLatin1("http://test.com/test.mp4"));
+    const QString mimeType(QLatin1String("video/mp4"));
+    const QString amrCodec(QLatin1String("amr"));
+    const QString h264Codec(QLatin1String("h264"));
+
+    const qint64 dataSize(23600);
+    int audioBitRate = 1, sampleRate = 2, channelCount = 3, videoBitRate = 4;
+    QSize resolution(QSize(640, 480));
+    QString language("eng");
+
+    // Create the instance with url and mimetype.
+    QMediaResource original(url, mimeType);
+
+    // Set all the parameters.
+    original.setAudioCodec(amrCodec);
+    original.setLanguage(QString("eng"));
+    original.setVideoCodec(h264Codec);
+    original.setDataSize(dataSize);
+    original.setAudioBitRate(audioBitRate);
+    original.setSampleRate(sampleRate);
+    original.setChannelCount(channelCount);
+    original.setVideoBitRate(videoBitRate);
+    original.setResolution(resolution);
+
+    // Copy the instance to new object.
+    QMediaResource copy(original);
+
+    // Verify all the parameters of the copied object.
+    QCOMPARE(copy.url(), url);
+    QCOMPARE(copy.mimeType(), mimeType);
+    QCOMPARE(copy.audioCodec(), amrCodec);
+    QCOMPARE(copy.language(), language );
+    QCOMPARE(copy.videoCodec(), h264Codec);
+    QCOMPARE(copy.dataSize(), dataSize);
+    QCOMPARE(copy.audioBitRate(), audioBitRate);
+    QCOMPARE(copy.sampleRate(), sampleRate);
+    QCOMPARE(copy.channelCount(), channelCount);
+    QCOMPARE(copy.videoBitRate(), videoBitRate);
+    QCOMPARE(copy.resolution(), resolution);
+
+    // Compare both the objects are equal.
+    QCOMPARE(original == copy, true);
+    QCOMPARE(original != copy, false);
+
+    // Initialise the request parameter.
+    QNetworkRequest request1(QUrl(QString::fromLatin1("http://test.com/test.mp4")));
+
+    // Constructor with rerquest and mimetype.
+    QMediaResource original1(request1, mimeType);
+
+    // Copy the object and verify if both are eqaul or not.
+    QMediaResource copy1(original1);
+    QCOMPARE(copy1.url(), url);
+    QCOMPARE(copy1.mimeType(), mimeType);
+    QCOMPARE(copy1.request(), request1);
+    QCOMPARE(original1 == copy1, true);
 }
 
 QTEST_MAIN(tst_QMediaResource)

@@ -81,7 +81,7 @@ public:
 	// Contact Item CRUD methods.
 	TContactItemId CreateContactL(CContactItem& aContact) const;
 	void DeleteContactL(const TContactItemId aCntId, TCntSendEventAction aCntEventType, TBool aDecAccessCount = EFalse) const;	
-	void DeleteContactsL(const CContactIdArray& aContactIds) const;
+	TInt DeleteContact(const TContactItemId aCntId, TCntSendEventAction aCntEventType, TBool aDecAccessCount = EFalse) const;	
 	void CommitContactL(const CContactItem& aContact, TBool aSendChangedEvent = ETrue) const;
 	CContactItem* ReadContactL(const CContactItemViewDef* aCntItemVDef, TContactItemId aCntId) const;
 	CContactItem* OpenContactLX(const CContactItemViewDef* aCntItemVDef, TContactItemId aCntId) const;
@@ -108,6 +108,7 @@ public:
     
 	TInt BeginDbTransaction() const;
 	TInt CommitDbTransaction() const;
+	void CommitDbTransaction(TRequestStatus*& aStatus) const;
 	TInt RollbackDbTransaction() const;
 	
 	// Observer methods for database event notifications.
@@ -218,6 +219,9 @@ private:
 	
 	// Image rescaling
 	CImageRescaler* iRescaler;
+	
+	//For tracking connection status
+	TBool iServerRunning;
 	};
 	
 #endif // RCNTMODEL_H

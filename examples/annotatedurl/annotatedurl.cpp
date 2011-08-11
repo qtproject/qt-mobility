@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the examples of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -54,61 +54,19 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QDesktopServices>
 
-AnnotatedUrl::AnnotatedUrl(QWidget *parent)
-:   QWidget(parent)
+AnnotatedUrl::AnnotatedUrl(QObject *parent)
+:   QObject(parent)
 {
-    QGridLayout *grid = new QGridLayout;
-
-    m_image = new QLabel;
-    grid->addWidget(m_image, 0, 0, 2, 1, Qt::AlignCenter);
-
-    m_title = new QLabel;
-    QFont titleFont = m_title->font();
-    titleFont.setBold(true);
-    m_title->setFont(titleFont);
-    grid->addWidget(m_title, 0, 1);
-
-    m_url = new QLabel;
-    grid->addWidget(m_url, 1, 1);
-
-    setLayout(grid);
 }
 
 AnnotatedUrl::~AnnotatedUrl()
 {
 }
 
-void AnnotatedUrl::targetDetected(const QNdefMessage &message, QNearFieldTarget *target)
+void AnnotatedUrl::handleMessage(const QNdefMessage &message, QNearFieldTarget *target)
 {
     Q_UNUSED(target);
 
-    displayNdefMessage(message);
-}
-
-void AnnotatedUrl::targetDetected(QNearFieldTarget *target)
-{
-    if (!target->hasNdefMessage())
-        return;
-
-    connect(target, SIGNAL(ndefMessageRead(QNdefMessage)),
-            this, SLOT(displayNdefMessage(QNdefMessage)));
-
-    target->readNdefMessages();
-}
-
-void AnnotatedUrl::targetLost(QNearFieldTarget *target)
-{
-    target->deleteLater();
-}
-
-void AnnotatedUrl::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (rect().contains(event->pos()))
-        QDesktopServices::openUrl(QUrl(m_url->text()));
-}
-
-void AnnotatedUrl::displayNdefMessage(const QNdefMessage &message)
-{
     enum {
         MatchedNone,
         MatchedFirst,
@@ -117,11 +75,11 @@ void AnnotatedUrl::displayNdefMessage(const QNdefMessage &message)
         MatchedLanguageAndCountry
     } bestMatch = MatchedNone;
 
-    m_title->clear();
-    m_url->clear();
-    m_image->clear();
-
     QLocale defaultLocale;
+
+    QString title;
+    QUrl url;
+    QPixmap pixmap;
 
     foreach (const QNdefRecord &record, message) {
         if (record.isRecordType<QNdefNfcTextRecord>()) {
@@ -133,26 +91,29 @@ void AnnotatedUrl::displayNdefMessage(const QNdefMessage &message)
             if (bestMatch == MatchedLanguageAndCountry) {
                 // do nothing
             } else if (bestMatch <= MatchedLanguage && locale == defaultLocale) {
-                m_title->setText(textRecord.text());
+                title = textRecord.text();
                 bestMatch = MatchedLanguageAndCountry;
             } else if (bestMatch <= MatchedEnglish &&
                        locale.language() == defaultLocale.language()) {
-                m_title->setText(textRecord.text());
+                title = textRecord.text();
                 bestMatch = MatchedLanguage;
             } else if (bestMatch <= MatchedFirst && locale.language() == QLocale::English) {
-                m_title->setText(textRecord.text());
+                title = textRecord.text();
                 bestMatch = MatchedEnglish;
             } else if (bestMatch == MatchedNone) {
-                m_title->setText(textRecord.text());
+                title = textRecord.text();
                 bestMatch = MatchedFirst;
             }
         } else if (record.isRecordType<QNdefNfcUriRecord>()) {
             QNdefNfcUriRecord uriRecord(record);
 
-            m_url->setText(uriRecord.uri().toString());
+            url = uriRecord.uri();
         } else if (record.typeNameFormat() == QNdefRecord::Mime &&
                    record.type().startsWith("image/")) {
-            m_image->setPixmap(QPixmap::fromImage(QImage::fromData(record.payload())));
+            pixmap = QPixmap::fromImage(QImage::fromData(record.payload()));
         }
     }
+
+    emit annotatedUrl(url, title, pixmap);
 }
+

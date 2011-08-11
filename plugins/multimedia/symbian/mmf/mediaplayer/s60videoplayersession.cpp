@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -60,6 +60,9 @@
 #include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 #include <MMFROPCustomCommandConstants.h>
+#ifdef HTTP_COOKIES_ENABLED
+#include <MMFSessionInfoCustomCommandConstants.h>
+#endif
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
 const TUid KHelixUID = {0x101F8514};
@@ -170,6 +173,9 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     , m_audioEndpoint(DefaultAudioEndpoint)
     , m_pendingChanges(0)
     , m_backendInitiatedPause(false)
+#ifdef HTTP_COOKIES_ENABLED
+    , m_destinationPckg(KUidInterfaceMMFControllerSessionInfo)
+#endif
 {
     DP0("S60VideoPlayerSession::S60VideoPlayerSession +++");
 
@@ -248,8 +254,10 @@ void S60VideoPlayerSession::applicationGainedFocus()
 void S60VideoPlayerSession::applicationLostFocus()
 {
     if (QMediaPlayer::PlayingState == state()) {
+        if (!m_isaudiostream) {
         m_backendInitiatedPause = true;
         pause();
+        }
     }
 }
 
@@ -407,18 +415,18 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
         const QRect clipRect = m_videoOutputDisplay ? m_videoOutputDisplay->clipRect() : QRect();
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
         if (m_pendingChanges & WindowHandle) {
-            if (m_displayWindow) {
-                m_player->RemoveDisplayWindow(*m_displayWindow);
-                m_displayWindow = 0;
-            }
-            if (window) {
+            if (window && window != m_displayWindow ) {
                 TRAP(error, m_player->AddDisplayWindowL(*m_wsSession, *m_screenDevice,
                                                         *window,
                                                         QRect2TRect(extentRect),
                                                         QRect2TRect(clipRect)));
-                if (KErrNone == error)
-                    m_displayWindow = window;
             }
+            if (m_displayWindow && m_displayWindow != window && KErrNone == error){
+                m_player->RemoveDisplayWindow(*m_displayWindow);
+                m_displayWindow = 0;
+            }
+            if (KErrNone == error && window )
+                m_displayWindow = window;
             m_pendingChanges = ScaleFactors;
         }
         if (KErrNone == error && (m_pendingChanges & DisplayRect) && m_displayWindow) {
@@ -654,9 +662,45 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
     DP1("S60VideoPlayerSession::MvpuoOpenComplete - aError:", aError);
 
     setError(aError);
+#ifdef HTTP_COOKIES_ENABLED
+    if (KErrNone == aError) {
+        TInt err(KErrNone);
+        const QByteArray userAgentString("User-Agent");
+        TInt uasize = m_source.canonicalRequest().rawHeader(userAgentString).size();
+        TPtrC8 userAgent((const unsigned char*)(m_source.canonicalRequest().rawHeader(userAgentString).constData()), uasize);
+        if (userAgent.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("User-Agent"), userAgent);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        const QByteArray refererString("Referer");
+        TInt refsize = m_source.canonicalRequest().rawHeader(refererString).size();
+        TPtrC8 referer((const unsigned char*)m_source.canonicalRequest().rawHeader(refererString).constData(),refsize);
+        if (referer.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("Referer"), referer);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        const QByteArray cookieString("Cookie");
+        TInt cksize = m_source.canonicalRequest().rawHeader(cookieString).size();
+        TPtrC8 cookie((const unsigned char*)m_source.canonicalRequest().rawHeader(cookieString).constData(),cksize);
+        if (cookie.Length()) {
+            err = m_player->CustomCommandSync(m_destinationPckg, EMMFSetSessionInfo, _L8("Cookie"), cookie);
+            if (err != KErrNone) {
+                setError(err);
+                return;
+            }
+        }
+        m_player->Prepare();
+    }
+#else
     if (KErrNone == aError)
         m_player->Prepare();
-
+#endif
     const TMMFMessageDestinationPckg dest( KUidInterfaceMMFROPController );
     TRAP_IGNORE(m_player->CustomCommandSync(dest, KMMFROPControllerEnablePausedLoadingStatus, KNullDesC8, KNullDesC8));
 
@@ -678,7 +722,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
         emit accessPointChanged(m_accessPointId);
         }
     if (KErrCouldNotConnect == aError && !(m_networkAccessControl->isLastAccessPoint())) {
-        load(m_UrlPath);
+        load(m_source);
     return;
     }
     TInt error = aError;
@@ -700,6 +744,14 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 #endif
         }
         if (KErrNone == error) {
+        // changes made to play without pausing in case of audio streaming use case
+            if (m_player->VideoFormatMimeType().Length() == 0) {
+            m_isaudiostream = true;
+            m_backendInitiatedPause = false;
+            play();
+            } else {
+            m_isaudiostream = false;
+            }
             applyPendingChanges(true); // force apply even though state is not Loaded
             if (KErrNone == this->error()) // applyPendingChanges() can call setError()
                 loaded();
@@ -740,8 +792,12 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
     if (m_stream)
     m_networkAccessControl->resetIndex();
 
-    endOfMedia();
-    setError(aError);
+    if (aError != KErrNone) {
+        setError(aError);
+        doClose();
+    } else {
+        endOfMedia();
+    }
 
     DP0("S60VideoPlayerSession::MvpuoPlayComplete ---");
 }
@@ -1002,7 +1058,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 }
 
 /*!
-    The default Audio ouptut has been changed.
+    The default Audio output has been changed.
 
     \a aAudioOutput Audio Output object.
 

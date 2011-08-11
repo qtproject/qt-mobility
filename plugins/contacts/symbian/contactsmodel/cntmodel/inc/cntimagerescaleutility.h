@@ -33,6 +33,7 @@ NONSHARABLE_CLASS(TCntImageRescaleUtility)
 public:
     /**
      * Returns the private image directory.
+     * Creates private image directory if doesn't exist
      * 
      * @return TPath Valid path to image directory
      * @leave If any error occures
@@ -77,5 +78,12 @@ private:
      * Creates a backup and restore file
      */
     static void CreateBackupAndRestoreFileL( RFs& aFs, const TPath& aDir );
+    
+    /**
+     * Checks whether the drive is ready
+     * return KErrNone if drive is ready else it returns KErrBadHandle
+     */     
+    static TInt IsDriveReady( RFs& aRfs, TInt aDrive );
+    
 };
 #endif /* CNTIMAGERESCALEUTILITY_H_ */

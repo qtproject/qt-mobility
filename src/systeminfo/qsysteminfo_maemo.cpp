@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -41,6 +41,8 @@
 
 #include "qsysteminfo_maemo_p.h"
 
+#include <QFile>
+#include <QTextStream>
 #include <QtGui/qdesktopwidget.h>
 
 #include <fcntl.h>
@@ -1567,22 +1569,39 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
 
 QString QSystemDeviceInfoPrivate::model()
 {
+    QString productName;
 #if !defined(QT_NO_DBUS)
-    QString product = sysinfodValueForKey("/component/product");
-    if (!product.isEmpty()) {
-        return product;
-    }
+    productName = sysinfodValueForKey("/component/product-name");
+    if (!productName.isEmpty())
+        return productName;
 #endif
-    return QString();
+    QFile cpuinfoFile("/proc/cpuinfo");
+
+    if (!cpuinfoFile.open(QFile::ReadOnly | QFile::Text))
+        return productName;
+
+    QTextStream in(&cpuinfoFile);
+    QString cpuinfo = in.readAll();
+
+    int start = cpuinfo.indexOf("model name\t", 0, Qt::CaseInsensitive);
+    if (start < 0)
+        start = cpuinfo.indexOf("processor\t", 0, Qt::CaseInsensitive);
+
+    if (start > -1 &&
+        (start = cpuinfo.indexOf(':', start)) > -1) {
+        int end = cpuinfo.indexOf('\n', start);
+        if (start < end)
+           productName = cpuinfo.mid(start+1, end-start).trimmed();
+    }
+    return productName;
 }
 
 QString QSystemDeviceInfoPrivate::productName()
 {
 #if !defined(QT_NO_DBUS)
-    QString productName = sysinfodValueForKey("/component/product-name");
-    if (!productName.isEmpty()) {
-        return productName;
-    }
+    QString product = sysinfodValueForKey("/component/product");
+    if (!product.isEmpty())
+        return product;
 #endif
     return QString();
 }

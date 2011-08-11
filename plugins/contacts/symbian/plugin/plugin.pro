@@ -46,7 +46,6 @@ symbian: {
         inc/transform/cnttransformringtone.h \
         inc/transform/cnttransformthumbnail.h \
         inc/transform/cnttransformavatar.h \
-        inc/transform/cntthumbnailcreator.h \
         inc/transform/cnttransformsynctarget.h \
         inc/transform/cnttransformgender.h \
         inc/transform/cnttransformanniversary.h \
@@ -86,7 +85,6 @@ symbian: {
         src/transform/cnttransformringtone.cpp \
         src/transform/cnttransformthumbnail.cpp \
         src/transform/cnttransformavatar.cpp \
-        src/transform/cntthumbnailcreator.cpp\
         src/transform/cnttransformsynctarget.cpp \
         src/transform/cnttransformgender.cpp \
         src/transform/cnttransformanniversary.cpp \
@@ -132,15 +130,6 @@ symbian: {
     target.path = /sys/bin
     INSTALLS += target
 
-    contains(DEFINES, SYMBIAN_BACKEND_USE_CNTMODEL_V2) {
-        cntmodelResourceFile = \
-            "START RESOURCE ../../rss/customisedcntmodel.rss" \
-            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
-            "LANGUAGE_IDS" \
-            "END"
-        MMP_RULES += cntmodelResourceFile
-    }
-    
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin

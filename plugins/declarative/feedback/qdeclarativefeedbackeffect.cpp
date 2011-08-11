@@ -8,29 +8,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -42,12 +42,16 @@
 
 #include "qdeclarativefeedbackeffect_p.h"
 
+
 /*!
-    \qmlclass Feedback
-    \brief The Feedback object defines a number of constants
+    \qmlclass FeedbackEffect QDeclarativeFeedbackEffect
+    \brief The FeedbackEffect element is the base class for all feedback effects.
     \ingroup qml-feedback-api
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
+
+    You can't create one of these elements directly, but several other elements
+    inherit the methods and properties of these elements.
 
     There are several predefined enumerations and constants provided in this class:
 
@@ -61,10 +65,10 @@
     2. State
     This enum describes the state of the effect. An effect will be in one of these states.
     \list
-    \o Feedback.Stopped - The effect is not running. This is the initial state.
-    \o Feedback.Paused - Paused The effect is paused.
-    \o Feedback.Running - The effect is running.
-    \o Feedback.Loading - The effect is loading.
+    \o Feedback.stopped - The effect is not running. This is the initial state.
+    \o Feedback.paused  - The effect is paused.
+    \o Feedback.running - The effect is running.
+    \o Feedback.loading - The effect is loading.
     \endlist
 
     3. ErrorType
@@ -75,20 +79,6 @@
        the device could be busy if a higher-priority client is using the haptics/actuator device.
     \endlist
 
-
-    \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
-*/
-
-
-/*!
-    \qmlclass FeedbackEffect QDeclarativeFeedbackEffect
-    \brief The FeedbackEffect element is the base class for all feedback effects.
-    \ingroup qml-feedback-api
-
-    This element is part of the \bold{QtMobility.feedback 1.1} module.
-
-    You can't create one of these elements directly, but several other elements
-    inherit the methods and properties of these elements.
 
     \sa FileEffect, ThemeEffect, HapticsEffect, {QFeedbackEffect}
 */
@@ -212,6 +202,12 @@ QDeclarativeFeedbackEffect::ErrorType QDeclarativeFeedbackEffect::error() const
 {
     return m_error;
 }
+
+/*!
+    \qmlmethod  Feedback::updateState()
+
+     updates the state of the effect.
+*/
 void QDeclarativeFeedbackEffect::updateState() {
     bool running = m_effect->state() == QFeedbackEffect::Running;
     bool paused = m_effect->state() == QFeedbackEffect::Paused;
@@ -224,6 +220,37 @@ void QDeclarativeFeedbackEffect::updateState() {
         emit pausedChanged();
     }
 }
+
+/*!
+    \qmlmethod  Feedback::start()
+
+    makes sure that the effect associated with the feedback object is started.
+    \sa QFeedbackEffect::start()
+*/
+void QDeclarativeFeedbackEffect::start() {
+    m_effect->start();
+}
+
+/*!
+    \qmlmethod  Feedback::stop()
+
+    makes sure that the effect associated with the feedback object is stoped.
+    \sa QFeedbackEffect::stop()
+*/
+void QDeclarativeFeedbackEffect::stop() {
+    m_effect->stop();
+}
+
+/*!
+    \qmlmethod  Feedback::pause()
+
+    makes sure that the effect associated with the feedback object is paused.
+    \sa QFeedbackEffect::pause()
+*/
+void QDeclarativeFeedbackEffect::pause() {
+    m_effect->pause();
+}
+
 void QDeclarativeFeedbackEffect::_error(QFeedbackEffect::ErrorType err)
 {
     if (static_cast<ErrorType>(err) != m_error) {

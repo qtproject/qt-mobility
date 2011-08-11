@@ -7,29 +7,29 @@
 ** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -59,23 +59,24 @@ public:
 private slots:
     void checkNull();
     void checkFrequency();
-    void checkChannels();
     void checkSampleSize();
     void checkCodec();
     void checkByteOrder();
     void checkSampleType();
     void checkEquality();
     void checkAssignment();
+    void checkSampleRate();
+    void checkChannelCount();
 };
 
 void tst_QAudioFormat::checkNull()
 {
     // Default constructed QAudioFormat is invalid.
-    QAudioFormat    audioFormat0;
+    QAudioFormat audioFormat0;
     QVERIFY(!audioFormat0.isValid());
 
     // validity is transferred
-    QAudioFormat    audioFormat1(audioFormat0);
+    QAudioFormat audioFormat1(audioFormat0);
     QVERIFY(!audioFormat1.isValid());
 
     audioFormat0.setFrequency(44100);
@@ -88,50 +89,52 @@ void tst_QAudioFormat::checkNull()
 
 void tst_QAudioFormat::checkFrequency()
 {
-    QAudioFormat    audioFormat;
+    QAudioFormat audioFormat;
     audioFormat.setFrequency(44100);
     QVERIFY(audioFormat.frequency() == 44100);
 }
 
-void tst_QAudioFormat::checkChannels()
-{
-    QAudioFormat    audioFormat;
-    audioFormat.setChannels(2);
-    QVERIFY(audioFormat.channels() == 2);
-}
-
 void tst_QAudioFormat::checkSampleSize()
 {
-    QAudioFormat    audioFormat;
+    QAudioFormat audioFormat;
     audioFormat.setSampleSize(16);
     QVERIFY(audioFormat.sampleSize() == 16);
 }
 
 void tst_QAudioFormat::checkCodec()
 {
-    QAudioFormat    audioFormat;
+    QAudioFormat audioFormat;
     audioFormat.setCodec(QString::fromLatin1("audio/pcm"));
     QVERIFY(audioFormat.codec() == QString::fromLatin1("audio/pcm"));
 }
 
 void tst_QAudioFormat::checkByteOrder()
 {
-    QAudioFormat    audioFormat;
+    QAudioFormat audioFormat;
     audioFormat.setByteOrder(QAudioFormat::LittleEndian);
     QVERIFY(audioFormat.byteOrder() == QAudioFormat::LittleEndian);
+
+    audioFormat.setByteOrder(QAudioFormat::BigEndian);
+    QVERIFY(audioFormat.byteOrder() == QAudioFormat::BigEndian);
 }
 
 void tst_QAudioFormat::checkSampleType()
 {
-    QAudioFormat    audioFormat;
+    QAudioFormat audioFormat;
     audioFormat.setSampleType(QAudioFormat::SignedInt);
     QVERIFY(audioFormat.sampleType() == QAudioFormat::SignedInt);
+
+    audioFormat.setSampleType(QAudioFormat::Unknown);
+    QVERIFY(audioFormat.sampleType() == QAudioFormat::Unknown);
+
+    audioFormat.setSampleType(QAudioFormat::Float);
+    QVERIFY(audioFormat.sampleType() == QAudioFormat::Float);
 }
 
 void tst_QAudioFormat::checkEquality()
 {
-    QAudioFormat    audioFormat0;
-    QAudioFormat    audioFormat1;
+    QAudioFormat audioFormat0;
+    QAudioFormat audioFormat1;
 
     // Null formats are equivalent
     QVERIFY(audioFormat0 == audioFormat1);
@@ -162,8 +165,8 @@ void tst_QAudioFormat::checkEquality()
 
 void tst_QAudioFormat::checkAssignment()
 {
-    QAudioFormat    audioFormat0;
-    QAudioFormat    audioFormat1;
+    QAudioFormat audioFormat0;
+    QAudioFormat audioFormat1;
 
     audioFormat0.setFrequency(8000);
     audioFormat0.setChannels(1);
@@ -175,8 +178,36 @@ void tst_QAudioFormat::checkAssignment()
     audioFormat1 = audioFormat0;
     QVERIFY(audioFormat1 == audioFormat0);
 
-    QAudioFormat    audioFormat2(audioFormat0);
+    QAudioFormat audioFormat2(audioFormat0);
     QVERIFY(audioFormat2 == audioFormat0);
+}
+
+/* sampleRate() API property test. */
+void tst_QAudioFormat::checkSampleRate()
+{
+    QAudioFormat audioFormat;
+    QVERIFY(audioFormat.sampleRate() == -1);
+
+    audioFormat.setSampleRate(123);
+    QVERIFY(audioFormat.sampleRate() == 123);
+}
+
+/* channelCount() API property test. */
+void tst_QAudioFormat::checkChannelCount()
+{
+    // channels is the old name for channelCount, so
+    // they should always be equal
+    QAudioFormat audioFormat;
+    QVERIFY(audioFormat.channelCount() == -1);
+    QVERIFY(audioFormat.channels() == -1);
+
+    audioFormat.setChannelCount(123);
+    QVERIFY(audioFormat.channelCount() == 123);
+    QVERIFY(audioFormat.channels() == 123);
+
+    audioFormat.setChannels(5);
+    QVERIFY(audioFormat.channelCount() == 5);
+    QVERIFY(audioFormat.channels() == 5);
 }
 
 QTEST_MAIN(tst_QAudioFormat)

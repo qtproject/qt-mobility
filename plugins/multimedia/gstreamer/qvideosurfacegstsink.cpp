@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -66,6 +66,7 @@ QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(
     , m_pool(0)
     , m_renderReturn(GST_FLOW_ERROR)
     , m_bytesPerLine(0)
+    , m_startCanceled(false)
 {
     if (m_surface) {
 #if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
@@ -114,9 +115,25 @@ bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int byte
     if (QThread::currentThread() == thread()) {
         m_started = !m_surface.isNull() ? m_surface->start(m_format) : false;
     } else {
+        m_started = false;
+        m_startCanceled = false;
         QMetaObject::invokeMethod(this, "queuedStart", Qt::QueuedConnection);
 
-        m_setupCondition.wait(&m_mutex);
+        /*
+        Waiting for start() to be invoked in the main thread may block
+        if gstreamer blocks the main thread until this call is finished.
+        This situation is rare and usually caused by setState(Null)
+        while pipeline is being prerolled.
+
+        The proper solution to this involves controlling gstreamer pipeline from
+        other thread than video surface.
+
+        Currently start() fails if wait() timed out.
+        */
+        if (!m_setupCondition.wait(&m_mutex, 1000)) {
+            qWarning() << "Failed to start video surface due to main thread blocked.";
+            m_startCanceled = true;
+        }
     }
 
     m_format = m_surface->surfaceFormat();
@@ -137,7 +154,9 @@ void QVideoSurfaceGstDelegate::stop()
     } else {
         QMetaObject::invokeMethod(this, "queuedStop", Qt::QueuedConnection);
 
-        m_setupCondition.wait(&m_mutex);
+        // Waiting for stop() to be invoked in the main thread may block
+        // if gstreamer blocks the main thread until this call is finished.
+        m_setupCondition.wait(&m_mutex, 500);
     }
 
     m_started = false;
@@ -195,11 +214,11 @@ GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
 
 void QVideoSurfaceGstDelegate::queuedStart()
 {
-    QMutexLocker locker(&m_mutex);
-
-    m_started = m_surface->start(m_format);
-
-    m_setupCondition.wakeAll();
+    if (!m_startCanceled) {
+        QMutexLocker locker(&m_mutex);
+        m_started = m_surface->start(m_format);
+        m_setupCondition.wakeAll();
+    }
 }
 
 void QVideoSurfaceGstDelegate::queuedStop()
@@ -644,13 +663,16 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
     Q_UNUSED(offset);
     Q_UNUSED(size);
 
+    if (!buffer)
+        return GST_FLOW_ERROR;
+
+    *buffer = NULL;
+
     if (!sink->delegate->pool())
         return GST_FLOW_OK;
 
     QMutexLocker poolLock(sink->delegate->poolMutex());
     QAbstractGstBufferPool *pool = sink->delegate->pool();
-
-    *buffer = 0;
 
     if (!pool)
         return GST_FLOW_OK;

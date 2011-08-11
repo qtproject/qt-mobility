@@ -39,6 +39,9 @@
 ****************************************************************************/
 
 #include "camera.h"
+#ifdef Q_OS_SYMBIAN
+#include "camerakeyevent_symbian.h"
+#endif // Q_OS_SYMBIAN
 
 #include <QtGui>
 
@@ -60,6 +63,7 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_SYMBIAN
     camera.showMaximized();
+    new QSymbianCameraKeyListener(&camera);
 #else
     camera.show();
 #endif

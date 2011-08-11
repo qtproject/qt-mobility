@@ -7,29 +7,29 @@
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
- ** No Commercial Usage
- ** This file contains pre-release code and may not be distributed.
- ** You may use this file in accordance with the terms and conditions
- ** contained in the Technology Preview License Agreement accompanying
- ** this package.
- **
  ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
- ** General Public License version 2.1 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.LGPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU Lesser General Public License version 2.1 requirements
- ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ ** This file may be used under the terms of the GNU Lesser General Public
+ ** License version 2.1 as published by the Free Software Foundation and
+ ** appearing in the file LICENSE.LGPL included in the packaging of this
+ ** file. Please review the following information to ensure the GNU Lesser
+ ** General Public License version 2.1 requirements will be met:
+ ** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  **
  ** In addition, as a special exception, Nokia gives you certain additional
- ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** rights. These rights are described in the Nokia Qt LGPL Exception
  ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
  **
- ** If you have questions regarding the use of this file, please contact
- ** Nokia at qt-info@nokia.com.
+ ** GNU General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU General
+ ** Public License version 3.0 as published by the Free Software Foundation
+ ** and appearing in the file LICENSE.GPL included in the packaging of this
+ ** file. Please review the following information to ensure the GNU General
+ ** Public License version 3.0 requirements will be met:
+ ** http://www.gnu.org/copyleft/gpl.html.
  **
- **
- **
+ ** Other Usage
+ ** Alternatively, this file may be used in accordance with the terms and
+ ** conditions contained in a signed written agreement between you and Nokia.
  **
  **
  **
@@ -157,8 +157,10 @@ void CCameraEngine::SetViewfinderObserver(MCameraViewfinderObserver* aViewfinder
 
 void CCameraEngine::ReserveAndPowerOn()
 {
-    if (!iCamera || iEngineState > EEngineNotReady)
+    if (!iCamera || iEngineState > EEngineNotReady) {
         iObserver->MceoHandleError(EErrReserve, KErrNotReady);
+        return;
+    }
 
     iCamera->Reserve();
 }
@@ -202,7 +204,6 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
                             TRect& aScreenRect,
                             TRect& aClipRect)
 {
-    Q_UNUSED(aClipRect)
     if (iEngineState < EEngineIdle)
         User::Leave(KErrNotReady);
 
@@ -210,6 +211,14 @@ void CCameraEngine::StartDirectViewFinderL(RWsSession& aSession,
         User::Leave(KErrNotSupported);
 
     if (!iCamera->ViewFinderActive()) {
+        // Viewfinder extent needs to be clipped according to the clip rect.
+        // This is because the native camera framework does not support
+        // clipping and starting viewfinder with bigger than the display(S60
+        // 5.0 and older)/window(Symbian^3 and later) would cause viewfinder
+        // starting to fail entirely. This causes shrinking effect in some
+        // cases, but is better than not having the viewfinder at all.
+        if (aScreenRect.Intersects(aClipRect))
+            aScreenRect.Intersection(aClipRect);
 
         if (iCameraIndex != 0)
             iCamera->SetViewFinderMirrorL(true);
@@ -391,8 +400,9 @@ void CCameraEngine::DisablePreviewProvider()
     iCameraSnapshot->StopSnapshot();
 
     delete iCameraSnapshot;
+    iCameraSnapshot = 0;
 
-    iPreviewObserver = NULL;
+    iPreviewObserver = 0;
 }
 #endif // ECAM_PREVIEW_API
 

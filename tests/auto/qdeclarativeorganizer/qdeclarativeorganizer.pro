@@ -1,6 +1,10 @@
-load(qttest_p4)
+TARGET = tst_qdeclarativeorganizer
+CONFIG += testcase
+
 include (../../../common.pri)
+
 CONFIG += mobility
+DEFINES+=IGNORE_METAOBJECTBUILDER_EXPORT
 MOBILITY += organizer versit
 QT += declarative
 
@@ -38,11 +42,7 @@ SOURCES += tst_qdeclarativeorganizer.cpp \
 
 include(../../../plugins/declarative/common/dynamicproperties.pri)
 
-symbian: {
-    importFiles.sources = data
-    importFiles.path = .
-    DEPLOYMENT = importFiles
-} else {
+!symbian {
     DEFINES += SRCDIR=\\\"$$PWD\\\"
 }
 

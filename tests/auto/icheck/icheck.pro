@@ -40,3 +40,4 @@ SOURCES += tst_icheck.cpp \
 HEADERS += ../../../tools/icheck/parsemanager.h \
     ../../../tools/icheck/ichecklib.h
 
+maemo*:CONFIG += insignificant_test

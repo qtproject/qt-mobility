@@ -31,3 +31,5 @@ unix:!mac:!symbian {
         DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
     }
 }
+
+maemo*:CONFIG += insignificant_test

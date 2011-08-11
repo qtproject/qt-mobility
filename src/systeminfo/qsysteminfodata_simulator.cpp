@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -137,9 +137,10 @@ QDataStream &operator<<(QDataStream &out, const QSystemStorageInfoData::DriveInf
 QDataStream &operator>>(QDataStream &in, QSystemStorageInfoData::DriveInfo &s)
 {
     qint32 type, state;
-    in >> type >> state;
+    in >> type;
     s.type = static_cast<QSystemStorageInfo::DriveType>(type);
     in >> s.availableSpace >> s.totalSpace;
+    in >> state;
     s.state = static_cast<QSystemStorageInfo::StorageState>(state);
     in >> s.uri;
     return in;
@@ -198,13 +199,12 @@ QDataStream &operator<<(QDataStream &out, const QSystemDisplayInfoData &s)
 
 QDataStream &operator>>(QDataStream &in, QSystemDisplayInfoData &s)
 {
-    qint32 depth, brightness, colorDepth, orientation,
-            backlightStatus;
-    in >> depth >> brightness;
-    in >> colorDepth;
-    in >> orientation;
-    s.colorDepth = depth;
-    s.displayBrightness = brightness;
+    qint32 colorDepth, displayBrightness,
+            orientation, backlightStatus;
+    in >> colorDepth >> displayBrightness;
+    in >> orientation >> backlightStatus;
+    s.colorDepth = colorDepth;
+    s.displayBrightness = displayBrightness;
     s.orientation = static_cast<QSystemDisplayInfo::DisplayOrientation>(orientation);
     s.backlightStatus = static_cast<QSystemDisplayInfo::BacklightState>(backlightStatus);
 
@@ -225,17 +225,18 @@ QDataStream &operator<<(QDataStream &out, const QSystemBatteryInfoData &s)
 QDataStream &operator>>(QDataStream &in, QSystemBatteryInfoData &s)
 {
     qint32 batteryStatus, chargingState, chargerType, energyMeasurementUnit;
-    in >> batteryStatus >> chargingState >> chargerType >> energyMeasurementUnit;
+    in >> batteryStatus >> chargingState >> chargerType;
 
     s.batteryStatus = static_cast<QSystemBatteryInfo::BatteryStatus>(batteryStatus);
     s.chargingState = static_cast<QSystemBatteryInfo::ChargingState>(chargingState);
     s.chargerType = static_cast<QSystemBatteryInfo::ChargerType>(chargerType);
 
-    s.energyMeasurementUnit = static_cast<QSystemBatteryInfo::EnergyUnit>(energyMeasurementUnit);
-
     in >> s.nominalCapacity >> s.remainingCapacityPercent >> s.remainingCapacity;
     in >> s.voltage >> s.remainingChargingTime >> s.currentFlow;
     in >> s.cumulativeCurrentFlow >> s.remainingCapacityBars >> s.maxBars;
+
+    in >> energyMeasurementUnit;
+    s.energyMeasurementUnit = static_cast<QSystemBatteryInfo::EnergyUnit>(energyMeasurementUnit);
     return in;
 }
 

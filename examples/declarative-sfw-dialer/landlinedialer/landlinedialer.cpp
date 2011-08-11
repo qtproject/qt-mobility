@@ -89,10 +89,7 @@ void LandlineDialer::setNewState()
         case Disconnected:
             break;
         case Connecting:
-            if ((qrand() %2) == 0)
-                m_state = Connected;
-            else
-                m_state = Engaged;
+            m_state = Connected;
             emit stateChanged();
             break;
         case Connected:

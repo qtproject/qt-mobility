@@ -1,7 +1,8 @@
 <aegis>
     <request>
-        <credential name="Cellular" />
         <credential name="TrackerReadAccess" />
-        <for path="/usr/tests/qtm/MessagingEx" />
+        <credential name="TrackerWriteAccess" />
+        <for path="/usr/tests/qtm/tst_qmessagestore" />
+        <for path="/usr/tests/qtm/tst_qmessagestorekeys" />
     </request>
 </aegis>

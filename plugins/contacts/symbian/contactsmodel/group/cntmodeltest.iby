@@ -18,36 +18,36 @@
 #define __CNTTESTCODE_IBY__
 
 #include <cntmodel.iby>
-#include <CoreAppsTest.iby>
+#include <coreappstest.iby>
 
 REM Needed for CenRep file for default view definitions
 #include <contacts.iby>
 
 REM Contacts Model testcode
 
-file=ABI_DIR\BUILD_DIR\CNTTUTIL.DLL	System\Libs\CNTTUTIL.DLL
+file=ABI_DIR\BUILD_DIR\cnttutil.dll	System\Libs\cnttutil.dll
   ECOM_PLUGIN(cnttestsync.dll,102035fe.rsc)
 
-file=ABI_DIR\BUILD_DIR\CNTSYNCCHECKER.DLL	System\Libs\CNTSYNCCHECKER.DLL
-data=DATAZ_\private\10202BE9\1020384e.txt							 private\10202be9\1020384e.txt
+file=ABI_DIR\BUILD_DIR\cntsyncchecker.dll	System\Libs\cntsyncchecker.dll
+data=DATAZ_\private\10202be9\1020384e.txt							 private\10202be9\1020384e.txt
 data=DATAZ_\t_view2\t_view2_initial_contacts.txt	T_VIEW2\t_view2_initial_contacts.txt
 data=DATAZ_\t_view2\t_view2_initial_contacts_small.txt	T_VIEW2\t_view2_initial_contacts_small.txt
 data=DATAZ_\t_view2\t_view2_more_contacts_1.txt		T_VIEW2\t_view2_more_contacts_1.txt
 data=DATAZ_\t_view2\t_view2_more_contacts_2.txt		T_VIEW2\t_view2_more_contacts_2.txt
-data=DATAZ_\t_HintExtension_original.cdb   		t_HintExtension_original.cdb
+data=DATAZ_\t_hintextension_original.cdb   		t_hintextension_original.cdb
 data=DATAZ_\t_apac\t_apac_initial_contacts.txt   	t_apac\t_apac_initial_contacts.txt
 data=DATAZ_\t_old_contacts_original.cdb   		t_old_contacts_original.cdb
-data=DATAZ_\t_cnt_backup_Corrupted_100065FF.cdb t_cnt_backup_Corrupted_100065FF.cdb
+data=DATAZ_\t_cnt_backup_corrupted_100065ff.cdb t_cnt_backup_corrupted_100065ff.cdb
 
-data=DATAZ_\t_timeis\Connectivity.vcf			T_TimeIS\Connectivity.vcf
+data=DATAZ_\t_timeis\connectivity.vcf			t_timeis\connectivity.vcf
 data=DATAZ_\cntvcard\testvcard1.vcf			cntvcard\testvcard1.vcf
 data=DATAZ_\cntvcard\testvcard.vcf			cntvcard\testvcard.vcf
 data=DATAZ_\cntvcard\address-with-trailing-white-space.vcf	cntvcard\address-with-trailing-white-space.vcf
 data=DATAZ_\cntvcard\names.first.2gm			cntvcard\names.first.2gm
 data=DATAZ_\cntvcard\names.last.2gm			cntvcard\names.last.2gm
 
-data=DATAZ_\t_cntvcard\cntvcardLF.vcf			t_cntvcard\cntvcardLF.vcf
-data=DATAZ_\t_cntvcard\cntvcardUID.vcf			t_cntvcard\cntvcardUID.vcf
+data=DATAZ_\t_cntvcard\cntvcardlf.vcf			t_cntvcard\cntvcardlf.vcf
+data=DATAZ_\t_cntvcard\cntvcarduid.vcf			t_cntvcard\cntvcarduid.vcf
 
 //t_cntvcard email update test
 data=DATAZ_\t_cntvcard\email1.vcf 		t_cntvcard\email1.vcf
@@ -61,150 +61,150 @@ data=DATAZ_\t_cntvcard\withoutcompany.vcf	t_cntvcard\withoutcompany.vcf
 data=DATAZ_\t_cntvcard\vcardwithlargephoto.vcf	t_cntvcard\vcardwithlargephoto.vcf
 
 // Type check
-data=DATAZ_\t_cntvcard\testTypeVcard.vcf	t_cntvcard\testTypeVcard.vcf
-data=DATAZ_\t_cntvcard\testNoTypeVcard.vcf	t_cntvcard\testNoTypeVcard.vcf
+data=DATAZ_\t_cntvcard\testtypevcard.vcf	t_cntvcard\testtypevcard.vcf
+data=DATAZ_\t_cntvcard\testnotypevcard.vcf	t_cntvcard\testnotypevcard.vcf
 data=DATAZ_\t_cntvcard\t_vexporttypewithgif.vcf t_cntvcard\t_vexporttypewithgif.vcf
 
-data=ZSYSTEM\Programs\CntmodelTest\cnt2.csv		CntmodelTest\cnt2.csv
-data=ZSYSTEM\Programs\CntmodelTest\mat2.csv		CntmodelTest\mat2.csv
-data=ZSYSTEM\Programs\CntmodelTest\res2.csv		CntmodelTest\res2.csv
+data=ZSYSTEM\programs\cntmodeltest\cnt2.csv		cntmodeltest\cnt2.csv
+data=ZSYSTEM\programs\cntmodeltest\mat2.csv		cntmodeltest\mat2.csv
+data=ZSYSTEM\programs\cntmodeltest\res2.csv		cntmodeltest\res2.csv
 
-data=ZSYSTEM\programs\cntmodeltest\vcardupdate1.vcf 	System\Programs\Cntmodeltest\vcardupdate1.vcf
-data=ZSYSTEM\Programs\Cntmodeltest\vcardupdate2.vcf 	System\Programs\Cntmodeltest\vcardupdate2.vcf
-data=ZSYSTEM\Programs\Cntmodeltest\vcardupdate3.vcf 	System\Programs\Cntmodeltest\vcardupdate3.vcf
+data=ZSYSTEM\programs\cntmodeltest\vcardupdate1.vcf 	System\programs\cntmodeltest\vcardupdate1.vcf
+data=ZSYSTEM\programs\cntmodeltest\vcardupdate2.vcf 	System\programs\cntmodeltest\vcardupdate2.vcf
+data=ZSYSTEM\programs\cntmodeltest\vcardupdate3.vcf 	System\programs\cntmodeltest\vcardupdate3.vcf
 
 define CNTMODEL_PERF Core-Apps\App-Engines\CntModel\Performance
 data=DATAZ_\CNTMODEL_PERF\corp_std.vcf 		CNTMODEL_PERF\corp_std.vcf
 data=DATAZ_\CNTMODEL_PERF\corporate-1000-0.vcf 		CNTMODEL_PERF\corporate-1000-0.vcf
 
-data=DATAZ_\cntvcard\T_ViewSortPlugin.vcf	cntvcard\T_ViewSortPlugin.vcf
+data=DATAZ_\cntvcard\t_viewsortplugin.vcf	cntvcard\t_viewsortplugin.vcf
 
 define CNTMODEL_DATA Core-Apps\App-Engines\CntModel\Databases  
 
 data=DATAZ_\CNTMODEL_DATA\SQLite__Contacts.cdb		CNTMODEL_DATA\SQLite__Contacts.cdb
 data=DATAZ_\CNTMODEL_DATA\SQLite__Contacts58920.cdb	CNTMODEL_DATA\SQLite__Contacts58920.cdb
 
-file=ABI_DIR\BUILD_DIR\t_launchTest.exe	System\Programs\CntmodelTest\t_launchTest.exe
-file=ABI_DIR\BUILD_DIR\T_ITEM.EXE	System\Programs\CntmodelTest\T_ITEM.EXE
-file=ABI_DIR\BUILD_DIR\T_FIELD.EXE	System\Programs\CntmodelTest\T_FIELD.EXE
-file=ABI_DIR\BUILD_DIR\T_DBASE2.EXE	System\Programs\CntmodelTest\T_DBASE2.EXE
-file=ABI_DIR\BUILD_DIR\T_VIEW.EXE	System\Programs\CntmodelTest\T_VIEW.EXE
-file=ABI_DIR\BUILD_DIR\T_TEMPL.EXE	System\Programs\CntmodelTest\T_TEMPL.EXE
-file=ABI_DIR\BUILD_DIR\T_VERS.EXE	System\Programs\CntmodelTest\T_VERS.EXE
-file=ABI_DIR\BUILD_DIR\T_EXPDEL.EXE	System\Programs\CntmodelTest\T_EXPDEL.EXE
-file=ABI_DIR\BUILD_DIR\T_TTVERS.EXE	System\Programs\CntmodelTest\T_TTVERS.EXE
-file=ABI_DIR\BUILD_DIR\T_NOMACH.EXE	System\Programs\CntmodelTest\T_NOMACH.EXE
-file=ABI_DIR\DEBUG_DIR\T_CntMatch.EXE	System\Programs\CntmodelTest\T_CntMatch.EXE
-file=ABI_DIR\BUILD_DIR\T_CARDTM.EXE	System\Programs\CntmodelTest\T_CARDTM.EXE
-file=ABI_DIR\BUILD_DIR\T_OWNCAR.EXE	System\Programs\CntmodelTest\T_OWNCAR.EXE
-file=ABI_DIR\BUILD_DIR\T_GROUPS.EXE	System\Programs\CntmodelTest\T_GROUPS.EXE
-file=ABI_DIR\BUILD_DIR\T_CONNEC.EXE	System\Programs\CntmodelTest\T_CONNEC.EXE
-file=ABI_DIR\BUILD_DIR\T_VIEW2.EXE	System\Programs\CntmodelTest\T_VIEW2.EXE
-file=ABI_DIR\DEBUG_DIR\T_FILTERVIEW.EXE	System\Programs\CntmodelTest\T_FILTERVIEW.EXE
-file=ABI_DIR\DEBUG_DIR\T_CUSTFILTER.EXE	System\Programs\CntmodelTest\T_CUSTFILTER.EXE
-file=ABI_DIR\BUILD_DIR\T_GROUPVIEW.EXE	System\Programs\CntmodelTest\T_GROUPVIEW.EXE
-file=ABI_DIR\BUILD_DIR\T_SERVERSTART.EXE	System\Programs\CntmodelTest\T_SERVERSTART.EXE
-file=ABI_DIR\BUILD_DIR\T_LOCALVIEWDUPLICATES.EXE	System\Programs\CntmodelTest\T_LOCALVIEWDUPLICATES.EXE
-file=ABI_DIR\BUILD_DIR\T_FILTEREDVIEWUPDATE.EXE	System\Programs\CntmodelTest\T_FILTEREDVIEWUPDATE.EXE
-file=ABI_DIR\BUILD_DIR\T_GROUPVIEWUPDATE.EXE	System\Programs\CntmodelTest\T_GROUPVIEWUPDATE.EXE
-file=ABI_DIR\DEBUG_DIR\T_VIEWSOOM.EXE	System\Programs\CntmodelTest\T_VIEWSOOM.EXE
-file=ABI_DIR\BUILD_DIR\T_REFINEFINDVIEWL.EXE	System\Programs\CntmodelTest\T_REFINEFINDVIEWL.EXE
-file=ABI_DIR\BUILD_DIR\T_VIEWOBSERVERSBUG.EXE	System\Programs\CntmodelTest\T_VIEWOBSERVERSBUG.EXE
-file=ABI_DIR\BUILD_DIR\T_GROUPVIEWPANIC.EXE	System\Programs\CntmodelTest\T_GROUPVIEWPANIC.EXE
-file=ABI_DIR\BUILD_DIR\T_FILTERFINDCONTACTS.EXE	System\Programs\CntmodelTest\T_FILTERFINDCONTACTS.EXE
-file=ABI_DIR\BUILD_DIR\T_CONCURRENT.EXE	System\Programs\CntmodelTest\T_CONCURRENT.EXE
+file=ABI_DIR\BUILD_DIR\t_launchTest.exe	System\Programs\cntmodeltest\t_launchTest.exe
+file=ABI_DIR\BUILD_DIR\t_item.exe	System\Programs\cntmodeltest\t_item.exe
+file=ABI_DIR\BUILD_DIR\t_field.exe	System\Programs\cntmodeltest\t_field.exe
+file=ABI_DIR\BUILD_DIR\t_dbase2.exe	System\Programs\cntmodeltest\t_dbase2.exe
+file=ABI_DIR\BUILD_DIR\t_view.exe	System\Programs\cntmodeltest\t_view.exe
+file=ABI_DIR\BUILD_DIR\t_templ.EXE	System\Programs\cntmodeltest\t_templ.exe
+file=ABI_DIR\BUILD_DIR\t_vers.exe	System\Programs\cntmodeltest\t_vers.exe
+file=ABI_DIR\BUILD_DIR\t_expdel.exe	System\Programs\cntmodeltest\t_expdel.exe
+file=ABI_DIR\BUILD_DIR\t_ttvers.exe	System\Programs\cntmodeltest\t_ttvers.exe
+file=ABI_DIR\BUILD_DIR\t_nomach.exe	System\Programs\cntmodeltest\t_nomach.exe
+file=ABI_DIR\DEBUG_DIR\t_cntmatch.exe	System\Programs\cntmodeltest\t_cntmatch.exe
+file=ABI_DIR\BUILD_DIR\t_cardtm.exe	System\Programs\cntmodeltest\t_cardtm.exe
+file=ABI_DIR\BUILD_DIR\t_owncar.exe	System\Programs\cntmodeltest\t_owncar.exe
+file=ABI_DIR\BUILD_DIR\t_groups.exe	System\Programs\cntmodeltest\t_groups.exe
+file=ABI_DIR\BUILD_DIR\t_connec.exe	System\Programs\cntmodeltest\t_connec.exe
+file=ABI_DIR\BUILD_DIR\t_view2.exe	System\Programs\cntmodeltest\t_view2.exe
+file=ABI_DIR\DEBUG_DIR\t_filterview.exe	System\Programs\cntmodeltest\t_filterview.exe
+file=ABI_DIR\DEBUG_DIR\t_custfilter.exe	System\Programs\cntmodeltest\t_custfilter.exe
+file=ABI_DIR\BUILD_DIR\t_groupview.exe	System\Programs\cntmodeltest\t_groupview.exe
+file=ABI_DIR\BUILD_DIR\t_serverstart.exe	System\Programs\cntmodeltest\t_serverstart.exe
+file=ABI_DIR\BUILD_DIR\t_localviewduplicates.exe	System\Programs\cntmodeltest\t_localviewduplicates.exe
+file=ABI_DIR\BUILD_DIR\t_filteredviewupdate.exe	System\Programs\cntmodeltest\t_filteredviewupdate.exe
+file=ABI_DIR\BUILD_DIR\t_groupviewupdate.exe	System\Programs\cntmodeltest\t_groupviewupdate.exe
+file=ABI_DIR\DEBUG_DIR\t_viewsoom.exe	System\Programs\cntmodeltest\t_viewsoom.exe
+file=ABI_DIR\BUILD_DIR\t_refinefindviewl.exe	System\Programs\cntmodeltest\t_refinefindviewl.exe
+file=ABI_DIR\BUILD_DIR\t_viewobserversbug.exe	System\Programs\cntmodeltest\t_viewobserversbug.exe
+file=ABI_DIR\BUILD_DIR\t_groupviewpanic.exe	System\Programs\cntmodeltest\t_groupviewpanic.exe
+file=ABI_DIR\BUILD_DIR\t_filterfindcontacts.exe	System\Programs\cntmodeltest\t_filterfindcontacts.exe
+file=ABI_DIR\BUILD_DIR\t_concurrent.exe	System\Programs\cntmodeltest\t_concurrent.exe
 
-file=ABI_DIR\BUILD_DIR\T_LONGSQL.EXE	System\Programs\CntmodelTest\T_LONGSQL.EXE
-file=ABI_DIR\BUILD_DIR\T_SEC_CNTDBASE.EXE	System\Programs\CntmodelTest\T_SEC_CNTDBASE.EXE
-file=ABI_DIR\BUILD_DIR\T_CONTENTTYPE.EXE	System\Programs\CntmodelTest\T_CONTENTTYPE.EXE
+file=ABI_DIR\BUILD_DIR\t_longsql.exe	System\Programs\cntmodeltest\t_longsql.exe
+file=ABI_DIR\BUILD_DIR\t_sec_cntdbase.exe	System\Programs\cntmodeltest\t_sec_cntdbase.exe
+file=ABI_DIR\BUILD_DIR\t_contenttype.exe	System\Programs\cntmodeltest\t_contenttype.exe
 
-file=ABI_DIR\BUILD_DIR\T_ICCENTRY.EXE	System\Programs\CntmodelTest\T_ICCENTRY.EXE
-file=ABI_DIR\BUILD_DIR\T_ICCSTARTUP.EXE	System\Programs\CntmodelTest\T_ICCSTARTUP.EXE
-file=ABI_DIR\BUILD_DIR\T_ICCVIEW.EXE	System\Programs\CntmodelTest\T_ICCVIEW.EXE
-file=ABI_DIR\BUILD_DIR\T_ICCMULTIPLEPHONEBOOK.EXE System\Programs\CntmodelTest\T_ICCMULTIPLEPHONEBOOK.EXE
+file=ABI_DIR\BUILD_DIR\t_iccentry.exe	System\Programs\cntmodeltest\t_iccentry.exe
+file=ABI_DIR\BUILD_DIR\t_iccstartup.exe	System\Programs\cntmodeltest\t_iccstartup.exe
+file=ABI_DIR\BUILD_DIR\t_iccview.exe	System\Programs\cntmodeltest\t_iccview.exe
+file=ABI_DIR\BUILD_DIR\t_iccmultiplephonebook.exe System\Programs\cntmodeltest\t_iccmultiplephonebook.exe
 
-file=ABI_DIR\BUILD_DIR\T_CASESENSITIVEDB.EXE	System\Programs\CntmodelTest\T_CASESENSITIVEDB.EXE
-file=ABI_DIR\BUILD_DIR\T_CONTACTAT.EXE	System\Programs\CntmodelTest\T_CONTACTAT.EXE
-file=ABI_DIR\BUILD_DIR\T_FILTEREDVIEWEVENTS.EXE	System\Programs\CntmodelTest\T_FILTEREDVIEWEVENTS.EXE
-file=ABI_DIR\BUILD_DIR\T_GROUPDELETEBUG.EXE	System\Programs\CntmodelTest\T_GROUPDELETEBUG.EXE
-file=ABI_DIR\BUILD_DIR\T_CNTIDTEST.EXE	System\Programs\CntmodelTest\T_CNTIDTEST.EXE
-file=ABI_DIR\BUILD_DIR\T_VIEWCONTACTID.EXE	System\Programs\CntmodelTest\T_VIEWCONTACTID.EXE
-file=ABI_DIR\BUILD_DIR\T_CNTVCARD.EXE	System\Programs\CntmodelTest\T_CNTVCARD.EXE
-file=ABI_DIR\BUILD_DIR\T_VIEWSORT.EXE	System\Programs\CntmodelTest\T_VIEWSORT.EXE
-file=ABI_DIR\BUILD_DIR\T_PREFIXFULLSEARCH.EXE	System\Programs\CntmodelTest\T_PREFIXFULLSEARCH.EXE
-file=ABI_DIR\BUILD_DIR\T_WRONGFIELDMATCH.EXE	System\Programs\CntmodelTest\T_WRONGFIELDMATCH.EXE
-file=ABI_DIR\BUILD_DIR\T_UPDATEFORSYNC.EXE	System\Programs\CntmodelTest\T_UPDATEFORSYNC.EXE
-file=ABI_DIR\BUILD_DIR\T_GROUPVIEW_UNFILED_PROFILE.EXE	System\Programs\CntmodelTest\T_GROUPVIEW_UNFILED_PROFILE.EXE
-file=ABI_DIR\BUILD_DIR\T_DBASE.EXE	System\Programs\CntmodelTest\T_DBASE.EXE
-file=ABI_DIR\BUILD_DIR\T_TIME.EXE	System\Programs\CntmodelTest\T_TIME.EXE
-file=ABI_DIR\DEBUG_DIR\T_ERROR.EXE	System\Programs\CntmodelTest\T_ERROR.EXE
-file=ABI_DIR\BUILD_DIR\T_FERROR.EXE	System\Programs\CntmodelTest\T_FERROR.EXE
-file=ABI_DIR\BUILD_DIR\T_CURRENTDB.EXE	System\Programs\CntmodelTest\T_CURRENTDB.EXE
-file=ABI_DIR\BUILD_DIR\T_BENCH.EXE	System\Programs\CntmodelTest\T_BENCH.EXE
-file=ABI_DIR\BUILD_DIR\T_PREFERENCESBUG.EXE	System\Programs\CntmodelTest\T_PREFERENCESBUG.EXE
-file=ABI_DIR\BUILD_DIR\T_DATABASE_KILLER.EXE	System\Programs\CntmodelTest\T_DATABASE_KILLER.EXE
-file=ABI_DIR\BUILD_DIR\T_OWNCARD.EXE	System\Programs\CntmodelTest\T_OWNCARD.EXE
-file=ABI_DIR\DEBUG_DIR\T_ICCIMPORTLOCK.EXE	System\Programs\CntmodelTest\T_ICCIMPORTLOCK.EXE
-file=ABI_DIR\DEBUG_DIR\T_FILTEREDVIEWSORT.EXE	System\Programs\CntmodelTest\T_FILTEREDVIEWSORT.EXE
-file=ABI_DIR\DEBUG_DIR\T_LOCALVIEWREMOVE.EXE	System\Programs\CntmodelTest\T_LOCALVIEWREMOVE.EXE
-file=ABI_DIR\DEBUG_DIR\T_GENERALADDRESS.EXE	System\Programs\CntmodelTest\T_GENERALADDRESS.EXE
-file=ABI_DIR\BUILD_DIR\T_APAC.EXE	System\Programs\CntmodelTest\T_APAC.EXE
-file=ABI_DIR\BUILD_DIR\T_Performance.EXE      System\Programs\CntmodelTest\T_Performance.EXE
+file=ABI_DIR\BUILD_DIR\t_casesensitivedb.exe	System\Programs\cntmodeltest\t_casesensitivedb.exe
+file=ABI_DIR\BUILD_DIR\t_contactat.exe	System\Programs\cntmodeltest\t_contactat.exe
+file=ABI_DIR\BUILD_DIR\t_filteredviewevents.exe	System\Programs\cntmodeltest\t_filteredviewevents.exe
+file=ABI_DIR\BUILD_DIR\t_groupdeletebug.exe	System\Programs\cntmodeltest\t_groupdeletebug.exe
+file=ABI_DIR\BUILD_DIR\t_cntidtest.exe	System\Programs\cntmodeltest\t_cntidtest.exe
+file=ABI_DIR\BUILD_DIR\t_viewcontactid.exe	System\Programs\cntmodeltest\t_viewcontactid.exe
+file=ABI_DIR\BUILD_DIR\t_cntvcard.exe	System\Programs\cntmodeltest\t_cntvcard.exe
+file=ABI_DIR\BUILD_DIR\t_viewsort.exe	System\Programs\cntmodeltest\t_viewsort.exe
+file=ABI_DIR\BUILD_DIR\t_prefixfullsearch.exe	System\Programs\cntmodeltest\t_prefixfullsearch.exe
+file=ABI_DIR\BUILD_DIR\t_wrongfieldmatch.exe	System\Programs\cntmodeltest\t_wrongfieldmatch.exe
+file=ABI_DIR\BUILD_DIR\t_updateforsync.exe	System\Programs\cntmodeltest\t_updateforsync.exe
+file=ABI_DIR\BUILD_DIR\t_groupview_unfiled_profile.exe	System\Programs\cntmodeltest\t_groupview_unfiled_profile.exe
+file=ABI_DIR\BUILD_DIR\t_dbase.exe	System\Programs\cntmodeltest\t_dbase.exe
+file=ABI_DIR\BUILD_DIR\t_time.exe	System\Programs\cntmodeltest\t_time.exe
+file=ABI_DIR\DEBUG_DIR\t_error.exe	System\Programs\cntmodeltest\t_error.exe
+file=ABI_DIR\BUILD_DIR\t_ferror.exe	System\Programs\cntmodeltest\t_ferror.exe
+file=ABI_DIR\BUILD_DIR\t_currentdb.exe	System\Programs\cntmodeltest\t_currentdb.exe
+file=ABI_DIR\BUILD_DIR\t_bench.exe	System\Programs\cntmodeltest\t_bench.exe
+file=ABI_DIR\BUILD_DIR\t_preferencesbug.exe	System\Programs\cntmodeltest\t_preferencesbug.exe
+file=ABI_DIR\BUILD_DIR\t_database_killer.exe	System\Programs\cntmodeltest\t_database_killer.exe
+file=ABI_DIR\BUILD_DIR\t_owncard.exe	System\Programs\cntmodeltest\t_owncard.exe
+file=ABI_DIR\DEBUG_DIR\t_iccimportlock.exe	System\Programs\cntmodeltest\t_iccimportlock.exe
+file=ABI_DIR\DEBUG_DIR\t_filteredviewsort.exe	System\Programs\cntmodeltest\t_filteredviewsort.exe
+file=ABI_DIR\DEBUG_DIR\t_localviewremove.exe	System\Programs\cntmodeltest\t_localviewremove.exe
+file=ABI_DIR\DEBUG_DIR\t_generaladdress.exe	System\Programs\cntmodeltest\t_generaladdress.exe
+file=ABI_DIR\BUILD_DIR\t_apac.exe	System\Programs\cntmodeltest\t_apac.exe
+file=ABI_DIR\BUILD_DIR\t_performance.exe      System\Programs\cntmodeltest\t_performance.exe
 ECOM_PLUGIN(cntfindplugin.dll,101f8010.rsc)
-file=ABI_DIR\BUILD_DIR\T_SPEEDDIALTEST.EXE	System\Programs\CntmodelTest\T_SPEEDDIALTEST.EXE
-file=ABI_DIR\BUILD_DIR\T_VIEWEVENTS.EXE	System\Programs\CntmodelTest\T_VIEWEVENTS.EXE
-file=ABI_DIR\BUILD_DIR\asynaccess.EXE	System\Programs\CntmodelTest\asynaccess.EXE
-file=ABI_DIR\BUILD_DIR\t_groupviewmodifiedContact.EXE	system\Programs\CntmodelTest\t_groupviewmodifiedContact.EXE
-file=ABI_DIR\BUILD_DIR\t_filterview_matching_profile.EXE	system\Programs\CntmodelTest\t_filterview_matching_profile.EXE
-file=ABI_DIR\BUILD_DIR\T_TimeIS.EXE	system\Programs\CntmodelTest\T_TimeIS.EXE
-file=ABI_DIR\DEBUG_DIR\T_CVIEWCONTACT.EXE	System\Programs\CntmodelTest\T_CVIEWCONTACT.EXE
-file=ABI_DIR\DEBUG_DIR\T_FILTERBROADCAST.EXE	System\Programs\CntmodelTest\T_FILTERBROADCAST.EXE
-file=ABI_DIR\BUILD_DIR\T_SecondName.EXE		System\Programs\CntmodelTest\T_SecondName.EXE
-file=ABI_DIR\BUILD_DIR\T_RemoteView.EXE		System\Programs\CntmodelTest\T_RemoteView.EXE
-file=ABI_DIR\BUILD_DIR\T_FilterviewSpeed.EXE	System\Programs\CntmodelTest\T_FilterviewSpeed.EXE
-file=ABI_DIR\BUILD_DIR\T_ViewNotificationError.EXE	System\Programs\CntmodelTest\T_ViewNotificationError.EXE
-file=ABI_DIR\BUILD_DIR\T_VExportBirthday.EXE	System\Programs\CntmodelTest\T_VExportBirthday.EXE
-file=ABI_DIR\BUILD_DIR\T_VExportType.EXE	System\Programs\CntmodelTest\T_VExportType.EXE
-file=ABI_DIR\BUILD_DIR\T_VExportORG.EXE 	System\Programs\CntmodelTest\T_VExportORG.EXE
-file=ABI_DIR\BUILD_DIR\T_Cnt_ViewSortProfiling.exe	System\Programs\CntmodelTest\T_Cnt_ViewSortProfiling.exe
-file=ABI_DIR\BUILD_DIR\T_ViewSortProfiling.EXE	System\Programs\CntmodelTest\T_ViewSortProfiling.EXE
-file=ABI_DIR\BUILD_DIR\t_ViewSortPlugin.EXE      System\Programs\CntmodelTest\t_ViewSortPlugin.EXE
-file=ABI_DIR\BUILD_DIR\T_AsyncOpen.EXE       System\Programs\CntmodelTest\T_AsyncOpen.EXE
-file=ABI_DIR\BUILD_DIR\T_Sec_AsyncOpen.EXE       System\Programs\CntmodelTest\T_Sec_AsyncOpen.EXE
-file=ABI_DIR\BUILD_DIR\t_datacompatibility.exe       System\Programs\CntmodelTest\t_datacompatibility.exe
-file=ABI_DIR\BUILD_DIR\t_cnt_backup.EXE       System\Programs\CntmodelTest\t_cnt_backup.EXE
-file=ABI_DIR\BUILD_DIR\T_platsec.EXE             System\Programs\CntmodelTest\T_platsec.EXE
-file=ABI_DIR\BUILD_DIR\T_SampProf.exe        System\Programs\CntmodelTest\T_SampProf.exe
-file=ABI_DIR\BUILD_DIR\t_lowdiskspace.exe	System\Programs\CntmodelTest\t_lowdiskspace.exe
-file=ABI_DIR\BUILD_DIR\t_cntfindall.exe	System\Programs\CntmodelTest\t_cntfindall.exe
-file=ABI_DIR\BUILD_DIR\t_dbfill.exe	System\Programs\CntmodelTest\t_dbfill.exe
-file=ABI_DIR\BUILD_DIR\Profiler.exe	System\Programs\Profiler.exe
-file=ABI_DIR\BUILD_DIR\T_ContactViewEvents.exe	System\Programs\CntmodelTest\T_ContactViewEvents.exe
-file=ABI_DIR\BUILD_DIR\t_contactdbevent.exe	System\Programs\CntmodelTest\t_contactdbevent.exe
-file=ABI_DIR\BUILD_DIR\T_EVENTORDER.EXE	System\Programs\CntmodelTest\T_EVENTORDER.EXE
-file=ABI_DIR\BUILD_DIR\t_GroupViewEvents.exe	System\Programs\CntmodelTest\t_GroupViewEvents.exe
+file=ABI_DIR\BUILD_DIR\t_speeddialtest.exe	System\Programs\cntmodeltest\t_speeddialtest.exe
+file=ABI_DIR\BUILD_DIR\t_viewevents.exe	System\Programs\cntmodeltest\t_viewevents.exe
+file=ABI_DIR\BUILD_DIR\asynaccess.exe	System\Programs\cntmodeltest\asynaccess.exe
+file=ABI_DIR\BUILD_DIR\t_groupviewmodifiedcontact.exe	system\Programs\cntmodeltest\t_groupviewmodifiedcontact.exe
+file=ABI_DIR\BUILD_DIR\t_filterview_matching_profile.exe	system\Programs\cntmodeltest\t_filterview_matching_profile.exe
+file=ABI_DIR\BUILD_DIR\t_timeis.exe	system\Programs\cntmodeltest\t_timeis.exe
+file=ABI_DIR\DEBUG_DIR\t_cviewcontact.exe	System\Programs\cntmodeltest\t_cviewcontact.exe
+file=ABI_DIR\DEBUG_DIR\t_filterbroadcast.exe	System\Programs\cntmodeltest\t_filterbroadcast.exe
+file=ABI_DIR\BUILD_DIR\t_secondname.exe		System\Programs\cntmodeltest\t_secondname.exe
+file=ABI_DIR\BUILD_DIR\t_remoteview.exe		System\Programs\cntmodeltest\t_remoteview.exe
+file=ABI_DIR\BUILD_DIR\t_filterviewspeed.exe	System\Programs\cntmodeltest\t_filterviewspeed.exe
+file=ABI_DIR\BUILD_DIR\t_viewnotificationerror.exe	System\Programs\cntmodeltest\t_viewnotificationerror.exe
+file=ABI_DIR\BUILD_DIR\t_vexportbirthday.exe	System\Programs\cntmodeltest\t_vexportbirthday.exe
+file=ABI_DIR\BUILD_DIR\t_vexporttype.exe	System\Programs\cntmodeltest\t_vexporttype.exe
+file=ABI_DIR\BUILD_DIR\t_vexportorg.exe 	System\Programs\cntmodeltest\t_vexportorg.exe
+file=ABI_DIR\BUILD_DIR\t_cnt_viewsortprofiling.exe	System\Programs\cntmodeltest\t_cnt_viewsortprofiling.exe
+file=ABI_DIR\BUILD_DIR\t_viewsortprofiling.exe	System\Programs\cntmodeltest\t_viewsortprofiling.exe
+file=ABI_DIR\BUILD_DIR\t_viewsortplugin.exe      System\Programs\cntmodeltest\t_viewsortplugin.exe
+file=ABI_DIR\BUILD_DIR\t_asyncopen.exe       System\Programs\cntmodeltest\t_asyncopen.exe
+file=ABI_DIR\BUILD_DIR\t_sec_asyncopen.exe       System\Programs\cntmodeltest\t_sec_asyncopen.exe
+file=ABI_DIR\BUILD_DIR\t_datacompatibility.exe       System\Programs\cntmodeltest\t_datacompatibility.exe
+file=ABI_DIR\BUILD_DIR\t_cnt_backup.exe       System\Programs\cntmodeltest\t_cnt_backup.exe
+file=ABI_DIR\BUILD_DIR\t_platsec.exe             System\Programs\cntmodeltest\t_platsec.exe
+file=ABI_DIR\BUILD_DIR\t_sampprof.exe        System\Programs\cntmodeltest\t_sampprof.exe
+file=ABI_DIR\BUILD_DIR\t_lowdiskspace.exe	System\Programs\cntmodeltest\t_lowdiskspace.exe
+file=ABI_DIR\BUILD_DIR\t_cntfindall.exe	System\Programs\cntmodeltest\t_cntfindall.exe
+file=ABI_DIR\BUILD_DIR\t_dbfill.exe	System\Programs\cntmodeltest\t_dbfill.exe
+file=ABI_DIR\BUILD_DIR\profiler.exe	System\Programs\profiler.exe
+file=ABI_DIR\BUILD_DIR\t_contactviewevents.exe	System\Programs\cntmodeltest\t_contactviewevents.exe
+file=ABI_DIR\BUILD_DIR\t_contactdbevent.exe	System\Programs\cntmodeltest\t_contactdbevent.exe
+file=ABI_DIR\BUILD_DIR\t_eventorder.exe	System\Programs\cntmodeltest\t_eventorder.exe
+file=ABI_DIR\BUILD_DIR\t_groupviewevents.exe	System\Programs\cntmodeltest\t_groupviewevents.exe
 data=ABI_DIR\BUILD_DIR\Sampler.ldd	System\Libs\Sampler.ldd
 ECOM_PLUGIN(cntsimplesortplugin.dll,10200fbc.rsc)
 
-file=ABI_DIR\BUILD_DIR\NBCNTTESTLIB.DLL			 					 System\Libs\NBCNTTESTLIB.DLL
-file=ABI_DIR\BUILD_DIR\T_PERSISTENCELAYER.exe       				 System\Programs\CntmodelTest\T_PERSISTENCELAYER.exe
-file=ABI_DIR\BUILD_DIR\T_PLPERFORMANCE.exe       					 System\Programs\CntmodelTest\T_PLPERFORMANCE.exe
-file=ABI_DIR\BUILD_DIR\t_contactsramtest.exe					 	 System\Programs\CntmodelTest\t_contactsramtest.exe
-file=ABI_DIR\BUILD_DIR\t_cntdelete.exe					 	 	 System\Programs\CntmodelTest\t_cntdelete.exe
-file=ABI_DIR\BUILD_DIR\t_owncarddelete.exe				 	 	 System\Programs\CntmodelTest\t_owncarddelete.exe
+file=ABI_DIR\BUILD_DIR\nbcnttestlib.dll			 					 System\Libs\nbcnttestlib.dll
+file=ABI_DIR\BUILD_DIR\t_persistencelayer.exe       				 System\Programs\cntmodeltest\t_persistencelayer.exe
+file=ABI_DIR\BUILD_DIR\t_plperformance.exe       					 System\Programs\cntmodeltest\t_plperformance.exe
+file=ABI_DIR\BUILD_DIR\t_contactsramtest.exe					 	 System\Programs\cntmodeltest\t_contactsramtest.exe
+file=ABI_DIR\BUILD_DIR\t_cntdelete.exe					 	 	 System\Programs\cntmodeltest\t_cntdelete.exe
+file=ABI_DIR\BUILD_DIR\t_owncarddelete.exe				 	 	 System\Programs\cntmodeltest\t_owncarddelete.exe
 
-file=ABI_DIR\BUILD_DIR\t_viewstore.exe	System\Programs\CntmodelTest\t_viewstore.exe
-file=ABI_DIR\BUILD_DIR\t_CntPBAPSupport.exe	System\Programs\CntmodelTest\t_CntPBAPSupport.exe
-file=ABI_DIR\BUILD_DIR\t_vtel_email.exe	System\Programs\CntmodelTest\t_vtel_email.exe
-file=ABI_DIR\BUILD_DIR\t_AGENT.exe	System\Programs\CntmodelTest\t_AGENT.exe
-file=ABI_DIR\BUILD_DIR\t_geo.exe	System\Programs\CntmodelTest\t_geo.exe
-data=DATAZ_\ImportContacts.vcf	ImportContacts.vcf
-data=DATAZ_\Expectedcontact.vcf	Expectedcontact.vcf
+file=ABI_DIR\BUILD_DIR\t_viewstore.exe	System\Programs\cntmodeltest\t_viewstore.exe
+file=ABI_DIR\BUILD_DIR\t_cntpbapsupport.exe	System\Programs\cntmodeltest\t_cntpbapsupport.exe
+file=ABI_DIR\BUILD_DIR\t_vtel_email.exe	System\Programs\cntmodeltest\t_vtel_email.exe
+file=ABI_DIR\BUILD_DIR\t_agent.exe	System\Programs\cntmodeltest\t_agent.exe
+file=ABI_DIR\BUILD_DIR\t_geo.exe	System\Programs\cntmodeltest\t_geo.exe
+data=DATAZ_\importcontacts.vcf	importcontacts.vcf
+data=DATAZ_\expectedcontact.vcf	expectedcontact.vcf
 
-file=ABI_DIR\BUILD_DIR\t_dbnametest.exe						System\Programs\CntmodelTest\t_dbnametest.exe
-file=ABI_DIR\BUILD_DIR\t_requeststoretest.exe				System\Programs\CntmodelTest\t_requeststoretest.exe
-file=ABI_DIR\BUILD_DIR\t_db_sortl_test.exe					System\Programs\CntmodelTest\t_db_sortl_test.exe
-file=ABI_DIR\BUILD_DIR\t_subview.exe						System\Programs\CntmodelTest\t_subview.exe
+file=ABI_DIR\BUILD_DIR\t_dbnametest.exe						System\Programs\cntmodeltest\t_dbnametest.exe
+file=ABI_DIR\BUILD_DIR\t_requeststoretest.exe				System\Programs\cntmodeltest\t_requeststoretest.exe
+file=ABI_DIR\BUILD_DIR\t_db_sortl_test.exe					System\Programs\cntmodeltest\t_db_sortl_test.exe
+file=ABI_DIR\BUILD_DIR\t_subview.exe						System\Programs\cntmodeltest\t_subview.exe
 
 REM Testcode for Log Engine contact matching plug-in
 #include <cntmatchtest.iby>

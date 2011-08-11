@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -42,6 +42,68 @@
 #include "qdeclarativendeftextrecord_p.h"
 
 #include <QtCore/QLocale>
+
+/*!
+    \qmlclass NdefTextRecord QDeclarativeNdefTextRecord
+    \brief The NdefTextRecord element represents an NFC RTD-Text NDEF record.
+
+    \ingroup connectivity-qml
+    \inmodule QtConnectivity
+
+    \inherits NdefRecord
+
+    \sa QNdefNfcTextRecord
+
+    The NdefTextRecord element is part of the \bold {QtMobility.connectivity 1.2} module.
+
+    The NdefTextRecord element contains a localized piece of text that can be display to the user.
+    An NDEF message may contain many text records for different locales, it is up to the
+    application to select the most appropriate one to display to the user.  The localeMatch
+    property can be used to determine if the text record has been matched.
+*/
+
+/*!
+    \qmlproperty string NdefTextRecord::text
+
+    This property holds the text which should be displayed when the current locale matches
+    \l locale.
+*/
+
+/*!
+    \qmlproperty string NdefTextRecord::locale
+
+    This property holds the locale that this text record is for.
+*/
+
+/*!
+    \qmlproperty enumeration NdefTextRecord::localeMatch
+
+    This property holds an enum describing how closely the locale of the text record matches the
+    applications current locale.  The application should display only the text record that most
+    closely matches the applications current locale.
+
+    \table
+        \header
+            \o Value
+            \o Description
+        \row
+            \o LocaleMatchedNone
+            \o The text record does not match at all.
+        \row
+            \o LocaleMatchedEnglish
+            \o The language of the text record is English and the language of application's current
+               locale is \bold {not} English.  The English language text should be displayed if
+               there is not a more appropriate match.
+        \row
+            \o LocaleMatchedLanguage
+            \o The language of the text record and the language of the applications's current
+               locale are the same.
+        \row
+            \o LocaleMatchedLanguageAndCountry
+            \o The language and country of the text record matches that of the applicatin's current
+               locale.
+    \endtable
+*/
 
 Q_DECLARE_NDEFRECORD(QDeclarativeNdefTextRecord, QNdefRecord::NfcRtd, "T")
 

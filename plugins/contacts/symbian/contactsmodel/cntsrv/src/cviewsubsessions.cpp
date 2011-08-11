@@ -130,7 +130,10 @@ void CViewSubSessionQueue::QueueEvent(const TContactViewEvent& aEvent)
 						if(iEvents[pos].iInt >= aEvent.iInt && 
 								iEvents[pos].iContactId != aEvent.iContactId)
 							{
-							iEvents[pos].iInt++;
+							if( iEvents[pos].iEventType == TContactViewEvent::EItemRemoved || iEvents[pos].iEventType == TContactViewEvent::EItemAdded)  
+								{
+								iEvents[pos].iInt++;
+								}
 							}
 						}
 					iQueueError = iEvents.Insert(aEvent, lastItemRemovedPosition);		
@@ -153,7 +156,10 @@ void CViewSubSessionQueue::QueueEvent(const TContactViewEvent& aEvent)
 							eventsCount=iEvents.Count();
 							for(TUint loop=pos+1; loop<eventsCount; ++loop)
 								{
-								iEvents[loop].iInt++;
+								if( iEvents[pos].iEventType == TContactViewEvent::EItemRemoved || iEvents[pos].iEventType == TContactViewEvent::EItemAdded)
+									{
+									iEvents[loop].iInt++;
+									}
 								}						
 							haveToAppendEvent = EFalse;										
 							break;
@@ -168,52 +174,7 @@ void CViewSubSessionQueue::QueueEvent(const TContactViewEvent& aEvent)
 			}
 		else 
 			{
-			if(event.iEventType == TContactViewEvent::EItemRemoved)
-				{
-				TBool anyEventWithSameInt = EFalse;												
-				for( pos=0; pos<eventsCount; ++pos ) 
-					{
-					if(iEvents[pos].iEventType == TContactViewEvent::EItemAdded)
-						{								
-						if(iEvents[pos].iInt == event.iInt)
-							{
-							iEvents.Remove(pos);
-							eventsCount=iEvents.Count();
-							for(TUint loop=pos; loop<eventsCount; ++loop)
-								{
-								iEvents[loop].iInt--;
-								}						
-							anyEventWithSameInt=ETrue;	
-							break;									
-							}					
-						}
-					}						
-				pos=0;	
-				if(!anyEventWithSameInt) 
-					{
-					while(pos < eventsCount && iEvents[pos].iInt <= event.iInt)
-						{
-						pos++;
-						}
-					if(pos!=eventsCount)
-						{	
-						iQueueError = iEvents.Insert(event, pos);
-						eventsCount=iEvents.Count();
-						for(TUint loop=pos+1; loop<eventsCount; ++loop)
-							{
-							iEvents[loop].iInt--;
-							}	
-						}
-					else
-						{
-						iQueueError = iEvents.Append(event);
-						}
-					}
-				}
-			else
-				{
-				iQueueError = iEvents.Append(event);	
-				}
+			iQueueError = iEvents.Append(event);	
 			}
 		DEBUG_PRINTVN2(__VERBOSE_DEBUG__,_L("[CNTMODEL] CViewSubSessionQueue::QueueEvent(): ->Q:"), event);
 		}

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -89,6 +89,7 @@ public:
 /*!
     Create a slot invoker that can invoke \a member on \a receiver.
     The object will be attached to \a parent, if present.
+    \since 1.1
 */
 QSlotInvoker::QSlotInvoker( QObject *receiver, const QByteArray &member,
                             QObject *parent )
@@ -143,6 +144,7 @@ QSlotInvoker::~QSlotInvoker()
 
 /*!
     Returns true if the member is present on the object.
+    \since 1.1
 */
 bool QSlotInvoker::memberPresent() const
 {
@@ -153,6 +155,7 @@ bool QSlotInvoker::memberPresent() const
     Returns true if the member can be invoked with \a numArgs arguments.
     That is, the receiver has not been destroyed, the member is present,
     and it requires \a numArgs or less arguments.
+    \since 1.1
 */
 bool QSlotInvoker::canInvoke( int numArgs ) const
 {
@@ -163,6 +166,7 @@ bool QSlotInvoker::canInvoke( int numArgs ) const
 
 /*!
     Returns the object that will receive slot invocations.
+    \since 1.1
 */
 QObject *QSlotInvoker::receiver() const
 {
@@ -171,6 +175,7 @@ QObject *QSlotInvoker::receiver() const
 
 /*!
     Returns the member that will receiver slot invocations.
+    \since 1.1
 */
 QByteArray QSlotInvoker::member() const
 {
@@ -179,6 +184,7 @@ QByteArray QSlotInvoker::member() const
 
 /*!
     Returns the parameter types associated with this member.
+    \since 1.1
 */
 int *QSlotInvoker::parameterTypes() const
 {
@@ -187,6 +193,7 @@ int *QSlotInvoker::parameterTypes() const
 
 /*!
     Returns the number of parameter types associated with this member.
+    \since 1.1
 */
 int QSlotInvoker::parameterTypesCount() const
 {
@@ -202,6 +209,7 @@ int QSlotInvoker::parameterTypesCount() const
     If it is possible that the slot may throw an exception,
     it is the responsibility of the caller to catch and
     handle the exception.
+    \since 1.1
 */
 QVariant QSlotInvoker::invoke( const QList<QVariant>& args )
 {

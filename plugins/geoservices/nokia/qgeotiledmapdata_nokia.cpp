@@ -7,29 +7,29 @@
  ** This file is part of the Qt Mobility Components.
  **
  ** $QT_BEGIN_LICENSE:LGPL$
- ** No Commercial Usage
- ** This file contains pre-release code and may not be distributed.
- ** You may use this file in accordance with the terms and conditions
- ** contained in the Technology Preview License Agreement accompanying
- ** this package.
- **
  ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
- ** General Public License version 2.1 as published by the Free Software
- ** Foundation and appearing in the file LICENSE.LGPL included in the
- ** packaging of this file.  Please review the following information to
- ** ensure the GNU Lesser General Public License version 2.1 requirements
- ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ ** This file may be used under the terms of the GNU Lesser General Public
+ ** License version 2.1 as published by the Free Software Foundation and
+ ** appearing in the file LICENSE.LGPL included in the packaging of this
+ ** file. Please review the following information to ensure the GNU Lesser
+ ** General Public License version 2.1 requirements will be met:
+ ** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  **
  ** In addition, as a special exception, Nokia gives you certain additional
- ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** rights. These rights are described in the Nokia Qt LGPL Exception
  ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
  **
- ** If you have questions regarding the use of this file, please contact
- ** Nokia at qt-info@nokia.com.
+ ** GNU General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU General
+ ** Public License version 3.0 as published by the Free Software Foundation
+ ** and appearing in the file LICENSE.GPL included in the packaging of this
+ ** file. Please review the following information to ensure the GNU General
+ ** Public License version 3.0 requirements will be met:
+ ** http://www.gnu.org/copyleft/gpl.html.
  **
- **
- **
+ ** Other Usage
+ ** Alternatively, this file may be used in accordance with the terms and
+ ** conditions contained in a signed written agreement between you and Nokia.
  **
  **
  **
@@ -57,18 +57,37 @@
 
 QTM_USE_NAMESPACE
 
+namespace
+{
+    void AdjustLogo(const QRect &windowRect, QRect &logoRect, int position)
+    {
+        logoRect.moveTo(windowRect.topLeft());
+        if (position & ShiftedRight)
+        {
+            logoRect.moveRight(windowRect.x() + windowRect.width());
+        }
+
+        if (position & ShiftedDown)
+        {
+            logoRect.moveBottom(windowRect.y() + windowRect.height());
+        }
+    }
+}
+
 /*!
  Constructs a new tiled map data object, which stores the map data required by
  \a geoMap and makes use of the functionality provided by \a engine.
  */
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engine) :
     QGeoTiledMapData(engine),
-    watermark(":/images/watermark.png")
+    watermark(":/images/watermark.png"),
+    m_logoPosition(engine->logoPosition())
 {
     m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(copyrightReplyFinished(QNetworkReply*)));
 
-    m_networkManager->get(QNetworkRequest(QUrl("http://maptile.maps.svc.ovi.com/maptiler/v2/copyright/newest")));
+    QString copirightUrl = "http://" + engine->host() + "/maptiler/v2/copyright/newest";
+    m_networkManager->get(QNetworkRequest(QUrl(copirightUrl)));
 }
 
 QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia()
@@ -185,52 +204,40 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
 /*!
  \reimp
  */
-void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *)
 {
-    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
-
-    painter->drawPixmap(
-        viewport.bottomLeft()+QPoint(5,-5-watermark.height()),
-        watermark
-    );
-
-    QString copyrightText = getViewCopyright();
-
-    if (copyrightText != lastCopyrightText || lastViewport != viewport) {
-        lastCopyrightText = copyrightText;
-        lastViewport = viewport;
-
-        QRect maxBoundingRect(QPoint(viewport.left()+10+watermark.width(), viewport.top()), QPoint(viewport.right()-5, viewport.bottom()-5));
-
-        QRect textBoundingRect = painter->boundingRect(maxBoundingRect, Qt::AlignLeft | Qt::AlignBottom | Qt::TextWordWrap, copyrightText);
-        lastCopyrightRect = textBoundingRect.adjusted(-1, -1, 1, 1);
-
-        lastCopyright = QPixmap(lastCopyrightRect.size());
-        lastCopyright.fill(QColor(Qt::transparent));
-
-        {
-            QPainter painter2(&lastCopyright);
-
-            painter2.drawText(
-                QRect(QPoint(1, 2), textBoundingRect.size()),
-                Qt::TextWordWrap,
-                copyrightText
-            );
-
-            painter2.drawPixmap(QRect(QPoint(-1, -1), lastCopyrightRect.size()), lastCopyright);
-            painter2.drawPixmap(QRect(QPoint(1, -1), lastCopyrightRect.size()), lastCopyright);
-
-            painter2.setPen(QColor(Qt::white));
-            painter2.drawText(
-                QRect(QPoint(1, 1), textBoundingRect.size()),
-                Qt::TextWordWrap,
-                copyrightText
-            );
-        }
+    QColor fontColor(Qt::white);
+    if (mapType() == QGraphicsGeoMap::StreetMap)
+    {
+       fontColor = Qt::black;
+       fontColor.setAlphaF(0.5);
     }
 
-    painter->drawPixmap(
-        lastCopyrightRect,
-        lastCopyright
-    );
+    QFont font("Arial");
+    font.setPixelSize(10);
+    font.setStyleHint(QFont::SansSerif);
+
+    painter->save();
+    painter->setFont(font);
+    painter->setPen(fontColor);
+
+    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
+    const int offset = 5;
+    viewport.adjust(offset, offset, -offset, -offset);
+
+    QString copyrightText = getViewCopyright();
+    QRect copyrightRect = painter->boundingRect(viewport, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, copyrightText);
+
+    QRect watermarkViewRect(viewport), copyrightViewRect(viewport);
+    watermarkViewRect.setHeight(watermarkViewRect.height() - copyrightRect.height());
+    copyrightViewRect.adjust(0, watermark.height(), 0, 0);
+
+    QRect watermarkRect(watermark.rect());
+    AdjustLogo(watermarkViewRect, watermarkRect, m_logoPosition);
+    AdjustLogo(copyrightViewRect, copyrightRect, m_logoPosition);
+
+    painter->drawPixmap(watermarkRect, watermark);
+    painter->drawText(copyrightRect, Qt::TextWordWrap, copyrightText);
+
+    painter->restore();
 }

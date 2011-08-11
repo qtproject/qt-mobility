@@ -7,29 +7,29 @@
 ** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -250,6 +250,9 @@ void QDeclarativeCamera::_q_captureFailed(int id, QCameraImageCapture::Error err
     \brief The QDeclarativeCamera class provides a camera item that you can add to a QDeclarativeView.
 */
 
+/*!
+    Construct a declarative camera object using \a parent object.
+ */
 QDeclarativeCamera::QDeclarativeCamera(QDeclarativeItem *parent) :
     QDeclarativeItem(parent),
     m_camera(0),
@@ -308,6 +311,7 @@ QDeclarativeCamera::QDeclarativeCamera(QDeclarativeItem *parent) :
 
 }
 
+/*! Destructor, clean up memory */
 QDeclarativeCamera::~QDeclarativeCamera()
 {
     if (m_isValid) {
@@ -319,6 +323,10 @@ QDeclarativeCamera::~QDeclarativeCamera()
     }
 }
 
+/*!
+    Returns any camera error.
+    \sa QDeclarativeCamera::Error
+*/
 QDeclarativeCamera::Error QDeclarativeCamera::error() const
 {
     if (!m_isValid)
@@ -332,6 +340,11 @@ QDeclarativeCamera::Error QDeclarativeCamera::error() const
 
     A description of the current error, if any.
 */
+/*!
+    \property QDeclarativeCamera::errorString
+
+    A description of the current error, if any.
+*/
 QString QDeclarativeCamera::errorString() const
 {
     if (!m_isValid)
@@ -342,6 +355,35 @@ QString QDeclarativeCamera::errorString() const
 
 /*!
     \qmlproperty enumeration Camera::cameraState
+
+    The current state of the camera object.
+
+    \table
+    \header \o Value \o Description
+    \row \o UnloadedState
+         \o The initial camera state, with camera not loaded,
+           the camera capabilities except of supported capture modes
+           are unknown.
+           While the supported settings are unknown in this state,
+           it's allowed to set the camera capture settings like codec,
+           resolution, or frame rate.
+
+    \row \o LoadedState
+         \o The camera is loaded and ready to be configured.
+
+           In the Idle state it's allowed to query camera capabilities,
+           set capture resolution, codecs, etc.
+
+           The viewfinder is not active in the loaded state.
+
+    \row \o ActiveState
+          \o In the active state as soon as camera is started
+           the viewfinder displays video frames and the
+           camera is ready for capture.
+    \endtable
+*/
+/*!
+    \property QDeclarativeCamera::cameraState
 
     The current state of the camera object.
 
@@ -427,6 +469,7 @@ void QDeclarativeCamera::setCameraState(QDeclarativeCamera::State state)
 
 /*!
     \qmlmethod Camera::start()
+    \fn QDeclarativeCamera::start()
 
     Starts the camera.
 */
@@ -438,6 +481,7 @@ void QDeclarativeCamera::start()
 
 /*!
     \qmlmethod Camera::stop()
+    \fn QDeclarativeCamera::stop()
 
     Stops the camera.
 */
@@ -450,6 +494,32 @@ void QDeclarativeCamera::stop()
 
 /*!
     \qmlproperty enumeration Camera::lockStatus
+
+    The overall status for all the requested camera locks.
+
+    \table
+    \header \o Value \o Description
+    \row \o Unlocked
+        \o The application is not interested in camera settings value.
+        The camera may keep this parameter without changes, this is common with camera focus,
+        or adjust exposure and white balance constantly to keep the viewfinder image nice.
+
+    \row \o Searching
+        \o The application has requested the camera focus, exposure or white balance lock with
+        searchAndLock(). This state indicates the camera is focusing or calculating exposure and white balance.
+
+    \row \o Locked
+        \o The camera focus, exposure or white balance is locked.
+        The camera is ready to capture, application may check the exposure parameters.
+
+        The locked state usually means the requested parameter stays the same,
+        except in the cases when the parameter is requested to be constantly updated.
+        For example in continuous focusing mode, the focus is considered locked as long
+        and the object is in focus, even while the actual focusing distance may be constantly changing.
+    \endtable
+*/
+/*!
+    \property QDeclarativeCamera::lockStatus
 
     The overall status for all the requested camera locks.
 
@@ -504,6 +574,7 @@ QDeclarativeCamera::LockStatus QDeclarativeCamera::lockStatus() const
 
 /*!
     \qmlmethod Camera::searchAndLock()
+    \fn QDeclarativeCamera::searchAndLock()
 
     Start focusing, exposure and white balance calculation.
     If the camera has keyboard focus, searchAndLock() is called
@@ -517,6 +588,7 @@ void QDeclarativeCamera::searchAndLock()
 
 /*!
     \qmlmethod Camera::unlock()
+    \fn QDeclarativeCamera::unlock()
 
     Unlock focus.
 
@@ -531,9 +603,11 @@ void QDeclarativeCamera::unlock()
 
 /*!
     \qmlmethod Camera::captureImage()
+    \fn QDeclarativeCamera::captureImage()
 
-    Start image capture.  The \l onImageCaptured and \l onImageSaved signals will
-    be emitted when the capture is complete.
+    Start image capture.  The \l {imageCaptured()}{onImageCaptured()}
+    and \l {imageSaved()}{onImageSaved()} signals will be emitted when
+    the capture is complete.
 */
 void QDeclarativeCamera::captureImage()
 {
@@ -542,6 +616,9 @@ void QDeclarativeCamera::captureImage()
 }
 
 // XXX this doesn't seem to be used
+/*!
+    \fn QDeclarativeCamera::capturedImagePreview() const
+*/
 QImage QDeclarativeCamera::capturedImagePreview() const
 {
     return m_capturedImagePreview;
@@ -552,15 +629,27 @@ QImage QDeclarativeCamera::capturedImagePreview() const
 
     The path to the captured image.
 */
+/*!
+    \property QDeclarativeCamera::capturedImagePath
+
+    The path to the captured image.
+*/
 QString QDeclarativeCamera::capturedImagePath() const
 {
     return m_capturedImagePath;
 }
 
-void QDeclarativeCamera::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
+/*!
+    Paint method.
+    Takes a \a painter object, a graphics \a style option and a \a widget
+*/
+void QDeclarativeCamera::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWidget *widget)
 {
 }
 
+/*!
+    Change viewfinder size to \a newGeometry and returning the \a oldGeometry
+*/
 void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     m_viewfinderItem->setSize(newGeometry.size());
@@ -569,38 +658,49 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
     QDeclarativeItem::geometryChanged(newGeometry, oldGeometry);
 }
 
+/*!
+    \fn void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
+    Handler for keypress events. The \a event is compared to a small set of events.
+*/
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
-    if (!m_isValid)
+    if (!m_isValid || event->isAutoRepeat())
         return;
 
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->searchAndLock();
+        event->accept();
         break;
     case Qt::Key_Camera:
         if (m_camera->captureMode() == QCamera::CaptureStillImage)
             captureImage();
         //else
         //    m_recorder->record();
+        event->accept();
         break;
     default:
         QDeclarativeItem::keyPressEvent(event);
     }
 }
 
+/*!
+    Handle the release of a key in \a event and take action if needed.
+*/
 void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 {
-    if (!m_isValid)
+    if (!m_isValid || event->isAutoRepeat())
         return;
 
     switch (event->key()) {
     case Qt::Key_CameraFocus:
         m_camera->unlock();
+        event->accept();
         break;
     case Qt::Key_Camera:
         //if (m_camera->captureMode() == QCamera::CaptureVideo)
         //    m_recorder->stop();
+        event->accept();
         break;
     default:
         QDeclarativeItem::keyReleaseEvent(event);
@@ -610,6 +710,26 @@ void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 
 /*!
     \qmlproperty enumeration Camera::flashMode
+
+    \table
+    \header \o Value \o Description
+    \row \o FlashOff             \o Flash is Off.
+    \row \o FlashOn              \o Flash is On.
+    \row \o FlashAuto            \o Automatic flash.
+    \row \o FlashRedEyeReduction \o Red eye reduction flash.
+    \row \o FlashFill            \o Use flash to fillin shadows.
+    \row \o FlashTorch           \o Constant light source, useful for focusing and video capture.
+    \row \o FlashSlowSyncFrontCurtain
+                                \o Use the flash in conjunction with a slow shutter speed.
+                                This mode allows better exposure of distant objects and/or motion blur effect.
+    \row \o FlashSlowSyncRearCurtain
+                                \o The similar mode to FlashSlowSyncFrontCurtain but flash is fired at the end of exposure.
+    \row \o FlashManual          \o Flash power is manually set.
+    \endtable
+
+*/
+/*!
+    \property QDeclarativeCamera::flashMode
 
     \table
     \header \o Value \o Description
@@ -692,7 +812,7 @@ void QDeclarativeCamera::setExposureCompensation(qreal ev)
     The sensor's ISO sensitivity.
  */
 /*!
-    \property QDeclarativeCamera::isoSensitivity
+    \property QDeclarativeCamera::iso
 
     The sensor's ISO sensitivity.
  */
@@ -989,7 +1109,7 @@ void QDeclarativeCamera::setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMod
     \sa whiteBalanceMode
 */
 /*!
-    \property QCamera::manualWhiteBalance
+    \property QDeclarativeCamera::manualWhiteBalance
 
     The color temperature used when in manual white balance mode (WhiteBalanceManual).
 
@@ -1012,6 +1132,22 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 }
 
 /*!
+    \fn void QDeclarativeCamera::error(QDeclarativeCamera::Error , const QString &)
+    This handler is called when an error occurs.  The enumeration value \a error is one of the
+    values defined below, and a descriptive string value is available in \a errorString.
+
+    \table
+    \header \o Value \o Description
+    \row \o NoError \o No errors have occurred.
+    \row \o CameraError \o An error has occurred.
+    \row \o InvalidRequestError \o System resource doesn't support requested functionality.
+    \row \o ServiceMissingError \o No camera service available.
+    \row \o NotSupportedFeatureError \o The feature is not supported.
+    \endtable
+
+    \sa QDeclarativeCamera::Error
+*/
+/*!
     \qmlsignal Camera::onError(error, errorString)
 
 
@@ -1028,6 +1164,13 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
     \endtable
 */
 /*!
+    \qmlsignal Camera::onError(error, errorString)
+
+
+    This handler is called when an error occurs.  The enumeration value \a error is one of the
+    values defined below, and a descriptive string value is available in \a errorString.
+*/
+/*!
     \enum QDeclarativeCamera::Error
     \value NoError                  No errors have occurred.
     \value CameraError              An error has occurred.
@@ -1042,6 +1185,11 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
     This handler is called when an error occurs during capture.  A descriptive message is available in \a message.
 */
+/*!
+    \fn QDeclarativeCamera::captureFailed(const QString &message)
+
+    This handler is called when an error occurs during capture.  A descriptive message is available in \a message.
+*/
 
 /*!
     \qmlsignal Camera::onImageCaptured(preview)
@@ -1051,6 +1199,14 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
     \sa onImageSaved
 */
+/*!
+    \fn QDeclarativeCamera::imageCaptured(const QString &preview)
+
+    This handler is called when an image has been captured but not yet saved to the filesystem.  The \a preview
+    parameter can be used as the URL supplied to an Image element.
+
+    \sa imageSaved()
+*/
 
 /*!
     \qmlsignal Camera::onImageSaved(path)
@@ -1059,11 +1215,19 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
     \sa onImageCaptured
 */
+/*!
+    \fn QDeclarativeCamera::imageSaved(const QString &path)
+
+    This handler is called after the image has been written to the filesystem.  The \a path is a local file path, not a URL.
+
+    \sa imageCaptured()
+*/
 
 
 /*!
     \fn void QDeclarativeCamera::lockStatusChanged()
-
+*/
+/*!
     \qmlsignal Camera::lockStatusChanged()
 */
 
@@ -1085,51 +1249,65 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
     \qmlsignal Camera::imageSaved(string)
 */
 
-/*!
-    \fn void QDeclarativeCamera::error(QDeclarativeCamera::Error , const QString &)
-
-    \qmlsignal Camera::error(Camera::Error, string)
-*/
 
 /*!
     \fn void QDeclarativeCamera::errorChanged()
 
+*/
+/*!
     \qmlsignal Camera::errorChanged()
 */
 
 /*!
-    \fn void QDeclarativeCamera::isoSensitivityChanged(int)
+    \fn void QDeclarativeCamera::isoSensitivityChanged(int isoValue)
 
+    The iso value has changed to \a isoValue.
+*/
+/*!
     \qmlsignal Camera::isoSensitivityChanged(int)
 */
 
 /*!
-    \fn void QDeclarativeCamera::apertureChanged(qreal)
-
+    \fn void QDeclarativeCamera::apertureChanged(qreal aperture)
+    Signals the change to a new \a aperture value.
+*/
+/*!
     \qmlsignal Camera::apertureChanged(real)
 */
 
 /*!
-    \fn void QDeclarativeCamera::shutterSpeedChanged(qreal)
+    \fn void QDeclarativeCamera::shutterSpeedChanged(qreal speed)
 
+    The shutter speed has been changed to \a speed.
+
+*/
+/*!
     \qmlsignal Camera::shutterSpeedChanged(real)
 */
 
 /*!
-    \fn void QDeclarativeCamera::exposureCompensationChanged(qreal)
+    \fn void QDeclarativeCamera::exposureCompensationChanged(qreal expComp)
 
+    Compensation has changed to the new value \a expComp.
+*/
+/*!
     \qmlsignal Camera::exposureCompensationChanged(real)
 */
 
 /*!
-    \fn void QDeclarativeCamera:opticalZoomChanged(qreal)
+    \fn void QDeclarativeCamera::opticalZoomChanged(qreal zoom)
 
+    Optical zoom changed to \a zoom.
+*/
+/*!
     \qmlsignal Camera::opticalZoomChanged(real)
 */
 
 /*!
     \fn void QDeclarativeCamera::digitalZoomChanged(qreal)
 
+*/
+/*!
     \qmlsignal Camera::digitalZoomChanged(real)
 */
 
@@ -1140,47 +1318,70 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 
 /*!
-    \fn void QDeclarativeCamera::maximumDigitalZoomChanged(qreal)
-
+    \fn void QDeclarativeCamera::maximumDigitalZoomChanged(qreal zoom)
+    The maximum digital zoom is now \a zoom.
+*/
+/*!
     \qmlsignal Camera::maximumDigitalZoomChanged(real)
 */
 
-/*!
-    \fn void QDeclarativeCamera::captureFailed(const QString &)
 
-    \qmlsignal Camera::captureFailed(string)
+/*!
+    \fn void QDeclarativeCamera::exposureModeChanged(QDeclarativeCamera::ExposureMode mode)
+
+    Signals that the exposure mode is now \a mode.
 */
-
 /*!
-    \fn void QDeclarativeCamera::exposureModeChanged(QDeclarativeCamera::ExposureMode)
 
     \qmlsignal Camera::exposureModeChanged(Camera::ExposureMode)
 */
 
 /*!
     \fn void QDeclarativeCamera::flashModeChanged(int)
+*/
+/*!
+    \qmlsignal Camera::flashModeChanged(int mode)
 
-    \qmlsignal Camera::flashModeChanged(int)
+    The flash mode is now \a mode.
+    \sa QDeclarativeCamera::FlashMode
 */
 
 /*!
     \fn void QDeclarativeCamera::whiteBalanceModeChanged(QDeclarativeCamera::WhiteBalanceMode) const
 
+*/
+/*!
     \qmlsignal Camera::whiteBalanceModeChanged(Camera::WhiteBalanceMode)
 */
 
 /*!
-    \fn void QDeclarativeCamera::manualWhiteBalanceChanged(int) const
-
+    \fn void QDeclarativeCamera::manualWhiteBalanceChanged(int newWhiteBal) const
+    Indicates that the white balance has been manually changed to \a newWhiteBal.
+*/
+/*!
     \qmlsignal Camera::manualWhiteBalanceChanged(int)
 */
 
 /*!
-    \fn void QDeclarativeCamera::captureResolutionChanged(const QSize &)
+    \fn void QDeclarativeCamera::captureResolutionChanged(const QSize &resolution)
+
+    Signal that the resolution has changed to \a resolution.
+ */
+/*!
 
     \qmlsignal Camera::captureResolutionChanged(Item)
 */
 
+/*!
+    \fn QDeclarativeCamera::cameraStateChanged(QDeclarativeCamera::State state)
+
+    The camera state has changed to value \a state.
+
+*/
+/*!
+    \qmlsignal Camera::cameraStateChanged(Camera::State)
+
+*/
 
 
 QT_END_NAMESPACE

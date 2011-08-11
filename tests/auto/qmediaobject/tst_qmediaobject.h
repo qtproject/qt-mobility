@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -48,8 +48,37 @@
 #include <qmediaobject.h>
 #include <qmediaservice.h>
 #include <qmetadatareadercontrol.h>
+#include <qaudiocapturesource.h>
+#include <qaudioendpointselector.h>
 
 //TESTED_COMPONENT=src/multimedia
+
+#include "mockmetadatareadercontrol.h"
+
+class QtTestMetaDataService : public QMediaService
+{
+    Q_OBJECT
+public:
+    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), metaDataRef(0), hasMetaData(true)
+    {
+    }
+
+    QMediaControl *requestControl(const char *iid)
+    {
+        if (hasMetaData && qstrcmp(iid, QMetaDataReaderControl_iid) == 0)
+            return &metaData;
+        else
+            return 0;
+    }
+
+    void releaseControl(QMediaControl *)
+    {
+    }
+
+    MockMetaDataReaderControl metaData;
+    int metaDataRef;
+    bool hasMetaData;
+};
 
 QT_USE_NAMESPACE
 class tst_QMediaObject : public QObject
@@ -72,70 +101,11 @@ private slots:
     void extendedMetaData_data() { metaData_data(); }
     void extendedMetaData();
 
+    void service();
+    void availabilityChangedSignal();
 
 private:
     void setupNotifyTests();
-};
-
-class QtTestMetaDataProvider : public QMetaDataReaderControl
-{
-    Q_OBJECT
-public:
-    QtTestMetaDataProvider(QObject *parent = 0)
-        : QMetaDataReaderControl(parent)
-        , m_available(false)
-    {
-    }
-
-    bool isMetaDataAvailable() const { return m_available; }
-    void setMetaDataAvailable(bool available) {
-        if (m_available != available)
-            emit metaDataAvailableChanged(m_available = available);
-    }
-    QList<QtMultimediaKit::MetaData> availableMetaData() const { return m_data.keys(); }
-
-
-    QVariant metaData(QtMultimediaKit::MetaData key) const { return m_data.value(key); }
-
-    QVariant extendedMetaData(const QString &key) const { return m_extendedData.value(key); }
-
-    QStringList availableExtendedMetaData() const { return m_extendedData.keys(); }
-
-    using QMetaDataReaderControl::metaDataChanged;
-
-    void populateMetaData()
-    {
-        m_available = true;
-    }
-
-    bool m_available;
-    QMap<QtMultimediaKit::MetaData, QVariant> m_data;
-    QMap<QString, QVariant> m_extendedData;
-};
-
-class QtTestMetaDataService : public QMediaService
-{
-    Q_OBJECT
-public:
-    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), metaDataRef(0), hasMetaData(true)
-    {
-    }
-
-    QMediaControl *requestControl(const char *iid)
-    {
-        if (hasMetaData && qstrcmp(iid, QMetaDataReaderControl_iid) == 0)
-            return &metaData;
-        else
-            return 0;
-    }
-
-    void releaseControl(QMediaControl *)
-    {
-    }
-
-    QtTestMetaDataProvider metaData;
-    int metaDataRef;
-    bool hasMetaData;
 };
 
 class QtTestMediaObject : public QMediaObject

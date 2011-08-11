@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -1269,6 +1269,90 @@ void tst_QContactFilter::testFilter_data()
                 << contact
                 << QContactEmailAddress::match("bar")
                 << false;
+    }
+    {
+        QContact contact;
+        QContactOrganization org;
+        org.setDepartment(QStringList("one")); // Single department as a stringlist
+        contact.saveDetail(&org);
+        QContactDetailFilter df;
+        df.setDetailDefinitionName(QContactOrganization::DefinitionName, QContactOrganization::FieldDepartment);
+
+        // First case sensitive
+        df.setMatchFlags(QContactDetailFilter::MatchCaseSensitive);
+        df.setValue("one"); // this is a string
+        QTest::newRow("QContactOrganization::match single positive against string")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QStringList("one")); // this is a stringlist of the same length
+        QTest::newRow("QContactOrganization::match single positive against stringlist")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QString("two"));
+        QTest::newRow("QContactOrganization::match negative string")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QStringList("two"));
+        QTest::newRow("QContactOrganization::match negative stringlist")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QString("ONE"));
+        QTest::newRow("QContactOrganization::match negative case sensitive string")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QStringList("ONE"));
+        QTest::newRow("QContactOrganization::match negative case sensitive stringlist")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        // Now case insensitive
+        df.setMatchFlags(0);
+        df.setValue("one"); // this is a string
+        QTest::newRow("QContactOrganization::match positive insensitive against string")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QStringList("one")); // this is a stringlist of the same length
+        QTest::newRow("QContactOrganization::match positive insensitive against stringlist")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QString("two"));
+        QTest::newRow("QContactOrganization::match negative insensitive string")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QStringList("two"));
+        QTest::newRow("QContactOrganization::match negative insensitive stringlist")
+                << contact
+                << QContactFilter(df)
+                << false;
+
+        df.setValue(QString("ONE"));
+        QTest::newRow("QContactOrganization::match positive case insensitive string 2")
+                << contact
+                << QContactFilter(df)
+                << true;
+
+        df.setValue(QStringList("ONE"));
+        QTest::newRow("QContactOrganization::match positive case insensitive stringlist 2")
+                << contact
+                << QContactFilter(df)
+                << true;
     }
 }
 

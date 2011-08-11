@@ -16,7 +16,7 @@
 */
 
 
-target          T_CntImageRescaler.exe
+target          t_cntimagerescaler.exe
 targettype      EXE
 CAPABILITY	    All -TCB
 MACRO			UNIT_TEST

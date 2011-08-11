@@ -2597,8 +2597,9 @@ in the database.
 */
 EXPORT_C void CContactDatabase::DeleteContactsL(const CContactIdArray& aContactIds)
 	{
-    const TInt KDeleteTransactionGranularity = 50;
-	TInt count = aContactIds.Count();
+  TInt error = KErrNone;
+  const TInt KDeleteTransactionGranularity = 50;
+  TInt count = aContactIds.Count();
 	if (count == 0)
 		{
 		return;
@@ -2608,6 +2609,7 @@ EXPORT_C void CContactDatabase::DeleteContactsL(const CContactIdArray& aContactI
 	CContactIdArray* sortedIdArray = CContactIdArray::NewLC(&aContactIds);
 	sortedIdArray->Sort();
 
+	TInt deleteError = KErrNone;
     if (count > 1)
 	    {	    
 	    for(TInt ii = 0; ii < count-1; ++ii)
@@ -2621,7 +2623,18 @@ EXPORT_C void CContactDatabase::DeleteContactsL(const CContactIdArray& aContactI
 			    DatabaseBeginLC(EFalse);			
 			    }
 		    // Delete the contact but do not trigger any event		
-		    DeleteContactSendEventActionL((*sortedIdArray)[ii], EDeferEvent);
+		    deleteError = DeleteContactSendEventAction((*sortedIdArray)[ii], EDeferEvent);
+		    
+		    // On error, check if possible to continue delete operation
+		    if (deleteError == KErrInUse || deleteError == KErrNotFound)
+		        {
+		        error = deleteError;
+		        continue;
+		        }
+		    else
+		        {
+		        User::LeaveIfError(deleteError);
+		        }
 		    }
 	    }
 	else	 
@@ -2630,38 +2643,32 @@ EXPORT_C void CContactDatabase::DeleteContactsL(const CContactIdArray& aContactI
 		}		
 		
 	// Delete the last item and trigger EContactDbObserverEventUnknownChanges 
-	DeleteContactSendEventActionL((*sortedIdArray)[count-1], ESendUnknownChangesEvent);	
-			
-	DatabaseCommitLP(EFalse);		
+    deleteError = DeleteContactSendEventAction((*sortedIdArray)[count-1], ESendUnknownChangesEvent);
+    if (deleteError == KErrInUse || deleteError == KErrNotFound)
+        {
+        error = deleteError;
+        }
+    else
+        {
+        User::LeaveIfError(deleteError);
+        }
+    
+	DatabaseCommitLP(EFalse);
 
-	CleanupStack::PopAndDestroy(sortedIdArray);	
+	CleanupStack::PopAndDestroy(sortedIdArray);
+	
+	// Propogate error to client
+	User::LeaveIfError(error);
 	}
 
 /**
-Deletes an array of contacts, version 2. If some contact item IDs contained in the array
-are not present in the db, this method doesn't leave and only existing contacts
-are deleted.  
+Not supporte anymore.
 
-@capability WriteUserData 
-@capability ReadUserData 
-
-@param aContactIds An array of contacts to delete.
-
-@leave KErrInUse One or more of the contact items is open. 
-@leave KErrDiskFull The disk does not have enough free space to perform the operation.
+@leave KErrInNotSupported Always. 
 */
-EXPORT_C void CContactDatabase::DeleteContactsV2L(const CContactIdArray& aContactIds)
+EXPORT_C void CContactDatabase::DeleteContactsV2L(const CContactIdArray& /*aContactIds*/)
     {
-    iCntSvr->DeleteContactsL(aContactIds);
-    if (iSortedItems != NULL || iCardTemplateIds != NULL || iGroupIds != NULL)
-        {
-        for (TInt i = 0; i < aContactIds.Count(); i++) 
-            {
-            RemoveFromSortArray(aContactIds[i]);
-            RemoveFromTemplateList(aContactIds[i]);
-            RemoveFromGroupIds(aContactIds[i]);
-            }
-        }
+    User::LeaveIfError(KErrNotSupported);
     }
 
 /**
@@ -3640,6 +3647,23 @@ EXPORT_C void CContactDatabase::DatabaseCommitL(TBool aIsInTransaction)
 		}
 	}
 	
+/**
+Asynchronous commit of an existing transaction, without popping a cleanup item.
+
+@publishedPartner
+@released
+@capability WriteUserData
+
+@param aIsInTransaction ETrue if transaction already started
+@param aStatus Valid status to that will contain the completion value
+*/
+EXPORT_C void CContactDatabase::DatabaseCommit(TBool aIsInTransaction, TRequestStatus*& aStatus)
+    {
+    if (!aIsInTransaction)
+        {
+        iCntSvr->CommitDbTransaction(aStatus);
+        }
+    }
 
 /**
 Force a rollback of the database.
@@ -5385,5 +5409,27 @@ void CContactDatabase::DeleteContactSendEventActionL(TContactItemId aContactId, 
 	//Now we check if the contact belonged to the Group Id list, if so 
 	//remove it from iGroupIds	
 	RemoveFromGroupIds(aContactId);
+	}
+
+/**
+Deletes a contact item. 
+See doDeleteContactL() for details
+@return KErrNone if the function completed successfully, otherwise one of the 
+standard error codes.
+*/
+TInt CContactDatabase::DeleteContactSendEventAction(TContactItemId aContactId, TCntSendEventAction aActionType)
+	{
+    TInt retValue=KErrNone;
+    retValue=iCntSvr->DeleteContact(aContactId, aActionType);
+	//Now we check if the contact belonged to the sort array, if so 
+	//remove it from iSortedItems
+	RemoveFromSortArray(aContactId);
+	//Now we check if the contact belonged to the template list, if so 
+	//remove it from iCardTemplateIds
+	RemoveFromTemplateList(aContactId);
+	//Now we check if the contact belonged to the Group Id list, if so 
+	//remove it from iGroupIds	
+	RemoveFromGroupIds(aContactId);
+	return retValue;
 	}
 

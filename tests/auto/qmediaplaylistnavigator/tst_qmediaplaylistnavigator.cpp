@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -62,10 +62,20 @@ private slots:
     void currentItemOnce();
     void currentItemInLoop();
     void randomPlayback();
+
+    void testItemAt();
+    void testNextIndex();
+    void testPreviousIndex();
+    void testCurrentIndexChangedSignal();
+    void testPlaybackModeChangedSignal();
+    void testSurroundingItemsChangedSignal();
+    void testActivatedSignal();
 };
 
 void tst_QMediaPlaylistNavigator::init()
 {
+    qRegisterMetaType<QMediaPlaylist::PlaybackMode>("QMediaPlaylist::PlaybackMode");
+    qRegisterMetaType<QMediaContent>("QMediaContent");
 }
 
 void tst_QMediaPlaylistNavigator::cleanup()
@@ -312,6 +322,203 @@ void tst_QMediaPlaylistNavigator::randomPlayback()
     navigator.next();
     QCOMPARE(navigator.currentIndex(), pos4);
 
+}
+
+void tst_QMediaPlaylistNavigator::testItemAt()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //Adding the media to the playlist
+    QMediaContent content = QMediaContent(QUrl(QLatin1String("file:///1")));
+    playlist.addMedia(content);
+
+    //Currently it is not pointing to any index , Returns Null mediacontent
+    QCOMPARE(navigator.currentIndex(), -1);
+    QCOMPARE(navigator.itemAt(navigator.currentIndex()),QMediaContent());
+    navigator.next();
+
+    //Points to the added media
+    int pos1 = navigator.currentIndex();
+    QCOMPARE(content,navigator.itemAt(pos1));
+}
+
+void tst_QMediaPlaylistNavigator::testNextIndex()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //Adding the media to the playlist
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///2"))));
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///3"))));
+
+    playlist.shuffle();
+
+    //Currently it is not pointing to any index
+    QCOMPARE(navigator.currentIndex(), -1);
+    navigator.next();
+    int pos1 = navigator.currentIndex();
+    //Pointing to the next index
+    navigator.next();
+    int pos2 = navigator.currentIndex();
+    navigator.next();
+    int pos3 = navigator.currentIndex();
+
+    //Pointing to the previous index
+    navigator.previous();
+    QCOMPARE(navigator.nextIndex(1), pos3);
+    navigator.previous();
+    QCOMPARE(navigator.nextIndex(1), pos2);
+    QCOMPARE(navigator.nextIndex(2), pos3);
+    navigator.previous();
+    QCOMPARE(navigator.nextIndex(1), pos1);
+}
+
+void tst_QMediaPlaylistNavigator::testPreviousIndex()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //Adding the media to the playlist
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///2"))));
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///3"))));
+    playlist.shuffle();
+
+    //Currently it is not pointing to any index
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //pointing to next index
+    navigator.next();
+    int pos1 = navigator.currentIndex();
+    navigator.next();
+    int pos2 = navigator.currentIndex();
+    navigator.next();
+    int pos3 = navigator.currentIndex();
+    QCOMPARE(navigator.previousIndex(1), pos2);
+    QCOMPARE(navigator.previousIndex(2), pos1);
+    navigator.next();
+    QCOMPARE(navigator.previousIndex(1), pos3);
+}
+
+void tst_QMediaPlaylistNavigator::testCurrentIndexChangedSignal()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //Creating a QSignalSpy object for currentIndexChanged() signal
+    QSignalSpy spy(&navigator,SIGNAL(currentIndexChanged(int)));
+    QVERIFY(spy.count() == 0);
+
+    //Adding the media to the playlist
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///2"))));
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///3"))));
+
+    //Currently it is not pointing to any index
+    QCOMPARE(navigator.currentIndex(), -1);
+    navigator.next();
+    QVERIFY(spy.count() == 1);
+    int pos1 = navigator.currentIndex();
+    //Pointing to the next index
+    navigator.next();
+    QVERIFY(navigator.previousIndex(1) == pos1);
+    QVERIFY(spy.count() == 2);
+}
+
+void tst_QMediaPlaylistNavigator::testPlaybackModeChangedSignal()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //Creating a QSignalSpy object for currentIndexChanged() signal
+    QSignalSpy spy(&navigator,SIGNAL(playbackModeChanged(QMediaPlaylist::PlaybackMode)));
+    QVERIFY(spy.count() == 0);
+
+    //Adding the media to the playlist
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///1"))));
+
+    //set the play back mode to sequential
+    navigator.setPlaybackMode(QMediaPlaylist::Sequential);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Sequential);
+    QVERIFY(spy.count() == 1);
+
+    //set the play back mode to loop
+    navigator.setPlaybackMode(QMediaPlaylist::Loop);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Loop);
+    QVERIFY(spy.count() == 2);
+}
+
+void tst_QMediaPlaylistNavigator::testSurroundingItemsChangedSignal()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //Creating a QSignalSpy object for surroundingItemsChanged()signal
+    QSignalSpy spy(&navigator,SIGNAL(surroundingItemsChanged()));
+    QVERIFY(spy.count() == 0);
+
+    //Adding the media to the playlist
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    QVERIFY(spy.count() == 1);
+
+    //set the play back mode to sequential
+    navigator.setPlaybackMode(QMediaPlaylist::Sequential);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Sequential);
+    QVERIFY(spy.count() == 2);
+
+    //Point to the next index
+    navigator.next();
+    QVERIFY(spy.count() == 3);
+}
+
+void tst_QMediaPlaylistNavigator::testActivatedSignal()
+{
+    QLocalMediaPlaylistProvider playlist;
+    QMediaPlaylistNavigator navigator(&playlist);
+    navigator.setPlaybackMode(QMediaPlaylist::Random);
+    QCOMPARE(navigator.playbackMode(), QMediaPlaylist::Random);
+    QCOMPARE(navigator.currentIndex(), -1);
+
+    //Creating a QSignalSpy object for surroundingItemsChanged()signal
+    QSignalSpy spy(&navigator,SIGNAL(activated(QMediaContent)));
+    QVERIFY(spy.count() == 0);
+
+    //Adding the media to the playlist
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///1"))));
+    playlist.addMedia(QMediaContent(QUrl(QLatin1String("file:///2"))));
+    playlist.shuffle();
+
+    //Point to the next index
+    navigator.next();
+    QVERIFY(spy.count() == 1);
+
+    //Jump to 0th item
+    navigator.jump(0);
+    QVERIFY(spy.count() == 2);
+
+    //move to previous item
+    navigator.previous();
+    QVERIFY(spy.count() == 3);
 }
 
 QTEST_MAIN(tst_QMediaPlaylistNavigator)

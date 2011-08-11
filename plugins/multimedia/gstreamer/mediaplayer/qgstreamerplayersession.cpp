@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -47,6 +47,7 @@
 #include "qgstutils.h"
 
 #include <gst/gstvalue.h>
+#include <gst/base/gstbasesrc.h>
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
@@ -103,7 +104,8 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_duration(-1),
      m_durationQueries(0),
      m_everPlayed(false) ,
-     m_sourceType(UnknownSrc)
+     m_sourceType(UnknownSrc),
+     m_isLiveSource(false)
 {
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
@@ -203,6 +205,9 @@ void QGstreamerPlayerSession::configureAppSrcElement(GObject* object, GObject *o
 void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIODevice *appSrcStream)
 {
 #if defined(HAVE_GST_APPSRC)
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
     m_request = request;
     m_duration = -1;
     m_lastPosition = 0;
@@ -232,6 +237,9 @@ void QGstreamerPlayerSession::loadFromStream(const QNetworkRequest &request, QIO
 
 void QGstreamerPlayerSession::loadFromUri(const QNetworkRequest &request)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO << request.url();
+#endif
     m_request = request;
     m_duration = -1;
     m_lastPosition = 0;
@@ -275,6 +283,9 @@ qreal QGstreamerPlayerSession::playbackRate() const
 
 void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO << rate;
+#endif
     if (!qFuzzyCompare(m_playbackRate, rate)) {
         m_playbackRate = rate;
         if (m_playbin) {
@@ -349,6 +360,9 @@ int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType strea
 
 void QGstreamerPlayerSession::setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO << streamType << streamNumber;
+#endif
 
     if (m_usePlaybin2 && streamNumber >= 0)
         streamNumber -= m_playbin2StreamOffset.value(streamType,0);
@@ -421,6 +435,9 @@ void QGstreamerPlayerSession::updateVideoRenderer()
 
 void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
     if (m_videoOutput != videoOutput) {
         if (m_videoOutput) {
             disconnect(m_videoOutput, SIGNAL(sinkChanged()),
@@ -664,6 +681,9 @@ void QGstreamerPlayerSession::finishVideoOutputChange()
 
 void QGstreamerPlayerSession::insertColorSpaceElement(GstElement *element, gpointer data)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
     Q_UNUSED(element);
     QGstreamerPlayerSession* session = reinterpret_cast<QGstreamerPlayerSession*>(data);
 
@@ -716,6 +736,9 @@ bool QGstreamerPlayerSession::isSeekable() const
 
 bool QGstreamerPlayerSession::play()
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
     m_everPlayed = false;
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PlayingState;
@@ -733,6 +756,9 @@ bool QGstreamerPlayerSession::play()
 
 bool QGstreamerPlayerSession::pause()
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
     if (m_playbin) {
         m_pendingState = QMediaPlayer::PausedState;
         if (m_pendingVideoSink != 0)
@@ -753,6 +779,9 @@ bool QGstreamerPlayerSession::pause()
 
 void QGstreamerPlayerSession::stop()
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
     m_everPlayed = false;
     if (m_playbin) {
         if (m_renderer)
@@ -775,6 +804,9 @@ void QGstreamerPlayerSession::stop()
 
 bool QGstreamerPlayerSession::seek(qint64 ms)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO << ms;
+#endif
     //seek locks when the video output sink is changing and pad is blocked
     if (m_playbin && !m_pendingVideoSink && m_state != QMediaPlayer::StoppedState) {
         ms = qMax(ms,qint64(0));
@@ -798,6 +830,10 @@ bool QGstreamerPlayerSession::seek(qint64 ms)
 
 void QGstreamerPlayerSession::setVolume(int volume)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO << volume;
+#endif
+
     if (m_volume != volume) {
         m_volume = volume;
 
@@ -814,6 +850,9 @@ void QGstreamerPlayerSession::setVolume(int volume)
 
 void QGstreamerPlayerSession::setMuted(bool muted)
 {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO << muted;
+#endif
     if (m_muted != muted) {
         m_muted = muted;
 
@@ -829,6 +868,9 @@ void QGstreamerPlayerSession::setMuted(bool muted)
 
 void QGstreamerPlayerSession::setSeekable(bool seekable)
 {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO << seekable;
+#endif
     if (seekable != m_seekable) {
         m_seekable = seekable;
         emit seekableChanged(m_seekable);
@@ -876,6 +918,10 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 #ifdef DEBUG_PLAYBIN
         if (m_sourceType == MMSSrc && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
             qDebug() << "Message from MMSSrc: " << GST_MESSAGE_TYPE(gm);
+        } else if (m_sourceType == RTSPSrc && qstrcmp(GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)), "source") == 0) {
+            qDebug() << "Message from RTSPSrc: " << GST_MESSAGE_TYPE(gm);
+        } else {
+            qDebug() << "Message from " << GST_OBJECT_NAME(GST_MESSAGE_SRC(gm)) << ":" << GST_MESSAGE_TYPE(gm);
         }
 #endif
 
@@ -1292,6 +1338,9 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
 void QGstreamerPlayerSession::updateVideoResolutionTag()
 {
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO;
+#endif
     QSize size;
     QSize aspectRatio;
 
@@ -1357,6 +1406,9 @@ void QGstreamerPlayerSession::updateDuration()
         QTimer::singleShot(delay, this, SLOT(updateDuration()));
         m_durationQueries--;
     }
+#ifdef DEBUG_PLAYBIN
+        qDebug() << Q_FUNC_INFO << m_duration;
+#endif
 }
 
 void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
@@ -1417,23 +1469,49 @@ void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpo
         gst_structure_free(extras);
     }
 
-    //set timeout property to 5 seconds
+    //set timeout property to 30 seconds
+    const int timeout = 30;
     if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstUDPSrc") == 0) {
         //udpsrc timeout unit = microsecond
-        g_object_set(G_OBJECT(source), "timeout", G_GUINT64_CONSTANT(5000000), NULL);
+        //The udpsrc is always a live source.
+        g_object_set(G_OBJECT(source), "timeout", G_GUINT64_CONSTANT(timeout*1000000), NULL);
         self->m_sourceType = UDPSrc;
+        self->m_isLiveSource = true;
     } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstSoupHTTPSrc") == 0) {
         //souphttpsrc timeout unit = second
-        g_object_set(G_OBJECT(source), "timeout", guint(5), NULL);
+        g_object_set(G_OBJECT(source), "timeout", guint(timeout), NULL);
         self->m_sourceType = SoupHTTPSrc;
+        //since gst_base_src_is_live is not reliable, so we check the source property directly
+        gboolean isLive = false;
+        g_object_get(G_OBJECT(source), "is-live", &isLive, NULL);
+        self->m_isLiveSource = isLive;
     } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstMMSSrc") == 0) {
         self->m_sourceType = MMSSrc;
-        g_object_set(G_OBJECT(source), "tcp-timeout", G_GUINT64_CONSTANT(5000000), NULL);
+        self->m_isLiveSource = gst_base_src_is_live(GST_BASE_SRC(source));
+        g_object_set(G_OBJECT(source), "tcp-timeout", G_GUINT64_CONSTANT(timeout*1000000), NULL);
+    } else if (qstrcmp(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(source)), "GstRTSPSrc") == 0) {
+        //rtspsrc acts like a live source and will therefore only generate data in the PLAYING state.
+        self->m_sourceType = RTSPSrc;
+        self->m_isLiveSource = true;
     } else {
         self->m_sourceType = UnknownSrc;
+        self->m_isLiveSource = gst_base_src_is_live(GST_BASE_SRC(source));
     }
 
+#ifdef DEBUG_PLAYBIN
+    if (self->m_isLiveSource)
+        qDebug() << "Current source is a live source";
+    else
+        qDebug() << "Current source is a non-live source";
+#endif
+
+
     gst_object_unref(source);
+}
+
+bool QGstreamerPlayerSession::isLiveSource() const
+{
+    return m_isLiveSource;
 }
 
 void QGstreamerPlayerSession::handleVolumeChange(GObject *o, GParamSpec *p, gpointer d)
@@ -1531,6 +1609,9 @@ void QGstreamerPlayerSession::handleElementAdded(GstBin *bin, GstElement *elemen
 //doing proper operations when detecting an invalidMedia: change media status before signal the erorr
 void QGstreamerPlayerSession::processInvalidMedia(QMediaPlayer::Error errorCode, const QString& errorString)
 {
+#ifdef DEBUG_PLAYBIN
+    qDebug() << Q_FUNC_INFO;
+#endif
     emit invalidMedia();
     stop();
     emit error(int(errorCode), errorString);

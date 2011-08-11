@@ -13,7 +13,7 @@ INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/feedback
 symbian: {
     importFiles.sources = data
     importFiles.path = .
-    DEPLOYMENT = importFiles
+    DEPLOYMENT += importFiles
 } else {
     DEFINES += SRCDIR=\\\"$$PWD\\\"
 }
@@ -25,3 +25,5 @@ OTHER_FILES += \
     data/themeeffect.qml \
     data/themeeffect2.qml \
     data/themeeffect3.qml
+
+maemo*:CONFIG += insignificant_test

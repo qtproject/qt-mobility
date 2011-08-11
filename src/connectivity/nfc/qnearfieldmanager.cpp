@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -121,19 +121,13 @@ QTM_BEGIN_NAMESPACE
 
         The -datatype and -match options are mutually exclusive.
 
-        Available templates: maemo6, symbian
+        Available templates: symbian
     \endcode
 
     A typical invocation of the \c ndefhandlergen tool for Symbian^3 target:
 
     \code
         ndefhandlergen -template symbian -appname myapplication -datatype urn:nfc:ext:com.example:f
-    \endcode
-
-    and for Maemo6 target:
-
-    \code
-        ndefhandlergen -template maemo6 -appname myapplication -apppath /usr/bin/myapplication -datatype urn:nfc:ext:com.example:f
     \endcode
 
     Once the application has been registered as an NDEF message handler, the application only needs
@@ -183,75 +177,6 @@ QTM_BEGIN_NAMESPACE
         }
     \endcode
 
-    \section3 Maemo6
-
-    On Maemo6 the NDEF message handler notifications are passed over D-Bus. Registration of the
-    NDEF message match criteria is done via a D-Bus call. The application must also ensure that it
-    has registered a D-Bus service name so that the application can be automatically launched when
-    a notification message is sent to the registered service.
-
-    To register the D-Bus service the two files need to be created and installed into particular
-    directories on the device. The first file is the D-Bus bus configuration file:
-
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.conf
-
-    The \i {%APPNAME%} tag must be replaced with the name of your application binary.
-
-    The second file is a D-Bus service file which is used by the D-Bus daemon to launch your
-    application.
-
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.service
-
-    The \i {%APPNAME%} tag must be replace with the name of your application binary and the
-    \i {%APPPATH%} tag must be replaced with the path to your installed application binary.
-
-    It is recommended to name these files after the application package name. For example
-    myapplication.conf and myapplication.service. To install the above files into the correct
-    location the following should be added to the application .pro file:
-
-    \code
-        maemo6 {
-            ndefhandler_conf.sources = myapplication.conf
-            ndefhandler_conf.path = /etc/dbus-1/system.d/
-
-            ndefhandler_service.sources = myapplication.service
-            ndefhandler_service.path = /usr/share/dbus-1/system-services/
-
-            DEPLOYMENT += ndefhandler_conf ndefhandler_service
-        }
-    \endcode
-
-    The NDEF message handler is registered with the following D-Bus command. Applications should
-    ensure that the following command (or similar) is executed once at installation time. For
-    example in the packages post-installation script.
-
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.postinst
-
-    The \i {%APPNAME%} string must be replaced with the name of the application binary. The
-    \i {%DATATYPE%} string must be replaced with the NDEF record type to match. For example the
-    following would be used to match NDEF messages that contain a RTD-URI record:
-
-    \code
-        string:"urn:nfc:wkt:U[1:*];"
-    \endcode
-
-    The following would be used to match NDEF messages that contain a custom type
-    urn:nfc:ext:example.com:f:
-
-    \code
-        string:"urn:nfc:ext:example.com:f[1:*];"
-    \endcode
-
-    Note that \c {[1:*]} indicates one or more records of the specified type must be in the NDEF
-    message. The value of the datatype string argument can be set to any valid match string
-    supported by the Maemo6 platform.
-
-    The NDEF message handler should be unregistered at uninstallation time. For example in the
-    packages pre-removal script.
-
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.prerm
-
-    The \i {%APPNAME%} string must be replace with the name of the application binary.
 */
 
 /*!
@@ -308,20 +233,6 @@ QTM_BEGIN_NAMESPACE
     The \a applicationIdentifier is a byte array of up to 16 bytes as defined by ISO 7816-4 and
     uniquely identifies the application and application vendor that was involved in the
     transaction.
-*/
-
-/*!
-    \fn int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
-
-    Registers \a object to receive notifications on \a method when a tag has been detected and has
-    an NDEF record that matches template argument.  The \a method on \a object should have the
-    prototype 'void targetDetected(const QNdefMessage &message, QNearFieldTarget *target)'.
-
-    Returns an identifier, which can be used to unregister the handler, on success; otherwise
-    returns -1.
-
-    \note The \i target parameter of \a method may not be available on all platforms, in which case
-    \i target will be 0.
 */
 
 /*!
@@ -477,6 +388,8 @@ int QNearFieldManager::registerNdefMessageHandler(QNdefRecord::TypeNameFormat ty
 }
 
 /*!
+    \fn int QNearFieldManager::registerNdefMessageHandler(QObject *object, const char *method)
+
     Registers \a object to receive notifications on \a method when a tag has been detected and has
     an NDEF message that matches a pre-registered message format. The \a method on \a object should
     have the prototype

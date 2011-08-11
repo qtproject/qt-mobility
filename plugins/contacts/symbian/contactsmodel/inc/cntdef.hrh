@@ -50,9 +50,8 @@
 // UID's 0x1000401D-0x10004033	UID values
 // UID's 0x10004034-6			Birthday/URL/inline
 // UID's 0x10274DA4-B7          Assistant/Assistant Tel/Anniversary/Spouse/Children/Class
-//			                    Currently uids 0x10274DA4-B2 are being used and 
-//			                    uids 0x10274DB3-B7 are free and can be used in future
-// UID's 0x10274DB5-B7          Online Account Informaiton
+//			                    Currently uids 0x10274DA4-B5 are being used and 
+//			                    uids 0x10274DB6-B7 are free and can be used in future
 
 
 #define KUidContactFieldAddressValue        0x1000130C
@@ -105,9 +104,6 @@
 #define KUidContactFieldClassValue		0x10274DA8
 #define KUidContactFieldDepartmentNameValue	0x10274DA9
 #define KUidContactFieldGEOValue            0x10274DB2
-#define KUidContactFieldServiceProviderValue    0x10274DB5    
-#define KUidContactFieldPresenceValue           0x10274DB6
-#define KUidContactFieldStatusMsgValue          0x10274DB7
 
 
 #define KIntContactFieldVCardMapWORK    0x100039DA

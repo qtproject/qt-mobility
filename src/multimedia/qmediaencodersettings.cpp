@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -82,7 +82,7 @@ private:
 
 /*!
     \class QAudioEncoderSettings
-    
+
     \brief The QAudioEncoderSettings class provides a set of audio encoder settings.
 
     \inmodule QtMultimediaKit
@@ -110,6 +110,7 @@ QAudioEncoderSettings::QAudioEncoderSettings()
 
 /*!
     Constructs a copy of the audio encoder settings object \a other.
+    \since 1.0
 */
 
 QAudioEncoderSettings::QAudioEncoderSettings(const QAudioEncoderSettings& other)
@@ -127,6 +128,7 @@ QAudioEncoderSettings::~QAudioEncoderSettings()
 
 /*!
     Assigns the value of \a other to an audio encoder settings object.
+    \since 1.0
 */
 
 QAudioEncoderSettings& QAudioEncoderSettings::operator=(const QAudioEncoderSettings &other)
@@ -141,6 +143,7 @@ QAudioEncoderSettings& QAudioEncoderSettings::operator=(const QAudioEncoderSetti
 
     Returns true if the settings objects are of equal value, and false if they
     are not of equal value.
+    \since 1.0
 */
 
 bool QAudioEncoderSettings::operator==(const QAudioEncoderSettings &other) const
@@ -161,6 +164,7 @@ bool QAudioEncoderSettings::operator==(const QAudioEncoderSettings &other) const
 
     Returns true if the settings objects are not of equal value, and true if
     they are of equal value.
+    \since 1.0
 */
 
 bool QAudioEncoderSettings::operator!=(const QAudioEncoderSettings &other) const
@@ -172,6 +176,7 @@ bool QAudioEncoderSettings::operator!=(const QAudioEncoderSettings &other) const
     Identifies if an audio settings object is initialized.
 
     Returns true if the settings object is null, and false if it is not.
+    \since 1.0
 */
 
 bool QAudioEncoderSettings::isNull() const
@@ -182,6 +187,7 @@ bool QAudioEncoderSettings::isNull() const
 /*!
     Returns the audio encoding mode.
 
+    \since 1.0
     \sa QtMultimediaKit::EncodingMode
 */
 QtMultimediaKit::EncodingMode QAudioEncoderSettings::encodingMode() const
@@ -199,6 +205,7 @@ QtMultimediaKit::EncodingMode QAudioEncoderSettings::encodingMode() const
     The audio codec, channels count and sample rate settings are used in all
     the encoding modes.
 
+    \since 1.0
     \sa encodingMode(), QtMultimediaKit::EncodingMode
 */
 void QAudioEncoderSettings::setEncodingMode(QtMultimediaKit::EncodingMode mode)
@@ -208,6 +215,7 @@ void QAudioEncoderSettings::setEncodingMode(QtMultimediaKit::EncodingMode mode)
 
 /*!
     Returns the audio codec.
+    \since 1.0
 */
 QString QAudioEncoderSettings::codec() const
 {
@@ -216,6 +224,7 @@ QString QAudioEncoderSettings::codec() const
 
 /*!
     Sets the audio \a codec.
+    \since 1.0
 */
 void QAudioEncoderSettings::setCodec(const QString& codec)
 {
@@ -225,6 +234,7 @@ void QAudioEncoderSettings::setCodec(const QString& codec)
 
 /*!
     Returns the bit rate of the compressed audio stream in bits per second.
+    \since 1.0
 */
 int QAudioEncoderSettings::bitRate() const
 {
@@ -233,6 +243,7 @@ int QAudioEncoderSettings::bitRate() const
 
 /*!
     Returns the number of audio channels.
+    \since 1.0
 */
 int QAudioEncoderSettings::channelCount() const
 {
@@ -244,6 +255,7 @@ int QAudioEncoderSettings::channelCount() const
 
     A value of -1 indicates the encoder should make an optimal choice based on
     what is available from the audio source and the limitations of the codec.
+    \since 1.0
 */
 void QAudioEncoderSettings::setChannelCount(int channels)
 {
@@ -253,6 +265,7 @@ void QAudioEncoderSettings::setChannelCount(int channels)
 
 /*!
     Sets the audio bit \a rate in bits per second.
+    \since 1.0
 */
 void QAudioEncoderSettings::setBitRate(int rate)
 {
@@ -262,6 +275,7 @@ void QAudioEncoderSettings::setBitRate(int rate)
 
 /*!
     Returns the audio sample rate in Hz.
+    \since 1.0
 */
 int QAudioEncoderSettings::sampleRate() const
 {
@@ -273,6 +287,7 @@ int QAudioEncoderSettings::sampleRate() const
 
     A value of -1 indicates the encoder should make an optimal choice based on what is avaialbe
     from the audio source and the limitations of the codec.
+    \since 1.0
   */
 void QAudioEncoderSettings::setSampleRate(int rate)
 {
@@ -282,6 +297,7 @@ void QAudioEncoderSettings::setSampleRate(int rate)
 
 /*!
     Returns the audio encoding quality.
+    \since 1.0
 */
 
 QtMultimediaKit::EncodingQuality QAudioEncoderSettings::quality() const
@@ -297,6 +313,7 @@ QtMultimediaKit::EncodingQuality QAudioEncoderSettings::quality() const
 
     The \a quality settings parameter is only used in the
     \l {QtMultimediaKit::ConstantQualityEncoding}{constant quality} \l{encodingMode()}{encoding mode}.
+    \since 1.0
 */
 void QAudioEncoderSettings::setQuality(QtMultimediaKit::EncodingQuality quality)
 {
@@ -342,8 +359,9 @@ private:
 
 /*!
     \class QVideoEncoderSettings
-    
+
     \brief The QVideoEncoderSettings class provides a set of video encoder settings.
+    \since 1.0
 
     A video encoder settings object is used to specify the video encoder
     settings used by QMediaRecorder.  Video encoder settings are selected by
@@ -367,6 +385,7 @@ QVideoEncoderSettings::QVideoEncoderSettings()
 
 /*!
     Constructs a copy of the video encoder settings object \a other.
+    \since 1.0
 */
 
 QVideoEncoderSettings::QVideoEncoderSettings(const QVideoEncoderSettings& other)
@@ -384,6 +403,7 @@ QVideoEncoderSettings::~QVideoEncoderSettings()
 
 /*!
     Assigns the value of \a other to a video encoder settings object.
+    \since 1.0
 */
 QVideoEncoderSettings &QVideoEncoderSettings::operator=(const QVideoEncoderSettings &other)
 {
@@ -396,6 +416,7 @@ QVideoEncoderSettings &QVideoEncoderSettings::operator=(const QVideoEncoderSetti
 
     Returns true if the settings objects are of equal value, and false if they
     are not of equal value.
+    \since 1.0
 */
 bool QVideoEncoderSettings::operator==(const QVideoEncoderSettings &other) const
 {
@@ -414,6 +435,7 @@ bool QVideoEncoderSettings::operator==(const QVideoEncoderSettings &other) const
 
     Returns true if the settings objects are not of equal value, and false if
     they are of equal value.
+    \since 1.0
 */
 bool QVideoEncoderSettings::operator!=(const QVideoEncoderSettings &other) const
 {
@@ -424,6 +446,7 @@ bool QVideoEncoderSettings::operator!=(const QVideoEncoderSettings &other) const
     Identifies if a video encoder settings object is uninitalized.
 
     Returns true if the settings are null, and false if they are not.
+    \since 1.0
 */
 bool QVideoEncoderSettings::isNull() const
 {
@@ -433,6 +456,7 @@ bool QVideoEncoderSettings::isNull() const
 /*!
     Returns the video encoding mode.
 
+    \since 1.0
     \sa QtMultimediaKit::EncodingMode
 */
 QtMultimediaKit::EncodingMode QVideoEncoderSettings::encodingMode() const
@@ -449,6 +473,7 @@ QtMultimediaKit::EncodingMode QVideoEncoderSettings::encodingMode() const
 
     The rest of encoding settings are respected regardless of encoding mode.
 
+    \since 1.0
     \sa QtMultimediaKit::EncodingMode
 */
 void QVideoEncoderSettings::setEncodingMode(QtMultimediaKit::EncodingMode mode)
@@ -459,6 +484,7 @@ void QVideoEncoderSettings::setEncodingMode(QtMultimediaKit::EncodingMode mode)
 
 /*!
     Returns the video codec.
+    \since 1.0
 */
 
 QString QVideoEncoderSettings::codec() const
@@ -468,6 +494,7 @@ QString QVideoEncoderSettings::codec() const
 
 /*!
     Sets the video \a codec.
+    \since 1.0
 */
 void QVideoEncoderSettings::setCodec(const QString& codec)
 {
@@ -477,6 +504,7 @@ void QVideoEncoderSettings::setCodec(const QString& codec)
 
 /*!
     Returns bit rate of the encoded video stream in bits per second.
+    \since 1.0
 */
 int QVideoEncoderSettings::bitRate() const
 {
@@ -485,6 +513,7 @@ int QVideoEncoderSettings::bitRate() const
 
 /*!
     Sets the bit rate of the encoded video stream to \a value.
+    \since 1.0
 */
 
 void QVideoEncoderSettings::setBitRate(int value)
@@ -495,6 +524,7 @@ void QVideoEncoderSettings::setBitRate(int value)
 
 /*!
     Returns the video frame rate.
+    \since 1.0
 */
 qreal QVideoEncoderSettings::frameRate() const
 {
@@ -508,6 +538,7 @@ qreal QVideoEncoderSettings::frameRate() const
 
     A value of 0 indicates the encoder should make an optimal choice based on what is available
     from the video source and the limitations of the codec.
+    \since 1.0
 */
 
 void QVideoEncoderSettings::setFrameRate(qreal rate)
@@ -518,6 +549,7 @@ void QVideoEncoderSettings::setFrameRate(qreal rate)
 
 /*!
     Returns the resolution of the encoded video.
+    \since 1.0
 */
 
 QSize QVideoEncoderSettings::resolution() const
@@ -530,6 +562,7 @@ QSize QVideoEncoderSettings::resolution() const
 
     An empty QSize indicates the encoder should make an optimal choice based on
     what is available from the video source and the limitations of the codec.
+    \since 1.0
 */
 
 void QVideoEncoderSettings::setResolution(const QSize &resolution)
@@ -542,6 +575,7 @@ void QVideoEncoderSettings::setResolution(const QSize &resolution)
     Sets the \a width and \a height of the resolution of the encoded video.
 
     \overload
+    \since 1.0
 */
 
 void QVideoEncoderSettings::setResolution(int width, int height)
@@ -552,6 +586,7 @@ void QVideoEncoderSettings::setResolution(int width, int height)
 
 /*!
     Returns the video encoding quality.
+    \since 1.0
 */
 
 QtMultimediaKit::EncodingQuality QVideoEncoderSettings::quality() const
@@ -570,6 +605,7 @@ QtMultimediaKit::EncodingQuality QVideoEncoderSettings::quality() const
     The \a quality settings parameter is only used in the \l
     {QtMultimediaKit::ConstantQualityEncoding}{constant quality}
     \l{encodingMode()}{encoding mode}.
+    \since 1.0
 */
 
 void QVideoEncoderSettings::setQuality(QtMultimediaKit::EncodingQuality quality)
@@ -609,10 +645,11 @@ private:
 
 /*!
     \class QImageEncoderSettings
-    
+
 
     \brief The QImageEncoderSettings class provides a set of image encoder
     settings.
+    \since 1.0
 
     A image encoder settings object is used to specify the image encoder
     settings used by QCameraImageCapture.  Image encoder settings are selected
@@ -636,6 +673,7 @@ QImageEncoderSettings::QImageEncoderSettings()
 
 /*!
     Constructs a copy of the image encoder settings object \a other.
+    \since 1.0
 */
 
 QImageEncoderSettings::QImageEncoderSettings(const QImageEncoderSettings& other)
@@ -653,6 +691,7 @@ QImageEncoderSettings::~QImageEncoderSettings()
 
 /*!
     Assigns the value of \a other to a image encoder settings object.
+    \since 1.0
 */
 QImageEncoderSettings &QImageEncoderSettings::operator=(const QImageEncoderSettings &other)
 {
@@ -666,6 +705,7 @@ QImageEncoderSettings &QImageEncoderSettings::operator=(const QImageEncoderSetti
 
     Returns true if the settings objects are of equal value, and false if they
     are not of equal value.
+    \since 1.0
 */
 bool QImageEncoderSettings::operator==(const QImageEncoderSettings &other) const
 {
@@ -683,6 +723,7 @@ bool QImageEncoderSettings::operator==(const QImageEncoderSettings &other) const
 
     Returns true if the settings objects are not of equal value, and false if
     they are of equal value.
+    \since 1.0
 */
 bool QImageEncoderSettings::operator!=(const QImageEncoderSettings &other) const
 {
@@ -693,6 +734,7 @@ bool QImageEncoderSettings::operator!=(const QImageEncoderSettings &other) const
     Identifies if a image encoder settings object is uninitalized.
 
     Returns true if the settings are null, and false if they are not.
+    \since 1.0
 */
 bool QImageEncoderSettings::isNull() const
 {
@@ -701,6 +743,7 @@ bool QImageEncoderSettings::isNull() const
 
 /*!
     Returns the image codec.
+    \since 1.0
 */
 
 QString QImageEncoderSettings::codec() const
@@ -710,6 +753,7 @@ QString QImageEncoderSettings::codec() const
 
 /*!
     Sets the image \a codec.
+    \since 1.0
 */
 void QImageEncoderSettings::setCodec(const QString& codec)
 {
@@ -719,6 +763,7 @@ void QImageEncoderSettings::setCodec(const QString& codec)
 
 /*!
     Returns the resolution of the encoded image.
+    \since 1.0
 */
 
 QSize QImageEncoderSettings::resolution() const
@@ -731,6 +776,7 @@ QSize QImageEncoderSettings::resolution() const
 
     An empty QSize indicates the encoder should make an optimal choice based on
     what is available from the image source and the limitations of the codec.
+    \since 1.0
 */
 
 void QImageEncoderSettings::setResolution(const QSize &resolution)
@@ -743,6 +789,7 @@ void QImageEncoderSettings::setResolution(const QSize &resolution)
     Sets the \a width and \a height of the resolution of the encoded image.
 
     \overload
+    \since 1.0
 */
 
 void QImageEncoderSettings::setResolution(int width, int height)
@@ -753,6 +800,7 @@ void QImageEncoderSettings::setResolution(int width, int height)
 
 /*!
     Returns the image encoding quality.
+    \since 1.0
 */
 
 QtMultimediaKit::EncodingQuality QImageEncoderSettings::quality() const
@@ -762,6 +810,7 @@ QtMultimediaKit::EncodingQuality QImageEncoderSettings::quality() const
 
 /*!
     Sets the image encoding \a quality.
+    \since 1.0
 */
 
 void QImageEncoderSettings::setQuality(QtMultimediaKit::EncodingQuality quality)

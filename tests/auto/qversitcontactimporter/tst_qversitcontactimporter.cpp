@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -166,7 +166,8 @@ void tst_QVersitContactImporter::init()
 void tst_QVersitContactImporter::cleanup()
 {
     QVERIFY(mImporter->propertyHandler() == mPropertyHandler);
-    mImporter->setPropertyHandler(static_cast<QVersitContactImporterPropertyHandlerV2*>(0));
+    MyQVersitContactImporterPropertyHandler* nullPtr = NULL;
+    mImporter->setPropertyHandler(nullPtr);
     delete mPropertyHandler;
     QVERIFY(mImporter->resourceHandler() == mResourceHandler);
     mImporter->setResourceHandler(0);
@@ -598,8 +599,8 @@ void tst_QVersitContactImporter::testTimeStamp()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     timeStamp = contact.detail<QContactTimestamp>();
-    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate),dateAndTimeValue);
-    QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
+    QCOMPARE(timeStamp.lastModified().toString(Qt::ISODate), dateAndTimeWithUtcValue);
+    QCOMPARE(timeStamp.lastModified().timeSpec(), Qt::UTC);
 
     // Date and Time : ISO 8601 in basic format without utc offset
     dateAndTimeValue = QLatin1String("19810520T235555");
@@ -948,8 +949,8 @@ void tst_QVersitContactImporter::testGeo()
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty nameProperty;
     QStringList val;
-    val.append(QLatin1String("18.53"));// Longtitude
     val.append(QLatin1String("45.32")); // Latitude
+    val.append(QLatin1String("18.53"));// Longtitude
     nameProperty.setName(QLatin1String("GEO"));
     nameProperty.setValue(val);
     nameProperty.setValueType(QVersitProperty::CompoundType);
@@ -958,17 +959,17 @@ void tst_QVersitContactImporter::testGeo()
     QContact contact = mImporter->contacts().first();
     QContactGeoLocation geo = (QContactGeoLocation)contact.detail(QContactGeoLocation::DefinitionName);
     QString str;
-    str.setNum(geo.longitude(),'.',2);
-    QCOMPARE(str,val[0]);
     str.setNum(geo.latitude(),'.',2);
+    QCOMPARE(str,val[0]);
+    str.setNum(geo.longitude(),'.',2);
     QCOMPARE(str,val[1]);
 
     // some negative values
     document.clear();
     document.setType(QVersitDocument::VCard30Type);
     nameProperty = QVersitProperty();
-    val.append(QLatin1String("18.53"));// Longtitude
     val.append(QLatin1String("-45.32")); // Latitude
+    val.append(QLatin1String("18.53"));// Longtitude
     nameProperty.setName(QLatin1String("GEO"));
     nameProperty.setValue(val);
     nameProperty.setValueType(QVersitProperty::CompoundType);
@@ -976,9 +977,9 @@ void tst_QVersitContactImporter::testGeo()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     geo = (QContactGeoLocation)contact.detail(QContactGeoLocation::DefinitionName);
-    str.setNum(geo.longitude(),'.',2);
-    QCOMPARE(str,val[0]);
     str.setNum(geo.latitude(),'.',2);
+    QCOMPARE(str,val[0]);
+    str.setNum(geo.longitude(),'.',2);
     QCOMPARE(str,val[1]);
 }
 

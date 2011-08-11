@@ -7,29 +7,29 @@
 ** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -81,6 +81,12 @@ private slots:
     void compare();
     void copy();
     void assign();
+
+    void isValid();
+    void yCbCrColorSpaceEnum_data();
+    void yCbCrColorSpaceEnum ();
+    void copyAllParameters ();
+    void assignAllParameters ();
 };
 
 tst_QVideoSurfaceFormat::tst_QVideoSurfaceFormat()
@@ -731,6 +737,133 @@ void tst_QVideoSurfaceFormat::assign()
 
     QCOMPARE(original == copy, false);
     QCOMPARE(original != copy, true);
+}
+
+/* Test case for Enum YCbCr_BT601, YCbCr_xvYCC709 */
+void tst_QVideoSurfaceFormat::yCbCrColorSpaceEnum_data()
+{
+    QTest::addColumn<QVideoSurfaceFormat::YCbCrColorSpace>("colorspace");
+
+    QTest::newRow("YCbCr_BT601")
+            << QVideoSurfaceFormat::YCbCr_BT601;
+    QTest::newRow("YCbCr_xvYCC709")
+            << QVideoSurfaceFormat::YCbCr_xvYCC709;
+}
+
+/* Test case for Enum YCbCr_BT601, YCbCr_xvYCC709 */
+void tst_QVideoSurfaceFormat::yCbCrColorSpaceEnum()
+{
+    QFETCH(QVideoSurfaceFormat::YCbCrColorSpace, colorspace);
+
+    {
+        QVideoSurfaceFormat format(QSize(64, 64), QVideoFrame::Format_RGB32);
+        format.setYCbCrColorSpace(colorspace);
+
+        QCOMPARE(format.yCbCrColorSpace(), colorspace);
+        QCOMPARE(qvariant_cast<QVideoSurfaceFormat::YCbCrColorSpace>(format.property("yCbCrColorSpace")),
+                colorspace);
+    }
+    {
+        QVideoSurfaceFormat format(QSize(64, 64), QVideoFrame::Format_RGB32);
+        format.setProperty("yCbCrColorSpace", qVariantFromValue(colorspace));
+
+        QCOMPARE(format.yCbCrColorSpace(), colorspace);
+        QCOMPARE(qvariant_cast<QVideoSurfaceFormat::YCbCrColorSpace>(format.property("yCbCrColorSpace")),
+                colorspace);
+    }
+}
+
+/* Test case for api isValid */
+void tst_QVideoSurfaceFormat::isValid()
+{
+    /* When both pixel format and framesize is not valid */
+    QVideoSurfaceFormat format;
+    QVERIFY(!format.isValid());
+
+    /* When framesize is valid and pixel format is not valid */
+    format.setFrameSize(64,64);
+    QVERIFY(format.frameSize() == QSize(64,64));
+    QVERIFY(!format.pixelFormat());
+    QVERIFY(!format.isValid());
+
+    /* When both the pixel format and framesize is valid. */
+    QVideoSurfaceFormat format1(QSize(32, 32), QVideoFrame::Format_AYUV444);
+    QVERIFY(format1.isValid());
+
+    /* When pixel format is valid and frame size is not valid */
+    format1.setFrameSize(-1,-1);
+    QVERIFY(!format1.frameSize().isValid());
+    QVERIFY(!format1.isValid());
+}
+
+/* Test case for copy constructor with all the parameters. */
+void tst_QVideoSurfaceFormat::copyAllParameters()
+{
+    /* Create the instance and set all the parameters. */
+    QVideoSurfaceFormat original(
+            QSize(1024, 768), QVideoFrame::Format_ARGB32, QAbstractVideoBuffer::GLTextureHandle);
+
+    original.setScanLineDirection(QVideoSurfaceFormat::BottomToTop);
+    original.setViewport(QRect(0, 0, 1024, 1024));
+    original.setFrameRate(qreal(15.0));
+    original.setPixelAspectRatio(QSize(320,480));
+    original.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_BT709);
+
+    /* Copy the original instance to copy and verify if both the instances
+      have the same parameters. */
+    QVideoSurfaceFormat copy(original);
+
+    QCOMPARE(copy.handleType(), QAbstractVideoBuffer::GLTextureHandle);
+    QCOMPARE(copy.pixelFormat(), QVideoFrame::Format_ARGB32);
+    QCOMPARE(copy.frameSize(), QSize(1024, 768));
+    QCOMPARE(copy.scanLineDirection(), QVideoSurfaceFormat::BottomToTop);
+    QCOMPARE(copy.viewport(), QRect(0, 0, 1024, 1024));
+    QCOMPARE(copy.frameRate(), qreal(15.0));
+    QCOMPARE(copy.pixelAspectRatio(), QSize(320,480));
+    QCOMPARE(copy.yCbCrColorSpace(), QVideoSurfaceFormat::YCbCr_BT709);
+
+    /* Verify if both the instances are eqaul */
+    QCOMPARE(original == copy, true);
+    QCOMPARE(original != copy, false);
+}
+
+/* Test case for copy constructor with all the parameters. */
+void tst_QVideoSurfaceFormat::assignAllParameters()
+{
+    /* Create the instance and set all the parameters. */
+    QVideoSurfaceFormat copy(
+            QSize(64, 64), QVideoFrame::Format_AYUV444, QAbstractVideoBuffer::UserHandle);
+    copy.setScanLineDirection(QVideoSurfaceFormat::TopToBottom);
+    copy.setViewport(QRect(0, 0, 640, 320));
+    copy.setFrameRate(qreal(7.5));
+    copy.setPixelAspectRatio(QSize(640,320));
+    copy.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_BT601);
+
+    /* Create the instance and set all the parameters. */
+    QVideoSurfaceFormat original(
+            QSize(1024, 768), QVideoFrame::Format_ARGB32, QAbstractVideoBuffer::GLTextureHandle);
+    original.setScanLineDirection(QVideoSurfaceFormat::BottomToTop);
+    original.setViewport(QRect(0, 0, 1024, 1024));
+    original.setFrameRate(qreal(15.0));
+    original.setPixelAspectRatio(QSize(320,480));
+    original.setYCbCrColorSpace(QVideoSurfaceFormat::YCbCr_BT709);
+
+    /* Assign the original instance to copy and verify if both the instancess
+      have the same parameters. */
+    copy = original;
+
+    QCOMPARE(copy.handleType(), QAbstractVideoBuffer::GLTextureHandle);
+    QCOMPARE(copy.pixelFormat(), QVideoFrame::Format_ARGB32);
+    QCOMPARE(copy.frameSize(), QSize(1024, 768));
+    QCOMPARE(copy.scanLineDirection(), QVideoSurfaceFormat::BottomToTop);
+    QCOMPARE(copy.viewport(), QRect(0, 0, 1024, 1024));
+    QCOMPARE(copy.frameRate(), qreal(15.0));
+    QCOMPARE(copy.pixelAspectRatio(), QSize(320,480));
+    QCOMPARE(copy.yCbCrColorSpace(), QVideoSurfaceFormat::YCbCr_BT709);
+
+     /* Verify if both the instances are eqaul */
+    QCOMPARE(original == copy, true);
+    QCOMPARE(original != copy, false);
 }
 
 QTEST_MAIN(tst_QVideoSurfaceFormat)

@@ -87,8 +87,7 @@ Maximum number of fields that can be set as filterable fields by licensees.
 const TInt KMaxCustomFilterableFields=4;
 
 /** 
-Enables searching for best matching strategy: 
-Leading zeros are removed then shorter number must be substring of second one.
+Enables searching for dynamic matching with 7 digits as minimum.
 @see CContactDatabase::MatchPhoneNumberL
 @publishedAll
 @released
@@ -1002,6 +1001,7 @@ public: // for vCard converter only
 public: // For Symbian use only
 	IMPORT_C void DatabaseBeginL(TBool aIsInTransaction);
 	IMPORT_C void DatabaseCommitL(TBool aIsInTransaction);
+	IMPORT_C void DatabaseCommit(TBool aIsInTransaction, TRequestStatus*& aStatus);
 	IMPORT_C void DatabaseRollback();
 	IMPORT_C void SetSortedItemsList(CContactIdArray* aSortedItems, CArrayFix<TSortPref>* aSortOrder);
 	IMPORT_C CContactIdArray* UnfiledContactsL();
@@ -1123,6 +1123,7 @@ private:
    	void ConstructTableUsageFlagsFromSortOrderL(TInt& aFlags);
    	void LoadSyncPluginL();
    	void DeleteContactSendEventActionL(TContactItemId aContactId, TCntSendEventAction aActionType);
+   	TInt DeleteContactSendEventAction(TContactItemId aContactId, TCntSendEventAction aActionType);
 
 public:
    	//for LocalView

@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -60,18 +60,12 @@ void TestCntSymbianDatabase::initTestCase()
     connect(m_engine, SIGNAL(selfContactIdChanged(const QContactLocalId&, const QContactLocalId&)), this, SLOT(handleMyCardChangedOrig(const QContactLocalId&, const QContactLocalId&)));    
     connect(m_engine, SIGNAL(relationshipsAdded(QList<QContactLocalId>)), this, SLOT(handleRelationshipsAddedOrig(QList<QContactLocalId>)));
     connect(m_engine, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)), this, SLOT(handleRelationshipsRemovedOrig(QList<QContactLocalId>)));
-    
-    m_db = new CntSymbianDatabase(m_engine, &error);
-    if (error != QContactManager::NoError)
-        QSKIP("Error creating cntsymbiandatabase", SkipAll);
-
 }
 
 void TestCntSymbianDatabase::cleanupTestCase()
 {
     removeAllContacts();
     delete m_engine;
-    delete m_db;
 }
 
 void TestCntSymbianDatabase::init()
@@ -299,7 +293,6 @@ void TestCntSymbianDatabase::handleChangedOrig(const QList<QContactLocalId>& con
 
 void TestCntSymbianDatabase::handleRemovedOrig(const QList<QContactLocalId>& contactIds)
 {
-    removedOrigContactId.clear();
     removedOrigContactId.append(contactIds);
 }
 
@@ -341,7 +334,6 @@ void TestCntSymbianDatabase::handleChanged(const QList<QContactLocalId>& contact
 
 void TestCntSymbianDatabase::handleRemoved(const QList<QContactLocalId>& contactIds)
 {
-    removedContactId.clear();
     removedContactId.append(contactIds);
 }
 

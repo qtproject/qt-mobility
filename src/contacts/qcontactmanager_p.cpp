@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -56,6 +56,7 @@
 #include <QSharedData>
 #include <QtPlugin>
 #include <QPluginLoader>
+#include <QWeakPointer>
 
 #include <QDebug>
 #include <QDir>
@@ -85,10 +86,21 @@ QStringList QContactManagerData::m_pluginPaths;
 static void qContactsCleanEngines()
 {
     // This is complicated by needing to remove any engines before we unload factories
+    // guard pointers as one engine could be parent of another manager and cause doubledelete
+    QList<QWeakPointer<QContactManager> > aliveManagers;
     foreach(QContactManager* manager, QContactManagerData::m_aliveEngines) {
+        aliveManagers << QWeakPointer<QContactManager>(manager);
+    }
+
+    foreach(QWeakPointer<QContactManager> manager, aliveManagers) {
+        if (!manager) {
+            // deleting engine of one manager, could cause deleting next manager in list (aggregation case)
+            continue;
+        }
         // We don't delete the managers here, we just kill their engines
         // and replace it with an invalid engine (for safety :/)
-        QContactManagerData* d = QContactManagerData::managerData(manager);
+        QContactManagerData* d = QContactManagerData::managerData(manager.data());
+
         delete d->m_engine;
         d->m_engine = new QContactInvalidEngine();
     }
@@ -121,10 +133,14 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory")) {
-        m_engine = new QContactManagerEngineV2Wrapper(QContactMemoryEngine::createMemoryEngine(parameters));
+        QContactManagerEngine* engine = QContactMemoryEngine::createMemoryEngine(parameters);
+        m_engine = new QContactManagerEngineV2Wrapper(engine);
+        m_signalSource = engine;
 #ifdef QT_SIMULATOR
     } else if (builtManagerName == QLatin1String("simulator")) {
-        m_engine = new QContactManagerEngineV2Wrapper(QContactSimulatorEngine::createSimulatorEngine(parameters));
+        QContactManagerEngine* engine = QContactSimulatorEngine::createSimulatorEngine(parameters);
+        m_engine = new QContactManagerEngineV2Wrapper(engine);
+        m_signalSource = engine;
 #endif
     } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
@@ -151,6 +167,9 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                     if (!m_engine && engine) {
                         // Nope, v1, so wrap it
                         m_engine = new QContactManagerEngineV2Wrapper(engine);
+                        m_signalSource = engine;
+                    } else {
+                        m_signalSource = m_engine; // use the v2 engine directly
                     }
                     found = true;
                     break;
@@ -171,13 +190,13 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         // the engine factory could lie to us, so check the real implementation version
         if (m_engine && (implementationVersion != -1 && m_engine->managerVersion() != implementationVersion)) {
             m_lastError = QContactManager::VersionMismatchError;
-            m_engine = 0;
+            m_signalSource = m_engine = 0;
         }
 
         if (!m_engine) {
             if (m_lastError == QContactManager::NoError)
                 m_lastError = QContactManager::DoesNotExistError;
-            m_engine = new QContactInvalidEngine();
+            m_signalSource = m_engine = new QContactInvalidEngine();
         }
     }
 }

@@ -36,3 +36,5 @@ symbian: {
         LIBS += -lcntmodel
     }
 }
+
+maemo*:CONFIG += insignificant_test

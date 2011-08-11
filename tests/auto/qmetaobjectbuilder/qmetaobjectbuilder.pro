@@ -1,6 +1,8 @@
 TARGET = tst_qmetaobjectbuilder
 INCLUDEPATH += ../../../src/serviceframework
 INCLUDEPATH += ../../../src/serviceframework/ipc
+include(../../../src/serviceframework/ipc/metaobjectbuilder.pri)
+INCLUDEPATH += ../../../src/serviceframework/$$OBJECTBUILDER_INCLUDEPATH
 
 CONFIG+=testcase
 
@@ -9,7 +11,12 @@ QT = core
 include(../../../common.pri)
 
 # Input 
-SOURCES += tst_qmetaobjectbuilder.cpp
+
+contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 8) {
+    SOURCES += tst_qmetaobjectbuilder_47.cpp
+} else {
+    SOURCES += tst_qmetaobjectbuilder.cpp
+}
 
 CONFIG += mobility
 MOBILITY = serviceframework
@@ -29,9 +36,9 @@ symbian|wince* {
         DEPLOYMENT_PLUGIN += qsqlite
     }
 
-    addFiles.sources = ../../testservice2/xml/testserviceplugin.xml \
-                       ../../sampleserviceplugin/xml/sampleservice.xml \
-                       ../../sampleserviceplugin2/xml/sampleservice2.xml
+    addFiles.sources = ../../tools/testservice2/xml/testserviceplugin.xml \
+                       ../../tools/sampleserviceplugin/xml/sampleservice.xml \
+                       ../../tools/sampleserviceplugin2/xml/sampleservice2.xml
     addFiles.path = plugins/xmldata
     DEPLOYMENT += addFiles
 }

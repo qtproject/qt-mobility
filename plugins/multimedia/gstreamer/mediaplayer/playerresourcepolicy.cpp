@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -62,7 +62,7 @@ PlayerResourcePolicy::PlayerResourcePolicy(QObject *parent) :
 {
 #ifdef HAVE_RESOURCE_POLICY
     m_resourceSet = new ResourcePolicy::ResourceSet("player", this);
-    m_resourceSet->setAutoRelease();
+    m_resourceSet->setAlwaysReply();
 
     ResourcePolicy::AudioResource *audioResource = new ResourcePolicy::AudioResource("player");
     audioResource->setProcessID(QCoreApplication::applicationPid());
@@ -77,6 +77,8 @@ PlayerResourcePolicy::PlayerResourcePolicy(QObject *parent) :
     connect(m_resourceSet, SIGNAL(resourcesDenied()),
             this, SLOT(handleResourcesDenied()));
     connect(m_resourceSet, SIGNAL(lostResources()),
+            this, SLOT(handleResourcesLost()));
+    connect(m_resourceSet, SIGNAL(resourcesReleasedByManager()),
             this, SLOT(handleResourcesLost()));
 #endif
 }
@@ -164,9 +166,15 @@ void PlayerResourcePolicy::handleResourcesDenied()
 
 void PlayerResourcePolicy::handleResourcesLost()
 {
-    m_status = Initial;
 #ifdef DEBUG_RESOURCE_POLICY
     qDebug() << Q_FUNC_INFO << "Resource lost";
 #endif
-    emit resourcesLost();
+    if (m_status != Initial) {
+        m_status = Initial;
+        emit resourcesLost();
+    }
+
+#ifdef HAVE_RESOURCE_POLICY
+    m_resourceSet->release();
+#endif
 }

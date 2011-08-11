@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -79,6 +79,8 @@
 
 QT_USE_NAMESPACE
 
+#include "mockvideosurface.h"
+
 void tst_QMediaPlayer::initTestCase_data()
 {
     QTest::addColumn<bool>("valid");
@@ -126,8 +128,8 @@ void tst_QMediaPlayer::initTestCase()
     qRegisterMetaType<QMediaPlayer::MediaStatus>("QMediaPlayer::MediaStatus");
     qRegisterMetaType<QMediaContent>("QMediaContent");
 
-    mockService = new MockPlayerService;
-    mockProvider = new MockProvider(mockService);
+    mockService = new MockMediaPlayerService;
+    mockProvider = new MockMediaServiceProvider(mockService, true);
     player = new QMediaPlayer(0, 0, mockProvider);
 }
 
@@ -147,7 +149,7 @@ void tst_QMediaPlayer::cleanup()
 
 void tst_QMediaPlayer::testNullService()
 {
-    MockProvider provider(0);
+    MockMediaServiceProvider provider(0);
     QMediaPlayer player(0, 0, &provider);
 
     const QIODevice *nullDevice = 0;
@@ -842,6 +844,68 @@ void tst_QMediaPlayer::testPlaylist()
 
 }
 
+void tst_QMediaPlayer::testPlayerFlags()
+{
+    MockMediaServiceProvider provider(0, true);
+    QMediaPlayer::Flag flags = QMediaPlayer::LowLatency;
+
+    QMediaPlayer player(0, flags, &provider);
+    QMediaServiceProviderHint::Feature feature;
+
+    if (flags & QMediaPlayer::LowLatency)
+    {
+        /* if the flag is low latency set the low latency play back for the service provider */
+        feature = QMediaServiceProviderHint::LowLatencyPlayback;
+        const QByteArray service(Q_MEDIASERVICE_MEDIAPLAYER);
+        const QMediaServiceProviderHint providerHint(feature);
+        /* request service for the service provider */
+        provider.requestService(service,providerHint);
+
+        /* Constructs a SupportedFeatures  media service provider hint. */
+        QMediaServiceProviderHint servicepro(feature);
+
+        /* compare the flag value */
+        QVERIFY(servicepro.features() == QMediaServiceProviderHint::LowLatencyPlayback);
+    }
+
+    /* The player is expected to play QIODevice based streams.
+        If passed to QMediaPlayer  constructor,
+        the service supporting streams playback will be chosen. */
+    flags = QMediaPlayer::StreamPlayback;
+    /* Construct a QMediaPlayer  that uses the playback service from provider,
+        parented to parent  and with flags.*/
+    QMediaPlayer player2(0,flags , &provider);
+
+    if (flags & QMediaPlayer::StreamPlayback)
+    {
+        /* if the flag is stream play back set the stream play back for the service provider */
+        feature = QMediaServiceProviderHint::StreamPlayback;
+        const QByteArray service(Q_MEDIASERVICE_MEDIAPLAYER);
+        const QMediaServiceProviderHint providerHint(feature);
+
+        /* request service for the service provider */
+        provider.requestService(service,providerHint);
+
+        /* Constructs a SupportedFeatures media service provider hint. */
+        QMediaServiceProviderHint servicepro(feature);
+
+        /* compare the flag value */
+        QVERIFY(servicepro.features() == QMediaServiceProviderHint::StreamPlayback);
+    }
+}
+
+void tst_QMediaPlayer::testDestructor()
+{
+    /* create an object for player */
+    QMediaPlayer *player = new QMediaPlayer;
+
+    /* check whether the object is created */
+    QVERIFY(player);
+
+    /* delete the instance */
+    delete player;
+}
+
 void tst_QMediaPlayer::testNetworkAccess()
 {
     QNetworkConfigurationManager manager;
@@ -876,9 +940,8 @@ void tst_QMediaPlayer::testSetVideoOutput()
     QGraphicsVideoItem item;
     MockVideoSurface surface;
 
-    MockPlayerService service;
-    MockProvider provider(&service);
-    provider.deleteServiceOnRelease = false;
+    MockMediaPlayerService service;
+    MockMediaServiceProvider provider(&service);
     QMediaPlayer player(0, 0, &provider);
 
     player.setVideoOutput(&widget);
@@ -922,7 +985,7 @@ void tst_QMediaPlayer::testSetVideoOutputNoService()
     QGraphicsVideoItem item;
     MockVideoSurface surface;
 
-    MockProvider provider(0);
+    MockMediaServiceProvider provider(0, true);
     QMediaPlayer player(0, 0, &provider);
 
     player.setVideoOutput(&widget);
@@ -941,12 +1004,11 @@ void tst_QMediaPlayer::testSetVideoOutputNoControl()
     QGraphicsVideoItem item;
     MockVideoSurface surface;
 
-    MockPlayerService service;
+    MockMediaPlayerService service;
     service.rendererRef = 1;
     service.windowRef = 1;
 
-    MockProvider provider(&service);
-    provider.deleteServiceOnRelease = false;
+    MockMediaServiceProvider provider(&service);
     QMediaPlayer player(0, 0, &provider);
 
     player.setVideoOutput(&widget);
@@ -963,9 +1025,8 @@ void tst_QMediaPlayer::testSetVideoOutputDestruction()
 {
     MockVideoSurface surface;
 
-    MockPlayerService service;
-    MockProvider provider(&service);
-    provider.deleteServiceOnRelease = false;
+    MockMediaPlayerService service;
+    MockMediaServiceProvider provider(&service);
 
     {
         QMediaPlayer player(0, 0, &provider);
@@ -1016,4 +1077,9 @@ void tst_QMediaPlayer::debugEnums()
     qDebug() << QMediaPlayer::NetworkError;
 }
 
+void tst_QMediaPlayer::testSupportedMimeTypes()
+{
+    QStringList mimeList = QMediaPlayer::supportedMimeTypes(QMediaPlayer::LowLatency);
 
+    // This is empty on some platforms, and not on others, so can't test something here at the moment.
+}

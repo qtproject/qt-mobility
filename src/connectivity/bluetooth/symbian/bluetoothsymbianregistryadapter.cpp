@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -69,13 +69,10 @@ BluetoothSymbianRegistryAdapter::BluetoothSymbianRegistryAdapter(const QBluetoot
     : QObject(parent)
     , m_bluetoothDeviceManager(0)
     , m_address(address)
-    , m_pairingStatus(QBluetoothLocalDevice::Unpaired)
+    , m_operation(NoOp)
 {
     TRAP(m_errorCode, m_bluetoothDeviceManager = CBTEngDevMan::NewL(this))
-
-    if (m_errorCode == KErrNone)
-        m_pairingStatus = remoteDevicePairingStatus();
-    else
+    if (m_errorCode != KErrNone) 
         emit registryHandlingError(m_errorCode);
 }
 BluetoothSymbianRegistryAdapter::~BluetoothSymbianRegistryAdapter()
@@ -134,10 +131,15 @@ QBluetoothLocalDevice::Pairing BluetoothSymbianRegistryAdapter::remoteDevicePair
         bool isValidDevicePaired = device->IsValidPaired();
         bool isDevicePaired = device->IsPaired();
         //TODO Check whether check is correct?
-        if (isValidDevicePaired || isDevicePaired)
-            returnValue = QBluetoothLocalDevice::Paired;
-        else if (!isValidDevicePaired && !isDevicePaired)
+        if (isValidDevicePaired || isDevicePaired) {
+            if (device->GlobalSecurity().NoAuthorise())
+                returnValue = QBluetoothLocalDevice::AuthorizedPaired;
+            else
+                returnValue = QBluetoothLocalDevice::Paired;
+        }
+        else if (!isValidDevicePaired && !isDevicePaired) {
             returnValue = QBluetoothLocalDevice::Unpaired;
+        }
 
     } else {
         returnValue = QBluetoothLocalDevice::Unpaired;
@@ -157,8 +159,7 @@ void BluetoothSymbianRegistryAdapter::removePairing()
 {
     // setup current values
     int errorCode = 0;
-    //setup current status so that we emit correct signal when done.
-    m_pairingStatus = QBluetoothLocalDevice::Unpaired;
+    m_operation = RemovePairing;
     // Spesify search criteria
     TBTRegistrySearch searchCriteria;
     TBTDevAddr btAddress(m_address.toUInt64());
@@ -170,18 +171,25 @@ void BluetoothSymbianRegistryAdapter::removePairing()
 
 }
 
-QBluetoothLocalDevice::Pairing BluetoothSymbianRegistryAdapter::pairingStatus() const
+QBluetoothLocalDevice::Pairing BluetoothSymbianRegistryAdapter::pairingStatus()
 {
-    return m_pairingStatus;
+    m_operation = PairingStatus;  // only needed for uniformity
+    QBluetoothLocalDevice::Pairing pairStatus = remoteDevicePairingStatus();
+    m_operation = NoOp;
+    
+    return pairStatus;
 }
 
 void BluetoothSymbianRegistryAdapter::HandleDevManComplete( TInt aErr )
 {
     m_errorCode = aErr;
-    if (aErr != KErrNone)
+    if (aErr != KErrNone) {
         emit registryHandlingError(aErr);
-
-    emit pairingStatusChanged(m_address, m_pairingStatus);
+    }
+    if (m_operation == RemovePairing) {
+        emit pairingStatusChanged(m_address, QBluetoothLocalDevice::Unpaired);
+        m_operation = NoOp;
+    }
 
 }
 

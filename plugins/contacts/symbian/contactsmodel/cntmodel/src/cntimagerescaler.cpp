@@ -302,19 +302,11 @@ void CImageRescaler::ResizeImageL(const TDesC& aSourceFile, const TDesC& aDestFi
 Start decoding asychronously
 */
 void CImageRescaler::DecodeL()
-    {
-    ASSERT(iDestFile.Length());
+    {    
     // Check for a valid source file
     if (!iSourceFile.Length() || !BaflUtils::FileExists(iFs, iSourceFile))
         {
         User::Leave(KErrArgument);
-        }
-    
-    // If there is no images dir or the source file does not exist, do not do any 
-    // rescaling and complete with KErrNotFound error
-    if (!iImagesDirPath.Length())
-        {
-        User::Leave(KErrNotFound);
         }
     
     delete iImageDecoder;
@@ -361,7 +353,7 @@ void CImageRescaler::DecodeL()
             }
         }
 
-    User::LeaveIfError( iBitmap->Create( loadSize, iImageDecoder->FrameInfo().iFrameDisplayMode ));
+    User::LeaveIfError( iBitmap->Create( loadSize, EColor16M ));
 
     iState = EDecoding;
     iImageDecoder->Convert( &iStatus, *iBitmap );
@@ -391,12 +383,26 @@ void CImageRescaler::EncodeL()
     {
     delete iImageEncoder; 
     iImageEncoder = NULL;
-
-    iImageEncoder = CImageEncoder::FileNewL( iFs, iDestFile, KMimeTypeJPEG, CImageEncoder::EPreferFastEncode );
     
-    // Start converstion to a JPEG image
-    iState = EEncoding;
-    iImageEncoder->Convert( &iStatus, *iBitmap );
+    if ( iImagesDirPath.Length() && iDestFile.Length() )
+        {
+        iImageEncoder = CImageEncoder::FileNewL( iFs, iDestFile, KMimeTypeJPEG, CImageEncoder::EPreferFastEncode );
+        if ( iImageEncoder )
+            {        
+            // Start converstion to a JPEG image
+            iState = EEncoding;
+            iImageEncoder->Convert( &iStatus, *iBitmap );            
+            }
+        }
+    else
+        {
+        //If there is no images dir do not do anything
+        //Just complete the request
+        iState = EEncoding;
+        TRequestStatus* ptrStatus = &iStatus;
+        User::RequestComplete( ptrStatus, KErrNone );
+        }
+    
     SetActive();
     }
 

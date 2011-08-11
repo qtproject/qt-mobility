@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -59,6 +59,11 @@
 #include <QDir>
 #include <QSystemSemaphore>
 
+#ifdef Q_OS_SYMBIAN
+    #include <QLibraryInfo>
+    #include <f32file.h>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
@@ -66,13 +71,45 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
     if (QFile::exists(libNameOrPath))
         return libNameOrPath;
 
-    // try to find plug-in via QLibrary
     QStringList paths = QCoreApplication::libraryPaths();
+
+#ifdef Q_OS_SYMBIAN
+    // try to find plug-in via QLibrary
+    // Work around for QCoreApplication::libraryPaths() caching
+    // paths from application startup.  On Symbian the paths can be
+    // created during the lifetime of the application.
+    QString pluginpaths = QLibraryInfo::location(QLibraryInfo::PluginsPath);
+
+    // Add existing path on all drives for relative PluginsPath in Symbian
+    if (pluginpaths.at(1) != QChar(QLatin1Char(':'))) {
+        QString tempPath = pluginpaths;
+        if (tempPath.at(tempPath.length() - 1) != QDir::separator()) {
+            tempPath += QDir::separator();
+        }
+        RFs iFs;
+        iFs.Connect();
+        iFs.ShareProtected();
+        TPtrC tempPathPtr(reinterpret_cast<const TText*> (tempPath.constData()));
+        TFindFile finder(iFs);
+        TInt err = finder.FindByDir(tempPathPtr, tempPathPtr);
+        while (err == KErrNone) {
+            QString foundDir(reinterpret_cast<const QChar *>(finder.File().Ptr()),
+                             finder.File().Length());
+            foundDir = QDir(foundDir).canonicalPath();
+            if (!paths.contains(foundDir)) {
+                paths << foundDir;
+            }
+            err = finder.Find();
+        }
+        iFs.Close();
+    }
+#endif
+
 #ifdef QTM_PLUGIN_PATH
     paths << QLatin1String(QTM_PLUGIN_PATH)+QLatin1String("/serviceframework");
 #endif
-    for (int i=0; i<paths.count(); i++) {
-        QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
+    foreach (QString path, paths) {
+        QString libPath = QDir::toNativeSeparators(path) + QDir::separator() + libNameOrPath;
 
 #ifdef Q_OS_SYMBIAN
         QFileInfo fi(libPath);
@@ -93,6 +130,12 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             return lib.fileName();
         }
 #endif
+    }
+    //Plugin library couldn't be found. Print out warning
+    qWarning() << "Library " + libNameOrPath + " not found!";
+    qWarning() << "please be sure that your library is in one of the following path:";
+    for (int i=0; i<paths.count(); i++) {
+        qWarning() << "- " << QDir::toNativeSeparators(paths[i]) + QDir::separator();
     }
     return QString();
 }
@@ -252,6 +295,7 @@ private slots:
     notifications about services added in the user scope.
 
     \sa addService()
+    \since 1.0
 */
 
 /*!
@@ -265,6 +309,7 @@ private slots:
     notifications about services removed in the user scope.
 
     \sa removeService()
+    \since 1.0
 */
 
 /*!
@@ -282,6 +327,7 @@ QServiceManager::QServiceManager(QObject *parent)
 
 /*!
     Creates a service manager with the given \a scope and \a parent.
+    \since 1.0
 */
 QServiceManager::QServiceManager(QService::Scope scope, QObject *parent)
     : QObject(parent),
@@ -300,6 +346,7 @@ QServiceManager::~QServiceManager()
 
 /*!
     Returns the scope used for registering and searching of services.
+    \since 1.0
 */
 QService::Scope QServiceManager::scope() const
 {
@@ -310,6 +357,7 @@ QService::Scope QServiceManager::scope() const
     Returns a list of the services that provide the interface specified by
     \a interfaceName. If \a interfaceName is empty, this function returns
     a list of all available services in this manager's scope.
+    \since 1.0
 */
 QStringList QServiceManager::findServices(const QString& interfaceName) const
 {
@@ -323,6 +371,7 @@ QStringList QServiceManager::findServices(const QString& interfaceName) const
 
 /*!
     Returns a list of the interfaces that match the specified \a filter.
+    \since 1.0
 */
 QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServiceFilter& filter) const
 {
@@ -340,6 +389,7 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServic
     Returns a list of the interfaces provided by the service named
     \a serviceName. If \a serviceName is empty, this function returns
     a list of all available interfaces in this manager's scope.
+    \since 1.0
 */
 QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString& serviceName) const
 {
@@ -365,6 +415,7 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QString
     are enforced during service loading.
 
     \sa setInterfaceDefault(), interfaceDefault()
+    \since 1.0
 */
 QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
 {
@@ -384,6 +435,7 @@ QObject* QServiceManager::loadInterface(const QString& interfaceName, QServiceCo
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
     are enforced during service loading.
+    \since 1.0
 */
 QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
@@ -427,16 +479,17 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     }
 
     QPluginLoader *loader = new QPluginLoader(serviceFilePath);
+
     //pluginIFace is same for all service instances of the same plugin
     //calling loader->unload deletes pluginIFace automatically if now other
     //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
     if (pluginIFace) {
-
         //check initialization first as the service may be a pre-registered one
         bool doLoading = true;
         QString serviceInitialized = descriptor.customAttribute(SERVICE_INITIALIZED_ATTR);
         if (!serviceInitialized.isEmpty() && (serviceInitialized == QLatin1String("NO"))) {
+
             // open/create the semaphore using the service's name as identifier
             QSystemSemaphore semaphore(descriptor.serviceName(), 1);
             if (semaphore.error() != QSystemSemaphore::NoError) {
@@ -451,8 +504,9 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
                 // release semaphore
                 semaphore.release();
             }
-            else
+            else {
                 doLoading = false;
+            }
         }
 
         if (doLoading) {
@@ -495,6 +549,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     are enforced during service loading.
 
     \sa setInterfaceDefault(), interfaceDefault()
+    \since 1.0
 */
 
 
@@ -518,6 +573,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
     are enforced during service loading.
+    \since 1.0
 */
 
 /*!
@@ -533,6 +589,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     versions that the new plugin implements.
 
     \sa removeService(), setInterfaceDefault()
+    \since 1.0
 */
 bool QServiceManager::addService(const QString& xmlFilePath)
 {
@@ -564,6 +621,7 @@ bool QServiceManager::addService(const QString& xmlFilePath)
     service manager instance.
 
     \sa removeService(), setInterfaceDefault()
+    \since 1.0
 */
 bool QServiceManager::addService(QIODevice *device)
 {
@@ -621,6 +679,7 @@ bool QServiceManager::addService(QIODevice *device)
     service manager instance.
 
     \sa addService()
+    \since 1.0
 */
 bool QServiceManager::removeService(const QString& serviceName)
 {
@@ -675,6 +734,7 @@ bool QServiceManager::removeService(const QString& serviceName)
 
     \bold {Note:} When in system scope, the \a service must be a system-wide
     service rather than a user-specific service; otherwise, this will fail.
+    \since 1.0
 */
 bool QServiceManager::setInterfaceDefault(const QString &service, const QString &interfaceName)
 {
@@ -704,6 +764,7 @@ bool QServiceManager::setInterfaceDefault(const QString &service, const QString 
     \bold {Note:} When in system scope, the \a descriptor must refer to a
     system-wide service rather than a user-specific service; otherwise, this
     will fail.
+    \since 1.0
 */
 bool QServiceManager::setInterfaceDefault(const QServiceInterfaceDescriptor& descriptor)
 {
@@ -719,6 +780,7 @@ bool QServiceManager::setInterfaceDefault(const QServiceInterfaceDescriptor& des
 
 /*!
     Returns the default interface implementation for the given \a interfaceName.
+    \since 1.0
 */
 QServiceInterfaceDescriptor QServiceManager::interfaceDefault(const QString& interfaceName) const
 {
@@ -735,6 +797,7 @@ QServiceInterfaceDescriptor QServiceManager::interfaceDefault(const QString& int
 
 /*!
     Returns the type of error that last occurred.
+    \since 1.0
 */
 QServiceManager::Error QServiceManager::error() const
 {
@@ -743,6 +806,7 @@ QServiceManager::Error QServiceManager::error() const
 
 /*!
     \internal
+    \since 1.0
 */
 void QServiceManager::connectNotify(const char *signal)
 {
@@ -756,6 +820,7 @@ void QServiceManager::connectNotify(const char *signal)
 
 /*!
     \internal
+    \since 1.0
 */
 void QServiceManager::disconnectNotify(const char *signal)
 {

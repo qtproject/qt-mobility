@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -50,16 +50,19 @@ void tst_QRadioTuner::initTestCase()
     qRegisterMetaType<QRadioTuner::State>("QRadioTuner::State");
     qRegisterMetaType<QRadioTuner::Band>("QRadioTuner::Band");
 
-    mock = new MockControl(this);
-    service = new MockService(this, mock);
-    provider = new MockProvider(service);
+    mock = new MockRadioTunerControl(this);
+    service = new MockMediaService(this, mock);
+    provider = new MockMediaServiceProvider(service);
     radio = new QRadioTuner(0,provider);
     QVERIFY(radio->service() != 0);
+    QVERIFY(radio->isAvailable());
+    QVERIFY(radio->availabilityError() == QtMultimediaKit::NoError);
 
     QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
 
     QCOMPARE(radio->state(), QRadioTuner::StoppedState);    
     radio->start();
+    QVERIFY(radio->availabilityError() == QtMultimediaKit::NoError);
     QCOMPARE(radio->state(), QRadioTuner::ActiveState);
 
     QCOMPARE(stateSpy.count(), 1);
@@ -74,6 +77,7 @@ void tst_QRadioTuner::cleanupTestCase()
     QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
 
     radio->stop();
+    QVERIFY(radio->availabilityError() == QtMultimediaKit::NoError);
     QCOMPARE(radio->state(), QRadioTuner::StoppedState);
     QCOMPARE(stateSpy.count(), 1);
 
@@ -88,9 +92,9 @@ void tst_QRadioTuner::testNullService()
 {
     const QPair<int, int> nullRange(0, 0);
 
-    MockProvider provider(0);
+    MockMediaServiceProvider provider(0);
     QRadioTuner radio(0, &provider);
-
+    QVERIFY(!radio.isAvailable());
     radio.start();
     QCOMPARE(radio.error(), QRadioTuner::ResourceError);
     QCOMPARE(radio.errorString(), QString());
@@ -115,10 +119,10 @@ void tst_QRadioTuner::testNullControl()
 {
     const QPair<int, int> nullRange(0, 0);
 
-    MockService service(0, 0);
-    MockProvider provider(&service);
+    MockMediaService service(0, 0);
+    MockMediaServiceProvider provider(&service);
     QRadioTuner radio(0, &provider);
-
+    QVERIFY(!radio.isAvailable());
     radio.start();
 
     QCOMPARE(radio.error(), QRadioTuner::ResourceError);
@@ -269,7 +273,47 @@ void tst_QRadioTuner::testSignal()
 
 void tst_QRadioTuner::testStereo()
 {
+    /* no set function to toggle stereo status;
+    cannot emit stereoStatusChanged() signal */
+
     QVERIFY(radio->isStereo());
     radio->setStereoMode(QRadioTuner::ForceMono);
     QVERIFY(radio->stereoMode() == QRadioTuner::ForceMono);
+}
+
+// QRadioTuner's errorsignal
+void tst_QRadioTuner::errorSignal()
+{
+    qRegisterMetaType<QRadioTuner::Error>("QRadioTuner::Error");
+    QObject obj;
+    MockRadioTunerControl dctrl(&obj);
+    MockMediaService service(&obj, &dctrl);
+    MockMediaServiceProvider provider(&service);
+    QRadioTuner radio(0,&provider);
+    QSignalSpy spy(&radio, SIGNAL(error(QRadioTuner::Error)));
+    QVERIFY(radio.service() != 0);
+    QVERIFY(radio.isAvailable());
+    radio.start();
+    radio.setBand(QRadioTuner::FM);
+    QVERIFY(spy.count() == 1);
+    QVERIFY(qvariant_cast<QRadioTuner::Error>(spy.at(0).at(0)) == QRadioTuner::NoError);
+    QVERIFY(radio.error() == QRadioTuner::NoError);
+    QVERIFY(radio.error() != QRadioTuner::OpenError);
+    QVERIFY(radio.errorString().isEmpty());
+    spy.clear();
+
+    /* emits QRadioTuner::OutOfRangeError if band is set to FM2 or LW
+           and frequency set to >= 148500000 */
+
+    radio.setBand(QRadioTuner::LW);
+    radio.setBand(QRadioTuner::FM2);
+    radio.setFrequency(148500000);
+    QVERIFY(spy.count() == 3);
+    QVERIFY(qvariant_cast<QRadioTuner::Error>(spy.at(0).at(0)) == QRadioTuner::OutOfRangeError);
+    QVERIFY(qvariant_cast<QRadioTuner::Error>(spy.at(1).at(0)) == QRadioTuner::OutOfRangeError);
+    QVERIFY(qvariant_cast<QRadioTuner::Error>(spy.at(2).at(0)) == QRadioTuner::OutOfRangeError);
+    QVERIFY(radio.error() == QRadioTuner::OutOfRangeError);
+    QVERIFY2(!radio.errorString().isEmpty(), "band and range not supported");
+    spy.clear();
+    radio.stop();
 }

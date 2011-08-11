@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -44,10 +44,10 @@
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
-Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivateSingleton)
 
 #ifdef QT_SIMULATOR
-QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate(); }
+QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivateSingleton(); }
 #endif // QT_SIMULATOR
 
 /*!
@@ -55,7 +55,14 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
     \ingroup systeminfo
     \inmodule QtSystemInfo
     \brief The QSystemNetworkInfo class provides access to various networking status and signals.
-    \since 1.1
+    \since 1.0
+
+    \reentrant
+
+    \note Most functions in this class are reentrant on all platforms. The exceptions are listed below.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
+
 */
 
 /*!
@@ -85,7 +92,7 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
     \value EthernetMode            Wired Local Area network.
     \value BluetoothMode           Bluetooth network.
     \value WimaxMode               Wimax network.
-    \value LteMode                 Lte network.
+    \value LteMode                 Lte network. Since 1.2
 */
 
 /*!
@@ -103,48 +110,56 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
     \fn void QSystemNetworkInfo::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode, QSystemNetworkInfo::NetworkStatus status)
 
     This signal is emitted whenever the network status of \a mode changes, specified by \a status.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode, int strength)
 
     This signal is emitted whenever the network \a mode signal strength changes, specified by \a strength.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::currentMobileCountryCodeChanged(const QString &mcc)
 
     This signal is emitted whenever the Mobile Country Code changes, specified by \a mcc.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::currentMobileNetworkCodeChanged(const QString &mnc)
 
     This signal is emitted whenever the network Mobile Network Code changes, specified by \a mnc.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString & name)
 
     This signal is emitted whenever the network \a mode name changes, specified by \a name.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::cellIdChanged(int cellId)
 
     This signal is emitted whenever the network cell changes, specified by \a cellId.
+    \since 1.2
 */
 
 /*!
     \fn void QSystemNetworkInfo::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
 
     This signal is emitted whenever the network mode changes, specified by \a mode.
+    \since 1.0
 */
 
 /*!
     \fn void QSystemNetworkInfo::cellDataTechnologyChanged(QSystemNetworkInfo::CellDataTechnology cellTech)
 
     This signal is emitted whenever the cellular technology changes, specified by \a cellTech.
+    \since 1.2
 */
 
 /*!
@@ -152,8 +167,12 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
 */
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent)
-   , d(netInfoPrivate())
 {
+#ifdef Q_OS_SYMBIAN
+    d = new QSystemNetworkInfoPrivate();
+#else
+    d = netInfoPrivateSingleton();
+#endif
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 }
@@ -163,27 +182,34 @@ QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
 */
 QSystemNetworkInfo::~QSystemNetworkInfo()
 {
+#ifdef Q_OS_SYMBIAN
+    delete d;
+#endif
 }
 
 /*!
     Returns the status of the network \a mode.
+    \since 1.0
 */
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    return netInfoPrivate()->networkStatus(mode);
+    return d->networkStatus(mode);
 }
 
 /*!
     Returns the strength of the network signal, per network \a mode , 0 - 100 linear scaling. -1 is returned
     if not available or on error.
+    \since 1.0
+
+    \warning On Symbian this function is not reentrant and must be used from main thread only.
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    QSystemNetworkInfo::NetworkStatus info = netInfoPrivate()->networkStatus(mode);
+    QSystemNetworkInfo::NetworkStatus info = netInfoPrivateSingleton()->networkStatus(mode);
     if (info == QSystemNetworkInfo::UndefinedStatus || info == QSystemNetworkInfo::NoNetworkAvailable)
         return -1;
 
-    return netInfoPrivate()->networkSignalStrength(mode);
+    return netInfoPrivateSingleton()->networkSignalStrength(mode);
 }
 
 /*!
@@ -191,10 +217,11 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
     \brief The devices Cell ID
 
     Returns the Cell ID of the connected tower or based station. -1 is returned if not available or on error.
+    \since 1.2
 */
 int QSystemNetworkInfo::cellId()
 {
-    return netInfoPrivate()->cellId();
+    return d->cellId();
 }
 
 /*!
@@ -203,10 +230,11 @@ int QSystemNetworkInfo::cellId()
 
     Returns the location area code of the current cellular radio network. -1 is returned if not available
     or on error.
+    \since 1.0
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
-    return netInfoPrivate()->locationAreaCode();
+    return d->locationAreaCode();
 }
 
 /*!
@@ -214,10 +242,11 @@ int QSystemNetworkInfo::locationAreaCode()
     \brief The current MCC.
 
     Returns the current Mobile Country Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
-    return netInfoPrivate()->currentMobileCountryCode();
+    return d->currentMobileCountryCode();
 }
 
 /*!
@@ -225,10 +254,11 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
     \brief The current MNC.
 
     Returns the current Mobile Network Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
-    return netInfoPrivate()->currentMobileNetworkCode();
+    return d->currentMobileNetworkCode();
 }
 
 /*!
@@ -236,10 +266,11 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
     \brief The home MNC.
 
     Returns the home Mobile Country Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
-    return netInfoPrivate()->homeMobileCountryCode();
+    return d->homeMobileCountryCode();
 }
 
 /*!
@@ -247,10 +278,11 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
     \brief The home MCC.
 
     Returns the home Mobile Network Code. An empty string is returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
-    return netInfoPrivate()->homeMobileNetworkCode();
+    return d->homeMobileNetworkCode();
 }
 
 /*!
@@ -258,28 +290,33 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
     available or on error.
 
     For WLAN this returns the network's current SSID.
+    \since 1.0
+
+    \warning On Symbian this function is not reentrant and must be used from main thread only.
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
-    return netInfoPrivate()->networkName(mode);
+    return netInfoPrivateSingleton()->networkName(mode);
 }
 
 /*!
     Returns the MAC address for the interface servicing the network \a mode. An empty string is
     returned if not available or on error.
+    \since 1.0
 */
 QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    return netInfoPrivate()->macAddress(mode);
+    return d->macAddress(mode);
 }
 
 /*!
     Returns the first found QNetworkInterface for type \a mode. If none is found, or it can't be represented
     by QNetworkInterface (e.g. Bluetooth), an invalid QNetworkInterface object is returned.
+    \since 1.0
 */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    return netInfoPrivate()->interfaceForMode(mode);
+    return d->interfaceForMode(mode);
 }
 
 /*!
@@ -287,10 +324,11 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 
     Returns the current active network mode. If more than one mode is active, returns the
     default or preferred mode. If no modes are active, returns UnknownMode.
+    \since 1.0
 */
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
 {
-    return netInfoPrivate()->currentMode();
+    return d->currentMode();
 }
 
 /*!
@@ -302,7 +340,7 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
     //This is not required on all platforms
 #if defined(Q_WS_MAEMO_5)
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
-        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
+        d->setWlanSignalStrengthCheckEnabled(true);
     } else
 #endif // Q_WS_MAEMO_5
     if (QLatin1String(signal) == SIGNAL(currentMobileCountryCodeChanged(QString))) {
@@ -345,7 +383,7 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
     //This is not required on all platforms
 #if defined(Q_WS_MAEMO_5)
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
-        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
+        d->setWlanSignalStrengthCheckEnabled(false);
     } else
 #endif // Q_WS_MAEMO_5
     if (QLatin1String(signal) == SIGNAL(currentMobileCountryCodeChanged(QString))) {
@@ -382,10 +420,11 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
 
     If no data technology is active, or data technology is not supported, QSystemNetworkInfo::UnknownDataTechnology
     is returned.
+    \since 1.2
 */
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfo::cellDataTechnology()
 {
-    return netInfoPrivate()->cellDataTechnology();
+    return d->cellDataTechnology();
 }
 
 #include "moc_qsystemnetworkinfo.cpp"

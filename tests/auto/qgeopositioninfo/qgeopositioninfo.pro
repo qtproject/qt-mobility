@@ -15,4 +15,3 @@ MOBILITY = location
 symbian {
         TARGET.CAPABILITY = ALL -TCB
 }
-

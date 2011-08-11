@@ -7,29 +7,29 @@
 ** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -57,6 +57,10 @@
 #include "qdeclarativeorganizeritemdetail_p.h" 
 #include "qdeclarativeorganizeritemfetchhint_p.h" 
 #include "qdeclarativeorganizercollection_p.h" 
+
+//TESTED_COMPONENT=src/organizer
+//TESTED_CLASS=
+//TESTED_FILES=
 
 // Eventually these will make it into qtestcase.h
 // but we might need to tweak the timeout values here.
@@ -183,21 +187,20 @@ void tst_QDeclarativeOrganizer::construction_data()
     QTest::newRow("OrganizerModel: No properties") <<  "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {}" << true;
     QTest::newRow("OrganizerModel: Only id property") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId}" << true;
     QTest::newRow("OrganizerModel: Valuetype properties") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; manager:'memory'; startPeriod:'2010-08-12T13:22:01'; endPeriod:'2010-09-12T13:22:01'}" << true;
-    QTest::newRow("OrganizerModel: With filter") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; filter: OrganizerItemDateTimePeriodFilter{id: filter;start:'2010-08-12T13:22:01';end:'2010-09-12T13:22:01'} }" << true;
-    QTest::newRow("OrganizerModel: With fetchHint") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; fetchHint:OrganizerItemFetchHint {id:hint; optimizationHints:OrganizerItemFetchHint.AllRequired} }" << true;
+    QTest::newRow("OrganizerModel: With filter") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; filter: DetailFilter{} }" << true;
+    QTest::newRow("OrganizerModel: With fetchHint") << "QDeclarativeOrganizerModel" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerModel {id: organizerModelId; fetchHint:FetchHint {id:hint; optimizationHints:FetchHint.AllRequired} }" << true;
 
     // OrganizerItem
     QTest::newRow("Base organizer item") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {}" << true;
     QTest::newRow("Base organizer item: only id") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem}" << true;
     QTest::newRow("Base organizer item: Valuetype properties") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem; displayLabel:'test item'; description:'item description'; guid:'1112232133'}" << true;
-    QTest::newRow("Base organizer item: default property") << "QDeclarativeOrganizerItem" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerItem {id:organizerItem; OrganizerItemDisplayLabel {label:'test item'} OrganizerItemDescription { description:'item description'} OrganizerItemGuid{guid:'1112232133'} }" << true;
 
     //OrganizerEvent
-    QTest::newRow("Organizer event") << "QDeclarativeOrganizerEvent" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n OrganizerEvent {}" << true;
+    QTest::newRow("Organizer event") << "QDeclarativeOrganizerEvent" << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n Event {}" << true;
     QTest::newRow("Organizer event: Valuetype properties") << "QDeclarativeOrganizerEvent"
                << "import Qt 4.7 \n import QtMobility.organizer 1.1 \n"
-                  "OrganizerEvent {id:organizerEvent; displayLabel:'meeting'; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; isAllDay:false; locationName:'office'; locationAddress:'53 Brandl st'; locationGeoCoordinates:'-27.579570, 153.10031'; priority:OrganizerItemPriority.LowPriority;"
-                  "recurrence.recurrenceRules:[OrganizerItemRecurrenceRule {}]\n"
+                  "Event {id:organizerEvent; startDateTime:'2010-08-12T13:00:00'; endDateTime:'2010-08-12T15:00:00'; allDay:false; location:'office'; priority:Priority.Low;"
+                  "recurrence.recurrenceRules:[RecurrenceRule {}]\n"
                   "recurrence.recurrenceDates:[]\n recurrence.exceptionDates:[]"
                   "}"
                << true;

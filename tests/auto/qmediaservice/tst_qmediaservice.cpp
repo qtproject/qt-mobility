@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -53,17 +53,6 @@
 QT_BEGIN_NAMESPACE
 
 class QtTestMediaService;
-
-class tst_QMediaService : public QObject
-{
-    Q_OBJECT
-private slots:
-    void initTestCase();
-
-    void control_iid();
-    void control();
-};
-
 
 class QtTestMediaControlA : public QMediaControl
 {
@@ -98,23 +87,31 @@ class QtTestMediaControlD : public QMediaControl
 #define QtTestMediaControlD_iid "com.nokia.QtTestMediaControlD"
 Q_MEDIA_DECLARE_CONTROL(QtTestMediaControlD, QtTestMediaControlD_iid)
 
+//unimplemented service
+#define QtTestMediaControlE_iid "com.nokia.QtTestMediaControlF"
 class QtTestMediaControlE : public QMediaControl
 {
     Q_OBJECT
 };
 
+/* implementation of child class by inheriting The QMediaService base class for media service implementations. */
 class QtTestMediaService : public QMediaService
 {
     Q_OBJECT
 public:
-    QtTestMediaService()
-        : QMediaService(0)
-        , refA(0)
-        , refB(0)
-        , refC(0)
+    int refA;
+    int refB;
+    int refC;
+    QtTestMediaControlA controlA;
+    QtTestMediaControlB controlB;
+    QtTestMediaControlC controlC;
+
+    //constructor
+    QtTestMediaService(): QMediaService(0), refA(0), refB(0), refC(0)
     {
     }
 
+    //requestControl() pure virtual function of QMediaService class.
     QMediaControl *requestControl(const char *name)
     {
         if (strcmp(name, QtTestMediaControlA_iid) == 0) {
@@ -134,6 +131,7 @@ public:
         }
     }
 
+    //releaseControl() pure virtual function of QMediaService class.
     void releaseControl(QMediaControl *control)
     {
         if (control == &controlA)
@@ -144,19 +142,106 @@ public:
             refC -= 1;
     }
 
+    //requestControl() function of QMediaService class.
     using QMediaService::requestControl;
-
-    int refA;
-    int refB;
-    int refC;
-    QtTestMediaControlA controlA;
-    QtTestMediaControlB controlB;
-    QtTestMediaControlC controlC;
 };
 
-void tst_QMediaService::initTestCase()
-{    
+/* Test case implementation for QMediaService class which provides a common base class for media service implementations.*/
+class tst_QMediaService : public QObject
+{
+    Q_OBJECT
+private slots:
+    void tst_destructor();
+    void tst_releaseControl();
+    void tst_requestControl();
+    void tst_requestControlTemplate();
+
+    void initTestCase();
+
+    void control_iid();
+    void control();
+
+};
+
+/*MaemoAPI-1668 :destructor property test. */
+void tst_QMediaService::tst_destructor()
+{
+    QtTestMediaService *service = new QtTestMediaService;
+    delete service;
 }
+
+void tst_QMediaService::initTestCase()
+{
+}
+
+/*MaemoAPI-1669 :releaseControl() API property test. */
+void tst_QMediaService::tst_releaseControl()
+{
+    //test class instance creation
+    QtTestMediaService service;
+
+    //Get a pointer to the media control implementing interface and verify.
+    QMediaControl* controlA = service.requestControl(QtTestMediaControlA_iid);
+    QCOMPARE(controlA, &service.controlA);
+    service.releaseControl(controlA); //Controls must be returned to the service when no longer needed
+    QVERIFY(service.refA == 0);
+
+    //Get a pointer to the media control implementing interface and verify.
+    QMediaControl* controlB = service.requestControl(QtTestMediaControlB_iid);
+    QCOMPARE(controlB, &service.controlB);
+    service.releaseControl(controlB); //Controls must be returned to the service when no longer needed
+    QVERIFY(service.refB == 0);
+}
+
+/*MaemoAPI-1670 :requestControl() API property test. */
+void tst_QMediaService::tst_requestControl()
+{
+    //test class instance creation
+    QtTestMediaService service;
+
+    //Get a pointer to the media control implementing interface and verify.
+    QMediaControl* controlA = service.requestControl(QtTestMediaControlA_iid);
+    QCOMPARE(controlA, &service.controlA);
+    service.releaseControl(controlA); //Controls must be returned to the service when no longer needed
+
+    //Get a pointer to the media control implementing interface and verify.
+    QMediaControl* controlB = service.requestControl(QtTestMediaControlB_iid);
+    QCOMPARE(controlB, &service.controlB);
+    service.releaseControl(controlB); //Controls must be returned to the service when no longer needed
+
+    //If the service does not implement the control, a null pointer is returned instead.
+    QMediaControl* controlE = service.requestControl(QtTestMediaControlE_iid);
+    QVERIFY(!controlE); //should return null pointer
+    service.releaseControl(controlE); //Controls must be returned to the service when no longer needed
+
+    //If the service is unavailable a null pointer is returned instead.
+    QMediaControl* control = service.requestControl("");
+    QVERIFY(!control); //should return null pointer
+    service.releaseControl(control); //Controls must be returned to the service when no longer needed
+}
+
+/*MaemoAPI-1671 :requestControl() API property test. */
+void tst_QMediaService::tst_requestControlTemplate()
+{
+    //test class instance creation
+    QtTestMediaService service;
+
+    //Get a pointer to the media control of type T implemented by a media service.
+    QtTestMediaControlA *controlA = service.requestControl<QtTestMediaControlA *>();
+    QCOMPARE(controlA, &service.controlA);
+    service.releaseControl(controlA);
+
+    //Get a pointer to the media control of type T implemented by a media service.
+    QtTestMediaControlB *controlB = service.requestControl<QtTestMediaControlB *>();
+    QCOMPARE(controlB, &service.controlB);
+    service.releaseControl(controlB);
+
+    QVERIFY(!service.requestControl<QtTestMediaControlC *>());  // Faulty implementation returns A.
+    QCOMPARE(service.refA, 0);  // Verify the control was released.
+
+    QVERIFY(!service.requestControl<QtTestMediaControlD *>());  // No control of that type.
+}
+
 
 void tst_QMediaService::control_iid()
 {
@@ -181,7 +266,7 @@ void tst_QMediaService::control()
     QCOMPARE(controlB, &service.controlB);
     service.releaseControl(controlB);
 
-    QVERIFY(!service.requestControl<QtTestMediaControlC *>());  // Faulty implementation returns A.
+    QVERIFY(!service.requestControl<QtTestMediaControlC *>());  // Faulty implementation returns A, but is wrong class
     QCOMPARE(service.refA, 0);  // Verify the control was released.
 
     QVERIFY(!service.requestControl<QtTestMediaControlD *>());  // No control of that type.

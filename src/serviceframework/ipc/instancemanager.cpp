@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -52,6 +52,7 @@ Q_GLOBAL_STATIC(InstanceManager, typeRegister);
     \internal
 
     Returns the instance manager for the service process
+    \since 1.1
 */
 InstanceManager* InstanceManager::instance()
 {
@@ -84,8 +85,9 @@ InstanceManager::~InstanceManager()
 
 /*!
     \internal
-    
+
     Adds an entry to the map of service identifiers
+    \since 1.1
 */
 bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
 {
@@ -107,6 +109,7 @@ bool InstanceManager::addType(const QRemoteServiceRegister::Entry& e)
     \internal
 
     Returns the metaobject of a registered service object identified by its \a entry
+    \since 1.1
 */
 const QMetaObject* InstanceManager::metaObject(const QRemoteServiceRegister::Entry& entry) const
 {
@@ -122,6 +125,7 @@ const QMetaObject* InstanceManager::metaObject(const QRemoteServiceRegister::Ent
    \internal
 
    Returns a list of all the registered entries
+    \since 1.1
 */
 QList<QRemoteServiceRegister::Entry> InstanceManager::allEntries() const
 {
@@ -135,6 +139,7 @@ QList<QRemoteServiceRegister::Entry> InstanceManager::allEntries() const
     Instance manager takes ownership of service instance. Returns a null pointer
     if \a entry cannot be mapped to a known meta object. The \a instanceId will
     contain the unique ID for the new service instance.
+    \since 1.1
 */
 QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Entry& entry, QUuid& instanceId)
 {
@@ -179,6 +184,7 @@ QObject* InstanceManager::createObjectInstance(const QRemoteServiceRegister::Ent
     using the \a entry as the key.
 
     Emits instanceClosed() and allInstancesClosed() if no more instances are open
+    \since 1.1
 */
 void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& entry, const QUuid& instanceId)
 {
@@ -187,11 +193,11 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
         return;
 
     ServiceIdentDescriptor& descr = metaMap[entry];
-    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {        
+    if (descr.entryData->instanceType == QRemoteServiceRegister::GlobalInstance) {
         if (descr.globalRefCount < 1)
             return;
 
-        if (descr.globalRefCount == 1) {            
+        if (descr.globalRefCount == 1) {
             if (descr.globalInstance)
                 QTimer::singleShot(0, descr.globalInstance, SLOT(deleteLater()));
             descr.globalInstance = 0;
@@ -220,6 +226,7 @@ void InstanceManager::removeObjectInstance(const QRemoteServiceRegister::Entry& 
     \internal
 
     Provides a count of how many global and private instances are currently open
+    \since 1.1
 */
 int InstanceManager::totalInstances() const
 {
@@ -231,7 +238,7 @@ int InstanceManager::totalInstances() const
         total += descr.globalRefCount;
         total += descr.individualInstances.size();
     }
-   
+
     return total;
 }
 

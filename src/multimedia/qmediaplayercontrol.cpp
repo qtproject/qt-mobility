@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -102,6 +102,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     \fn QMediaPlayerControl::state() const
 
     Returns the state of a player control.
+    \since 1.0
 */
 
 /*!
@@ -109,6 +110,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that the \a state of a player control has changed.
 
+    \since 1.0
     \sa state()
 */
 
@@ -116,6 +118,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     \fn QMediaPlayerControl::mediaStatus() const
 
     Returns the status of the current media.
+    \since 1.0
 */
 
 /*!
@@ -123,6 +126,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that the \a status of the current media has changed.
 
+    \since 1.0
     \sa mediaStatus()
 */
 
@@ -131,6 +135,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     \fn QMediaPlayerControl::duration() const
 
     Returns the duration of the current media in milliseconds.
+    \since 1.0
 */
 
 /*!
@@ -138,6 +143,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that the \a duration of the current media has changed.
 
+    \since 1.0
     \sa duration()
 */
 
@@ -145,6 +151,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     \fn QMediaPlayerControl::position() const
 
     Returns the current playback position in milliseconds.
+    \since 1.0
 */
 
 /*!
@@ -152,6 +159,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Sets the playback \a position of the current media.  This will initiate a seek and it may take
     some time for playback to reach the position set.
+    \since 1.0
 */
 
 /*!
@@ -162,6 +170,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     This is only emitted in when there has been a discontinous change in the playback postion, such
     as a seek or the position being reset.
 
+    \since 1.0
     \sa position()
 */
 
@@ -169,12 +178,14 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     \fn QMediaPlayerControl::volume() const
 
     Returns the audio volume of a player control.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlayerControl::setVolume(int volume)
 
     Sets the audio \a volume of a player control.
+    \since 1.0
 */
 
 /*!
@@ -182,6 +193,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals the audio \a volume of a player control has changed.
 
+    \since 1.0
     \sa volume()
 */
 
@@ -189,12 +201,14 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     \fn QMediaPlayerControl::isMuted() const
 
     Returns the mute state of a player control.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlayerControl::setMuted(bool mute)
 
     Sets the \a mute state of a player control.
+    \since 1.0
 */
 
 /*!
@@ -202,6 +216,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals a change in the \a mute status of a player control.
 
+    \since 1.0
     \sa isMuted()
 */
 
@@ -210,6 +225,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Returns the buffering progress of the current media.  Progress is measured in the percentage
     of the buffer filled.
+    \since 1.0
 */
 
 /*!
@@ -217,6 +233,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that buffering \a progress has changed.
 
+    \since 1.0
     \sa bufferStatus()
 */
 
@@ -226,6 +243,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Identifies if there is audio output available for the current media.
 
     Returns true if audio output is available and false otherwise.
+    \since 1.0
 */
 
 /*!
@@ -233,6 +251,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that there has been a change in the availability of \a audio output.
 
+    \since 1.0
     \sa isAudioAvailable()
 */
 
@@ -242,6 +261,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Identifies if there is video output available for the current media.
 
     Returns true if video output is available and false otherwise.
+    \since 1.0
 */
 
 /*!
@@ -249,6 +269,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that there has been a change in the availability of \a video output.
 
+    \since 1.0
     \sa isVideoAvailable()
 */
 
@@ -258,6 +279,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Identifies if the current media is seekable.
 
     Returns true if it possible to seek within the current media, and false otherwise.
+    \since 1.0
 */
 
 /*!
@@ -265,6 +287,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that the \a seekable state of a player control has changed.
 
+    \since 1.0
     \sa isSeekable()
 */
 
@@ -276,6 +299,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Usually for local files this is a continuous interval equal to [0..duration()]
     or an empty time range if seeking is not supported, but for network sources
     it refers to the buffered parts of the media.
+    \since 1.0
 */
 
 /*!
@@ -283,6 +307,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Signals that the available media playback \a ranges have changed.
 
+    \since 1.0
     \sa QMediaPlayerControl::availablePlaybackRanges()
 */
 
@@ -290,18 +315,21 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     \fn qreal QMediaPlayerControl::playbackRate() const
 
     Returns the rate of playback.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlayerControl::setPlaybackRate(qreal rate)
 
     Sets the \a rate of playback.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlayerControl::media() const
 
     Returns the current media source.
+    \since 1.0
 */
 
 /*!
@@ -309,6 +337,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     Returns the current media stream. This is only a valid if a stream was passed to setMedia().
 
+    \since 1.0
     \sa setMedia()
 */
 
@@ -322,12 +351,14 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     Setting the media to a null QMediaContent will cause the control to discard all
     information relating to the current media source and to cease all I/O operations related
     to that media.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlayerControl::mediaChanged(const QMediaContent& content)
 
     Signals that the current media \a content has changed.
+    \since 1.0
 */
 
 /*!
@@ -338,6 +369,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     If successful the player control will immediately enter the \l {QMediaPlayer::PlayingState}
     {playing} state.
 
+    \since 1.0
     \sa state()
 */
 
@@ -349,6 +381,7 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
     If sucessful the player control will immediately enter the \l {QMediaPlayer::PausedState}
     {paused} state.
 
+    \since 1.0
     \sa state(), play(), stop()
 */
 
@@ -359,18 +392,21 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 
     If successful the player control will immediately enter the \l {QMediaPlayer::StoppedState}
     {stopped} state.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlayerControl::error(int error, const QString &errorString)
 
     Signals that an \a error has occurred.  The \a errorString provides a more detailed explanation.
+    \since 1.0
 */
 
 /*!
     \fn QMediaPlayerControl::playbackRateChanged(qreal rate)
 
     Signal emitted when playback rate changes to \a rate.
+    \since 1.0
 */
 
 #include "moc_qmediaplayercontrol.cpp"

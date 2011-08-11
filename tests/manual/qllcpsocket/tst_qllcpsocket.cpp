@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -77,6 +77,9 @@ private slots:
     void tst_waitFor();
 
     void tst_invalidServiceUri();
+
+    void tst_serverConnectionless();
+    void tst_clientConnectionless();
 };
 
 Q_DECLARE_METATYPE(tst_QLlcpSocket::ClientConnectionShutdown)
@@ -173,6 +176,8 @@ void tst_QLlcpSocket::tst_clientConnection()
     if (stream) {
         socket->write("URI\n");
 
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
+
         QCOMPARE(bytesWrittenSpy.count(), 1);
         QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(4));
 
@@ -183,6 +188,8 @@ void tst_QLlcpSocket::tst_clientConnection()
         QCOMPARE(line, service.toLatin1());
     } else {
         socket->writeDatagram("URI");
+
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
 
         QCOMPARE(bytesWrittenSpy.count(), 1);
         QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(3));
@@ -203,10 +210,15 @@ void tst_QLlcpSocket::tst_clientConnection()
     /* Read / Write */
     if (stream) {
         QByteArray data("ECHO Test data\n");
-        socket->write(data);
+
+        // fill up the local outgoing buffer
+        int count = 0;
+        while (socket->write(data) == data.size()) { ++count; }
+
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
 
         QCOMPARE(bytesWrittenSpy.count(), 1);
-        QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(data.size()));
+        QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), count * qint64(data.size()));
 
         QTRY_VERIFY(!readyReadSpy.isEmpty());
 
@@ -215,6 +227,8 @@ void tst_QLlcpSocket::tst_clientConnection()
         QCOMPARE(line.constData(), "Test data");
     } else {
         socket->writeDatagram("ECHO Test data");
+
+        QTRY_VERIFY(!bytesWrittenSpy.isEmpty());
 
         QCOMPARE(bytesWrittenSpy.count(), 1);
         QCOMPARE(bytesWrittenSpy.takeFirst().at(0).value<qint64>(), qint64(14));
@@ -374,6 +388,68 @@ void tst_QLlcpSocket::tst_invalidServiceUri()
     QVERIFY(!socket->errorString().isEmpty());
 
     delete socket;
+}
+
+void tst_QLlcpSocket::tst_serverConnectionless()
+{
+    QLlcpSocket *socket = new QLlcpSocket;
+
+    QSignalSpy stateSpy(socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
+
+    QVERIFY2(socket->bind(63), "Failed to bind to port 63");
+
+    QVERIFY(errorSpy.isEmpty());
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::BoundState);
+    QCOMPARE(socket->state(), QLlcpSocket::BoundState);
+
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+    QTRY_VERIFY(!readyReadSpy.isEmpty());
+
+    QVERIFY(socket->hasPendingDatagrams());
+
+    while (socket->hasPendingDatagrams()) {
+        qint64 size = socket->pendingDatagramSize();
+        QVERIFY2(size > 0, "Invalid datagram size");
+
+        QByteArray data;
+        data.resize(size);
+        QNearFieldTarget *target = 0;
+        quint8 port = 0;
+
+        qint64 readSize = socket->readDatagram(data.data(), size, &target, &port);
+
+        QCOMPARE(size, readSize);
+    }
+}
+
+void tst_QLlcpSocket::tst_clientConnectionless()
+{
+    QLlcpSocket *socket = new QLlcpSocket;
+
+    QSignalSpy stateSpy(socket, SIGNAL(stateChanged(QLlcpSocket::SocketState)));
+    QSignalSpy errorSpy(socket, SIGNAL(error(QLlcpSocket::SocketError)));
+
+    QVERIFY2(socket->bind(0), "Failed to bind to port 0");
+
+    QVERIFY(errorSpy.isEmpty());
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(stateSpy.takeFirst().at(0).value<QLlcpSocket::SocketState>(),
+             QLlcpSocket::BoundState);
+    QCOMPARE(socket->state(), QLlcpSocket::BoundState);
+
+    QSignalSpy bytesWrittenSpy(socket, SIGNAL(bytesWritten(qint64)));
+
+    for (int i = 0; i < 60; ++i) {
+        QString string = QString("Test message %1").arg(i);
+        const QByteArray data = string.toUtf8();
+        qint64 writeData = socket->writeDatagram(data, 0, 63);
+        QCOMPARE(writeData, qint64(data.length()));
+
+        QTest::qWait(500);
+    }
 }
 
 QTEST_MAIN(tst_QLlcpSocket)

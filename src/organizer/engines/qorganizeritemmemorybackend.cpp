@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -68,15 +68,16 @@ QTM_BEGIN_NAMESPACE
   of an organizer item backend.
   \inmodule QtOrganizer
   \internal
- 
+  \since 1.1
+
   It may be used as a reference implementation, or when persistent storage is not required.
- 
+
   During construction, it will load the in-memory data associated with the memory store
   identified by the "id" parameter from the given parameters if it exists, or a new,
   anonymous store if it does not.
- 
+
   Data stored in this engine is only available in the current process.
- 
+
   This engine supports sharing, so an internal reference count is increased
   whenever a manager uses this backend, and is decreased when the manager
   no longer requires this engine.
@@ -89,6 +90,7 @@ QMap<QString, QOrganizerItemMemoryEngineData*> QOrganizerItemMemoryEngine::engin
   \class QOrganizerItemMemoryEngineId
   \brief The QOrganizerItemMemoryEngineId class provides an id which uniquely identifies
   a QOrganizerItem stored within a collection stored within a a QOrganizerItemMemoryEngine.
+  \since 1.1
 
   \internal
   It may be used as a reference implementation, although since different platforms
@@ -189,6 +191,7 @@ uint QOrganizerItemMemoryEngineId::hash() const
   \brief The QOrganizerCollectionMemoryEngineId class provides an id which uniquely identifies
   a QOrganizerCollection stored within a collection stored within a a QOrganizerCollectionMemoryEngine.
   \internal
+  \since 1.1
 
   It may be used as a reference implementation, although since different platforms
   have different semantics for ids (datastore-unique versus calendar-unique, etc),
@@ -269,7 +272,9 @@ uint QOrganizerCollectionMemoryEngineId::hash() const
     return m_collectionId;
 }
 
-/*! Constructor of a QOrganizerItemMemoryEngineData object */
+/*! Constructor of a QOrganizerItemMemoryEngineData object
+  \since 1.1
+*/
 QOrganizerItemMemoryEngineData::QOrganizerItemMemoryEngineData()
     : QSharedData(),
     m_refCount(QAtomicInt(1)),
@@ -286,6 +291,7 @@ QOrganizerItemMemoryEngineData::QOrganizerItemMemoryEngineData()
  *
  * The same engine will be returned for multiple calls with the
  * same value for the "id" parameter, while one of them is in scope.
+  \since 1.1
  */
 QOrganizerItemMemoryEngine* QOrganizerItemMemoryEngine::createMemoryEngine(const QMap<QString, QString>& parameters)
 {
@@ -312,6 +318,7 @@ QOrganizerItemMemoryEngine* QOrganizerItemMemoryEngine::createMemoryEngine(const
 /*!
  * Constructs a new in-memory backend which shares the given \a data with
  * other shared memory engines.
+  \since 1.1
  */
 QOrganizerItemMemoryEngine::QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngineData* data)
     : d(data)
@@ -330,7 +337,9 @@ QOrganizerItemMemoryEngine::QOrganizerItemMemoryEngine(QOrganizerItemMemoryEngin
     }
 }
 
-/*! Frees any memory used by this engine */
+/*! Frees any memory used by this engine
+  \since 1.1
+*/
 QOrganizerItemMemoryEngine::~QOrganizerItemMemoryEngine()
 {
     d->m_sharedEngines.removeAll(this);
@@ -340,13 +349,17 @@ QOrganizerItemMemoryEngine::~QOrganizerItemMemoryEngine()
     }
 }
 
-/*! \reimp */
+/*! \reimp
+  \since 1.1
+*/
 QString QOrganizerItemMemoryEngine::managerName() const
 {
     return QLatin1String("memory");
 }
 
-/*! \reimp */
+/*! \reimp
+  \since 1.1
+*/
 QMap<QString, QString> QOrganizerItemMemoryEngine::managerParameters() const
 {
     QMap<QString, QString> params;
@@ -354,7 +367,9 @@ QMap<QString, QString> QOrganizerItemMemoryEngine::managerParameters() const
     return params;
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerManager::Error* error) const
 {
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
@@ -363,7 +378,9 @@ QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemId& organize
     return retn;
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 QList<QOrganizerItemId> QOrganizerItemMemoryEngine::itemIds(const QDateTime& startDate, const QDateTime& endDate, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerManager::Error* error) const
 {
     /* Special case the fast case */
@@ -435,6 +452,7 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QDateTime& 
 /*!
  * Determines if \a rrule is underspecified and if so, fills in missing information based on \a
  * initialDate.
+  \since 1.1
  */
 void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerRecurrenceRule* rrule, const QDate& initialDate) const
 {
@@ -501,6 +519,7 @@ void QOrganizerItemMemoryEngine::inferMissingCriteria(QOrganizerRecurrenceRule* 
  * to determine when the week boundary is.
  * eg. If \a frequency is Monthly and \a interval is 3, then true is returned iff \a date is in the
  * same month as \a initialDate, in a month 3 months ahead, 6 months ahead, etc.
+  \since 1.1
  */
 bool QOrganizerItemMemoryEngine::inMultipleOfInterval(const QDate& date, const QDate& initialDate, QOrganizerRecurrenceRule::Frequency frequency, int interval, Qt::DayOfWeek firstDayOfWeek, int maxCount) const
 {
@@ -551,6 +570,7 @@ bool QOrganizerItemMemoryEngine::inMultipleOfInterval(const QDate& date, const Q
  * the \a frequency is Monthly, then this returns the first day of \a date's month.  If the \a
  * frequency is Weekly, then it returns the first day of \a date's week, considering the week to
  * start on \a firstDayOfWeek
+   \since 1.1
  */
 QDate QOrganizerItemMemoryEngine::firstDateInPeriod(const QDate& date, QOrganizerRecurrenceRule::Frequency frequency, Qt::DayOfWeek firstDayOfWeek) const
 {
@@ -565,7 +585,7 @@ QDate QOrganizerItemMemoryEngine::firstDateInPeriod(const QDate& date, QOrganize
         case QOrganizerRecurrenceRule::Weekly:
             while (retn.dayOfWeek() != firstDayOfWeek) {
                 retn = retn.addDays(-1);
-            } 
+            }
             return retn;
         case QOrganizerRecurrenceRule::Daily:
             return retn;
@@ -579,6 +599,7 @@ QDate QOrganizerItemMemoryEngine::firstDateInPeriod(const QDate& date, QOrganize
  * Returns the date which is the first date of the next calendar period after \a date specified by
  * \a frequency.  eg. if \a frequency is Monthly, then this returns the first day of the next month.
  * If \a frequency is Weekly, then it returns the first \a firstDayOfWeek after \a date.
+   \since 1.1
  */
 QDate QOrganizerItemMemoryEngine::firstDateInNextPeriod(const QDate& date, QOrganizerRecurrenceRule::Frequency frequency, Qt::DayOfWeek firstDayOfWeek) const
 {
@@ -612,6 +633,7 @@ QDate QOrganizerItemMemoryEngine::firstDateInNextPeriod(const QDate& date, QOrga
  * Returns a list of dates between \a periodStart (inclusive) and \a periodEnd (inclusive) which
  * match the \a rrule.  Only daysOfWeek, daysOfMonth, daysOfYear, weeksOfYear and months from the \a
  * rrule are matched.
+  \since 1.1
  */
 QList<QDate> QOrganizerItemMemoryEngine::matchingDates(const QDate& periodStart, const QDate& periodEnd, const QOrganizerRecurrenceRule& rrule) const
 {
@@ -643,6 +665,7 @@ QList<QDate> QOrganizerItemMemoryEngine::matchingDates(const QDate& periodStart,
  * For positive values in \a positions, the values represent a 1-based index into \a dates.
  * For negative values, they represent indices counting from the end of \a dates (eg. -1 means the
  * last value of \a dates).
+  \since 1.1
  */
 QList<QDate> QOrganizerItemMemoryEngine::filterByPosition(const QList<QDate>& dates, const QSet<int> positions) const
 {
@@ -1107,6 +1130,7 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
 /*!
  * For Occurrence type items, ensure the ParentId and the Guid are set consistently.  Returns
  * false and sets \a error on error, returns true otherwise.
+  \since 1.1
  */
 bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem, QOrganizerManager::Error* error)
 {
@@ -1177,6 +1201,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
 
 /*!
  * Returns true if and only if \a occurrenceType is the "Occurrence" version of \a parentType.
+  \since 1.1
  */
 bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, const QString& parentType)
 {
@@ -1186,7 +1211,9 @@ bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, 
                 && occurrenceType == QOrganizerItemType::TypeTodoOccurrence));
 }
 
-/*! \reimp */
+/*! \reimp
+  \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     Q_ASSERT(errorMap);
@@ -1218,7 +1245,9 @@ bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems
 }
 
 /*! Removes the organizer item identified by the given \a organizeritemId, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizer items as required */
+    filling the \a changeSet with ids of changed organizer items as required
+   \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     QHash<QOrganizerItemId, QOrganizerItem>::const_iterator hashIterator = d->m_idToItemHash.find(organizeritemId);
@@ -1252,7 +1281,9 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemId& organizerite
     return true;
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemId>& organizeritemIds, QMap<int, QOrganizerManager::Error>* errorMap, QOrganizerManager::Error* error)
 {
     Q_ASSERT(errorMap);
@@ -1410,7 +1441,9 @@ bool QOrganizerItemMemoryEngine::removeCollection(const QOrganizerCollectionId& 
     return false;
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMemoryEngine::detailDefinitions(const QString& organizeritemType, QOrganizerManager::Error* error) const
 {
     // lazy initialisation of schema definitions.
@@ -1423,7 +1456,9 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMemoryEngine::detail
 }
 
 /*! Saves the given detail definition \a def, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizer items as required */
+    filling the \a changeSet with ids of changed organizer items as required
+    \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. // XXX TODO.
@@ -1442,7 +1477,9 @@ bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetail
     return true;
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerManager::Error* error)
 {
     QOrganizerItemChangeSet changeSet;
@@ -1452,7 +1489,9 @@ bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetail
 }
 
 /*! Removes the detail definition identified by \a definitionId, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizer items as required */
+    filling the \a changeSet with ids of changed organizer items as required
+    \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet...
@@ -1476,7 +1515,9 @@ bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitio
     return success;
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerManager::Error* error)
 {
     QOrganizerItemChangeSet changeSet;
@@ -1485,13 +1526,17 @@ bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitio
     return retn;
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 void QOrganizerItemMemoryEngine::requestDestroyed(QOrganizerAbstractRequest* req)
 {
     Q_UNUSED(req);
 }
 
-/*! \reimp */
+/*! \reimp
+    \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::startRequest(QOrganizerAbstractRequest* req)
 {
     if (!req)
@@ -1505,14 +1550,18 @@ bool QOrganizerItemMemoryEngine::startRequest(QOrganizerAbstractRequest* req)
     return true;
 }
 
-/*! \reimp */
+/*! \reimp
+  \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::cancelRequest(QOrganizerAbstractRequest* req)
 {
     Q_UNUSED(req); // we can't cancel since we complete immediately
     return false;
 }
 
-/*! \reimp */
+/*! \reimp
+  \since 1.1
+*/
 bool QOrganizerItemMemoryEngine::waitForRequestFinished(QOrganizerAbstractRequest* req, int msecs)
 {
     // in our implementation, we always complete any operation we start.
@@ -1525,6 +1574,7 @@ bool QOrganizerItemMemoryEngine::waitForRequestFinished(QOrganizerAbstractReques
 /*!
  * This slot is called some time after an asynchronous request is started.
  * It performs the required operation, sets the result and returns.
+  \since 1.1
  */
 void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerAbstractRequest *currentRequest)
 {
@@ -1794,6 +1844,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerAbstract
 
 /*!
  * \reimp
+  \since 1.1
  */
 bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerManager::ManagerFeature feature, const QString& organizeritemType) const
 {
@@ -1813,6 +1864,7 @@ bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerManager::ManagerFeature fe
 
 /*!
  * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
+  \since 1.1
  */
 bool QOrganizerItemMemoryEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
 {

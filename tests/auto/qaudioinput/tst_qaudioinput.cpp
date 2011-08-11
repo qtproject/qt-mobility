@@ -7,29 +7,29 @@
 ** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -203,7 +203,7 @@ void tst_QAudioInput::initTestCase()
 
     QVERIFY(testFormats.size());
 
-    foreach (format, testFormats) {
+    foreach (const QAudioFormat &format, testFormats) {
         QFile* file = new QFile(workingDir() + formatToFileName(format) + QString(".wav"));
         audioFiles.append(file);
     }
@@ -269,6 +269,7 @@ void tst_QAudioInput::invalidFormat()
     QVERIFY2((audioInput.error() == QAudio::NoError), "error() was not set to QAudio::NoError before start()");
 
     audioInput.start();
+
     // Check that error is raised
     QTRY_VERIFY2((audioInput.error() == QAudio::OpenError),"error() was not set to QAudio::OpenError after start()");
 }
@@ -439,6 +440,7 @@ void tst_QAudioInput::pull()
         QVERIFY(wavHeader.write(*audioFiles.at(i)));
 
         audioInput.start(audioFiles.at(i));
+
         // Check that QAudioInput immediately transitions to ActiveState or IdleState
         QTRY_VERIFY2((stateSignal.count() > 0),"didn't emit signals on start()");
         QVERIFY2((audioInput.state() == QAudio::ActiveState || audioInput.state() == QAudio::IdleState),
@@ -497,6 +499,7 @@ void tst_QAudioInput::pullSuspendResume()
         QVERIFY(wavHeader.write(*audioFiles.at(i)));
 
         audioInput.start(audioFiles.at(i));
+
         // Check that QAudioInput immediately transitions to ActiveState or IdleState
         QTRY_VERIFY2((stateSignal.count() > 0),"didn't emit signals on start()");
         QVERIFY2((audioInput.state() == QAudio::ActiveState || audioInput.state() == QAudio::IdleState),
@@ -770,32 +773,71 @@ void tst_QAudioInput::pushSuspendResume()
 void tst_QAudioInput::reset()
 {
     for(int i=0; i<audioFiles.count(); i++) {
-        QAudioInput audioInput(testFormats.at(i), this);
 
-        audioInput.setNotifyInterval(100);
+        // Try both push/pull.. the vagaries of Active vs Idle are tested elsewhere
+        {
+            QAudioInput audioInput(testFormats.at(i), this);
 
-        QSignalSpy notifySignal(&audioInput, SIGNAL(notify()));
-        QSignalSpy stateSignal(&audioInput, SIGNAL(stateChanged(QAudio::State)));
+            audioInput.setNotifyInterval(100);
 
-        // Check that we are in the default state before calling start
-        QVERIFY2((audioInput.state() == QAudio::StoppedState), "state() was not set to StoppedState before start()");
-        QVERIFY2((audioInput.error() == QAudio::NoError), "error() was not set to QAudio::NoError before start()");
-        QVERIFY2((audioInput.elapsedUSecs() == qint64(0)),"elapsedUSecs() not zero on creation");
+            QSignalSpy notifySignal(&audioInput, SIGNAL(notify()));
+            QSignalSpy stateSignal(&audioInput, SIGNAL(stateChanged(QAudio::State)));
 
-        audioInput.start();
-        // Check that QAudioInput immediately transitions to IdleState
-        QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit IdleState signal on start()");
-        QVERIFY2((audioInput.state() == QAudio::IdleState), "didn't transition to IdleState after start()");
-        QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
-        QVERIFY(audioInput.periodSize() > 0);
-        QTest::qWait(500);
-        QVERIFY(audioInput.bytesReady() > 0);
-        stateSignal.clear();
+            // Check that we are in the default state before calling start
+            QVERIFY2((audioInput.state() == QAudio::StoppedState), "state() was not set to StoppedState before start()");
+            QVERIFY2((audioInput.error() == QAudio::NoError), "error() was not set to QAudio::NoError before start()");
+            QVERIFY2((audioInput.elapsedUSecs() == qint64(0)),"elapsedUSecs() not zero on creation");
 
-        audioInput.reset();
-        QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit StoppedState signal after reset()");
-        QVERIFY2((audioInput.state() == QAudio::StoppedState), "didn't transitions to StoppedState after reset()");
-        QVERIFY2((audioInput.bytesReady() == 0), "buffer not cleared after reset()");
+            QIODevice* device = audioInput.start();
+            // Check that QAudioInput immediately transitions to IdleState
+            QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit IdleState signal on start()");
+            QVERIFY2((audioInput.state() == QAudio::IdleState), "didn't transition to IdleState after start()");
+            QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
+            QVERIFY(audioInput.periodSize() > 0);
+            QTRY_VERIFY2((audioInput.bytesReady() > 0), "no bytes available after starting");
+
+            // Trigger a read
+            QByteArray data = device->read(1);
+
+            QTRY_VERIFY2((audioInput.state() == QAudio::ActiveState), "didn't transition to ActiveState after read()");
+            QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
+            stateSignal.clear();
+
+            audioInput.reset();
+            QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit StoppedState signal after reset()");
+            QVERIFY2((audioInput.state() == QAudio::StoppedState), "didn't transitions to StoppedState after reset()");
+            QVERIFY2((audioInput.bytesReady() == 0), "buffer not cleared after reset()");
+        }
+
+        {
+            QAudioInput audioInput(testFormats.at(i), this);
+            QBuffer buffer;
+
+            audioInput.setNotifyInterval(100);
+
+            QSignalSpy notifySignal(&audioInput, SIGNAL(notify()));
+            QSignalSpy stateSignal(&audioInput, SIGNAL(stateChanged(QAudio::State)));
+
+            // Check that we are in the default state before calling start
+            QVERIFY2((audioInput.state() == QAudio::StoppedState), "state() was not set to StoppedState before start()");
+            QVERIFY2((audioInput.error() == QAudio::NoError), "error() was not set to QAudio::NoError before start()");
+            QVERIFY2((audioInput.elapsedUSecs() == qint64(0)),"elapsedUSecs() not zero on creation");
+
+            audioInput.start(&buffer);
+
+            // Check that QAudioInput immediately transitions to ActiveState
+            QTRY_VERIFY2((stateSignal.count() >= 1),"didn't emit state changed signal on start()");
+            QTRY_VERIFY2((audioInput.state() == QAudio::ActiveState), "didn't transition to ActiveState after start()");
+            QVERIFY2((audioInput.error() == QAudio::NoError), "error state is not equal to QAudio::NoError after start()");
+            QVERIFY(audioInput.periodSize() > 0);
+            QTRY_VERIFY2((audioInput.bytesReady() > 0), "no bytes available after starting");
+            stateSignal.clear();
+
+            audioInput.reset();
+            QTRY_VERIFY2((stateSignal.count() == 1),"didn't emit StoppedState signal after reset()");
+            QVERIFY2((audioInput.state() == QAudio::StoppedState), "didn't transitions to StoppedState after reset()");
+            QVERIFY2((audioInput.bytesReady() == 0), "buffer not cleared after reset()");
+        }
     }
 }
 

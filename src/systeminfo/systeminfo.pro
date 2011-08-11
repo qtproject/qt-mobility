@@ -172,7 +172,7 @@ unix:!simulator {
             HEADERS += qsysteminfo_maemo_p.h linux/gconfitem_p.h
             DEFINES += QT_NO_NETWORKMANAGER QT_NO_CONNMAN QT_NO_UDISKS QT_NO_UPOWER QT_NO_UDEV
 
-            contains(bme_enabled, yes): {
+            maemo6: {
                 LIBS += -lbmeipc
                 DEFINES += Q_USE_BME
             }
@@ -204,10 +204,10 @@ unix:!simulator {
 
                 !isEmpty(SDK6) {
                     LIBS += -framework CoreWLAN  -framework CoreLocation
-                }
-            } else {
-                DEFINES += MAC_SDK_10_5
-                CONFIG += no_keywords
+                }  else {
+                   DEFINES += MAC_SDK_10_5
+                  CONFIG += no_keywords
+               }
             }
 
             TEMPLATE = lib
@@ -329,6 +329,14 @@ unix:!simulator {
             SOURCES += thermalstatus_s60.cpp
             HEADERS += thermalstatus_s60.h
             message("Thermalstatus enabled")
+        }
+
+        contains(networkhandlingengine_symbian_enabled, yes) {
+            DEFINES += NETWORKHANDLER_SYMBIAN_SUPPORTED
+            SOURCES += networkoperatornamelistener_s60.cpp
+            HEADERS += networkoperatornamelistener_s60.h
+            LIBS    += -lnetworkhandling
+            message("Network Handling engine enabled")
         }
 
         TARGET.CAPABILITY = ALL -TCB

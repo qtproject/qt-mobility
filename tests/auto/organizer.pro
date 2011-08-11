@@ -15,6 +15,6 @@ SUBDIRS += \
     qorganizermanagerdetails \
     qmalgorithms
 
-#contains(QT_CONFIG, declarative) {
-#    SUBDIRS += qdeclarativeorganizer
-#}
+contains(QT_CONFIG, declarative) {
+    SUBDIRS += qdeclarativeorganizer
+}
