@@ -163,7 +163,10 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                         versions.contains(implementationVersion)) {
                     QContactManagerEngine* engine = f->engine(parameters, &m_lastError);
                     // if it's a V2, use it
-                    m_engine = qobject_cast<QContactManagerEngineV2*>(engine);
+                    // qobject_cast for QContactManagerEngineV2 broken, see QTMOBILITY-1798
+                    // Workaround: use code behind general qobject_cast explicitly:
+                    //m_engine = qobject_cast<QContactManagerEngineV2*>(engine);
+                    m_engine = static_cast<QContactManagerEngineV2*>(reinterpret_cast<QContactManagerEngineV2*>(0)->staticMetaObject.cast(engine));
                     if (!m_engine && engine) {
                         // Nope, v1, so wrap it
                         m_engine = new QContactManagerEngineV2Wrapper(engine);
