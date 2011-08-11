@@ -148,6 +148,7 @@ private:
     QMap<int, NdefHandler *> m_registeredHandlers;
 
     QMap<QString, QBasicTimer> m_pendingDetectedTargets;
+    QMap<QString, QNearFieldManager::TargetAccessModes> m_grantedModesForTarget;
 };
 
 QTM_END_NAMESPACE
