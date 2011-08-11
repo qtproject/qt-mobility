@@ -1176,19 +1176,19 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
         return QSystemStorageInfo::NoDrive;
     }
 
-    if (driveInfo.iType == EMediaRemote) {
+    if (driveInfo.iType == EMediaNotPresent || driveInfo.iType == EMediaUnknown) {
+        return QSystemStorageInfo::NoDrive;
+    } else if (driveInfo.iType == EMediaRemote) {
         return QSystemStorageInfo::RemoteDrive;
     } else if (driveInfo.iType == EMediaCdRom) {
         return QSystemStorageInfo::CdromDrive;
-    }
-
-    if (driveInfo.iDriveAtt & KDriveAttInternal) {
-        if (driveInfo.iType == EMediaNANDFlash)
-            return QSystemStorageInfo::RamDrive;
-        else
+    } else if (driveInfo.iType == EMediaRam) {
+        return QSystemStorageInfo::RamDrive;
+    } else {
+        if (driveInfo.iDriveAtt & KDriveAttInternal)
             return QSystemStorageInfo::InternalDrive;
-    } else if (driveInfo.iDriveAtt & KDriveAttRemovable) {
-        return QSystemStorageInfo::RemovableDrive;
+        else if (driveInfo.iDriveAtt & KDriveAttRemovable)
+            return QSystemStorageInfo::RemovableDrive;
     }
 
     return QSystemStorageInfo::NoDrive;
