@@ -1,6 +1,9 @@
 # #####################################################################
 # Organizer Mobility API
 # #####################################################################
+
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 
 # Target gets fixed up in common.pri
@@ -99,13 +102,13 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
-    TARGET.UID3 = 0x2002BFCD
+    TARGET.UID3 = $$mobilityUID(0x2002BFCD)
     
     LIBS += -lefsrv
 
     # ## Organizer
     # Main library
-    ORGANIZER_DEPLOYMENT.sources = QtOrganizer.dll
+    ORGANIZER_DEPLOYMENT.sources = QtOrganizer$${QT_LIBINFIX}.dll
     ORGANIZER_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += ORGANIZER_DEPLOYMENT
 }

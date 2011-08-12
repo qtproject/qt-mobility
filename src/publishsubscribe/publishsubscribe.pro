@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
 QT = core
@@ -46,9 +48,9 @@ symbian {
     SOURCES += settingslayer_symbian.cpp
 
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x2002AC78
+    TARGET.UID3 = $$mobilityUID(0x2002AC78)
 
-    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll qpspathmapperserver.exe
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe$${QT_LIBINFIX}.dll qpspathmapperserver$${QT_LIBINFIX}.exe
     QtPublishSubscribeDeployment.path = /sys/bin
     DEPLOYMENT += QtPublishSubscribeDeployment
 }

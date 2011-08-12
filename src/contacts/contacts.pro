@@ -1,6 +1,9 @@
 # #####################################################################
 # Contacts Mobility API
 # #####################################################################
+
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 
 # Target gets fixed up in common.pri
@@ -104,13 +107,13 @@ symbian {
 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x2002AC7A
+    TARGET.UID3 = $$mobilityUID(0x2002AC7A)
 
     LIBS += -lefsrv
 
     ### Contacts
     # Main library
-    CONTACTS_DEPLOYMENT.sources = QtContacts.dll
+    CONTACTS_DEPLOYMENT.sources = QtContacts$${QT_LIBINFIX}.dll
     CONTACTS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }

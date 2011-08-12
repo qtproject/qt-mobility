@@ -50,18 +50,6 @@ win32:contains(CONFIG_WIN32,build_all) {
     }
 }
 
-# Helper function.  This should move to a .prf file
-defineReplace(mobilityDeployFilename) {
-   unset(MOBILITY_DEPLOY_NAME)
-   MOBILITY_DEPLOY_NAME = $$1
-   CONFIG(debug, debug|release): {
-      mac:RET = $$member(MOBILITY_DEPLOY_NAME, 0)_debug
-      else:win32:RET = $$member(MOBILITY_DEPLOY_NAME, 0)d
-   }
-   isEmpty(RET):RET = $$MOBILITY_DEPLOY_NAME
-   return($$RET)
-}
-
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 

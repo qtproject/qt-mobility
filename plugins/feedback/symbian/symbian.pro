@@ -1,6 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtfeedback_symbian)
+TARGET = $$mobilityPluginTarget(qtfeedback_symbian)
 PLUGIN_TYPE=feedback
 
 include(../../../common.pri)
@@ -48,8 +50,7 @@ symbian {
 
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
-    TARGET.UID3=0x200315FE
-    TARGET = $${TARGET}$${QT_LIBINFIX}
+    TARGET.UID3 = $$mobilityUID(0x200315FE)
 
     load(armcc_warnings)
 

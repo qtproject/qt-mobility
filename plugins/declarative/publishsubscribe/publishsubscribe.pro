@@ -1,10 +1,12 @@
+include(../../../features/utils.pri)
+
 INCLUDEPATH += ../../../src/publishsubscribe
 DEPENDPATH += ../../../src/publishsubscribe
 INCLUDEPATH += ../../../src/global
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET  = $$qtLibraryTarget(declarative_publishsubscribe)
+TARGET  = $$mobilityPluginTarget(declarative_publishsubscribe)
 TARGETPATH = QtMobility/publishsubscribe
 PLUGIN_TYPE = declarative
 DEFINES += QT_MAKEDLL
@@ -41,7 +43,7 @@ symbian {
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
     # Target UID, makes every Symbian app unique
-    TARGET.UID3 = 0x20021322
+    TARGET.UID3 = $$mobilityUID(0x20021322)
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_publishsubscribe$${QT_LIBINFIX}.dll qmldir
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH

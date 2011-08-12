@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 
 # distinct from QtMultimedia
@@ -204,10 +206,10 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 symbian {
     contains(S60_VERSION, 5.1) |contains (S60_VERSION, 3.2) | contains(S60_VERSION, 3.1): DEFINES += PRE_S60_52_PLATFORM
     load(data_caging_paths)
-    QtMediaDeployment.sources = QtMultimediaKit.dll
+    QtMediaDeployment.sources = QtMultimediaKit$${QT_LIBINFIX}.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
-    TARGET.UID3=0x2002AC77
+    TARGET.UID3 = $$mobilityUID(0x2002AC77)
     TARGET.CAPABILITY = ALL -TCB
     LIBS += -lefsrv
 }
