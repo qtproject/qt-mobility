@@ -474,8 +474,6 @@ void QNearFieldManagerPrivateImpl::AccessFailed(const QDBusObjectPath &target, c
 void QNearFieldManagerPrivateImpl::AccessGranted(const QDBusObjectPath &target,
                                                  const QString &kind)
 {
-    Q_UNUSED(kind);
-
     m_grantedModesForTarget[target.path()] |= kindToAccessMode(kind);
 
     if (m_grantedModesForTarget.value(target.path()) == m_requestedModes) {
@@ -502,7 +500,7 @@ void QNearFieldManagerPrivateImpl::timerEvent(QTimerEvent *event)
             const QString target = i.key();
 
             i.remove();
-            m_grantedModesForTarget.remove(i.key());
+            m_grantedModesForTarget.remove(target);
 
             emitTargetDetected(target);
 
