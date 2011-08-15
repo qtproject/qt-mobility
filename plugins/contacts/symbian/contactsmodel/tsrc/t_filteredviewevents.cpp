@@ -366,7 +366,7 @@ void CFilteredViewTester::HandleContactViewEvent(const CContactViewBase& aView, 
 				{
 				test.Printf(_L("Remove event received: Filtered view\r\n"));
 				iFilteredContactsCount--;
-				//Verify that deleted contact is the one present in the event recieved.
+				//Verify that deleted contact is the one present in the event received.
 				//The order is not important. 
 				TBool found = EFalse;
 				TInt count = iIdArray->Count();
