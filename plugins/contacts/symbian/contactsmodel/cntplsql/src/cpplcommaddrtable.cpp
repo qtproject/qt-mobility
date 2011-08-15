@@ -733,13 +733,18 @@ CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, cons
 	{
     // We have to handle deprecated KBestMatchingPhoneNumbers argument, KBestMatchingPhoneNumbers = DM(7)
   
-    // Minimum number of digits to compare the numbers
-    const TInt KMatchLengthFromRight = aMatchLengthFromRight ? aMatchLengthFromRight : KLowerSevenDigits;
+    // Minimum number of digits to compare the numbers.
+    // In case KBestMatchingPhoneNumbers is used we use KLowerSevenDigits.
+    // The value cannot be more than KMaxPhoneMatchLength.
+    const TInt KMatchLengthFromRight = Min(aMatchLengthFromRight ? aMatchLengthFromRight : KLowerSevenDigits,
+                                           KMaxPhoneMatchLength);
 
-    // Maximum number of digits (limit) to compare the numbers
-	// aMatchLengthFromRight + 2, or KLowerSevenDigits + 2 in case KBestMatchingPhoneNumbers is used
-    const TInt KMatchLengthFromRightLimit = KMatchLengthFromRight + KExtraDigitForNumberCompare;
-       
+    // Maximum number of digits (limit) to compare the numbers.
+    // Because Dynamic Matching is enabled then the limit is KMatchLengthFromRight + 2.
+    // The value cannot be more than KMaxPhoneMatchLength.
+    const TInt KMatchLengthFromRightLimit = Min(KMatchLengthFromRight + KExtraDigitForNumberCompare,
+                                                KMaxPhoneMatchLength);
+
     const TInt KUpperMaxLength = KMaxPhoneMatchLength - KLowerSevenDigits;
     
     CContactIdArray* phoneMatchArray = CContactIdArray::NewLC();
@@ -772,10 +777,10 @@ CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, cons
             TInt32 storedUpperDigits;
             User::LeaveIfError(TLex(extValString).Val(storedUpperDigits));
             
-            // If the length of number is < 7 (excluding leading 0s, the numbers must be equal to match,
-			// otherwis they do not match
-            // Example: number in DB = "3560 0123456" and matching number = "123456" should not match
-			// Note: Here the lower seven digits are the same for DB and matching numbers
+            // If the length of both numbers is < 7 (excluding leading 0s), the numbers must be equal
+            // to match, otherwise they do not match.
+            // Example: number in DB = "3560 0123456" and matching number = "123456" do not match.
+			// Note: Here the lower seven digits are the same for DB and matching numbers.
             if (!((((phoneDigits.iLowerSevenDigits % 10 == 0) && (numberUpperDigits == 0)) ||
                    ((phoneDigits.iLowerSevenDigits % 10 == 0) && (storedUpperDigits == 0))) &&
                 (numberUpperDigits > 0 || storedUpperDigits > 0)))
@@ -784,9 +789,12 @@ CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, cons
                 TBool nonZeroInStoredFound = (storedUpperDigits % 10 != 0); // is last digit != 0
                 
                 // Upper digits are in reverse order and padded (i.e. 21853000 for number +358 12 3456789).
-                // The loop cuts the upper digits of cutoffLengthOfUpperDigits, as they are not used for comparing
-                // Example: "35851234567" and aMatchLengthFromRight = 8 , upperdigit = 58530000
-                // and upperdigit left after loop = 585   (585|cutoffLengthOfUpperDigits|30000)
+                // The loop cuts the upper digits of cutoffLengthOfUpperDigits, as they are not used for
+                // the comparison.
+                // Example: "35851234567" and aMatchLengthFromRight = 8, Dynamic matching is enabled.
+                //          therefore we keep 8+2=10 digits for comparison from the original 15;
+                //          7 digits are in the lower part, therefore we keep 10-7=3 in the upper part.
+                //          --> upperdigit = 58530000 and upperdigit left after loop = 585.  
                 TInt cutoffLengthOfUpperDigits = KMaxPhoneMatchLength - KMatchLengthFromRightLimit;
                 for (TInt cutCount = 0; cutCount < cutoffLengthOfUpperDigits; cutCount++)
                     {
@@ -796,11 +804,11 @@ CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, cons
                     nonZeroInStoredFound |= (storedUpperDigits % 10 != 0);
                     }
 
-                // The loop cuts the remaing upper digits to the Minimum limit to compare the numbers 
-                // if numbers are shorter then KMatchLengthFromRightLimit
-				// This loop is the core of Dynamic Matching (Dynamic number of digits are used for Matching)
+                // The loop cuts the remaing upper digits to the Minimum limit to compare the numbers
+                // if numbers are shorter then KMatchLengthFromRightLimit.
+				// This loop is the core of Dynamic Matching (Dynamic number of digits are used for Matching).
                 for (TInt cutCount = KMatchLengthFromRight; 
-                    (cutCount < KMatchLengthFromRightLimit  )           // all KMatchLengthFromRight digits are significant
+                    (cutCount < KMatchLengthFromRightLimit)             // all KMatchLengthFromRight digits are significant
                     && !(nonZeroInNumberFound && nonZeroInStoredFound); // DM:if there are more non zero digits they are significant 
                     cutCount++)
                     {

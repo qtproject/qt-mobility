@@ -1,0 +1,48 @@
+/*
+* Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*
+*/
+
+
+TARGET          t_launchTest.exe
+TARGETTYPE      exe
+UID             0x100039CE 0xE3DDB9D3
+VENDORID        0
+
+CAPABILITY   ReadUserData WriteUserData
+
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN 
+userinclude     ../inc 
+SYSTEMINCLUDE   \epoc32\include\stdapis
+SYSTEMINCLUDE   \epoc32\include
+
+SOURCEPATH      ../tsrc
+SOURCE          t_launchTest.cpp
+source          t_utils2.cpp
+
+// Using main() as entry point
+STATICLIBRARY   libcrt0.lib
+
+// libc and euser are always needed when using main() entry point
+LIBRARY         libc.lib 
+LIBRARY         euser.lib
+LIBRARY         efsrv.lib
+LIBRARY         estor.lib
+library         pimtestclient.lib
+library         cntmodel.lib 
+library         cntview.lib 
+
+
+SMPSAFE
