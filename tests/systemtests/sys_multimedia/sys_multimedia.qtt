@@ -433,6 +433,36 @@ A device specific headset is required to be connected to device for radio testin
           "));
     },
 
+    take_a_video: function()
+    {
+        // Test meta data
+         testApplication = "Multimedia - Photo Camera";
+         testBinary = "camera";
+        testGoal = "Verify that thre camera can capture and save an audio/video file.";
+        testPreconditions = "";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testApplication + "<br><br>
+             *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | If device has lens cover, make sure it is open | |
+            | Select Video tab to put camera in video mode |  Verify the intended scene is reproduced in the preview/viewfinder |
+            | Select Record Video | Verify that video is shown on screen for preview |
+            | Select Pause | Verify that the Recorded counter has stopped |
+            | Select Record again | Verify that the Recorded counter has continued counting |
+            | Select Stop | Verify that the recording has now stopped |
+            | | Verify that a new file is in the Images folder and accessabble with the player |
+            | Select given video | Verify that it is a true representation of the intended sceen |
+            |  | Verify that the Pause in the recording has happened and that recording continued without an issue after that |
+            | | Verify the image has no unintended artifacts and noise and is properly formatted |
+        "));
+    },
+
     record_an_audio_file: function()
     {
 
