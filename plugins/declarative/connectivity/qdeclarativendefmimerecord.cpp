@@ -47,6 +47,7 @@
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+    \since Mobility 1.2
 
     \inherits NdefRecord
 
@@ -58,6 +59,7 @@
 
 /*!
     \qmlproperty string NdefMimeRecord::uri
+    \since Mobility 1.2
 
     This property hold the URI from which the MIME data can be fetched from.  Currently this
     property returns a data url.

@@ -119,6 +119,7 @@ QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
 
     \brief The GalleryEqualsFilter element provides a filter which tests
     if a meta-data property is equal to a value.
+    \since Mobility 1.1
 
     \ingroup qml-gallery
     \ingroup qml-gallery-filters
@@ -135,18 +136,21 @@ QGalleryFilter QDeclarativeGalleryStringFilter::filter() const
 
 /*!
     \qmlproperty string GalleryEqualsFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryEqualsFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryEqualsFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
@@ -166,6 +170,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlclass GalleryLessThanFilter QDeclarativeGalleryLessThanFilter
+    \since Mobility 1.1
 
     \brief The GalleryLessThanFilter element provides a filter which tests
     if a meta-data property is less than a value.
@@ -185,18 +190,21 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryLessThanFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryLessThanFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryLessThanFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
@@ -204,6 +212,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlclass GalleryLessThanEqualsFilter QDeclarativeGalleryLessThanEqualsFilter
+    \since Mobility 1.1
 
     \brief The GalleryLessThanEqualsFilter element provides a filter which tests
     if a meta-data property is less than or equal to a value.
@@ -223,18 +232,21 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryLessThanEqualsFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryLessThanEqualsFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryLessThanEqualsFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
@@ -242,6 +254,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlclass GalleryGreaterThanFilter QDeclarativeGalleryGreaterThanFilter
+    \since Mobility 1.1
 
     \brief The GalleryGreaterThanFilter element provides a filter which tests
     if a meta-data property is greater than a value.
@@ -261,24 +274,28 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryGreaterThanFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryGreaterThanFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryGreaterThanFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
 
 /*!
     \qmlclass GalleryGreaterThanEqualsFilter QDeclarativeGalleryGreaterThanEqualsFilter
+    \since Mobility 1.1
 
     \brief The GalleryGreaterThanEqualsFilter element provides a filter which
     tests if a meta-data property is greater than or equal to a value.
@@ -298,24 +315,28 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryGreaterThanEqualsFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryGreaterThanEqualsFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryGreaterThanEqualsFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
 
 /*!
     \qmlclass GalleryContainsFilter QDeclarativeGalleryContainsFilter
+    \since Mobility 1.1
 
     \brief The GalleryContainsFilter element provides a filter which tests if
     a meta-data property contains a string.
@@ -335,24 +356,28 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryContainsFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryContainsFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryContainsFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
 
 /*!
     \qmlclass GalleryStartsWithFilter QDeclarativeGalleryStartsWithFilter
+    \since Mobility 1.1
 
     \brief The GalleryStartsWithFilter element provides a filter which tests if
     a meta-data property starts with a string.
@@ -372,18 +397,21 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryStartsWithFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryStartsWithFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryStartsWithFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
@@ -393,6 +421,7 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
     \brief The GalleryEndsWithFilter element provides a filter which tests if a
     meta-data property ends with a string.
+    \since Mobility 1.1
 
     \ingroup qml-gallery
     \ingroup qml-gallery-filters
@@ -409,24 +438,28 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryEndsWithFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryEndsWithFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryEndsWithFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
 
 /*!
     \qmlclass GalleryWildcardFilter QDeclarativeGalleryWildcardFilter
+    \since Mobility 1.1
 
     \brief The GalleryWildcardFilter element provides a filter which tests a
     meta-data property against a value using wildcard matching.
@@ -446,18 +479,21 @@ QGalleryFilter QDeclarativeGalleryEqualsFilter::filter() const
 
 /*!
     \qmlproperty string GalleryWildcardFilter::property
+    \since Mobility 1.1
 
     This property holds the name of the property to filter against.
 */
 
 /*!
     \qmlproperty variant GalleryWildcardFilter::value
+    \since Mobility 1.1
 
     This property holds the value to filter using.
 */
 
 /*!
     \qmlproperty bool GalleryWildcardFilter::negated
+    \since Mobility 1.1
 
     This property holds whether the result of a filter should be negated.
 */
@@ -532,6 +568,7 @@ void QDeclarativeGalleryFilterGroup::clear(
     \qmlclass GalleryFilterUnion GalleryFilterUnion
 
     \brief The GalleryFilterUnion elements provides a union of gallery filters.
+    \since Mobility 1.1
 
     \ingroup qml-gallery
     \ingroup qml-gallery-filters
@@ -541,6 +578,7 @@ void QDeclarativeGalleryFilterGroup::clear(
 
 /*!
     \qmlproperty filterlist GalleryFilterUnion::filters
+    \since Mobility 1.1
 
     This property holds the children of a union filter.
 */
@@ -574,6 +612,7 @@ QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
 
     \brief The GalleryFilterIntersection elements provides a intersection of
     gallery filters.
+    \since Mobility 1.1
 
     \ingroup qml-gallery
     \ingroup qml-gallery-filters
@@ -583,6 +622,7 @@ QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
 
 /*!
     \qmlproperty filterlist GalleryFilterIntersection::filters
+    \since Mobility 1.1
 
     This property holds the children of a intersection filter.
 */

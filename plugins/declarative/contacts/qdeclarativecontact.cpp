@@ -65,6 +65,7 @@
     value returned. The list of dynamic detail properties depends on the contact engine implementations.
 
     \ingroup qml-contacts
+    \since Mobility 1.1
 
     \sa QContact
     The Contact element is part of the \bold{QtMobility.contacts 1.1} module.
@@ -114,6 +115,7 @@ QContact QDeclarativeContact::contact() const
 
 /*!
     \qmlproperty bool Contact::modified
+    \since Mobility 1.1
 
     This property holds the dirty flag of the Contact object.
     If the Contact has been changed, returns true, otherwise returns false.
@@ -129,6 +131,7 @@ void QDeclarativeContact::setModified()
 
 /*!
     \qmlproperty enumeration Contact::type
+    \since Mobility 1.1
 
     This property holds type of the Contact, the value can be one of:
 
@@ -157,6 +160,7 @@ QDeclarativeContact::ContactType QDeclarativeContact::type() const
 
 /*!
     \qmlmethod Contact::removeDetail(detail)
+    \since Mobility 1.1
 
     Removes the give contact \a detail from the contact, returns true if successful, otherwise returns false.
 */
@@ -174,6 +178,7 @@ bool QDeclarativeContact::removeDetail(QDeclarativeContactDetail* detail)
 
 /*!
     \qmlmethod Contact::addDetail(detail)
+    \since Mobility 1.1
 
     Adds the given contact \a detail to the contact, returns true if successful, otherwise returns false.
     \note: If the \a detail has been added into the same contact before, this operation will be ignored,
@@ -193,6 +198,7 @@ bool QDeclarativeContact::addDetail(QDeclarativeContactDetail* detail)
 
 /*!
     \qmlproperty list<ContactDetail> Contact::details
+    \since Mobility 1.1
 
     This property holds the list of \l ContactDetail elements that the contact has.
 */
@@ -203,6 +209,7 @@ QDeclarativeListProperty<QDeclarativeContactDetail> QDeclarativeContact::details
 
 /*!
     \qmlproperty int Contact::contactId
+    \since Mobility 1.1
 
     This property holds the id of the Contact object.
     This property is read only.
@@ -214,6 +221,7 @@ QContactLocalId QDeclarativeContact::contactId() const
 
 /*!
     \qmlproperty string Contact::manager
+    \since Mobility 1.1
 
     This property holds the manager name which the Contact object comes from.
 */
@@ -224,6 +232,7 @@ QString QDeclarativeContact::manager() const
 
 /*!
     \qmlmethod ContactDetail Contact::detail(name)
+    \since Mobility 1.1
 
     Returns ContactDetail object which detail name or detail type is \a name.
 */
@@ -237,6 +246,7 @@ QDeclarativeContactDetail* QDeclarativeContact::detail(const QVariant& name)
 
 /*!
     \qmlmethod list<ContactDetail> Contact::details(name)
+    \since Mobility 1.1
 
     Returns a list of ContactDetail objects which detail name or detail type is \a name.
 */
@@ -250,6 +260,7 @@ QDeclarativeListProperty<QDeclarativeContactDetail> QDeclarativeContact::details
 
 /*!
     \qmlmethod Contact::clearDetails()
+    \since Mobility 1.1
 
     Remove all detail objects in this contact.
 */
@@ -262,6 +273,7 @@ void QDeclarativeContact::clearDetails()
 
 /*!
     \qmlmethod Contact::save()
+    \since Mobility 1.1
 
     Saves this Contact if the contact has been modified.
 
@@ -279,6 +291,7 @@ void QDeclarativeContact::save()
 
 /*!
     \qmlproperty Address Contact::address
+    \since Mobility 1.1
 
     This property holds the address detail of the Contact object.
 */
@@ -289,6 +302,7 @@ QDeclarativeContactAddress* QDeclarativeContact::address()
 
 /*!
     \qmlproperty Anniversary Contact::anniversary
+    \since Mobility 1.1
 
     This property holds the anniversary detail of the Contact object.
 */
@@ -299,6 +313,7 @@ QDeclarativeContactAnniversary* QDeclarativeContact::anniversary()
 
 /*!
     \qmlproperty Avatar Contact::avatar
+    \since Mobility 1.1
 
     This property holds the avatar detail of the Contact object.
 */
@@ -309,6 +324,7 @@ QDeclarativeContactAvatar* QDeclarativeContact::avatar()
 
 /*!
     \qmlproperty Birthday Contact::birthday
+    \since Mobility 1.1
 
     This property holds the birthday detail of the Contact object.
 */
@@ -319,6 +335,7 @@ QDeclarativeContactBirthday*  QDeclarativeContact::birthday()
 
 /*!
     \qmlproperty string Contact::displayLabel
+    \since Mobility 1.1
 
     This property holds the display label value of the Contact object.
 */
@@ -329,6 +346,7 @@ QString QDeclarativeContact::displayLabel()
 
 /*!
     \qmlproperty EmailAddress Contact::email
+    \since Mobility 1.1
 
     This property holds the email address detail of the Contact object.
 */
@@ -339,6 +357,7 @@ QDeclarativeContactEmailAddress*  QDeclarativeContact::email()
 
 /*!
     \qmlproperty Family Contact::family
+    \since Mobility 1.1
 
     This property holds the family detail of the Contact object.
 */
@@ -349,6 +368,7 @@ QDeclarativeContactFamily*  QDeclarativeContact::family()
 
 /*!
     \qmlproperty Favorite Contact::favorite
+    \since Mobility 1.1
 
     This property holds the favorite detail of the Contact object.
 */
@@ -359,6 +379,7 @@ QDeclarativeContactFavorite*  QDeclarativeContact::favorite()
 
 /*!
     \qmlproperty Gender Contact::gender
+    \since Mobility 1.1
 
     This property holds the gender detail of the Contact object.
 */
@@ -369,6 +390,7 @@ QDeclarativeContactGender*  QDeclarativeContact::gender()
 
 /*!
     \qmlproperty GeoLocation Contact::geolocation
+    \since Mobility 1.1
 
     This property holds the geolocation detail of the Contact object.
 */
@@ -379,6 +401,7 @@ QDeclarativeContactGeoLocation*  QDeclarativeContact::geolocation()
 
 /*!
     \qmlproperty GlobalPresence Contact::globalPresence
+    \since Mobility 1.1
 
     This property holds the globalPresence detail of the Contact object.
 */
@@ -389,6 +412,7 @@ QDeclarativeContactGlobalPresence*  QDeclarativeContact::globalPresence()
 
 /*!
     \qmlproperty Guid Contact::guid
+    \since Mobility 1.1
 
     This property holds the guid detail of the Contact object.
 */
@@ -399,6 +423,7 @@ QDeclarativeContactGuid*  QDeclarativeContact::guid()
 
 /*!
     \qmlproperty Name Contact::name
+    \since Mobility 1.1
 
     This property holds the name detail of the Contact object.
 */
@@ -409,6 +434,7 @@ QDeclarativeContactName*  QDeclarativeContact::name()
 
 /*!
     \qmlproperty Nickname Contact::nickname
+    \since Mobility 1.1
 
     This property holds the nickname detail of the Contact object.
 */
@@ -419,6 +445,7 @@ QDeclarativeContactNickname*  QDeclarativeContact::nickname()
 
 /*!
     \qmlproperty Note Contact::note
+    \since Mobility 1.1
 
     This property holds the note detail of the Contact object.
 */
@@ -429,6 +456,7 @@ QDeclarativeContactNote*  QDeclarativeContact::note()
 
 /*!
     \qmlproperty OnlineAccount Contact::onlineAccount
+    \since Mobility 1.1
 
     This property holds the onlineAccount detail of the Contact object.
 */
@@ -439,6 +467,7 @@ QDeclarativeContactOnlineAccount*  QDeclarativeContact::onlineAccount()
 
 /*!
     \qmlproperty Organization Contact::organization
+    \since Mobility 1.1
 
     This property holds the organization detail of the Contact object.
 */
@@ -449,6 +478,7 @@ QDeclarativeContactOrganization*  QDeclarativeContact::organization()
 
 /*!
     \qmlproperty PhoneNumber Contact::phoneNumber
+    \since Mobility 1.1
 
     This property holds the phoneNumber detail of the Contact object.
 */
@@ -459,6 +489,7 @@ QDeclarativeContactPhoneNumber*  QDeclarativeContact::phoneNumber()
 
 /*!
     \qmlproperty Presence Contact::presence
+    \since Mobility 1.1
 
     This property holds the presence detail of the Contact object.
 */
@@ -469,6 +500,7 @@ QDeclarativeContactPresence*  QDeclarativeContact::presence()
 
 /*!
     \qmlproperty Ringtone Contact::ringtone
+    \since Mobility 1.1
 
     This property holds the ringtone detail of the Contact object.
 */
@@ -479,6 +511,7 @@ QDeclarativeContactRingtone*  QDeclarativeContact::ringtone()
 
 /*!
     \qmlproperty SyncTarget Contact::syncTarget
+    \since Mobility 1.1
 
     This property holds the syncTarget detail of the Contact object.
 */
@@ -489,6 +522,7 @@ QDeclarativeContactSyncTarget*  QDeclarativeContact::syncTarget()
 
 /*!
     \qmlproperty Tag Contact::tag
+    \since Mobility 1.1
 
     This property holds the tag detail of the Contact object.
 */
@@ -499,6 +533,7 @@ QDeclarativeContactTag*  QDeclarativeContact::tag()
 
 /*!
     \qmlproperty url Contact::thumbnail
+    \since Mobility 1.1
 
     This property holds the thumbnail URL of the Contact object.
 */
@@ -521,6 +556,7 @@ void QDeclarativeContact::setThumbnail(const QUrl& url)
 
 /*!
     \qmlproperty Url Contact::url
+    \since Mobility 1.1
 
     This property holds the url detail of the Contact object.
 */
@@ -532,6 +568,7 @@ QDeclarativeContactUrl*  QDeclarativeContact::url()
 
 /*!
     \qmlproperty Hobby Contact::hobby
+    \since Mobility 1.1
 
     This property holds the hobby detail of the Contact object.
 */

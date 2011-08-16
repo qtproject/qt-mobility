@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QGeoMapCircleObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The circle is specified in terms of a central coordinate and
     a radius in metres.
@@ -95,6 +96,7 @@ QDeclarativeGeoMapCircleObject::~QDeclarativeGeoMapCircleObject()
 
 /*!
     \qmlproperty Coordinate MapCircle::center
+    \since Mobility 1.2
 
     This property holds the coordinate at the center of the circle.
 
@@ -155,6 +157,7 @@ qreal QDeclarativeGeoMapCircleObject::radius() const
 
 /*!
     \qmlproperty qreal MapCircle::radius
+    \since Mobility 1.2
 
     This property holds the radius of the circle in metres.
 
@@ -164,6 +167,7 @@ qreal QDeclarativeGeoMapCircleObject::radius() const
 
 /*!
     \qmlproperty color MapCircle::color
+    \since Mobility 1.2
 
     This property holds the color used to fill the circle.
 
@@ -189,6 +193,7 @@ QColor QDeclarativeGeoMapCircleObject::color() const
 /*!
     \qmlproperty int MapCircle::border.width
     \qmlproperty color MapCircle::border.color
+    \since Mobility 1.2
 
     These properties hold the width and color used to draw the border of the circle.
 
@@ -223,6 +228,7 @@ void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
 
 /*!
     \qmlproperty int MapCircle::z
+    \since Mobility 1.2
 
     This property holds the z-value of the circle.
 
@@ -232,6 +238,7 @@ void QDeclarativeGeoMapCircleObject::borderWidthChanged(int width)
 
 /*!
     \qmlproperty bool MapCircle::visible
+    \since Mobility 1.2
 
     This property holds a boolean corresponding to whether or not the
     circle is visible.

@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     \brief The Coordinate element holds various positional data, such as \l
     latitude, \l longitude and \l altitude.
     \inherits QObject
+    \since Mobility 1.2
 
     \ingroup qml-location
 
@@ -94,6 +95,7 @@ QGeoCoordinate QDeclarativeCoordinate::coordinate() const
 
 /*!
     \qmlproperty double Coordinate::altitude
+    \since Mobility 1.2
 
     This property holds the value of altitude (metres above sea level).
     If the property has not been set, its default value is zero.
@@ -115,6 +117,7 @@ double QDeclarativeCoordinate::altitude() const
 
 /*!
     \qmlproperty double Coordinate::longitude
+    \since Mobility 1.2
 
     This property holds the longitude value of the geographical position
     (decimal degrees). A positive longitude indicates the Eastern Hemisphere,
@@ -137,6 +140,7 @@ double QDeclarativeCoordinate::longitude() const
 
 /*!
     \qmlproperty double Coordinate::latitude
+    \since Mobility 1.2
 
     This property holds latitude value of the geographical position
     (decimal degrees). A positive latitude indicates the Northern Hemisphere,
@@ -159,6 +163,7 @@ double QDeclarativeCoordinate::latitude() const
 
 /*!
     \qmlmethod Coordinate::distanceTo(Coordinate)
+    \since Mobility 1.2
 
     Returns the distance (in meters) from this coordinate to the
     coordinate specified by other. Altitude is not used in the calculation.

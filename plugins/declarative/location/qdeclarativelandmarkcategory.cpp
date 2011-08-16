@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass LandmarkCategory QDeclarativeLandmarkCategory
     \brief The LandmarkCategory element presents one landmark category.
     \ingroup qml-location-landmarks
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -73,6 +74,7 @@ QString QDeclarativeLandmarkCategory::name()
 
 /*!
   \qmlproperty string LandmarkCategory::name
+  \since Mobility 1.2
 
   This property holds the name of the category.
 
@@ -93,6 +95,7 @@ QUrl QDeclarativeLandmarkCategory::iconSource()
 
 /*!
   \qmlproperty url LandmarkCategory::iconSource
+  \since Mobility 1.2
 
   This property holds the icon source URL of the category.
 
