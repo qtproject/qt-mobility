@@ -115,6 +115,7 @@ public:
     \class QDeclarativeOpenMetaObject
     \internal
     \brief open meta object for accessing dynamic properties in qml
+    \since Mobility 1.2
 */
 
 void QDeclarativeOpenMetaObject::setMetaObject(const QMetaObject& metaObject)

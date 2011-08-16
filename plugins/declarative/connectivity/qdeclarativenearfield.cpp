@@ -55,6 +55,7 @@
 
     \ingroup connectivity-qml
     \inmodule QtConnectivity
+    \since Mobility 1.2
 
     \sa NdefFilter
     \sa NdefRecord
@@ -81,12 +82,14 @@
 
 /*!
     \qmlproperty list<NdefRecord> NearField::messageRecords
+    \since Mobility 1.2
 
     This property contains the list of NDEF records in the last NDEF message read.
 */
 
 /*!
     \qmlproperty list<NdefFilter> NearField::filter
+    \since Mobility 1.2
 
     This property holds the NDEF filter constraints.  The \l messageRecords property will only be
     set to NDEF messages which match the filter.
@@ -94,6 +97,7 @@
 
 /*!
     \qmlproperty bool NearField::orderMatch
+    \since Mobility 1.2
 
     This property indicates whether the order of records should be taken into account when matching
     messages.

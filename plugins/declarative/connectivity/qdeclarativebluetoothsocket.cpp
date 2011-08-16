@@ -61,6 +61,7 @@
 
    \ingroup connectivity-qml
    \inmodule QtConnectivity
+   \since Mobility 1.2
 
    \sa QBluetoothSocket
    \sa QDataStream
@@ -175,6 +176,7 @@ void QDeclarativeBluetoothSocket::componentComplete()
 
 /*!
   \qmlproperty BluetoothService BluetoothSocket::service
+  \since Mobility 1.2
 
   This property holds the details of the remote service to connect too. It can be
   set to a static BluetoothService with a fixed description, or a service returned
@@ -201,6 +203,7 @@ void QDeclarativeBluetoothSocket::setService(QDeclarativeBluetoothService *servi
 
 /*!
   \qmlproperty bool BluetoothSocket::connected
+  \since Mobility 1.2
 
   This property holds the connection state of the socket. If the socket is
   connected to peer it returns true. It can be set true of false to control the
@@ -237,6 +240,7 @@ void QDeclarativeBluetoothSocket::setConnected(bool connected)
 
 /*!
   \qmlproperty string BluetoothSocket::error
+  \since Mobility 1.2
 
   This property holds the string for the last reported error
   This property is read only.
@@ -317,6 +321,7 @@ void QDeclarativeBluetoothSocket::socket_readyRead()
 
 /*!
   \qmlproperty string BluetoothSocket::stringData
+  \since Mobility 1.2
 
   This property receives or sends data to remote bluetooth device. Arrival of
   data is signaled through the dataAvailable signal and can be read by

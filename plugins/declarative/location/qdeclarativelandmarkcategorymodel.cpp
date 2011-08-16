@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
     \brief The LandmarkCategoryModel element provides access to categories.
     \inherits LandmarkAbstractModel
     \ingroup qml-location-landmarks
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -123,6 +124,7 @@ QDeclarativeLandmark* QDeclarativeLandmarkCategoryModel::landmark() const
 
 /*!
   \qmlproperty Landmark LandmarkCategoryModel::landmark
+  \since Mobility 1.2
 
   Landmark whose categories the model should represent.
   Note that the landmark needs to be from \l LandmarkModel
@@ -291,6 +293,7 @@ QList<QLandmarkCategory> QDeclarativeLandmarkCategoryModel::categoryList()
 
 /*!
     \qmlproperty QDeclarativeListProperty LandmarkCategoryModel::categories
+    \since Mobility 1.2
 
     This element holds the list of \l LandmarkCategory elements that the model currently has.
     Accessing categories by iterating over this list is not guaranteed to be in the

@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     (longitude, latitude, altitude) and speed.
     \inherits QObject
     \ingroup qml-location
+    \since Mobility 1.2
 
     The Position element holds various positional data, such as \l coordinate,
     (longitude, latitude, and altitude) and \l speed, as well as \l timestamp.
@@ -84,6 +85,7 @@ QDeclarativePosition::~QDeclarativePosition()
 
 /*!
     \qmlproperty Coordinate Position::coordinate
+    \since Mobility 1.2
 
     This property holds the latitude, longitude, and altitude
     value of the Position.
@@ -137,6 +139,7 @@ QDeclarativeCoordinate* QDeclarativePosition::coordinate()
 
 /*!
     \qmlproperty bool Position::latitudeValid
+    \since Mobility 1.2
 
     This property is true if coordinate's latitude has been set
     (to indicate whether that data has been received or not, as every update
@@ -154,6 +157,7 @@ bool QDeclarativePosition::isLatitudeValid() const
 
 /*!
     \qmlproperty bool Position::longitudeValid
+    \since Mobility 1.2
 
     This property is true if coordinate's longitude has been set
     (to indicate whether that data has been received or not, as every update
@@ -171,6 +175,7 @@ bool QDeclarativePosition::isLongitudeValid() const
 
 /*!
     \qmlproperty bool Position::speedValid
+    \since Mobility 1.2
 
     This property is true if \l speed has been set
     (to indicate whether that data has been received or not, as every update
@@ -187,6 +192,7 @@ bool QDeclarativePosition::isSpeedValid() const
 
 /*!
     \qmlproperty bool Position::altitudeValid
+    \since Mobility 1.2
 
     This property is true if coordinate's altitude has been set
     (to indicate whether that data has been received or not, as every update
@@ -203,6 +209,7 @@ bool QDeclarativePosition::isAltitudeValid() const
 
 /*!
     \qmlproperty double Position::speed
+    \since Mobility 1.2
 
     This property holds the value of speed (groundspeed, metres / second).
     Currently a read-only property.
@@ -229,6 +236,7 @@ double QDeclarativePosition::speed() const
 
 /*!
     \qmlproperty qreal Position::horizontalAccuracy
+    \since Mobility 1.2
 
     This property holds the horizontal accuracy of the coordinate (in meters).
 
@@ -254,6 +262,7 @@ qreal QDeclarativePosition::horizontalAccuracy() const
 
 /*!
     \qmlproperty bool Position::horizontalAccuracyValid
+    \since Mobility 1.2
 
     This property is true if \l horizontalAccuracy has been set
     (to indicate whether that data has been received or not, as every update
@@ -270,6 +279,7 @@ bool QDeclarativePosition::isHorizontalAccuracyValid() const
 
 /*!
     \qmlproperty qreal Position::verticalAccuracy
+    \since Mobility 1.2
 
     This property holds the vertical accuracy of the coordinate (in meters).
 
@@ -295,6 +305,7 @@ qreal QDeclarativePosition::verticalAccuracy() const
 
 /*!
     \qmlproperty bool Position::verticalAccuracyValid
+    \since Mobility 1.2
 
     This property is true if \l verticalAccuracy has been set
     (to indicate whether that data has been received or not, as every update
@@ -311,6 +322,7 @@ bool QDeclarativePosition::isVerticalAccuracyValid() const
 
 /*!
     \qmlproperty date Position::timestamp
+    \since Mobility 1.2
 
     This property holds the timestamp when this position
     was received. If the property has not been set, it is invalid.

@@ -57,6 +57,7 @@ Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
     \inherits QSystemDeviceInfo
 
     \ingroup qml-systeminfo
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
@@ -68,28 +69,33 @@ Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
 
 /*!
     \qmlsignal DeviceInfo::batteryLevelChanged(int)
+    \since Mobility 1.1
 
     This handler is called when battery level has changed.
 */
 /*!
     \qmlsignal DeviceInfo::batteryStatusChanged(DeviceInfo::BatteryStatus)
+    \since Mobility 1.1
 
     This handler is called when battery status has changed.
 
 */
 /*!
     \qmlsignal DeviceInfo::powerStateChanged(DeviceINfo::PowerState)
+    \since Mobility 1.1
 
     This handler is called when the power state has changed.
 */
 /*!
     \qmlsignal DeviceInfo::currentProfileChanged(DeviceInfo::Profile)
+    \since Mobility 1.1
 
     This handler is called when current device profile has changed.
 
 */
 /*!
     \qmlsignal DeviceInfo::bluetoothStateChanged(bool)
+    \since Mobility 1.1
 
     This handler is called when bluetooth power state has changed.
 
@@ -97,30 +103,35 @@ Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
 
 /*!
     \qmlsignal DeviceInfo::wirelessKeyboardConnected(bool)
+    \since Mobility 1.2
 
   This signal is emitted whenever a wireless keyboard is connected
 */
 
 /*!
     \qmlsignal DeviceInfo::keyboardFlipped(bool)
+    \since Mobility 1.2
 
       This signal is emitted whenever a phone flips open.
 */
 
 /*!
     \qmlsignal DeviceInfo::deviceLocked(bool)
+    \since Mobility 1.2
 
     This signal is emitted whenever the device lock state changes
 */
 
 /*!
     \qmlsignal DeviceInfo::lockStatusChanged(DeviceInfo::LockTypeFlags)
+    \since Mobility 1.2
 
     This signal is emitted whenever the lock state changes
 */
 
 /*!
     \qmlsignal DeviceInfo::thermalStateChanged(DeviceInfo::ThermalState)
+    \since Mobility 1.2
 
     This handler is called when thermal state has changed.
 */
@@ -132,6 +143,7 @@ QDeclarativeDeviceInfo::QDeclarativeDeviceInfo(QObject *parent) :
 
 /*!
    This function starts the batteryLevelChanged notification
+   \since Mobility 1.1
 
 */
 
@@ -149,6 +161,7 @@ void QDeclarativeDeviceInfo::startBatteryLevelChanged(bool on)
 
 /*!
     \qmlproperty bool DeviceInfo::monitorBatteryLevelChanges
+    \since Mobility 1.2
     Use the monitorBatteryLevelChanges signal.
 
   */
@@ -159,6 +172,7 @@ bool QDeclarativeDeviceInfo::monitorBatteryLevelChanges()
 
 /*!
    This function starts the batteryStatusChanged notification
+   \since Mobility 1.1
 
 */
 void QDeclarativeDeviceInfo::startBatteryStatusChanged(bool on)
@@ -175,6 +189,7 @@ void QDeclarativeDeviceInfo::startBatteryStatusChanged(bool on)
 
 /*!
     \qmlproperty bool DeviceInfo::monitorBatteryStatusChanges
+    \since Mobility 1.2
     Use the monitorBatteryStatusChanges signal.
   */
 bool QDeclarativeDeviceInfo::monitorBatteryStatusChanges()
@@ -185,6 +200,7 @@ bool QDeclarativeDeviceInfo::monitorBatteryStatusChanges()
 
 /*!
    This function starts the powerStateChanged notification
+   \since Mobility 1.1
 
 */
 void QDeclarativeDeviceInfo::startPowerStateChanged(bool on)
@@ -201,6 +217,7 @@ void QDeclarativeDeviceInfo::startPowerStateChanged(bool on)
 
 /*!
     \qmlproperty bool DeviceInfo::monitorPowerStateChanges
+    \since Mobility 1.2
     Use the monitorPowerStateChanges signal.
   */
 bool QDeclarativeDeviceInfo::monitorPowerStateChanges()
@@ -211,6 +228,7 @@ bool QDeclarativeDeviceInfo::monitorPowerStateChanges()
 
 /*!
    This function is needed to start currentProfileChanged notification
+   \since Mobility 1.1
 
 */
 void QDeclarativeDeviceInfo::startCurrentProfileChanged(bool on)
@@ -227,7 +245,8 @@ void QDeclarativeDeviceInfo::startCurrentProfileChanged(bool on)
 
 /*!
     \qmlproperty bool DeviceInfo::monitorCurrentProfileChanges
-   Use the monitorCurrentProfileChanges signal.
+    \since Mobility 1.2
+    Use the monitorCurrentProfileChanges signal.
   */
 bool QDeclarativeDeviceInfo::monitorCurrentProfileChanges()
 {
@@ -237,6 +256,7 @@ bool QDeclarativeDeviceInfo::monitorCurrentProfileChanges()
 
 /*!
    This function starts the bluetoothStateChanged notification
+   \since Mobility 1.1
 
 */
 void QDeclarativeDeviceInfo::startBluetoothStateChanged(bool on)
@@ -253,6 +273,7 @@ void QDeclarativeDeviceInfo::startBluetoothStateChanged(bool on)
 
 /*!
     \qmlproperty bool DeviceInfo::monitorBluetoothStateChanges
+    \since Mobility 1.2
     Use the bluetoothStateChanges signal.
   */
 bool QDeclarativeDeviceInfo::monitorBluetoothStateChanges()
@@ -262,6 +283,7 @@ bool QDeclarativeDeviceInfo::monitorBluetoothStateChanges()
 
 /*!
    This function starts the thermalStateChanged notification
+   \since Mobility 1.2
 
 */
 void QDeclarativeDeviceInfo::startThermalStateChanged(bool on)
@@ -278,6 +300,7 @@ void QDeclarativeDeviceInfo::startThermalStateChanged(bool on)
 
 /*!
     \qmlproperty bool DeviceInfo::monitorThermalStateChanges
+    \since Mobility 1.2
     Use the thermalStateChanges signal.
   */
 bool QDeclarativeDeviceInfo::monitorThermalStateChanges()
@@ -288,6 +311,7 @@ bool QDeclarativeDeviceInfo::monitorThermalStateChanges()
 /*!
 
   \qmlproperty bool DeviceInfo::monitorWirelessKeyboardConnects()
+  \since Mobility 1.2
 
   Start the connection for the wirelessKeyboardConnected signal.
   */
@@ -299,6 +323,7 @@ bool QDeclarativeDeviceInfo::monitorWirelessKeyboardConnects()
 
 /*!
    This function starts the startBatteryStatusChanged notification.
+   \since Mobility 1.1
 
 */
 void QDeclarativeDeviceInfo::startWirelessKeyboardConnected(bool on)
@@ -317,6 +342,7 @@ void QDeclarativeDeviceInfo::startWirelessKeyboardConnected(bool on)
 /*!
 
   \qmlproperty bool DeviceInfo::monitorKeyboardFlips()
+  \since Mobility 1.2
 
   Start the connection for the keyboardFlipped signal.
   */
@@ -327,6 +353,7 @@ bool QDeclarativeDeviceInfo::monitorKeyboardFlips()
 
 /*!
    This function starts the startKeyboardFlipped notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeDeviceInfo::startKeyboardFlipped(bool on)
@@ -345,6 +372,7 @@ void QDeclarativeDeviceInfo::startKeyboardFlipped(bool on)
 /*!
 
   \qmlproperty bool Device::monitorDeviceLocks()
+  \since Mobility 1.2
 
   Start the connection for the deviceLocked signal.
   */
@@ -355,6 +383,7 @@ bool QDeclarativeDeviceInfo::monitorDeviceLocks()
 
 /*!
    This function starts the startDeviceLocked notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeDeviceInfo::startDeviceLocked(bool on)
@@ -372,6 +401,7 @@ void QDeclarativeDeviceInfo::startDeviceLocked(bool on)
 /*!
 
   \qmlproperty bool DeviceInfo::monitorLockStatusChanges()
+  \since Mobility 1.2
 
   Start the connection for the lockStatusChanged signal.
   */
@@ -383,6 +413,7 @@ bool QDeclarativeDeviceInfo::monitorLockStatusChanges()
 
 /*!
    This function starts the startLockStatusChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeDeviceInfo::startLockStatusChanged(bool on)
@@ -399,6 +430,7 @@ void QDeclarativeDeviceInfo::startLockStatusChanged(bool on)
 
 /*!
   \qmlproperty int DeviceInfo::messageRingtoneVolume()
+  \since Mobility 1.2
 
     Returns the active profile's message ringtone volume. From 0 to 100.
   */
@@ -409,6 +441,7 @@ int QDeclarativeDeviceInfo::messageRingtoneVolume()
 
 /*!
   \qmlproperty int DeviceInfo::voiceRingtoneVolume()
+  \since Mobility 1.2
 
     Returns the active profile's voice ringtone volume. From 0 to 100.
 
@@ -420,6 +453,7 @@ int QDeclarativeDeviceInfo::voiceRingtoneVolume()
 
 /*!
   \qmlproperty bool DeviceInfo::vibrationActive()
+  \since Mobility 1.2
 
     Returns the whether the active profile's vibration is active.
 
@@ -431,12 +465,14 @@ bool QDeclarativeDeviceInfo::vibrationActive()
 
 /*!
   \qmlproperty bool DeviceInfo::primaryKeypadLightOn()
+  \since Mobility 1.2
 
-    Returns the whether he primary keypad  or keyboard light is on.
-  */
+  Returns the whether he primary keypad  or keyboard light is on.
+*/
 /*!
   Returns true if the primary key pad light is on, otherwise false;
-  */
+  \since Mobility 1.2
+*/
 bool QDeclarativeDeviceInfo::primaryKeypadLightOn()
 {
     return deviceInfo()->keypadLightOn(QSystemDeviceInfo::PrimaryKeypad);
@@ -444,12 +480,14 @@ bool QDeclarativeDeviceInfo::primaryKeypadLightOn()
 
 /*!
   \qmlproperty bool DeviceInfo::secondaryKeypadLightOn()
+  \since Mobility 1.2
 
     Returns the whether he secondary keypad or keyboard light is on.
   */
 /*!
   Returns true if the key pad light is on, otherwise false;
-  */
+  \since Mobility 1.2
+*/
 bool QDeclarativeDeviceInfo::secondaryKeypadLightOn()
 {
     return deviceInfo()->keypadLightOn(QSystemDeviceInfo::SecondaryKeypad);
@@ -460,80 +498,97 @@ bool QDeclarativeDeviceInfo::secondaryKeypadLightOn()
 
 /*!
   \qmlproperty QString DeviceInfo::imei
+  \since Mobility 1.2
 
      Returns the International Mobile Equipment Identity (IMEI), or a null QString in the case of none.
   */
 
 /*!
   \qmlproperty QString DeviceInfo::imsi
- Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none
+  \since Mobility 1.2
+  Returns the International Mobile Subscriber Identity (IMSI), or a null QString in the case of none
   */
 
 /*!
   \qmlproperty QString DeviceInfo::manufacturer
-    Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor
+  \since Mobility 1.2
+  Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor
     of the motherboard.
   */
 /*!
   \qmlproperty QString DeviceInfo::model
-    Returns the model information of the device. In the case of desktops where no
+  \since Mobility 1.2
+  Returns the model information of the device. In the case of desktops where no
     model information is present, the CPU architect, such as i686, and machine type, such as Server,
     Desktop or Laptop.
   */
 /*!
   \qmlproperty QString DeviceInfo::productName
-    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
+  \since Mobility 1.2
+  Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
 
   */
 /*!
   \qmlproperty int DeviceInfo::batteryLevel
-   Returns the battery charge level as percentage 1 - 100 scale.
+  \since Mobility 1.1
+  Returns the battery charge level as percentage 1 - 100 scale.
   */
 /*!
   \qmlproperty InputMethodFlags DeviceInfo::inputMethodType
-Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.
+  \since Mobility 1.2
+  Returns the QSystemDeviceInfo::InputMethodFlags InputMethodType that the system uses.
   */
 /*!
   \qmlproperty BatteryStatus DeviceInfo::batteryStatus
+  \since Mobility 1.1
   Returns the battery charge status.
   */
 /*!
   \qmlproperty bool DeviceInfo::isDeviceLocked
+  \since Mobility 1.2
 
   Returns true if the device is locked, otherwise false.
   */
 /*!
   \qmlproperty SimStatus DeviceInfo::simStatus
+  \since Mobility 1.2
   Returns the QSystemDeviceInfo::simStatus status of SIM card.
   */
 /*!
   \qmlproperty Profile DeviceInfo::currentProfile
+  \since Mobility 1.2
   Gets the current QSystemDeviceInfo::currentProfile device profile.
   */
 /*!
   \qmlproperty PowerState DeviceInfo::currentPowerState
+  \since Mobility 1.2
 
   Gets the current QSystemDeviceInfo::currentPowerState state.
   */
 /*!
   \qmlproperty bool DeviceInfo::currentBluetoothPowerState
-Gets the current bluetooth power state.
+  \since Mobility 1.2
+  Gets the current bluetooth power state.
   */
 /*!
   \qmlproperty KeyboardTypeFlags DeviceInfo::keyboardTypes
+  \since Mobility 1.2
   Returns the type of keyboards found.
   */
 /*!
   \qmlproperty bool DeviceInfo::isWirelessKeyboardConnected
+  \since Mobility 1.2
   Returns true if a wireless keyboard is connected, otherwise false;
   */
 /*!
   \qmlproperty bool DeviceInfo::isKeyboardFlippedOpen
+  \since Mobility 1.2
   Returns true if the flip keyboard is open, otherwise false;
   */
 
 /*!
   \qmlproperty LockTypeFlags DeviceInfo::lockStatus
+  \since Mobility 1.2
   Returns the QSystemDeviceInfo::LockTypeFlags type of lock state the device might be in.
   The LockType must be currently active not just enabled.
   */
@@ -542,13 +597,14 @@ Gets the current bluetooth power state.
     \qmlproperty ThermalState DeviceInfo::currentThermalState
     Returns the current thermal state of the device.
 
-    \since 1.2
+    \since Mobility 1.2
     \sa QSystemDeviceInfo::ThermalState
 */
 
 
 /*!
   \qmlproperty string DeviceInfo::uniqueID
+  \since Mobility 1.2
 
   Returns a unique identifier for the machine.
 

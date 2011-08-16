@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     An example of setting the Plugin in the Map element:
     \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Map Plugin
@@ -66,6 +67,7 @@ QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider() {}
 
 /*!
     \qmlproperty string Plugin::name
+    \since Mobility 1.2
 
     This property holds the name of the plugin.
 */
@@ -87,6 +89,7 @@ QString QDeclarativeGeoServiceProvider::name() const
 /*!
     \qmlproperty list<PluginParameter> Plugin::parameters
     \default
+    \since Mobility 1.2
 
     This property holds the list of plugin parameters.
 */
@@ -141,6 +144,7 @@ QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
     \inherits QObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The PluginParameter element is part of the \bold{QtMobility.location 1.2} module.
 */
@@ -152,6 +156,7 @@ QDeclarativeGeoServiceProviderParameter::~QDeclarativeGeoServiceProviderParamete
 
 /*!
     \qmlproperty string PluginParameter::name
+    \since Mobility 1.2
 
     This property holds the name of the plugin parameter.
 */
@@ -172,6 +177,7 @@ QString QDeclarativeGeoServiceProviderParameter::name() const
 
 /*!
     \qmlproperty QVariant PluginParameter::value
+    \since Mobility 1.2
 
     This property holds the value of the plugin parameter.
 */

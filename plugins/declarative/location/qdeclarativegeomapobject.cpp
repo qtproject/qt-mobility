@@ -193,6 +193,7 @@ bool QDeclarativeGeoMapObject::isVisible() const
     \inherits QDeclarativeItem
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The MapObjectView is used to populate Map with MapObjects from a model.
     The MapObjectView element only makes sense when contained in a Map object,
@@ -236,6 +237,7 @@ QVariant QDeclarativeGeoMapObjectView::model() const
 
 /*!
     \qmlproperty model MapObjectView::model
+    \since Mobility 1.2
 
     This property holds the model that provides data for
     populating data with delegates.
@@ -314,6 +316,7 @@ QDeclarativeComponent* QDeclarativeGeoMapObjectView::delegate() const
 
 /*!
     \qmlproperty Component MapObjectView::delegate
+    \since Mobility 1.2
 
     This property holds the delegate which defines how each item in the
     model should be displayed. The Component must contain exactly one
@@ -432,6 +435,7 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
 
 /*!
     \qmlproperty bool MapObjectView::visible
+    \since Mobility 1.2
 
     This property holds whether the delegate objects created from the
     model are visible or not. Default value is true.
@@ -460,6 +464,7 @@ bool QDeclarativeGeoMapObjectView::isVisible() const
 
 /*!
     \qmlproperty int MapObjectView::z
+    \since Mobility 1.2
 
     This property holds the z-value of the MapObjectView.
     It determines the z-value of the instantiated delegates.

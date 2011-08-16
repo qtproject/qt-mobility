@@ -55,6 +55,7 @@ Q_GLOBAL_STATIC(QSystemBatteryInfo, batteryInfo)
     \inherits QSystemBatteryInfo
 
     \ingroup qml-systeminfo
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.systeminfo 1.2} module.
     It is a convience class to make QML usage easier.
@@ -81,6 +82,7 @@ QDeclarativeBatteryInfo::QDeclarativeBatteryInfo(QObject *parent) :
 
 /*!
    This function starts the startBatteryStatusChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startBatteryStatusChanged(bool on)
@@ -98,6 +100,7 @@ void QDeclarativeBatteryInfo::startBatteryStatusChanged(bool on)
 /*!
 
   \qmlproperty bool BatteryInfo::monitorBatteryStatusChanges()
+  \since Mobility 1.2
 
   Start the connection for the batteryStatusChanged signal.
   */
@@ -108,6 +111,7 @@ bool QDeclarativeBatteryInfo::monitorBatteryStatusChanges()
 
 /*!
    This function starts the startChargingStateChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startChargingStateChanged(bool on)
@@ -125,7 +129,8 @@ void QDeclarativeBatteryInfo::startChargingStateChanged(bool on)
 /*!
     \qmlproperty bool BatteryInfo::monitorChargingStateChanges
     Start the connection for the chargingStateChanged signal.
-  */
+    \since Mobility 1.2
+*/
 bool QDeclarativeBatteryInfo::monitorChargingStateChanges()
 {
     return monitoringChargingStateChanges;
@@ -133,6 +138,7 @@ bool QDeclarativeBatteryInfo::monitorChargingStateChanges()
 
 /*!
    This function starts the startChargerTypeChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startChargerTypeChanged(bool on)
@@ -149,6 +155,7 @@ void QDeclarativeBatteryInfo::startChargerTypeChanged(bool on)
 
 /*!
     \qmlproperty bool BatteryInfo::monitorChargerTypeChanges
+    \since Mobility 1.2
     Start the connection for the chargerTypeChanged signal.
   */
 bool QDeclarativeBatteryInfo::monitorChargerTypeChanges()
@@ -158,6 +165,7 @@ bool QDeclarativeBatteryInfo::monitorChargerTypeChanges()
 
 /*!
    This function starts the startNominalCapacityChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startNominalCapacityChanged(bool on)
@@ -174,6 +182,7 @@ void QDeclarativeBatteryInfo::startNominalCapacityChanged(bool on)
 
 /*!
     \qmlproperty bool BatteryInfo::monitorNominalCapacityChanges
+    \since Mobility 1.2
     Start the connection for the nominalCapacityChanged signal.
   */
 bool QDeclarativeBatteryInfo::monitorNominalCapacityChanges()
@@ -183,6 +192,7 @@ bool QDeclarativeBatteryInfo::monitorNominalCapacityChanges()
 
 /*!
    This function starts the startRemainingCapacityPercentChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startRemainingCapacityPercentChanged(bool on)
@@ -199,6 +209,7 @@ void QDeclarativeBatteryInfo::startRemainingCapacityPercentChanged(bool on)
 
 /*!
     \qmlproperty bool BatteryInfo::monitorRemainingCapacityPercentChanges
+    \since Mobility 1.2
     Start the connection for the remainingCapacityPercentChanged signal.
   */
 bool QDeclarativeBatteryInfo::monitorRemainingCapacityPercentChanges()
@@ -208,6 +219,7 @@ bool QDeclarativeBatteryInfo::monitorRemainingCapacityPercentChanges()
 
 /*!
    This function starts the startRemainingCapacityChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startRemainingCapacityChanged(bool on)
@@ -224,6 +236,7 @@ void QDeclarativeBatteryInfo::startRemainingCapacityChanged(bool on)
 
 /*!
     \qmlproperty bool BatteryInfo::monitorRemainingCapacityChanges
+    \since Mobility 1.2
     Start the connection for the remainingCapacityChanged signal.
   */
 bool QDeclarativeBatteryInfo::monitorRemainingCapacityChanges()
@@ -233,6 +246,7 @@ bool QDeclarativeBatteryInfo::monitorRemainingCapacityChanges()
 
 /*!
    This function starts the startCurrentFlowChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startCurrentFlowChanged(bool on)
@@ -249,6 +263,7 @@ void QDeclarativeBatteryInfo::startCurrentFlowChanged(bool on)
 
 /*!
     \qmlproperty bool BatteryInfo::monitorCurrentFlowChanges
+    \since Mobility 1.2
     Start the connection for the currentFlowChanged signal.
   */
 bool QDeclarativeBatteryInfo::monitorCurrentFlowChanges()
@@ -258,6 +273,7 @@ bool QDeclarativeBatteryInfo::monitorCurrentFlowChanges()
 
 /*!
    This function starts the startRemainingCapacityBarsChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startRemainingCapacityBarsChanged(bool on)
@@ -274,6 +290,7 @@ void QDeclarativeBatteryInfo::startRemainingCapacityBarsChanged(bool on)
 
 /*!
     \qmlproperty bool BatteryInfo::monitorRemainingCapacityBarsChanges
+    \since Mobility 1.2
     Start the connection for the remainingCapacityBarsChanged signal.
   */
 bool QDeclarativeBatteryInfo::monitorRemainingCapacityBarsChanges()
@@ -283,6 +300,7 @@ bool QDeclarativeBatteryInfo::monitorRemainingCapacityBarsChanges()
 
 /*!
    This function starts the startRemainingChargingTimeChanged notification.
+   \since Mobility 1.2
 
 */
 void QDeclarativeBatteryInfo::startRemainingChargingTimeChanged(bool on)
@@ -298,6 +316,7 @@ void QDeclarativeBatteryInfo::startRemainingChargingTimeChanged(bool on)
 }
 /*!
     \qmlproperty bool BatteryInfo::monitorRemainingChargingTimeChanges
+    \since Mobility 1.2
     Start the connection for the remainingChargingTimeChanged signal.
   */
 bool QDeclarativeBatteryInfo::monitorRemainingChargingTimeChanges()
@@ -306,6 +325,7 @@ bool QDeclarativeBatteryInfo::monitorRemainingChargingTimeChanges()
 }
 /*!
     \qmlsignal BatteryInfo::batteryStatusChanged(BatteryInfo::BatteryStatus)
+    \since Mobility 1.2
 
   This signal is emitted when battery status has changed.
 
@@ -313,35 +333,41 @@ bool QDeclarativeBatteryInfo::monitorRemainingChargingTimeChanges()
 */
 /*!
     \qmlsignal BatteryInfo::chargingStateChanged(BatteryInfo::ChargingState)
-   This signal is emitted when charging state has changed.
+    \since Mobility 1.2
+    This signal is emitted when charging state has changed.
 
     \sa QSystemBatteryInfo::ChargingState
 */
 /*!
     \qmlsignal BatteryInfo::chargerTypeChanged(BatteryInfo::ChargerType)
-This signal is emitted when the charger type has changed, such as when a phone gets plugged in to the wall, or usb.
+    \since Mobility 1.2
+    This signal is emitted when the charger type has changed, such as when a phone gets plugged in to the wall, or usb.
 
  \sa QSystemBatteryInfo::ChargerType
 */
 /*!
     \qmlsignal BatteryInfo::nominalCapacityChanged(int)
+    \since Mobility 1.2
     This signal is emitted when nominal (maximum) battery level has changed.
  \sa QSystemBatteryInfo::nominalCapacity
 */
 /*!
     \qmlsignal BatteryInfo::remainingCapacityPercentChanged(int)
-  This signal is emitted when battery capacity in percent has changed.
+    \since Mobility 1.2
+    This signal is emitted when battery capacity in percent has changed.
  \sa QSystemBatteryInfo::remainingCapacityPercent
 */
 /*!
     \qmlsignal BatteryInfo::remainingCapacityChanged(QSystemBatteryInfo::EnergyUnit)
-  This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
+    \since Mobility 1.2
+    This signal is emitted when battery capacity has changed, reported in QSystemBatteryInfo::EnergyUnit.
 
  \sa QSystemBatteryInfo::remainingCapacity
 */
 
 /*!
     \qmlsignal BatteryInfo::currentFlowChanged(int)
+    \since Mobility 1.2
 
   This signal is emitted when the short term averge battery current has changed,
   or on some systems at regular intervals.
@@ -353,13 +379,15 @@ This signal is emitted when the charger type has changed, such as when a phone g
 */
 /*!
     \qmlsignal BatteryInfo::remainingCapacityBarsChanged(int)
-  This signal is emitted when battery level has changed.
+    \since Mobility 1.2
+    This signal is emitted when battery level has changed.
 
  \sa QSystemBatteryInfo::remainingCapacityBars
 */
 /*!
     \qmlsignal BatteryInfo::remainingChargingTimeChanged(int)
-This signal is emitted when remianing charge time has changed.
+    \since Mobility 1.2
+    This signal is emitted when remianing charge time has changed.
 
  \sa QSystemBatteryInfo::remainingChargingTime
 */
@@ -367,34 +395,40 @@ This signal is emitted when remianing charge time has changed.
 
 /*!
   \qmlproperty ChargerType BatteryInfo::chargerType
+  \since Mobility 1.2
 
-    Returns the currently used charger type.
-  */
+   Returns the currently used charger type.
+*/
 
 /*!
   \qmlproperty ChargingState BatteryInfo::chargingState
-    Returns the charging state.
+  \since Mobility 1.2
+  Returns the charging state.
   */
 /*!
   \qmlproperty int BatteryInfo::nominalCapacity
+  \since Mobility 1.2
 
     Returns the nominal (maximum) capacity of the battery, in milliampere-hours (mAh).
     If no battery is found, -1.
 */
 /*!
   \qmlproperty int BatteryInfo::remainingCapacityPercent
+  \since Mobility 1.2
 
     Returns the remaining battery level of the battery in percent.
     If no battery is found, -1.
   */
 /*!
   \qmlproperty int BatteryInfo::remainingCapacity
-    Returns the remaining battery level of the battery in BatteryInfo::EnergyUnit.
+  \since Mobility 1.2
+  Returns the remaining battery level of the battery in BatteryInfo::EnergyUnit.
 
     \sa QSystemBatteryInfo::EnergyUnit
   */
 /*!
   \qmlproperty int BatteryInfo::voltage
+  \since Mobility 1.2
 
     Returns the voltage of the battery, in millivolts (mV).
     If no battery is found, -1.
@@ -402,12 +436,14 @@ This signal is emitted when remianing charge time has changed.
 
 /*!
   \qmlproperty int BatteryInfo::remainingChargingTime
+  \since Mobility 1.2
 
     Returns the remaining time of charging in seconds if charging,
     0 if battery is full and not charging, or -1 no battery found.
 */
 /*!
   \qmlproperty int BatteryInfo::currentFlow
+  \since Mobility 1.2
 
     Returns the amount of current flowing out from the battery (a short term averge), milliapmeres (mA).
     Positive current means discharging and negative current means charging.
@@ -415,6 +451,7 @@ This signal is emitted when remianing charge time has changed.
   */
 /*!
   \qmlproperty int BatteryInfo::remainingCapacityBars
+  \since Mobility 1.2
 
    Returns the remaining capacity in number of bars.
    The bar count will not necessarily always reflect one to one on the remaining capacity percentage.
@@ -422,17 +459,20 @@ This signal is emitted when remianing charge time has changed.
 
 /*!
   \qmlproperty int BatteryInfo::maxBars
+  \since Mobility 1.2
 
    Returns the Maximum number of bars the system uses. In the case that the system has no
    default number of battery bars, 0 is returned.
   */
 /*!
     \qmlproperty BatteryStatus BatteryInfo::batteryStatus
+    \since Mobility 1.2
 
     Returns the battery charge status.
   */
 /*!
     \qmlproperty EnergyUnit BatteryInfo::energyMeasurementUnit
+    \since Mobility 1.2
 
   Returns the QSystemBatteryInfo::EnergyUnit that the system uses.
   */

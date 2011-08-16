@@ -52,6 +52,7 @@
    \ingroup qml-contacts
 
    \sa QContactDetail
+   \since Mobility 1.1
 
     The ContactDetail element is part of the \bold{QtMobility.contacts 1.1} module.
  */
@@ -81,6 +82,7 @@ void QDeclarativeContactDetail::setDetail(const QContactDetail& detail)
 
 /*!
   \qmlproperty string ContactDetail::definitionName
+  \since Mobility 1.1
 
   This property holds the string constant for the definition name of the detail.
   This property is read only.
@@ -92,6 +94,7 @@ QString QDeclarativeContactDetail::definitionName() const
 
 /*!
   \qmlproperty list<string> ContactDetail::contexts
+  \since Mobility 1.1
   This property holds one or more contexts that this detail is associated with.
   */
 QStringList QDeclarativeContactDetail::contexts() const
@@ -105,6 +108,7 @@ void QDeclarativeContactDetail::setContexts(const QStringList& contexts)
 
 /*!
   \qmlproperty bool ContactDetail::readOnly
+  \since Mobility 1.1
 
   This property indicates whether or not this detail is writable.
   This property is read only.
@@ -116,6 +120,7 @@ bool QDeclarativeContactDetail::readOnly() const
 
 /*!
   \qmlproperty bool ContactDetail::removable
+  \since Mobility 1.1
 
   This property indicates whether or not this detail is removale.
   This property is read only.
@@ -127,6 +132,7 @@ bool QDeclarativeContactDetail::removable() const
 
 /*!
   \qmlproperty string ContactDetail::detailUri
+  \since Mobility 1.1
 
   This property holds the unique URI of the detail if one exists.
   */
@@ -141,6 +147,7 @@ void QDeclarativeContactDetail::setDetailUri(const QString& detailUri)
 
 /*!
   \qmlproperty list<string> ContactDetail::linkedDetailUris
+  \since Mobility 1.1
 
   This property holds a list of detail URIs to which this detail is linked.
   */
@@ -155,6 +162,7 @@ void QDeclarativeContactDetail::setLinkedDetailUris(const QStringList& linkedDet
 
 /*!
   \qmlproperty enumeration ContactDetail::type
+  \since Mobility 1.1
 
   This property holds the type of the detail.
 
@@ -196,6 +204,7 @@ QDeclarativeContactDetail::ContactDetailType QDeclarativeContactDetail::detailTy
 
 /*!
   \qmlproperty list<string> ContactDetail::fieldNames
+  \since Mobility 1.1
 
   This property holds the list of all field names which this detail supports.
 
@@ -401,6 +410,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Address QDeclarativeContactAddress
    \brief The Address element contains an address of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    The fields in the Address element are based on the segments
    of the ADR property of a Versit vCard file.
@@ -470,6 +480,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Anniversary  QDeclarativeContactAnniversary
    \brief The Anniversary element contains an anniversary of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Anniversary element contains the following field types:
    \list
@@ -484,22 +495,26 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Anniversary::calendarId
+  \since Mobility 1.1
 
   This property holds the id of the calendar event.
   */
 /*!
   \qmlproperty date Anniversary::originalDate
+  \since Mobility 1.1
 
   This property holds the original anniversary date value.
   This property is either a date, or a date and time.
   */
 /*!
   \qmlproperty string Anniversary::event
+  \since Mobility 1.1
 
   This property holds the name of the event value.
   */
 /*!
   \qmlproperty enumeration Anniversary::subType
+  \since Mobility 1.1
 
   This property holds the sub type of an Anniversary.
 
@@ -518,6 +533,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Avatar  QDeclarativeContactAvatar
    \brief The Avatar element contains avatar URLs of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Avatar element contains the following field types:
    \list
@@ -530,11 +546,13 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Avatar::imageUrl
+  \since Mobility 1.1
 
   This property holds the URL of the avatar image.
   */
 /*!
   \qmlproperty string Avatar::videoUrl
+  \since Mobility 1.1
 
   This property holds the URL of a video avatar.
   */
@@ -545,6 +563,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Birthday QDeclarativeContactBirthday
    \brief The Birthday element contains a birthday of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Birthday element contains the following field types:
    \list
@@ -556,6 +575,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty date Birthday::birthday
+  \since Mobility 1.1
 
   This property holds the birthday date. The property value is either a date, or a date and time.
   */
@@ -565,6 +585,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass DisplayLabel QDeclarativeContactDisplayLabel
    \brief The DisplayLabel element contains the (possibly synthesized) display label of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    DisplayLabel element contains the following field types:
    \list
@@ -576,6 +597,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string DisplayLabel::label
+  \since Mobility 1.1
 
   This property holds the value of the display label.
   This property is a read only property.
@@ -586,6 +608,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass EmailAddress QDeclarativeContactEmailAddress
    \brief The EmailAddress element contains an email address of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    EmailAddress element contains the following field types:
    \list
@@ -597,6 +620,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string EmailAddress::emailAddress
+  \since Mobility 1.1
 
   This property holds the email address value.
   */
@@ -607,6 +631,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Family QDeclarativeContactFamily
    \brief The Family element contains names of family members of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Family element contains the following field types:
    \list
@@ -619,12 +644,14 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Family::spouse
+  \since Mobility 1.1
 
   This property holds the name of a spouse.
   */
 
 /*!
   \qmlproperty list<string> Family::children
+  \since Mobility 1.1
 
   This property holds the the names of children.
   */
@@ -635,6 +662,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \brief The Favorite element indicates if a contact is a favorite contact as well as the
    position it should appear in an ordered list of favorites.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Favorite element contains the following field types:
    \list
@@ -647,12 +675,14 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty bool Favorite::favorite
+  \since Mobility 1.1
 
   This property holds the value that indicates whether a contact is a favorite.
   */
 
 /*!
   \qmlproperty int Favorite::index
+  \since Mobility 1.1
 
   This property holds the index of the favorite contact (which determines the order they appear).
   */
@@ -663,6 +693,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Gender QDeclarativeContactGender
    \brief The Gender element contains the gender of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Gender element contains the following field types:
    \list
@@ -674,6 +705,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty enumeration Gender::gender
+  \since Mobility 1.1
 
   This property holds the value of the gender.
 
@@ -689,6 +721,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass GeoLocation QDeclarativeContactGeoLocation
    \brief The GeoLocation element contains a global location coordinate associated with a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    GeoLocation element contains the following field types:
    \list
@@ -708,46 +741,55 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string GeoLocation::label
+  \since Mobility 1.1
 
   This property holds the location label.
   */
 /*!
   \qmlproperty double GeoLocation::latitude
+  \since Mobility 1.1
 
   This property holds the value of the latitude.
   */
 /*!
   \qmlproperty double GeoLocation::longitude
+  \since Mobility 1.1
 
   This property holds the value of the longitude.
   */
 /*!
   \qmlproperty double GeoLocation::accuracy
+  \since Mobility 1.1
 
   This property holds the value of the location (latitude/longitude) accuracy.
   */
 /*!
   \qmlproperty double GeoLocation::altitude
+  \since Mobility 1.1
 
   This property holds the value of the altitude.
   */
 /*!
   \qmlproperty double GeoLocation::altitudeAccuracy
+  \since Mobility 1.1
 
   This property holds the value of the accuracy of the altitude.
   */
 /*!
   \qmlproperty double GeoLocation::heading
+  \since Mobility 1.1
 
   This property holds the value of the heading.
   */
 /*!
   \qmlproperty double GeoLocation::speed
+  \since Mobility 1.1
 
   This property holds the value of the speed.
   */
 /*!
   \qmlproperty date GeoLocation::timestamp
+  \since Mobility 1.1
 
   This property holds the value of the timestamp of the location information.
   */
@@ -759,6 +801,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \brief The GlobalPresence element provides aggregated presence information
    for a contact, synthesized or supplied by the backend.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    GlobalPresence element contains the following field types:
    \list
@@ -775,16 +818,19 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty date GlobalPresence::timestamp
+  \since Mobility 1.1
 
   This property holds the timestamp value of the GlobalPresence.
   */
 /*!
   \qmlproperty string GlobalPresence::nickname
+  \since Mobility 1.1
 
   This property holds the nickname value of the GlobalPresence.
   */
 /*!
   \qmlproperty enumeration GlobalPresence::state
+  \since Mobility 1.1
 
   This property holds the presence state enumeration value.
 
@@ -800,17 +846,20 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
   */
 /*!
   \qmlproperty string GlobalPresence::stateText
+  \since Mobility 1.1
 
   This property holds the text corresponding to the current presence state.
   */
 /*!
   \qmlproperty url GlobalPresence::imageUrl
+  \since Mobility 1.1
 
   This property holds the last-known status image url of the contact for the online account
    about which this detail stores presence information.
   */
 /*!
   \qmlproperty string GlobalPresence::customMessage
+  \since Mobility 1.1
 
   This property holds the custom status message from the contact for the online account
    about which this detail stores presence information.
@@ -821,6 +870,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Guid QDeclarativeContactGuid
    \brief The Guid element contains a globally unique Id of a contact, for use in synchronization with other datastores.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Guid element contains the following field types:
    \list
@@ -832,6 +882,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Guid::guid
+  \since Mobility 1.1
 
   This property holds the value of the GUID.
   */
@@ -841,6 +892,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Hobby QDeclarativeContactHobby
    \brief The Hobby element contains a hobby of the contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Hobby element contains the following field types:
    \list
@@ -852,6 +904,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Hobby::hobby
+  \since Mobility 1.1
 
   This property holds the name of the hobby.
   */
@@ -861,6 +914,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Name QDeclarativeContactName
    \brief The Name element contains a name of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Name element contains the following field types:
    \list
@@ -877,31 +931,37 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Name::prefix
+  \since Mobility 1.1
 
   This property holds the prefix name part of the name.
   */
 /*!
   \qmlproperty string Name::firstName
+  \since Mobility 1.1
 
   This property holds the first name part of the name.
   */
 /*!
   \qmlproperty string Name::middleName
+  \since Mobility 1.1
 
   This property holds the middle name part of the name.
   */
 /*!
   \qmlproperty string Name::lastName
+  \since Mobility 1.1
 
   This property holds the last name part of the name.
   */
 /*!
   \qmlproperty string Name::suffix
+  \since Mobility 1.1
 
   This property holds the suffix part of the name.
   */
 /*!
   \qmlproperty string Name::customLabel
+  \since Mobility 1.1
 
   This property holds a custom formatted label for the name.
   */
@@ -912,6 +972,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Nickname QDeclarativeContactNickname
    \brief The Nickname element contains a nickname of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Nickname element contains the following field types:
    \list
@@ -923,6 +984,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Nickname::nickname
+  \since Mobility 1.1
 
   This property holds the value of the nickname.
   */
@@ -933,6 +995,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Note QDeclarativeContactNote
    \brief The Note element contains a note associated with a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Note element contains the following field types:
    \list
@@ -944,6 +1007,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Note::note
+  \since Mobility 1.1
 
   This property holds the value of the note.
   */
@@ -954,6 +1018,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass OnlineAccount QDeclarativeContactOnlineAccount
    \brief The OnlineAccount element contains a note associated with a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    OnlineAccount element contains the following field types:
    \list
@@ -968,21 +1033,25 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string OnlineAccount::accountUri
+  \since Mobility 1.1
 
   This property holds the value of the account uri.
   */
 /*!
   \qmlproperty string OnlineAccount::serviceProvider
+  \since Mobility 1.1
 
   This property holds the value of the account service provider name.
   */
 /*!
   \qmlproperty list<string> OnlineAccount::capabilities
+  \since Mobility 1.1
 
   This property holds the value of the account capabilities.
   */
 /*!
   \qmlproperty list<variant> OnlineAccount::subTypes
+  \since Mobility 1.1
 
   This property holds the value of the sub types of an online account.
 
@@ -1001,6 +1070,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \brief The Organization element provides details about an
    organization that the contact is either a part of, or stands for.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Organization element contains the following field types:
    \list
@@ -1018,36 +1088,43 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string Organization::name
+  \since Mobility 1.1
 
   This property holds the value of the organization name.
   */
 /*!
   \qmlproperty url Organization::logoUrl
+  \since Mobility 1.1
 
   This property holds the URL of the organization logo image.
   */
 /*!
   \qmlproperty list<string> Organization::department
+  \since Mobility 1.1
 
   This property holds the value of the department name.
   */
 /*!
   \qmlproperty string Organization::location
+  \since Mobility 1.1
 
   This property holds the value of the location of the organization.
   */
 /*!
   \qmlproperty string Organization::role
+  \since Mobility 1.1
 
   This property holds the value of the contact's role in the organization.
   */
 /*!
   \qmlproperty string Organization::title
+  \since Mobility 1.1
 
   This property holds the value of the contact's title in the organization.
   */
 /*!
   \qmlproperty string Organization::assistantName
+  \since Mobility 1.1
 
   This property holds the value of the name of the contact's assistant.
   */
@@ -1057,6 +1134,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass PhoneNumber QDeclarativeContactPhoneNumber
    \brief The PhoneNumber element provides a phone number of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    PhoneNumber element contains the following field types:
    \list
@@ -1069,12 +1147,14 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty string PhoneNumber::number
+  \since Mobility 1.1
 
   This property holds the value of the phone number.
   */
 
 /*!
   \qmlproperty list<variant> PhoneNumber::subTypes
+  \since Mobility 1.1
 
   This property holds the sub types of a PhoneNumber.
 
@@ -1100,6 +1180,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Presence QDeclarativeContactPresence
    \brief The Presence element provides presence information for an online account of a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Presence element contains the following field types:
    \list
@@ -1116,16 +1197,19 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty date Presence::timestamp
+  \since Mobility 1.1
 
   This property holds the timestamp value of the Presence.
   */
 /*!
   \qmlproperty string Presence::nickname
+  \since Mobility 1.1
 
   This property holds the nickname value of the Presence.
   */
 /*!
   \qmlproperty enumeration Presence::state
+  \since Mobility 1.1
 
   This property holds the presence state enumeration value.
 
@@ -1141,17 +1225,20 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
   */
 /*!
   \qmlproperty string Presence::stateText
+  \since Mobility 1.1
 
   This property holds the text corresponding to the current presence state.
   */
 /*!
   \qmlproperty url Presence::imageUrl
+  \since Mobility 1.1
 
   This property holds the last-known status image url of the contact for the online account
    about which this detail stores presence information.
   */
 /*!
   \qmlproperty string Presence::customMessage
+  \since Mobility 1.1
 
   This property holds the custom status message from the contact for the online account
    about which this detail stores presence information.
@@ -1164,6 +1251,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Ringtone QDeclarativeContactRingtone
    \brief The Ringtone element provides a ringtone associated with a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Ringtone element contains the following field types:
    \list
@@ -1176,11 +1264,13 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
 
 /*!
   \qmlproperty url Ringtone::audioRingtoneUrl
+  \since Mobility 1.1
 
   This property holds the value of the URL for an audio ringtone.
   */
 /*!
   \qmlproperty url Ringtone::videoRingtoneUrl
+  \since Mobility 1.1
 
   This property holds the value of the URL for a video ringtone.
   */
@@ -1197,6 +1287,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass SyncTarget QDeclarativeContactSyncTarget
    \brief The SyncTarget element provides a sync target for a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    SyncTarget element contains the following field types:
    \list
@@ -1208,6 +1299,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
  */
 /*!
   \qmlproperty string SyncTarget::syncTarget
+  \since Mobility 1.1
 
   This property holds the sync target value.
   */
@@ -1217,6 +1309,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Tag QDeclarativeContactTag
    \brief The Tag element provides a contains a tag associated with a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Tag element contains the following field types:
    \list
@@ -1227,6 +1320,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
  */
 /*!
   \qmlproperty string Tag::tag
+  \since Mobility 1.1
 
   This property holds the value of the tag.
   */
@@ -1236,6 +1330,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Timestamp QDeclarativeContactTimestamp
    \brief The Timestamp element contains the creation and last-modified timestamp associated with the contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Timestamp element contains the following field types:
    \list
@@ -1247,11 +1342,13 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
  */
 /*!
   \qmlproperty date Timestamp::lastModified
+  \since Mobility 1.1
 
   This property holds the value of the last modified timestamp.
   */
 /*!
   \qmlproperty date Timestamp::created
+  \since Mobility 1.1
 
   This property holds the value of the timestamp a contact was created.
   */
@@ -1261,6 +1358,7 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
    \qmlclass Url QDeclarativeContactUrl
    \brief The Url element contains a url associated with a contact.
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    Url element contains the following field types:
    \list
@@ -1272,11 +1370,13 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
  */
 /*!
   \qmlproperty string Url::url
+  \since Mobility 1.1
 
   This property holds the value of the URL.
   */
 /*!
   \qmlproperty enumeration Url::subType
+  \since Mobility 1.1
 
   This property holds the sub type of a QContactUrl.
 

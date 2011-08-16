@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QGeoMapTextObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The string \l text will be drawn \l offset.x and \l offset.y pixels away from the
     on-screen position of \l coordinate.
@@ -106,6 +107,7 @@ QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
 
 /*!
     \qmlproperty Coordinate MapText::coordinate
+    \since Mobility 1.2
 
     This property holds the coordinate at which to anchor the text.
 */
@@ -155,6 +157,7 @@ void QDeclarativeGeoMapTextObject::coordinateAltitudeChanged(double /*altitude*/
 
 /*!
     \qmlproperty string MapText::text
+    \since Mobility 1.2
 
     This property holds the text to display.
 
@@ -173,6 +176,7 @@ void QDeclarativeGeoMapTextObject::setText(const QString &text)
 
 /*!
     \qmlproperty string MapText::font.family
+    \since Mobility 1.2
 
     Sets the family name of the font.
 
@@ -183,12 +187,14 @@ void QDeclarativeGeoMapTextObject::setText(const QString &text)
 
 /*!
     \qmlproperty bool MapText::font.bold
+    \since Mobility 1.2
 
     Sets whether the font weight is bold.
 */
 
 /*!
     \qmlproperty enumeration MapText::font.weight
+    \since Mobility 1.2
 
     Sets the font's weight.
 
@@ -208,30 +214,35 @@ void QDeclarativeGeoMapTextObject::setText(const QString &text)
 
 /*!
     \qmlproperty bool MapText::font.italic
+    \since Mobility 1.2
 
     Sets whether the font has an italic style.
 */
 
 /*!
     \qmlproperty bool MapText::font.underline
+    \since Mobility 1.2
 
     Sets whether the text is underlined.
 */
 
 /*!
     \qmlproperty bool MapText::font.strikeout
+    \since Mobility 1.2
 
     Sets whether the font has a strikeout style.
 */
 
 /*!
     \qmlproperty real MapText::font.pointSize
+    \since Mobility 1.2
 
     Sets the font size in points. The point size must be greater than zero.
 */
 
 /*!
     \qmlproperty int MapText::font.pixelSize
+    \since Mobility 1.2
 
     Sets the font size in pixels.
 
@@ -241,6 +252,7 @@ void QDeclarativeGeoMapTextObject::setText(const QString &text)
 
 /*!
     \qmlproperty real MapText::font.letterSpacing
+    \since Mobility 1.2
 
     Sets the letter spacing for the font.
 
@@ -250,6 +262,7 @@ void QDeclarativeGeoMapTextObject::setText(const QString &text)
 
 /*!
     \qmlproperty real MapText::font.wordSpacing
+    \since Mobility 1.2
 
     Sets the word spacing for the font.
 
@@ -260,6 +273,7 @@ void QDeclarativeGeoMapTextObject::setText(const QString &text)
 
 /*!
     \qmlproperty enumeration MapText::font.capitalization
+    \since Mobility 1.2
 
     Sets the capitalization for the text.
 
@@ -289,6 +303,7 @@ void QDeclarativeGeoMapTextObject::setFont(const QFont &font)
 /*!
     \qmlproperty int MapText::offset.x
     \qmlproperty int MapText::offset.y
+    \since Mobility 1.2
 
     These properties hold the offset from the on-screen position of
     \l coordinate at which the text should be displayed.
@@ -308,6 +323,7 @@ void QDeclarativeGeoMapTextObject::setOffset(const QPoint &offset)
 
 /*!
     \qmlproperty color MapText::color
+    \since Mobility 1.2
 
     This property holds the color used to draw the text.
 
@@ -333,6 +349,7 @@ QColor QDeclarativeGeoMapTextObject::color() const
 /*!
     \qmlproperty enumeration MapText::horizontalAlignment
     \qmlproperty enumeration MapText::verticalAlignment
+    \since Mobility 1.2
 
     Sets the horizontal and vertical alignment of the text.
 
@@ -386,6 +403,7 @@ void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextOb
 
 /*!
     \qmlproperty int MapText::z
+    \since Mobility 1.2
 
     This property holds the z-value of the text.
 
@@ -395,6 +413,7 @@ void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextOb
 
 /*!
     \qmlproperty bool MapText::visible
+    \since Mobility 1.2
 
     This property holds a boolean corresponding to whether or not the
     text is visible.

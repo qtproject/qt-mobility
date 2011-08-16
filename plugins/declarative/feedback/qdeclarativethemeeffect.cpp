@@ -44,6 +44,7 @@
     \qmlclass ThemeEffect
     \brief The ThemeEffect element represents a themed feedback effect.
     \ingroup qml-feedback-api
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
@@ -61,6 +62,7 @@ QDeclarativeThemeEffect::QDeclarativeThemeEffect(QObject *parent)
 
 /*!
     \qmlproperty bool ThemeEffect::supported
+    \since Mobility 1.1
 
     This property is true if the system supports themed feedback effects.
 */
@@ -70,6 +72,7 @@ bool QDeclarativeThemeEffect::effectSupported() {
 
 /*!
     \qmlproperty ThemeEffect ThemeEffect::effect
+    \since Mobility 1.1
 
     This property holds the specific themed effect type to play.  It is one of:
 
@@ -126,6 +129,7 @@ QDeclarativeThemeEffect::ThemeEffect QDeclarativeThemeEffect::effect() const
 
 /*!
     \qmlmethod ThemeEffect::play()
+    \since Mobility 1.1
 
     Call this to play the themed effect.
 */

@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
     \inherits QObject
 
     \ingroup qml-systeminfo
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
@@ -67,7 +68,8 @@ QDeclarativeScreenSaver::QDeclarativeScreenSaver(QObject *parent) :
 
 /*!
   Destroys the QDeclarativeScreenSaver object.
- */
+  \since Mobility 1.1
+  */
 
 QDeclarativeScreenSaver::~QDeclarativeScreenSaver()
 {
@@ -79,6 +81,7 @@ QDeclarativeScreenSaver::~QDeclarativeScreenSaver()
 
 /*!
     \qmlproperty void ScreenSaver::setScreenSaverDelayed(bool)
+    \since Mobility 1.1
 
     Delays the screensaver if \a on is true, otherwise continues the screensaver.
 */
@@ -96,6 +99,7 @@ void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
 
 /*!
     \qmlproperty bool ScreenSaver::screenSaverDelayed
+    \since Mobility 1.1
 
     Returns whether the screensaver has been suppressed, or not.
 */
@@ -107,6 +111,7 @@ bool QDeclarativeScreenSaver::screenSaverDelayed()
 
 /*!
   \brief Set the screensaver to be inhibited.
+  \since Mobility 1.1
 
    Temporarily inhibits the screensaver.
 
@@ -133,6 +138,7 @@ bool  QDeclarativeScreenSaver::screenSaverInhibited()
 
 /*!
     \qmlproperty void ScreenSaver::setScreenSaverInhibited(bool)
+    \since Mobility 1.1
 
     Inhibits the screensaver if \a on is true, otherwise continues the screensaver.
 */
