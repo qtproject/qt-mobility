@@ -227,19 +227,19 @@ void ServiceBrowser::setDefaultInterfaceImplementation()
 
 void ServiceBrowser::registerExampleServices()
 {
-    QStringList exampleXmlFiles;
-    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml" << "notesmanagerservice.xml";
-    foreach (const QString &fileName, exampleXmlFiles) {
-        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
-        serviceManager->addService(path);
-    }
+//    QStringList exampleXmlFiles;
+//    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml" << "notesmanagerservice.xml";
+//    foreach (const QString &fileName, exampleXmlFiles) {
+//        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+//        serviceManager->addService(path);
+//    }
 }
 
 void ServiceBrowser::unregisterExampleServices()
 {
-    serviceManager->removeService("FileManagerService");
-    serviceManager->removeService("BluetoothTransferService");
-    serviceManager->removeService("NotesManagerService");
+//    serviceManager->removeService("FileManagerService");
+//    serviceManager->removeService("BluetoothTransferService");
+//    serviceManager->removeService("NotesManagerService");
 }
 
 void ServiceBrowser::reloadAttributesRadioButtonText()
@@ -270,6 +270,8 @@ void ServiceBrowser::initWidgets()
 
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5)
     interfacesListWidget->setMinimumWidth(450);
+#else
+    interfacesListWidget->setMaximumWidth(360);
 #endif
 
     connect(servicesListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
