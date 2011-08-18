@@ -22,14 +22,14 @@ qt-mobility (1.2.1+193) unstable; urgency=low
 qt-mobility (1.2.1+192) unstable; urgency=low
 
   * Remaining version number issues fixed in src/harmattaninstalls
-  * Fixes: NB#275362
+  * See version 1.2.1+195 for license headers fix
 
  -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Fri, 5 Aug 2011 13:27:48 +1000
 
 qt-mobility (1.2.1+44) unstable; urgency=low
 
   * Fixed debian version number
-  * Fixes: NB#237919
+  * See version 1.2.1+195 for battery charge fix.
 
  -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 7 Jul 2011 13:50:48 +1000
 
