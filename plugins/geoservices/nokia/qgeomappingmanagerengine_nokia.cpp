@@ -468,7 +468,7 @@ const QString & QGeoMappingManagerEngineNokia::host() const
 
 void QGeoMappingManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
 {
-    if (mcc == "460" || mcc == "461") {
+    if (mcc == "460" || mcc == "461" || mcc == "454" || mcc == "455") {
         m_host ="maptile.maps.svc.nokia.com.cn";
     } else {
         m_host ="maptile.maps.svc.ovi.com";
