@@ -20,7 +20,7 @@
 #include "dbsqlconstants.h"
 #include "plplugins.h"
 #include <cntdb.h>
-#include <Phonebook2PublicCRKeys.h>
+//#include <Phonebook2PublicCRKeys.h>
 #include <centralrepository.h>
 #ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <cntphonenumparser.h>
@@ -191,9 +191,9 @@ void CPplCommAddrTable::ConstructL()
     // Read the Dynamic Matching flag from cenrep
     // This sets the matching algorithm used
     iDynamicMatch = ETrue; // Dynamic Matching is enabled by default
-    CRepository* cenRepSession = CRepository::NewL(TUid::Uid(KCRUidPhonebook));
-    cenRepSession->Get( KTelDynamicMatching, iDynamicMatch );
-    delete cenRepSession;
+    //CRepository* cenRepSession = CRepository::NewL(TUid::Uid(KCRUidPhonebook));
+    //cenRepSession->Get( KTelDynamicMatching, iDynamicMatch );
+    //delete cenRepSession;
 	}
 
 
