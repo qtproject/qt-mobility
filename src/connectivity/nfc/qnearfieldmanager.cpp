@@ -241,14 +241,14 @@ QTM_BEGIN_NAMESPACE
     following would be used to match NDEF messages that contain a RTD-URI record:
 
     \code
-        string:"urn:nfc:wkt:U[1:*];"
+        string:"'urn:nfc:wkt:U'[1:*];"
     \endcode
 
     The following would be used to match NDEF messages that contain a custom type
     urn:nfc:ext:example.com:f:
 
     \code
-        string:"urn:nfc:ext:example.com:f[1:*];"
+        string:"'urn:nfc:ext:example.com:f'[1:*];"
     \endcode
 
     Note that \c {[1:*]} indicates one or more records of the specified type must be in the NDEF
