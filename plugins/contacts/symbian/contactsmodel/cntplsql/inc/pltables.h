@@ -278,6 +278,7 @@ private:
 	CCntSqlStatement* iAllForItemDeleteStmnt;
 	CCntSqlStatement* iSingleDeleteStmnt;
 	RSqlDatabase&  iDatabase;
+	TBool iDynamicMatch;
 	};
 
 

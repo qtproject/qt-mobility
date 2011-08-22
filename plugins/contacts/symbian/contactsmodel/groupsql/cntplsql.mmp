@@ -81,6 +81,7 @@ LIBRARY     	libc.lib
 LIBRARY     	libm.lib
 LIBRARY      	platformenv.lib
 LIBRARY         charconv.lib
+LIBRARY         centralrepository.lib
 
 OPTION ARMCC --visibility_inlines_hidden
 

@@ -20,6 +20,8 @@
 #include "dbsqlconstants.h"
 #include "plplugins.h"
 #include <cntdb.h>
+//#include <Phonebook2PublicCRKeys.h>
+#include <centralrepository.h>
 #ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <cntphonenumparser.h>
 #endif
@@ -185,6 +187,13 @@ void CPplCommAddrTable::ConstructL()
 	iAllForItemDeleteStmnt->SetConditionL(*whereContactIdClause);
 
 	CleanupStack::PopAndDestroy(3, whereContactIdClause); // and whereCommAddrIdClause, whereValueAndTypeClause
+	
+    // Read the Dynamic Matching flag from cenrep
+    // This sets the matching algorithm used
+    iDynamicMatch = ETrue; // Dynamic Matching is enabled by default
+    //CRepository* cenRepSession = CRepository::NewL(TUid::Uid(KCRUidPhonebook));
+    //cenRepSession->Get( KTelDynamicMatching, iDynamicMatch );
+    //delete cenRepSession;
 	}
 
 
@@ -742,7 +751,8 @@ CContactIdArray* CPplCommAddrTable::MatchPhoneNumberL(const TDesC& aNumber, cons
     // Maximum number of digits (limit) to compare the numbers.
     // Because Dynamic Matching is enabled then the limit is KMatchLengthFromRight + 2.
     // The value cannot be more than KMaxPhoneMatchLength.
-    const TInt KMatchLengthFromRightLimit = Min(KMatchLengthFromRight + KExtraDigitForNumberCompare,
+    const TInt KMatchLengthFromRightLimit = Min(iDynamicMatch ? KMatchLengthFromRight + KExtraDigitForNumberCompare
+                                                          : KMatchLengthFromRight,
                                                 KMaxPhoneMatchLength);
 
     const TInt KUpperMaxLength = KMaxPhoneMatchLength - KLowerSevenDigits;
