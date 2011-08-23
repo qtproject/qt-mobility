@@ -877,8 +877,8 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(cm->contactIds(dfil).isEmpty());
 
     // remove all contacts
-    dfil.setDetailDefinitionName(QContactDisplayLabel::DefinitionName); // delete everything.
-    crr.setContactIds(cm->contactIds(dfil));
+    const QContactFilter noFilter; // delete everything.
+    crr.setContactIds(cm->contactIds(noFilter));
     
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
@@ -898,7 +898,7 @@ void tst_QContactAsync::contactRemove()
     nameDetail.setFirstName("Should not be removed");
     temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
-    crr.setContactIds(cm->contactIds(dfil));
+    crr.setContactIds(cm->contactIds(noFilter));
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -914,7 +914,7 @@ void tst_QContactAsync::contactRemove()
             if (!cm->saveContact(&temp)) {
                 QSKIP("Unable to save temporary contact for remove request cancellation test!", SkipSingle);
             }
-            crr.setContactIds(cm->contactIds(dfil));
+            crr.setContactIds(cm->contactIds(noFilter));
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -946,7 +946,7 @@ void tst_QContactAsync::contactRemove()
             crr.waitForFinished();
             temp.setId(QContactId());
             cm->saveContact(&temp);
-            crr.setContactIds(cm->contactIds(dfil));
+            crr.setContactIds(cm->contactIds(noFilter));
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
