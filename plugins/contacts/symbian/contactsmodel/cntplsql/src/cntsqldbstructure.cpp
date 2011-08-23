@@ -348,9 +348,10 @@ void CCntSqlDbTable::FillFavoritesColumnL()
             {
             const CContactItemField& field = item->CardFields()[indexFavField];
             HBufC* updateQuery = HBufC::NewLC(KContactUpdateFavoriteColumnQuery().Length() + 
-                    field.TextStorage()->Text().Length() + MAX_INT_LEN); 
+                    field.TextStorage()->Text().Length() + MAX_INT_LEN);
+            TPtrC ptrText = field.TextStorage()->Text();
             updateQuery->Des().Format(KContactUpdateFavoriteColumnQuery,
-                    &(field.TextStorage()->Text()), contactIds[i]);
+                    &ptrText, contactIds[i]);
             
             err = iDatabase.Exec(*updateQuery);
             if (err != KSqlAtRow)

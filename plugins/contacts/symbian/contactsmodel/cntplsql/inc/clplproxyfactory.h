@@ -91,7 +91,7 @@ public:
     void FindAsyncTextDefInitL(const CDesCArray& aWords,CContactTextDef* aTextDef);
     CContactIdArray* FindAsyncL(TBool& aMoreToGo, TUint aSessionId);
     CContactIdArray* FindL(const TDesC& aText, const CContactItemFieldDef* aFieldDef, TUint aSessionId);
-    CContactIdArray* FindSpeedDialContactsL(){};
+    CContactIdArray* FindSpeedDialContactsL();
     TBool ContactMatchesHintFieldL (TInt aBitWiseFilter, TContactItemId aContactId);
     CContactIdArray* MatchPhoneNumberL(const TDesC& aNumber, const TInt aMatchLengthFromRight);
 
