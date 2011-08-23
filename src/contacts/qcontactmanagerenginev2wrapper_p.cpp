@@ -397,11 +397,16 @@ void PartialSaveRequestController::handleFinishedSubRequest(QContactAbstractRequ
         }
         // Populate the m_errorMap with the m_errorMap of the attempted save
         QMap<int, QContactManager::Error>::ConstIterator it(saveErrors.constBegin());
-        QContactManager::Error error = QContactManager::NoError;
         while (it != saveErrors.constEnd()) {
-            error = it.value();
             m_errorMap.insert(m_savedToOriginalMap[it.key()], it.value());
             it++;
+        }
+        // Get last error (m_errorMap being a QMap is sorted by index, so just pick it)
+        QContactManager::Error error = QContactManager::NoError;
+        it = m_errorMap.constEnd();
+        if (it != m_errorMap.constBegin()) {
+            --it;
+            error = it.value();
         }
 
         // Update the request object
