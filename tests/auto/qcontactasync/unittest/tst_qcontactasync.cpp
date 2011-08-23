@@ -910,11 +910,11 @@ void tst_QContactAsync::contactRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             crr.waitForFinished();
-            crr.setContactIds(cm->contactIds(dfil));
             temp.setId(QContactId());
             if (!cm->saveContact(&temp)) {
                 QSKIP("Unable to save temporary contact for remove request cancellation test!", SkipSingle);
             }
+            crr.setContactIds(cm->contactIds(dfil));
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -944,9 +944,9 @@ void tst_QContactAsync::contactRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             crr.waitForFinished();
-            crr.setContactIds(cm->contactIds(dfil));
             temp.setId(QContactId());
             cm->saveContact(&temp);
+            crr.setContactIds(cm->contactIds(dfil));
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
