@@ -1217,6 +1217,7 @@ void tst_QContactAsync::contactPartialSave()
     // 3) Remove an email address and a phone number
     QCOMPARE(contacts[1].details<QContactPhoneNumber>().count(), 1);
     QCOMPARE(contacts[1].details<QContactEmailAddress>().count(), 1);
+    email = contacts[1].detail<QContactEmailAddress>();
     QVERIFY(contacts[1].removeDetail(&email));
     phn = contacts[1].detail<QContactPhoneNumber>();
     QVERIFY(contacts[1].removeDetail(&phn));
