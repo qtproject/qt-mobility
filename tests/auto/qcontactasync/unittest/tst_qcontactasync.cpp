@@ -828,10 +828,27 @@ void tst_QContactAsync::contactIdFetch()
 
 }
 
+/// Returns @p first with the elements of @p second removed if contained.
+static QList<QContactLocalId>
+operator-(QList<QContactLocalId> first, const QList<QContactLocalId> &second)
+{
+    foreach(QContactLocalId localId, second) {
+        first.removeOne(localId);
+    }
+    return first;
+}
+
 void tst_QContactAsync::contactRemove()
 {
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(prepareModel(uri));
+    // tracker backend cannot remove selfContact
+    const QList<QContactLocalId> unremovableIds =
+        (cm->managerName() == QLatin1String("tracker")) ?
+        QList<QContactLocalId>() << cm->selfContactId() :
+        QList<QContactLocalId>();
+    const int unremovableCount = unremovableIds.count();
+
     QContactRemoveRequest crr;
     QVERIFY(crr.type() == QContactAbstractRequest::ContactRemoveRequest);
 
@@ -878,7 +895,7 @@ void tst_QContactAsync::contactRemove()
 
     // remove all contacts
     const QContactFilter noFilter; // delete everything.
-    crr.setContactIds(cm->contactIds(noFilter));
+    crr.setContactIds(cm->contactIds(noFilter)-unremovableIds);
     
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
@@ -888,7 +905,7 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(crr.waitForFinished());
     QVERIFY(crr.isFinished());
 
-    QCOMPARE(cm->contactIds().size(), 0); // no contacts should be left.
+    QCOMPARE(cm->contactIds().size(), unremovableCount); // no contacts should be left, besides unremovable
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -898,7 +915,7 @@ void tst_QContactAsync::contactRemove()
     nameDetail.setFirstName("Should not be removed");
     temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
-    crr.setContactIds(cm->contactIds(noFilter));
+    crr.setContactIds(cm->contactIds(noFilter)-unremovableIds);
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -914,7 +931,7 @@ void tst_QContactAsync::contactRemove()
             if (!cm->saveContact(&temp)) {
                 QSKIP("Unable to save temporary contact for remove request cancellation test!", SkipSingle);
             }
-            crr.setContactIds(cm->contactIds(noFilter));
+            crr.setContactIds(cm->contactIds(noFilter)-unremovableIds);
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -928,8 +945,9 @@ void tst_QContactAsync::contactRemove()
         // if we get here, then we are cancelling the request.
         QVERIFY(crr.waitForFinished());
         QVERIFY(crr.isCanceled());
-        QCOMPARE(cm->contactIds().size(), 1);
-        QCOMPARE(cm->contactIds(), crr.contactIds());
+        const QList<QContactLocalId> cmRemovableContactIds = cm->contactIds()-unremovableIds;
+        QCOMPARE(cmRemovableContactIds.size(), 1);
+        QCOMPARE(cmRemovableContactIds, crr.contactIds());
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -958,8 +976,9 @@ void tst_QContactAsync::contactRemove()
         }
         crr.waitForFinished();
         QVERIFY(crr.isCanceled());
-        QCOMPARE(cm->contactIds().size(), 1);
-        QCOMPARE(cm->contactIds(), crr.contactIds());
+        const QList<QContactLocalId> cmRemovableContactIds = cm->contactIds()-unremovableIds;
+        QCOMPARE(cmRemovableContactIds.size(), 1);
+        QCOMPARE(cmRemovableContactIds, crr.contactIds());
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -2570,6 +2589,10 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     // XXX TODO: ensure that this is the case:
     // there should be no contacts in the database.
     QList<QContactLocalId> toRemove = cm->contactIds();
+    // tracker backend cannot remove selfContact
+    if (cm->managerName() == QLatin1String("tracker")) {
+        toRemove.removeOne(cm->selfContactId());
+    }
     foreach (const QContactLocalId& removeId, toRemove)
         cm->removeContact(removeId);
 
