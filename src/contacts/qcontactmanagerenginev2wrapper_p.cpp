@@ -396,9 +396,9 @@ void PartialSaveRequestController::handleFinishedSubRequest(QContactAbstractRequ
             contacts[m_savedToOriginalMap[i]].setId(savedContacts[i].id());
         }
         // Populate the m_errorMap with the m_errorMap of the attempted save
-        QMap<int, QContactManager::Error>::iterator it(saveErrors.begin());
+        QMap<int, QContactManager::Error>::ConstIterator it(saveErrors.constBegin());
         QContactManager::Error error = QContactManager::NoError;
-        while (it != saveErrors.end()) {
+        while (it != saveErrors.constEnd()) {
             error = it.value();
             m_errorMap.insert(m_savedToOriginalMap[it.key()], it.value());
             it++;
