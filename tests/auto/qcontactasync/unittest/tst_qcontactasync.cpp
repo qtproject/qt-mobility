@@ -66,6 +66,7 @@ QTM_USE_NAMESPACE
 // in their processing.  So we do multiple loops until things work out.. or not
 #define MAX_OPTIMISTIC_SCHEDULING_LIMIT 100
 
+const QString trackerEngineName = QLatin1String("tracker");
 
 // Thread capable QThreadSignalSpy (to avoid data races with count/appendArgS)
 class QThreadSignalSpy: public QObject
@@ -2072,6 +2073,9 @@ void tst_QContactAsync::relationshipRemove()
     if (cm->managerName() == "symbian") {
         QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
     }
+    if (cm->managerName() == trackerEngineName) {
+        QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
+    }
     
     QContactRelationshipRemoveRequest rrr;
     QVERIFY(rrr.type() == QContactAbstractRequest::RelationshipRemoveRequest);
@@ -2230,6 +2234,9 @@ void tst_QContactAsync::relationshipSave()
     if (cm->managerName() == "symbian") {
         QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
     }    
+    if (cm->managerName() == trackerEngineName) {
+        QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
+    }
     
     QContactRelationshipSaveRequest rsr;
     QVERIFY(rsr.type() == QContactAbstractRequest::RelationshipSaveRequest);
