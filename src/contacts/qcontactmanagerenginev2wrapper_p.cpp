@@ -200,9 +200,13 @@ bool RequestController::waitForFinished(int msecs)
         return false;
     }
     while (!isFinished()) {
+        QContactAbstractRequest* const activeSubRequest = m_currentSubRequest.data();
         if (!m_currentSubRequest->waitForFinished(msecs))
             return false;
-        handleFinishedSubRequest(m_currentSubRequest.data());
+        // Handler not yet called due to some event loop used by the engine on waiting?
+        if (activeSubRequest == m_currentSubRequest.data()) {
+            handleFinishedSubRequest(activeSubRequest);
+        }
     }
     return true;
 }
@@ -265,6 +269,9 @@ void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractReques
             results.append(contacts[idMap[id]]);
         }
     }
+
+    // Free the subrequest, to mark that this handler has been run
+    m_currentSubRequest.reset();
 
     // Update the request object
     QContactManagerEngineV2Wrapper::updateContactFetchByIdRequest(
