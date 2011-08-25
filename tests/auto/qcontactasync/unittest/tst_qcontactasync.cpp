@@ -202,6 +202,8 @@ private slots:
     void contactPartialSave_data() { addManagers(); }
     void contactPartialSaveAsync();
     void contactPartialSaveAsync_data() {addManagers();}
+    void contactPartialSaveLastError();
+    void contactPartialSaveLastError_data() {addManagers();}
 
     void definitionFetch();
     void definitionFetch_data() { addManagers(); }
@@ -1399,6 +1401,121 @@ void tst_QContactAsync::contactPartialSaveAsync()
     QVERIFY(saveRequest->isFinished());
 }
 
+void tst_QContactAsync::contactPartialSaveLastError()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QContactManager> cm(prepareModel(uri));
+    QContactSaveRequest csr;
+    QVERIFY(csr.type() == QContactAbstractRequest::ContactSaveRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
+    QVERIFY(!csr.start());
+    QVERIFY(!csr.cancel());
+    QVERIFY(!csr.waitForFinished());
+
+    // Save a group of contacts.
+    QContact testContact1, testContact2, testContact3, testContact4, testContact5, testContact6;
+    QContactName nameDetail;
+    nameDetail.setFirstName("Test Contact1");
+    testContact1.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact2");
+    testContact2.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact3");
+    testContact3.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact4");
+    testContact4.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact5");
+    testContact5.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact6");
+    testContact6.saveDetail(&nameDetail);
+    QList<QContact> testContacts;
+    testContacts << testContact1 << testContact2 << testContact3 << testContact4 << testContact5 << testContact6;
+    csr.setContacts(testContacts);
+    csr.setManager(cm.data());
+    QCOMPARE(csr.manager(), cm.data());
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
+    QVERIFY(!csr.cancel());
+    QVERIFY(!csr.waitForFinished());
+    qRegisterMetaType<QContactSaveRequest*>("QContactSaveRequest*");
+    QThreadSignalSpy spy(&csr, SIGNAL(stateChanged(QContactAbstractRequest::State)));
+    QVERIFY(!csr.cancel()); // not started
+    QVERIFY(csr.start());
+    QVERIFY((csr.isActive() && csr.state() == QContactAbstractRequest::ActiveState) || csr.isFinished());
+    QVERIFY(csr.waitForFinished());
+    QVERIFY(csr.isFinished());
+    QVERIFY(spy.count() >= 1); // active + finished progress signals
+    spy.clear();
+
+    // Store contacts with their local ids they got when saved.
+    testContacts = csr.contacts();
+    QList<QContactLocalId> localIdsForSavedContacts;
+    foreach (QContact contact, csr.contacts()) {
+        localIdsForSavedContacts << contact.localId();
+    }
+
+    // Partially saving emails for contacts and causing two errors.
+    QContactEmailAddress email;
+    email.setEmailAddress("me@example.com");
+    testContacts[0].saveDetail(&email);
+    testContacts[1].saveDetail(&email);
+    testContacts[2].saveDetail(&email);
+    testContacts[3].saveDetail(&email);
+    testContacts[4].saveDetail(&email);
+    testContacts[5].saveDetail(&email);
+
+    QContactId contactId1(testContacts[5].id());
+    QContactId badId1(contactId1);
+    badId1.setLocalId(987234); // something nonexistent (hopefully)
+    testContacts[5].setId(badId1);
+
+    QContactId contactId2(testContacts[3].id());
+    QContactId badId2(contactId2);
+    badId2.setManagerUri(QString());
+    badId2.setLocalId(987344); // something nonexistent (hopefully)
+    testContacts[3].setId(badId2);
+
+    csr.setContacts(testContacts);
+    csr.setDefinitionMask(QStringList(QContactEmailAddress::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+
+    // Check we got two errors for invalid contact ids.
+
+    QVERIFY(csr.errorMap().size() == 2);
+    QCOMPARE(csr.errorMap().value(5), QContactManager::DoesNotExistError);
+    QCOMPARE(csr.errorMap().value(3), QContactManager::DoesNotExistError);
+
+    // The rest contacts in the request should have been updated ok and there should be no errors in the map for them.
+    QCOMPARE(csr.errorMap().value(4), QContactManager::NoError);
+    QCOMPARE(csr.errorMap().value(2), QContactManager::NoError);
+    QCOMPARE(csr.errorMap().value(1), QContactManager::NoError);
+    QCOMPARE(csr.errorMap().value(0), QContactManager::NoError);
+
+    // The error in request must be te same as last error in the error map.
+    QCOMPARE(csr.error(), csr.errorMap().value(5));
+
+    // They also must have the email detail updated as requested except for failed ones. Fetch them and check.
+    QList<QContact> fetchedContacts;
+    fetchedContacts = cm->contacts(localIdsForSavedContacts);
+
+    /* foreach (QContact contact, fetchedContacts) {
+            qDebug() << "Name in saved contact: " << contact.detail<QContactName>().firstName();
+            qDebug() << "Email in saved contact: " << contact.detail<QContactEmailAddress>().emailAddress();
+            qDebug() << "ManagerUri in saved contact: " << contact.id().managerUri();
+            qDebug() << "Local id in saved contact: " << contact.id().localId();
+    }*/
+
+    QCOMPARE(fetchedContacts[0].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[1].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[2].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[3].detail<QContactEmailAddress>().emailAddress(), QString(""));
+    QCOMPARE(fetchedContacts[4].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[5].detail<QContactEmailAddress>().emailAddress(), QString(""));
+}
+
 void tst_QContactAsync::definitionFetch()
 {
     QFETCH(QString, uri);
@@ -2579,6 +2696,10 @@ void tst_QContactAsync::addManagers(QStringList stringlist)
         managers.removeAll("simcard");
     if (!stringlist.contains("com.nokia.messaging.contacts.engines.mail.contactslookup"))
         managers.removeAll("com.nokia.messaging.contacts.engines.mail.contactslookup");
+
+    // Telepathy not passing all tests here.
+    // if (!stringlist.contains("telepathy"))
+    //    managers.removeAll("telepathy");
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
