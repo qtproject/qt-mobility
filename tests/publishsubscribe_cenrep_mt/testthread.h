@@ -39,64 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef MODULETEST_CONFIGURABILITY
-#define MODULETEST_CONFIGURABILITY
 
-#include <QObject>
+#ifndef TESTTHREAD_H_
+#define TESTTHREAD_H_
 
-class ModuletestConfigurability : public QObject
+#include <QThread>
+
+class QSemaphore;
+class QMutex;
+
+class ConfigurabilityTestThread : public QThread
 {
-    Q_OBJECT
 public:
+    ConfigurabilityTestThread(QSemaphore *sem, QMutex *mutex, int testcase);
 
-private slots:
-    void initTestCase();     //before first
-    void init();             //before each
-    void cleanup();          //after each
-    void cleanupTestCase();  //after last
+    void setPath(QString path, QString key);
 
-    void threads();
-    void threads2();
+protected:
+    void run();
 
-    void readAndSetCenrep_data();
-    void readAndSetCenrep();
-    void readAndSetPubsub_data();
-    void readAndSetPubsub();
+private:
+    void case1();
+    void case2();
 
-    void invalidPath_data();
-    void invalidPath();
+private:
+    QSemaphore *mSemaphore;
+    QMutex *mMutex;
+    int mTestCase;
+    QString mPath;
+    QString mKey;
 
-    void cenrepInteroperabilityQtToSymbian_data();
-    void cenrepInteroperabilityQtToSymbian();
-    void cenrepInteroperabilitySymbianToQt_data();
-    void cenrepInteroperabilitySymbianToQt();
-    void cenrepInteroparabilityDecodableBytearray_data();
-    void cenrepInteroparabilityDecodableBytearray();
-
-    void floatType();
-    void floatTypeProperty();
-    void stringParameter1_data();
-    void stringParameter1();
-    void stringParameter2_data();
-    void stringParameter2();
-    void stringRProperty1_data();
-    void stringRProperty1();
-    void stringRProperty2_data();
-    void stringRProperty2();
-
-    void featManagerSimpleSubscriber_data();
-    void featManagerSimpleSubscriber();
-
-#ifdef Q_OS_SYMBIAN
-    void featManagerAdvSubscriber_data();
-    void featManagerAdvSubscriber();
-#endif /* Q_OS_SYMBIAN */
-
-    void featManagerMapperCase_data();
-    void featManagerMapperCase();
-
-public slots:
-    void dummy();
+public:
+    QString errorString;
+    bool error;
 };
 
-#endif // MODULETEST_CONFIGURABILITY
+#endif /* TESTTHREAD_H_ */

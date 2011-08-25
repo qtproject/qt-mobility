@@ -12,9 +12,11 @@ CONFIG += qtestlib console
 symbian: {
     CONFIG += symbian_test
 
-    HEADERS += moduletest_configurability.h
+    HEADERS += moduletest_configurability.h \
+               testthread.h
 
-    SOURCES += moduletest_configurability.cpp
+    SOURCES += moduletest_configurability.cpp \
+               testthread.cpp
 
     LIBS += -lfeatdiscovery \
             -lcentralrepository \
