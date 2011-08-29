@@ -54,17 +54,28 @@ testcase = {
         '));
     },
 
-    select_backends: function()
+    select_backends : function()
     {
-        prompt(twiki('---++ Various backends can be selected
+        // Test meta data
+        testTitle = "Organizer - select backends";             
+        testBinary = "calendardemo";
+        testGoal = "Backends can be selected without error.";                   
+        testPreconditions = "None";
+        testGroups = "MOBILITY";                                                
 
-    1. Launch the *calendardemo* application
-    1. For each item in the backend  ( combo box at top of dialog )
-        1. Choose as current backend
-        1. Verify that the backend can be selected without any error or crash
-    1. Close the *calendardemo* application
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |          
+            | Choose each item as the backend | Verify that the backend can be selected without any error or crash |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
     },
+
 
     add_event: function()
     {
