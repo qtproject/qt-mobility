@@ -54,7 +54,7 @@ testcase = {
     vibrate_using_lowlevel_API: function(duration, intensity, comment)
     {
         // Test meta data
-        testApplication = "Feedback - Vibrate Using Low Level API";
+        testTitle = "Feedback - Vibrate Using Low Level API";
         testBinary = "hapticsplayer";
         testGoal = "Verify that vibrate functionality can be called with low level API";
         testPreconditions = "None";
@@ -64,7 +64,7 @@ testcase = {
 //            enter(duration, 'duration');
 //            enter(intensity, 'intensity');
 
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
@@ -81,14 +81,14 @@ testcase = {
     vibrate_using_highlevel_API: function()
     {
          // Test meta data
-         testApplication = "Feedback - Vibrate Using High Level API";
+         testTitle = "Feedback - Vibrate Using High Level API";
          testBinary = "hapticsplayer";
          testGoal = "Verify that vibrate functionality can be called with high level API.";
          testPreconditions = "'High-Level' tab must be enabled";
          testGroups = "BAT";
 
          // Test steps
-         prompt(twiki("---+++ " + testApplication + "<br><br>
+         prompt(twiki("---+++ " + testTitle + "<br><br>
              *Goal:* " + testGoal + "<br>
              *Pre-Requisites:* " + testPreconditions + "<br>
              *Tested Binary:* " + testBinary + "<br>
@@ -104,7 +104,7 @@ testcase = {
     vibrate_using_file_API: function()
     {
          // Test meta data
-         testApplication = "Feedback - Play File";
+         testTitle = "Feedback - Play File";
          testBinary = "hapticsplayer";
          testGoal = "Verify that feedback mechanism works using a specified files.";
          testPreconditions = "1. 'File' tab must be enabled.<br>
@@ -112,7 +112,7 @@ testcase = {
          testGroups = "BAT";
 
          // Test steps
-         prompt(twiki("---+++ " + testApplication + "<br><br>
+         prompt(twiki("---+++ " + testTitle + "<br><br>
              *Goal:* " + testGoal + "<br>
              *Pre-Requisites:* " + testPreconditions + "<br>
              *Tested Binary:* " + testBinary + "<br>
@@ -138,14 +138,14 @@ testcase = {
     simple_vibrate_test: function(effect)
     {
         // Test meta data
-        testApplication = "Feedback - Effects";
+        testTitle = "Feedback - Effects";
         testBinary = "hapticsquare";
         testGoal = "Verify that feedback mechanism works with selected effects.";
         testPreconditions = "tested device must have a touch screen/mouse";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>

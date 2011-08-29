@@ -46,14 +46,14 @@ testcase = {
     List_Albums: function()
     {
          // Test meta data
-         testApplication = "Music - List Albums";
+         testTitle = "Music - List Albums";
          testBinary = "declarative-music-browser";
          testGoal = "Verify that all available music albums can be shown and selected";
          testPreconditions = "None";
          testGroups = "BAT";
 
          // Test steps
-         prompt(twiki("---+++ " + testApplication + "<br><br>
+         prompt(twiki("---+++ " + testTitle + "<br><br>
              *Goal:* " + testGoal + "<br>
              *Pre-Requisites:* " + testPreconditions + "<br>
              *Tested Binary:* " + testBinary + "<br>
@@ -71,14 +71,14 @@ testcase = {
 
     List_Artists : function()
     {
-        testApplication = "Music - List Artists";
+        testTitle = "Music - List Artists";
         testBinary = "declarative-music-browser";
         testGoal = "Verify that all available artists can be shown and selected";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -96,14 +96,14 @@ testcase = {
 
     List_Genres : function()
     {
-        testApplication = "Music - List Genres";
+        testTitle = "Music - List Genres";
         testBinary = "declarative-music-browser";
         testGoal = "Verify that available genres are shown correctly";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -121,14 +121,14 @@ testcase = {
 
     List_Songs : function()
     {
-        testApplication = "Music - List Songs";
+        testTitle = "Music - List Songs";
         testBinary = "declarative-music-browser";
         testGoal = "Verify that available songs are listed correctly";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>

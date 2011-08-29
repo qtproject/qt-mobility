@@ -57,7 +57,7 @@ testcase = {
     enumeration: function()
     {
         // Test meta data
-        testApplication = "Bearer - Enumeration of Connections";
+        testTitle = "Bearer - Enumeration of Connections";
         testBinary = "bearermonitor";
         testGoal = "Verify the system can detect and display all available networks";
         testPreconditions = "Work out the list of available networks:<br>
@@ -67,7 +67,7 @@ testcase = {
         testGroups = "BAT";
 
          // Test Steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Tested Binary:* " + testBinary + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
@@ -81,14 +81,14 @@ testcase = {
     added_interfaces: function()
     {
           // Test meta data
-          testApplication = "Bearer - Added network interfaces";
+          testTitle = "Bearer - Added network interfaces";
           testBinary = "bearermonitor";
           testGoal = "Verify that network interfaces can be added";
           testPreconditions = "No network access points are defined on the device; a WLAN is available";
           testGroups = "BAT";
 
           // Test steps
-          prompt(twiki("---+++ " + testApplication + "<br><br>
+          prompt(twiki("---+++ " + testTitle + "<br><br>
               *Goal:* " + testGoal + "<br>
               *Pre-Requisites:* " + testPreconditions + "<br>
               *Tested Binary:* " + testBinary + "<br>
@@ -107,14 +107,14 @@ testcase = {
     removed_interfaces: function()
     {
         // Test meta data
-        testApplication = "Bearer - Removed network interfaces";
+        testTitle = "Bearer - Removed network interfaces";
         testBinary = "bearercloud";
         testGoal = "Verify that removal of a network connection is detected correctly";
         testPreconditions = "A connection to a WLAN exists";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
@@ -133,14 +133,14 @@ testcase = {
     change_status: function()
     {
        // Test meta data
-       testApplication = "Bearer - Changing the status of a network";
+       testTitle = "Bearer - Changing the status of a network";
        testBinary = "bearercloud";
        testGoal = "Verify that network status changes are detected correctly.";
        testPreconditions = "no network access points are defined on the device; a WLAN is available";
        testGroups = "BAT";
 
        // Test steps
-       prompt(twiki("---+++ " + testApplication + "<br><br>
+       prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>
@@ -170,7 +170,7 @@ testcase = {
         }
 
         // Test meta data
-        testApplication = "Bearer - Interfaces are used in order of priority";
+        testTitle = "Bearer - Interfaces are used in order of priority";
         testBinary = "";
         testGoal = "Verify that network interfaces are used in order of priority";
         testPreconditions = "   1. GPRS is available to the device<br>
@@ -178,7 +178,7 @@ testcase = {
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Tested Binary:* " + testBinary + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>

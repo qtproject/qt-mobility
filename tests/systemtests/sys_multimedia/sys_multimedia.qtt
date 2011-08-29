@@ -68,14 +68,14 @@ A device specific headset is required to be connected to device for radio testin
     play_an_audio_file: function(extension, filename, format)
     {
         // Test meta data
-        testApplication = "Multimedia - Play Audio File";
+        testTitle = "Multimedia - Play Audio File";
         testBinary = "player";
         testGoal = "Verify that Audio files can be played.";
         testPreconditions = "Audio files in " + extension + " format are available on device.";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
@@ -96,14 +96,14 @@ A device specific headset is required to be connected to device for radio testin
     basic_player_controls_for_audio: function(extension, filename, format)
     {
          // Test meta data
-         testApplication = "Multimedia - Audio Player Controls";
+         testTitle = "Multimedia - Audio Player Controls";
          testBinary = "";
          testGoal = "Verify that ";
          testPreconditions = "a test "+extension+" file is available on device";
          testGroups = "BAT";
 
          // Test steps
-         prompt(twiki("---+++ " + testApplication + "<br><br>
+         prompt(twiki("---+++ " + testTitle + "<br><br>
              *Goal:* " + testGoal + "<br>
              *Pre-Requisites:* " + testPreconditions + "<br>
              *Tested Binary:* " + testBinary + "<br>
@@ -151,14 +151,14 @@ A device specific headset is required to be connected to device for radio testin
     seek_controls_for_audio: function(extension, filename, format)
     {
          // Test meta data
-         testApplication = "Multimedia - Audio Seek Controls";
+         testTitle = "Multimedia - Audio Seek Controls";
          testBinary = "player";
          testGoal = "Verify that audio files can be 'searched'";
          testPreconditions = "a test "+extension+" file is available on device";
          testGroups = "BAT";
 
          // Test steps
-         prompt(twiki("---+++ " + testApplication + "<br><br>
+         prompt(twiki("---+++ " + testTitle + "<br><br>
              *Goal:* " + testGoal + "<br>
              *Pre-Requisites:* " + testPreconditions + "<br>
              *Tested Binary:* " + testBinary + "<br>
@@ -187,14 +187,14 @@ A device specific headset is required to be connected to device for radio testin
     play_a_video_file: function(extension, filename, format)
     {
       // Test meta data
-      testApplication = "Multimedia - Play Video File";
+      testTitle = "Multimedia - Play Video File";
       testBinary = "player";
       testGoal = "Verify that video files can be played. ";
       testPreconditions = "a test "+extension+" file is available on device.";
       testGroups = "BAT";
 
       // Test steps
-      prompt(twiki("---+++ " + testApplication + "<br><br>
+      prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -216,14 +216,14 @@ A device specific headset is required to be connected to device for radio testin
     basic_controls_for_video: function(extension, filename, format)
     {
       // Test meta data
-      testApplication = "Multimedia - Video Controls";
+      testTitle = "Multimedia - Video Controls";
       testBinary = "player";
       testGoal = "Verify that video file replay can be start/stop/paused";
       testPreconditions = "a test "+extension+" file is available on device.";
       testGroups = "BAT";
 
       // Test steps
-      prompt(twiki("---+++ " + testApplication + "<br><br>
+      prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -268,14 +268,14 @@ A device specific headset is required to be connected to device for radio testin
     seek_controls_for_video: function()
     {
        // Test meta data
-       testApplication = "Multimedia - Video Seek";
+       testTitle = "Multimedia - Video Seek";
        testBinary = "player";
        testGoal = "Verify that video files can be played at various replay speeds (search mode).";
        testPreconditions = "Video files are available for testing on the device.";
        testGroups = "BAT";
 
        // Test steps
-       prompt(twiki("---+++ " + testApplication + "<br><br>
+       prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>
@@ -298,14 +298,14 @@ A device specific headset is required to be connected to device for radio testin
 //*Note* For this test you need a playlist of streaming media urls. Suggest: http://202.6.74.107:8060/triplej.mp3 ; http://www.abc.net.au/streaming/triplej.asx ; rtsp://media1.abc.net.au/broadcast/triplej.rm ; mms://media3.abc.net.au/triplej ; depending on your platform and backend support.
 
        // Test meta data
-       testApplication = "Multimedia - Content Streaming";
+       testTitle = "Multimedia - Content Streaming";
        testBinary = "player";
        testGoal = "Verify that streaming playlist can be played.";
        testPreconditions = "";
        testGroups = "BAT";
 
        // Test steps
-       prompt(twiki("---+++ " + testApplication + "<br><br>
+       prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>
@@ -333,14 +333,14 @@ A device specific headset is required to be connected to device for radio testin
     play_a_radio_transmission: function()
     {
         // Test meta data
-        testApplication = "Multimedia - Play Radio Transmission";
+        testTitle = "Multimedia - Play Radio Transmission";
         testBinary = "radio";
         testGoal = "Verify that radio stations can be played.";
         testPreconditions = "1. This test requires radio reception and headphones to be connected to device.";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
@@ -363,14 +363,14 @@ A device specific headset is required to be connected to device for radio testin
     radio_interrupted_by_system_notification: function()
     {
         // Test meta data
-        testApplication = "Multimedia - Play Radio With Interruptions";
+        testTitle = "Multimedia - Play Radio With Interruptions";
         testBinary = "radio";
         testGoal = "Verify that radio play can be interrupted by system notifications.";
         testPreconditions = "1. Audible system notifications should be enabled for this test.<br>2. This test requires radio reception and headphones to be connected to device.";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
@@ -385,14 +385,14 @@ A device specific headset is required to be connected to device for radio testin
     radio_volume_control: function()
     {
      // Test meta data
-     testApplication = "Multimedia - Radio Volume Control";
+     testTitle = "Multimedia - Radio Volume Control";
      testBinary = "radio";
      testGoal = "Verify that the radio volume can be controlled.";
      testPreconditions = "1. This test requires radio reception and headphones to be connected to device.";
      testGroups = "BAT";
 
      // Test steps
-     prompt(twiki("---+++ " + testApplication + "<br><br>
+     prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -409,14 +409,14 @@ A device specific headset is required to be connected to device for radio testin
     take_a_photo: function()
     {
          // Test meta data
-         testApplication = "Multimedia - Photo Camera";
+         testTitle = "Multimedia - Photo Camera";
          testBinary = "camera";
          testGoal = "Verify that a photo can be made with the camera.";
          testPreconditions = "";
          testGroups = "BAT";
 
          // Test steps
-         prompt(twiki("---+++ " + testApplication + "<br><br>
+         prompt(twiki("---+++ " + testTitle + "<br><br>
              *Goal:* " + testGoal + "<br>
              *Pre-Requisites:* " + testPreconditions + "<br>
              *Tested Binary:* " + testBinary + "<br>
@@ -440,14 +440,14 @@ A device specific headset is required to be connected to device for radio testin
 // Note: Selecting the alternative selection, if available, works as well.
 
       // Test meta data
-      testApplication = "Multimedia - Recording Audio";
+      testTitle = "Multimedia - Recording Audio";
       testBinary = "audiorecorder";
       testGoal = "Verify that audio can be recorded.";
       testPreconditions = "";
       testGroups = "BAT";
 
       // Test steps
-      prompt(twiki("---+++ " + testApplication + "<br><br>
+      prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -475,14 +475,14 @@ pause_recording_an_audio_file: function()
 // Note: Selecting the alternative selection, if available, works as well.
 
       // Test meta data
-      testApplication = "Multimedia - Pause Recording Audio";
+      testTitle = "Multimedia - Pause Recording Audio";
       testBinary = "audiorecorder";
       testGoal = "Verify that audio recordings can be paused.";
       testPreconditions = "";
       testGroups = "BAT";
 
       // Test steps
-      prompt(twiki("---+++ " + testApplication + "<br><br>
+      prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -510,14 +510,14 @@ pause_recording_an_audio_file: function()
     play_a_slideshow: function()
     {
        // Test meta data
-       testApplication = "Multimedia - Play Slideshow";
+       testTitle = "Multimedia - Play Slideshow";
        testBinary = "slideshow";
        testGoal = "Verify that a slideshow can be played.";
        testPreconditions = "";
        testGroups = "BAT";
 
        // Test steps
-       prompt(twiki("---+++ " + testApplication + "<br><br>
+       prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>

@@ -288,7 +288,7 @@ testcase = {
     addContact: function(contactSet)
     {
         // Test meta data
-        testApplication = "Contacts - Add Contact";
+        testTitle = "Contacts - Add Contact";
         testBinary = "samplephonebook";
         testGoal = "Verify that contacts can be added";
         testPreconditions = "None";
@@ -316,7 +316,7 @@ testcase = {
     updateContactDetails : function(contactSet)
     {
         // Test meta data
-        testApplication = "Contacts - Update Contact Details";
+        testTitle = "Contacts - Update Contact Details";
         testBinary = "samplephonebook";
         testGoal = "Verify that contact details can be updated";
         testPreconditions = "None";
@@ -351,7 +351,7 @@ testcase = {
 
     filterCheck : function(name, exists, message) {
         // Test meta data
-        testApplication = "Contacts - Apply Filter";
+        testTitle = "Contacts - Apply Filter";
         testBinary = "samplephonebook";
         testGoal = "Verify the correct match of contacts against a simple filter";
         testPreconditions = "None";
@@ -379,7 +379,7 @@ testcase = {
 
     clearFilterCheck : function(nameFilter){
        // Test meta data
-       testApplication = "Contacts - Clear Filter";
+       testTitle = "Contacts - Clear Filter";
        testBinary = "samplephonebook";
        testGoal = "Verify that when the filter is cleared all contacts are visible";
        testPreconditions = "None";
@@ -409,7 +409,7 @@ testcase = {
 
     deleteContact : function(name1, name2, name3){
         // Test meta data
-        testApplication = "Contacts - Delete Contact";
+        testTitle = "Contacts - Delete Contact";
         testBinary = "samplephonebook";
         testGoal = "Verify that a contact can be deleted";
         testPreconditions = "None";
@@ -434,7 +434,7 @@ testcase = {
             checkContactExists(name2, false);
             checkContactExists(name3, false);
         }else{
-            prompt(twiki("---+++ " + testApplication + "<br><br>
+            prompt(twiki("---+++ " + testTitle + "<br><br>
                 *Goal:* " + testGoal + "<br>
                 *Pre-Requisites:* " + testPreconditions + "<br>
                 *Tested Binary:* " + testBinary + "<br>

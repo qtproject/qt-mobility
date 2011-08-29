@@ -46,14 +46,14 @@ testcase = {
     Dial_Landline_Number: function()
     {
         // Test meta data
-        testApplication = "SFW - Dial Landline Number";
+        testTitle = "SFW - Dial Landline Number";
         testBinary = "qmldialer";
         testGoal = "Verify that ";
         testPreconditions = "Nil.";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
@@ -71,14 +71,14 @@ testcase = {
     Dial_First_Voip_Number: function()
     {
         // Test meta data
-        testApplication = "SFW - Add Note Without Date";
+        testTitle = "SFW - Add Note Without Date";
         testBinary = "qmldialer";
         testGoal = "Verify that a note entered without a date gets the current date appended to it";
         testPreconditions = "Nil.";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>
@@ -95,14 +95,14 @@ testcase = {
     Dial_Second_Voip_Number: function()
     {
           // Test meta data
-          testApplication = "SFW - Browse Notes";
+          testTitle = "SFW - Browse Notes";
           testBinary = "qmldialer";
           testGoal = "Verify that the user can browse through all notes in the system.";
           testPreconditions = "Nil.";
           testGroups = "BAT";
 
           // Test steps
-          prompt(twiki("---+++ " + testApplication + "<br><br>
+          prompt(twiki("---+++ " + testTitle + "<br><br>
               *Goal:* " + testGoal + "<br>
               *Pre-Requisites:* " + testPreconditions + "<br>
               *Tested Binary:* " + testBinary + "<br>
