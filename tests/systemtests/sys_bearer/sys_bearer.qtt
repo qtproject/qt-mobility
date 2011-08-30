@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -57,7 +57,7 @@ testcase = {
     enumeration: function()
     {
         // Test meta data
-        testApplication = "Bearer - Enumeration of Connections";
+        testTitle = "Bearer - Enumeration of Connections";
         testBinary = "bearermonitor";
         testGoal = "Verify the system can detect and display all available networks";
         testPreconditions = "Work out the list of available networks:<br>
@@ -67,7 +67,7 @@ testcase = {
         testGroups = "BAT";
 
          // Test Steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Tested Binary:* " + testBinary + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
@@ -81,14 +81,14 @@ testcase = {
     added_interfaces: function()
     {
           // Test meta data
-          testApplication = "Bearer - Added network interfaces";
+          testTitle = "Bearer - Added network interfaces";
           testBinary = "bearermonitor";
           testGoal = "Verify that network interfaces can be added";
           testPreconditions = "No network access points are defined on the device; a WLAN is available";
           testGroups = "BAT";
 
           // Test steps
-          prompt(twiki("---+++ " + testApplication + "<br><br>
+          prompt(twiki("---+++ " + testTitle + "<br><br>
               *Goal:* " + testGoal + "<br>
               *Pre-Requisites:* " + testPreconditions + "<br>
               *Tested Binary:* " + testBinary + "<br>
@@ -107,14 +107,14 @@ testcase = {
     removed_interfaces: function()
     {
         // Test meta data
-        testApplication = "Bearer - Removed network interfaces";
+        testTitle = "Bearer - Removed network interfaces";
         testBinary = "bearercloud";
         testGoal = "Verify that removal of a network connection is detected correctly";
         testPreconditions = "A connection to a WLAN exists";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
@@ -133,14 +133,14 @@ testcase = {
     change_status: function()
     {
        // Test meta data
-       testApplication = "Bearer - Changing the status of a network";
+       testTitle = "Bearer - Changing the status of a network";
        testBinary = "bearercloud";
        testGoal = "Verify that network status changes are detected correctly.";
        testPreconditions = "no network access points are defined on the device; a WLAN is available";
        testGroups = "BAT";
 
        // Test steps
-       prompt(twiki("---+++ " + testApplication + "<br><br>
+       prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>
@@ -170,7 +170,7 @@ testcase = {
         }
 
         // Test meta data
-        testApplication = "Bearer - Interfaces are used in order of priority";
+        testTitle = "Bearer - Interfaces are used in order of priority";
         testBinary = "";
         testGoal = "Verify that network interfaces are used in order of priority";
         testPreconditions = "   1. GPRS is available to the device<br>
@@ -178,7 +178,7 @@ testcase = {
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Tested Binary:* " + testBinary + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
