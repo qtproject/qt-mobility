@@ -513,8 +513,8 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
                 m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
             } else {
                 if (m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
-                    m_viewfinderSurface->stop();
                     QVideoSurfaceFormat format = m_viewfinderSurface->surfaceFormat();
+                    m_viewfinderSurface->stop();
                     format.setFrameSize(QSize(m_actualViewFinderSize));
                     format.setViewport(QRect(0, 0, m_actualViewFinderSize.width(), m_actualViewFinderSize.height()));
                     m_viewfinderSurface->start(format);
