@@ -342,7 +342,7 @@ private: // Data
     // Internal state of the video recorder
     TVideoCaptureState          m_captureState;
     // Actual output file name/path
-    QUrl                        m_sink;
+    QString                     m_sink;
     // Requested output file name/path, this may be different from m_sink if
     // asynchronous operation was ongoing in the CVideoRecorderUtility when new
     // outputLocation was set.

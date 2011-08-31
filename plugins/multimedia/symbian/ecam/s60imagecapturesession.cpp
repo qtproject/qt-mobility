@@ -45,6 +45,7 @@
 #include "s60imagecapturesession.h"
 #include "s60videowidgetcontrol.h"
 #include "s60cameraservice.h"
+#include "s60filenamegenerator.h"
 #include "s60cameraconstants.h"
 
 #include <fbs.h>        // CFbsBitmap
@@ -637,7 +638,9 @@ int S60ImageCaptureSession::capture(const QString &fileName)
     QImage *snapImage = new QImage(QLatin1String("C:/Data/testimage.jpg"));
     emit imageExposed(m_currentImageId);
     emit imageCaptured(m_currentImageId, *snapImage);
-    emit imageSaved(m_currentImageId, m_stillCaptureFileName);
+    QString qtFileName(m_stillCaptureFileName);
+    qtFileName.replace(QChar('\\'), QChar('/'));
+    emit imageSaved(m_currentImageId, qtFileName);
 #endif // Q_CC_NOKIAX86
 
     return m_currentImageId;
@@ -656,59 +659,14 @@ void S60ImageCaptureSession::cancelCapture()
 
 void S60ImageCaptureSession::processFileName(const QString &fileName)
 {
-    // Empty FileName - Use default file name and path (C:\Data\Images\image.jpg)
-    if (fileName.isEmpty()) {
-        // Make sure default directory exists
-        QDir videoDir(QDir::rootPath());
-        if (!videoDir.exists(KDefaultImagePath))
-            videoDir.mkpath(KDefaultImagePath);
-        QString defaultFile = KDefaultImagePath;
-        defaultFile.append("\\");
-        defaultFile.append(KDefaultImageFileName);
-        m_stillCaptureFileName = defaultFile;
-
-    } else { // Not empty
-
-        QString fullFileName;
-
-        // Relative FileName
-        if (!fileName.contains(":")) {
-            // Extract file name and path from the URL
-            fullFileName = KDefaultImagePath;
-            if (fileName.at(0) != '\\')
-                fullFileName.append("\\");
-            fullFileName.append(QDir::toNativeSeparators(QDir::cleanPath(fileName)));
-
-        // Absolute FileName
-        } else {
-            // Extract file name and path from the given location
-            fullFileName = QDir::toNativeSeparators(QDir::cleanPath(fileName));
-        }
-
-        QString fileNameOnly = fullFileName.right(fullFileName.length() - fullFileName.lastIndexOf("\\") - 1);
-        QString directory = fullFileName.left(fullFileName.lastIndexOf("\\"));
-        if (directory.lastIndexOf("\\") == (directory.length() - 1))
-            directory = directory.left(directory.length() - 1);
-
-        // URL is Absolute path, not including file name
-        if (!fileNameOnly.contains(".")) {
-            if (fileNameOnly != "") {
-                directory.append("\\");
-                directory.append(fileNameOnly);
-            }
-            fileNameOnly = KDefaultImageFileName;
-        }
-
-        // Make sure absolute directory exists
-        QDir imageDir(QDir::rootPath());
-        if (!imageDir.exists(directory))
-            imageDir.mkpath(directory);
-
-        QString resolvedFileName = directory;
-        resolvedFileName.append("\\");
-        resolvedFileName.append(fileNameOnly);
-        m_stillCaptureFileName = resolvedFileName;
-    }
+    // Empty FileName - Use default file name
+    if (fileName.isEmpty())
+        m_stillCaptureFileName = S60FileNameGenerator::defaultFileName(S60FileNameGenerator::ImageFileName,
+                                                                       QLatin1String(".jpg"));
+    else // Not empty
+        m_stillCaptureFileName = S60FileNameGenerator::generateFileNameFromString(S60FileNameGenerator::ImageFileName,
+                                                                                  fileName,
+                                                                                  QLatin1String(".jpg"));
 }
 
 void S60ImageCaptureSession::MceoFocusComplete()
@@ -850,8 +808,8 @@ TFileName S60ImageCaptureSession::convertImagePath()
     // Convert to Symbian path
     TPtrC16 attachmentPath(KNullDesC);
 
-    // Path is already included in filename
-    attachmentPath.Set(reinterpret_cast<const TUint16*>(QDir::toNativeSeparators(m_stillCaptureFileName).utf16()));
+    // Path is already included in filename and native separators are being used
+    attachmentPath.Set(reinterpret_cast<const TUint16*>(m_stillCaptureFileName.utf16()));
     path.Append(attachmentPath);
 
     return path;
@@ -952,7 +910,9 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         m_fileSystemAccess = fileSystemAccess;
 #endif // ECAM_PREVIEW_API
 
-        emit imageSaved(m_currentImageId, m_stillCaptureFileName);
+        QString qtFileName(m_stillCaptureFileName);
+        qtFileName.replace(QChar('\\'), QChar('/'));
+        emit imageSaved(m_currentImageId, qtFileName);
 
         // Inform that we can continue taking more pictures
         emit readyForCaptureChanged(true);
@@ -1930,7 +1890,9 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         setError(error, tr("Saving captured image to file failed."));
         return;
     } else {
-        QT_TRYCATCH_LEAVING( emit imageSaved(m_currentImageId, m_stillCaptureFileName) );
+        QString qtFileName(m_stillCaptureFileName);
+        qtFileName.replace(QChar('\\'), QChar('/'));
+        QT_TRYCATCH_LEAVING( emit imageSaved(m_currentImageId, qtFileName) );
     }
 
     if (m_imageEncoder) {
