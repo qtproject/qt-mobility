@@ -237,8 +237,22 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
     m_detectTargetTypes = targetTypes;
 
     // signals connected in ensureConnection()
+    if (!ensureConnection())
+        return false;
 
-    ensureConnection();
+    const QString requesterPath =
+        QLatin1String(accessRequesterPath) + QString::number(quintptr(this));
+
+    if (!m_accessAgent) {
+        m_accessAgent = new AccessRequestorAdaptor(this);
+        if (!m_connection.registerObject(requesterPath, this)) {
+            delete m_accessAgent;
+            m_accessAgent = 0;
+            return false;
+        }
+    }
+
+    m_adapter->RequestAccess(QDBusObjectPath(requesterPath), "target.detect");
 
     return true;
 }
@@ -248,8 +262,13 @@ void QNearFieldManagerPrivateImpl::stopTargetDetection()
     m_detectTargetTypes.clear();
 
     // signals disconnected in ensureConnection()
+    if (!ensureConnection())
+        return;
 
-    ensureConnection();
+    const QString requesterPath =
+        QLatin1String(accessRequesterPath) + QString::number(quintptr(this));
+
+    m_adapter->CancelAccessRequest(QDBusObjectPath(requesterPath), "target.detect");
 }
 
 QNearFieldTarget *QNearFieldManagerPrivateImpl::targetForPath(const QString &path)
