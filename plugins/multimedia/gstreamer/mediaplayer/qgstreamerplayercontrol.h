@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 class QSocketNotifier;
+class QTimer;
 QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
@@ -126,10 +127,16 @@ private Q_SLOTS:
     void handleResourcesLost();
     void handleResourcesDenied();
 
+    void unloadPlayer();
+
 private:
     bool openFifo();
     void closeFifo();
     void playOrPause(QMediaPlayer::State state);
+
+    int unloadTimeout() const;
+    void startUnloadTimer();
+    void restartUnloadTimer();
 
     void pushState();
     void popAndNotifyState();
@@ -154,6 +161,7 @@ private:
     char m_buffer[PIPE_BUF];
 
     PlayerResourcePolicy *m_resources;
+    QTimer *m_unloadTimer;
 };
 
 #endif
