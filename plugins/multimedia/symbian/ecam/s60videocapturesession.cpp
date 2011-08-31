@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qtimer.h>
 
@@ -169,25 +168,23 @@ void S60VideoCaptureSession::setError(const TInt error, const QString &descripti
 QMediaRecorder::Error S60VideoCaptureSession::fromSymbianErrorToQtMultimediaError(int aError)
 {
     switch(aError) {
-        case KErrNone:
-            return QMediaRecorder::NoError; // No errors have occurred
-        case KErrArgument:
-        case KErrNotSupported:
-            return QMediaRecorder::FormatError; // The feature/format is not supported
-        case KErrNoMemory:
-        case KErrNotFound:
-        case KErrBadHandle:
-            return QMediaRecorder::ResourceError; // Not able to use camera/recorder resources
-
-        default:
-            return QMediaRecorder::ResourceError; // Other error has occurred
+    case KErrNone:
+        return QMediaRecorder::NoError;         // No errors have occurred
+    case KErrArgument:
+    case KErrNotSupported:
+        return QMediaRecorder::FormatError;     // The feature/format is not supported
+    case KErrNoMemory:
+    case KErrNotFound:
+    case KErrBadHandle:
+        return QMediaRecorder::ResourceError;   // Not able to use camera/recorder resources
+    default:
+        return QMediaRecorder::ResourceError;   // Other error has occurred
     }
 }
 
 /*
  * This function applies all recording settings to make latency during the
- * start of the recording as short as possible. After this it is not possible to
- * set settings (inc. output location) before stopping the recording.
+ * start of the recording as short as possible
  */
 void S60VideoCaptureSession::applyAllSettings()
 {
@@ -218,7 +215,6 @@ void S60VideoCaptureSession::applyAllSettings()
     case EPaused:
         setError(KErrNotReady, tr("Cannot apply settings while recording."));
         return;
-
     default:
         setError(KErrGeneral, tr("Unexpected camera error."));
         return;
@@ -574,27 +570,24 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
         return false;
 
     switch (m_captureState) {
-        case ENotInitialized:
-        case EInitializing:
-        case EOpening:
-        case EPreparing:
-            m_openWhenReady = true;
-            return true;
-
-        case EInitialized:
-        case EOpenComplete:
-        case EPrepared:
-            // Continue
-            break;
-
-        case ERecording:
-        case EPaused:
-            setError(KErrNotReady, tr("Cannot set file name while recording."));
-            return false;
-
-        default:
-            setError(KErrGeneral, tr("Unexpected camera error."));
-            return false;
+    case ENotInitialized:
+    case EInitializing:
+    case EOpening:
+    case EPreparing:
+        m_openWhenReady = true;
+        return true;
+    case EInitialized:
+    case EOpenComplete:
+    case EPrepared:
+        // Continue
+        break;
+    case ERecording:
+    case EPaused:
+        setError(KErrNotReady, tr("Cannot set file name while recording."));
+        return false;
+    default:
+        setError(KErrGeneral, tr("Unexpected camera error."));
+        return false;
     }
 
     // Empty URL - Use default file name and path
@@ -1330,42 +1323,39 @@ void S60VideoCaptureSession::startRecording()
     }
 
     switch (m_captureState) {
-        case ENotInitialized:
-        case EInitializing:
-        case EInitialized:
-            if (m_captureState == EInitialized)
-                setOutputLocation(m_requestedSink);
-            m_startAfterPrepareComplete = true;
-            return;
-
-        case EOpening:
-        case EPreparing:
-            // Execute FileOpenL() and Prepare() asap and then start recording
-            m_startAfterPrepareComplete = true;
-            return;
-        case EOpenComplete:
-        case EPrepared:
-            if (m_captureState == EPrepared && !m_uncommittedSettings)
-                break;
-
-            // Revert state internally, since logically applying settings means going
-            // from OpenComplete ==> Preparing ==> Prepared.
-            m_captureState = EOpenComplete;
-            m_startAfterPrepareComplete = true;
-
-            // Commit settings and prepare with them
-            applyAllSettings();
-            return;
-        case ERecording:
-            // Discard
-            return;
-        case EPaused:
-            // Continue
+    case ENotInitialized:
+    case EInitializing:
+    case EInitialized:
+        if (m_captureState == EInitialized)
+            setOutputLocation(m_requestedSink);
+        m_startAfterPrepareComplete = true;
+        return;
+    case EOpening:
+    case EPreparing:
+        // Execute FileOpenL() and Prepare() asap and then start recording
+        m_startAfterPrepareComplete = true;
+        return;
+    case EOpenComplete:
+    case EPrepared:
+        if (m_captureState == EPrepared && !m_uncommittedSettings)
             break;
+        // Revert state internally, since logically applying settings means going
+        // from OpenComplete ==> Preparing ==> Prepared.
+        m_captureState = EOpenComplete;
+        m_startAfterPrepareComplete = true;
 
-        default:
-            setError(KErrGeneral, tr("Unexpected camera error."));
-            return;
+        // Commit settings and prepare with them
+        applyAllSettings();
+        return;
+    case ERecording:
+        // Discard
+        return;
+    case EPaused:
+        // Continue
+        break;
+    default:
+        setError(KErrGeneral, tr("Unexpected camera error."));
+        return;
     }
 
     // State should now be either Prepared with no Uncommitted Settings or Paused
@@ -2165,7 +2155,8 @@ void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
         }
     }
 
-    m_videoRecorder->Close();
+    if (m_videoRecorder)
+        m_videoRecorder->Close();
     if (aError == KErrNotFound || aError == KErrNotSupported || aError == KErrArgument)
         setError(KErrGeneral, tr("Requested video container or controller is not supported."));
     else

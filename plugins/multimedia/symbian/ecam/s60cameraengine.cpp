@@ -42,7 +42,9 @@
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 #include "s60cameraconstants.h"
+
 #include <QtCore/qglobal.h>
+
 #include <fbs.h> // CFbsBitmap
 #ifdef ECAM_PREVIEW_API
     #include <platform/ecam/camerasnapshot.h>
@@ -54,7 +56,7 @@ CCameraEngine::CCameraEngine()
 
 CCameraEngine::CCameraEngine(TInt aCameraHandle,
                              TInt aPriority,
-                             MCameraEngineObserver* aObserver) :
+                             MCameraEngineObserver* aObserver):
     // CBase initializes member variables to NULL
     iObserver(aObserver),
     iCameraIndex(aCameraHandle),
@@ -240,7 +242,6 @@ void CCameraEngine::PrepareL(TSize& aCaptureSize, CCamera::TFormat aFormat)
 
     // Scan through supported capture sizes and select the closest match
     for (TInt index = 0; index < iCameraInfo.iNumImageSizesSupported; index++) {
-
         iCamera->EnumerateCaptureSizes(size, index, aFormat);
         if (size == aCaptureSize) {
             selected = index;
@@ -297,7 +298,9 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
 
 #ifdef ECAM_PREVIEW_API
     if (aEvent.iEventType == KUidECamEventCameraSnapshot) {
-        HandlePreview();
+        TRAPD(err, HandlePreviewL());
+        if (err)
+            iImageCaptureObserver->MceoHandleError(EErrPreview, err);
         return;
     }
 #endif // ECAM_PREVIEW_API
@@ -359,15 +362,14 @@ void CCameraEngine::PowerOnComplete(TInt aError)
 void CCameraEngine::EnablePreviewProvider(MCameraPreviewObserver *aPreviewObserver)
 {
     // Delete old one if exists
-    if (iCameraSnapshot)
+    if (iCameraSnapshot) {
         delete iCameraSnapshot;
+        iCameraSnapshot = 0;
+    }
 
     iPreviewObserver = aPreviewObserver;
-
-    TInt error = KErrNone;
-
     if (iCamera) {
-        TRAP(error, iCameraSnapshot = CCamera::CCameraSnapshot::NewL(*iCamera));
+        TRAPD(error, iCameraSnapshot = CCamera::CCameraSnapshot::NewL(*iCamera));
         if (error) {
             if (iObserver)
                 iObserver->MceoHandleError(EErrPreview, error);
@@ -400,9 +402,9 @@ void CCameraEngine::DisablePreviewProvider()
     iCameraSnapshot->StopSnapshot();
 
     delete iCameraSnapshot;
-    iCameraSnapshot = 0;
+    iCameraSnapshot = NULL;
 
-    iPreviewObserver = 0;
+    iPreviewObserver = NULL;
 }
 #endif // ECAM_PREVIEW_API
 
@@ -422,8 +424,7 @@ void CCameraEngine::ViewFinderReady(MCameraBuffer &aCameraBuffer, TInt aError)
         } else {
             iObserver->MceoHandleError(EErrViewFinderReady, KErrNotReady);
         }
-    }
-    else {
+    } else {
         iObserver->MceoHandleError(EErrViewFinderReady, aError);
     }
 }
@@ -610,24 +611,24 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
     iEngineState = EEngineIdle;
 
     if (aError == KErrNone) {
-        if (isBitmap)
+        if (isBitmap) {
             if (iImageCaptureObserver) {
                 if (iLatestImageBufferIndex == 0)
                     iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap1);
                 else
                     iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap2);
-            }
-            else
+            } else {
                 ReleaseImageBuffer();
-        else {
+            }
+        } else {
             if (iImageCaptureObserver) {
                 if (iLatestImageBufferIndex == 0)
                     iImageCaptureObserver->MceoCapturedDataReady(iImageData1);
                 else
                     iImageCaptureObserver->MceoCapturedDataReady(iImageData2);
-            }
-            else
+            } else {
                 ReleaseImageBuffer();
+            }
         }
     } else {
         if (iImageCaptureObserver)
@@ -636,7 +637,7 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
 }
 
 #ifdef ECAM_PREVIEW_API
-void CCameraEngine::HandlePreview()
+void CCameraEngine::HandlePreviewL()
 {
     if (!iCameraSnapshot) {
         if (iObserver)
@@ -697,10 +698,10 @@ void CCameraEngine::OptimisedFocusComplete(TInt aError)
 {
     iEngineState = EEngineIdle;
 
-    if (aError == KErrNone)
+    if (aError == KErrNone) {
         if (iImageCaptureObserver)
             iImageCaptureObserver->MceoFocusComplete();
-    else {
+    } else {
         if (iImageCaptureObserver)
             iImageCaptureObserver->MceoHandleError(EErrOptimisedFocusComplete, aError);
     }

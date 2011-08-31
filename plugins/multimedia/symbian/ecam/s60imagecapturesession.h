@@ -77,11 +77,11 @@ class S60ImageCaptureDecoder : public CActive
 public: // Static Contructor & Destructor
 
     static S60ImageCaptureDecoder* FileNewL(S60ImageCaptureSession *imageSession = 0,
-                                        RFs *fileSystemAccess = 0,
-                                        const TDesC16 *fileName = 0);
+                                            RFs *fileSystemAccess = 0,
+                                            const TDesC16 *fileName = 0);
     static S60ImageCaptureDecoder* DataNewL(S60ImageCaptureSession *imageSession = 0,
-                                        RFs *fileSystemAccess = 0,
-                                        const TDesC8 *data = 0);
+                                            RFs *fileSystemAccess = 0,
+                                            const TDesC8 *data = 0);
     ~S60ImageCaptureDecoder();
 
 public: // Operations
@@ -161,6 +161,8 @@ private: // Data
 };
 
 //=============================================================================
+
+using namespace S60CameraEngineError;
 
 /*
  * Session handling all image capture activities.
@@ -330,7 +332,7 @@ signals: // Notifications
     void imageAvailable(const int, const QVideoFrame&);
     void imageSaved(const int, const QString&);
 
-    // Focus notifications
+    // Focus notifications (S60 3.1 Focusing)
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
 
 private slots: // Internal Slots

@@ -48,9 +48,9 @@
 #include "s60filenamegenerator.h"
 #include "s60cameraconstants.h"
 
-#include <fbs.h>        // CFbsBitmap
+#include <fbs.h>                // CFbsBitmap
 #include <pathinfo.h>
-#include <imageconversion.h> // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
+#include <imageconversion.h>    // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
 
 S60ImageCaptureDecoder::S60ImageCaptureDecoder(S60ImageCaptureSession *imageSession,
                                                RFs *fileSystemAccess,
@@ -120,9 +120,9 @@ void S60ImageCaptureDecoder::decode(CFbsBitmap *destBitmap)
     if (m_imageDecoder) {
         m_imageDecoder->Convert(&iStatus, *destBitmap, 0);
         SetActive();
-    }
-    else
+    } else {
         m_imageSession->setError(KErrGeneral, QLatin1String("Preview image creation failed."));
+    }
 }
 
 TFrameInfo *S60ImageCaptureDecoder::frameInfo()
@@ -130,9 +130,9 @@ TFrameInfo *S60ImageCaptureDecoder::frameInfo()
     if (m_imageDecoder) {
         m_frameInfo = m_imageDecoder->FrameInfo();
         return &m_frameInfo;
-    }
-    else
+    } else {
         return 0;
+    }
 }
 
 void S60ImageCaptureDecoder::RunL()
@@ -227,9 +227,9 @@ void S60ImageCaptureEncoder::encode(CFbsBitmap *sourceBitmap)
     if (m_imageEncoder) {
         m_imageEncoder->Convert(&iStatus, *sourceBitmap, m_frameImageData);
         SetActive();
-    }
-    else
+    } else {
         m_imageSession->setError(KErrGeneral, QLatin1String("Saving image to file failed."));
+    }
 }
 
 void S60ImageCaptureEncoder::RunL()
@@ -479,20 +479,19 @@ void S60ImageCaptureSession::setError(const TInt error,
 QCameraImageCapture::Error S60ImageCaptureSession::fromSymbianErrorToQtMultimediaError(int aError)
 {
     switch(aError) {
-        case KErrNone:
-            return QCameraImageCapture::NoError; // No errors have occurred
-        case KErrNotReady:
-            return QCameraImageCapture::NotReadyError; // Not ready for operation
-        case KErrNotSupported:
-            return QCameraImageCapture::NotSupportedFeatureError; // The feature is not supported
-        case KErrNoMemory:
-            return QCameraImageCapture::OutOfSpaceError; // Out of disk space
-        case KErrNotFound:
-        case KErrBadHandle:
-            return QCameraImageCapture::ResourceError; // No resources available
-
-        default:
-            return QCameraImageCapture::ResourceError; // Other error has occurred
+    case KErrNone:
+        return QCameraImageCapture::NoError;                    // No errors have occurred
+    case KErrNotReady:
+        return QCameraImageCapture::NotReadyError;              // Not ready for operation
+    case KErrNotSupported:
+        return QCameraImageCapture::NotSupportedFeatureError;   // The feature is not supported
+    case KErrNoMemory:
+        return QCameraImageCapture::OutOfSpaceError;            // Out of disk space
+    case KErrNotFound:
+    case KErrBadHandle:
+        return QCameraImageCapture::ResourceError;              // No resources available
+    default:
+        return QCameraImageCapture::ResourceError;              // Other error has occurred
     }
 }
 
@@ -708,7 +707,6 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
     }
 
     m_icState = EImageCapturePrepared;
-
 }
 
 void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
@@ -792,7 +790,7 @@ QVideoFrame S60ImageCaptureSession::generateImageBuffer(TDesC8 *aData)
     QVideoFrame::PixelFormat format = QVideoFrame::Format_Jpeg;
     QVideoFrame newVideoFrame(bytes, resolution, bytesPerLine, format);
 
-    // Copy image data into the newly created QVideoFrame image container
+    // Deep copy image data into the newly created QVideoFrame image container
     newVideoFrame.map(QAbstractVideoBuffer::WriteOnly);
     uchar *destData = newVideoFrame.bits();
     memcpy(destData, aData->Ptr(), bytes);
@@ -821,8 +819,7 @@ TFileName S60ImageCaptureSession::convertImagePath()
  */
 void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 {
-    if (aData == 0)
-        setError(KErrGeneral, tr("Captured image data is not available."), true);
+    // Checked if aData is NULL already in the MceoCapturedDataReady()
 
     if (aPath.Size() > 0) {
 #ifndef ECAM_PREVIEW_API
@@ -889,7 +886,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         fileWriteErr = file.Replace(*fileSystemAccess, aPath, EFileWrite);
         if (fileWriteErr)
             User::Leave(fileWriteErr);
-        CleanupClosePushL(file); // Close if Leaves
+        CleanupClosePushL(file);
 
         fileWriteErr = file.Write(*aData);
         if (fileWriteErr)
@@ -1859,7 +1856,7 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
     m_previewDecodingOngoing = false;
 
     QPixmap prevPixmap = QPixmap::fromSymbianCFbsBitmap(m_previewBitmap);
-    QImage preview = prevPixmap.toImage();
+    QImage preview = prevPixmap.toImage(); // Deep copy
 
     if (m_previewBitmap) {
         m_previewBitmap->Reset();
@@ -1951,7 +1948,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
 void S60ImageCaptureSession::MceoPreviewReady(CFbsBitmap& aPreview)
 {
     QPixmap previewPixmap = QPixmap::fromSymbianCFbsBitmap(&aPreview);
-    QImage preview = previewPixmap.toImage();
+    QImage preview = previewPixmap.toImage(); // Deep copy
 
     // Notify preview availability
     emit imageCaptured(m_currentImageId, preview);
