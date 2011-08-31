@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
     related camera parameters.
 
     \inmodule QtMultimediaKit
-    \ingroup camera
+    \ingroup multimedia-serv
     \since 1.1
 
     The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
