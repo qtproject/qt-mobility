@@ -55,6 +55,8 @@
 #include <ecam/ecamconstants.h> // TValueInfo
 #endif // S60 5.0 or later
 
+using namespace S60CameraConstants;
+
 S60CameraAdvSettings::S60CameraAdvSettings(QObject *parent, CCameraEngine *engine):
     QObject(parent),
 #ifndef S60_31_PLATFORM // Post S60 3.1 Platforms

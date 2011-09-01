@@ -128,7 +128,7 @@ public: // Static Contructor & Destructor
     static S60ImageCaptureEncoder* NewL(S60ImageCaptureSession *imageSession = 0,
                                         RFs *fileSystemAccess = 0,
                                         const TDesC16 *fileName = 0,
-                                        TInt jpegQuality = KDefaultImageQuality);
+                                        TInt jpegQuality = KJpegQualityDefault);
     ~S60ImageCaptureEncoder();
 
 public: // Operations

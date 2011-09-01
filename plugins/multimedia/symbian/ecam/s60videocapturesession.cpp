@@ -53,6 +53,8 @@
 #include <mmf/devvideo/devvideorecord.h>
 #endif
 
+using namespace S60CameraConstants;
+
 S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent) :
     QObject(parent),
     m_cameraEngine(0),
@@ -1960,14 +1962,14 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
             // BitRate
 #ifdef SYMBIAN_3_PLATFORM
             if (m_cameraEngine->CurrentCameraIndex() == 0)
-                bitRate = KBiR_H264_PLID_42801F    // 14Mbps
+                bitRate = KBiR_H264_PLID_42801F;    // 14Mbps
             else
-                bitRate = KBiR_H264_PLID_428016    // 4Mbps
+                bitRate = KBiR_H264_PLID_428016;    // 4Mbps
 #else // Other platforms
             if (m_cameraEngine->CurrentCameraIndex() == 0)
-                bitRate = KBiR_MPEG4_PLID_4        // 2/4Mbps
+                bitRate = KBiR_MPEG4_PLID_4;        // 2/4Mbps
             else
-                bitRate = KBiR_MPEG4_PLID_3        // 384kbps
+                bitRate = KBiR_MPEG4_PLID_3;        // 384kbps
 #endif // SYMBIAN_3_PLATFORM
 
         } else {

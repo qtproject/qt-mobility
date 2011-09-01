@@ -43,6 +43,8 @@
 #include "s60videocapturesession.h"
 #include "s60cameraconstants.h"
 
+using namespace S60CameraConstants;
+
 S60MediaContainerControl::S60MediaContainerControl(QObject *parent):
     QMediaContainerControl(parent)
 {
