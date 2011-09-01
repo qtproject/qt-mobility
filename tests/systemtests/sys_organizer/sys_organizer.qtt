@@ -397,53 +397,84 @@ testcase = {
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     add_journal: function()
     {
-        prompt(twiki('---++ Add Journal Entry
-    1. Launch the *testQtOrganizer* application
-    1. Select \'Organize items\'
-    1. Press \'Create item\' button
-    1. Add a Journal entry:
-        1. Fill in following fileds
-            | Subject | Journal1 |
-            | Reminder | disabled |
-        1. Press Save button and save to default collection
-    1. Verify that Journal1 appears in the items tabel
-    '));
-    },
+        // Test meta data
+        testTitle = "Organizer - add journal";
+        testBinary = "testQtOrganizer";
+        testGoal = "Verify that journal can be added";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Organize items* | |
+            | Press *Create item* button | |
+            | Select Type : 'Journal' | |
+            | Enter 'Journal1' in 'Subject' and select 'disabled' in 'Reminder' | |
+            | Press *Save* button and save to default collection | Verify that Journal1 appears in the items tabel |
+        "));
+    },            
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_journal: function()
     {
-        prompt(twiki('---++ Edit Journal Entry
-    1. Launch the *testQtOrganizer* application
-    1. Select \'Organize items\'
-    1. Press \'Create item\' button
-    1. Add a Journal entry:
-        1. Fill in following fields:
-            | Subject | Journal1 |
-            | Reminder |disabled |
-        1.Press Save button and save to default collection
-    1. Select Joutnal1 and press \'Edit...\' button
-    1. Modify label to Journal2 and save the changes
-    1. Verify that tabel has Journal2 record and no Journal1
-    '));
-    },
+        // Test meta data
+        testTitle = "Organizer - edit journal";
+        testBinary = "testQtOrganizer";
+        testGoal = "Verify that journal can be edited";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
 
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select 'Organize items', then press 'Create item' button | |
+            | Enter Display label: 'Journal1' | |
+            | Select Type : 'Journal' and disable the Reminder | |
+            | Press *Save* button and save to default collection | |
+            | Select 'Journal1' and press *Edit...* button | |
+            | Modify label to Journal2 and press *Save* button | Verify that there is Journal2 record without Journal1 |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
+    
+    },
+    
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    delete_journal: function()
+   delete_journal: function()
     {
-        prompt(twiki('---++ Delete Journal Entry
-    1. Launch the *testQtOrganizer* application
-    1. Select \'Organize items\'
-    1. Press \'Create item\' button
-    1. Add a Journal entry:
-        1. Fill in following fields:
-            | Subject | Journal1 |
-            | Reminder | disabled |
-        1. Press Save button and save to default collection
-    1. Add a Journal enry Journal2
-    1. Select Joutnal1 and press \'Remove...\' button
-    1.Verify that tabel has no Journal1 record and has Journal2
-    '));
+        // Test meta data
+        testTitle = "Organizer - delete journal";
+        testBinary = "testQtOrganizer";
+        testGoal = "Verify that journal can be deleted";
+        testPreconditions = "There are no journal in calendar";
+        testGroups = "BAT_MOBILITY";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Organize* item |  |
+            | Press *Create item* button |  |
+            | Add Journal entry: with Subject: 'Journal1', Type : 'Journal' and Reminder : 'disabled' |  |
+            | Press *Save* button and save to default collection |  |
+            | Add a Journal entry with Subject: 'Journal2' | Verify that 'Journal1' and 'Journal2' are listed |
+            | Select *Journal1* and press *Remove* button | Verify that 'Journal1' disappear in the tabel record only 'Journal2' in it |
+
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
