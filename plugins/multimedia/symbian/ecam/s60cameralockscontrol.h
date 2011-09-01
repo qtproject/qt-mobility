@@ -87,7 +87,6 @@ Q_SIGNALS: // QCameraLocksControl
 
 private slots: // Internal Slots
 
-    void exposureStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
     void resetAdvancedSetting();
 
@@ -96,10 +95,6 @@ private: // Internal
     // Focus
     void startFocusing();
     void cancelFocusing();
-
-    // Exposure
-    void startExposureLocking();
-    void cancelExposureLocking();
 
 private: // Data
 

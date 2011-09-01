@@ -1,5 +1,6 @@
 INCLUDEPATH += $$PWD
 
+# Include common video output code
 include (../videooutput/videooutput.pri)
 
 # Camera Service
@@ -18,12 +19,8 @@ contains(S60_VERSION, 3.2) {
 }
 
 # S60 5.0 platform
-!contains(DEFINES, S60_31_PLATFORM) {
-    !contains(DEFINES, S60_32_PLATFORM) {
-        !contains(DEFINES, SYMBIAN_3_PLATFORM) {
-            DEFINES += S60_50_PLATFORM
-        }
-    }
+contains(S60_VERSION, 5.0) {
+    DEFINES += S60_50_PLATFORM
 }
 
 # Symbian 3 platform
@@ -31,7 +28,7 @@ contains(DEFINES, VIDEOOUTPUT_GRAPHICS_SURFACES) {
     DEFINES += SYMBIAN_3_PLATFORM
 }
 
-# AutoFocusing (CamAutoFocus) from ForumNokia example
+# AutoFocusing (CamAutoFocus) from ForumNokia example (S60 3.1 only)
 contains(symbian_camera_camautofocus_enabled, yes) {
     exists($${EPOCROOT}epoc32\\include\\CCamAutoFocus.h) {
         message ("CameraBE: Using S60 3.1 autofocusing")
@@ -92,7 +89,8 @@ contains(symbian_camera_snapshot_enabled, yes) {
 }
 
 # Libraries:
-symbian:LIBS += -lfbscli \
+symbian:LIBS += \
+        -lfbscli \
         -lmediaclientvideo \
         -lecam \
         -lbafl \
@@ -103,14 +101,14 @@ symbian:LIBS += -lfbscli \
         -ljisx0201 \
         -ljisx0208 \
         -lmmfcontrollerframework \
-        -lfbscli \
         -lefsrv \
         -lcone \
         -lws32 \
         -limageconversion
 
 # Source:
-HEADERS += $$PWD/s60cameraconstants.h \
+HEADERS += \
+    $$PWD/s60cameraconstants.h \
     $$PWD/s60cameralockscontrol.h \
     $$PWD/s60camerafocuscontrol.h \
     $$PWD/s60cameraexposurecontrol.h \
@@ -133,9 +131,11 @@ HEADERS += $$PWD/s60cameraconstants.h \
     $$PWD/s60cameraengineobserver.h \
     $$PWD/s60videorenderercontrol.h \
     $$PWD/s60cameracapturedestinationcontrol.h \
-    $$PWD/s60cameracapturebufferformatcontrol.h
+    $$PWD/s60cameracapturebufferformatcontrol.h \
+    $$PWD/s60filenamegenerator.h
 
-SOURCES += $$PWD/s60cameralockscontrol.cpp \
+SOURCES += \
+    $$PWD/s60cameralockscontrol.cpp \
     $$PWD/s60camerafocuscontrol.cpp \
     $$PWD/s60cameraexposurecontrol.cpp \
     $$PWD/s60cameraflashcontrol.cpp \
@@ -156,6 +156,7 @@ SOURCES += $$PWD/s60cameralockscontrol.cpp \
     $$PWD/s60cameraviewfinderengine.cpp \
     $$PWD/s60videorenderercontrol.cpp \
     $$PWD/s60cameracapturedestinationcontrol.cpp \
-    $$PWD/s60cameracapturebufferformatcontrol.cpp
+    $$PWD/s60cameracapturebufferformatcontrol.cpp \
+    $$PWD/s60filenamegenerator.cpp
 
 # End of file

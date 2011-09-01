@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,52 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef S60AUDIOENCODERCONTROL_H
-#define S60AUDIOENCODERCONTROL_H
+#ifndef S60FILENAMEGENERATOR_H
+#define S60FILENAMEGENERATOR_H
 
-#include <QtCore/qstringlist.h>
-#include <QtCore/qmap.h>
-
-#include <qaudioencodercontrol.h>
+#include <QtCore/QObject>
+#include <QtCore/QUrl>
+#include <QtCore/QDir>
+#include <QtCore/QDate>
 
 QT_USE_NAMESPACE
 
-QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
-
 /*
- * Control for audio settings when recording video using QMediaRecorder.
+ * Class to generate image and video file name.
  */
-class S60AudioEncoderControl : public QAudioEncoderControl
+class S60FileNameGenerator : public QObject
 {
     Q_OBJECT
 
-public: // Constructor & Destructor
+public: // Enums
 
-    S60AudioEncoderControl(QObject *parent = 0);
-    S60AudioEncoderControl(S60VideoCaptureSession *session, QObject *parent = 0);
-    virtual ~S60AudioEncoderControl();
+    enum FileNameType {
+        ImageFileName,
+        VideoFileName
+    };
 
-public: // QAudioEncoderControl
+public: // API
 
-    // Audio Codec
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName) const;
+    static QString defaultFileName(const FileNameType nameType,
+                                   const QString postfix);
+    static QString generateFileNameFromString(const FileNameType nameType,
+                                              const QString base,
+                                              const QString postfix);
+    static QString generateFileNameFromUrl(const FileNameType nameType,
+                                           const QUrl base,
+                                           const QString postfix);
 
-    // Sample Rate
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
+private: // Internal
 
-    // Audio Settings
-    QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings &settings);
+    static QString generateFileName(const FileNameType nameType,
+                                    QString base,
+                                    QString postfix);
+    static QString detectDestinationDrive(const QDir currentDirectory);
+    static void generateFolder(QDir &currentDirectory, QDate &date, int &fileNameOffset);
 
-    // Encoding Option
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
-
-private: // Data
-
-    S60VideoCaptureSession *m_session;
 };
 
-#endif // S60AUDIOENCODERCONTROL_H
+#endif // S60FILENAMEGENERATOR_H

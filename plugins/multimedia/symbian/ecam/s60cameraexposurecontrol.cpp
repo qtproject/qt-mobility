@@ -134,7 +134,6 @@ bool S60CameraExposureControl::isExposureModeSupported(QCameraExposure::Exposure
 {
     if (m_session->isExposureModeSupported(mode))
         return true;
-
     return false;
 }
 
@@ -207,29 +206,27 @@ bool S60CameraExposureControl::isParameterSupported(ExposureParameter parameter)
 QVariant S60CameraExposureControl::exposureParameter(ExposureParameter parameter) const
 {
     switch (parameter) {
-        case QCameraExposureControl::ISO:
-            return QVariant(isoSensitivity());
-        case QCameraExposureControl::Aperture:
-            return QVariant(aperture());
-        case QCameraExposureControl::ShutterSpeed:
-            return QVariant(shutterSpeed());
-        case QCameraExposureControl::ExposureCompensation:
-            return QVariant(exposureCompensation());
-        case QCameraExposureControl::FlashPower:
-        case QCameraExposureControl::FlashCompensation:
-            // Not supported in Symbian
-            return QVariant();
-
-        default:
-            // Not supported in Symbian
-            return QVariant();
+    case QCameraExposureControl::ISO:
+        return QVariant(isoSensitivity());
+    case QCameraExposureControl::Aperture:
+        return QVariant(aperture());
+    case QCameraExposureControl::ShutterSpeed:
+        return QVariant(shutterSpeed());
+    case QCameraExposureControl::ExposureCompensation:
+        return QVariant(exposureCompensation());
+    case QCameraExposureControl::FlashPower:
+    case QCameraExposureControl::FlashCompensation:
+        // Not supported in Symbian
+        return QVariant();
+    default:
+        // Not supported in Symbian
+        return QVariant();
     }
 }
 
 QCameraExposureControl::ParameterFlags S60CameraExposureControl::exposureParameterFlags(ExposureParameter parameter) const
 {
     QCameraExposureControl::ParameterFlags flags;
-
     /*
      * ISO, ExposureCompensation:
      *  - Automatic/Manual
@@ -240,20 +237,19 @@ QCameraExposureControl::ParameterFlags S60CameraExposureControl::exposureParamet
      *  - Not supported
      */
     switch (parameter) {
-        case QCameraExposureControl::ISO:
-        case QCameraExposureControl::ExposureCompensation:
-            flags |= QCameraExposureControl::AutomaticValue;
-            break;
-        case QCameraExposureControl::Aperture:
-        case QCameraExposureControl::ShutterSpeed:
-        case QCameraExposureControl::FlashPower:
-        case QCameraExposureControl::FlashCompensation:
-            // Do nothing - no flags
-            break;
-
-        default:
-            // Do nothing - no flags
-            break;
+    case QCameraExposureControl::ISO:
+    case QCameraExposureControl::ExposureCompensation:
+        flags |= QCameraExposureControl::AutomaticValue;
+        break;
+    case QCameraExposureControl::Aperture:
+    case QCameraExposureControl::ShutterSpeed:
+    case QCameraExposureControl::FlashPower:
+    case QCameraExposureControl::FlashCompensation:
+        // Do nothing - no flags
+        break;
+    default:
+        // Do nothing - no flags
+        break;
     }
 
     return flags;
@@ -353,21 +349,20 @@ bool S60CameraExposureControl::setExposureParameter(ExposureParameter parameter,
 QString S60CameraExposureControl::extendedParameterName(ExposureParameter parameter)
 {
     switch (parameter) {
-        case QCameraExposureControl::ISO:
-            return QLatin1String("ISO Sensitivity");
-        case QCameraExposureControl::Aperture:
-            return QLatin1String("Aperture");
-        case QCameraExposureControl::ShutterSpeed:
-            return QLatin1String("Shutter Speed");
-        case QCameraExposureControl::ExposureCompensation:
-            return QLatin1String("Exposure Compensation");
-        case QCameraExposureControl::FlashPower:
-            return QLatin1String("Flash Power");
-        case QCameraExposureControl::FlashCompensation:
-            return QLatin1String("Flash Compensation");
-
-        default:
-            return QString();
+    case QCameraExposureControl::ISO:
+        return QLatin1String("ISO Sensitivity");
+    case QCameraExposureControl::Aperture:
+        return QLatin1String("Aperture");
+    case QCameraExposureControl::ShutterSpeed:
+        return QLatin1String("Shutter Speed");
+    case QCameraExposureControl::ExposureCompensation:
+        return QLatin1String("Exposure Compensation");
+    case QCameraExposureControl::FlashPower:
+        return QLatin1String("Flash Power");
+    case QCameraExposureControl::FlashCompensation:
+        return QLatin1String("Flash Compensation");
+    default:
+        return QString();
     }
 }
 

@@ -87,7 +87,6 @@ bool S60CameraImageCaptureControl::isReadyForCapture() const
 {
     if (m_cameraControl && m_cameraControl->captureMode() != QCamera::CaptureStillImage)
         return false;
-
     return m_session->isDeviceReady();
 }
 
@@ -102,7 +101,6 @@ void S60CameraImageCaptureControl::setDriveMode(QCameraImageCapture::DriveMode m
         emit error((m_session->currentImageId() + 1), QCamera::NotSupportedFeatureError, tr("DriveMode not supported."));
         return;
     }
-
     m_driveMode = mode;
 }
 
@@ -113,9 +111,7 @@ int S60CameraImageCaptureControl::capture(const QString &fileName)
         return 0;
     }
 
-    int imageId = m_session->capture(fileName);
-
-    return imageId;
+    return m_session->capture(fileName);
 }
 
 void S60CameraImageCaptureControl::cancelCapture()

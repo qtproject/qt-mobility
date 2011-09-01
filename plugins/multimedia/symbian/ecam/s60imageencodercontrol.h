@@ -71,7 +71,6 @@ public: // QImageEncoderControl
     // Resolution
     QList<QSize> supportedResolutions(const QImageEncoderSettings &settings,
                                       bool *continuous = 0) const;
-
     // Settings
     QImageEncoderSettings imageSettings() const;
     void setImageSettings(const QImageEncoderSettings &settings);
