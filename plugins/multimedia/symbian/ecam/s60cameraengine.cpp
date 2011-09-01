@@ -75,7 +75,9 @@ CCameraEngine::~CCameraEngine()
     StopViewFinder();
     ReleaseViewFinderBuffer();  // Releases iViewFinderBuffer
     ReleaseImageBuffer();       // Releases iImageBuffer + iImageBitmap
-
+#ifdef ECAM_PREVIEW_API
+    DisablePreviewProvider();
+#endif // ECAM_PREVIEW_API
     iAdvancedSettingsObserver = NULL;
     iImageCaptureObserver = NULL;
     iViewfinderObserver = NULL;
@@ -650,8 +652,11 @@ void CCameraEngine::HandlePreviewL()
 
     MCameraBuffer &newPreview = iCameraSnapshot->SnapshotDataL(previewIndices);
 
-    for (TInt i = 0; i < previewIndices.Count(); ++i)
+    for (TInt i = 0; i < previewIndices.Count(); ++i) {
         iPreviewObserver->MceoPreviewReady(newPreview.BitmapL(0));
+        newPreview.BitmapL(0).Reset(); // Reset/Delete bitmap
+    }
+    newPreview.Release(); // Release the buffer
 
     CleanupStack::PopAndDestroy(); // RArray<TInt> previewIndices
 }
