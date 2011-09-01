@@ -172,7 +172,7 @@ bool S60CameraExposureControl::isParameterSupported(ExposureParameter parameter)
     if (m_advancedSettings) {
         switch (parameter) {
             case QCameraExposureControl::ISO:
-                if (m_advancedSettings->supportedIsoSensitivities().count() > 0)
+                if (m_advancedSettings->supportedIsoSensitivitiesL().count() > 0)
                     return true;
                 else
                     return false;
@@ -262,7 +262,7 @@ QVariantList S60CameraExposureControl::supportedParameterRange(ExposureParameter
     if (m_advancedSettings) {
         switch (parameter) {
             case QCameraExposureControl::ISO: {
-                foreach (int iso, m_advancedSettings->supportedIsoSensitivities())
+                foreach (int iso, m_advancedSettings->supportedIsoSensitivitiesL())
                     valueList << QVariant(iso);
                 break;
             }
@@ -376,7 +376,7 @@ int S60CameraExposureControl::isoSensitivity() const
 bool S60CameraExposureControl::isIsoSensitivitySupported(const int iso) const
 {
     if (m_advancedSettings &&
-        m_advancedSettings->supportedIsoSensitivities().contains(iso))
+        m_advancedSettings->supportedIsoSensitivitiesL().contains(iso))
         return true;
     else
         return false;

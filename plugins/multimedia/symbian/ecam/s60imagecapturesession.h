@@ -52,7 +52,7 @@
 #include <qcameraimagecapture.h>
 #include <qvideoframe.h>
 
-#include "s60camerasettings.h"
+#include "s60cameraadvsettings.h"
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 #include "s60cameraconstants.h" // Default Jpeg Quality
@@ -200,7 +200,7 @@ public: // Methods
     void notifySettingsSet();
 
     // Ecam Advanced Settings
-    S60CameraSettings* advancedSettings();
+    S60CameraAdvSettings* advancedSettings();
     void deleteAdvancedSettings();
 
     // Controls
@@ -234,7 +234,7 @@ public: // Methods
     QList<QVideoFrame::PixelFormat> supportedBufferCaptureFormats() const;
     void setBufferCaptureFormat(const QVideoFrame::PixelFormat format);
 
-    // S60 3.1 Focus Control (S60 3.2 and later via S60CameraSettings class)
+    // S60 3.1 Focus Control (S60 3.2 and later via S60CameraAdvSettings class)
     bool isFocusSupported() const;
     void startFocus();
     void cancelFocus();
@@ -342,7 +342,7 @@ private slots: // Internal Slots
 private: // Data
 
     CCameraEngine           *m_cameraEngine;
-    S60CameraSettings       *m_advancedSettings;
+    S60CameraAdvSettings    *m_advancedSettings;
     mutable TCameraInfo     *m_cameraInfo;
     CFbsBitmap              *m_previewBitmap;
     CActiveScheduler        *m_activeScheduler;

@@ -683,7 +683,7 @@ TSize CCameraEngine::SelectPreviewResolution()
 #endif // ECAM_PREVIEW_API
 
 //=============================================================================
-// S60 3.1 - AutoFocus support (Other platforms, see S60CameraSettings class)
+// S60 3.1 - AutoFocus support (Other platforms, see S60CameraAdvSettings class)
 //=============================================================================
 
 void CCameraEngine::InitComplete(TInt aError)
@@ -746,7 +746,7 @@ TBool CCameraEngine::IsAutoFocusSupported() const
 
 /*
  * This function is used for focusing in S60 3.1 platform. Platforms from S60
- * 3.2 onwards should use the focusing provided by the S60CameraSettings class.
+ * 3.2 onwards should use the focusing provided by the S60CameraAdvSettings class.
  */
 void CCameraEngine::StartFocusL()
 {
@@ -771,7 +771,7 @@ void CCameraEngine::StartFocusL()
 /*
  * This function is used for cancelling focusing in S60 3.1 platform. Platforms
  * from S60 3.2 onwards should use the focusing provided by the
- * S60CameraSettings class.
+ * S60CameraAdvSettings class.
  */
 void CCameraEngine::FocusCancel()
 {

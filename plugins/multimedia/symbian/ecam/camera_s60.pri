@@ -125,7 +125,7 @@ HEADERS += \
     $$PWD/s60cameraimagecapturecontrol.h \
     $$PWD/s60videodevicecontrol.h \
     $$PWD/s60imageencodercontrol.h \
-    $$PWD/s60camerasettings.h \
+    $$PWD/s60cameraadvsettings.h \
     $$PWD/s60cameraengine.h \
     $$PWD/s60cameraviewfinderengine.h \
     $$PWD/s60cameraengineobserver.h \
@@ -151,7 +151,7 @@ SOURCES += \
     $$PWD/s60cameraimagecapturecontrol.cpp \
     $$PWD/s60videodevicecontrol.cpp \
     $$PWD/s60imageencodercontrol.cpp \
-    $$PWD/s60camerasettings.cpp \
+    $$PWD/s60cameraadvsettings.cpp \
     $$PWD/s60cameraengine.cpp \
     $$PWD/s60cameraviewfinderengine.cpp \
     $$PWD/s60videorenderercontrol.cpp \

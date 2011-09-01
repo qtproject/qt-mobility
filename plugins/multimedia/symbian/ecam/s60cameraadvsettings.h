@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef S60CAMERASETTINGS_H
-#define S60CAMERASETTINGS_H
+#ifndef S60CAMERAADVSETTINGS_H
+#define S60CAMERAADVSETTINGS_H
 
-#include "qcamera.h"
+#include <qcameraimageprocessingcontrol.h>
 
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
@@ -52,17 +52,19 @@
 QT_USE_NAMESPACE
 
 /*
- * Class handling CCamera AdvancedSettings and ImageProcessing operations.
+ * Class handling all the more advanced camera settings. In practice this means
+ * the settings set via the ECam CCameraAdvancedSettings or
+ * CCameraImageProcessing API classes.
  */
-class S60CameraSettings : public QObject,
-                          public MAdvancedSettingsObserver
+class S60CameraAdvSettings : public QObject,
+                             public MAdvancedSettingsObserver
 {
     Q_OBJECT
 
 public: // Static Contructor & Destructor
 
-    static S60CameraSettings* New(int &error, QObject *parent = 0, CCameraEngine *engine = 0);
-    ~S60CameraSettings();
+    static S60CameraAdvSettings* New(int &error, QObject *parent = 0, CCameraEngine *engine = 0);
+    ~S60CameraAdvSettings();
 
 public: // Methods
 
@@ -83,11 +85,6 @@ public: // Methods
     // Flash
     bool isFlashReady();
 
-    // Exposure
-    void setExposureMode(QCameraExposure::ExposureMode mode);
-    void lockExposure(bool lock);
-    bool isExposureLocked();
-
     // Metering Mode
     QCameraExposure::MeteringMode meteringMode();
     void setMeteringMode(QCameraExposure::MeteringMode mode);
@@ -97,7 +94,7 @@ public: // Methods
     int isoSensitivity();
     void setManualIsoSensitivity(int iso);
     void setAutoIsoSensitivity();
-    QList<int> supportedIsoSensitivities();
+    QList<int> supportedIsoSensitivitiesL();
 
     // Aperture
     qreal aperture();
@@ -114,14 +111,20 @@ public: // Methods
     void setExposureCompensation(qreal ev);
     QList<qreal> supportedExposureCompensationValues();
 
-    // Sharpening Level
-    int sharpeningLevel() const;
-    void setSharpeningLevel(int value);
-    bool isSharpeningSupported() const;
-
-    // Saturation
+    // Saturation Control
+    bool isSaturationSupported();
     int saturation();
     void setSaturation(int value);
+
+    // Sharpening Control
+    bool isSharpeningSupported();
+    int sharpeningLevel();
+    void setSharpeningLevel(int value);
+
+    // Denoising Control
+    bool isDenoisingSupported();
+    int denoising();
+    void setDenoising(int value);
 
 signals: // Notifications
 
@@ -134,7 +137,6 @@ signals: // Notifications
     void evChanged();
 
     // For QCameraLocksControl
-    void exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
 
     // Errors
@@ -142,7 +144,7 @@ signals: // Notifications
 
 protected: // Protected constructors
 
-    S60CameraSettings(QObject *parent, CCameraEngine *engine);
+    S60CameraAdvSettings(QObject *parent, CCameraEngine *engine);
     void ConstructL();
 
 protected: // MAdvancedSettingsObserver
@@ -152,6 +154,7 @@ protected: // MAdvancedSettingsObserver
 private: // Internal
 
     bool queryAdvancedSettingsInfo();
+    QList<QCameraImageProcessingControl::ProcessingParameter> supportedProcessingParametersL();
 
 private: // Enums
 
@@ -174,4 +177,4 @@ private: // Data
     bool                                m_continuousFocusing;
 };
 
-#endif // S60CAMERASETTINGS_H
+#endif // S60CAMERAADVSETTINGS_H

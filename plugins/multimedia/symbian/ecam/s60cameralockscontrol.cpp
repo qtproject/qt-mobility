@@ -45,7 +45,6 @@
 #include "s60cameralockscontrol.h"
 #include "s60cameraservice.h"
 #include "s60imagecapturesession.h"
-#include "s60camerasettings.h"
 #include "s60camerafocuscontrol.h"
 
 S60CameraLocksControl::S60CameraLocksControl(QObject *parent) :
