@@ -49,6 +49,7 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qsocketnotifier.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
 
 #include <sys/types.h>
@@ -57,6 +58,9 @@
 #include <unistd.h>
 
 //#define DEBUG_PLAYBIN
+
+#define UNLOAD_TIMEOUT_LOCAL 3000
+#define UNLOAD_TIMEOUT_NETWORK 15000
 
 QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *session, QObject *parent)
     : QMediaPlayerControl(parent)
@@ -110,6 +114,10 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
     connect(m_resources, SIGNAL(resourcesGranted()), SLOT(handleResourcesGranted()));
     connect(m_resources, SIGNAL(resourcesDenied()), SLOT(handleResourcesDenied()));
     connect(m_resources, SIGNAL(resourcesLost()), SLOT(handleResourcesLost()));
+
+    m_unloadTimer = new QTimer(this);
+    m_unloadTimer->setSingleShot(true);
+    connect(m_unloadTimer, SIGNAL(timeout()), SLOT(unloadPlayer()));
 }
 
 QGstreamerPlayerControl::~QGstreamerPlayerControl()
@@ -124,7 +132,13 @@ QGstreamerPlayerControl::~QGstreamerPlayerControl()
 
 qint64 QGstreamerPlayerControl::position() const
 {
-    return m_seekToStartPending ? 0 : m_session->position();
+    if (m_seekToStartPending)
+        return 0;
+
+    if (m_pendingSeekPosition != -1)
+        return m_pendingSeekPosition;
+
+    return m_session->position();
 }
 
 qint64 QGstreamerPlayerControl::duration() const
@@ -199,9 +213,17 @@ void QGstreamerPlayerControl::setPosition(qint64 pos)
         m_pendingSeekPosition = pos;
         //don't display the first video frame since it's not what user requested.
         m_session->showPrerollFrames(false);
+
+        //if position is changed while player is unloaded,
+        //try to load it again to display updated frame
+        if (m_state != QMediaPlayer::StoppedState &&
+                !m_resources->isGranted() && !m_resources->isRequested())
+            m_resources->acquire();
     }
 
     popAndNotifyState();
+
+    restartUnloadTimer();
 }
 
 void QGstreamerPlayerControl::play()
@@ -261,10 +283,15 @@ void QGstreamerPlayerControl::playOrPause(QMediaPlayer::State newState)
         //the pipeline is paused instead of playing, seeked to requested position,
         //and after seeking is finished (position updated) playback is restarted
         //with show-preroll-frame enabled.
-        if (newState == QMediaPlayer::PlayingState && m_pendingSeekPosition == -1)
+        if (newState == QMediaPlayer::PlayingState && m_pendingSeekPosition == -1) {
             ok = m_session->play();
-        else
+            if (ok)
+                m_unloadTimer->stop();
+        } else {
             ok = m_session->pause();
+            if (ok)
+                startUnloadTimer();
+        }
 
         if (!ok)
             newState = QMediaPlayer::StoppedState;
@@ -307,16 +334,20 @@ void QGstreamerPlayerControl::stop()
     }
 
     popAndNotifyState();
+
+    startUnloadTimer();
 }
 
 void QGstreamerPlayerControl::setVolume(int volume)
 {
     m_session->setVolume(volume);
+    restartUnloadTimer();
 }
 
 void QGstreamerPlayerControl::setMuted(bool muted)
 {
     m_session->setMuted(muted);
+    restartUnloadTimer();
 }
 
 QMediaContent QGstreamerPlayerControl::media() const
@@ -334,6 +365,8 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
 #ifdef DEBUG_PLAYBIN
     qDebug() << Q_FUNC_INFO;
 #endif
+
+    startUnloadTimer();
 
     pushState();
 
@@ -768,6 +801,65 @@ void QGstreamerPlayerControl::popAndNotifyState()
     }
 }
 
+void QGstreamerPlayerControl::unloadPlayer()
+{
+#ifdef Q_WS_MAEMO_6
+
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Unload media player";
+#endif
+
+    if (m_state != QMediaPlayer::PlayingState &&
+            m_session->state() == QMediaPlayer::PausedState) {
+
+        pushState();
+        QMediaPlayer::State oldState = m_state;
+
+        qint64 pos = m_session->position();
+
+        m_session->saveFallbackVideoFrame();
+        m_session->stop();
+        m_pendingSeekPosition = pos;
+
+        //don't blink the first video frame after playback is restored
+        m_session->showPrerollFrames(false);
+
+        m_resources->release();
+
+        m_state = oldState;
+
+        popAndNotifyState();
+    }
+#endif
+}
+
+int QGstreamerPlayerControl::unloadTimeout() const
+{
+    return m_bufferProgress == -1 ? UNLOAD_TIMEOUT_LOCAL : UNLOAD_TIMEOUT_NETWORK;
+}
+
+void QGstreamerPlayerControl::startUnloadTimer()
+{
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Start unload timer" << unloadTimeout();
+#endif
+
+    m_unloadTimer->stop();
+    m_unloadTimer->start(unloadTimeout());
+}
+
+void QGstreamerPlayerControl::restartUnloadTimer()
+{
+    if (m_unloadTimer->isActive()) {
+
+#ifdef DEBUG_PLAYBIN
+    qDebug() << "Restart unload timer" << unloadTimeout();
+#endif
+        m_unloadTimer->stop();
+        m_unloadTimer->start(unloadTimeout());
+    }
+}
+
 void QGstreamerPlayerControl::updatePosition(qint64 pos)
 {
 #ifdef DEBUG_PLAYBIN
@@ -781,6 +873,7 @@ void QGstreamerPlayerControl::updatePosition(qint64 pos)
         m_session->showPrerollFrames(true);
         if (m_state == QMediaPlayer::PlayingState) {
             m_session->play();
+            m_unloadTimer->stop();
         }
     }
 

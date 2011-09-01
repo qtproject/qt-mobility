@@ -43,6 +43,7 @@
 #define QGSTUTILS_H
 
 #include <QtCore/qmap.h>
+#include <QtCore/qvariant.h>
 #include <gst/gst.h>
 
 class QSize;
@@ -55,5 +56,7 @@ namespace QGstUtils {
     QSize capsResolution(const GstCaps *caps);
     QSize capsCorrectedResolution(const GstCaps *caps);
 }
+
+Q_DECLARE_METATYPE(GstBuffer*)
 
 #endif

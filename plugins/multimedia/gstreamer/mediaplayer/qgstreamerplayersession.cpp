@@ -1636,3 +1636,14 @@ void QGstreamerPlayerSession::showPrerollFrames(bool enabled)
         m_displayPrerolledFrame = enabled;
     }
 }
+
+void QGstreamerPlayerSession::saveFallbackVideoFrame()
+{
+    if (m_videoOutput && m_videoOutput->metaObject()->indexOfProperty("fallbackBuffer") > 0) {
+        GstBuffer *fallbackBuffer = 0;
+        g_object_get(m_playbin, "frame", &fallbackBuffer, NULL);
+        m_videoOutput->setProperty("fallbackBuffer", QVariant::fromValue<GstBuffer*>(fallbackBuffer));
+        if (fallbackBuffer)
+            gst_buffer_unref(fallbackBuffer);
+    }
+}

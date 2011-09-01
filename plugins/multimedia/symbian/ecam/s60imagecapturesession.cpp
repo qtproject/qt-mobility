@@ -414,7 +414,7 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
     m_currentFormat = defaultImageFormat();
 
     int err = KErrNone;
-    m_advancedSettings = S60CameraSettings::New(err, this, m_cameraEngine);
+    m_advancedSettings = S60CameraAdvSettings::New(err, this, m_cameraEngine);
     if (err == KErrNotSupported) {
         m_advancedSettings = 0;
 #ifndef S60_31_PLATFORM // Post S60 3.1 Platform
@@ -444,7 +444,7 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
     emit advancedSettingChanged();
 }
 
-S60CameraSettings* S60ImageCaptureSession::advancedSettings()
+S60CameraAdvSettings* S60ImageCaptureSession::advancedSettings()
 {
     return m_advancedSettings;
 }

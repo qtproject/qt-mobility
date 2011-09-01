@@ -114,6 +114,8 @@ public:
 
     bool isLiveSource() const;
 
+    void saveFallbackVideoFrame();
+
 public slots:
     void loadFromUri(const QNetworkRequest &url);
     void loadFromStream(const QNetworkRequest &url, QIODevice *stream);
