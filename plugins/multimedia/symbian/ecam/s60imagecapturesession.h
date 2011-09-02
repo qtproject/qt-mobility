@@ -60,6 +60,7 @@
 #include <icl/imagedata.h> // TFrameInfo
 
 QT_USE_NAMESPACE
+using namespace S60CameraConstants;
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(CImageDecoder)
