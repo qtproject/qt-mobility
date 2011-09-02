@@ -170,6 +170,8 @@ is replaced.
     {
     TInt count = anArray->MdcaCount();
     delete (iText);
+    iText = NULL;
+    
 	TInt size=0;
 	TInt ii=0;
     for (;ii<count;ii++)

@@ -47,6 +47,7 @@
 
     \ingroup connectivity-qml
     \inmodule QtConnectivity
+    \since Mobility 1.2
 
     \sa NearField
     \sa QNdefFilter
@@ -71,6 +72,7 @@
 
 /*!
     \qmlproperty string NdefFilter::type
+    \since Mobility 1.2
 
     This property holds the NDEF record type that the filter matches.  This property must be set to
     the fully qualified record type, i.e. including the NIS and NSS prefixes.  For example set to
@@ -79,6 +81,7 @@
 
 /*!
     \qmlproperty int NdefFilter::minimum
+    \since Mobility 1.2
 
     This property holds the minimum number of records of the given type that must be in the NDEF
     message for it match.
@@ -90,6 +93,7 @@
 
 /*!
     \qmlproperty int NdefFilter::maximum
+    \since Mobility 1.2
 
     This property holds the maximum number of records of the given type that must be in the NDEF
     message for it match.

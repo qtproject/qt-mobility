@@ -26,7 +26,7 @@
 ****************************************************************************/
 
 /*!
-    \example declarative-connectivity/tennis
+    \example ../demos/qmltennis
     \title QML Bluetooth Tennis Example
 
     The Bluetooth Tennis example shows how to use QML and the Qt Connectivity Bluetooth API

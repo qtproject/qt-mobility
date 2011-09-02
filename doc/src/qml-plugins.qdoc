@@ -44,6 +44,9 @@
         \o Description
 
     \row
+        \o \l {Connectivity QML Plugin}{Connectivity}
+        \o A QML plugin for the Connectivity API including Bluetooth and NFC.
+    \row
         \o \l {Contacts QML Plugin}{Contacts}
         \o A QML plugin for the Contacts API.
     \row
@@ -56,6 +59,9 @@
         \o \l {Location QML Plugin}{Location}
         \o A QML plugin for the Location API.
     \row
+        \o \l {Messaging QML Plugin}{Messaging}
+        \o A QML plugin for the Messaging API.
+    \row
         \o \l {Multimedia QML Plugin}{Multimedia}
         \o A QML plugin for the Multimedia API: includes audio and video.
     \row
@@ -65,20 +71,21 @@
         \o \l {Publish and Subscribe QML Plugin}{Publish and Subscribe}
         \o A QML plugin for the Publish and Subscribe API.
     \row
+        \o \l {Sensors QML Plugin}{Sensors}
+        \o A QML plugin for the Sensors API.
+    \row
         \o \l {Service Framework QML Plugin}{Service Framework}
         \o A QML plugin for the Service Framework API for
            discovering and connecting to services.
     \row
-        \o \l {Messaging QML Plugin}{Messaging}
-        \o A QML plugin for the Messaging API.
-    \row
         \o \l {SystemInfo QML Plugin}{System Information}
         \o A QML plugin for the SystemInfo API.
-    \row
-        \o \l {Sensors QML Plugin}{Sensors}
-        \o A QML plugin for the Sensors API.
     \endtable
 
+
+    \section1 \l {QtMobility QML Elements}{List of Mobility QML Elements}
+
+    The QtMobility QML Elements ordered by API.
 
     \section1 Platform Issues
     \section2 Symbian

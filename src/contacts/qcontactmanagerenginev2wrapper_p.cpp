@@ -200,9 +200,13 @@ bool RequestController::waitForFinished(int msecs)
         return false;
     }
     while (!isFinished()) {
+        QContactAbstractRequest* const activeSubRequest = m_currentSubRequest.data();
         if (!m_currentSubRequest->waitForFinished(msecs))
             return false;
-        handleFinishedSubRequest(m_currentSubRequest.data());
+        // Handler not yet called due to some event loop used by the engine on waiting?
+        if (activeSubRequest == m_currentSubRequest.data()) {
+            handleFinishedSubRequest(activeSubRequest);
+        }
     }
     return true;
 }
@@ -265,6 +269,9 @@ void FetchByIdRequestController::handleFinishedSubRequest(QContactAbstractReques
             results.append(contacts[idMap[id]]);
         }
     }
+
+    // Free the subrequest, to mark that this handler has been run
+    m_currentSubRequest.reset();
 
     // Update the request object
     QContactManagerEngineV2Wrapper::updateContactFetchByIdRequest(
@@ -396,12 +403,17 @@ void PartialSaveRequestController::handleFinishedSubRequest(QContactAbstractRequ
             contacts[m_savedToOriginalMap[i]].setId(savedContacts[i].id());
         }
         // Populate the m_errorMap with the m_errorMap of the attempted save
-        QMap<int, QContactManager::Error>::iterator it(saveErrors.begin());
-        QContactManager::Error error = QContactManager::NoError;
-        while (it != saveErrors.end()) {
-            error = it.value();
+        QMap<int, QContactManager::Error>::ConstIterator it(saveErrors.constBegin());
+        while (it != saveErrors.constEnd()) {
             m_errorMap.insert(m_savedToOriginalMap[it.key()], it.value());
             it++;
+        }
+        // Get last error (m_errorMap being a QMap is sorted by index, so just pick it)
+        QContactManager::Error error = QContactManager::NoError;
+        it = m_errorMap.constEnd();
+        if (it != m_errorMap.constBegin()) {
+            --it;
+            error = it.value();
         }
 
         // Update the request object

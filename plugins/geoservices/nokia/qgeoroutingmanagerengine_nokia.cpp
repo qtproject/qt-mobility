@@ -58,7 +58,8 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         : QGeoRoutingManagerEngine(parameters),
         m_host("prd.lbsp.navteq.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
+        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
+        m_serviceDisabled(false)
 {
     m_networkManager = new QNetworkAccessManager(this);
 
@@ -91,6 +92,13 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     }
     else if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
+    }
+
+    if (parameters.contains("routing.app_id")) {
+        m_applicationId = parameters.value("routing.app_id").toString();
+    }
+    else if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
     }
 
     setSupportsRouteUpdates(true);
@@ -128,12 +136,16 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     QGeoRouteRequest::SegmentDetails segmentDetails;
     segmentDetails |= QGeoRouteRequest::BasicSegmentData;
     setSupportedSegmentDetails(segmentDetails);
-
     if (error)
         *error = QGeoServiceProvider::NoError;
 
     if (errorString)
         *errorString = "";
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(const QString&)), SLOT(currentMobileCountryCodeChanged(const QString&)));
+    currentMobileCountryCodeChanged(m_networkInfo.currentMobileCountryCode());
+#endif
+
 }
 
 QGeoRoutingManagerEngineNokia::~QGeoRoutingManagerEngineNokia() {}
@@ -142,7 +154,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 {
     QString reqString = calculateRouteRequestString(request);
 
-    if (reqString.isEmpty()) {
+    if (reqString.isEmpty() || m_serviceDisabled) {
         QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
@@ -168,7 +180,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
 {
     QString reqString = updateRouteRequestString(route, position);
 
-    if (reqString.isEmpty()) {
+    if (reqString.isEmpty() ||  m_serviceDisabled) {
         QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
@@ -365,6 +377,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
         if (featureStrings.count())
             requestString += ";" + featureStrings.join(",");
     }
+
     return requestString;
 }
 
@@ -431,6 +444,11 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     requestString += "&language=";
     requestString += locale().name();
 
+    if (!m_applicationId.isEmpty()) {
+        requestString += "&app_id=";
+        requestString += m_applicationId;
+    }
+
     return requestString;
 }
 
@@ -474,4 +492,14 @@ void QGeoRoutingManagerEngineNokia::routeError(QGeoRouteReply::Error error, cons
     }
 
     emit this->error(reply, error, errorString);
+}
+
+void QGeoRoutingManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
+{
+    if (mcc == "460" || mcc == "461" || mcc == "454" || mcc == "455") {
+        m_serviceDisabled=true;
+    }
+     else{
+        m_serviceDisabled=false;
+    }
 }

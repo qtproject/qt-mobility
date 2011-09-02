@@ -6,6 +6,7 @@ PLUGIN_TYPE=geoservices
 include(../../../common.pri)
 
 QT += network
+QT += xml
 
 CONFIG += mobility
 MOBILITY = location
@@ -33,7 +34,9 @@ SOURCES += \
             qgeosearchmanagerengine_nokia.cpp \
             qgeosearchreply_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp \
-            qgeotiledmapdata_nokia.cpp
+            qgeotiledmapdata_nokia.cpp\
+            marclanguagecodes.cpp
+
 
 INCLUDEPATH += $$SOURCE_DIR/src/location \
                 $$SOURCE_DIR/src/location/maps \
@@ -50,3 +53,9 @@ symbian {
 }
 
 RESOURCES += resource.qrc
+
+symbian|maemo5|maemo6:{
+    message("Building for mobile platform...")
+    MOBILITY +=systeminfo
+    DEFINES +=USE_CHINA_NETWORK_REGISTRATION
+}

@@ -65,7 +65,7 @@
     Policy type is not defined.
 */
 
-/* 
+/*
     \enum XQPublishAndSubscribeSecurityPolicy::Capability
 
     This enum defines the possible capabilities.
@@ -131,14 +131,14 @@
     Grants CapabilityUserEnvironment level access.
 */
 
-/* 
+/*
     \return Secure ID
 */
 XQPublishAndSubscribeSecurityPolicy::SecureId::SecureId(long int uid) : m_uid(uid)
 {
 }
 
-/* 
+/*
     \return Vendor ID
 */
 XQPublishAndSubscribeSecurityPolicy::VendorId::VendorId(long int uid) : m_uid(uid)
@@ -146,7 +146,7 @@ XQPublishAndSubscribeSecurityPolicy::VendorId::VendorId(long int uid) : m_uid(ui
 }
 
 
-/* 
+/*
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param secPolicyType Policy type
 */
@@ -155,7 +155,7 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(SecPoli
 {
 }
 
-/* 
+/*
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param capabilities List of needed capabilities. Max seven capabilities can be given. Extra capabilities
     in the list will not be used.
@@ -166,7 +166,7 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(QList<C
 {
 }
 
-/* 
+/*
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param secureId Secure ID
     \param capabilities List of needed capabilities. Max three capabilities can be given. Extra capabilities
@@ -178,7 +178,7 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(SecureI
 {
 }
 
-/* 
+/*
     Constructs an XQPublishAndSubscribeSecurityPolicy object.
     \param vendorId Vendor ID
     \param capabilities List of needed capabilities. Max three capabilities can be given. Extra capabilities
@@ -190,14 +190,14 @@ XQPublishAndSubscribeSecurityPolicy::XQPublishAndSubscribeSecurityPolicy(VendorI
 {
 }
 
-/* 
+/*
     Destructs an XQPublishAndSubscribeSecurityPolicy object.
 */
 XQPublishAndSubscribeSecurityPolicy::~XQPublishAndSubscribeSecurityPolicy()
 {
 }
 
-/* 
+/*
     \return Policy type.
 */
 XQPublishAndSubscribeSecurityPolicy::SecPolicyType XQPublishAndSubscribeSecurityPolicy::secPolicyType() const
@@ -205,7 +205,7 @@ XQPublishAndSubscribeSecurityPolicy::SecPolicyType XQPublishAndSubscribeSecurity
     return m_secPolicyType;
 }
 
-/* 
+/*
     \return Secure ID or -1 if not defined.
 */
 XQPublishAndSubscribeSecurityPolicy::SecureId XQPublishAndSubscribeSecurityPolicy::secureId() const
@@ -213,7 +213,7 @@ XQPublishAndSubscribeSecurityPolicy::SecureId XQPublishAndSubscribeSecurityPolic
     return m_secureId;
 }
 
-/* 
+/*
     \return Vendor ID or -1 if not defined.
 */
 XQPublishAndSubscribeSecurityPolicy::VendorId XQPublishAndSubscribeSecurityPolicy::vendorId() const
@@ -221,7 +221,7 @@ XQPublishAndSubscribeSecurityPolicy::VendorId XQPublishAndSubscribeSecurityPolic
     return m_vendorId;
 }
 
-/* 
+/*
     \return List of capabilities
 */
 QList<XQPublishAndSubscribeSecurityPolicy::Capability> XQPublishAndSubscribeSecurityPolicy::capabilities() const

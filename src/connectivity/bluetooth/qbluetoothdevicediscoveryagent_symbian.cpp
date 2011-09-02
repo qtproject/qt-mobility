@@ -97,7 +97,9 @@ void QBluetoothDeviceDiscoveryAgentPrivate::start()
     if (!m_deviceDiscovery) {
         allocate();
     } 
-    m_deviceDiscovery->startDiscovery(inquiryTypeToIAC());
+    if(m_deviceDiscovery) {
+        m_deviceDiscovery->startDiscovery(inquiryTypeToIAC());
+    }
 
 }
 

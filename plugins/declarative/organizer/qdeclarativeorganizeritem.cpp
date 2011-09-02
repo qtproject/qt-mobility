@@ -50,6 +50,7 @@
   and has no tie to a specific backend calendar store.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
   A OrganizerItem has a number of mandatory details. Different subclasses of OrganizerItem
   (i.e., Event, EventOccurrence, Journal, Todo, TodoOccurrence, Note) may have more mandatory details.
@@ -116,6 +117,7 @@ QOrganizerItem QDeclarativeOrganizerItem::item() const
 
 /*!
   \qmlproperty string OrganizerItem::itemId
+  \since Mobility 1.1
 
    This property holds the id of the OrganizerItem object.
    This property is read only.
@@ -127,6 +129,7 @@ QString QDeclarativeOrganizerItem::itemId() const
 
 /*!
   \qmlproperty string OrganizerItem::manager
+  \since Mobility 1.1
 
   This property holds the manager uri which the \l OrganizerItem object comes from.
   */
@@ -137,6 +140,7 @@ QString QDeclarativeOrganizerItem::manager() const
 
 /*!
   \qmlproperty bool OrganizerItem::modified
+  \since Mobility 1.1
 
    This property holds the dirty flag of the OrganizerItem object.
    If the OrganizerItem has been changed, returns true, otherwise returns false.
@@ -150,6 +154,7 @@ bool QDeclarativeOrganizerItem::modified() const
 
 /*!
   \qmlproperty bool OrganizerItem::isFloatingTime
+  \since Mobility 1.1
 
    This property indicates whether the organizer item created with floating date time.
    A floating time will always appear with the same value regardless of what time zone the user is in.
@@ -157,7 +162,6 @@ bool QDeclarativeOrganizerItem::modified() const
    but will appear to change in value if the user's time zone changes.
    This property is read only.
 
-   \since organizer 1.1.1
   */
 bool QDeclarativeOrganizerItem::isFloatingTime() const
 {
@@ -179,11 +183,11 @@ bool QDeclarativeOrganizerItem::isFloatingTime() const
 
 /*!
   \qmlproperty date OrganizerItem::itemStartTime
+  \since Mobility 1.1
 
    This property holds the start date time of the OrganizerItem object.
    For differrent organizer item type, the return value is differrent, too.
 
-   \since organizer 1.1.1
    \sa QDeclarativeOrganizerItem::OrganizerItemType
   */
 QDateTime QDeclarativeOrganizerItem::itemStartTime() const
@@ -208,11 +212,11 @@ QDateTime QDeclarativeOrganizerItem::itemStartTime() const
 
 /*!
   \qmlproperty date OrganizerItem::itemEndTime
+  \since Mobility 1.1
 
    This property holds the end date time of the OrganizerItem object.
    For different organizer item type, the return value is different, too.
 
-   \since organizer 1.1.1
    \sa QDeclarativeOrganizerItem::OrganizerItemType
   */
 
@@ -246,6 +250,7 @@ void QDeclarativeOrganizerItem::setModified()
 
 /*!
   \qmlmethod Detail OrganizerItem::detail(name)
+  \since Mobility 1.1
 
     This method returns an \l Detail object which detail name is \a name.
   */
@@ -256,6 +261,7 @@ QVariant QDeclarativeOrganizerItem::detail(const QString& name)
 
 /*!
     \qmlproperty list<Detail> OrganizerItem::details
+    \since Mobility 1.1
 
     This property holds the list of \l Detail elements that the organizer item has.
 */
@@ -266,6 +272,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItemDetail> QDeclarativeOrganizerI
 
 /*!
   \qmlmethod list<Detail> OrganizerItem::details(name)
+  \since Mobility 1.1
 
     This method returns a list of details which detail name is \a name.
   */
@@ -276,6 +283,7 @@ QVariant QDeclarativeOrganizerItem::details(const QString& name)
 
 /*!
     \qmlmethod OrganizerItem::addComment(comment)
+    \since Mobility 1.1
 
     Addes a \a comment for the organizer item.
 
@@ -289,6 +297,7 @@ void QDeclarativeOrganizerItem::addComment(const QString& comment)
 
 /*!
     \qmlmethod OrganizerItem::clearComments()
+    \since Mobility 1.1
 
     Removes all comments from the organizer item.
 
@@ -302,6 +311,7 @@ void QDeclarativeOrganizerItem::clearComments()
 
 /*!
     \qmlmethod bool OrganizerItem::removeDetail(detail)
+    \since Mobility 1.1
 
     Removes given \a detail from the organizer item. If the detail is not removable, returns false.
 
@@ -320,6 +330,7 @@ bool QDeclarativeOrganizerItem::removeDetail(QDeclarativeOrganizerItemDetail* de
 
 /*!
     \qmlmethod bool OrganizerItem::addDetail(detail)
+    \since Mobility 1.1
 
     Adds the given organizer item \a detail to the organizer item, returns true if successful, otherwise returns false.
 
@@ -340,6 +351,7 @@ bool QDeclarativeOrganizerItem::addDetail(QDeclarativeOrganizerItemDetail* detai
 
 /*!
     \qmlmethod OrganizerItem::clearDetails()
+    \since Mobility 1.1
 
     Removes all details from the organizer item.
 
@@ -354,6 +366,7 @@ void QDeclarativeOrganizerItem::clearDetails()
 
 /*!
     \qmlmethod OrganizerItem::save()
+    \since Mobility 1.1
 
     Saves this OrganizerItem if the item has been modified.
 
@@ -371,6 +384,7 @@ void QDeclarativeOrganizerItem::save()
 
 /*!
     \qmlproperty string OrganizerItem::type
+    \since Mobility 1.1
 
     This property holds the type name of the organizer item.
     This property is read only.
@@ -399,6 +413,7 @@ QDeclarativeOrganizerItem::OrganizerItemType QDeclarativeOrganizerItem::itemType
 
 /*!
     \qmlproperty string OrganizerItem::displayLabel
+    \since Mobility 1.1
 
     This property holds the display label of the organizer item.
 */
@@ -419,6 +434,7 @@ void QDeclarativeOrganizerItem::setDisplayLabel(const QString& label)
 
 /*!
     \qmlproperty string OrganizerItem::description
+    \since Mobility 1.1
 
     This property holds the description text of the organizer item.
 */
@@ -439,6 +455,7 @@ void QDeclarativeOrganizerItem::setDescription(const QString& description)
 
 /*!
     \qmlproperty string OrganizerItem::guid
+    \since Mobility 1.1
 
     This property holds the GUID string of the organizer item.
 */
@@ -458,11 +475,11 @@ void QDeclarativeOrganizerItem::setGuid(const QString& guid)
 
 /*!
     \qmlproperty bool OrganizerItem::isOccurrence
+    \since Mobility 1.1
 
     If this OrganizerItem is an occurrence item, returns true, otherwise returns false.
 
     This is a read only property.
-    \since organizer 1.1.1
 */
 bool QDeclarativeOrganizerItem::isOccurrence() const
 {
@@ -476,6 +493,7 @@ bool QDeclarativeOrganizerItem::isOccurrence() const
     \brief The Event element provides an event in time which may reoccur.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
     \sa OrganizerItem, EventOccurrence, Journal, Todo, TodoOccurrence, Note, {QOrganizerEvent}
 
@@ -491,6 +509,7 @@ QDeclarativeOrganizerEvent::QDeclarativeOrganizerEvent(QObject *parent)
 
 /*!
   \qmlproperty date Event::startDateTime
+  \since Mobility 1.1
 
   This property holds the start date time of the event.
   */
@@ -511,6 +530,7 @@ QDateTime QDeclarativeOrganizerEvent::startDateTime() const
 
 /*!
   \qmlproperty date Event::endDateTime
+  \since Mobility 1.1
 
   This property holds the end date time of the event.
   */
@@ -531,6 +551,7 @@ QDateTime QDeclarativeOrganizerEvent::endDateTime() const
 
 /*!
   \qmlproperty bool Event::allDay
+  \since Mobility 1.1
 
   This property indicates whether the time-of-day component of the event's start date-time or end date-time is
   insignificant. If allDay is true, the time-of-day component is considered insignificant, and the event will
@@ -550,6 +571,7 @@ bool QDeclarativeOrganizerEvent::isAllDay() const
 
 /*!
   \qmlproperty enumeration Event::priority
+  \since Mobility 1.1
 
   This property holds the priority of the event. The value can be one of:
   \list
@@ -582,6 +604,7 @@ QDeclarativeOrganizerItemPriority::PriorityType QDeclarativeOrganizerEvent::prio
 
 /*!
   \qmlproperty string Event::location
+  \since Mobility 1.1
 
   This property holds the label of the location at which the event occurs.
   */
@@ -601,6 +624,7 @@ void QDeclarativeOrganizerEvent::setLocation(const QString& newLocation)
 
 /*!
   \qmlproperty Recurrence Event::recurrence
+  \since Mobility 1.1
 
   This property holds the recurrence element of the event item.
   */
@@ -618,6 +642,7 @@ QDeclarativeOrganizerItemRecurrence* QDeclarativeOrganizerEvent::recurrence()
     \brief The EventOccurrence element provides an occurrence of an event.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
     \sa OrganizerItem, Event, Journal, Todo, TodoOccurrence, Note, {QOrganizerEventOccurrence}
 
@@ -634,6 +659,7 @@ QDeclarativeOrganizerEventOccurrence::QDeclarativeOrganizerEventOccurrence(QObje
 
 /*!
   \qmlproperty date EventOccurrence::originalDate
+  \since Mobility 1.1
 
   This property holds the date at which the occurrence was originally going to occur.
   */
@@ -654,6 +680,7 @@ QDate QDeclarativeOrganizerEventOccurrence::originalDate() const
 
 /*!
   \qmlproperty date EventOccurrence::startDateTime
+  \since Mobility 1.1
 
   This property holds the start date time of the event occurrence.
   */
@@ -672,6 +699,7 @@ QDateTime QDeclarativeOrganizerEventOccurrence::startDateTime() const
 
 /*!
   \qmlproperty int EventOccurrence::parentId
+  \since Mobility 1.1
 
   This property holds the id of the event which is this occurrence's parent.
   */
@@ -693,6 +721,7 @@ QString QDeclarativeOrganizerEventOccurrence::parentId() const
 
 /*!
   \qmlproperty date EventOccurrence::endDateTime
+  \since Mobility 1.1
 
   This property holds the date time at which the event occurrence ends.
   */
@@ -710,6 +739,7 @@ QDateTime QDeclarativeOrganizerEventOccurrence::endDateTime() const
 
 /*!
   \qmlproperty enumeration EventOccurrence::priority
+  \since Mobility 1.1
 
   This property holds the priority of the event occurrence. The value can be one of:
   \list
@@ -766,6 +796,7 @@ void QDeclarativeOrganizerEventOccurrence::setLocation(const QString& newLocatio
     \brief The Journal element provides a journal which is associated with a particular point in time.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
     \sa OrganizerItem, Event, EventOccurrence, Todo, TodoOccurrence, Note, {QOrganizerJournal}
 
@@ -782,6 +813,7 @@ QDeclarativeOrganizerJournal::QDeclarativeOrganizerJournal(QObject *parent)
 
 /*!
   \qmlproperty date Journal::dateTime
+  \since Mobility 1.1
 
   This property holds the date time associated with this journal.
   */
@@ -807,6 +839,7 @@ QDateTime QDeclarativeOrganizerJournal::dateTime() const
     \brief The Note element provides a note which is not associated with any particular point in time.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
     \sa OrganizerItem, Event, EventOccurrence, Journal, Todo, TodoOccurrence, {QOrganizerNote}
 
@@ -829,6 +862,7 @@ QDeclarativeOrganizerNote::QDeclarativeOrganizerNote(QObject *parent)
     \brief The Todo element provides a task which should be completed.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
     \sa OrganizerItem, Event, EventOccurrence, Journal, TodoOccurrence, Note, {QOrganizerTodo}
 
@@ -845,6 +879,7 @@ QDeclarativeOrganizerTodo::QDeclarativeOrganizerTodo(QObject *parent)
 
 /*!
   \qmlproperty Recurrence Todo::recurrence
+  \since Mobility 1.1
 
   This property holds the recurrence element of the todo item.
   */
@@ -856,6 +891,7 @@ QDeclarativeOrganizerItemRecurrence* QDeclarativeOrganizerTodo::recurrence()
 
 /*!
   \qmlproperty date Todo::startDateTime
+  \since Mobility 1.1
 
   This property holds the date time at which the task should be started.
   */
@@ -876,6 +912,7 @@ QDateTime QDeclarativeOrganizerTodo::startDateTime() const
 
 /*!
   \qmlproperty date Todo::dueDateTime
+  \since Mobility 1.1
 
   This property holds the date time by which the task should be completed.
   */
@@ -896,6 +933,7 @@ QDateTime QDeclarativeOrganizerTodo::dueDateTime() const
 
 /*!
   \qmlproperty bool Todo::allDay
+  \since Mobility 1.1
 
   This property indicates whether the time-of-day component of the Todo's start date-time or due date-time is
   insignificant. If allDay is true, the time-of-day component is considered insignificant, and the todo will
@@ -918,6 +956,7 @@ bool QDeclarativeOrganizerTodo::isAllDay() const
 
 /*!
   \qmlproperty enumeration Todo::priority
+  \since Mobility 1.1
 
   This property holds the priority of the todo item. The value can be one of:
   \list
@@ -951,6 +990,7 @@ QDeclarativeOrganizerItemPriority::PriorityType QDeclarativeOrganizerTodo::prior
 
 /*!
   \qmlproperty int Todo::progressPercentage
+  \since Mobility 1.1
 
   This property holds the percentage of progress completed on the task described by the todo item.
   */
@@ -972,6 +1012,7 @@ int QDeclarativeOrganizerTodo::progressPercentage() const
 
 /*!
   \qmlproperty enumeration Todo::status
+  \since Mobility 1.1
 
   This property holds the progress status of the task described by the todo. The value can be one of:
   \list
@@ -998,6 +1039,7 @@ QDeclarativeOrganizerTodoProgress::StatusType QDeclarativeOrganizerTodo::status(
 
 /*!
   \qmlproperty date Todo::finishedDateTime
+  \since Mobility 1.1
 
   This property holds the date and time at which the task was completed, if known.
   */
@@ -1023,6 +1065,7 @@ QDateTime QDeclarativeOrganizerTodo::finishedDateTime() const
     \brief The TodoOccurrence element provides an occurrence of an event.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
     \sa OrganizerItem, Event, EventOccurrence, Journal, Todo, Note, {QOrganizerTodoOccurrence}
 
@@ -1039,6 +1082,7 @@ QDeclarativeOrganizerTodoOccurrence::QDeclarativeOrganizerTodoOccurrence(QObject
 
 /*!
   \qmlproperty date TodoOccurrence::startDateTime
+  \since Mobility 1.1
 
   This property holds the date time at which the task should be started.
   */
@@ -1058,6 +1102,7 @@ QDateTime QDeclarativeOrganizerTodoOccurrence::startDateTime() const
 }
 /*!
   \qmlproperty date TodoOccurrence::dueDateTime
+  \since Mobility 1.1
 
   This property holds the date time by which the task should be completed.
   */
@@ -1078,6 +1123,7 @@ QDateTime QDeclarativeOrganizerTodoOccurrence::dueDateTime() const
 
 /*!
   \qmlproperty enumeration TodoOccurrence::priority
+  \since Mobility 1.1
 
   This property holds the priority of the todo occurrence. The value can be one of:
   \list
@@ -1111,6 +1157,7 @@ QDeclarativeOrganizerItemPriority::PriorityType QDeclarativeOrganizerTodoOccurre
 
 /*!
   \qmlproperty int TodoOccurrence::progressPercentage
+  \since Mobility 1.1
 
   This property holds the percentage of progress completed on the task described by the todo item.
   */
@@ -1131,6 +1178,7 @@ int QDeclarativeOrganizerTodoOccurrence::progressPercentage() const
 
 /*!
   \qmlproperty enumeration TodoOccurrence::status
+  \since Mobility 1.1
 
   This property holds the progress status of the task described by the todo occurrence. The value can be one of:
   \list
@@ -1157,6 +1205,7 @@ QDeclarativeOrganizerTodoProgress::StatusType QDeclarativeOrganizerTodoOccurrenc
 
 /*!
   \qmlproperty date TodoOccurrence::finishedDateTime
+  \since Mobility 1.1
 
   This property holds the date and time at which the task was completed, if known.
   */
@@ -1177,6 +1226,7 @@ QDateTime QDeclarativeOrganizerTodoOccurrence::finishedDateTime() const
 
 /*!
   \qmlproperty int TodoOccurrence::parentId
+  \since Mobility 1.1
 
   This property holds the id of the todo which is this occurrence's parent.
   */
@@ -1196,6 +1246,7 @@ QString QDeclarativeOrganizerTodoOccurrence::parentId() const
 }
 /*!
   \qmlproperty date TodoOccurrence::originalDate
+  \since Mobility 1.1
 
   This property holds the date at which the occurrence was originally going to occur.
   */

@@ -50,6 +50,9 @@
 #include <QByteArray>
 #include <QMultiMap>
 
+#include <e32base.h>
+#include <featdiscovery.h>
+
 #if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
     #include "pathmapper_symbian_p.h"
 #else
@@ -104,6 +107,8 @@ public:
     static SymbianSettingsLayer *instance();
 
 private:
+    XQSettingsManager * getSettingsManagerForThread();
+
     struct SymbianSettingsHandle {
         SymbianSettingsHandle(const QString &p)
         :   path(p), refCount(1)
@@ -133,9 +138,9 @@ private slots:
 
 private:    //data
     PathMapper m_pathMapper;
-    XQSettingsManager m_settingsManager;
     QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
     QSet<QString> m_monitoringPaths;
+    CFeatureDiscovery *m_featureManager;
 };
 
 QTM_END_NAMESPACE

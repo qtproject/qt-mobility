@@ -51,6 +51,7 @@
    \brief The RelationshipModel provides a model of contact relationships from the contacts store.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -114,6 +115,7 @@ QDeclarativeContactRelationshipModel::~QDeclarativeContactRelationshipModel()
 
 /*!
   \qmlproperty string RelationshipModel::manager
+  \since Mobility 1.1
 
   This property holds the manager uri of the contact backend engine.
   */
@@ -127,6 +129,7 @@ QString QDeclarativeContactRelationshipModel::manager() const
 
 /*!
   \qmlproperty string RelationshipModel::error
+  \since Mobility 1.1
 
   This property holds the latest error code returned by the contact manager.
 
@@ -181,6 +184,7 @@ void QDeclarativeContactRelationshipModel::setManager(const QString& manager)
 
 /*!
   \qmlproperty int RelationshipModel::participantId
+  \since Mobility 1.1
 
   This property holds the participant id which the list of relationships returned by RelationshipModel should contain.
 
@@ -201,6 +205,7 @@ void QDeclarativeContactRelationshipModel::setParticipantId(const QContactLocalI
 
 /*!
   \qmlproperty variant RelationshipModel::relationshipType
+  \since Mobility 1.1
 
   This property holds the relationship type which the list of relationships returned by RelationshipModel should contain.
 
@@ -220,6 +225,7 @@ void QDeclarativeContactRelationshipModel::setRelationshipType(const QVariant& t
 
 /*!
   \qmlproperty enumeration RelationshipModel::role
+  \since Mobility 1.1
 
   This property holds the relationship role which the list of relationships returned by RelationshipModel should contain.
 
@@ -239,6 +245,7 @@ void QDeclarativeContactRelationshipModel::setRole(QDeclarativeContactRelationsh
 
 /*!
   \qmlproperty bool RelationshipModel::autoUpdate
+  \since Mobility 1.1
 
   This property indicates whether or not the relationship model should be updated automatically, default value is true.
   */
@@ -255,6 +262,7 @@ void QDeclarativeContactRelationshipModel::setAutoUpdate(bool autoUpdate)
 
 /*!
   \qmlproperty list<Relationship> RelationshipModel::relationships
+  \since Mobility 1.1
 
   This property holds a list of relationships.
 
@@ -307,7 +315,8 @@ void QDeclarativeContactRelationshipModel::fetchAgain()
 
 /*!
   \qmlmethod RelationshipModel::addRelationship(relationship)
-  Addes the given \a relationship to the backend store.
+  \since Mobility 1.1
+  Adds the given \a relationship to the backend store.
   */
 void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRelationship* dcr)
 {
@@ -323,6 +332,7 @@ void QDeclarativeContactRelationshipModel::addRelationship(QDeclarativeContactRe
 
 /*!
   \qmlmethod RelationshipModel::removeRelationship(relationship)
+  \since Mobility 1.1
   Removes the given \a relationship from the backend store.
   */
 void QDeclarativeContactRelationshipModel::removeRelationship(QDeclarativeContactRelationship* dcr)

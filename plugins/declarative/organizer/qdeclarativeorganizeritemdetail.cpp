@@ -75,6 +75,7 @@ Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTime::DetailName, "todoTime");
    \qmlclass Detail QDeclarativeOrganizerItemDetail
    \brief The Detail element represents a single, complete detail about a organizer item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    \sa QOrganizerItemDetail
 
@@ -84,12 +85,14 @@ Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTime::DetailName, "todoTime");
 
 /*!
   \qmlproperty string Detail::definitionName
+  \since Mobility 1.1
   This property holds the string constant for the definition name of the detail.
   This property is read only.
   */
 
 /*!
   \qmlproperty enumeration Detail::type
+  \since Mobility 1.1
 
   This property holds the type of the detail and is read only. It can be one of:
 
@@ -118,17 +121,20 @@ Q_DEFINE_LATIN1_CONSTANT(QDeclarativeOrganizerTodoTime::DetailName, "todoTime");
 
 /*!
   \qmlproperty list<string> Detail::fieldNames
+  \since Mobility 1.1
   This property holds the list of all field names which this detail supports.
 
   This property is read only.
   */
 /*!
   \qmlproperty bool Detail::readOnly
+  \since Mobility 1.1
   This property indicates whether or not this detail is writable.
   This property is read only.
   */
 /*!
   \qmlproperty bool Detail::removable
+  \since Mobility 1.1
   This property indicates whether or not this detail is removale.
   This property is read only.
   */
@@ -533,6 +539,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass EventTime QDeclarativeOrganizerEventTime
    \brief The EventTime element contains the start and end dates and times of a recurring event series, or occurrence of an event.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    EventTime element contains the following field types:
    \list
@@ -546,17 +553,20 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty date EventTime::startDateTime
+  \since Mobility 1.1
 
   This property holds the start date and time value of the event.
   */
 
 /*!
   \qmlproperty date EventTime::endDateTime
+  \since Mobility 1.1
 
   This property holds the end date and time value of the event.
   */
 /*!
   \qmlproperty date EventTime::allDay
+  \since Mobility 1.1
 
   This property holds whether the time is significant in the start datetime.
   */
@@ -566,6 +576,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass TodoTime QDeclarativeOrganizerTodoTime
    \brief The TodoTime element contains the start and due dates and times of a recurring todo series, or occurrence of an todo item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    TodoTime element contains the following field types:
    \list
@@ -579,17 +590,20 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty date TodoTime::startDateTime
+  \since Mobility 1.1
 
   This property holds the start date and time value of the todo item.
   */
 
 /*!
   \qmlproperty date TodoTime::dueDateTime
+  \since Mobility 1.1
 
   This property holds the end date and time value of the todo item.
   */
 /*!
   \qmlproperty date TodoTime::allDay
+  \since Mobility 1.1
 
   This property holds whether the time is significant in the start datetime.
   */
@@ -599,6 +613,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass JournalTime QDeclarativeOrganizerJournalTime
    \brief The JournalTime element contains the entry date and time of a journal item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    JournalTime element contains the following field types:
    \list
@@ -610,6 +625,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty date JournalTime::entryDateTime
+  \since Mobility 1.1
 
   This property holds the entry date and time value of the journal.
   */
@@ -619,6 +635,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Comment QDeclarativeOrganizerItemComment
    \brief The Comment element contains the comment text of an organizer item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Comment element contains the following field types:
    \list
@@ -630,6 +647,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty string Comment::comment
+  \since Mobility 1.1
 
   This property holds the text of the comment.
   */
@@ -639,6 +657,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Description QDeclarativeOrganizerItemDescription
    \brief The Description element contains the description text of an organizer item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Description element contains the following field types:
    \list
@@ -650,6 +669,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty string Description::description
+  \since Mobility 1.1
 
   This property holds the text of the description.
   */
@@ -659,6 +679,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass DisplayLabel QDeclarativeOrganizerItemDisplayLabel
    \brief The DisplayLabel element contains the display label of an organizer item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    DisplayLabel element contains the following field types:
    \list
@@ -679,6 +700,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Guid QDeclarativeOrganizerItemGuid
    \brief The Guid element contains the GUID string of an organizer item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Guid element contains the following field types:
    \list
@@ -699,6 +721,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Tag QDeclarativeOrganizerItemTag
    \brief The Tag element contains the tag string of an organizer item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Tag element contains the following field types:
    \list
@@ -710,6 +733,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty string Tag::tag
+  \since Mobility 1.1
 
   This property holds the tag string.
   */
@@ -719,6 +743,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Type QDeclarativeOrganizerItemType
    \brief The Type element contains the type string of an organizer item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Type element contains the following field types:
    \list
@@ -730,6 +755,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty string Type::type
+  \since Mobility 1.1
 
   This property holds the type string.
   */
@@ -739,6 +765,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Timestamp QDeclarativeOrganizerItemTimestamp
    \brief The Timestamp element contains the created and last modified timestamp of an organizer item's creating date and time.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Timestamp element contains the following field types:
    \list
@@ -751,12 +778,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty date Timestamp::lastModified
+  \since Mobility 1.1
 
   This property holds the value of the item's last modified date and time.
   */
 
 /*!
   \qmlproperty date Timestamp::created
+  \since Mobility 1.1
 
   This property holds the value of the item's creation date and time.
   */
@@ -766,6 +795,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Location QDeclarativeOrganizerItemLocation
    \brief The Location element contains information about a location which is related to the organizer item in some manner.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Location element contains the following field types:
    \list
@@ -779,18 +809,21 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty string Location::label
+  \since Mobility 1.1
 
   This property holds the location label value.
   */
 
 /*!
   \qmlproperty double Location::longitude
+  \since Mobility 1.1
 
   This property holds the location longitude value .
   */
 
 /*!
   \qmlproperty double Location::latitude
+  \since Mobility 1.1
 
   This property holds the location latitude value.
   */
@@ -800,6 +833,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass TodoProgress QDeclarativeOrganizerTodoProgress
    \brief The TodoProgress element contains information about the progress of a todo item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    TodoProgress element contains the following field types:
    \list
@@ -813,6 +847,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty enumeration TodoProgress::status
+  \since Mobility 1.1
 
   This property holds the value which describes the current completion status of the
    todo item. The value can be one of:
@@ -825,6 +860,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty int TodoProgress::percentage
+  \since Mobility 1.1
 
   This property holds the value which contains the current completion percentage of the
    todo item.
@@ -832,6 +868,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty date TodoProgress::finishedDateTime
+  \since Mobility 1.1
 
   This property holds the date time value which contains the date and time at which the
    todo item was completed.
@@ -843,6 +880,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Parent QDeclarativeOrganizerItemParent
    \brief The Parent element contains information about the event or todo that generated this item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Parent element contains the following field types:
    \list
@@ -855,12 +893,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty string Parent::parentId
+  \since Mobility 1.1
 
   This property holds the organizer item id of the parent recurrent event or todo.
   */
 
 /*!
   \qmlproperty date Parent::originalDate
+  \since Mobility 1.1
 
   This property holds the original date of this instance origin item.
   */
@@ -871,6 +911,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \brief The Recurrence element contains a list of rules and dates on which the recurrent item occurs,
           and a list of rules and dates on which exceptions occur.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Recurrence element contains the following field types:
    \list
@@ -885,6 +926,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty list<RecurrenceRule> Recurrence::recurrenceRules
+  \since Mobility 1.1
 
   This property holds the list of recurrence rules.
 
@@ -893,6 +935,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty list<RecurrenceRule> Recurrence::exceptionRules
+  \since Mobility 1.1
 
   This property holds the list of exception rules.
 
@@ -901,12 +944,14 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty list<date> Recurrence::recurrenceDates
+  \since Mobility 1.1
 
   This property holds the list of recurrence dates.
   */
 
 /*!
   \qmlproperty list<date> Recurrence::exceptionDates
+  \since Mobility 1.1
 
   This property holds the list of exception dates.
   */
@@ -916,6 +961,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Priority QDeclarativeOrganizerItemPriority
    \brief The Priority element contains the priority of the organizer item, which may be used to resolve scheduling conflicts.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Priority element contains the following field types:
    \list
@@ -927,6 +973,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty enumeration Priority::priority
+  \since Mobility 1.1
 
   This property holds the priority associated with an organizer item. The value can be one of:
   \list
@@ -948,6 +995,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass Reminder QDeclarativeOrganizerItemReminder
    \brief The Reminder element contains information about when and how the user wants to reminded of the item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    Reminder element contains the following field types:
    \list
@@ -962,6 +1010,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty enumeration Reminder::reminderType
+  \since Mobility 1.1
 
   This property holds the reminder type of this reminder for an organizer item. The value can be one of:
   \list
@@ -974,17 +1023,20 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty int Reminder::secondsBeforeStart
+  \since Mobility 1.1
 
   This property holds the number of seconds prior to the activation of the item
    at which the user wants to be reminded of the item.
   */
 /*!
   \qmlproperty int Reminder::repetitionCount
+  \since Mobility 1.1
 
   This property holds the number of times the user should be reminded of the item.
   */
 /*!
   \qmlproperty int Reminder::repetitionDelay
+  \since Mobility 1.1
 
   This property holds the delay (in seconds) between each repetition of the reminder.
   */
@@ -994,6 +1046,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass AudibleReminder QDeclarativeOrganizerItemAudibleReminder
    \brief The AudibleReminder element contains information about an audible reminder of an item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    \inherits Reminder
 
@@ -1007,6 +1060,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty url AudibleReminder::dataUrl
+  \since Mobility 1.1
 
   This property holds the url of the audible data to play.
   */
@@ -1016,6 +1070,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass VisualReminder QDeclarativeOrganizerItemVisualReminder
    \brief The VisualReminder element contains information about a visual reminder of an item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    \inherits Reminder
 
@@ -1030,11 +1085,13 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty url VisualReminder::dataUrl
+  \since Mobility 1.1
 
   This property holds the url of the visual data which the user wishes to be displayed as part of the reminder.
   */
 /*!
   \qmlproperty string VisualReminder::message
+  \since Mobility 1.1
 
   This property holds the message which the user wishes to be displayed as part of the reminder.
   */
@@ -1044,6 +1101,7 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
    \qmlclass EmailReminder QDeclarativeOrganizerItemEmailReminder
    \brief The EmailReminder element contains information about an email reminder of an item.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    \inherits Reminder
 
@@ -1060,23 +1118,27 @@ QString QDeclarativeOrganizerItemTimestamp::fieldNameFromFieldType(int type)
 
 /*!
   \qmlproperty string EmailReminder::subject
+  \since Mobility 1.1
 
   This property holds the subject of the email.
   */
 /*!
   \qmlproperty string EmailReminder::body
+  \since Mobility 1.1
 
   This property holds the body of the email.
   */
 
 /*!
   \qmlproperty list<string> EmailReminder::recipients
+  \since Mobility 1.1
 
   This property holds the list of recipients that the user wishes to be sent an email as part of the reminder.
   */
 
 /*!
   \qmlproperty list<variant> EmailReminder::attachments
+  \since Mobility 1.1
 
   This property holds the attachments of the email.
   */

@@ -253,7 +253,7 @@ LOCAL_C void TestNewMatchingL()
 	_LIT(KCntSpaceInNumber,"   0 2 0      7 1 2 0  5 6 7 8    ");
 	_LIT(KCntSpaceMatch,"02071205678");
 	_LIT(KCntSpaceInNumberIntl,"   +44 7447 065 472");
-	_LIT(KCntSpaceInNumberIntlMatch,"+447747065472");
+	_LIT(KCntSpaceInNumberIntlMatch,"+446447065472");
 	_LIT(KCntSpaceWorstCase,"              ");
 	_LIT(KCntNoRealDigitsInNumber,"Lycos SMS");
 
@@ -288,9 +288,9 @@ LOCAL_C void TestNewMatchingL()
 	TContactItemId id = CreateContactL(KCntName,KCntSurname,KCntZeroAtEnd,KNullDesC);
 
 	CheckPhoneMatchL(KCntMatch1to7,KMatch7Digits,9);
-	CheckPhoneMatchL(KCntMatch1to7,KLastThreeDigits,0);	// no contact with 567 as phone number  
+	CheckPhoneMatchL(KCntMatch1to7,KLastThreeDigits,9);	// no contact with 567 as phone number  
 	CheckPhoneMatchL(KCntMatch1to7,KMatch7Digits,9);
-	CheckPhoneMatchL(KCntMatch1to7,KLastThreeDigits,0); // no contact with 567 as phone number  
+	CheckPhoneMatchL(KCntMatch1to7,KLastThreeDigits,9); // no contact with 567 as phone number  
 	
 	CheckPhoneMatchL(KCntMatch1to3,KMatch7Digits,1);
 	CheckPhoneMatchL(KCntMatch1to3,KMatch7Digits,1);
@@ -643,7 +643,7 @@ LOCAL_C void Test15DigitMatchingL()
 
 	CheckPhoneMatchL(K15DigitMatch3,KMatch15Digits,1);
 
-	CheckPhoneMatchL(K15DigitMatch4,KMatch16Digits,0);
+	CheckPhoneMatchL(K15DigitMatch4,KMatch16Digits,1);
 	CheckPhoneMatchL(K15DigitMatch4,KMatch15Digits,1);
 	}
 
@@ -686,7 +686,7 @@ LOCAL_C void TestEmbeddedZeroesL()
 	CheckPhoneMatchL(KEmbeddedZeroMatch5,KMatch15Digits,1);
 	CheckPhoneMatchL(KEmbeddedZeroMatch5,KMatch8Digits,1);
 	CheckPhoneMatchL(KEmbeddedZeroMatch6,KMatch7Digits,2);
-	CheckPhoneMatchL(KEmbeddedZeroMatch7,KMatch7Digits,2);
+	CheckPhoneMatchL(KEmbeddedZeroMatch7,KMatch7Digits,1);
 	CheckPhoneMatchL(KEmbeddedZeroMatch6,KMatch6Digits,2);
 	}
 

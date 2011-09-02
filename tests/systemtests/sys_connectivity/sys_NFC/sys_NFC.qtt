@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-//TESTED_COMPONENT=src/systeminfo
+//TESTED_COMPONENT=src/connectivity/nfc
 
 testcase = {
 
@@ -84,7 +84,7 @@ testcase = {
 
     NDEF_Notification_Deregistration: function()
     {
-      skip all
+      skip("No test app", SkipAll);
         prompt(twiki('*Unregister for NDEF notifications*
 
     1 currently no test application
@@ -125,7 +125,7 @@ testcase = {
 
     Tag_Specific_Command_Write: function()
     {
-      skip all;
+      skip("No test app", SkipAll);
         prompt(twiki('*Send tag specific commands to a tag *
 
     1 not enabled yet in bluewheel

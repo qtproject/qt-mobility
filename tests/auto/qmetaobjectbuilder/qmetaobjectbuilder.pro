@@ -36,9 +36,9 @@ symbian|wince* {
         DEPLOYMENT_PLUGIN += qsqlite
     }
 
-    addFiles.sources = ../../testservice2/xml/testserviceplugin.xml \
-                       ../../sampleserviceplugin/xml/sampleservice.xml \
-                       ../../sampleserviceplugin2/xml/sampleservice2.xml
+    addFiles.sources = ../../tools/testservice2/xml/testserviceplugin.xml \
+                       ../../tools/sampleserviceplugin/xml/sampleservice.xml \
+                       ../../tools/sampleserviceplugin2/xml/sampleservice2.xml
     addFiles.path = plugins/xmldata
     DEPLOYMENT += addFiles
 }

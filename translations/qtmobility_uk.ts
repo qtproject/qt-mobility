@@ -382,6 +382,7 @@
     <message>
         <source>Invalid sample rate</source>
         <translation>Неправильний розмір семплу</translation>
+    </message>
 </context>
 <context>
     <name>S60CameraImageCaptureControl</name>

@@ -83,8 +83,8 @@ QCameraFocus::FocusMode S60CameraFocusControl::focusMode() const
 void S60CameraFocusControl::setFocusMode(QCameraFocus::FocusMode mode)
 {
     if (isFocusModeSupported(mode)) {
-        // FocusMode and FocusRange are set. Focusing is triggered by setting
-        // the corresponding FocusType active by calling searchAndLock in LocksControl.
+        // FocusMode and FocusRange will be set. Focusing is triggered by setting
+        // the corresponding FocusType active by calling searchAndLock in LocksControl
         m_focusMode = mode;
         if (m_advancedSettings)
             m_advancedSettings->setFocusMode(m_focusMode);
@@ -186,7 +186,7 @@ void S60CameraFocusControl::setCustomFocusPoint(const QPointF &point)
 QCameraFocusZoneList S60CameraFocusControl::focusZones() const
 {
     // Not supported in Symbian
-    return QCameraFocusZoneList(); // Return empty list
+    return QCameraFocusZoneList();
 }
 
 // End of file

@@ -49,6 +49,7 @@
 
     \ingroup connectivity-qml
     \inmodule QtConnectivity
+    \since Mobility 1.2
 
     \sa QLlcpSocket
     \sa QLlcpServer
@@ -61,6 +62,7 @@
 
 /*!
     \qmlproperty string NearFieldSocket::uri
+    \since Mobility 1.2
 
     This property hold the URI of the socket.  The URI uniquely identifies a remote service (for
     client sockets) or to register a service (for server sockets).
@@ -68,30 +70,35 @@
 
 /*!
     \qmlproperty bool NearFieldSocket::connected
+    \since Mobility 1.2
 
     This property holds the connected state of the socket.
 */
 
 /*!
     \qmlproperty string NearFieldSocket::error
+    \since Mobility 1.2
 
     This property holds the last error that occurred.
 */
 
 /*!
     \qmlproperty string NearFieldSocket::state
+    \since Mobility 1.2
 
     This property holds the state of the socket.
 */
 
 /*!
     \qmlproperty bool NearFieldSocket::listening
+    \since Mobility 1.2
 
     This property holds whether the socket is listening for incoming connections.
 */
 
 /*!
     \qmlproperty string NearFieldSocket::stringData
+    \since Mobility 1.2
 
     This property returns the available string data read from the socket.  Seting this property
     sends the data to the remote socket.

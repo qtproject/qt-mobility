@@ -50,10 +50,11 @@
 
 /*!
     \qmlclass BluetoothDiscoveryModel QDeclarativeBluetoothDiscoveryModel
-    \brief The BluetoothDisoceryModel element provides access device and service scanning
+    \brief The BluetoothDiscoveryModel element provides access device and service scanning
 
     \ingroup connectivity-qml
     \inmodule QtConnectivity
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.connectivity 1.2} module.
 
@@ -124,11 +125,16 @@ void QDeclarativeBluetoothDiscoveryModel::componentComplete()
 }
 
 /*!
-  \qmlproperty bool BluetoothSocket::discovery
+  \qmlproperty bool BluetoothDiscoveryModel::discovery
+  \since Mobility 1.2
 
   This property starts or stops discovery.
 
   */
+bool QDeclarativeBluetoothDiscoveryModel::discovery()
+{
+    return d->m_working;
+}
 
 void QDeclarativeBluetoothDiscoveryModel::setDiscovery(bool discovery_)
 {
@@ -169,6 +175,7 @@ void QDeclarativeBluetoothDiscoveryModel::errorDiscovery(QBluetoothServiceDiscov
 
 /*!
   \qmlproperty string BluetoothDiscoveryModel::error
+  \since Mobility 1.2
 
   This property holds the last error reported by discovery.
 
@@ -218,6 +225,7 @@ QVariant QDeclarativeBluetoothDiscoveryModel::data(const QModelIndex &index, int
 
 /*!
   \qmlsignal BluetoothDiscoveryModel::newServiceDiscovered()
+  \since Mobility 1.2
 
   This handler is called when a new service is discovered.
   */
@@ -241,6 +249,7 @@ void QDeclarativeBluetoothDiscoveryModel::serviceDiscovered(const QBluetoothServ
 
 /*!
     \qmlsignal BluetoothDiscoveryModel::discoveryChanged()
+    \since Mobility 1.2
 
     This handler is called when discovery has completed and no
     further results will be generated.
@@ -255,6 +264,7 @@ void QDeclarativeBluetoothDiscoveryModel::finishedDiscovery()
 
 /*!
   \qmlproperty bool BluetoothDiscoveryModel::minimalDiscovery
+  \since Mobility 1.2
 
   This property controls minimalDiscovery, which is faster than full discocvery but it
   only guarantees the device and UUID information to be correct.
@@ -272,13 +282,9 @@ void QDeclarativeBluetoothDiscoveryModel::setMinimalDiscovery(bool minimalDiscov
     emit minimalDiscoveryChanged();
 }
 
-bool QDeclarativeBluetoothDiscoveryModel::discovery()
-{
-    return d->m_working;
-}
-
 /*!
   \qmlproperty string BluetoothDiscoveryModel::uuidFilter
+  \since Mobility 1.2
 
   This property holds an optional UUID filter.  A UUID can be used to return only
   matching services.  16 bit, 32 bit or 128 bit UUIDs maybe used.  The string format

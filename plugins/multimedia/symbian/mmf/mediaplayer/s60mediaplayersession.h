@@ -168,6 +168,7 @@ protected:
     QUrl m_UrlPath;
     bool m_stream;
     QMediaContent m_source;
+    bool m_isaudiostream;
 
 private:
     qreal m_playbackRate;
@@ -182,6 +183,7 @@ private:
     bool m_play_requested;
     bool m_seekable;
     qint64 m_duration;
+    qint64 m_progressduration;
 };
 
 #endif

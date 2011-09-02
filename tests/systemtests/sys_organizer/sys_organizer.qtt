@@ -55,182 +55,147 @@ testcase = {
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    select_backends: function()
+    select_backends : function()
     {
-        prompt(twiki('---++ Various backends can be selected
+        // Test meta data
+        testTitle = "Organizer - select backends";
+        testBinary = "calendardemo";
+        testGoal = "Verify that backends can be selected";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
 
-    1. Launch the *calendardemo* application
-    1. For each item in the backend  ( combo box at top of dialog )
-        1. Choose as current backend
-        1. Verify that the backend can be selected without any error or crash
-    1. Close the *calendardemo* application
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Choose each item as the backend | Verify that the backend can be selected without any error or crash |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
     },
 
-    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    add_event: function()
-    {
-        prompt(twiki('---++ Add Calendar Event
-
-    1. Launch the *calendardemo* application
-    1. Verify the layout and UI of the application is appropriate for device
-    1. Verify the correct day and month is shown.
-    1. Verify that todays date is highlighted
-    1. Verify that no events are listed. If events are listed then
-        1. Remove the events
-        1. Close the *calendardemo* application
-        1. Restart this test case
-    1. Verify that the current backend is the best to suit device
-    1. Add a *valid* event:
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 1\' |
-            | Start time   | today\'s date, 08:00 AM |
-            | End time     | today\'s date, 01:00 PM |
-            | Alarm        | \'30 minutes before\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. Verify that you are presented with the day view for today and that \'Event 1\' is listed with start time shown
-    1. Click \'View Month\' button
-    1. Verify that you are in the Month View with todays date underlined.
-    1. Add an *invalid* event:
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Invalid Event\' |
-            | Start time   | today\'s date, 08:00 AM |
-            | End time     | yesterday\'s date, 01:00 PM |
-            | Alarm        | \'30 minutes before\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. Verify that you are presented with an error: \'Failed! Start date is not before due date\'.
-    1. Click \'Done\'(or \'OK\') button
-    1. Click \'Cancel\' button
-    1. Verify that \'Event Invalid\' is not listed in either Today\'s, nor Yesterday\'s date.
-    1. Add a *valid* event for later today:
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 2\' |
-            | Start time   | today\'s date at 02:00 PM |
-            | End time     | today\'s date at 03:00 PM |
-            | Alarm        | \'15 minutes before\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. Verify that events \'Event 1\' and \'Event 2\' are listed against today\'s date
-    1. Click \'View Month\' button
-    1. Verify that events \'Event 1\' and \'Event 2\' are listed for today\'s date
-    1. Add *valid* event for 2 days into the future:
-        1. Clicking date 2 days into the future in the Calendar View
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 3\' |
-            | Start time   | future date, 06:00 PM |
-            | End time     | future date, 07:00 PM |
-            | Alarm        | \'05 minutes before\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. If \'Memory\' backend is not being used
-        1. Close the *calendardemo* application
-        1. Launch the *calendardemo* application
-    1. Verify that today\'s date has events \'Event 1\' and \'Event 2\' listed with correct details
-    1. Verify that the day after tomorrow has the event \'Event 3\'
-    1. Delete events  \'Event 1\', \'Event 2\', \'Event 3\' (using native calendar application if neccessary)
-    1. Close the *calendardemo* application
-        '));
+    add_event_data : {
+        valid_data : ['There are no events list in calendar', 'Event 1', 'today\'s date, 08:00 AM', 'today\'s date, 01:00 PM', '30 minutes before', 'None', 'Verify that events \'Event 1\' is listed against today\'s date', 'click *view month* button', 'Verify that date of today is underlined in the Month View'],
+        invalid_data : ['None', 'Invalid Event', 'today\'s date, 08:00 AM', 'yesterday\'s date, 01:00 PM', '30 minutes before', 'None', 'Verify that an error message is pop-up: \'Start date is not before end date\'', 'click *done(or ok)* then click *cancel* button', 'Verify that \'Event Invalid\' is not listed in neither Today\'s, nor Yesterday\'s date'],
+        valid_data_later_today : ['None', 'Event 2', 'today\'s date at 02:00 PM', 'today\'s date at 03:00 PM', '15 minutes before', 'None', 'Verify that events \'Event 1\' and \'Event 2\' are listed against today\'s date', 'click *view month*', 'Verify that events \'Event 1\' and \'Event 2\' are listed for today\'s date'],
+        valid_data_2days : ['None', 'Event 3', 'future date, 06:00 PM', 'future date, 07:00 PM', '05 minutes before', 'None', 'Verify that today\'s date has events \'Event 1\' and \'Event 2\' listed with correct details and future date has the event \'Event 3\'', 'Delete events  \'Event 1\', \'Event 2\', \'Event 3\' (using native calendar application if neccessary)', ''],
     },
 
-    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    delete_event: function()
+    add_event: function(precondition, subject, start_time, end_time, alarm, repeat, comment, last_step, verification)
     {
-        prompt(twiki('---++ Delete Calendar Event
+        // Test meta data
+        testTitle = "Organizer - add event";
+        testBinary = "calendardemo";
+        testGoal = "Verify that event can be added";
+        testPreconditions = precondition;
+        testGroups = "BAT_MOBILITY";
 
-    1. Launch the *calendardemo* application
-    1. Select appropriate backend
-    1. Verify that no events are listed. If events are listed then
-        1. Remove the events
-        1. Close the *calendardemo* application
-        1. Restart this test case
-    1. Add the event \'Event 1\':
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 1\' |
-        1. Click \'Save\' button
-    1. Add the event \'Event 2\':
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 2\' |
-        1. Click \'Save\' button
-    1. Verify that \'Event 1\' and \'Event 2\' are listed
-    1. Without selecting any events (no events highlighted), click \'Remove\' button
-    1. Verify that no event has been removed from list.
-    1. Return back to Month View, and reselect todays date.
-    1. Verify that \'Event 1\' and \'Event 2\' are still listed
-    1. Select \'Event 1\'
-    1. Click \'Remove\' button
-    1. Verify that \'Event 1\' has been removed from list of events.
-    1. If \'Memory\' backend is not being used
-        1. Close the *calendardemo* application
-        1. Launch the *calendardemo* application
-        1. Verify that \'Event 1\' is not listed in the list of today\'s events
-    1. Delete events  \'Event 1\'and \'Event 2\' (using native calendar application if neccessary)
-    1. Close the *calendardemo* application
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify the layout and UI of the application is appropriate for device |
+            | | Verify the correct day and month is shown |
+            | | Verify that todays date is highlighted |
+            | | Verify that the current backend is the best to suit device |
+            | Select *Add Event* menu entry (maybe listed under *Options* menu) | |
+            | Enter '" + subject + "' into Subject field | |
+            | Enter '" + start_time + "' into Start time field | |
+            | Enter '" + end_time + "' into End time field | |
+            | Enter '" + alarm + "' into Alarm field | |
+            | Select '" + repeat + "' into Repeat field | |
+            | Click *Save* button | " + comment + " |
+            | " + last_step + " | " + verification + " |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
     },
 
-    // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    edit_event: function()
+    delete_event : function()
     {
-        prompt(twiki('---++ Edit Calendar Event
+        // Test meta data
+        testTitle = "Organizer - delete event";
+        testBinary = "calendardemo";
+        testGoal = "Verify that event can be deleted";
+        testPreconditions = "There are no events list in calendar";
+        testGroups = "BAT_MOBILITY";
 
-    1. Launch the *calendardemo* application
-    1. Select appropriate backend
-    1. Select today\'s date
-    1. Verify that no events are listed. If events are listed then
-        1. Remove the events
-        1. Close the *calendardemo* application
-        1. Restart this test case
-    1. Add the event \'Event 1\':
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 1\' |
-            | Start time   | today\'s date, 08:00 AM |
-            | End time     | today\'s date, 01:00 PM |
-            | Alarm        | \'30 minutes before\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. Add the event \'Event 2\':
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 2\' |
-            | Start time   | today\'s date, 08:00 AM |
-            | End time     | today\'s date, 01:00 PM |
-            | Alarm        | \'30 minutes before\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. Verify that \'Event 1\' and \'Event 2\' are listed
-    1. Edit event \'Event 1\':
-        1. Click(Highlight) event \'Event 1\'
-        1. Click \'Edit\' button
-        1. Enter new details for event \'Event 1\':
-             | Subject      | \'Event 1 Edited\' |
-             | Start time   | tomorrow\'s date, 08:00 AM |
-             | End time     | tomorrow\'s date, 01:00 PM |
-             | Alarm        | \'30 minutes before\' |
-             | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. Verify that \'Event 1 Edited\' is now listed under tomorrow\'s date
-    1. Select \'Event 1 Edited\' and click the \'Edit\' button
-    1. Change \'End time\' of event to today\'s date, leaving \'Start time\' to refer to tomorrow\'s date
-    1. Verify that you are presented with an error: \'Failed! Start date is not before end date\'.
-    1. Click \'Done\' (or \'OK\' button)
-    1. Click \'Cancel\' button
-    1. Verify that \'Event 1 Edited\' has not been edited
-    1. Highlight \'Event 1 Edited\' and click the \'Edit\' button
-    1. Change both \'Start time\' and \'End time\' to today\'s date with a valid range
-    1. Select in Calendar view today\'s date
-    1. Verify that \'Event 2 Edited\' is now listed
-    1. Delete events  \'Event 1 Edited\'and \'Event 2\' (using native calendar application if neccessary)
-    1. Close the *calendardemo* application
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select appropriate as backend | Verify there is no events are listed |
+            | Add Event1 Subject: 'Event 1' |  |
+            | Add Event2 Subject: 'Event 2' | Verify that 'Event 1' and 'Event 2' are listed |
+            | Without selecting any events (no events highlighted), click *Remove* button | Verify that no event has been removed from list |
+            | Return back to Month View, and reselect todays date | Verify that no event has been removed from list |
+            | Select *Event 1* | |
+            | Click *Remove* button | Verify that 'Event 1' has been removed from list of events |
+            | If 'Memory' backend is not being used, close " + testBinary + " then launch it | 'Event 1' is not listed in the list of today\'s events |
+            | Delete events  'Event 1'and 'Event 2' (using native calendar application if neccessary) | |
+            | Close " + testBinary + " | Test application closed successfully | 
+        "));
+    },
+
+    edit_event:function()
+    {
+        // Test meta data
+        testTitle = "Organizer - edit event";
+        testBinary = "calendardemo";
+        testGoal = "Verify that event can be edited";
+        testPreconditions = "There are no events list in calendar";
+        testGroups = "BAT_MOBILITY";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select appropriate backend | |
+            | Select today\'s date | |
+            | Select *Add Event* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject:'Event 1' | |
+            | Enter Start time:today\'s date, 08:00 AM | |
+            | Enter End time:today\'s date, 01:00 PM | |
+            | Select Alarm:'30 minutes before' | |
+            | Select Repeat:'None' | |
+            | Click *Save* button | |
+            | Select *Add Event* menu entry | |
+            | Enter Subject:'Event 2' | |
+            | Enter Start time:today\'s date, 08:00 AM | |
+            | Enter End time:today\'s date, 01:00 PM | |
+            | Select Alarm:'30 minutes before' | |
+            | Select Repeat:'None' | |
+            | Click *Save* button | Verify that 'Event 1' and 'Event 2' are listed |  
+            | Select 'Event 1' and click *Edit* button | |
+            | Enter Subject:'Event 1 Edited' | |
+            | Enter Start time:tomorrow\'s date, 08:00 AM | |
+            | Enter End time:tomorrow\'s date, 01:00 PM | |
+            | Select Alarm:'30 minutes before' | |
+            | Select Repeat 'None' | |
+            | Click *Save* button | Verify that 'Event 1 Edited' is now listed under tomorrow\'s date |
+            | Select 'Event 1 Edited' and click the *Edit* button | |
+            | Change 'End time' of event to today\'s date, leaving 'Start time' to refer to tomorrow\'s date | Verify that an error message is pop-up: 'Start date is not before end date' | 
+            | Click *Done* (or *OK* button) | |
+            | Click *Cancel* button | Verify that 'Event 1 Edited' has not been edited |
+            | Select 'Event 1 Edited' and click the *Edit* button | |
+            | Change both 'Start time' and 'End time' to today\'s date with a valid range | |
+            | Select in Calendar view today\'s date | Verify that 'Event 1 Edited' and 'Event2' are now listed | |
+            | Delete events 'Event 1 Edited'and 'Event 2' | |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
@@ -432,53 +397,84 @@ testcase = {
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     add_journal: function()
     {
-        prompt(twiki('---++ Add Journal Entry
-    1. Launch the *testQtOrganizer* application
-    1. Select \'Organize items\'
-    1. Press \'Create item\' button
-    1. Add a Journal entry:
-        1. Fill in following fileds
-            | Subject | Journal1 |
-            | Reminder | disabled |
-        1. Press Save button and save to default collection
-    1. Verify that Journal1 appears in the items tabel
-    '));
-    },
+        // Test meta data
+        testTitle = "Organizer - add journal";
+        testBinary = "testQtOrganizer";
+        testGoal = "Verify that journal can be added";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Organize items* | |
+            | Press *Create item* button | |
+            | Select Type : 'Journal' | |
+            | Enter 'Journal1' in 'Subject' and select 'disabled' in 'Reminder' | |
+            | Press *Save* button and save to default collection | Verify that Journal1 appears in the items tabel |
+        "));
+    },            
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_journal: function()
     {
-        prompt(twiki('---++ Edit Journal Entry
-    1. Launch the *testQtOrganizer* application
-    1. Select \'Organize items\'
-    1. Press \'Create item\' button
-    1. Add a Journal entry:
-        1. Fill in following fields:
-            | Subject | Journal1 |
-            | Reminder |disabled |
-        1.Press Save button and save to default collection
-    1. Select Joutnal1 and press \'Edit...\' button
-    1. Modify label to Journal2 and save the changes
-    1. Verify that tabel has Journal2 record and no Journal1
-    '));
-    },
+        // Test meta data
+        testTitle = "Organizer - edit journal";
+        testBinary = "testQtOrganizer";
+        testGoal = "Verify that journal can be edited";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
 
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select 'Organize items', then press 'Create item' button | |
+            | Enter Display label: 'Journal1' | |
+            | Select Type : 'Journal' and disable the Reminder | |
+            | Press *Save* button and save to default collection | |
+            | Select 'Journal1' and press *Edit...* button | |
+            | Modify label to Journal2 and press *Save* button | Verify that there is Journal2 record without Journal1 |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
+    
+    },
+    
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    delete_journal: function()
+   delete_journal: function()
     {
-        prompt(twiki('---++ Delete Journal Entry
-    1. Launch the *testQtOrganizer* application
-    1. Select \'Organize items\'
-    1. Press \'Create item\' button
-    1. Add a Journal entry:
-        1. Fill in following fields:
-            | Subject | Journal1 |
-            | Reminder | disabled |
-        1. Press Save button and save to default collection
-    1. Add a Journal enry Journal2
-    1. Select Joutnal1 and press \'Remove...\' button
-    1.Verify that tabel has no Journal1 record and has Journal2
-    '));
+        // Test meta data
+        testTitle = "Organizer - delete journal";
+        testBinary = "testQtOrganizer";
+        testGoal = "Verify that journal can be deleted";
+        testPreconditions = "There are no journal in calendar";
+        testGroups = "BAT_MOBILITY";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Organize* item |  |
+            | Press *Create item* button |  |
+            | Add Journal entry: with Subject: 'Journal1', Type : 'Journal' and Reminder : 'disabled' |  |
+            | Press *Save* button and save to default collection |  |
+            | Add a Journal entry with Subject: 'Journal2' | Verify that 'Journal1' and 'Journal2' are listed |
+            | Select *Journal1* and press *Remove* button | Verify that 'Journal1' disappear in the tabel record only 'Journal2' in it |
+
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280

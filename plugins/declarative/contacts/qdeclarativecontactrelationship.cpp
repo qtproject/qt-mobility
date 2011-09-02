@@ -46,6 +46,7 @@
    \qmlclass Relationship QDeclarativeContactRelationship
    \brief The Relationship element describes a one-to-one relationship
   between a locally-stored contact and another (possibly remote) contact.
+  \since Mobility 1.1
 
    \ingroup qml-contacts
 
@@ -69,6 +70,7 @@ QDeclarativeContactRelationship::QDeclarativeContactRelationship(QObject* parent
 
 /*!
   \qmlproperty int Relationship::first
+  \since Mobility 1.1
 
   This property holds the id of the locally-stored contact which has a relationship of the given type with the second contact.
   */
@@ -80,6 +82,7 @@ QContactLocalId QDeclarativeContactRelationship::first() const
 
 /*!
   \qmlproperty int Relationship::second
+  \since Mobility 1.1
 
   This property holds the id of the contact with which the first contact has a relationship of the given type.
   */
@@ -90,6 +93,7 @@ QContactLocalId  QDeclarativeContactRelationship::second() const
 
 /*!
   \qmlproperty string Relationship::type
+  \since Mobility 1.1
 
   This property holds the type of relationship which the source contact has with the destination contacts.
   The value for this property can be one of:

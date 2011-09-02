@@ -67,14 +67,26 @@ A device specific headset is required to be connected to device for radio testin
 
     play_an_audio_file: function(extension, filename, format)
     {
-        prompt(twiki("Ensure a test "+extension+" file is available on device"));
-        prompt(twiki("Launch player application
-Select [Open]
-In [Open File] select the "+filename+extension+" file to return to player UI
-Verify selected file has populated playlist window
-Highlight file in playlist window by clicking on it
-Select [Play]
-Verify that the "+format+" file is audible on device"));
+        // Test meta data
+        testTitle = "Multimedia - Play Audio File";
+        testBinary = "player";
+        testGoal = "Verify that Audio files can be played.";
+        testPreconditions = "Audio files in " + extension + " format are available on device.";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | Select [Open] | |
+           | In [Open File] select the "+filename+extension+" file to return to player UI | Verify selected file has  populated playlist window |
+           | Highlight file in playlist window by clicking on it | |
+           | Select [Play] | Verify that the " + format + " file is audible on device |
+         "));
     },
 
     basic_player_controls_for_audio_data: {
@@ -83,51 +95,49 @@ Verify that the "+format+" file is audible on device"));
 
     basic_player_controls_for_audio: function(extension, filename, format)
     {
-        prompt(twiki("Ensure a test "+extension+" file is available on device"));
-prompt(twiki("Launch player application
-Select [Open]
-In [Open File] select the "+filename+extension+" file to return to player UI
-Select [Play] to play the file
-Select [Pause]
-Verify that file has paused
-Verify that [Pause] control has now changed to [Play] control
-Select [Play]
-Verify that file continues to play from where previously paused.
-Verify that [Play] icon is now a [Pause] icon
-Select [Next File] control
-Verify that next file in playlist is playing from start
-After some time (10-20 sec) Select [Beginning of File] control
-Verify that current file is being played from start
-Let some arbitrary time pass, then Select [Beginning of File] control twice in quick succession.
-Verify that previous file in playlist is playing from start
-Select [Stop] control
-Verify that file has stopped playing
-Select [Play]
-Verify that file continues to play from start of file.
-Let file play till end
-Verify player continues playing the next file in the playlist window
-After some arbitrary time, Select [Stop]
-Select [Next File] control
-Verify that next file in playlist is highlighted
-Verify that file is not automatically playing
-Select [Beginning of File] control
-Verify that previous file in playlist is highlighted
-Select file in playlist
-Verify that file plays in player.
-Select number of files greater than can be displayed without scrolling in to playlist
-Verify that list can be scrolled through
-With file playing, verify that hardware keys can change volume up and down
-With file playing, verify that UI volume control slider can change volume up and down
-Select volume at 50% (or thereabout)
-Select [Mute]
-Verify that sound is muted while file is playing
-Verify that [Mute] control is displaying the Muted icon
-Select [Mute] control again
-Verify that sound has reverted back to level selected prior to muting
-Drag positional slider to right, then release
-Verify that player continues to play file at later part of file
-Drag positional slider to left, then release
-Verify that player continues to play file at earlier part of file"));
+         // Test meta data
+         testTitle = "Multimedia - Audio Player Controls";
+         testBinary = "";
+         testGoal = "Verify that ";
+         testPreconditions = "a test "+extension+" file is available on device";
+         testGroups = "BAT";
+
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select [Open] | |
+            | In [Open File] select the "+filename+extension+" file to return to player UI | |
+            | Select [Play] to play the file | |
+            | Select [Pause] | Verify that file has paused |
+            | | Verify that [Pause] control has now changed to [Play] control |
+            | Select [Play] | Verify that file continues to play from where previously paused. |
+            | | Verify that [Play] icon is now a [Pause] icon |
+            | Select [Next File] control | Verify that next file in playlist is playing from start |
+            | After some time (10-20 sec) Select [Beginning of File] control | Verify that current file is being played  from start |
+            | Let some arbitrary time pass, then Select [Beginning of File] control twice in quick succession. | Verify that previous file in playlist is playing from start |
+            | Select [Stop] control | Verify that file has stopped playing |
+            | Select [Play] | Verify that file continues to play from start of file. |
+            | Let file play till end | Verify player continues playing the next file in the playlist window |
+            | After some arbitrary time, Select [Stop] | |
+            | Select [Next File] control | Verify that next file in playlist is highlighted |
+            | | Verify that file is not automatically playing |
+            | Select [Beginning of File] control | Verify that previous file in playlist is highlighted |
+            | Select file in playlist | Verify that file plays in player. |
+            | Select number of files greater than can be displayed without scrolling in to playlist | Verify that list can be scrolled through |
+            | With file playing, verify that hardware keys can change volume up and down | |
+            | With file playing, verify that UI volume control slider can change volume up and down | |
+            | Select volume at 50% (or thereabout) | |
+            | Select [Mute] | Verify that sound is muted while file is playing |
+            | | Verify that [Mute] control is displaying the Muted icon |
+            | Select [Mute] control again | Verify that sound has reverted back to level selected prior to muting |
+            | Drag positional slider to right, then release | Verify that player continues to play file at later part of file |
+            | Drag positional slider to left, then release | Verify that player continues to play file at earlier part of file |
+         "));
 
 // Note: [Color Option] is not implemented so far in player
 // Note: [Full Screen] opens a blank screen with no content
@@ -140,23 +150,34 @@ Verify that player continues to play file at earlier part of file"));
 
     seek_controls_for_audio: function(extension, filename, format)
     {
-        prompt(twiki("Ensure a test "+extension+" file is available on device"));
-prompt(twiki("Launch player application
-Select [Open]
-In [Open File] select the "+filename+extension+" file to return to player UI
-Select [Play] to play the file
-Select the [1.0] (Multiplier) control.
-Select [2.0]
-Verify that file is playing at double speed
-With multiplier control set on [2.0], select a new file from the playlist window
-Verify that the Multiplier control has reverted back to [1.0]
-Verify that the audio is playing at normal speed
-Select [Multiplier] control.
-Select [0.5]
-Verify that file is playing at half speed
-With multiplier control set on [0.5], select a new file from the playlist window
-Verify that the Multiplier control has reverted back to [1.0]
-Verify that the audio is playing at normal speed"));
+         // Test meta data
+         testTitle = "Multimedia - Audio Seek Controls";
+         testBinary = "player";
+         testGoal = "Verify that audio files can be 'searched'";
+         testPreconditions = "a test "+extension+" file is available on device";
+         testGroups = "BAT";
+
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select [Open] | |
+            | In [Open File] select the "+filename+extension+" file to return to player UI | |
+            | Select [Play] to play the file | |
+            | Select the [1.0] (Multiplier) control. | |
+            | Select [2.0] | |
+            | Verify that file is playing at double speed | |
+            | With multiplier control set on [2.0], select a new file from the playlist window | Verify that the  Multiplier control has reverted back to [1.0] |
+            | | Verify that the audio is playing at normal speed |
+            | Select [Multiplier] control. | |
+            | Select [0.5] | Verify that file is playing at half speed |
+            | With multiplier control set on [0.5], select a new file from the playlist window | Verify that the  Multiplier control has reverted back to [1.0] |
+            | | Verify that the audio is playing at normal speed |
+      "));
     },
 
     play_a_video_file_data: {
@@ -165,15 +186,27 @@ Verify that the audio is playing at normal speed"));
 
     play_a_video_file: function(extension, filename, format)
     {
-        prompt(twiki("Ensure a test "+extension+" file is available on device"));
-prompt(twiki("Launch player application
-Select [Open]
-In [Open File] select the "+filename+extension+" file to return to player UI
-Select [Play] to play the file
-Verify selected file has populated playlist
-Highlight file in playlist by clicking on it
-Select [Play]
-Verify that .MP4 file is playing on device"));
+      // Test meta data
+      testTitle = "Multimedia - Play Video File";
+      testBinary = "player";
+      testGoal = "Verify that video files can be played. ";
+      testPreconditions = "a test "+extension+" file is available on device.";
+      testGroups = "BAT";
+
+      // Test steps
+      prompt(twiki("---+++ " + testTitle + "<br><br>
+          *Goal:* " + testGoal + "<br>
+          *Pre-Requisites:* " + testPreconditions + "<br>
+          *Tested Binary:* " + testBinary + "<br>
+
+         | *Step* | *Verification* |
+         | Launch " + testBinary + " | App launches normally |
+         | Select [Open] | |
+         | In [Open File] select the "+filename+extension+" file to return to player UI | |
+         | Select [Play] to play the file | Verify selected file has populated playlist |
+         | Highlight file in playlist by clicking on it | |
+         | Select [Play] | Verify that .MP4 file is playing on device |
+      "));
     },
 
     basic_controls_for_video_data: {
@@ -182,67 +215,78 @@ Verify that .MP4 file is playing on device"));
 
     basic_controls_for_video: function(extension, filename, format)
     {
-        prompt(twiki("Launch player application
-Select [Open]
-In [Open File] select the "+filename+extension+" file to return to player UI
-Select [Play] to play the file
-Select [Pause]
-Verify that file has paused
-Verify that the [Pause] icon has changed to a [Play] icon
-Select [Play]
-Verify that the [Play] icon has changed to a [Pause] icon
-Verify that file continues to play from where previously paused.
-Select [Next File]
-Verify that next file in playlist is playing from start
-After some time (10-20 sec) Select [Beginning of File] control
-Verify that current file is being played from start
-Let arbitrary time pass, then Select [Beginning of File] control twice in quick succession.
-Verify that previous file in playlist is playing from start
-Select [Stop]
-Verify that file has stopped playing
-Select [Play]
-Verify that file continues to play from start of file.
-Let file play till end
-Verify player stops at end of file.
-Start playing file.
-After arbitrary time, Select [Stop]
-Select [Next File]
-Verify that next file in playlist is highlighted
-Verify that file is not automatically playing
-Select [Beginning of File]
-Verify that previous file in playlist is highlighted
-Select file in playlist
-Verify that file plays in player.
-Select number of files greater than can be displayed without scrolling in to playlist
-Verify that list can be scrolled through
-With file playing, verify that hardware keys can change volume up and down
-With file playing, verify that UI volume control slider can change volume up and down
-Select volume at 50% (or thereabout)
-Select [Mute] control
-Verify that sound is muted while file is playing
-Verify that [Mute] control is displaying the Muted icon
-Select [Mute] control again
-Verify that sound has reverted back to level selected prior to muting
-Drag positional slider to right, then release
-Verify that player continues to play file at later part of file
-Drag positional slider to left, then release
-Verify that player continues to play file at earlier part of file
-Start playing file
-Select [FullScreen] control
-Verify that video is now playing in Fullscreen mode
-When at end of current file, verify that next file in playlist is being played
-When at last file in playlist and at end of file, verify that fullscreen mode is exited and user returned to player interface and that [FullScreen] is no longer selected."));
+      // Test meta data
+      testTitle = "Multimedia - Video Controls";
+      testBinary = "player";
+      testGoal = "Verify that video file replay can be start/stop/paused";
+      testPreconditions = "a test "+extension+" file is available on device.";
+      testGroups = "BAT";
+
+      // Test steps
+      prompt(twiki("---+++ " + testTitle + "<br><br>
+          *Goal:* " + testGoal + "<br>
+          *Pre-Requisites:* " + testPreconditions + "<br>
+          *Tested Binary:* " + testBinary + "<br>
+
+         | *Step* | *Verification* |
+         | Launch " + testBinary + " | App launches normally |
+         | Select [Open] | |
+         | In [Open File] select the "+filename+extension+" file to return to player UI | |
+         | Select [Play] to play the file | |
+         | Select [Pause] | Verify that file has paused |
+         | | Verify that the [Pause] icon has changed to a [Play] icon |
+         | Select [Play] | Verify that the [Play] icon has changed to a [Pause] icon |
+         | | Verify that file continues to play from where previously paused. |
+         | Select [Next File] | Verify that next file in playlist is playing from start |
+         | After some time (10-20 sec) Select [Beginning of File] control | Verify that current file is being played from start |
+         | Let arbitrary time pass, then Select [Beginning of File] control twice in quick succession.| Verify that previous file in playlist is playing from start |
+         | Select [Stop] | Verify that file has stopped playing |
+         | Select [Play] | Verify that file continues to play from start of file. |
+         | Let file play till end | Verify player stops at end of file. |
+         | Start playing file. | |
+         | After arbitrary time, Select [Stop] | |
+         | Select [Next File] | Verify that next file in playlist is highlighted |
+         | | Verify that file is not automatically playing |
+         | Select [Beginning of File] | Verify that previous file in playlist is highlighted |
+         | Select file in playlist | Verify that file plays in player. |
+         | Select number of files greater than can be displayed without scrolling in to playlist | Verify that list can be scrolled through |
+         | With file playing, verify that hardware keys can change volume up and down | |
+         | With file playing, verify that UI volume control slider can change volume up and down | |
+         | Select volume at 50% (or thereabout) | |
+         | Select [Mute] control | Verify that sound is muted while file is playing |
+         | | Verify that [Mute] control is displaying the Muted icon |
+         | Select [Mute] control again | Verify that sound has reverted back to level selected prior to muting |
+         | Drag positional slider to right, then release | Verify that player continues to play file at later part of file |
+         | Drag positional slider to left, then release | Verify that player continues to play file at earlier part of file |
+         | Start playing file | |
+         | Select [FullScreen] control | Verify that video is now playing in Fullscreen mode |
+         | When at end of current file | Verify that next file in playlist is being played |
+         | When at last file in playlist and at end of file | Verify that fullscreen mode is exited and user returned to player interface and that [FullScreen] is no longer selected. |
+       "));
     },
 
     seek_controls_for_video: function()
     {
-        prompt(twiki("
-While playing a video file, Select or Tap on [1.0] (Multiplier) control
-Select [2.0]
-Verify that file is playing at double speed
-Select [Multiplier] control
-Select [0.5]
-Verify that file is playing at half speed"));
+       // Test meta data
+       testTitle = "Multimedia - Video Seek";
+       testBinary = "player";
+       testGoal = "Verify that video files can be played at various replay speeds (search mode).";
+       testPreconditions = "Video files are available for testing on the device.";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | While playing a video file, Select or Tap on [1.0] (Multiplier) control | |
+          | Select [2.0] | Verify that file is playing at double speed |
+          | Select [Multiplier] control | |
+          | Select [0.5] | Verify that file is playing at half speed |
+        "));
     },
 
     basic_controls_for_streamed_content: function()
@@ -253,93 +297,232 @@ Verify that file is playing at half speed"));
 //            run-standalone.sh ./player http://202.6.74.107:8060/triplej.mp3
 //*Note* For this test you need a playlist of streaming media urls. Suggest: http://202.6.74.107:8060/triplej.mp3 ; http://www.abc.net.au/streaming/triplej.asx ; rtsp://media1.abc.net.au/broadcast/triplej.rm ; mms://media3.abc.net.au/triplej ; depending on your platform and backend support.
 
-        prompt(twiki("Launch player application
-In player application, Select or Tap [Open]
-In [Open File] navigate and highlight test playlist file
-Select or Tap on selected file to return to player UI
-Verify selected file has populated playlist
-Highlight file in playlist by selecting or clicking it
-Select [Play]
-Verify that stream is playing on device
-Select [Pause]
-Verify that stream is paused on device
-Verify that the [Pause] button has changed to a [Play] button
-Select [Play] again
-Verify that stream is playing on device
-Select [Stop]
-Open local mp3 file in to play list and select it to play
-Verify that the mp3 plays while the stream name is still present in the playlist
-Re-select the stream in the playlist
-Verify that the stream starts playing again
-Select [Next File]
-Verify that the player started playing the next file in the playlist
-Select [Previous File]
-Verify that the original stream is playing again
-During stream playback, have headphones connected to device
-Verify that the sound is now playing through the headphones
-Invoke a system notification on the device (such as an incoming SMS)
-Verify that the device correctly transmits the audible system notification through the devices speakers and then returns to playing the stream through the headphones"));
+       // Test meta data
+       testTitle = "Multimedia - Content Streaming";
+       testBinary = "player";
+       testGoal = "Verify that streaming playlist can be played.";
+       testPreconditions = "";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | In player application, Select or Tap [Open] | |
+          | In [Open File] navigate and highlight test (streaming) playlist file | |
+          | Select or Tap on selected file to return to player UI | Verify selected file has populated playlist |
+          | Highlight file in playlist by selecting or clicking it | |
+          | Select [Play] | Verify that stream is playing on device |
+          | Select [Pause] | Verify that stream is paused on device |
+          | | Verify that the [Pause] button has changed to a [Play] button |
+          | Select [Play] again | Verify that stream is playing on device |
+          | Select [Stop] | |
+          | Open local mp3 file in to play list and select it to play | Verify that the mp3 plays while the stream name is still present in the playlist |
+          | Re-select the stream in the playlist | Verify that the stream starts playing again |
+          | Select [Next File] | Verify that the player started playing the next file in the playlist |
+          | Select [Previous File] | Verify that the original stream is playing again |
+          | During stream playback, have headphones connected to device | Verify that the sound is now playing through the headphones |
+          | Invoke a system notification on the device (such as an incoming SMS) | Verify that the device correctly transmits the audible system notification through the devices speakers and then returns to playing the stream through the headphones |
+        "));
     },
-    
+
     play_a_radio_transmission: function()
     {
-//    *Note* This test requires radio reception and headphones to be connected to device
-//    *Note* Audible system notifications should be enabled for this test
+        // Test meta data
+        testTitle = "Multimedia - Play Radio Transmission";
+        testBinary = "radio";
+        testGoal = "Verify that radio stations can be played.";
+        testPreconditions = "1. This test requires radio reception and headphones to be connected to device.";
+        testGroups = "BAT";
 
-        prompt(twiki("Start Radio application
-Verify that 0 KHz and No Signal is displayed
-Select [Scan Up]
-Audible white noise should be heard as the radio searches for a frequency lock
-Frequency should be increasing in 100 KHz steps until a strong signal is found
-Verify that a radio signal can be heard. It is possible for the radio to lock on a silent station signal, in that case progress further up the frequencies
-Once a strong audible signal is found
-Verify that the stations frequency and Got Signal message is displayed
-Select [Scan Up]
-Verify that the radio has moved off the previous station and in progressing through the frequencies
-Once on a radio station, Select [Freq Up]
-Verify that the radio frequency has moved off the station by 100KHz and is stationary
-Select [Freq Up] again
-Verify that the radio frequency has moved up another 100KHz and is stationary
-Select [Freq Down] twice
-Verify that you are now at the frequency of the previous radio station and that the signal is audible
-Select [Scan Down]
-Verify that the radio has moved off the previous station, progressing through the frequencies, and finds the original station from this test
-Exit the radio application
-Verify that the radio station is no longer heard"));
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | | Verify that 0 KHz and No Signal is displayed |
+           | Select [Scan Up] | Audible white noise should be heard as the radio searches for a frequency lock. Frequency should be increasing in 100 KHz steps until a strong signal is found |
+           | | Verify that a radio signal can be heard. It is possible for the radio to lock on a silent station signal, in that case progress further up the frequencies |
+           | Once a strong audible signal is found | Verify that the stations frequency and Got Signal message is displayed |
+           | Select [Scan Up] | Verify that the radio has moved off the previous station and in progressing through the frequencies |
+           | Once on a radio station, Select [Freq Up] | Verify that the radio frequency has moved off the station by 100KHz and is stationary |
+           | Select [Freq Up] again | Verify that the radio frequency has moved up another 100KHz and is stationary |
+           | Select [Freq Down] twice | Verify that you are now at the frequency of the previous radio station and that the signal is audible |
+           | Select [Scan Down] | Verify that the radio has moved off the previous station, progressing through the frequencies, and finds the original station from this test |
+           | Exit the radio application | Verify that the radio station is no longer heard |
+         "));
     },
 
     radio_interrupted_by_system_notification: function()
     {
-        prompt(twiki("Launch the radio application
-Locate a strong radio station signal by scanning upwards
-While on a strong and audible radio signal, evoke a system notification on device (eg: incoming SMS, alarm notification)
-Verify that after the system notification has been delivered, the radio reverts to outputting the audio signal back through the headphones"));
+        // Test meta data
+        testTitle = "Multimedia - Play Radio With Interruptions";
+        testBinary = "radio";
+        testGoal = "Verify that radio play can be interrupted by system notifications.";
+        testPreconditions = "1. Audible system notifications should be enabled for this test.<br>2. This test requires radio reception and headphones to be connected to device.";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | Locate a strong radio station signal by scanning upwards | |
+           | While on a strong and audible radio signal, evoke a system notification on device (eg: incoming SMS, alarm notification) | Verify that after the system notification has been delivered, the radio reverts to outputting the audio signal back through the headphones |
+         "));
     },
 
-    basic_radio_controls: function()
+    radio_volume_control: function()
     {
-        prompt(twiki("Launch the radio application
-Locate a strong radio station signal by scanning upwards
-While on a strong and audible radio signal, move volume slider to the right
-Verify that the audio volume of the radio station is amplified
-Move volume slider to the left
-Verify that the audio volume is lowered
-Move the volume slider all the way to the left
-Verify that the sound is now completely muted"));
+     // Test meta data
+     testTitle = "Multimedia - Radio Volume Control";
+     testBinary = "radio";
+     testGoal = "Verify that the radio volume can be controlled.";
+     testPreconditions = "1. This test requires radio reception and headphones to be connected to device.";
+     testGroups = "BAT";
+
+     // Test steps
+     prompt(twiki("---+++ " + testTitle + "<br><br>
+         *Goal:* " + testGoal + "<br>
+         *Pre-Requisites:* " + testPreconditions + "<br>
+         *Tested Binary:* " + testBinary + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Locate a strong radio station signal by scanning upwards | |
+        | While on a strong and audible radio signal, move volume slider to the right | Verify that the audio volume of the radio station is amplified |
+        | Move volume slider to the left | Verify that the audio volume is lowered |
+        | Move the volume slider all the way to the left | Verify that the sound is now completely muted |
+       "));
     },
 
     take_a_photo: function()
     {
-        prompt(twiki("Launch camera application
- If device has lens cover, make sure it is open
- Select Image tab to put camera in still mode
- Verify the intended scene is reproduced in the preview/viewfinder
- Select Capture Photo
- If applicable, verify that flash has triggered
- Verify that image is shown on screen for preview
- Verify that a new file is in the Images folder and accessabble with the image viewer
- Select given image and Verify that it is a true representation of the intended sceen
- Verify the image has no unintended artifacts and noise and is properly formatted"));
+         // Test meta data
+         testTitle = "Multimedia - Photo Camera";
+         testBinary = "camera";
+         testGoal = "Verify that a photo can be made with the camera.";
+         testPreconditions = "";
+         testGroups = "BAT";
+
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | If device has lens cover, make sure it is open | |
+            | Select Image tab to put camera in still mode |  Verify the intended scene is reproduced in the preview/viewfinder |
+            | Select Capture Photo | If applicable, verify that flash has triggered |
+            | | Verify that image is shown on screen for preview |
+            | | Verify that a new file is in the Images folder and accessabble with the image viewer |
+            | Select given image | Verify that it is a true representation of the intended sceen |
+            | | Verify the image has no unintended artifacts and noise and is properly formatted |
+          "));
+    },
+
+change_camera_settings: function()
+{
+     // Test meta data
+     testTitle = "Multimedia - Photo Camera";
+     testBinary = "camera";
+     testGoal = "Verify that the camera can change its Still Camera settings successfully.";
+     testPreconditions = "";
+     testGroups = "BAT";
+
+     // Test steps
+     prompt(twiki("---+++ " + testTitle + "<br><br>
+         *Goal:* " + testGoal + "<br>
+         *Pre-Requisites:* " + testPreconditions + "<br>
+         *Tested Binary:* " + testBinary + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | If device has lens cover, make sure it is open | |
+        | Change Exposure Compensatioin on the slider in the main UI | Verify that the change in value affects the picture qwality in expected fashion |
+        | Select Settings/File/Setrtings | Verify that you have an option to change Image Resolution, Image Format and Quality |
+        | Change Image Resolution to another supported resolution | Verify that you can take stills with various resolutions |
+        | Change Image Format to another supported format | Verify that you can take stills with various Image Formats |
+        | Sellect Settings/Device/Secondary Device | Verify that you can see the view from the Front Facing Camera on the viewfinder |
+        |  | Varify that you can take still images from the Front Facing Camera |
+        | Select Settings/File/Exit | Verify that the application has now closed |
+
+      "));
+},
+
+    take_a_video: function()
+    {
+        // Test meta data
+         testTitle = "Multimedia - Video Camera";
+         testBinary = "camera";
+        testGoal = "Verify that the camera can capture and save an audio/video file.";
+        testPreconditions = "";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | If device has lens cover, make sure it is open | |
+            | Select Video tab to put camera in video mode |  Verify the intended scene is reproduced in the preview/viewfinder |
+            | Select Record Video | Verify that video is shown on screen for preview |
+            | Select Pause | Verify that the Recorded counter has stopped |
+            | Select Record again | Verify that the Recorded counter has continued counting |
+            | Select Stop | Verify that the recording has now stopped |
+            | | Verify that a new file is in the Images folder and accessabble with the player |
+            | Select given video | Verify that it is a true representation of the intended sceen |
+            |  | Verify that the Pause in the recording has happened and that recording continued without an issue after that |
+            | | Verify the image has no unintended artifacts and noise and is properly formatted |
+        "));
+    },
+
+    change_video_settings: function()
+    {
+        // Test meta data
+        testTitle = "Multimedia - Video Camera";
+        testBinary = "camera";
+        testGoal = "Verify that the camera can change its Video settings successfully.";
+        testPreconditions = "";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | If device has lens cover, make sure it is open | |
+            | Select Video tab to put camera in video mode |  Verify the intended scene is reproduced in the preview/viewfinder |
+            | In the Menu Bar, select Settings/Devices | Verify that you can select Primay and Secondary Camera on Device |
+            | Select Secondary Camera | Verify that devise is now showing video stram from Front Facing camera |
+            | Select Settings/File/Settings | Verify that you now have otion to select Audio Codecs, Resolution Sample Rate, Framerate, Quality, Video Codecs and Container Format |
+            | Change Audio Codecs to another supported Codecs | Verify that camera can record |
+            | Change Resolutiuon to another supported Resolution | Verify that camera can record |
+            | Change Sample Rate to another supported Sample Rate | Verify that camera can record |
+            | Change Framerate to another supported Framerate | Verify that camera can record |
+            | Change Quality | Verify that camera can record |
+            | Change Video Codecs to another supported Video Codecs | Verify that camera can record |
+            | Change Container Format | Verify that camera can record |
+            | Change Quality | Verify that camera can record |
+        "));
     },
 
     record_an_audio_file: function()
@@ -348,23 +531,34 @@ Verify that the sound is now completely muted"));
 // Note: On Maemo5, accepting the default for Input Device, Audio Codec, File Container and Sample Rate will produce a valid audio file.
 // Note: Selecting the alternative selection, if available, works as well.
 
-        prompt(twiki("Open audiorecorder application
- Select Input Device
- Select Audio Codec
- Select File Container
- Select Sample Rate
- Select Quality and Bitrate
- Select Output... and select location and name of output file
- Select Record
- Verify that [Record] button has changed in to [Stop]
- Verify that Duration is counting seconds
- Verify that Recording is displayed
- Select Stop
- Verify that Duration is now 0
- Select Output File in file browser
- Verify that an audio file has been generated
- Play output file in media player
- Verify that audible audio is recorded in file"));
+      // Test meta data
+      testTitle = "Multimedia - Recording Audio";
+      testBinary = "audiorecorder";
+      testGoal = "Verify that audio can be recorded.";
+      testPreconditions = "";
+      testGroups = "BAT";
+
+      // Test steps
+      prompt(twiki("---+++ " + testTitle + "<br><br>
+          *Goal:* " + testGoal + "<br>
+          *Pre-Requisites:* " + testPreconditions + "<br>
+          *Tested Binary:* " + testBinary + "<br>
+
+         | *Step* | *Verification* |
+         | Launch " + testBinary + " | App launches normally |
+         | Select Input Device | |
+         | Select Audio Codec | |
+         | Select File Container | |
+         | Select Sample Rate | |
+         | Select Quality and Bitrate | |
+         | Select Output... and select location and name of output file | |
+         | Select Record | Verify that [Record] button has changed in to [Stop] |
+         | | Verify that Duration is counting seconds |
+         | | Verify that Recording is displayed |
+         | Select Stop | Verify that Duration is now 0 |
+         | Select Output File in file browser | Verify that an audio file has been generated |
+         | Play output file in media player | Verify that audible audio is recorded in file |
+        "));
     },
 
 pause_recording_an_audio_file: function()
@@ -372,62 +566,75 @@ pause_recording_an_audio_file: function()
 // Note: On Maemo5, accepting the default for Input Device, Audio Codec, File Container and Sample Rate will produce a valid audio file.
 // Note: Selecting the alternative selection, if available, works as well.
 
-        prompt(twiki("Open audiorecorder application
- Select Input Device
- Select Audio Codec
- Select File Container
- Select Sample Rate
- Select Quality and Bitrate
- Select Output... and select location and name of output file
- Select Record
- Verify that [Record] button has changed in to [Stop]
- Verify that Duration is counting seconds
- Verify that Recording is displayed
- Select Pause
- Verify that instead of Duration, Paused is displayed
- Select Resume
- Verify that the counter has resumed the seconds count from where it was previously paused.
- After a arbitrary time, Stop the recording.
- Select Output File in file browser
- Verify that an audio file has been generated
- Play output file in media player
- Verify that audible audio is recorded in file and that audio is only recorded for period that Pause was not selected
- Verify there is no audible artifact that separates the two or more recording periods, that is that the joint is seamless"));
+      // Test meta data
+      testTitle = "Multimedia - Pause Recording Audio";
+      testBinary = "audiorecorder";
+      testGoal = "Verify that audio recordings can be paused.";
+      testPreconditions = "";
+      testGroups = "BAT";
+
+      // Test steps
+      prompt(twiki("---+++ " + testTitle + "<br><br>
+          *Goal:* " + testGoal + "<br>
+          *Pre-Requisites:* " + testPreconditions + "<br>
+          *Tested Binary:* " + testBinary + "<br>
+
+         | *Step* | *Verification* |
+         | Launch " + testBinary + " | App launches normally |
+         | Select Input Device | |
+         | Select Audio Codec | |
+         | Select File Container | |
+         | Select Sample Rate | |
+         | Select Quality and Bitrate | |
+         | Select Output... and select location and name of output file | |
+         | Select Record | Verify that [Record] button has changed in to [Stop] |
+         | | Verify that Duration is counting seconds |
+         | | Verify that Recording is displayed |
+         | Select Pause | Verify that instead of Duration, Paused is displayed |
+         | Select Resume | Verify that the counter has resumed the seconds count from where it was previously paused. |
+         | After a arbitrary time, Stop the recording. | |
+         | Select Output File in file browser | Verify that an audio file has been generated |
+         | Play output file in media player | Verify that audible audio is recorded in file and that audio is only recorded for period that Pause was not selected |
+         | | Verify there is no audible artifact that separates the two or more recording periods, that is that the joint is seamless |
+        "));
     },
 
     play_a_slideshow: function()
     {
-        prompt(twiki("Launch the slideshow application
-Select [Open] Icon
-Select Directory from the list
-Navigate to desired directory
-Select desired directory containing pictures
-Select [Play]
-Verify that the slideshow starts
-Select [Pause]
-Verify that slideshow stops on given image
-Select [Play] again
-Verify that slideshow resumes
-Select [Next File]
-Verify that slideshow jumps to next image in directory
-Select [Previous File]
-Verify that slideshow jumps to previous image in directory
-Select [Stop]
-Verify that slideshow has stopped
-Select [Open] Icon
-Select Playlist from the list
-Select [Play]
-Verify that slideshow starts
-Select [Pause]
-Verify that slideshow stops on given image
-Select [Play] again
-Verify that slideshow resumes
-Select [Next File]
-Verify that slideshow jumps to next image in directory
-Select [Previous File]
-Verify that slideshow jumps to previous image in directory
-Select [Stop]
-Verify that slideshow has stopped"));
-    }
+       // Test meta data
+       testTitle = "Multimedia - Play Slideshow";
+       testBinary = "slideshow";
+       testGoal = "Verify that a slideshow can be played.";
+       testPreconditions = "";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | Select [Open] Icon | |
+          | Select Directory from the list | |
+          | Navigate to desired directory | |
+          | Select desired directory containing pictures | |
+          | Select [Play] | Verify that the slideshow starts |
+          | Select [Pause] | Verify that slideshow stops on given image |
+          | Select [Play] again | Verify that slideshow resumes |
+          | Select [Next File] | Verify that slideshow jumps to next image in directory |
+          | Select [Previous File] | Verify that slideshow jumps to previous image in directory |
+          | Select [Stop] | Verify that slideshow has stopped |
+          | Select [Open] Icon | |
+          | Select Playlist from the list | |
+          | Select [Play] | Verify that slideshow starts |
+          | Select [Pause] | Verify that slideshow stops on given image |
+          | Select [Play] again | Verify that slideshow resumes |
+          | Select [Next File] | Verify that slideshow jumps to next image in directory |
+          | Select [Previous File] | Verify that slideshow jumps to previous image in directory |
+          | Select [Stop] | Verify that slideshow has stopped |
+        "));
+    },
 
 }

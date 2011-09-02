@@ -1213,7 +1213,7 @@ EXPORTS
 	??1QContactObserver@QtMobility@@UAE@XZ @ 1212 NONAME ; QtMobility::QContactObserver::~QContactObserver(void)
 	?ProtocolIrc@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$03@2@B @ 1213 NONAME ; struct QtMobility::QLatin1Constant<4> const QtMobility::QContactOnlineAccount::ProtocolIrc
 	?match@QContactFavorite@QtMobility@@SA?AVQContactFilter@2@XZ @ 1214 NONAME ; class QtMobility::QContactFilter QtMobility::QContactFavorite::match(void)
-	??0QContactTag@QtMobility@@QAE@ABV01@@Z @ 1215 NONAME ; QtMobility::QContactTag::QContactTag(class QtMobility::QContactTag const &)
+	??0QContactTag@QtMobility@@QAE@ABV01@@Z @ 1215 NONAME ABSENT ; QtMobility::QContactTag::QContactTag(class QtMobility::QContactTag const &)
 	?tags@QContact@QtMobility@@QBE?AVQStringList@@XZ @ 1216 NONAME ; class QStringList QtMobility::QContact::tags(void) const
 	?staticMetaObject@QContactObserver@QtMobility@@2UQMetaObject@@B @ 1217 NONAME ; struct QMetaObject const QtMobility::QContactObserver::staticMetaObject
 	?match@QContactTag@QtMobility@@SA?AVQContactFilter@2@ABVQString@@@Z @ 1218 NONAME ; class QtMobility::QContactFilter QtMobility::QContactTag::match(class QString const &)
@@ -1237,6 +1237,8 @@ EXPORTS
 	?ProtocolAim@QContactOnlineAccount@QtMobility@@2U?$QLatin1Constant@$03@2@B @ 1236 NONAME ; struct QtMobility::QLatin1Constant<4> const QtMobility::QContactOnlineAccount::ProtocolAim
 	?protocol@QContactOnlineAccount@QtMobility@@QBE?AVQString@@XZ @ 1237 NONAME ; class QString QtMobility::QContactOnlineAccount::protocol(void) const
 	?qt_metacast@QContactObserver@QtMobility@@UAEPAXPBD@Z @ 1238 NONAME ; void * QtMobility::QContactObserver::qt_metacast(char const *)
-	??_EQContactTag@QtMobility@@QAE@I@Z @ 1239 NONAME ; QtMobility::QContactTag::~QContactTag(unsigned int)
+	??_EQContactTag@QtMobility@@QAE@I@Z @ 1239 NONAME ABSENT ; QtMobility::QContactTag::~QContactTag(unsigned int)
 	?setMaxCountHint@QContactFetchHint@QtMobility@@QAEXH@Z @ 1240 NONAME ; void QtMobility::QContactFetchHint::setMaxCountHint(int)
+	?disconnectNotify@QContactManager@QtMobility@@MAEXPBD@Z @ 1241 NONAME ; void QtMobility::QContactManager::disconnectNotify(char const *)
+	?connectNotify@QContactManager@QtMobility@@MAEXPBD@Z @ 1242 NONAME ; void QtMobility::QContactManager::connectNotify(char const *)
 

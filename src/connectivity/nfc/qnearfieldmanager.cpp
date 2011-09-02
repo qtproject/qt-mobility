@@ -121,7 +121,7 @@ QTM_BEGIN_NAMESPACE
 
         The -datatype and -match options are mutually exclusive.
 
-        Available templates: maemo6, symbian
+        Available templates: Meego 1.2 Harmattan, symbian
     \endcode
 
     A typical invocation of the \c ndefhandlergen tool for Symbian^3 target:
@@ -130,11 +130,12 @@ QTM_BEGIN_NAMESPACE
         ndefhandlergen -template symbian -appname myapplication -datatype urn:nfc:ext:com.example:f
     \endcode
 
-    and for Maemo6 target:
+    and for the Meego 1.2 Harmattan target:
 
     \code
-        ndefhandlergen -template maemo6 -appname myapplication -apppath /usr/bin/myapplication -datatype urn:nfc:ext:com.example:f
+        ndefhandlergen -template harmattan -appname myapplication -apppath /usr/bin/myapplication -datatype urn:nfc:ext:com.example:f
     \endcode
+
 
     Once the application has been registered as an NDEF message handler, the application only needs
     to call the registerNdefMessageHandler() function:
@@ -175,6 +176,13 @@ QTM_BEGIN_NAMESPACE
     myapplication.xml. To install the above xml file into the correct location the following should
     be added to the application .pro file:
 
+    and for Meego 1.2 Harmattan target:
+
+    \code
+        ndefhandlergen -template harmattan -appname myapplication -apppath /usr/bin/myapplication -datatype urn:nfc:ext:com.example:f
+    \endcode
+
+
     \code
         symbian {
             ndefhandler.sources = myapplication.xml
@@ -183,24 +191,25 @@ QTM_BEGIN_NAMESPACE
         }
     \endcode
 
-    \section3 Maemo6
+\section3 Meego 1.2 Harmattan
 
-    On Maemo6 the NDEF message handler notifications are passed over D-Bus. Registration of the
-    NDEF message match criteria is done via a D-Bus call. The application must also ensure that it
-    has registered a D-Bus service name so that the application can be automatically launched when
-    a notification message is sent to the registered service.
+    On Meego 1.2 Harmattan the NDEF message handler notifications are passed over D-Bus.
+    Registration of the NDEF message match criteria is done via a D-Bus call. The
+    application must also ensure that it has registered a D-Bus service name so that the
+    application can be automatically launched when a notification message is sent to the
+    registered service.
 
     To register the D-Bus service the two files need to be created and installed into particular
     directories on the device. The first file is the D-Bus bus configuration file:
 
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.conf
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.conf
 
     The \i {%APPNAME%} tag must be replaced with the name of your application binary.
 
     The second file is a D-Bus service file which is used by the D-Bus daemon to launch your
     application.
 
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.service
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.service
 
     The \i {%APPNAME%} tag must be replace with the name of your application binary and the
     \i {%APPPATH%} tag must be replaced with the path to your installed application binary.
@@ -210,22 +219,22 @@ QTM_BEGIN_NAMESPACE
     location the following should be added to the application .pro file:
 
     \code
-        maemo6 {
-            ndefhandler_conf.sources = myapplication.conf
-            ndefhandler_conf.path = /etc/dbus-1/system.d/
+    harmattan {
+        ndefhandler_conf.sources = myapplication.conf
+        ndefhandler_conf.path = /etc/dbus-1/system.d/
 
-            ndefhandler_service.sources = myapplication.service
-            ndefhandler_service.path = /usr/share/dbus-1/system-services/
+        ndefhandler_service.sources = myapplication.service
+        ndefhandler_service.path = /usr/share/dbus-1/system-services/
 
-            DEPLOYMENT += ndefhandler_conf ndefhandler_service
-        }
+        DEPLOYMENT += ndefhandler_conf ndefhandler_service
+    }
     \endcode
 
     The NDEF message handler is registered with the following D-Bus command. Applications should
     ensure that the following command (or similar) is executed once at installation time. For
     example in the packages post-installation script.
 
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.postinst
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.postinst
 
     The \i {%APPNAME%} string must be replaced with the name of the application binary. The
     \i {%DATATYPE%} string must be replaced with the NDEF record type to match. For example the
@@ -249,9 +258,11 @@ QTM_BEGIN_NAMESPACE
     The NDEF message handler should be unregistered at uninstallation time. For example in the
     packages pre-removal script.
 
-    \quotefile tools/ndefhandlergen/templates/maemo6/maemo6.prerm
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.prerm
 
     The \i {%APPNAME%} string must be replace with the name of the application binary.
+
+
 */
 
 /*!

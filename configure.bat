@@ -589,6 +589,7 @@ goto windowsTests
 :symbianTests
 
 call :compileTest LBT lbt
+call :compileTest location_fix location_fix
 call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianENote symbianenote
@@ -641,6 +642,7 @@ call :compileTest DirectShow directshow
 call :compileTest WindowsMediaSDK wmsdk
 call :compileTest WindowMediaPlayer wmp
 call :compileTest EnhancedVideoRenderer evr
+call :compileTest WindowsMediaFoundation wmf
 
 :noTests
 

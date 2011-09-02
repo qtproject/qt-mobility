@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,7 @@
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativelandmark_p.h"
+#include "qdeclarativegeomapgroupobject_p.h"
 #include "qgeomapdata.h"
 
 #include <QDeclarativeParserStatus>
@@ -193,6 +194,7 @@ bool QDeclarativeGeoMapObject::isVisible() const
     \inherits QDeclarativeItem
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The MapObjectView is used to populate Map with MapObjects from a model.
     The MapObjectView element only makes sense when contained in a Map object,
@@ -236,6 +238,7 @@ QVariant QDeclarativeGeoMapObjectView::model() const
 
 /*!
     \qmlproperty model MapObjectView::model
+    \since Mobility 1.2
 
     This property holds the model that provides data for
     populating data with delegates.
@@ -314,6 +317,7 @@ QDeclarativeComponent* QDeclarativeGeoMapObjectView::delegate() const
 
 /*!
     \qmlproperty Component MapObjectView::delegate
+    \since Mobility 1.2
 
     This property holds the delegate which defines how each item in the
     model should be displayed. The Component must contain exactly one
@@ -347,7 +351,10 @@ void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
     if (!mapObjects.isEmpty()) {
         for (int i = 0; i < mapObjects.size(); i++) {
             group_.removeChildObject(mapObjects.at(i));
-            delete map_->objectMap_.take(mapObjects.at(i));
+
+            QDeclarativeGeoMapObject *mapObject = map_->objectMap_.value(mapObjects.at(i));
+            map_->recursiveRemoveFromObjectMap(mapObjects.at(i));
+            delete mapObject;
         }
     }
     declarativeObjectList_.clear();
@@ -375,7 +382,7 @@ void QDeclarativeGeoMapObjectView::repopulate()
         mapObject->setMap(map_);
         group_.addChildObject(mapObject->mapObject());
         // Needed in order for mouse areas to work.
-        map_->objectMap_.insert(mapObject->mapObject(), mapObject);
+        map_->recursiveAddToObjectMap(mapObject);
     }
 }
 
@@ -432,6 +439,7 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
 
 /*!
     \qmlproperty bool MapObjectView::visible
+    \since Mobility 1.2
 
     This property holds whether the delegate objects created from the
     model are visible or not. Default value is true.
@@ -460,6 +468,7 @@ bool QDeclarativeGeoMapObjectView::isVisible() const
 
 /*!
     \qmlproperty int MapObjectView::z
+    \since Mobility 1.2
 
     This property holds the z-value of the MapObjectView.
     It determines the z-value of the instantiated delegates.

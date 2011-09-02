@@ -254,8 +254,10 @@ void S60VideoPlayerSession::applicationGainedFocus()
 void S60VideoPlayerSession::applicationLostFocus()
 {
     if (QMediaPlayer::PlayingState == state()) {
+        if (!m_isaudiostream) {
         m_backendInitiatedPause = true;
         pause();
+        }
     }
 }
 
@@ -413,18 +415,18 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
         const QRect clipRect = m_videoOutputDisplay ? m_videoOutputDisplay->clipRect() : QRect();
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
         if (m_pendingChanges & WindowHandle) {
-            if (m_displayWindow) {
-                m_player->RemoveDisplayWindow(*m_displayWindow);
-                m_displayWindow = 0;
-            }
-            if (window) {
+            if (window && window != m_displayWindow ) {
                 TRAP(error, m_player->AddDisplayWindowL(*m_wsSession, *m_screenDevice,
                                                         *window,
                                                         QRect2TRect(extentRect),
                                                         QRect2TRect(clipRect)));
-                if (KErrNone == error)
-                    m_displayWindow = window;
             }
+            if (m_displayWindow && m_displayWindow != window && KErrNone == error){
+                m_player->RemoveDisplayWindow(*m_displayWindow);
+                m_displayWindow = 0;
+            }
+            if (KErrNone == error && window )
+                m_displayWindow = window;
             m_pendingChanges = ScaleFactors;
         }
         if (KErrNone == error && (m_pendingChanges & DisplayRect) && m_displayWindow) {
@@ -742,6 +744,14 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 #endif
         }
         if (KErrNone == error) {
+        // changes made to play without pausing in case of audio streaming use case
+            if (m_player->VideoFormatMimeType().Length() == 0) {
+            m_isaudiostream = true;
+            m_backendInitiatedPause = false;
+            play();
+            } else {
+            m_isaudiostream = false;
+            }
             applyPendingChanges(true); // force apply even though state is not Loaded
             if (KErrNone == this->error()) // applyPendingChanges() can call setError()
                 loaded();

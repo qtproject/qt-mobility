@@ -422,6 +422,13 @@ CContactIdArray* CCollectionProxy::FindL(const TDesC& aText, const CContactItemF
 	return iDb.iCntSvr->FindL(aText,aFieldDef);
 	}
 
+/**
+Dummy method - implemented in the Persistence Layer.
+*/
+CContactIdArray* CCollectionProxy::FindSpeedDialContactsL()
+    {
+    return NULL;
+    }
 	
 /**
 Dummy method - implemented in the Persistence Layer.

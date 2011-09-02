@@ -64,6 +64,7 @@ QDeclarativeValueSpacePublisherQueueItem::QDeclarativeValueSpacePublisherQueueIt
 
     \brief The ValueSpacePublisher element represents a path in the value space
            where keys can be published.
+    \since Mobility 1.2
 
     ValueSpacePublishers are constructed with a set \a path which cannot be
     changed. If you need to publish within multiple different paths, you will
@@ -160,6 +161,7 @@ void QDeclarativeValueSpacePublisher::doQueue()
 
 /*!
     \qmlproperty string ValueSpacePublisher::path
+    \since Mobility 1.2
 
     This property holds the base path of the publisher.
     This property is write-once -- after the first write, subsequent
@@ -186,6 +188,7 @@ void QDeclarativeValueSpacePublisher::setPath(const QString &path)
 
 /*!
     \qmlproperty QVariant ValueSpacePublisher::value
+    \since Mobility 1.2
 
     This property publishes a new value to the ValueSpace at the
     path given through the \a path property.
@@ -198,6 +201,7 @@ void QDeclarativeValueSpacePublisher::setValue(const QVariant &val)
 
 /*!
     \qmlproperty bool ValueSpacePublisher::server
+    \since Mobility 1.2
 
     This property can be used to force the Publisher to start the ValueSpace
     server (if one is appropriate on the platform) before the \a path property
@@ -214,6 +218,7 @@ void QDeclarativeValueSpacePublisher::startServer(const bool &really)
 
 /*!
     \qmlproperty bool ValueSpacePublisher::hasSubscribers
+    \since Mobility 1.2
 
     This property is true if there are subscribers currently subscribed to
     the ValueSpace path being published by this Publisher.
@@ -227,6 +232,7 @@ bool QDeclarativeValueSpacePublisher::hasSubscribers() const
 
 /*!
     \qmlproperty QStringList ValueSpacePublisher::keys
+    \since Mobility 1.2
 
     Setting this property creates a set of dynamic properties allowing
     easy access to set the values of keys under this Publisher's path.
