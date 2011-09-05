@@ -215,21 +215,19 @@ public: // Methods
     void setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination);
 
     // Image Resolution
-    QSize captureSize() const;
-    QSize minimumCaptureSize();
-    QSize maximumCaptureSize();
-    QList<QSize> supportedCaptureSizesForCodec(const QString &codecName);
-    void setCaptureSize(const QSize &size);
+    QSize imageResolution() const;
+    QList<QSize> supportedImageResolutionsForCodec(const QString &codecName);
+    void setImageResolution(const QSize &size);
 
     // Image Codec
-    QStringList supportedImageCaptureCodecs();
-    QString imageCaptureCodec();
-    void setImageCaptureCodec(const QString &codecName);
-    QString imageCaptureCodecDescription(const QString &codecName);
+    QStringList supportedImageCodecs();
+    QString imageCodec();
+    void setImageCodec(const QString &codecName);
+    QString imageCodecDescription(const QString &codecName);
 
     // Image Quality
-    QtMultimediaKit::EncodingQuality captureQuality() const;
-    void setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality);
+    QtMultimediaKit::EncodingQuality imageQuality() const;
+    void setImageQuality(const QtMultimediaKit::EncodingQuality &quality);
 
     // Image Format (Buffer Capture)
     QList<QVideoFrame::PixelFormat> supportedBufferCaptureFormats() const;
@@ -254,7 +252,7 @@ public: // Methods
     bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;
 
     // Flash Mode Control
-    QCameraExposure::FlashMode flashMode();
+    QCameraExposure::FlashModes flashMode();
     void setFlashMode(QCameraExposure::FlashModes mode);
     QCameraExposure::FlashModes supportedFlashModes();
 
@@ -299,7 +297,6 @@ private: // Internal
     CCamera::TFormat selectFormatForCodec(const QString &codec);
     CCamera::TFormat defaultImageFormat();
     bool queryCurrentCameraInfo();
-    QMap<QString, int> formatMap();
     QMap<QString, QString> codecDescriptionMap();
     void updateImageCaptureFormats();
 
