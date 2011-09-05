@@ -42,7 +42,9 @@
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 #include "s60cameraconstants.h"
+
 #include <QtCore/qglobal.h>
+
 #include <fbs.h> // CFbsBitmap
 #ifdef ECAM_PREVIEW_API
     #include <platform/ecam/camerasnapshot.h>
@@ -54,7 +56,7 @@ CCameraEngine::CCameraEngine()
 
 CCameraEngine::CCameraEngine(TInt aCameraHandle,
                              TInt aPriority,
-                             MCameraEngineObserver* aObserver) :
+                             MCameraEngineObserver* aObserver):
     // CBase initializes member variables to NULL
     iObserver(aObserver),
     iCameraIndex(aCameraHandle),
@@ -73,7 +75,9 @@ CCameraEngine::~CCameraEngine()
     StopViewFinder();
     ReleaseViewFinderBuffer();  // Releases iViewFinderBuffer
     ReleaseImageBuffer();       // Releases iImageBuffer + iImageBitmap
-
+#ifdef ECAM_PREVIEW_API
+    DisablePreviewProvider();
+#endif // ECAM_PREVIEW_API
     iAdvancedSettingsObserver = NULL;
     iImageCaptureObserver = NULL;
     iViewfinderObserver = NULL;
@@ -240,7 +244,6 @@ void CCameraEngine::PrepareL(TSize& aCaptureSize, CCamera::TFormat aFormat)
 
     // Scan through supported capture sizes and select the closest match
     for (TInt index = 0; index < iCameraInfo.iNumImageSizesSupported; index++) {
-
         iCamera->EnumerateCaptureSizes(size, index, aFormat);
         if (size == aCaptureSize) {
             selected = index;
@@ -297,7 +300,9 @@ void CCameraEngine::HandleEvent(const TECAMEvent &aEvent)
 
 #ifdef ECAM_PREVIEW_API
     if (aEvent.iEventType == KUidECamEventCameraSnapshot) {
-        HandlePreview();
+        TRAPD(err, HandlePreviewL());
+        if (err)
+            iImageCaptureObserver->MceoHandleError(EErrPreview, err);
         return;
     }
 #endif // ECAM_PREVIEW_API
@@ -359,15 +364,14 @@ void CCameraEngine::PowerOnComplete(TInt aError)
 void CCameraEngine::EnablePreviewProvider(MCameraPreviewObserver *aPreviewObserver)
 {
     // Delete old one if exists
-    if (iCameraSnapshot)
+    if (iCameraSnapshot) {
         delete iCameraSnapshot;
+        iCameraSnapshot = 0;
+    }
 
     iPreviewObserver = aPreviewObserver;
-
-    TInt error = KErrNone;
-
     if (iCamera) {
-        TRAP(error, iCameraSnapshot = CCamera::CCameraSnapshot::NewL(*iCamera));
+        TRAPD(error, iCameraSnapshot = CCamera::CCameraSnapshot::NewL(*iCamera));
         if (error) {
             if (iObserver)
                 iObserver->MceoHandleError(EErrPreview, error);
@@ -400,9 +404,9 @@ void CCameraEngine::DisablePreviewProvider()
     iCameraSnapshot->StopSnapshot();
 
     delete iCameraSnapshot;
-    iCameraSnapshot = 0;
+    iCameraSnapshot = NULL;
 
-    iPreviewObserver = 0;
+    iPreviewObserver = NULL;
 }
 #endif // ECAM_PREVIEW_API
 
@@ -422,8 +426,7 @@ void CCameraEngine::ViewFinderReady(MCameraBuffer &aCameraBuffer, TInt aError)
         } else {
             iObserver->MceoHandleError(EErrViewFinderReady, KErrNotReady);
         }
-    }
-    else {
+    } else {
         iObserver->MceoHandleError(EErrViewFinderReady, aError);
     }
 }
@@ -610,24 +613,24 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
     iEngineState = EEngineIdle;
 
     if (aError == KErrNone) {
-        if (isBitmap)
+        if (isBitmap) {
             if (iImageCaptureObserver) {
                 if (iLatestImageBufferIndex == 0)
                     iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap1);
                 else
                     iImageCaptureObserver->MceoCapturedBitmapReady(iImageBitmap2);
-            }
-            else
+            } else {
                 ReleaseImageBuffer();
-        else {
+            }
+        } else {
             if (iImageCaptureObserver) {
                 if (iLatestImageBufferIndex == 0)
                     iImageCaptureObserver->MceoCapturedDataReady(iImageData1);
                 else
                     iImageCaptureObserver->MceoCapturedDataReady(iImageData2);
-            }
-            else
+            } else {
                 ReleaseImageBuffer();
+            }
         }
     } else {
         if (iImageCaptureObserver)
@@ -636,7 +639,7 @@ void CCameraEngine::HandleImageReady(const TInt aError, const bool isBitmap)
 }
 
 #ifdef ECAM_PREVIEW_API
-void CCameraEngine::HandlePreview()
+void CCameraEngine::HandlePreviewL()
 {
     if (!iCameraSnapshot) {
         if (iObserver)
@@ -649,8 +652,11 @@ void CCameraEngine::HandlePreview()
 
     MCameraBuffer &newPreview = iCameraSnapshot->SnapshotDataL(previewIndices);
 
-    for (TInt i = 0; i < previewIndices.Count(); ++i)
+    for (TInt i = 0; i < previewIndices.Count(); ++i) {
         iPreviewObserver->MceoPreviewReady(newPreview.BitmapL(0));
+        newPreview.BitmapL(0).Reset(); // Reset/Delete bitmap
+    }
+    newPreview.Release(); // Release the buffer
 
     CleanupStack::PopAndDestroy(); // RArray<TInt> previewIndices
 }
@@ -682,7 +688,7 @@ TSize CCameraEngine::SelectPreviewResolution()
 #endif // ECAM_PREVIEW_API
 
 //=============================================================================
-// S60 3.1 - AutoFocus support (Other platforms, see S60CameraSettings class)
+// S60 3.1 - AutoFocus support (Other platforms, see S60CameraAdvSettings class)
 //=============================================================================
 
 void CCameraEngine::InitComplete(TInt aError)
@@ -697,10 +703,10 @@ void CCameraEngine::OptimisedFocusComplete(TInt aError)
 {
     iEngineState = EEngineIdle;
 
-    if (aError == KErrNone)
+    if (aError == KErrNone) {
         if (iImageCaptureObserver)
             iImageCaptureObserver->MceoFocusComplete();
-    else {
+    } else {
         if (iImageCaptureObserver)
             iImageCaptureObserver->MceoHandleError(EErrOptimisedFocusComplete, aError);
     }
@@ -745,7 +751,7 @@ TBool CCameraEngine::IsAutoFocusSupported() const
 
 /*
  * This function is used for focusing in S60 3.1 platform. Platforms from S60
- * 3.2 onwards should use the focusing provided by the S60CameraSettings class.
+ * 3.2 onwards should use the focusing provided by the S60CameraAdvSettings class.
  */
 void CCameraEngine::StartFocusL()
 {
@@ -770,7 +776,7 @@ void CCameraEngine::StartFocusL()
 /*
  * This function is used for cancelling focusing in S60 3.1 platform. Platforms
  * from S60 3.2 onwards should use the focusing provided by the
- * S60CameraSettings class.
+ * S60CameraAdvSettings class.
  */
 void CCameraEngine::FocusCancel()
 {

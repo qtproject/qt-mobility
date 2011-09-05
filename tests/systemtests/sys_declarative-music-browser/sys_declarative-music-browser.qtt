@@ -46,39 +46,39 @@ testcase = {
     List_Albums: function()
     {
          // Test meta data
-         testApplication = "Music - List Albums";
+         testTitle = "Music - List Albums";
          testBinary = "declarative-music-browser";
          testGoal = "Verify that all available music albums can be shown and selected";
          testPreconditions = "None";
          testGroups = "BAT";
 
          // Test steps
-         prompt(twiki("---+++ " + testApplication + "<br><br>
+         prompt(twiki("---+++ " + testTitle + "<br><br>
              *Goal:* " + testGoal + "<br>
              *Pre-Requisites:* " + testPreconditions + "<br>
              *Tested Binary:* " + testBinary + "<br>
 
              | *Step* | *Verification* |
-             | Launch " + testBinary + " | App launches normally |
+             | Launch " + testBinary + " | Verify app launches normally |
              | Click Albums icon | Verify that the albums listed match what is seen via the native music/document browser |
              | | Verify that albums have the expected cover thumbnail above the album title |
              | Click on an album in view that is known to have more that once song in it | Verify that the expected songs are listed in view |
-             | Click *Back* button | |
-             | Click *Back* button to return to top 'menu' | |
+             | Flick the screen to the left (in application) | Verify that the next album is displayed |
+             | Click the Menu label to return to the application home screen | |
         "));
     },
 
 
     List_Artists : function()
     {
-        testApplication = "Music - List Artists";
+        testTitle = "Music - List Artists";
         testBinary = "declarative-music-browser";
         testGoal = "Verify that all available artists can be shown and selected";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -88,22 +88,22 @@ testcase = {
           | Click Artists icon | Verify that the artists listed match what is seen via the native music/document browser |
           | Click on an artist in view | Verify that the artist name is listed correctly at top of view |
           | | Verify that expected songs are listed in view |
-          | Click *Back* button | |
-          | Click *Back* button to return to top 'menu' | |
+          | Flick the screen to the left (in application) | Verify that the next album from artist or next artist is displayed |
+          | Click the Menu label to return to the application home screen | |
         "));
     },
 
 
     List_Genres : function()
     {
-        testApplication = "Music - List Genres";
+        testTitle = "Music - List Genres";
         testBinary = "declarative-music-browser";
         testGoal = "Verify that available genres are shown correctly";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -111,24 +111,24 @@ testcase = {
           | *Step* | *Verification* |
           | Launch " + testBinary + " | App launches normally |
           | Click Genres icon | Verify that the genres listed match what is seen via the native music/document browser |
-          | Click on an genre in view | Verify that albums matching the genres are listed |
-          | | Verify that the expected songs are listed in view |
-          | Click *Back* button | |
-          | Click *Back* button to return to top 'menu' | |
+          | Click on a Genres in view | Verify that the Genres name is listed correctly at top of view |
+          | | Verify that expected songs are listed in view |
+          | Flick the screen to the left (in application) | Verify that the next Genres is displayed and that all albums in that Genre are listed |
+          | Click the Menu label to return to the application home screen | |
         "));
     },
 
 
     List_Songs : function()
     {
-        testApplication = "Music - List Songs";
+        testTitle = "Music - List Songs";
         testBinary = "declarative-music-browser";
         testGoal = "Verify that available songs are listed correctly";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -137,7 +137,8 @@ testcase = {
          | Launch " + testBinary + " | App launches normally |
          | Click Songs icon | Verify that the song listed match what is seen via the native music/document browser |
          | | Verify that two of the listed songs have the correct song length mentioned on right |
-         | Click *Back* button to return to top menu' | |
+                     | Click on a song title | Verify that this brings up details of the song, inlcuding Cover art, Song name, Artist name, Genre and Duration |
+         | Click the Menu label to return to the application home screen | |
         "));
     }
 

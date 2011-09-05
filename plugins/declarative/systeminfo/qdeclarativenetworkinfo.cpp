@@ -53,6 +53,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     \inherits QObject
 
     \ingroup qml-systeminfo
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
@@ -88,36 +89,42 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
 */
 /*!
     \qmlsignal NetworkInfo::statusChanged()
+    \since Mobility 1.1
 
     This handler is called when network status has changed.
     Note: To receive this notification, you must first call \a startStatusChanged.
 */
 /*!
     \qmlsignal NetworkInfo::signalStrengthChanged()
+    \since Mobility 1.1
 
     This handler is called when network signal strength has changed.
     Note: To receive this notification, you must first call \a startSignalStrengthChanged.
 */
 /*!
     \qmlsignal NetworkInfo::nameChanged()
+    \since Mobility 1.1
 
     This handler is called when network name has changed.
     Note: To receive this notification, you must first call \a startNameChanged.
 */
 /*!
     \qmlsignal NetworkInfo::modeChanged()
+    \since Mobility 1.1
 
     This handler is called when the systems default network mode has changed.
     Note: To receive this notification, you must first call \a startModeChanged.
 */
 /*!
     \qmlsignal NetworkInfo::currentMobileCountryCodeChanged()
+    \since Mobility 1.1
 
     This handler is called when network MCC has changed.
     Note: To receive this notification, you must first call \a startCurrentMobileCountryCodeChanged.
 */
 /*!
     \qmlsignal NetworkInfo::currentMobileNetworkCodeChanged()
+    \since Mobility 1.1
 
     This handler is called when network MNC has changed.
     Note: To receive this notification, you must first call \a startCurrentMobileNetworkCodeChanged.
@@ -135,6 +142,7 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 
 /*!
     \qmlproperty enumeration NetworkInfo::mode
+    \since Mobility 1.1
 
     Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
 
@@ -148,6 +156,7 @@ void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
 
 /*!
     \qmlproperty string NetworkInfo::networkStatus
+    \since Mobility 1.1
 
     Returns this NetworkInfo's network status.
 
@@ -192,6 +201,7 @@ QString QDeclarativeNetworkInfo::networkStatus()
 
 /*!
     \qmlproperty int NetworkInfo::networkSignalStrength
+    \since Mobility 1.1
 
     Returns this NetworkInfo's network signal strength.
 */
@@ -202,6 +212,7 @@ int QDeclarativeNetworkInfo::networkSignalStrength()
 
 /*!
     \qmlproperty string NetworkInfo::macAddress
+    \since Mobility 1.1
 
     Returns this NetworkInfo's network interface's MAC address.
 */
@@ -212,6 +223,7 @@ QString QDeclarativeNetworkInfo::macAddress()
 
 /*!
     \qmlproperty string NetworkInfo::networkName
+    \since Mobility 1.1
 
     Returns this NetworkInfo's network name.
 */
@@ -222,7 +234,8 @@ QString QDeclarativeNetworkInfo::networkName()
 
 /*!
     \qmlmethod QNetworkInterface NetworkInfo::interfaceForMode()
-   Returns the QNetworkInterface for this NetworkInfo.
+    \since Mobility 1.1
+    Returns the QNetworkInterface for this NetworkInfo.
 
 */
 QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
@@ -231,7 +244,8 @@ QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
 }
 
 /*!
-   This function starts the startBatteryStatusChanged notification
+   This function starts the startStatusChanged notification
+   \since Mobility 1.1
 
 */
 void QDeclarativeNetworkInfo::startStatusChanged(bool on)
@@ -249,7 +263,8 @@ void QDeclarativeNetworkInfo::startStatusChanged(bool on)
 /*!
     \qmlproperty bool NetworkInfo::monitorStatusChanges
     \brief Use the statusChanged signal.
-  */
+    \since Mobility 1.2
+    */
 bool QDeclarativeNetworkInfo::monitorStatusChanges()
 {
     return monitoringStatusChanges;
@@ -258,6 +273,7 @@ bool QDeclarativeNetworkInfo::monitorStatusChanges()
 
 /*!
    This function starts the signalStrengthChanged notification.
+   \since Mobility 1.1
 
 */
 void QDeclarativeNetworkInfo::startSignalStrengthChanged(bool on)
@@ -275,7 +291,8 @@ void QDeclarativeNetworkInfo::startSignalStrengthChanged(bool on)
 /*!
     \qmlproperty bool NetworkInfo::monitorSignalStrengthChanges
     \brief Use the signalStrengthChanged signal.
-  */
+    \since Mobility 1.2
+    */
 bool QDeclarativeNetworkInfo::monitorSignalStrengthChanges()
 {
     return monitoringSignalStrengthChanges;
@@ -283,7 +300,8 @@ bool QDeclarativeNetworkInfo::monitorSignalStrengthChanges()
 
 
 /*!
-   This function starts the statusChanged notification.
+   This function starts the nameChanged notification.
+   \since Mobility 1.1
 
 */
 void QDeclarativeNetworkInfo::startNameChanged(bool on)
@@ -301,7 +319,8 @@ void QDeclarativeNetworkInfo::startNameChanged(bool on)
 /*!
     \qmlproperty bool NetworkInfo::monitorNameChanges
     \brief Use the nameChanged signal.
-  */
+    \since Mobility 1.2
+    */
 bool QDeclarativeNetworkInfo::monitorNameChanges()
 {
     return monitoringNameChanges;
@@ -310,6 +329,7 @@ bool QDeclarativeNetworkInfo::monitorNameChanges()
 
 /*!
    This function starts the modeChanged notification.
+   \since Mobility 1.1
 
 */
 void QDeclarativeNetworkInfo::startModeChanged(bool on)
@@ -327,7 +347,8 @@ void QDeclarativeNetworkInfo::startModeChanged(bool on)
 /*!
     \qmlproperty bool NetworkInfo::monitorModeChanges
     \brief Use the monitorModeChanges signal.
-  */
+    \since Mobility 1.2
+    */
 bool QDeclarativeNetworkInfo::monitorModeChanges()
 {
     return monitoringModeChanges;
@@ -337,6 +358,7 @@ bool QDeclarativeNetworkInfo::monitorModeChanges()
 /*!
 
    This function starts the currentMobileCountryCodeChanged notification.
+   \since Mobility 1.1
 
 */
 void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged(bool on)
@@ -354,7 +376,8 @@ void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged(bool on)
 /*!
     \qmlproperty bool NetworkInfo::monitoringCurrentMobileCountryCodeChanges
     \brief Use the monitoringCurrentMobileCountryCodeChanges signal.
-  */
+    \since Mobility 1.2
+    */
 bool QDeclarativeNetworkInfo::monitorCurrentMobileCountryCodeChanges()
 {
     return monitoringCurrentMobileCountryCodeChanges;
@@ -363,6 +386,7 @@ bool QDeclarativeNetworkInfo::monitorCurrentMobileCountryCodeChanges()
 
 /*!
    This function starts the currentMobileNetworkCodeChanged notification.
+   \since Mobility 1.1
 
 */
 void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged(bool on)
@@ -380,7 +404,8 @@ void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged(bool on)
 /*!
     \qmlproperty bool NetworkInfo::monitorCurrentMobileNetworkCodeChanges
     \brief Use the monitorCurrentMobileNetworkCodeChanges signal.
-  */
+    \since Mobility 1.2
+    */
 bool QDeclarativeNetworkInfo::monitorCurrentMobileNetworkCodeChanges()
 {
     return monitoringCurrentMobileNetworkCodeChanges;
@@ -532,6 +557,7 @@ QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 /*!
     \qmlproperty bool NetworkInfo::monitoringCellDataTechnologyChanges
     \brief Use the cellDataTechnologyChanges signal.
+    \since Mobility 1.2
 
    \sa QSystemNetworkInfo::cellDataTechnologyChanged
   */
@@ -542,6 +568,7 @@ bool QDeclarativeNetworkInfo::monitorCellDataChanges()
 
 /*!
    This function starts the cellDataTechnologyChanges notification
+   \since Mobility 1.2
 
 */
 void QDeclarativeNetworkInfo::startCellDataChanged(bool on)
@@ -559,7 +586,8 @@ void QDeclarativeNetworkInfo::startCellDataChanged(bool on)
 /*!
     \qmlproperty bool NetworkInfo::monitoringCellIdChanges
     \brief Use the cellIdChanges signal.
-  */
+    \since Mobility 1.2
+    */
 bool QDeclarativeNetworkInfo::monitorCellIdChanges()
 {
     return monitoringCellIdChanges;
@@ -567,6 +595,7 @@ bool QDeclarativeNetworkInfo::monitorCellIdChanges()
 
 /*!
    This function starts the cellIdChanges notification
+   \since Mobility 1.2
 
    \sa QSystemNetworkInfo::cellIdChanged
 

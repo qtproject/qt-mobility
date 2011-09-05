@@ -70,6 +70,7 @@ QList<QSize> S60ImageEncoderControl::supportedResolutions(
 
     return resolutions;
 }
+
 QStringList S60ImageEncoderControl::supportedImageCodecs() const
 {
     return m_session->supportedImageCaptureCodecs();
@@ -90,6 +91,7 @@ QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 
     return settings;
 }
+
 void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
 {
     // Notify that settings have been implicitly set and there's no need to

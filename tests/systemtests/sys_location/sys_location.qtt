@@ -47,14 +47,14 @@ testcase = {
     current_position: function()
     {
         // Test meta data
-        testApplication = "Location - Current Position";
+        testTitle = "Location - Current Position";
         testBinary = "weatherinfo_with_location";
         testGoal = "Verify that current position is detected and displayed.";
         testPreconditions = "Note that GPS connection is required for this test case";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -68,14 +68,14 @@ testcase = {
     location_is_updated: function()
     {
         // Test meta data
-        testApplication = "Location - Location Updates";
+        testTitle = "Location - Location Updates";
         testBinary = "lightmaps_with_location (sources are in demos/lightmaps)";
         testGoal = "Verify that location data is received and map is updated and centered after changing location.";
         testPreconditions = "GPS and internet connection is required for this test case";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -90,7 +90,7 @@ testcase = {
     third_party_position_source: function()
     {
         // Test meta data
-        testApplication = "Location - Position Detection via Custom Plugin";
+        testTitle = "Location - Position Detection via Custom Plugin";
         testBinary = "testQtLocation"; // this is part of BlueWeel project, sources are in git@scm.dev.nokia.troll.no:qtmobility/qtmobility-tests.git
         testGoal = "Verify that positions can be detected using third party plugins";
         testPreconditions = "GPS and internet connection is required for this test case";
@@ -98,7 +98,7 @@ testcase = {
         testRequirements = "QTMOBILITY-873: Allow 3rd party position sources";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -114,7 +114,7 @@ testcase = {
     shift_to_the_given_offset: function()
     {
         // Test meta data
-        testApplication = "Location - Shift To Given Offset";
+        testTitle = "Location - Shift To Given Offset";
         testBinary = "testQtLocation";
         testGoal = "Verify that coordinates can be calculated as an offset to another position.";
         testPreconditions = "None";
@@ -124,7 +124,7 @@ testcase = {
         // Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -159,7 +159,7 @@ testcase = {
     store_and_load_a_landmark: function(name, latitude, longitude)
     {
         // Test meta data
-        testApplication = "Landmark - Store and Load Landmarks";
+        testTitle = "Landmark - Store and Load Landmarks";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that a landmark can be created (and stored)";
         testPreconditions = "None";
@@ -186,14 +186,14 @@ testcase = {
     negative_store_and_load_a_landmark: function(name, latitude, longitude)
     {
         // Test meta data
-        testApplication = "Landmark - Handling Invalid Landmark";
+        testTitle = "Landmark - Handling Invalid Landmark";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that invalid landmarks are detected and handled gracefully.";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        startApplication(testApplication);
+        startApplication(testTitle);
         select("Add Landmark");
         enter("Latitude", latitude);
         enter("Longitude", longitude);
@@ -208,14 +208,14 @@ testcase = {
     sorted_search_based_on_category: function()
     {
         // Test meta data
-        testApplication = "Landmark - Search on Category";
+        testTitle = "Landmark - Search on Category";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that landmarks can be sorted and filtered.";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -242,14 +242,14 @@ testcase = {
     sort_landmarks_in_alphabetical_and_nearest: function()
     {
         // Test meta data
-        testApplication = "Landmark - Nearest Landmarks";
+        testTitle = "Landmark - Nearest Landmarks";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that landmarks can be displayed in sorted order with nearest first.";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -279,14 +279,14 @@ testcase = {
     landmarks_within_range_of_a_position: function()
     {
         // Test meta data
-        testApplication = "Landmark - Within Range of Position";
+        testTitle = "Landmark - Within Range of Position";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that landmarks within range of a position can be shown";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -311,14 +311,14 @@ testcase = {
     create_edit_and_delete_a_landmark: function()
     {
         // Test meta data
-        testApplication = "Landmark - Edit and Delete Landmarks";
+        testTitle = "Landmark - Edit and Delete Landmarks";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that notifications can be send whenever landmarks are added, updated or deleted.";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -352,14 +352,14 @@ testcase = {
     enumerate_categories: function()
     {
         // Test meta data
-        testApplication = "Landmark - Enumerate";
+        testTitle = "Landmark - Enumerate";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that created categories can be showed in a list.";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -377,14 +377,14 @@ testcase = {
     {
         //Landmark manager provides notifications whenever categories are added, updated or deleted
         // Test meta data
-        testApplication = "Landmark - Add and Delete Categories ";
+        testTitle = "Landmark - Add and Delete Categories ";
         testBinary = "landmarkbrowser";
         testGoal = "Verify that the system sends notifications when categories are added or deleted.";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -420,7 +420,7 @@ testcase = {
     select_service_provider: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Select Service Provider";
+        testTitle = "Maps and Navigation - Select Service Provider";
         testBinary = "geoservicedemo";
         testGoal = "Verify that service provider can be selected";
         testPreconditions = "None";
@@ -432,7 +432,7 @@ testcase = {
         select("nokia");
         select("Set Service Provider");
 
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -449,7 +449,7 @@ testcase = {
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Route Calculation";
+        testTitle = "Maps and Navigation - Route Calculation";
         testBinary = "geoservicedemo";
         testGoal = "Verify that routes can be calculated from one GPS location to another.";
         testPreconditions = "None";
@@ -468,7 +468,7 @@ testcase = {
         enter(long2);
         select("Ok");
 
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -485,7 +485,7 @@ testcase = {
         enter(long1);
         select("Ok");
 
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -500,14 +500,14 @@ testcase = {
     geocoding: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Geocoding";
+        testTitle = "Maps and Navigation - Geocoding";
         testBinary = "geoservicedemo"; // (sources are /tests/location-testing-tools/geoservicedemo)
         testGoal = "Verify that geocoding searches are supported.";
         testPreconditions = "Note that testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -531,14 +531,14 @@ testcase = {
     reverse_geocoding: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Reverse Geocoding";
+        testTitle = "Maps and Navigation - Reverse Geocoding";
         testBinary = "geoservicedemo";
         testGoal = "Verify that a geocode can be calculated from a given position.";
         testPreconditions = "Note that testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -569,14 +569,14 @@ testcase = {
     different_map_types: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Map View Options";
+        testTitle = "Maps and Navigation - Map View Options";
         testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
         testGoal = "Verify that maps can be shown in street, satellite and terrain mode.";
         testPreconditions = "1. internet connection is required for this test case.<br>1. Nokia map engine supports only Street, Satellite and Terrain map types";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -596,14 +596,14 @@ testcase = {
     zooming_support:function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Zooming";
+        testTitle = "Maps and Navigation - Zooming";
         testBinary = "mapsdemo"; // (sources are /tests/location-testing-tools/mapviewer)
         testGoal = "Verify that maps can be zoomed in and out.";
         testPreconditions = "internet connection is required for this test case.";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
           *Goal:* " + testGoal + "<br>
           *Pre-Requisites:* " + testPreconditions + "<br>
           *Tested Binary:* " + testBinary + "<br>
@@ -620,14 +620,14 @@ testcase = {
     capturing_coordinates:function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Coordinate Capturing";
+        testTitle = "Maps and Navigation - Coordinate Capturing";
         testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
         testGoal = "Verify that coordinates can be captured when selecting a location on the map.";
         testPreconditions = "internet connection is required for this test case.";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
@@ -649,7 +649,7 @@ testcase = {
         //and 2 types of transforms (BilinearTransform, ExactTransform)). New set of tests has to be created as soon as testqtLocation is improved.
 
         // Test meta data
-        testApplication = "Maps and Navigation - Pixmap Object Zooming";
+        testTitle = "Maps and Navigation - Pixmap Object Zooming";
         testBinary = "testQtLocation";
         testGoal = "Verify that ";
         testPreconditions = "GPS and internet connection is required for this test case";
@@ -658,7 +658,7 @@ testcase = {
                             QTMOBILITY-701: Add a QGraphicsItem based map object.";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -678,7 +678,7 @@ testcase = {
     request_landmarks_for_given_coordinate_with_reverse_geocoding: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Landmarks for Coordinate with Reverse Geocoding";
+        testTitle = "Maps and Navigation - Landmarks for Coordinate with Reverse Geocoding";
         testBinary = "weatherinfo_with_location";
         testGoal = "Verify that ";
         testPreconditions = "None";
@@ -686,7 +686,7 @@ testcase = {
 
         // Test steps
 /*
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -705,7 +705,7 @@ testcase = {
     qml_display_map: function()
     {
         // Test meta data
-        testApplication = "Location - Map Display";
+        testTitle = "Location - Map Display";
         testBinary = "testqtlocation";
         testGoal = "Verify that a map can be loaded for a given position.";
         testPreconditions = "Internet connection is required for this test case.";
@@ -713,7 +713,7 @@ testcase = {
         testRequirements = "QTMOBILITY-796: QML for Maps & Navigation:mapping";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>
@@ -727,7 +727,7 @@ testcase = {
     qml_zoom_a_map: function()
     {
         // Test meta data
-        testApplication = "Location - Zoom In and Out";
+        testTitle = "Location - Zoom In and Out";
         testBinary = "testQtLocation";
         testGoal = "Verify that ";
         testPreconditions = "GPS and internet connection is required for this test case.";
@@ -735,7 +735,7 @@ testcase = {
         testRequirements = "QTMOBILITY-796: QML for Maps & Navigation:mapping.";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
          *Goal:* " + testGoal + "<br>
          *Pre-Requisites:* " + testPreconditions + "<br>
          *Tested Binary:* " + testBinary + "<br>

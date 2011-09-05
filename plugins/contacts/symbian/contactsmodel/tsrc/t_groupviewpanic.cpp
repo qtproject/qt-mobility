@@ -298,9 +298,13 @@ void CRemoteViewTestResources::CreateTestGroupsL()
     iViewEventQueue->ListenForEvent( 2, event );
     CheckEvent( event, TContactViewEvent::EItemAdded, 4, group5->Id() );
     iViewEventQueue->ListenForEvent( 2, event );
-    CheckEvent( event, TContactViewEvent::EItemAdded, 5, group8->Id() );
+    CheckEvent( event, TContactViewEvent::EItemAdded, 5, group6->Id() );
     iViewEventQueue->ListenForEvent( 2, event );
-    CheckEvent( event, TContactViewEvent::EItemAdded, 6, group6->Id() );
+    CheckEvent( event, TContactViewEvent::EItemAdded, 6, group8->Id() );
+    iViewEventQueue->ListenForEvent( 2, event );
+    CheckEvent( event, TContactViewEvent::EItemAdded, 7, group7->Id() );
+    iViewEventQueue->ListenForEvent( 2, event );
+    CheckEvent( event, TContactViewEvent::EItemRemoved, 7, group7->Id() );
     iViewEventQueue->ListenForEvent( 2, event );
     CheckEvent( event, TContactViewEvent::EGroupChanged, 0, group8->Id() );
 

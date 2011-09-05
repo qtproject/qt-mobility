@@ -53,10 +53,12 @@
 
 QT_USE_NAMESPACE
 
+using namespace S60CameraEngineError;
+
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
-QT_FORWARD_DECLARE_CLASS(S60CameraSettings)
+QT_FORWARD_DECLARE_CLASS(S60CameraAdvSettings)
 QT_FORWARD_DECLARE_CLASS(CCameraEngine)
 QT_FORWARD_DECLARE_CLASS(S60CameraViewfinderEngine)
 QT_FORWARD_DECLARE_CLASS(QTimer)
@@ -92,7 +94,8 @@ public: // QCameraControl
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
 
     // Property Setting
-    bool canChangeProperty(QCameraControl::PropertyChangeType changeType, QCamera::Status status) const;
+    bool canChangeProperty(QCameraControl::PropertyChangeType changeType,
+                           QCamera::Status status) const;
 
 /*
 Q_SIGNALS:
@@ -160,7 +163,7 @@ private: // Data
     S60CameraViewfinderEngine   *m_viewfinderEngine;
     S60ImageCaptureSession      *m_imageSession;
     S60VideoCaptureSession      *m_videoSession;
-    S60CameraSettings           *m_advancedSettings;
+    S60CameraAdvSettings        *m_advancedSettings;
     QObject                     *m_videoOutput;
     QTimer                      *m_inactivityTimer;
     QCamera::CaptureMode        m_captureMode;

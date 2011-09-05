@@ -49,6 +49,7 @@
 
     \ingroup connectivity-qml
     \inmodule QtConnectivity
+    \since Mobility 1.2
 
     \inherits NdefRecord
 
@@ -64,6 +65,7 @@
 
 /*!
     \qmlproperty string NdefTextRecord::text
+    \since Mobility 1.2
 
     This property holds the text which should be displayed when the current locale matches
     \l locale.
@@ -71,12 +73,14 @@
 
 /*!
     \qmlproperty string NdefTextRecord::locale
+    \since Mobility 1.2
 
     This property holds the locale that this text record is for.
 */
 
 /*!
     \qmlproperty enumeration NdefTextRecord::localeMatch
+    \since Mobility 1.2
 
     This property holds an enum describing how closely the locale of the text record matches the
     applications current locale.  The application should display only the text record that most

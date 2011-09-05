@@ -358,9 +358,9 @@ private:  // Internal functions
 #ifdef ECAM_PREVIEW_API
     /**
      * Handle preview. Retrieve preview data and notify observer about the
-     * preview availability.
+     * preview availability. Function can Leave.
      */
-    void HandlePreview();
+    void HandlePreviewL();
 
     /**
      * Calculate proper resolution for the SnapShot (Preview) image.
@@ -378,8 +378,8 @@ private:  // Data
     MCameraPreviewObserver              *iPreviewObserver;
     MCameraBuffer                       *iViewFinderBuffer;
     /*
-     * Following pointers are for the image buffers:
-     *  * Makes buffering of 2 concurrent image buffers possible
+     * Following pointers are for the image buffers;
+     * Makes buffering of 2 concurrent image buffers possible
      */
     MCameraBuffer                       *iImageBuffer1;
     MCameraBuffer                       *iImageBuffer2;

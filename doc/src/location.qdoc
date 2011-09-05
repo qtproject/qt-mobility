@@ -570,7 +570,9 @@ Note that accepting the terms and conditions only applies those terms and condit
 
 On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services. 
 
-The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to 10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application on Symbian is 4 MB, it may be good idea to increase the application's heap size (depending on the app of course). Otherwise somewhat misleading error popups may appear, e.g. "<application name>: Memory full. Close some applications and try again." See e.g.  \l {http://library.forum.nokia.com/index.jsp?topic=/Qt_for_Symbian_Developers_Library/GUID-4427F6F8-AB72-489B-BB9C-3261A0568E4E.html}{Forum Nokia documentation.}
+The routing feature of the Nokia plugin is not available for the People’s Republic of China.
+
+The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to 10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application on Symbian is 4 MB, it may be good idea to increase the application's heap size using EPOCHEAPSIZE.
 
 The following table lists optional parameters that can be passed to the Nokia plugin.
 \table

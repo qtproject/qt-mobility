@@ -70,8 +70,6 @@ S60MediaContainerControl::S60MediaContainerControl(S60VideoCaptureSession *sessi
 
 S60MediaContainerControl::~S60MediaContainerControl()
 {
-    m_supportedContainers.clear();
-    m_containerDescriptions.clear();
 }
 
 QStringList S60MediaContainerControl::supportedContainers() const

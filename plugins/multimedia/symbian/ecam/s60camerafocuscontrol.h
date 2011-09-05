@@ -44,7 +44,7 @@
 
 #include <qcamerafocuscontrol.h>
 
-#include "s60camerasettings.h"
+#include "s60cameraadvsettings.h"
 
 QT_USE_NAMESPACE
 
@@ -102,7 +102,7 @@ private slots: // Internal Slots
 private: // Data
     S60ImageCaptureSession  *m_session;
     S60CameraService        *m_service;
-    S60CameraSettings       *m_advancedSettings;
+    S60CameraAdvSettings    *m_advancedSettings;
     bool                    m_isFocusLocked;
     qreal                   m_opticalZoomValue;
     qreal                   m_digitalZoomValue;

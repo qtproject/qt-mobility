@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
     uninstantiable base element for LandmarkModel and LandmarkCategoryModel.
     It defines many common properties for the two models.
     \ingroup qml-location-landmarks
+    \since Mobility 1.2
 
     The LandmarkAbstractModel element is an uncreatable /
     uninstantiable base element for LandmarkModel and LandmarkCategoryModel.
@@ -75,6 +76,7 @@ QDeclarativeLandmarkAbstractModel::QDeclarativeLandmarkAbstractModel(QObject *pa
 
 /*!
     \qmlsignal LandmarkAbstractModel::modelChanged()
+    \since Mobility 1.2
 
     This handler is called when the model data has changed.
 
@@ -82,6 +84,7 @@ QDeclarativeLandmarkAbstractModel::QDeclarativeLandmarkAbstractModel(QObject *pa
 
 /*!
     \qmlsignal LandmarkAbstractModel::databaseChanged()
+    \since Mobility 1.2
 
     This handler is called when the data in the underlying data
     storage has changed. If \l autoUpdate is true, model data
@@ -151,6 +154,7 @@ void QDeclarativeLandmarkAbstractModel::dataChanged()
 
 /*!
     \qmlproperty bool LandmarkAbstractModel::autoUpdate
+    \since Mobility 1.2
 
     Controls whether the model data should be automatically updated when
     appropriate events occur: limit changes, offset changes, filter changes,
@@ -188,6 +192,7 @@ void QDeclarativeLandmarkAbstractModel::scheduleUpdate()
 
 /*!
     \qmlproperty string LandmarkAbstractModel::error
+    \since Mobility 1.2
 
     Human readable string of the last error that occurred
     (read-only).
@@ -226,6 +231,7 @@ void QDeclarativeLandmarkAbstractModel::setDbFileName(QString fileName)
 
 /*!
     \qmlmethod LandmarkAbstractModel::update()
+    \since Mobility 1.2
 
     Updates the items represented by the model from the
     underlying store.
@@ -245,6 +251,7 @@ int QDeclarativeLandmarkAbstractModel::limit()
 
 /*!
     \qmlproperty int LandmarkAbstractModel::limit
+    \since Mobility 1.2
 
     Sets the maximum amount of items held by the model.
 */
@@ -267,6 +274,7 @@ int QDeclarativeLandmarkAbstractModel::offset()
 
 /*!
     \qmlproperty int LandmarkAbstractModel::offset
+    \since Mobility 1.2
 
     Sets the offset for the landmarks. For example if
     one creates a tabbed / paged application, the offset
@@ -292,6 +300,7 @@ QDeclarativeLandmarkAbstractModel::SortKey QDeclarativeLandmarkAbstractModel::so
 
 /*!
     \qmlproperty enumeration LandmarkAbstractModel::sortBy
+    \since Mobility 1.2
 
     Specifies the role to sort the items by.
 
@@ -323,6 +332,7 @@ QDeclarativeLandmarkAbstractModel::SortOrder QDeclarativeLandmarkAbstractModel::
 
 /*!
     \qmlproperty enumeration LandmarkAbstractModel::sortOrder
+    \since Mobility 1.2
 
     Specifies the sort order.
 
@@ -352,6 +362,7 @@ void QDeclarativeLandmarkAbstractModel::setSortOrder(QDeclarativeLandmarkAbstrac
     \brief The LandmarkModel element provides access to landmarks.
     \inherits LandmarkAbstractModel
     \ingroup qml-location-landmarks
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -440,6 +451,7 @@ QDeclarativeLandmarkFilterBase* QDeclarativeLandmarkModel::filter()
 
 /*!
     \qmlproperty LandmarkFilterBase LandmarkModel::filter
+    \since Mobility 1.2
 
     The filter for filtering landmarks.
 
@@ -514,6 +526,7 @@ void QDeclarativeLandmarkModel::cancelUpdate()
 
 /*!
     \qmlmethod LandmarkModel::importLandmarks()
+    \since Mobility 1.2
 
     Imports landmarks (and categories) in \l importFile.
 */
@@ -536,6 +549,7 @@ void QDeclarativeLandmarkModel::cancelImport()
 
 /*!
     \qmlproperty int LandmarkAbstractModel::count
+    \since Mobility 1.2
 
     Indicates the number of items currently in the model
     (landmarks/categories).
@@ -575,6 +589,7 @@ void QDeclarativeLandmarkModel::setFetchOrder()
 
 /*!
     \qmlproperty QDeclarativeListProperty LandmarkModel::landmarks
+    \since Mobility 1.2
 
     This element holds the list of \l Landmark elements that the model currently has.
     Accessing landmarks by iterating over this list is not guaranteed to be in the
@@ -711,6 +726,7 @@ QString QDeclarativeLandmarkModel::importFile() const
 
 /*!
   \qmlproperty string LandmarkModel::importFile
+  \since Mobility 1.2
 
   Landmarks and their related categories can be imported by setting
   the import file. If \l LandmarkAbstractModel::autoUpdate is true, the import will be done
@@ -808,7 +824,7 @@ void QDeclarativeLandmarkModel::fetchRequestStateChanged(QLandmarkAbstractReques
         }
         if (oldCount != m_landmarks.count())
             emit countChanged();
-    } else if (m_error != m_fetchRequest->errorString()) {        
+    } else if (m_error != m_fetchRequest->errorString()) {
         m_error = m_fetchRequest->errorString();
         emit errorChanged();
     }

@@ -114,6 +114,8 @@ public:
 
     bool isLiveSource() const;
 
+    void saveFallbackVideoFrame();
+
 public slots:
     void loadFromUri(const QNetworkRequest &url);
     void loadFromStream(const QNetworkRequest &url, QIODevice *stream);
@@ -125,6 +127,8 @@ public slots:
 
     void setVolume(int volume);
     void setMuted(bool muted);
+
+    void showPrerollFrames(bool enabled);
 
 signals:
     void durationChanged(qint64 duration);
@@ -204,6 +208,8 @@ private:
     mutable qint64 m_lastPosition;
     qint64 m_duration;
     int m_durationQueries;
+
+    bool m_displayPrerolledFrame;
 
     enum SourceType
     {

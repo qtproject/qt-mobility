@@ -499,6 +499,7 @@ void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
 
     \brief The DocumentGalleryModel element is used to specify a model
     containing items from the document gallery.
+    \since Mobility 1.1
 
     \ingroup qml-gallery
 
@@ -564,6 +565,7 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
 /*!
     \qmlproperty enum DocumentGalleryModel::status
+    \since Mobility 1.1
 
     This property holds the status of a query.  It can be one of:
 
@@ -583,6 +585,7 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
 /*!
     \qmlproperty real DocumentGalleryModel::progress
+    \since Mobility 1.1
 
     This property holds the current progress of the request, from 0.0 (started)
     to 1.0 (finished).
@@ -590,6 +593,7 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
 /*!
     \qmlproperty QStringList DocumentGalleryModel::properties
+    \since Mobility 1.1
 
     This property holds the item properties a query should return values for.
     All supported properties are listed \l QDocumentGallery.
@@ -597,6 +601,7 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
 /*!
     \qmlproperty QStringList DocumentGalleryModel::sortProperties
+    \since Mobility 1.1
 
     This property holds the properties the results of a query should be sorted
     on.
@@ -608,6 +613,7 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
 /*!
     \qmlproperty bool DocumentGalleryModel::autoUpdate
+    \since Mobility 1.1
 
     This property holds whether a query should refresh its results
     automatically.
@@ -615,18 +621,21 @@ void QDeclarativeDocumentGalleryModel::classBegin()
 
 /*!
     \qmlproperty int DocumentGalleryModel::offset
+    \since Mobility 1.1
 
     This property holds the offset of the first item returned by a query.
 */
 
 /*!
     \qmlproperty int DocumentGalleryModel::limit
+    \since Mobility 1.1
 
     This property contains the maximum number of items returned by a query.
 */
 
 /*!
     \qmlproperty enum DocumentGalleryModel::rootType
+    \since Mobility 1.1
 
     This property contains the type of item a query should return.
     It can be one of:
@@ -667,12 +676,14 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 
 /*!
     \qmlproperty GalleryFilter DocumentGalleryModel::filter
+    \since Mobility 1.1
 
     This property contains criteria to used to filter the results of a query.
 */
 
 /*!
     \qmlproperty variant DocumentGalleryModel::rootItem
+    \since Mobility 1.1
 
     This property contains the id of an item that a query should return the
     descendants of.
@@ -680,6 +691,7 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 
 /*!
     \qmlproperty enum DocumentGalleryModel::scope
+    \since Mobility 1.1
 
     The property contains whether a query should count the direct descendants
     of the \l rootItem or all descendants.
@@ -687,30 +699,35 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 
 /*!
     \qmlmethod DocumentGalleryModel::reload()
+    \since Mobility 1.1
 
     Re-queries the gallery.
 */
 
 /*!
     \qmlmethod DocumentGalleryModel::cancel()
+    \since Mobility 1.1
 
     Cancels an executing query.
 */
 
 /*!
     \qmlmethod DocumentGalleryModel::clear()
+    \since Mobility 1.1
 
     Clears the results of a query.
 */
 
 /*!
     \qmlproperty int DocumentGalleryModel::count
+    \since Mobility 1.1
 
     This property holds the number of results returned by a query.
 */
 
 /*!
     \qmlmethod DocumentGalleryModel::get(int index)
+    \since Mobility 1.1
 
     Returns the result at \a index in a query model.
 
@@ -721,6 +738,7 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 
 /*!
     \qmlmethod DocumentGalleryModel::property(int index, string property)
+    \since Mobility 1.1
 
     Returns the value of \a property from the result at \a index.
 
@@ -731,6 +749,7 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 
 /*!
     \qmlmethod DocumentGalleryModel::set(int index, jsobject dict)
+    \since Mobility 1.1
 
     Changes the item at \a index in the list model with the values in \a dict.
     Properties not appearing in \a dict are left unchanged.
@@ -738,6 +757,7 @@ void QDeclarativeDocumentGalleryModel::setRootType(QDeclarativeDocumentGallery::
 
 /*!
     \qmlmethod DocumentGalleryModel::setProperty(int index, string property, variant value)
+    \since Mobility 1.1
 
     Changes the \a property of the result at \a index in a model to \a value.
 

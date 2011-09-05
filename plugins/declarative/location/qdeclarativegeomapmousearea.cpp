@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
     \brief The MapMouseArea item enables simple mouse handling.
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
    A MapMouseArea is an invisible item that is typically used in conjunction
    with a visible map object or map item in order to provide mouse handling.
@@ -100,6 +101,7 @@ QDeclarativeGraphicsGeoMap* QDeclarativeGeoMapMouseArea::map() const
 /*!
     \qmlproperty qreal MapMouseArea::mouseX
     \qmlproperty qreal MapMouseArea::mouseY
+    \since Mobility 1.2
 
     These properties hold the screen coordinates of the mouse cursor.
 
@@ -142,6 +144,7 @@ void QDeclarativeGeoMapMouseArea::setHovered(bool hovered)
 
 /*!
     \qmlproperty bool MapMouseArea::pressed
+    \since Mobility 1.2
     This property holds whether the mouse area is currently pressed.
 */
 
@@ -178,6 +181,7 @@ bool QDeclarativeGeoMapMouseArea::setPressed(bool pressed, QDeclarativeGeoMapMou
 
 /*!
     \qmlproperty bool MapMouseArea::enabled
+    \since Mobility 1.2
     This property holds whether the item accepts mouse events.
 
     By default, this property is true.
@@ -200,6 +204,7 @@ void QDeclarativeGeoMapMouseArea::setEnabled(bool enabled)
 
 /*!
     \qmlproperty MouseButton MapMouseArea::pressedButton
+    \since Mobility 1.2
     This property holds the mouse button currently pressed.
 
     It is one of:
@@ -220,6 +225,7 @@ Qt::MouseButton QDeclarativeGeoMapMouseArea::pressedButton() const
 
 /*!
     \qmlproperty Qt::MouseButtons MapMouseArea::acceptedButtons
+    \since Mobility 1.2
     This property holds the mouse buttons that the mouse area reacts to.
 
     The available buttons are:
@@ -368,6 +374,7 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
 
 /*!
   \qmlsignal MapMouseArea::onPressed(MapMouseEvent mouse)
+  \since Mobility 1.2
 
     This handler is called when there is a press.
 
@@ -384,6 +391,7 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
 
 /*!
   \qmlsignal MapMouseArea::onReleased(MapMouseEvent mouse)
+  \since Mobility 1.2
 
     This handler is called when there is a release.
     The \l {MapMouseEvent}{mouse} parameter provides information about the
@@ -395,6 +403,7 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
 
 /*!
   \qmlsignal MapMouseArea::onClicked(MapMouseEvent mouse)
+  \since Mobility 1.2
 
     This handler is called when there is a click. A click is defined as a
     press followed by a release, both inside the MapMouseArea (pressing,
@@ -410,6 +419,7 @@ void QDeclarativeGeoMapMouseArea::moveEvent(QDeclarativeGeoMapMouseEvent *event)
 
 /*!
   \qmlsignal MapMouseArea::onDoubleClicked(MapMouseEvent mouse)
+  \since Mobility 1.2
 
     This handler is called when there is a double-click (a press followed
     by a release followed by a press).

@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass Place QDeclarativeGeoPlace
     \brief The A Place element presents basic information about a place.
     \ingroup qml-location
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -90,6 +91,7 @@ QDeclarativeGeoBoundingBox* QDeclarativeGeoPlace::viewport()
 
 /*!
     \qmlproperty BoundingBox Place::viewport
+    \since Mobility 1.2
 
     This property holds the viewport of the place
     (minimum viewport necessary to display the entirety of the place).
@@ -113,6 +115,7 @@ QDeclarativeCoordinate* QDeclarativeGeoPlace::coordinate()
 
 /*!
     \qmlproperty Coordinate Place::coordinate
+    \since Mobility 1.2
 
     This property holds coordinate where this place is located at.
 
@@ -136,6 +139,7 @@ QDeclarativeGeoAddress* QDeclarativeGeoPlace::address()
 
 /*!
     \qmlproperty Address Place::address
+    \since Mobility 1.2
 
     This property holds address of the place.
 

@@ -44,7 +44,7 @@
 
 #include <qcameraflashcontrol.h>
 
-#include "s60camerasettings.h"
+#include "s60cameraadvsettings.h"
 
 QT_USE_NAMESPACE
 
@@ -86,7 +86,7 @@ private: // Data
 
     S60ImageCaptureSession          *m_session;
     S60CameraService                *m_service;
-    S60CameraSettings               *m_advancedSettings;
+    S60CameraAdvSettings            *m_advancedSettings;
     QCameraExposure::FlashModes     m_flashMode;
 };
 

@@ -58,7 +58,7 @@ QtVersit
 QtConnectivity
 -----
  - The QNearFieldTarget is now asynchronous.
- - LLCP socket support on Maemo 6
+ - LLCP socket support on Harmattan
  - Improved API documentation and example applications.
  - Added connectivity QML plugin
  - Added connectivity QML example applications

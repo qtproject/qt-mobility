@@ -130,21 +130,20 @@ QVariant S60CameraImageProcessingControl::processingParameter(
     QCameraImageProcessingControl::ProcessingParameter parameter) const
 {
     switch (parameter) {
-        case QCameraImageProcessingControl::Contrast:
-            return QVariant(contrast());
-        case QCameraImageProcessingControl::Saturation:
-            return QVariant(saturation());
-        case QCameraImageProcessingControl::Brightness:
-            return QVariant(brightness());
-        case QCameraImageProcessingControl::Sharpening:
-            return QVariant(sharpeningLevel());
-        case QCameraImageProcessingControl::Denoising:
-            return QVariant(denoisingLevel());
-        case QCameraImageProcessingControl::ColorTemperature:
-            return QVariant(manualWhiteBalance());
-
-        default:
-            return QVariant();
+    case QCameraImageProcessingControl::Contrast:
+        return QVariant(contrast());
+    case QCameraImageProcessingControl::Saturation:
+        return QVariant(saturation());
+    case QCameraImageProcessingControl::Brightness:
+        return QVariant(brightness());
+    case QCameraImageProcessingControl::Sharpening:
+        return QVariant(sharpeningLevel());
+    case QCameraImageProcessingControl::Denoising:
+        return QVariant(denoisingLevel());
+    case QCameraImageProcessingControl::ColorTemperature:
+        return QVariant(manualWhiteBalance());
+    default:
+        return QVariant();
     }
 }
 
@@ -152,29 +151,28 @@ void S60CameraImageProcessingControl::setProcessingParameter(
     QCameraImageProcessingControl::ProcessingParameter parameter, QVariant value)
 {
     switch (parameter) {
-        case QCameraImageProcessingControl::Contrast:
-            setContrast(value.toInt());
-            break;
-        case QCameraImageProcessingControl::Saturation:
-            setSaturation(value.toInt());
-            break;
-        case QCameraImageProcessingControl::Brightness:
-            setBrightness(value.toInt());
-            break;
-        case QCameraImageProcessingControl::Sharpening:
-            if (isSharpeningSupported())
-                setSharpeningLevel(value.toInt());
-            break;
-        case QCameraImageProcessingControl::Denoising:
-            if (isDenoisingSupported())
-                setDenoisingLevel(value.toInt());
-            break;
-        case QCameraImageProcessingControl::ColorTemperature:
-            setManualWhiteBalance(value.toInt());
-            break;
-
-        default:
-            break;
+    case QCameraImageProcessingControl::Contrast:
+        setContrast(value.toInt());
+        break;
+    case QCameraImageProcessingControl::Saturation:
+        setSaturation(value.toInt());
+        break;
+    case QCameraImageProcessingControl::Brightness:
+        setBrightness(value.toInt());
+        break;
+    case QCameraImageProcessingControl::Sharpening:
+        if (isSharpeningSupported())
+            setSharpeningLevel(value.toInt());
+        break;
+    case QCameraImageProcessingControl::Denoising:
+        if (isDenoisingSupported())
+            setDenoisingLevel(value.toInt());
+        break;
+    case QCameraImageProcessingControl::ColorTemperature:
+        setManualWhiteBalance(value.toInt());
+        break;
+    default:
+        break;
     }
 }
 

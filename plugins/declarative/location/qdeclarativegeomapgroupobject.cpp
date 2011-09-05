@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QGeoMapGroupObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     Grouping is provided to make it easier to quickly add, remove, show
     and hide groups of objects.
@@ -108,6 +109,7 @@ void QDeclarativeGeoMapGroupObject::setMap(QDeclarativeGraphicsGeoMap *map)
 /*!
     \qmlproperty list<QGeoMapObject> MapGroup::objects
     \default
+    \since Mobility 1.2
 
     This property holds the list of objects which make up the group.
 */
@@ -220,6 +222,7 @@ void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *even
 
 /*!
     \qmlproperty int MapGroup::zValue
+    \since Mobility 1.2
 
     This property holds the z-value of the group.
 
@@ -234,6 +237,7 @@ void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *even
 
 /*!
     \qmlproperty bool MapGroup::visible
+    \since Mobility 1.2
 
     This property holds a boolean corresponding to whether or not the
     group is visible.

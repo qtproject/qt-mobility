@@ -248,6 +248,7 @@ void QDeclarativeGalleryType::_q_metaDataChanged(const QList<int> &keys)
 
     \brief The DocumentGalleryType element allows you to request information
     about an item type from the document gallery.
+    \since Mobility 1.1
 
     This element is part of the \bold {QtMobility.gallery 1.1} module.
 
@@ -270,6 +271,7 @@ void QDeclarativeDocumentGalleryType::classBegin()
 
 /*!
     \qmlproperty enum DocumentGalleryType::status
+    \since Mobility 1.1
 
     This property holds the status of a type request.  It can be one of:
 
@@ -288,6 +290,7 @@ void QDeclarativeDocumentGalleryType::classBegin()
 
 /*!
     \qmlproperty real DocumentGalleryType::progress
+    \since Mobility 1.1
 
     This property holds the current progress of the request, from 0.0 (started)
     to 1.0 (finished).
@@ -295,12 +298,14 @@ void QDeclarativeDocumentGalleryType::classBegin()
 
 /*!
     \qmlproperty QStringList DocumentGalleryType::properties
+    \since Mobility 1.1
 
     This property holds the type properties a request should return values for.
 */
 
 /*!
     \qmlproperty bool DocumentGalleryType::autoUpdate
+    \since Mobility 1.1
 
     This property holds whether a request should refresh its results
     automatically.
@@ -308,6 +313,7 @@ void QDeclarativeDocumentGalleryType::classBegin()
 
 /*!
     \qmlproperty enum DocumentGalleryType::itemType
+    \since Mobility 1.1
 
     This property holds the item type that a request fetches information about.
     It can be one of:
@@ -355,30 +361,35 @@ void QDeclarativeDocumentGalleryType::setItemType(QDeclarativeDocumentGallery::I
 
 /*!
     \qmlproperty bool DocumentGalleryType::available
+    \since Mobility 1.1
 
     This property holds whether the meta-data of a type is available.
 */
 
 /*!
     \qmlproperty object DocumentGalleryType::metaData
+    \since Mobility 1.1
 
     This property holds the meta-data of an item type/
 */
 
 /*!
     \qmlmethod DocumentGalleryType::reload()
+    \since Mobility 1.1
 
     Re-queries the gallery.
 */
 
 /*!
     \qmlmethod DocumentGalleryType::cancel()
+    \since Mobility 1.1
 
     Cancels an executing request.
 */
 
 /*!
     \qmlmethod DocumentGalleryType::clear()
+    \since Mobility 1.1
 
     Clears the results of a request.
 */
