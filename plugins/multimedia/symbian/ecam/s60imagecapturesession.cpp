@@ -656,6 +656,7 @@ void S60ImageCaptureSession::cancelCapture()
         m_cameraEngine->CancelCapture();
 
     m_icState = EImageCapturePrepared;
+    emit readyForCaptureChanged(true);
 }
 
 void S60ImageCaptureSession::processFileName(const QString &fileName)
@@ -924,13 +925,13 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         qtFileName.replace(QChar('\\'), QChar('/'));
         emit imageSaved(m_currentImageId, qtFileName);
 
-        // Inform that we can continue taking more pictures
-        emit readyForCaptureChanged(true);
-
         // For custom preview generation, image buffer gets released in RunL()
 #ifdef ECAM_PREVIEW_API
         releaseImageBuffer();
 #endif // ECAM_PREVIEW_API
+
+        // Inform that we can continue taking more pictures
+        emit readyForCaptureChanged(true);
 
     } else {
         setError(KErrPathNotFound, tr("Invalid path given."), true);
