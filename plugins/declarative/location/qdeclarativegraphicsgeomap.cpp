@@ -100,6 +100,9 @@ QTM_BEGIN_NAMESPACE
     MapObjects or the Map item itself.
 
     The Map element is part of the \bold{QtMobility.location 1.2} module.
+
+    \bold{API break notice:} Any previous \code import QtMobility.location 1.1 \endcode statement
+    for Maps elements will no longer work since QtMobility 1.2.
 */
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
