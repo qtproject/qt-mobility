@@ -46,6 +46,8 @@
 #include "s60imagecapturesession.h"
 #include "s60cameraconstants.h"
 
+using namespace S60CameraConstants;
+
 S60CameraCaptureBufferFormatControl::S60CameraCaptureBufferFormatControl(QObject *parent):
 QCameraCaptureBufferFormatControl(parent)
 {

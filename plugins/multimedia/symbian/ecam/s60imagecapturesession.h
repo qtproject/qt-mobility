@@ -60,6 +60,7 @@
 #include <icl/imagedata.h> // TFrameInfo
 
 QT_USE_NAMESPACE
+using namespace S60CameraConstants;
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(CImageDecoder)
@@ -128,7 +129,7 @@ public: // Static Contructor & Destructor
     static S60ImageCaptureEncoder* NewL(S60ImageCaptureSession *imageSession = 0,
                                         RFs *fileSystemAccess = 0,
                                         const TDesC16 *fileName = 0,
-                                        TInt jpegQuality = KDefaultImageQuality);
+                                        TInt jpegQuality = KJpegQualityDefault);
     ~S60ImageCaptureEncoder();
 
 public: // Operations

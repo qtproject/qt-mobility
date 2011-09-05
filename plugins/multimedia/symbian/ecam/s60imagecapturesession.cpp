@@ -52,6 +52,8 @@
 #include <pathinfo.h>
 #include <imageconversion.h>    // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
 
+using namespace S60CameraConstants;
+
 S60ImageCaptureDecoder::S60ImageCaptureDecoder(S60ImageCaptureSession *imageSession,
                                                RFs *fileSystemAccess,
                                                const TDesC8 *data,
@@ -520,7 +522,7 @@ void S60ImageCaptureSession::initializeImageCaptureSettings()
         m_captureSize = KDefaultImageResolution;
     }
 
-    m_symbianImageQuality = KDefaultImageQuality;
+    m_symbianImageQuality = KJpegQualityDefault;
 }
 
 /*

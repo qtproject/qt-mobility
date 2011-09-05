@@ -50,6 +50,8 @@
 #include "s60cameraviewfinderengine.h"
 #include "s60cameraconstants.h"
 
+using namespace S60CameraConstants;
+
 S60CameraControl::S60CameraControl(QObject *parent) :
     QCameraControl(parent)
 {

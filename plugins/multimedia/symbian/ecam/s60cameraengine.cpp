@@ -50,6 +50,8 @@
     #include <platform/ecam/camerasnapshot.h>
 #endif // ECAM_PREVIEW_API
 
+using namespace S60CameraConstants;
+
 CCameraEngine::CCameraEngine()
 {
 }

@@ -59,6 +59,8 @@
 #include <coecntrl.h>   // CCoeControl
 #include <w32std.h>
 
+using namespace S60CameraConstants;
+
 // Helper function
 TRect qRect2TRect(const QRect &qr)
 {
