@@ -2,7 +2,7 @@
 
 dbus-send --system --type=method_call --dest=com.nokia.nfc / \
     com.nokia.nfc.Manager.RegisterNDEFHandler \
-        string:system \
+        string:session \
         string:com.nokia.qtmobility.nfc.%APPNAME% \
         objpath:/com/nokia/nfc/ndefhandler \
         string:any \

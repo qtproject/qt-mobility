@@ -191,7 +191,7 @@ QTM_BEGIN_NAMESPACE
         }
     \endcode
 
-\section3 Meego 1.2 Harmattan
+    \section3 Meego 1.2 Harmattan
 
     On Meego 1.2 Harmattan the NDEF message handler notifications are passed over D-Bus.
     Registration of the NDEF message match criteria is done via a D-Bus call. The
@@ -221,10 +221,10 @@ QTM_BEGIN_NAMESPACE
     \code
     harmattan {
         ndefhandler_conf.sources = myapplication.conf
-        ndefhandler_conf.path = /etc/dbus-1/system.d/
+        ndefhandler_conf.path = /etc/dbus-1/session.d/
 
         ndefhandler_service.sources = myapplication.service
-        ndefhandler_service.path = /usr/share/dbus-1/system-services/
+        ndefhandler_service.path = /usr/share/dbus-1/services/
 
         DEPLOYMENT += ndefhandler_conf ndefhandler_service
     }
@@ -253,7 +253,7 @@ QTM_BEGIN_NAMESPACE
 
     Note that \c {[1:*]} indicates one or more records of the specified type must be in the NDEF
     message. The value of the datatype string argument can be set to any valid match string
-    supported by the Maemo6 platform.
+    supported by the MeeGo 1.2 Harmattan platform.
 
     The NDEF message handler should be unregistered at uninstallation time. For example in the
     packages pre-removal script.
@@ -261,8 +261,6 @@ QTM_BEGIN_NAMESPACE
     \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.prerm
 
     The \i {%APPNAME%} string must be replace with the name of the application binary.
-
-
 */
 
 /*!

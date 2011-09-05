@@ -16,10 +16,10 @@ RESOURCES += \
 
 OTHER_FILES += \
     templates/symbian/symbian.xml \
-    templates/maemo6/maemo6.conf \
-    templates/maemo6/maemo6.service \
-    templates/maemo6/maemo6.postinst \
-    templates/maemo6/maemo6.prerm
+    templates/harmattan/harmattan.conf \
+    templates/harmattan/harmattan.service \
+    templates/harmattan/harmattan.postinst \
+    templates/harmattan/harmattan.prerm
 
 include(../../common.pri)
 include(../../features/deploy.pri)
