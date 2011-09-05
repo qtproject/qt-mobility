@@ -314,6 +314,8 @@ private: // Internal
 
     QVideoFrame generateImageBuffer(TDesC8 *aData);
 
+    TSize getScaledPreviewSize(const QSize originalSize) const;
+
 signals: // Notifications
 
     void stateChanged(QCamera::State);

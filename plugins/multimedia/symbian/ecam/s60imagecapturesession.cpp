@@ -675,6 +675,25 @@ void S60ImageCaptureSession::MceoFocusComplete()
     emit focusStatusChanged(QCamera::Locked, QCamera::LockAcquired);
 }
 
+TSize S60ImageCaptureSession::getScaledPreviewSize(const QSize originalSize) const
+{
+    // Set proper Preview Size
+    TSize scaledSize((originalSize.width() / KSnapshotDownScaleFactor),
+                     (originalSize.height() / KSnapshotDownScaleFactor));
+
+    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+        scaledSize.SetSize((originalSize.width() / (KSnapshotDownScaleFactor/2)),
+                           (originalSize.height() / (KSnapshotDownScaleFactor/2)));
+    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+        scaledSize.SetSize((originalSize.width() / (KSnapshotDownScaleFactor/4)),
+                           (originalSize.height() / (KSnapshotDownScaleFactor/4)));
+    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+        scaledSize.SetSize(originalSize.width(),
+                           originalSize.height());
+
+    return scaledSize;
+}
+
 void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 {
     emit imageExposed(m_currentImageId);
@@ -855,15 +874,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         S60ImageCaptureDecoder *imageDecoder = S60ImageCaptureDecoder::DataNewL(this, fileSystemAccess, aData);
         CleanupStack::PushL(imageDecoder);
 
-        // Set proper Preview Size
-        TSize scaledSize((m_captureSize.width() / KSnapshotDownScaleFactor), (m_captureSize.height() / KSnapshotDownScaleFactor));
-        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/2)), (m_captureSize.height() / (KSnapshotDownScaleFactor/2)));
-        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/4)), (m_captureSize.height() / (KSnapshotDownScaleFactor/4)));
-        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-            scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
-
+        TSize scaledSize = getScaledPreviewSize(m_imageSettings->imageResolution());
         TFrameInfo *info = imageDecoder->frameInfo();
         if (!info) {
             setError(KErrGeneral, tr("Preview image creation failed."));
@@ -1909,15 +1920,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         return;
     }
 
-    // Set proper Preview Size
-    TSize scaledSize((m_captureSize.width() / KSnapshotDownScaleFactor), (m_captureSize.height() / KSnapshotDownScaleFactor));
-    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-        scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/2)), (m_captureSize.height() / (KSnapshotDownScaleFactor/2)));
-    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-        scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/4)), (m_captureSize.height() / (KSnapshotDownScaleFactor/4)));
-    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-        scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
-
+    TSize scaledSize = getScaledPreviewSize(m_imageSettings->imageResolution());
     TFrameInfo *info = m_imageDecoder->frameInfo();
     if (!info) {
         setError(KErrGeneral, tr("Preview image creation failed."));
