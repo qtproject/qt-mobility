@@ -215,49 +215,52 @@ testcase = {
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     add_recurring_event: function()
     {
-        prompt(twiki('---++ Add Recurring Event
+        // Test meta data
+        testTitle = "Organizer - add recurring event";
+        testBinary = "calendardemo";
+        testSource = "$MOBILITYDIR/examples/calendardemo";
+        testGoal = "Verify that recurment events can be added";
+        testPreconditions = "There are no events list in calendar";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
 
-    1. Launch the *calendardemo* application
-    1. Select appropriate backend
-    1. Verify that no events are listed. If events are listed then
-        1. Remove the events
-        1. Close the *calendardemo* application
-        1. Restart this test case
-    1. Add events *without* no re-occurance:
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 1\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Event 2\' |
-            | Repeat       | \'None\' |
-        1. Click \'Save\' button
-    1. Add an event *with* an re-occurance:
-        1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-        1. Enter event details:
-            | Subject      | \'Recurring Event\'                   |
-            | Start time   | today\'s date, 30 min in the future   |
-            | End time     | today\'s date, 60 min in the future   |
-            | Repeat       | \'Weekly\'                            |
-            | Repeat period | \'For a number of occurances\'       |
-            | Repeat count | \'5\'                                 |
-        1. Click \'Save\' button
-    1. Verify that the \'Recurring Event\' is listed in event list
-    1. Click \'View Month\' button
-    1. Select in Calendar View a date 7 days from today
-    1. Verify that \'Recurring Event\' is listed on that day
-    1. Verify that  \'Event 1\' and \'Event 2\' are *not* listed on that day
-    1. Select in Calendar View  a date a futher *21 days* in the future
-    1. Verify that \'Reacurring Event\' is listed on that day
-    1. Select in Calendar View a date a futher *14 days* in the future
-    1. Verify that \'Reacurring Event\' is ont present on that day
-    1. Select in Calendar View a date *1 year* in the future on the given day of the week for \'Reacurring Event\'
-    1. Verify that \'Recurring Event\' is not listed on that day                     
-    1. Delete events  \'Event 1\', \'Event 2\' and \'Recurring Event\' (using native calendar application if neccessary)
-    1. Close the *calendardemo* application
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select appropriate backend | Verify that no events are listed |
+            | Add events without no re-occurance | |
+            | Select *Add Event* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject: 'Event 1' | |
+            | Enter Repeat: 'None' | |
+            | Click *Save* button | |
+            | Select *Add Event* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject: 'Event 2' | |
+            | Enter Repeat: 'None' | |
+            | Click *Save* button | |
+            | Add events without an re-occurance | |
+            | Select *Add Event* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject: 'Recurring Event' | |
+            | Enter Start time: today's date, 30 min in the future | |
+            | Enter End time: toda's date, 60 min in the future | |
+            | Enter Repeat : 'Weekly' | |
+            | Enter Repeat period : 'For a number of occurances' | |
+            | Enter Repeat count : '5' | |
+            | Click *Save* button | Verify that the 'Recurring Event' is listed in event list |
+            | Click *View Month* button | |
+            | Select in Calendar View a date 7 days from today | Verify that *Recurring Event* is listed on that day |
+            |  | Verify that  *Event 1* and *Event 2* are *not* listed on that day | 
+            | Select in Calendar View  a date a futher 21 days in the future | Verify that *Recurring Event* is listed on that day |
+            | Select in Calendar View  a date a futher 14 days in the future | Verify that *Reacurring Event* is ont present on that day |
+            | Select in Calendar View a date 1 year in the future on the given day of the week for *Reacurring Event* | Verify that *Recurring Event* is not listed on that day |
+            | Delete events 'Event 1 ', 'Event 2' and 'Recurring Event' (using native calendar application if neccessary) | |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
