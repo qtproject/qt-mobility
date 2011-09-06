@@ -543,72 +543,106 @@ testcase = {
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     search_items_any_attribute: function()
     {
-        prompt(twiki('---++ Search Items Using Any Attribute
-    1. Launch the *testQtOrganizer* application
-    1. Select \'Search items\'
-    1. Add an entry
-        1. Fill in following fields):
-            | Type | event |
-            | Name | Event 1 |
-            | Start time | 06/10/11 1:00 PM |
-            | End time | 06/10/11 1:00 PM |
-        1. Press \'Add New Entry\' button
-    1. Add an entry
-        | Type | event |
-        | Name | Event 2 |
-        | Start time | 06/11/11 1:00 PM |
-        | End time | 06/11/11 1:00 PM |
-    1. Add an entry
-        | Type | Todo |
-        | Name | Todo 1 |
-    1. Add an entry |
-        | Type | Journal |
-        | Name | Journal 1 |
-        | Start time | 06/10/11 1:00 PM |
-    1. Add an entry
-        | Type | Note |
-        | Name | Note 1 |
-        | Start time | 06/10/11 1:00 PM |
-    1. Press Search button
-    1. Select \'Detail\' in drop-down list
-    1. Fill in "Event 1" into Name field
-    1. Press Search button
-    1. Verify that only "Event 1" is in the list
-    '));
+        // Test meta data
+        testTitle = "Organizer - search items by any attribute";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify that all items can be searched by attribute";
+        testPreconditions = "There is no any item in calendar";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Search items* item |  |
+            | Add an entry with these info: *Type*:event, *Name*:event 1, *Start time*:06/10/11 1:00 PM, *End time*:06/10/11 1:00 PM |  |
+            | Press *Add New Entry* |  |
+            | Add a new entry with these info: *Type*:event, *Name*:event 2, *Start time*:06/11/11 1:00 PM, *End time*:06/11/11 1:00 PM |  |
+            | Press *Add New Entry* |  |
+            | Add a new entry with these info: *Type*:Todo, *Name*:Todo 1 |  |
+            | Press *Add New Entry* |  |
+            | Add a new entry with these info: *Type*:Journal, *Name*:Journal 1, *Start time*:06/10/11 1:00 PM |  |
+            | Press *Add New Entry* |  |
+            | Add a new entry with these info: *Type*:Note, *Name*:Note 1, *Start time*:06/10/11 1:00 PM |  |
+            | Press *Search* button |  |
+            | Select *Detail* in drop-down list |  | 
+            | Fill in 'Event 1' into Name field |  | 
+            | Press *Search* button | Verify that only 'Event 1' is in the list |
+            | Fill in 6/10/11 1:00 PM into *Start time* |  |
+            | Fill in 6/10/11 2:00 PM into *End time* |  |
+            | Press *Search* button | Verify that only 'Event 1', 'Note 1', 'Journal 1' are in the list |
+        "));
     },
 
 // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    custom_data: function()
+    custom_detail: function()
     {
-        prompt(twiki('---++ Custom Data
-    | *Step* | *Verification* |
-    | Launch the *testQtOrganizer* application | |
-    | Select \'Organize items\' | |
-    | Press \'Create item...\' button | |
-    | Fill in "event1" in \'Display label field\' | |
-    | Press \'Details...\' button | |
-    | Fill in \'Custom detail label\' field with some informaion | |
-    | Press \'Save\' button | |
-    | Press \'Close\' button | |
-    | Press \'Save\' button | Verify that event is saved with custam details (press \'Edit\' button to check all field)|
-    | Create Todo element with custom details | Verify that Todo is saved with custom details |
-    | Create Journal element with custom details | Verify that Journal is saved with custom details |
-    | Create Note element with custom details | Verify that Note is saved with custom details |
-    '));
+        // Test meta data
+        testTitle = "Organizer - check custom detail";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify that custom details can be added";
+        testPreconditions = "There is no any item in calendar";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>    
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select 'Organize items' | |
+            | Press *Create item...* button | |
+            | Fill 'event1' in 'Display label field' | |
+            | Press *Details...* button | |
+            | Fill in 'Custom detail label' field with some informaion | |
+            | Press *Save* button | |
+            | Press *Close* button | |
+            | Press *Save* button | Verify that event is saved with custom details (press *Edit* button to check all field) |
+            | Create Todo element with custom details | Verify that Todo is saved with custom details |
+            | Create Journal element with custom details | Verify that Journal is saved with custom details |
+            | Create Note element with custom details | Verify that Note is saved with custom details |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     multiple_stores: function()
     {
-        prompt(twiki('---++ Multiple stores
-    | *Step* | *Verification* |
-    | Create 2 calendars in *regular calendar* application (Calendar1 and Calendar2) | |
-    | Launch the *calendardemo* application | |
-    | Create an event Event1 in Calendar1 calendar | Verify that Event1 belongs Calendar1 only |
-    | Create an event Event2 in Calendar2 calendar | Verify that  Event1 belongs Calendar1 only and Event2 belongs Calendar2 only |
-    | Edit Event1 | Verify that Event1 is updated correct  ly and did not affect Event2 |
-    | Delete Event2 | verify that Event2 is removed and did not affect Event1 |
-    '));
+        // Test meta data
+        testTitle = "Organizer - multiple stores";
+        testBinary = "calendardemo";
+        testSource = "$MOBILITYDIR/examples/calendardemo";
+        testGoal = "Verify that calendar items can be multiple stored";
+        testPreconditions = "There is no any item in calendar";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Create 2 calendars in *regular calendar* application (Calendar1 and Calendar2) | |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Create an event 'Event1' in Calendar1 calendar | Verify that 'Event1' belongs Calendar1 only |
+            | Create an event 'Event2' in Calendar2 calendar | Verify that  'Event1' belongs Calendar1 only and 'Event2' belongs Calendar2 only |
+            | Edit 'Event1' | Verify that 'Event1' is updated correctly and did not affect 'Event2' |
+            | Delete 'Event2' | verify that 'Event2' is removed and did not affect 'Event1' |
+        "));
     },
 
 // Candidate for future fully described tests, disable for the moment.
@@ -624,31 +658,60 @@ testcase = {
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     import_vcal: function()
     {
-        prompt(twiki('---++ Import vCal items
-    | *Step* | *Verification* |
-    | Launch the *calendardemo* application | |
-    | On app \'Options\' menu, select \'Delete all items\' to insure you are dealing with a pristine calendar | |
-    | On app \'Options\' menu, select \'Import items\', then navigate to a exported instance of an empty vCal file | |
-    | Click on file | Verify that error message appears on the screen  |
-    | Press Ok button to close the message | Verify that calendar has no new items |
-    | On app \'Options\' menu, select \'Import items\', then navigate to a saved instance of an not empty vCal file | |
-    | Click on file | Verify that calendar items have populated the dates in the calendar. |
-    '));
-    },
+        // Test meta data
+        testTitle = "Organizer - import vCal";
+        testBinary = "calendardemo";
+        testSource = "$MOBILITYDIR/examples/calendardemo";
+        testGoal = "Verify that vCal can be imported";
+        testPreconditions = "There are empty and nonempty vCal files";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select 'Delete all items' in *Options* menu | Verify that pristine calendar can been deleted |
+            | Select 'Import items' in *Options* menu | |
+            | Navigate to a exported instance of an empty vCal file and click on file | Verify that error message appears on the screen |
+            | Press Ok button to close the message | Verify that calendar has no new items |
+            | Select 'Import items' in *Options* menu | |
+            | Navigate to a saved instance of an nonempty vCal file and click on file | Verify that calendar items have populated the dates in the calendar |
+        "));
+    },            
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     export_vcal: function()
     {
-        prompt(twiki('---++ Import vCal items
-    | *Step* | *Verification* |
-    | Launch the *calendardemo* application | |
-    | Create several items (events or todo) | |
-    | On app \'Options\' menu, select \'Export items\' | |
-    | Navigate to a folder for export | |
-    | Press Save button | |
-    | Enter file name and press Ok button | Check phone file system and verify that file is present there |
-    '));
-    }
+        // Test meta data
+        testTitle = "Organizer - export vCal";
+        testBinary = "calendardemo";
+        testSource = "$MOBILITYDIR/examples/calendardemo";
+        testGoal = "Verify that vCal can be exported";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Create several items (events or todo) | |
+            | Select 'Export items' in *Options* menu | |
+            | Navigate to a folder for export | |
+            | Press Save button | |
+            | Enter file name and press Ok button | Verify that file is present in phone file system |
+        "));
+    },
 
 // Candidate for future fully described tests, disable for the moment.
 /*
