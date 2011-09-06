@@ -875,7 +875,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         S60ImageCaptureDecoder *imageDecoder = S60ImageCaptureDecoder::DataNewL(this, fileSystemAccess, aData);
         CleanupStack::PushL(imageDecoder);
 
-        TSize scaledSize = getScaledPreviewSize(m_imageSettings->imageResolution());
+        TSize scaledSize = getScaledPreviewSize(m_captureSize);
         TFrameInfo *info = imageDecoder->frameInfo();
         if (!info) {
             setError(KErrGeneral, tr("Preview image creation failed."));
@@ -1882,7 +1882,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         return;
     }
 
-    TSize scaledSize = getScaledPreviewSize(m_imageSettings->imageResolution());
+    TSize scaledSize = getScaledPreviewSize(m_captureSize);
     TFrameInfo *info = m_imageDecoder->frameInfo();
     if (!info) {
         setError(KErrGeneral, tr("Preview image creation failed."));
