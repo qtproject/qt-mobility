@@ -582,23 +582,38 @@ testcase = {
     },
 
 // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
-    custom_data: function()
+    custom_detail: function()
     {
-        prompt(twiki('---++ Custom Data
-    | *Step* | *Verification* |
-    | Launch the *testQtOrganizer* application | |
-    | Select \'Organize items\' | |
-    | Press \'Create item...\' button | |
-    | Fill in "event1" in \'Display label field\' | |
-    | Press \'Details...\' button | |
-    | Fill in \'Custom detail label\' field with some informaion | |
-    | Press \'Save\' button | |
-    | Press \'Close\' button | |
-    | Press \'Save\' button | Verify that event is saved with custom details (press \'Edit\' button to check all field)|
-    | Create Todo element with custom details | Verify that Todo is saved with custom details |
-    | Create Journal element with custom details | Verify that Journal is saved with custom details |
-    | Create Note element with custom details | Verify that Note is saved with custom details |
-    '));
+        // Test meta data
+        testTitle = "Organizer - check custom detail";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify that custom details can be added";
+        testPreconditions = "There is no any item in calendar";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>    
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select 'Organize items' | |
+            | Press *Create item...* button | |
+            | Fill 'event1' in 'Display label field' | |
+            | Press *Details...* button | |
+            | Fill in 'Custom detail label' field with some informaion | |
+            | Press *Save* button | |
+            | Press *Close* button | |
+            | Press *Save* button | Verify that event is saved with custom details (press *Edit* button to check all field) |
+            | Create Todo element with custom details | Verify that Todo is saved with custom details |
+            | Create Journal element with custom details | Verify that Journal is saved with custom details |
+            | Create Note element with custom details | Verify that Note is saved with custom details |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
