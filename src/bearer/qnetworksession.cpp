@@ -63,6 +63,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtNetwork
     \ingroup bearer
     \since 1.0
+    \deprecated
 
     A QNetworkSession enables control over the system's network interfaces. The session's configuration
     parameter are determined via the QNetworkConfiguration object to which it is bound. Depending on the
