@@ -469,12 +469,17 @@ void S60ImageCaptureSession::setError(const TInt error,
 
     if (captureError) {
         emit this->captureError(m_currentImageId, cameraError, description);
-        if (cameraError != QCameraImageCapture::NotSupportedFeatureError)
+        if (cameraError != QCameraImageCapture::NotSupportedFeatureError &&
+            cameraError != QCameraImageCapture::NotReadyError) {
+            qWarning("Resetting image capture session to recover from error.");
             resetSession(true);
+        }
     } else {
         emit this->cameraError(cameraError, description);
-        if (cameraError != QCamera::NotSupportedFeatureError)
+        if (cameraError != QCamera::NotSupportedFeatureError) {
+            qWarning("Resetting image capture session to recover from camera error.");
             resetSession(true);
+        }
     }
 }
 
