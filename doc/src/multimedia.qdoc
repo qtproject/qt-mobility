@@ -40,9 +40,9 @@
 collection of media content.
 \ingroup mobility
 
-Multimedia provides a set of APIs that allow the developer to play, record
+QtMultimediaKit provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimediaKit module. QtMultimediaKit is the recommended API to build multimedia
+QtMultimedia module. QtMultimediaKit is the recommended API to build multimedia
 applications using Qt. The Phonon API is no longer recommended.
 
 \tableofcontents
