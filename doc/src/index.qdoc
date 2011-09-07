@@ -130,6 +130,8 @@
 
     \section2 Bearer Management
 
+    \bold {[ This API is now deprecated. ]}
+
     Although not a network manager, this component manages the connectivity
     state of the device to the network. So it does not manage network
     configurations, which are the role of the platform provider, but it does

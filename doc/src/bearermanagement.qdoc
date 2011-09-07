@@ -37,7 +37,6 @@
 \title Bearer Management
 \brief An API to control the system's connectivity state.
 
-\ingroup mobility
 
 Bearer Management controls the connectivity state of the system so that
 the user can start or stop interfaces, or roam transparently between
@@ -53,6 +52,8 @@ to facilitate the future migration of QtMobility APIs into Qt. See the
 namespace impacts on application development.
 
 \section1 Overview
+
+\bold {[This API is deprecated.]}
 
 The Bearer Management API controls the system's connectivity state. This
 incorporates simple information such as whether the device is online and

@@ -107,6 +107,7 @@ Q_GLOBAL_STATIC_QAPP_DESTRUCTION(QNetworkConfigurationManagerPrivate, connManage
     \inmodule QtNetwork
     \ingroup bearer
     \since 1.0
+    \deprecated
 
     QNetworkConfigurationManager provides access to the network configurations known to the system and
     enables applications to detect the system capabilities (with regards to network sessions) at runtime.
