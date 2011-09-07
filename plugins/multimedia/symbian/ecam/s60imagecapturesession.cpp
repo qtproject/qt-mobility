@@ -754,7 +754,7 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
                 return;
             }
 
-            TSize scaledSize = getScaledPreviewSize(m_imageSettings->imageResolution());
+            TSize scaledSize = getScaledPreviewSize(m_captureSize);
             TFrameInfo *info = m_imageDecoder->frameInfo();
             if (!info) {
                 setError(KErrGeneral, tr("Preview image creation failed."));
