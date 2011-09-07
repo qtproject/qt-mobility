@@ -706,10 +706,71 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
         emit imageAvailable(m_currentImageId, generateImageBuffer(aData));
 
         if (m_captureDestionation == QCameraImageCapture::CaptureToBuffer) {
+#ifdef ECAM_PREVIEW_API
             releaseImageBuffer();
             TInt err = KErrNone;
             QT_TRYCATCH_ERROR(err, emit readyForCaptureChanged(true));
             setError(err, tr("Failure while notifying client that camera is ready for capture."));
+#else // ECAM_PREVIEW_API
+            // Preview needs to be decoded from the compressed image
+            if (m_previewDecodingOngoing) {
+                m_previewInWaitLoop = true;
+                CActiveScheduler::Start(); // Wait for the completion of the previous Preview generation
+            }
+            if (m_fileSystemAccess) {
+                m_fileSystemAccess->Close();
+                delete m_fileSystemAccess;
+                m_fileSystemAccess = 0;
+            }
+            // Delete old instances if needed
+            if (m_imageDecoder) {
+                delete m_imageDecoder;
+                m_imageDecoder = 0;
+            }
+            if (m_previewBitmap) {
+                delete m_previewBitmap;
+                m_previewBitmap = 0;
+            }
+            TRAPD(err, m_fileSystemAccess = new (ELeave) RFs);
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+            err = m_fileSystemAccess->Connect();
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+
+            // Generate Thumbnail to be used as Preview
+            TRAP(err, m_imageDecoder = S60ImageCaptureDecoder::DataNewL(this, m_fileSystemAccess, aData));
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+
+            TSize scaledSize = getScaledPreviewSize(m_imageSettings->imageResolution());
+            TFrameInfo *info = m_imageDecoder->frameInfo();
+            if (!info) {
+                setError(KErrGeneral, tr("Preview image creation failed."));
+                return;
+            }
+
+            TRAP(err, m_previewBitmap = new (ELeave) CFbsBitmap);
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+            err = m_previewBitmap->Create(scaledSize, info->iFrameDisplayMode);
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+
+            // Jpeg conversion completes in RunL
+            m_previewDecodingOngoing = true;
+            m_imageDecoder->decode(m_previewBitmap);
+#endif // ECAM_PREVIEW_API
         }
     }
 
