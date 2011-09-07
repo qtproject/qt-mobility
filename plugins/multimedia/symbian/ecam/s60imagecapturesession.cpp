@@ -469,12 +469,17 @@ void S60ImageCaptureSession::setError(const TInt error,
 
     if (captureError) {
         emit this->captureError(m_currentImageId, cameraError, description);
-        if (cameraError != QCameraImageCapture::NotSupportedFeatureError)
+        if (cameraError != QCameraImageCapture::NotSupportedFeatureError &&
+            cameraError != QCameraImageCapture::NotReadyError) {
+            qWarning("Resetting image capture session to recover from error.");
             resetSession(true);
+        }
     } else {
         emit this->cameraError(cameraError, description);
-        if (cameraError != QCamera::NotSupportedFeatureError)
+        if (cameraError != QCamera::NotSupportedFeatureError) {
+            qWarning("Resetting image capture session to recover from camera error.");
             resetSession(true);
+        }
     }
 }
 
@@ -513,7 +518,7 @@ void S60ImageCaptureSession::initializeImageCaptureSettings()
 
     // Resolution
     if (m_cameraEngine) {
-        QList<QSize> resolutions = supportedCaptureSizesForCodec(imageCaptureCodec());
+        QList<QSize> resolutions = supportedImageResolutionsForCodec(imageCodec());
         foreach (QSize reso, resolutions) {
             if ((reso.width() * reso.height()) > (m_captureSize.width() * m_captureSize.height()))
                 m_captureSize = reso;
@@ -656,6 +661,7 @@ void S60ImageCaptureSession::cancelCapture()
         m_cameraEngine->CancelCapture();
 
     m_icState = EImageCapturePrepared;
+    emit readyForCaptureChanged(true);
 }
 
 void S60ImageCaptureSession::processFileName(const QString &fileName)
@@ -675,6 +681,25 @@ void S60ImageCaptureSession::MceoFocusComplete()
     emit focusStatusChanged(QCamera::Locked, QCamera::LockAcquired);
 }
 
+TSize S60ImageCaptureSession::getScaledPreviewSize(const QSize originalSize) const
+{
+    // Set proper Preview Size
+    TSize scaledSize((originalSize.width() / KSnapshotDownScaleFactor),
+                     (originalSize.height() / KSnapshotDownScaleFactor));
+
+    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+        scaledSize.SetSize((originalSize.width() / (KSnapshotDownScaleFactor/2)),
+                           (originalSize.height() / (KSnapshotDownScaleFactor/2)));
+    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+        scaledSize.SetSize((originalSize.width() / (KSnapshotDownScaleFactor/4)),
+                           (originalSize.height() / (KSnapshotDownScaleFactor/4)));
+    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
+        scaledSize.SetSize(originalSize.width(),
+                           originalSize.height());
+
+    return scaledSize;
+}
+
 void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 {
     emit imageExposed(m_currentImageId);
@@ -686,10 +711,71 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
         emit imageAvailable(m_currentImageId, generateImageBuffer(aData));
 
         if (m_captureDestionation == QCameraImageCapture::CaptureToBuffer) {
+#ifdef ECAM_PREVIEW_API
             releaseImageBuffer();
             TInt err = KErrNone;
             QT_TRYCATCH_ERROR(err, emit readyForCaptureChanged(true));
             setError(err, tr("Failure while notifying client that camera is ready for capture."));
+#else // ECAM_PREVIEW_API
+            // Preview needs to be decoded from the compressed image
+            if (m_previewDecodingOngoing) {
+                m_previewInWaitLoop = true;
+                CActiveScheduler::Start(); // Wait for the completion of the previous Preview generation
+            }
+            if (m_fileSystemAccess) {
+                m_fileSystemAccess->Close();
+                delete m_fileSystemAccess;
+                m_fileSystemAccess = 0;
+            }
+            // Delete old instances if needed
+            if (m_imageDecoder) {
+                delete m_imageDecoder;
+                m_imageDecoder = 0;
+            }
+            if (m_previewBitmap) {
+                delete m_previewBitmap;
+                m_previewBitmap = 0;
+            }
+            TRAPD(err, m_fileSystemAccess = new (ELeave) RFs);
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+            err = m_fileSystemAccess->Connect();
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+
+            // Generate Thumbnail to be used as Preview
+            TRAP(err, m_imageDecoder = S60ImageCaptureDecoder::DataNewL(this, m_fileSystemAccess, aData));
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+
+            TSize scaledSize = getScaledPreviewSize(m_captureSize);
+            TFrameInfo *info = m_imageDecoder->frameInfo();
+            if (!info) {
+                setError(KErrGeneral, tr("Preview image creation failed."));
+                return;
+            }
+
+            TRAP(err, m_previewBitmap = new (ELeave) CFbsBitmap);
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+            err = m_previewBitmap->Create(scaledSize, info->iFrameDisplayMode);
+            if (err) {
+                setError(err, tr("Failed to create preview image."));
+                return;
+            }
+
+            // Jpeg conversion completes in RunL
+            m_previewDecodingOngoing = true;
+            m_imageDecoder->decode(m_previewBitmap);
+#endif // ECAM_PREVIEW_API
         }
     }
 
@@ -855,15 +941,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         S60ImageCaptureDecoder *imageDecoder = S60ImageCaptureDecoder::DataNewL(this, fileSystemAccess, aData);
         CleanupStack::PushL(imageDecoder);
 
-        // Set proper Preview Size
-        TSize scaledSize((m_captureSize.width() / KSnapshotDownScaleFactor), (m_captureSize.height() / KSnapshotDownScaleFactor));
-        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/2)), (m_captureSize.height() / (KSnapshotDownScaleFactor/2)));
-        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-            scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/4)), (m_captureSize.height() / (KSnapshotDownScaleFactor/4)));
-        if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-            scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
-
+        TSize scaledSize = getScaledPreviewSize(m_captureSize);
         TFrameInfo *info = imageDecoder->frameInfo();
         if (!info) {
             setError(KErrGeneral, tr("Preview image creation failed."));
@@ -913,13 +991,13 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         qtFileName.replace(QChar('\\'), QChar('/'));
         emit imageSaved(m_currentImageId, qtFileName);
 
-        // Inform that we can continue taking more pictures
-        emit readyForCaptureChanged(true);
-
         // For custom preview generation, image buffer gets released in RunL()
 #ifdef ECAM_PREVIEW_API
         releaseImageBuffer();
 #endif // ECAM_PREVIEW_API
+
+        // Inform that we can continue taking more pictures
+        emit readyForCaptureChanged(true);
 
     } else {
         setError(KErrPathNotFound, tr("Invalid path given."), true);
@@ -1001,34 +1079,26 @@ void S60ImageCaptureSession::setCaptureDestination(const QCameraImageCapture::Ca
     }
 }
 
-QSize S60ImageCaptureSession::captureSize() const
+QSize S60ImageCaptureSession::imageResolution() const
 {
     return m_captureSize;
 }
 
-QSize S60ImageCaptureSession::minimumCaptureSize()
-{
-    return supportedCaptureSizesForCodec(formatMap().key(m_currentFormat)).first();
-}
-QSize S60ImageCaptureSession::maximumCaptureSize()
-{
-    return supportedCaptureSizesForCodec(formatMap().key(m_currentFormat)).last();
-}
 
-void S60ImageCaptureSession::setCaptureSize(const QSize &size)
+void S60ImageCaptureSession::setImageResolution(const QSize &size)
 {
     if (size.isNull() ||
         size.isEmpty() ||
         size == QSize(-1,-1)) {
         // An empty QSize indicates the encoder should make an optimal choice based on what is
         // available from the image source and the limitations of the codec.
-        m_captureSize = supportedCaptureSizesForCodec(formatMap().key(m_currentFormat)).last();
+        m_captureSize = supportedImageResolutionsForCodec(m_currentCodec).last();
     }
     else
         m_captureSize = size;
 }
 
-QList<QSize> S60ImageCaptureSession::supportedCaptureSizesForCodec(const QString &codecName)
+QList<QSize> S60ImageCaptureSession::supportedImageResolutionsForCodec(const QString &codecName)
 {
     QList<QSize> list;
 
@@ -1060,34 +1130,6 @@ QList<QSize> S60ImageCaptureSession::supportedCaptureSizesForCodec(const QString
     return list;
 }
 
-QMap<QString, int> S60ImageCaptureSession::formatMap()
-{
-    QMap<QString, int> formats;
-
-    // Format list copied from CCamera::TFormat (in ecam.h)
-    formats.insert("Monochrome",        0x0001);
-    formats.insert("16bitRGB444",       0x0002);
-    formats.insert("16BitRGB565",       0x0004);
-    formats.insert("32BitRGB888",       0x0008);
-    formats.insert("Jpeg",              0x0010);
-    formats.insert("Exif",              0x0020);
-    formats.insert("FbsBitmapColor4K",  0x0040);
-    formats.insert("FbsBitmapColor64K", 0x0080);
-    formats.insert("FbsBitmapColor16M", 0x0100);
-    formats.insert("UserDefined",       0x0200);
-    formats.insert("YUV420Interleaved", 0x0400);
-    formats.insert("YUV420Planar",      0x0800);
-    formats.insert("YUV422",            0x1000);
-    formats.insert("YUV422Reversed",    0x2000);
-    formats.insert("YUV444",            0x4000);
-    formats.insert("YUV420SemiPlanar",  0x8000);
-    formats.insert("FbsBitmapColor16MU", 0x00010000);
-    formats.insert("MJPEG",             0x00020000);
-    formats.insert("EncodedH264",       0x00040000);
-
-    return formats;
-}
-
 QMap<QString, QString> S60ImageCaptureSession::codecDescriptionMap()
 {
     QMap<QString, QString> formats;
@@ -1097,12 +1139,8 @@ QMap<QString, QString> S60ImageCaptureSession::codecDescriptionMap()
     return formats;
 }
 
-QStringList S60ImageCaptureSession::supportedImageCaptureCodecs()
+QStringList S60ImageCaptureSession::supportedImageCodecs()
 {
-#ifdef Q_CC_NOKIAX86 // Emulator
-    return formatMap().keys();
-#endif
-
     return m_supportedImageCodecs;
 }
 
@@ -1125,14 +1163,15 @@ void S60ImageCaptureSession::updateImageCaptureFormats()
     }
 }
 
-QString S60ImageCaptureSession::imageCaptureCodec()
+QString S60ImageCaptureSession::imageCodec()
 {
     return m_currentCodec;
 }
-void S60ImageCaptureSession::setImageCaptureCodec(const QString &codecName)
+
+void S60ImageCaptureSession::setImageCodec(const QString &codecName)
 {
     if (!codecName.isEmpty()) {
-        if (supportedImageCaptureCodecs().contains(codecName, Qt::CaseInsensitive) ||
+        if (supportedImageCodecs().contains(codecName, Qt::CaseInsensitive) ||
             codecName == "image/jpg") {
             m_currentCodec = codecName;
             m_currentFormat = selectFormatForCodec(m_currentCodec);
@@ -1145,13 +1184,13 @@ void S60ImageCaptureSession::setImageCaptureCodec(const QString &codecName)
     }
 }
 
-QString S60ImageCaptureSession::imageCaptureCodecDescription(const QString &codecName)
+QString S60ImageCaptureSession::imageCodecDescription(const QString &codecName)
 {
     QString description = codecDescriptionMap().value(codecName);
     return description;
 }
 
-QtMultimediaKit::EncodingQuality S60ImageCaptureSession::captureQuality() const
+QtMultimediaKit::EncodingQuality S60ImageCaptureSession::imageQuality() const
 {
     switch (m_symbianImageQuality) {
         case KJpegQualityVeryLow:
@@ -1171,7 +1210,7 @@ QtMultimediaKit::EncodingQuality S60ImageCaptureSession::captureQuality() const
     }
 }
 
-void S60ImageCaptureSession::setCaptureQuality(const QtMultimediaKit::EncodingQuality &quality)
+void S60ImageCaptureSession::setImageQuality(const QtMultimediaKit::EncodingQuality &quality)
 {
     // Use sensible presets
     switch (quality) {
@@ -1446,7 +1485,7 @@ void S60ImageCaptureSession::doSetFlashModeL(QCameraExposure::FlashModes mode)
     }
 }
 
-QCameraExposure::FlashMode S60ImageCaptureSession::flashMode()
+QCameraExposure::FlashModes S60ImageCaptureSession::flashMode()
 {
     if (m_cameraEngine && m_cameraEngine->Camera()) {
         CCamera *camera = m_cameraEngine->Camera();
@@ -1909,15 +1948,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         return;
     }
 
-    // Set proper Preview Size
-    TSize scaledSize((m_captureSize.width() / KSnapshotDownScaleFactor), (m_captureSize.height() / KSnapshotDownScaleFactor));
-    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-        scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/2)), (m_captureSize.height() / (KSnapshotDownScaleFactor/2)));
-    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-        scaledSize.SetSize((m_captureSize.width() / (KSnapshotDownScaleFactor/4)), (m_captureSize.height() / (KSnapshotDownScaleFactor/4)));
-    if (scaledSize.iWidth < KSnapshotMinWidth || scaledSize.iHeight < KSnapshotMinHeight)
-        scaledSize.SetSize(m_captureSize.width(), m_captureSize.height());
-
+    TSize scaledSize = getScaledPreviewSize(m_captureSize);
     TFrameInfo *info = m_imageDecoder->frameInfo();
     if (!info) {
         setError(KErrGeneral, tr("Preview image creation failed."));

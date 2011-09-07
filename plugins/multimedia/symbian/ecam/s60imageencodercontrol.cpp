@@ -62,32 +62,30 @@ S60ImageEncoderControl::~S60ImageEncoderControl()
 QList<QSize> S60ImageEncoderControl::supportedResolutions(
         const QImageEncoderSettings &settings, bool *continuous) const
 {
-    QList<QSize> resolutions = m_session->supportedCaptureSizesForCodec(settings.codec());
-
     // Discrete resolutions are returned
     if (continuous)
         *continuous = false;
 
-    return resolutions;
+    return m_session->supportedImageResolutionsForCodec(settings.codec());
 }
 
 QStringList S60ImageEncoderControl::supportedImageCodecs() const
 {
-    return m_session->supportedImageCaptureCodecs();
+    return m_session->supportedImageCodecs();
 }
 
 QString S60ImageEncoderControl::imageCodecDescription(const QString &codec) const
 {
-    return m_session->imageCaptureCodecDescription(codec);
+    return m_session->imageCodecDescription(codec);
 }
 
 QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 {
     // Update setting values from session
     QImageEncoderSettings settings;
-    settings.setCodec(m_session->imageCaptureCodec());
-    settings.setResolution(m_session->captureSize());
-    settings.setQuality(m_session->captureQuality());
+    settings.setCodec(m_session->imageCodec());
+    settings.setResolution(m_session->imageResolution());
+    settings.setQuality(m_session->imageQuality());
 
     return settings;
 }
@@ -101,20 +99,20 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
     if (!settings.isNull()) {
         if (!settings.codec().isEmpty()) {
             if (settings.resolution() != QSize(-1,-1)) { // Codec, Resolution & Quality
-                m_session->setImageCaptureCodec(settings.codec());
-                m_session->setCaptureSize(settings.resolution());
-                m_session->setCaptureQuality(settings.quality());
+                m_session->setImageCodec(settings.codec());
+                m_session->setImageResolution(settings.resolution());
+                m_session->setImageQuality(settings.quality());
             } else { // Codec and Quality
-                m_session->setImageCaptureCodec(settings.codec());
-                m_session->setCaptureQuality(settings.quality());
+                m_session->setImageCodec(settings.codec());
+                m_session->setImageQuality(settings.quality());
             }
         } else {
             if (settings.resolution() != QSize(-1,-1)) { // Resolution & Quality
-                m_session->setCaptureSize(settings.resolution());
-                m_session->setCaptureQuality(settings.quality());
+                m_session->setImageResolution(settings.resolution());
+                m_session->setImageQuality(settings.quality());
             }
             else // Only Quality
-                m_session->setCaptureQuality(settings.quality());
+                m_session->setImageQuality(settings.quality());
         }
 
         // Prepare ImageCapture with the settings and set error if needed

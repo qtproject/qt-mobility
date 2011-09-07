@@ -161,10 +161,12 @@ void S60VideoCaptureSession::setError(const TInt error, const QString &descripti
     emit this->error(recError, description);
 
     // Reset only of other than "not supported" error
-    if (m_error != KErrNotSupported)
+    if (m_error != KErrNotSupported && m_error != KErrNotFound) {
+        qWarning("Resetting video capture session to recover from error.");
         resetSession(true);
-    else
+    } else {
         m_error = KErrNone; // Reset error
+    }
 }
 
 QMediaRecorder::Error S60VideoCaptureSession::fromSymbianErrorToQtMultimediaError(int aError)
