@@ -47,6 +47,7 @@
     \brief The RecurrenceRule element represents a rule by which a organizer item repeats.
 
     \ingroup qml-organizer
+    \since Mobility 1.1
 
 
   \sa QOrganizerRecurrenceRule
@@ -56,6 +57,7 @@
 
 /*!
   \qmlproperty enumeration RecurrenceRule::frequency
+  \since Mobility 1.1
 
   This property holds the frequency with which the item recurs, the value can be one of:
   \list
@@ -69,32 +71,38 @@
 
 /*!
   \qmlproperty variant RecurrenceRule::limit
+  \since Mobility 1.1
 
   This property holds the limit condition of the recurrence rule, the value can be a limit date and time or a limit count.
   The default is no limit.
   */
 /*!
   \qmlproperty int RecurrenceRule::interval
+  \since Mobility 1.1
 
   This property holds the interval of recurrence.  The default interval is 1.
   */
 /*!
   \qmlproperty list<variant> RecurrenceRule::daysOfWeek
+  \since Mobility 1.1
 
   This property holds a list of the days of week that the item should recur on.
   */
 /*!
   \qmlproperty list<variant> RecurrenceRule::daysOfMonth
+  \since Mobility 1.1
 
   This property holds a list of the days of the month that the item should recur on.
   */
 /*!
   \qmlproperty list<variant> RecurrenceRule::daysOfYear
+  \since Mobility 1.1
 
   This property holds a list of the days of the year that the item should recur on.
   */
 /*!
   \qmlproperty list<int> RecurrenceRule::monthsOfYear
+  \since Mobility 1.1
 
   This property holds a list of the months that the item should recur on, the list element value can be one of:
   \list
@@ -115,16 +123,19 @@
 
 /*!
   \qmlproperty list<int> RecurrenceRule::weeksOfYear
+  \since Mobility 1.1
 
   This property holds a list of the weeks of the year that the item should recur on.
   */
 /*!
   \qmlproperty list<int> RecurrenceRule::positions
+  \since Mobility 1.1
 
   This property holds the position-list of the recurrence rule.
   */
 /*!
   \qmlproperty enumeration RecurrenceRule::firstDayOfWeek
+  \since Mobility 1.1
 
   This property holds the day that the week starts on.  If not set, this is Monday. The value can be one of:
   \list

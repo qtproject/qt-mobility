@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "moduletest_configurability.h"
+#include "testthread.h"
 
 #include <QtTest/QtTest>
 #include <QtDebug>
@@ -79,6 +80,19 @@ bool waitForSignal(QObject *sender, const char *signal, int timeout = 1000) {
     return timer.isActive();
 }
 
+// Runs the event loop for a short while to allow all unhandled queued signals to be sent forward.
+// This flushes the events, so that when we call waitForSignal we don't get any unhandled signals
+// from previous test cases.
+void flushEventLoop()
+{
+    QEventLoop loop;
+    QTimer timer;
+    QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    timer.setSingleShot(true);
+    timer.start(1000); // 1 second
+    loop.exec();
+}
+
 
 // ======== MEMBER FUNCTIONS ========
 
@@ -104,6 +118,70 @@ void ModuletestConfigurability::cleanup()
 
 void ModuletestConfigurability::cleanupTestCase()
 {
+}
+
+// TEST CASE: several different threads access the same cenrep value.
+// In this test case the read and write operations are protected with a mutex
+// in order to verify that the value was written successfully. That means
+// that this test case doesn't test simultaneous read/write operations from
+// multiple threads; it just tests that it is possible to read same value
+// multiple threads.
+void ModuletestConfigurability::threads()
+{
+    QSemaphore sem(0);
+    QMutex mutex;
+    ConfigurabilityTestThread *threads[10];
+    for (int i=0; i<10; i++) {
+        threads[i] = new ConfigurabilityTestThread(&sem, &mutex, 1);
+        threads[i]->start();
+    }
+    sem.acquire(10); // wait for the threads to finish
+
+    for (int i=0; i<10; i++) {
+        if (threads[i]->error) {
+            qDebug() << threads[i]->errorString;
+            QVERIFY(false);
+        }
+    }
+}
+
+// TEST CASE: several different threads are accessing PS API simultaneously.
+// Each thread is accessing a different cenrep or pubsub key.
+void ModuletestConfigurability::threads2()
+{
+    QSemaphore sem(0);
+    QMutex mutex;
+    ConfigurabilityTestThread *threads[10];
+ 
+    for (int i=0; i<10; i++) {
+        threads[i] = new ConfigurabilityTestThread(&sem, &mutex, 2);
+    }
+
+    threads[0]->setPath(QString("/publishsubscribe_mt/cenrep"), QString("int"));
+    threads[1]->setPath(QString("/publishsubscribe_mt/cenrep"), QString("int2"));
+    threads[2]->setPath(QString("/publishsubscribe_mt/cenrep"), QString("int3"));
+    threads[3]->setPath(QString("/publishsubscribe_mt/cenrep"), QString("int4"));
+    threads[4]->setPath(QString("/publishsubscribe_mt/cenrep"), QString("int5"));
+    threads[5]->setPath(QString("/publishsubscribe_mt/pubsub"), QString("int"));
+    threads[6]->setPath(QString("/ps/0xE056F50B"), QString("0x50"));
+    threads[7]->setPath(QString("/ps/0xE056F50B"), QString("0x51"));
+    threads[8]->setPath(QString("/ps/0xE056F50B"), QString("0x52"));
+    threads[9]->setPath(QString("/ps/0xE056F50B"), QString("0x53"));
+
+    for (int i=0; i<10; i++) {
+        threads[i]->start();
+    }
+
+    sem.acquire(10); // wait for the threads to finish
+    
+    bool fail = false;
+    for (int i=0; i<10; i++) {
+        if (threads[i]->error) {
+            qDebug() << threads[i]->errorString;
+            fail = true;
+        }
+    }
+    QVERIFY(!fail);
 }
 
 // TEST CASE: basic read and and write operations to Symbian Central Repository
@@ -135,6 +213,8 @@ void ModuletestConfigurability::readAndSetCenrep_data()
 
 void ModuletestConfigurability::readAndSetCenrep()
 {
+    flushEventLoop();
+
     QFETCH(QString, writePath);
     QFETCH(QString, writeKey);
     QFETCH(QString, readPath);
@@ -157,6 +237,7 @@ void ModuletestConfigurability::readAndSetCenrep()
 
     QCOMPARE(spy.count(), 1);
     QCOMPARE(subscriber.value(readKey), value);
+    disconnect(&subscriber, SIGNAL(contentsChanged()), this, SLOT(dummy()));
 }
 
 // TEST CASE: basic read and and write operations to Symbian RProperty
@@ -188,6 +269,8 @@ void ModuletestConfigurability::readAndSetPubsub_data()
 
 void ModuletestConfigurability::readAndSetPubsub()
 {
+    flushEventLoop();
+
     QFETCH(QString, writePath);
     QFETCH(QString, writeKey);
     QFETCH(QString, readPath);

@@ -43,6 +43,7 @@
     \qmlclass Actuator QFeedbackActuator
     \brief The Actuator element represents a feedback actuator.
     \ingroup qml-feedback-api
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
@@ -89,6 +90,7 @@ QFeedbackActuator* QDeclarativeFeedbackActuator::feedbackActuator() const
     \qmlproperty int Actuator::actuatorId
     This property holds the id of the feedback actuator.
     This property is read only.
+    \since Mobility 1.1
 */
 int QDeclarativeFeedbackActuator::actuatorId() const
 {
@@ -100,6 +102,7 @@ int QDeclarativeFeedbackActuator::actuatorId() const
 
     This property is true if the actuator is valid.
     This property is read only.
+    \since Mobility 1.1
 */
 bool QDeclarativeFeedbackActuator::isValid() const
 {
@@ -109,6 +112,7 @@ bool QDeclarativeFeedbackActuator::isValid() const
    \qmlproperty  string Actuator::name
     This property holds the name of the feedback actuator.
     This property is read only.
+    \since Mobility 1.1
 */
 QString QDeclarativeFeedbackActuator::name() const
 {
@@ -119,6 +123,7 @@ QString QDeclarativeFeedbackActuator::name() const
     \qmlproperty enumeration Actuator::state
     This property holds the state of the feedback actuator.
     This property is read only.
+    \since Mobility 1.1
 */
 QFeedbackActuator::State QDeclarativeFeedbackActuator::state() const
 {
@@ -132,6 +137,7 @@ QFeedbackActuator::State QDeclarativeFeedbackActuator::state() const
     \o Envelope - Value specifying that the device can bound its intensity by an Envelope.
     \o Period   - Value specifying that the device can play periodic effects.
     \endlist
+    \since Mobility 1.1
 */
 bool QDeclarativeFeedbackActuator::isCapabilitySupported(QFeedbackActuator::Capability capbility) const
 {
@@ -140,6 +146,7 @@ bool QDeclarativeFeedbackActuator::isCapabilitySupported(QFeedbackActuator::Capa
 /*!
     \qmlproperty bool Actuator::enabled
     This property is true if the feedback actuator is enabled.
+    \since Mobility 1.1
 */
 
 bool QDeclarativeFeedbackActuator::isEnabled() const

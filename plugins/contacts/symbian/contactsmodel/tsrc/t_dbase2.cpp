@@ -1363,8 +1363,9 @@ LOCAL_C void DoTestsL()
 	TRAP(err, FindContactWithApostropheL());
 	test(err==KErrNone);
 
-	TRAP(err, RollBackAndRecoverL());
-	test(err==KErrNone);
+// Old test case ... not needed anymore after using sqlite
+//	TRAP(err, RollBackAndRecoverL());
+//	test(err==KErrNone);
 
 	CntTest->CloseDatabase();
 	CntTest->DeleteDatabaseL();

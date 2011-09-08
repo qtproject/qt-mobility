@@ -57,6 +57,7 @@
 
    \ingroup connectivity-qml
    \inmodule QtConnectivity
+   \since Mobility 1.2
 
    \sa QBluetoothAddress
    \sa QBluetoothSocket
@@ -128,6 +129,7 @@ void QDeclarativeBluetoothService::componentComplete()
 
 /*!
   \qmlproperty string BluetoothService::deviceName
+  \since Mobility 1.2
 
   This property holds the name of the remote device.
   */
@@ -142,6 +144,7 @@ QString QDeclarativeBluetoothService::deviceName() const
 
 /*!
   \qmlproperty string BluetoothService::deviceAddress
+  \since Mobility 1.2
 
   This property holds the remote device MAc address. Must be valid if you to
   connect to a remote device with a BluetoothSocket.
@@ -167,6 +170,7 @@ void QDeclarativeBluetoothService::setDeviceAddress(QString address)
 
 /*!
   \qmlproperty string BluetoothService::serviceName
+  \since Mobility 1.2
 
   This property holds the name of the remote service if available.
   */
@@ -190,6 +194,7 @@ void QDeclarativeBluetoothService::setServiceName(QString name)
 
 /*!
   \qmlproperty string BluetoothService::serviceDescription
+  \since Mobility 1.2
 
   This property holds the description provided by the remote service.
   */
@@ -212,6 +217,7 @@ void QDeclarativeBluetoothService::setServiceDescription(QString description)
 
 /*!
   \qmlproperty string BluetoothService::serviceProtocol
+  \since Mobility 1.2
 
   This property holds the protocol used for the service. Can be the string
   "l2cap" or "rfcomm"
@@ -244,6 +250,7 @@ void QDeclarativeBluetoothService::setServiceProtocol(QString protocol)
 
 /*!
   \qmlproperty string BluetoothService::serviceUuid
+  \since Mobility 1.2
 
   This property holds the UUID of the remote service. Service UUID or port, as
   well as the address must be set to connect to a remote service. If UUID and
@@ -274,6 +281,7 @@ void QDeclarativeBluetoothService::setServiceUuid(QString uuid)
 
 /*!
   \qmlproperty int BluetoothService::servicePort
+  \since Mobility 1.2
 
   This property holds the port value for the remote service. Bluetooth does not
   use well defined port values, so port values should not be stored and used
@@ -307,6 +315,7 @@ void QDeclarativeBluetoothService::setServicePort(qint32 port)
 
 /*!
   \qmlproperty string BluetoothService::registered
+  \since Mobility 1.2
 
   This property holds the registration/publication status of the service.  If true the service
   is published via service discovery.  Not implemented in 1.2.

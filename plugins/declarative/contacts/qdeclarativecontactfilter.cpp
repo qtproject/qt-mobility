@@ -47,6 +47,7 @@
    selection of contacts which have certain details or properties.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -78,6 +79,7 @@
    \brief The ActionFilter element provides a filter based around an action availability criterion.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -86,6 +88,7 @@
 
 /*!
   \qmlproperty string ActionFilter::actionName
+  \since Mobility 1.1
 
   This property holds the action name criterion of the filter.
   */
@@ -95,6 +98,7 @@
    \brief The ChangeLogFilter element provides a filter based around a contact timestamp criterion.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -103,6 +107,7 @@
 
 /*!
   \qmlproperty date ChangeLogFilter::since
+  \since Mobility 1.1
 
   This property holds the date and time lower-bound criterion of the filter.The value can be one of:
   \list
@@ -114,6 +119,7 @@
 
 /*!
   \qmlproperty enumeration ChangeLogFilter::eventType
+  \since Mobility 1.1
 
   This property holds the type of change that this filter will match against.
   */
@@ -123,6 +129,7 @@
    \brief The \l DetailFilter element provides a filter based around a detail value criterion.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -131,6 +138,7 @@
 
 /*!
   \qmlproperty enumeration DetailFilter::detail
+  \since Mobility 1.1
 
   This property holds the detail type of which details will be matched to.
 
@@ -139,6 +147,7 @@
 
 /*!
   \qmlproperty int DetailFilter::field
+  \since Mobility 1.1
 
   This property holds the detail field type of which detail fields will be matched to.
   Detail field types are enumeration values defined in each detail elements.
@@ -172,12 +181,14 @@
 
 /*!
   \qmlproperty variant DetailFilter::value
+  \since Mobility 1.1
 
   This property holds the value criterion of the detail filter.
   */
 
 /*!
   \qmlproperty enumeration DetailFilter::matchFlags
+  \since Mobility 1.1
 
   This property holds the semantics of the value matching criterion. The valid match flags include:
   \list
@@ -194,8 +205,8 @@
    \qmlclass DetailRangeFilter QDeclarativeContactDetailRangeFilter
    \brief The DetailRangeFilter element provides a filter based around a detail value range criterion.
 
-
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -204,6 +215,7 @@
 
 /*!
   \qmlproperty enumeration DetailRangeFilter::detail
+  \since Mobility 1.1
 
   This property holds the detail type of which details will be matched to.
 
@@ -213,6 +225,7 @@
 
 /*!
   \qmlproperty int DetailRangeFilter::field
+  \since Mobility 1.1
 
   This property holds the detail field type of which detail fields will be matched to.
   Detail field types are enumeration values defined in each detail elements.
@@ -221,17 +234,20 @@
   */
 /*!
   \qmlproperty variant DetailRangeFilter::min
+  \since Mobility 1.1
 
   This property holds the lower bound of the value range criterion. By default, there is no lower bound.
   */
 /*!
   \qmlproperty variant DetailRangeFilter::max
+  \since Mobility 1.1
 
   This property holds the upper bound of the value range criterion. By default, there is no upper bound.
   */
 
 /*!
   \qmlproperty enumeration DetailRangeFilter::matchFlags
+  \since Mobility 1.1
 
   This property holds the match flags of the criterion, which define semantics such as case sensitivity, and exact matching.
 
@@ -240,6 +256,7 @@
 
 /*!
   \qmlproperty enumeration DetailRangeFilter::rangeFlags
+  \since Mobility 1.1
 
   This property holds a set of flags which defines the boundary condition semantics of the value range criterion.The valid range flags include:
     \list
@@ -254,6 +271,7 @@
    \brief The IntersectionFilter element provides a filter which intersects the results of other filters.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -262,6 +280,7 @@
 
 /*!
   \qmlproperty list<Filter> IntersectionFilter::filters
+  \since Mobility 1.1
 
   This property holds the list of filters which form the intersection filter.
   */
@@ -272,6 +291,7 @@
    \brief The UnionFilter element provides a filter which unions the results of other filters.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -280,6 +300,7 @@
 
 /*!
   \qmlproperty list<Filter> UnionFilter::filters
+  \since Mobility 1.1
 
   This property holds the list of filters which form the union filter.
   */
@@ -289,6 +310,7 @@
    \brief The IdFilter element provides a filter based around a list of contact ids.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -297,6 +319,7 @@
 
 /*!
   \qmlproperty list<string> IdFilter::ids
+  \since Mobility 1.1
 
   This property holds the list of ids of contacts which match this filter.
   */
@@ -307,6 +330,7 @@
    \brief The RelationshipFilter element provides a filter based around relationship criteria.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -319,6 +343,7 @@
 
 /*!
   \qmlproperty variant RelationshipFilter::relationshipType
+  \since Mobility 1.1
 
   This property holds the type of relationship that a contact must have in order to match the filter.
 
@@ -327,11 +352,13 @@
 
 /*!
   \qmlproperty int RelationshipFilter::relatedContactId
+  \since Mobility 1.1
 
   This property holds the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter
   */
 /*!
   \qmlproperty enumeration RelationshipFilter::relatedContactRole
+  \since Mobility 1.1
 
   This property holds the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter.
   The role can be one of:
@@ -347,6 +374,7 @@
    \brief the InvalidFilter element provides a filter which will never match any contacts.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 

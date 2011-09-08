@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass BoundingBox QDeclarativeGeoBoundingBox
     \brief The QGeoBoundingBox class defines a rectangular geographic area.
     \ingroup qml-location
+    \since Mobility 1.2
 
     The BoundingBox class defines a rectangular geographic area.
     This element is part of the \bold{QtMobility.location 1.1} module.
@@ -93,6 +94,7 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomLeft()
 
 /*!
   \qmlproperty Coordinate BoundingBox::bottomLeft
+  \since Mobility 1.2
 
   This property holds the bottom left coordinate of this bounding box.
 
@@ -118,6 +120,7 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomRight()
 
 /*!
   \qmlproperty Coordinate BoundingBox::bottomRight
+  \since Mobility 1.2
 
   This property holds the bottom right coordinate of this bounding box.
 
@@ -143,6 +146,7 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topLeft()
 
 /*!
   \qmlproperty Coordinate BoundingBox::topLeft
+  \since Mobility 1.2
 
   This property holds the top left coordinate of this bounding box.
 
@@ -168,6 +172,7 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topRight()
 
 /*!
   \qmlproperty Coordinate BoundingBox::topRight
+  \since Mobility 1.2
 
   This property holds the top right coordinate of this bounding box.
 
@@ -193,6 +198,7 @@ QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::center()
 
 /*!
   \qmlproperty Coordinate BoundingBox::center
+  \since Mobility 1.2
 
   This property holds the center coordinate of this bounding box.
 
@@ -219,6 +225,7 @@ double QDeclarativeGeoBoundingBox::height()
 
 /*!
   \qmlproperty double BoundingBox::height
+  \since Mobility 1.2
 
   This property holds the height of this bounding box (in degrees).
 
@@ -238,6 +245,7 @@ double QDeclarativeGeoBoundingBox::width()
 
 /*!
   \qmlproperty double BoundingBox::width
+  \since Mobility 1.2
 
   This property holds the width of this bounding box (in degrees).
 

@@ -57,6 +57,7 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
     \inherits QSystemInfo
 
     \ingroup qml-systeminfo
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
@@ -78,6 +79,7 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
 
 /*!
     \qmlsignal SystemInfo::startCurrentLanguageChanged()
+    \since Mobility 1.1
 
     This handler is called when current system language has changed.
     Note: To receive this notification, you must first call \a startCurrentLanguageChanged.
@@ -101,6 +103,7 @@ void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &l
 
 /*!
   \qmlproperty string QDeclarativeGeneralInfo::osVersion
+  \since Mobility 1.1
 
    Returns the version of the Operating System.
 */
@@ -111,6 +114,7 @@ QString QDeclarativeGeneralInfo::osVersion()
 
 /*!
   \qmlproperty string QDeclarativeGeneralInfo::qtCoreVersion
+  \since Mobility 1.1
 
    Returns the version of the installed Qt Core library.
 */
@@ -121,6 +125,7 @@ QString QDeclarativeGeneralInfo::qtCoreVersion()
 
 /*!
   \qmlproperty string QDeclarativeGeneralInfo::firmwareVersion
+  \since Mobility 1.1
 
    Returns the version of the firmware as a whole.
 */
@@ -131,6 +136,7 @@ QString QDeclarativeGeneralInfo::firmwareVersion()
 
 /*!
   \qmlproperty string QDeclarativeGeneralInfo::qtMobilityVersion
+  \since Mobility 1.1
 
    Returns the version of the installed Qt Mobility library.
 */

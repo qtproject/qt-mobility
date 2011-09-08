@@ -45,11 +45,12 @@
 #include "s60imagecapturesession.h"
 #include "s60videowidgetcontrol.h"
 #include "s60cameraservice.h"
+#include "s60filenamegenerator.h"
 #include "s60cameraconstants.h"
 
-#include <fbs.h>        // CFbsBitmap
+#include <fbs.h>                // CFbsBitmap
 #include <pathinfo.h>
-#include <imageconversion.h> // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
+#include <imageconversion.h>    // ICL Decoder (for SnapShot) & Encoder (for Bitmap Images)
 
 S60ImageCaptureDecoder::S60ImageCaptureDecoder(S60ImageCaptureSession *imageSession,
                                                RFs *fileSystemAccess,
@@ -119,9 +120,9 @@ void S60ImageCaptureDecoder::decode(CFbsBitmap *destBitmap)
     if (m_imageDecoder) {
         m_imageDecoder->Convert(&iStatus, *destBitmap, 0);
         SetActive();
-    }
-    else
+    } else {
         m_imageSession->setError(KErrGeneral, QLatin1String("Preview image creation failed."));
+    }
 }
 
 TFrameInfo *S60ImageCaptureDecoder::frameInfo()
@@ -129,9 +130,9 @@ TFrameInfo *S60ImageCaptureDecoder::frameInfo()
     if (m_imageDecoder) {
         m_frameInfo = m_imageDecoder->FrameInfo();
         return &m_frameInfo;
-    }
-    else
+    } else {
         return 0;
+    }
 }
 
 void S60ImageCaptureDecoder::RunL()
@@ -226,9 +227,9 @@ void S60ImageCaptureEncoder::encode(CFbsBitmap *sourceBitmap)
     if (m_imageEncoder) {
         m_imageEncoder->Convert(&iStatus, *sourceBitmap, m_frameImageData);
         SetActive();
-    }
-    else
+    } else {
         m_imageSession->setError(KErrGeneral, QLatin1String("Saving image to file failed."));
+    }
 }
 
 void S60ImageCaptureEncoder::RunL()
@@ -413,7 +414,7 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
     m_currentFormat = defaultImageFormat();
 
     int err = KErrNone;
-    m_advancedSettings = S60CameraSettings::New(err, this, m_cameraEngine);
+    m_advancedSettings = S60CameraAdvSettings::New(err, this, m_cameraEngine);
     if (err == KErrNotSupported) {
         m_advancedSettings = 0;
 #ifndef S60_31_PLATFORM // Post S60 3.1 Platform
@@ -443,7 +444,7 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
     emit advancedSettingChanged();
 }
 
-S60CameraSettings* S60ImageCaptureSession::advancedSettings()
+S60CameraAdvSettings* S60ImageCaptureSession::advancedSettings()
 {
     return m_advancedSettings;
 }
@@ -478,20 +479,19 @@ void S60ImageCaptureSession::setError(const TInt error,
 QCameraImageCapture::Error S60ImageCaptureSession::fromSymbianErrorToQtMultimediaError(int aError)
 {
     switch(aError) {
-        case KErrNone:
-            return QCameraImageCapture::NoError; // No errors have occurred
-        case KErrNotReady:
-            return QCameraImageCapture::NotReadyError; // Not ready for operation
-        case KErrNotSupported:
-            return QCameraImageCapture::NotSupportedFeatureError; // The feature is not supported
-        case KErrNoMemory:
-            return QCameraImageCapture::OutOfSpaceError; // Out of disk space
-        case KErrNotFound:
-        case KErrBadHandle:
-            return QCameraImageCapture::ResourceError; // No resources available
-
-        default:
-            return QCameraImageCapture::ResourceError; // Other error has occurred
+    case KErrNone:
+        return QCameraImageCapture::NoError;                    // No errors have occurred
+    case KErrNotReady:
+        return QCameraImageCapture::NotReadyError;              // Not ready for operation
+    case KErrNotSupported:
+        return QCameraImageCapture::NotSupportedFeatureError;   // The feature is not supported
+    case KErrNoMemory:
+        return QCameraImageCapture::OutOfSpaceError;            // Out of disk space
+    case KErrNotFound:
+    case KErrBadHandle:
+        return QCameraImageCapture::ResourceError;              // No resources available
+    default:
+        return QCameraImageCapture::ResourceError;              // Other error has occurred
     }
 }
 
@@ -637,7 +637,9 @@ int S60ImageCaptureSession::capture(const QString &fileName)
     QImage *snapImage = new QImage(QLatin1String("C:/Data/testimage.jpg"));
     emit imageExposed(m_currentImageId);
     emit imageCaptured(m_currentImageId, *snapImage);
-    emit imageSaved(m_currentImageId, m_stillCaptureFileName);
+    QString qtFileName(m_stillCaptureFileName);
+    qtFileName.replace(QChar('\\'), QChar('/'));
+    emit imageSaved(m_currentImageId, qtFileName);
 #endif // Q_CC_NOKIAX86
 
     return m_currentImageId;
@@ -656,59 +658,14 @@ void S60ImageCaptureSession::cancelCapture()
 
 void S60ImageCaptureSession::processFileName(const QString &fileName)
 {
-    // Empty FileName - Use default file name and path (C:\Data\Images\image.jpg)
-    if (fileName.isEmpty()) {
-        // Make sure default directory exists
-        QDir videoDir(QDir::rootPath());
-        if (!videoDir.exists(KDefaultImagePath))
-            videoDir.mkpath(KDefaultImagePath);
-        QString defaultFile = KDefaultImagePath;
-        defaultFile.append("\\");
-        defaultFile.append(KDefaultImageFileName);
-        m_stillCaptureFileName = defaultFile;
-
-    } else { // Not empty
-
-        QString fullFileName;
-
-        // Relative FileName
-        if (!fileName.contains(":")) {
-            // Extract file name and path from the URL
-            fullFileName = KDefaultImagePath;
-            if (fileName.at(0) != '\\')
-                fullFileName.append("\\");
-            fullFileName.append(QDir::toNativeSeparators(QDir::cleanPath(fileName)));
-
-        // Absolute FileName
-        } else {
-            // Extract file name and path from the given location
-            fullFileName = QDir::toNativeSeparators(QDir::cleanPath(fileName));
-        }
-
-        QString fileNameOnly = fullFileName.right(fullFileName.length() - fullFileName.lastIndexOf("\\") - 1);
-        QString directory = fullFileName.left(fullFileName.lastIndexOf("\\"));
-        if (directory.lastIndexOf("\\") == (directory.length() - 1))
-            directory = directory.left(directory.length() - 1);
-
-        // URL is Absolute path, not including file name
-        if (!fileNameOnly.contains(".")) {
-            if (fileNameOnly != "") {
-                directory.append("\\");
-                directory.append(fileNameOnly);
-            }
-            fileNameOnly = KDefaultImageFileName;
-        }
-
-        // Make sure absolute directory exists
-        QDir imageDir(QDir::rootPath());
-        if (!imageDir.exists(directory))
-            imageDir.mkpath(directory);
-
-        QString resolvedFileName = directory;
-        resolvedFileName.append("\\");
-        resolvedFileName.append(fileNameOnly);
-        m_stillCaptureFileName = resolvedFileName;
-    }
+    // Empty FileName - Use default file name
+    if (fileName.isEmpty())
+        m_stillCaptureFileName = S60FileNameGenerator::defaultFileName(S60FileNameGenerator::ImageFileName,
+                                                                       QLatin1String(".jpg"));
+    else // Not empty
+        m_stillCaptureFileName = S60FileNameGenerator::generateFileNameFromString(S60FileNameGenerator::ImageFileName,
+                                                                                  fileName,
+                                                                                  QLatin1String(".jpg"));
 }
 
 void S60ImageCaptureSession::MceoFocusComplete()
@@ -750,7 +707,6 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
     }
 
     m_icState = EImageCapturePrepared;
-
 }
 
 void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
@@ -834,7 +790,7 @@ QVideoFrame S60ImageCaptureSession::generateImageBuffer(TDesC8 *aData)
     QVideoFrame::PixelFormat format = QVideoFrame::Format_Jpeg;
     QVideoFrame newVideoFrame(bytes, resolution, bytesPerLine, format);
 
-    // Copy image data into the newly created QVideoFrame image container
+    // Deep copy image data into the newly created QVideoFrame image container
     newVideoFrame.map(QAbstractVideoBuffer::WriteOnly);
     uchar *destData = newVideoFrame.bits();
     memcpy(destData, aData->Ptr(), bytes);
@@ -850,8 +806,8 @@ TFileName S60ImageCaptureSession::convertImagePath()
     // Convert to Symbian path
     TPtrC16 attachmentPath(KNullDesC);
 
-    // Path is already included in filename
-    attachmentPath.Set(reinterpret_cast<const TUint16*>(QDir::toNativeSeparators(m_stillCaptureFileName).utf16()));
+    // Path is already included in filename and native separators are being used
+    attachmentPath.Set(reinterpret_cast<const TUint16*>(m_stillCaptureFileName.utf16()));
     path.Append(attachmentPath);
 
     return path;
@@ -863,8 +819,7 @@ TFileName S60ImageCaptureSession::convertImagePath()
  */
 void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 {
-    if (aData == 0)
-        setError(KErrGeneral, tr("Captured image data is not available."), true);
+    // Checked if aData is NULL already in the MceoCapturedDataReady()
 
     if (aPath.Size() > 0) {
 #ifndef ECAM_PREVIEW_API
@@ -931,7 +886,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         fileWriteErr = file.Replace(*fileSystemAccess, aPath, EFileWrite);
         if (fileWriteErr)
             User::Leave(fileWriteErr);
-        CleanupClosePushL(file); // Close if Leaves
+        CleanupClosePushL(file);
 
         fileWriteErr = file.Write(*aData);
         if (fileWriteErr)
@@ -952,7 +907,9 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         m_fileSystemAccess = fileSystemAccess;
 #endif // ECAM_PREVIEW_API
 
-        emit imageSaved(m_currentImageId, m_stillCaptureFileName);
+        QString qtFileName(m_stillCaptureFileName);
+        qtFileName.replace(QChar('\\'), QChar('/'));
+        emit imageSaved(m_currentImageId, qtFileName);
 
         // Inform that we can continue taking more pictures
         emit readyForCaptureChanged(true);
@@ -1899,7 +1856,7 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
     m_previewDecodingOngoing = false;
 
     QPixmap prevPixmap = QPixmap::fromSymbianCFbsBitmap(m_previewBitmap);
-    QImage preview = prevPixmap.toImage();
+    QImage preview = prevPixmap.toImage(); // Deep copy
 
     if (m_previewBitmap) {
         m_previewBitmap->Reset();
@@ -1930,7 +1887,9 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
         setError(error, tr("Saving captured image to file failed."));
         return;
     } else {
-        QT_TRYCATCH_LEAVING( emit imageSaved(m_currentImageId, m_stillCaptureFileName) );
+        QString qtFileName(m_stillCaptureFileName);
+        qtFileName.replace(QChar('\\'), QChar('/'));
+        QT_TRYCATCH_LEAVING( emit imageSaved(m_currentImageId, qtFileName) );
     }
 
     if (m_imageEncoder) {
@@ -1989,7 +1948,7 @@ void S60ImageCaptureSession::handleImageEncoded(int error)
 void S60ImageCaptureSession::MceoPreviewReady(CFbsBitmap& aPreview)
 {
     QPixmap previewPixmap = QPixmap::fromSymbianCFbsBitmap(&aPreview);
-    QImage preview = previewPixmap.toImage();
+    QImage preview = previewPixmap.toImage(); // Deep copy
 
     // Notify preview availability
     emit imageCaptured(m_currentImageId, preview);

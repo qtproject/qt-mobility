@@ -47,6 +47,7 @@
   function call.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -55,6 +56,7 @@
 
 /*!
   \qmlproperty FetchHint::OptimizationHints  FetchHint::optimizationHints
+  \since Mobility 1.1
 
   This property holds the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return

@@ -87,7 +87,7 @@ public: // QVideoEncoderControl
 
 private: // Data
 
-    S60VideoCaptureSession* m_session;
+    S60VideoCaptureSession *m_session;
 
 };
 

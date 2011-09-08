@@ -84,7 +84,7 @@ public: // QAudioEncoderControl
 
 private: // Data
 
-    S60VideoCaptureSession* m_session;
+    S60VideoCaptureSession *m_session;
 };
 
 #endif // S60AUDIOENCODERCONTROL_H

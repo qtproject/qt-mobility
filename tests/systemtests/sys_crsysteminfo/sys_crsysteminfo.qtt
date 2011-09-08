@@ -46,7 +46,7 @@ testcase = {
     Configurable_Signal_Strength: function()
     {
           // Test meta data
-          testApplication = "System Info - Configurable Signal Strength";
+          testTitle = "System Info - Configurable Signal Strength";
           testBinary = "";
           testGoal = "Verify that ";
           testPreconditions = "None";
@@ -59,7 +59,7 @@ testcase = {
     Storage_changed_notification: function()
     {
           // Test meta data
-          testApplication = "System Info - Storage Changed Notification";
+          testTitle = "System Info - Storage Changed Notification";
           testBinary = "examples/qsysinfo";
           testGoal = "Verify that the system detects changes to storage media correctly and sends notifications";
           testPreconditions = "   1. target supports removable storage, if not then pass this test<br>
@@ -68,7 +68,7 @@ testcase = {
           testGroups = "BAT";
 
           // Test steps
-          prompt(twiki("---+++ " + testApplication + "<br><br>
+          prompt(twiki("---+++ " + testTitle + "<br><br>
               *Goal:* " + testGoal + "<br>
               *Tested Binary:* " + testBinary + "<br>
               *Pre-Requisites:* " + testPreconditions + "<br>
@@ -84,14 +84,14 @@ testcase = {
     Query_OS_Qt_firmware_versions: function()
     {
        // Test meta data
-       testApplication = "System Info - OS Qt Firmware Version";
+       testTitle = "System Info - OS Qt Firmware Version";
        testBinary = "BlueWheel/SystemInfo";
        testGoal = "Verify that OS, Qt and Firmware versions numbers can be read";
        testPreconditions = "None";
        testGroups = "BAT";
 
        // Test steps
-       prompt(twiki("---+++ " + testApplication + "<br><br>
+       prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>
@@ -109,14 +109,14 @@ testcase = {
     Query_device_hardware_features: function()
     {
         // Test meta data
-        testApplication = "System Info - Device Hardware Features";
+        testTitle = "System Info - Device Hardware Features";
         testBinary = "BlueWheel/SystemInfo";
         testGoal = "Verify that device hardware status can be read";
         testPreconditions = "None";
         testGroups = "BAT";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>

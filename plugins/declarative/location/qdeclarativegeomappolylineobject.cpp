@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QGeoMapPolylineObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The polyline is specified in terms of an ordered list of
     coordinates.  Any invalid coordinates in the list will be ignored.
@@ -95,6 +96,7 @@ QDeclarativeGeoMapPolylineObject::~QDeclarativeGeoMapPolylineObject()
 /*!
     \qmlproperty list<Coordinate> MapPolyline::path
     \default
+    \since Mobility 1.2
 
     This property holds the ordered list of coordinates which
     define the polyline.
@@ -166,6 +168,7 @@ void QDeclarativeGeoMapPolylineObject::pathPropertyChanged()
 /*!
     \qmlproperty int MapPolyline::border.width
     \qmlproperty color MapPolyline::border.color
+    \since Mobility 1.2
 
     These properties hold the width and color used to draw the border of the circle.
 
@@ -201,6 +204,7 @@ void QDeclarativeGeoMapPolylineObject::borderWidthChanged(int width)
 
 /*!
     \qmlmethod MapPolyline::addCoordinate(Coordinate)
+    \since Mobility 1.2
 
     Adds coordinate to the path. The resulting path is derived
     from values at the time of assignment, meaning that later changes
@@ -225,6 +229,7 @@ void QDeclarativeGeoMapPolylineObject::addCoordinate(QDeclarativeCoordinate* coo
 
 /*!
     \qmlmethod MapPolyline::removeCoordinate(Coordinate)
+    \since Mobility 1.2
 
     Remove coordinate from the path. If there are multiple instances
     of the same coordinate, the one added last is removed. Removed Coordinate is not deleted.
@@ -260,6 +265,7 @@ void QDeclarativeGeoMapPolylineObject::removeCoordinate(QDeclarativeCoordinate* 
 
 /*!
     \qmlproperty int MapPolyline::z
+    \since Mobility 1.2
 
     This property holds the z-value of the polyline.
 
@@ -269,6 +275,7 @@ void QDeclarativeGeoMapPolylineObject::removeCoordinate(QDeclarativeCoordinate* 
 
 /*!
     \qmlproperty bool MapPolyline::visible
+    \since Mobility 1.2
 
     This property holds a boolean corresponding to whether or not the
     polyline is visible.

@@ -84,7 +84,7 @@ const QCameraImageCapture::CaptureDestination KDefaultCaptureDestination = QCame
 #endif // SYMBIAN_3_PLATFORM
 #define KSymbianImageQualityCoefficient 25
 const CCamera::TFormat KDefaultBufferCaptureSymbianFormat   = CCamera::EFormatExif;
-const QVideoFrame::PixelFormat KDefaultBufferCaptureQtFormat    = QVideoFrame::Format_Jpeg;
+const QVideoFrame::PixelFormat KDefaultBufferCaptureQtFormat = QVideoFrame::Format_Jpeg;
 // This must be divisible by 4 and creater or equal to 8
 #define KSnapshotDownScaleFactor        8
 #define KSnapshotMinWidth               640
@@ -100,9 +100,7 @@ const QVideoFrame::PixelFormat KDefaultBufferCaptureQtFormat    = QVideoFrame::F
 
 // VIDEO SETTINGS
 
-// ================
-// General settings
-// ================
+// * General settings *
 
 // Dummy file name to execute CVideoRecorderUtility::OpenFileL() without
 // knowing the actual outputLocation. This is needed to be able to query/set

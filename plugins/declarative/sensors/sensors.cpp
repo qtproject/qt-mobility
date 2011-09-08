@@ -126,6 +126,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlclass Sensor QSensor
     \ingroup qml-sensors_type
+    \since Mobility 1.2
     \brief The Sensor element serves as a base type for sensors.
 
     The Sensor element serves as a base type for sensors.
@@ -140,24 +141,28 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
 /*!
     \qmlproperty int Sensor::dataRate
+    \since Mobility 1.2
     Sets the rate at which data is returned by the sensor.
     Please see QSensor::dataRate for information about this property.
 */
 
 /*!
     \qmlproperty bool Sensor::active
+    \since Mobility 1.2
     Starts or stops the sensor.
     Please see QSensor::active for information about this property.
 */
 
 /*!
     \qmlproperty SensorReading Sensor::reading
+    \since Mobility 1.2
     Holds the most recent sensor reading.
     Please see QSensor::reading for information about this property.
 */
 
 /*!
     \qmlsignal Sensor::onReadingChanged()
+    \since Mobility 1.2
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
 */
@@ -165,6 +170,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlclass SensorReading QSensorReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.2
     \brief The SensorReading element serves as a base type for sensor readings.
 
     The SensorReading element serves as a base type for sensor readings.
@@ -177,6 +183,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
 /*!
     \qmlproperty quint64 SensorReading::timestamp
+    \since Mobility 1.2
     A timestamp for the reading.
     Please see QSensorReading::timestamp for information about this property.
 */
@@ -184,6 +191,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlclass Accelerometer QAccelerometer
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The Accelerometer element reports on linear acceleration
            along the X, Y and Z axes.
@@ -201,17 +209,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty AccelerometerReading Accelerometer::reading
     Holds the most recent accelerometer reading.
     Please see QSensor::reading for information about this property.
-*/
+    \since Mobility 1.2
+    */
 
 /*!
     \qmlsignal Accelerometer::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
-*/
+    \since Mobility 1.2
+    */
 
 /*!
     \qmlclass AccelerometerReading QAccelerometerReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The AccelerometerReading element holds the most recent Accelerometer reading.
 
@@ -226,21 +237,25 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlproperty qreal AccelerometerReading::x
     Please see QAccelerometerReading::x for information about this property.
-*/
+    \since Mobility 1.2
+    */
 
 /*!
     \qmlproperty qreal AccelerometerReading::y
     Please see QAccelerometerReading::y for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlproperty qreal AccelerometerReading::z
     Please see QAccelerometerReading::z for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass AmbientLightSensor QAmbientLightSensor
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The AmbientLightSensor element repors on ambient lighting conditions.
 
@@ -256,17 +271,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty AmbientLightReading AmbientLightSensor::reading
     Holds the most recent ambient light reading.
     Please see QSensor::reading for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlsignal AmbientLightSensor::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass AmbientLightReading QAmbientLightReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The AmbientLightReading element holds the most AmbientLightSensor reading.
 
@@ -291,11 +309,14 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
             }
         }
     \endcode
+
+\since Mobility 1.2
 */
 
 /*!
     \qmlclass Compass QCompass
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The Compass element reports on heading using magnetic north as a reference.
 
@@ -311,17 +332,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty CompassReading Compass::reading
     Holds the most recent compass reading.
     Please see QSensor::reading for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlsignal Compass::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass CompassReading QCompassReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The CompassReading element holds the most recent Compass reading.
 
@@ -336,16 +360,19 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlproperty qreal CompassReading::azimuth
     Please see QCompassReading::azimuth for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlproperty qreal CompassReading::calibrationLevel
     Please see QCompassReading::calibrationLevel for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass Magnetometer QMagnetometer
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The Magnetometer element reports on magnetic field strength
            along the Z, Y and Z axes.
@@ -363,17 +390,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty MagnetometerReading Magnetometer::reading
     Holds the most recent magnetometer reading.
     Please see QSensor::reading for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlsignal Magnetometer::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass MagnetometerReading QMagnetometerReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The MagnetometerReading element holds the most recent Magnetometer reading.
 
@@ -388,26 +418,31 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlproperty qreal MagnetometerReading::x
     Please see QMagnetometerReading::x for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlproperty qreal MagnetometerReading::y
     Please see QMagnetometerReading::y for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlproperty qreal MagnetometerReading::z
     Please see QMagnetometerReading::z for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlproperty qreal MagnetometerReading::calibrationLevel
     Please see QMagnetometerReading::calibrationLevel for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass OrientationSensor QOrientationSensor
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The OrientationSensor element reports device orientation.
 
@@ -423,17 +458,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty OrientationReading OrientationSensor::reading
     Holds the most recent orientation reading.
     Please see QSensor::reading for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlsignal OrientationSensor::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass OrientationReading QOrientationReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The OrientationReading element holds the most recent OrientationSensor reading.
 
@@ -458,11 +496,13 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
             }
         }
     \endcode
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass ProximitySensor QProximitySensor
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The ProximitySensor element reports on object proximity.
 
@@ -478,17 +518,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty ProximityReading ProximitySensor::reading
     Holds the most recent proximity reading.
     Please see QSensor::reading for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlsignal ProximitySensor::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass ProximityReading QProximityReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The ProximityReading element holds the most recent ProximitySensor reading.
 
@@ -503,11 +546,13 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlproperty bool ProximityReading::close
     Please see QProximityReading::close for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass RotationSensor QRotationSensor
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The RotationSensor element reports on device rotation
            around the X, Y and Z axes.
@@ -525,17 +570,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty RotationReading RotationSensor::reading
     Holds the most recent rotation reading.
     Please see QSensor::reading for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlsignal RotationSensor::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass RotationReading QRotationReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The RotationReading element holds the most recent RotationSensor reading.
 
@@ -550,21 +598,25 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlproperty qreal RotationReading::x
     Please see QRotationReading::x for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlproperty qreal RotationReading::y
     Please see QRotationReading::y for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlproperty qreal RotationReading::z
     Please see QRotationReading::z for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass TapSensor QTapSensor
     \ingroup qml-sensors_type
+    \since Mobility 1.1
     \inherits Sensor
     \brief The TapSensor element reports tap and double tap events
            along the X, Y and Z axes.
@@ -582,17 +634,20 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty TapReading TapSensor::reading
     Holds the most recent tap sensor reading.
     Please see QSensor::reading for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlsignal TapSensor::onReadingChanged()
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
+    \since Mobility 1.2
 */
 
 /*!
     \qmlclass TapReading QTapReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.1
     \inherits SensorReading
     \brief The TapReading element holds the most recent TapSensor reading.
 
@@ -607,6 +662,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlproperty bool TapReading::doubleTap
     Please see QTapReading::doubleTap for information about this property.
+    \since Mobility 1.2
 */
 
 /*!
@@ -622,11 +678,14 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
             }
         }
     \endcode
+
+\since Mobility 1.2
 */
 
 /*!
     \qmlclass LightSensor QLightSensor
     \ingroup qml-sensors_type
+    \since Mobility 1.2
     \inherits Sensor
     \brief The LightSensor element reports on light levels using LUX.
 
@@ -640,12 +699,14 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
 /*!
     \qmlproperty LightReading LightSensor::reading
+    \since Mobility 1.2
     Holds the most recent light sensor reading.
     Please see QSensor::reading for information about this property.
 */
 
 /*!
     \qmlsignal LightSensor::onReadingChanged()
+    \since Mobility 1.2
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
 */
@@ -653,6 +714,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlclass LightReading QLightReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.2
     \inherits SensorReading
     \brief The LightReading element holds the most recent LightSensor reading.
 
@@ -666,12 +728,14 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
 /*!
     \qmlproperty qreal LightReading::lux
+    \since Mobility 1.2
     Please see QLightReading::lux for information about this property.
 */
 
 /*!
     \qmlclass Gyroscope QGyroscope
     \ingroup qml-sensors_type
+    \since Mobility 1.2
     \inherits Sensor
     \brief The Gyroscope element reports on rotational acceleration
            around the X, Y and Z axes.
@@ -684,12 +748,14 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
 /*!
     \qmlproperty GyroscopeReading Gyroscope::reading
+    \since Mobility 1.2
     Holds the most recent gyroscope reading.
     Please see QSensor::reading for information about this property.
 */
 
 /*!
     \qmlsignal Gyroscope::onReadingChanged()
+    \since Mobility 1.2
     Called when the reading object changes.
     Please see QSensor::readingChanged() for information about this signal.
 */
@@ -697,6 +763,7 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlclass GyroscopeReading QGyroscopeReading
     \ingroup qml-sensors_reading
+    \since Mobility 1.2
     \inherits SensorReading
     \brief The GyroscopeReading element holds the most recent Gyroscope reading.
 
@@ -710,16 +777,19 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
 /*!
     \qmlproperty qreal GyroscopeReading::x
+    \since Mobility 1.2
     Please see QGyroscopeReading::x for information about this property.
 */
 
 /*!
     \qmlproperty qreal GyroscopeReading::y
+    \since Mobility 1.2
     Please see QGyroscopeReading::y for information about this property.
 */
 
 /*!
     \qmlproperty qreal GyroscopeReading::z
+    \since Mobility 1.2
     Please see QGyroscopeReading::z for information about this property.
 */
 

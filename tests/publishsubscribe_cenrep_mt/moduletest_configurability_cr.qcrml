@@ -4,4 +4,8 @@
     <key ref="/publishsubscribe_mt/cenrep/real" int="0x2" />
     <key ref="/publishsubscribe_mt/cenrep/string" int="0x5" />
     <key ref="/publishsubscribe_mt/cenrep/string8" int="0xc" />
+    <key ref="/publishsubscribe_mt/cenrep/int2" int="0xd" />
+    <key ref="/publishsubscribe_mt/cenrep/int3" int="0xe" />
+    <key ref="/publishsubscribe_mt/cenrep/int4" int="0xf" />
+    <key ref="/publishsubscribe_mt/cenrep/int5" int="0x10" />
 </repository>

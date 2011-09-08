@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
     \inherits QSystemAlignedTimer
 
     \ingroup qml-systeminfo
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.systeminfo 1.2} module.
     It is a convience class to make QML usage easier.
@@ -62,6 +63,7 @@ QT_BEGIN_NAMESPACE
 /*!
   \qmlproperty int AlignedTimer::minimumInterval
  The timers's minimumInterval.
+ \since Mobility 1.2
 
   Returns this current timer minimum interval.
   */
@@ -69,21 +71,25 @@ QT_BEGIN_NAMESPACE
 /*!
   \qmlproperty int AlignedTimer::maximumInterval
   The timers's maximumInterval.
+  \since Mobility 1.2
 
   Returns this current timer maximum interval.
   */
 /*!
   \qmlproperty bool AlignedTimer::singleShot
+  \since Mobility 1.2
   Whether the timer is single shot.
 */
 
 /*!
     \qmlproperty bool AlignedTimer::running
-  If the timer is running; otherwise false.
+    \since Mobility 1.2
+    If the timer is running; otherwise false.
 */
 
 /*!
   Constructs the AlignedTimer
+  \since Mobility 1.2
   */
 
 QDeclarativeAlignedTimer::QDeclarativeAlignedTimer(QObject *parent) :
@@ -93,7 +99,8 @@ QDeclarativeAlignedTimer::QDeclarativeAlignedTimer(QObject *parent) :
 
 /*!
    Sets the timer if \a running is true, otherwise stops it.
-  */
+   \since Mobility 1.2
+   */
 void QDeclarativeAlignedTimer::setRunning(bool running)
 {
 

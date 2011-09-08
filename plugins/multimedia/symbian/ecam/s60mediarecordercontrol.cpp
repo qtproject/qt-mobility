@@ -92,28 +92,24 @@ bool S60MediaRecorderControl::setOutputLocation(const QUrl& sink)
 QMediaRecorder::State S60MediaRecorderControl::convertInternalStateToQtState(S60VideoCaptureSession::TVideoCaptureState aState) const
 {
     QMediaRecorder::State state;
-
     switch (aState) {
-        case S60VideoCaptureSession::ERecording:
-            state = QMediaRecorder::RecordingState;
-            break;
-        case S60VideoCaptureSession::EPaused:
-            state = QMediaRecorder::PausedState;
-            break;
-
-        default:
-            // All others
-            state = QMediaRecorder::StoppedState;
-            break;
+    case S60VideoCaptureSession::ERecording:
+        state = QMediaRecorder::RecordingState;
+        break;
+    case S60VideoCaptureSession::EPaused:
+        state = QMediaRecorder::PausedState;
+        break;
+    default:
+        // All others
+        state = QMediaRecorder::StoppedState;
+        break;
     }
-
     return state;
 }
 
 void S60MediaRecorderControl::updateState(S60VideoCaptureSession::TVideoCaptureState state)
 {
     QMediaRecorder::State newState = convertInternalStateToQtState(state);
-
     if (m_state != newState) {
         m_state = newState;
         emit stateChanged(m_state);
@@ -156,20 +152,16 @@ void S60MediaRecorderControl::record()
 
 void S60MediaRecorderControl::pause()
 {
-    if (m_state != QMediaRecorder::RecordingState) {
-        // Discard
+    if (m_state != QMediaRecorder::RecordingState)
         return;
-    }
 
     m_session->pauseRecording();
 }
 
 void S60MediaRecorderControl::stop()
 {
-    if (m_state == QMediaRecorder::StoppedState) {
-        // Ignore
+    if (m_state == QMediaRecorder::StoppedState)
         return;
-    }
 
     m_session->stopRecording();
 }
