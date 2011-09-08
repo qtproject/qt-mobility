@@ -1021,7 +1021,7 @@ void S60VideoCaptureSession::validateRequestedCodecs()
     }
 }
 
-void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
+void S60VideoCaptureSession::setVideoQuality(const QtMultimediaKit::EncodingQuality quality,
                                                     const VideoQualityDefinition mode)
 {
     // Sensible presets
@@ -1191,7 +1191,7 @@ void S60VideoCaptureSession::setVideoCaptureQuality(const QtMultimediaKit::Encod
     m_uncommittedSettings = true;
 }
 
-void S60VideoCaptureSession::setAudioCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
+void S60VideoCaptureSession::setAudioQuality(const QtMultimediaKit::EncodingQuality quality,
                                                     const AudioQualityDefinition mode)
 {
     // Based on audio quality definition mode, select proper SampleRate and BitRate
@@ -1538,19 +1538,19 @@ void S60VideoCaptureSession::selectController(const QString &format,
     }
 }
 
-QStringList S60VideoCaptureSession::supportedVideoCaptureCodecs()
+QStringList S60VideoCaptureSession::supportedVideoCodecs()
 {
     return m_videoCodecList;
 }
 
-QStringList S60VideoCaptureSession::supportedAudioCaptureCodecs()
+QStringList S60VideoCaptureSession::supportedAudioCodecs()
 {
     QStringList keys = m_audioCodecList.keys();
     keys.sort();
     return keys;
 }
 
-QList<int> S60VideoCaptureSession::supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous)
+QList<int> S60VideoCaptureSession::supportedAudioSampleRates(const QAudioEncoderSettings &settings, bool *continuous)
 {
     QList<int> rates;
 
@@ -1629,7 +1629,7 @@ void S60VideoCaptureSession::setAudioChannelCount(const int channelCount)
     m_uncommittedSettings = true;
 }
 
-void S60VideoCaptureSession::setVideoCaptureCodec(const QString &codecName)
+void S60VideoCaptureSession::setVideoCodec(const QString &codecName)
 {
     if (codecName == m_videoSettings.codec())
         return;
@@ -1642,7 +1642,7 @@ void S60VideoCaptureSession::setVideoCaptureCodec(const QString &codecName)
     m_uncommittedSettings = true;
 }
 
-void S60VideoCaptureSession::setAudioCaptureCodec(const QString &codecName)
+void S60VideoCaptureSession::setAudioCodec(const QString &codecName)
 {
     if (codecName == m_audioSettings.codec())
         return;
@@ -1666,7 +1666,7 @@ void S60VideoCaptureSession::setAudioCaptureCodec(const QString &codecName)
     }
 }
 
-QString S60VideoCaptureSession::videoCaptureCodecDescription(const QString &codecName)
+QString S60VideoCaptureSession::videoCodecDescription(const QString &codecName)
 {
     QString codecDescription;
     if (codecName.contains("video/H263-2000", Qt::CaseInsensitive))
@@ -1767,7 +1767,7 @@ QString S60VideoCaptureSession::determineProfileAndLevel()
     return determinedMimeType;
 }
 
-void S60VideoCaptureSession::setBitrate(const int bitrate)
+void S60VideoCaptureSession::setVideoBitrate(const int bitrate)
 {
     m_videoSettings.setBitRate(bitrate);
 
@@ -1858,7 +1858,7 @@ void S60VideoCaptureSession::doSetVideoResolution(const QSize &resolution)
     }
 }
 
-void S60VideoCaptureSession::setFrameRate(qreal rate)
+void S60VideoCaptureSession::setVideoFrameRate(qreal rate)
 {
     m_videoSettings.setFrameRate(rate);
 
@@ -2060,7 +2060,7 @@ void S60VideoCaptureSession::setPixelAspectRatio(const QSize par)
     m_uncommittedSettings = true;
 }
 
-int S60VideoCaptureSession::gain()
+int S60VideoCaptureSession::audioGain()
 {
     TInt gain = 0;
     TRAPD(err, gain = m_videoRecorder->GainL());
@@ -2069,7 +2069,7 @@ int S60VideoCaptureSession::gain()
     return (int)gain;
 }
 
-void S60VideoCaptureSession::setGain(const int gain)
+void S60VideoCaptureSession::setAudioGain(const int gain)
 {
     TRAPD(err, m_videoRecorder->SetGainL(gain));
     if (err)

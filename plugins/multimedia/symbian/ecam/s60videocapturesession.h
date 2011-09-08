@@ -165,32 +165,32 @@ public: // Methods
     QList<QSize> supportedVideoResolutions(const QVideoEncoderSettings &settings, bool *continuous);
 
     // Framerate
-    void setFrameRate(const qreal rate);
+    void setVideoFrameRate(const qreal rate);
     QList<qreal> supportedVideoFrameRates(bool *continuous);
     QList<qreal> supportedVideoFrameRates(const QVideoEncoderSettings &settings, bool *continuous);
 
     // Other Video Settings
-    void setBitrate(const int bitrate);
+    void setVideoBitrate(const int bitrate);
     void setVideoEncodingMode(const QtMultimediaKit::EncodingMode mode);
 
     // Video Codecs
-    void setVideoCaptureCodec(const QString &codecName);
-    QStringList supportedVideoCaptureCodecs();
-    QString videoCaptureCodecDescription(const QString &codecName);
+    void setVideoCodec(const QString &codecName);
+    QStringList supportedVideoCodecs();
+    QString videoCodecDescription(const QString &codecName);
 
     // Audio Codecs
-    void setAudioCaptureCodec(const QString &codecName);
-    QStringList supportedAudioCaptureCodecs();
+    void setAudioCodec(const QString &codecName);
+    QStringList supportedAudioCodecs();
 
     // Encoder Settings
     void videoEncoderSettings(QVideoEncoderSettings &videoSettings);
     void audioEncoderSettings(QAudioEncoderSettings &audioSettings);
 
     // Quality
-    void setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
-                                const VideoQualityDefinition mode);
-    void setAudioCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
-                                const AudioQualityDefinition mode);
+    void setVideoQuality(const QtMultimediaKit::EncodingQuality quality,
+                         const VideoQualityDefinition mode);
+    void setAudioQuality(const QtMultimediaKit::EncodingQuality quality,
+                         const AudioQualityDefinition mode);
 
     // Video Containers
     QString videoContainer() const;
@@ -200,7 +200,7 @@ public: // Methods
     QString videoContainerDescription(const QString &containerName);
 
     // Audio Settings
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous);
+    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings, bool *continuous);
     void setAudioSampleRate(const int sampleRate);
     void setAudioBitRate(const int bitRate);
     void setAudioChannelCount(const int channelCount);
@@ -209,8 +209,8 @@ public: // Methods
     // Video Options
     QSize pixelAspectRatio();
     void setPixelAspectRatio(const QSize par);
-    int gain();
-    void setGain(const int gain);
+    int audioGain();
+    void setAudioGain(const int gain);
     int maxClipSizeInBytes() const;
     void setMaxClipSizeInBytes(const int size);
 
