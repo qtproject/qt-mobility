@@ -107,6 +107,8 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     connect(m_inactivityTimer, SIGNAL(timeout()), this, SLOT(toStandByStatus()));
     connect(this, SIGNAL(statusChanged(QCamera::Status)),
         m_imageSession, SLOT(cameraStatusChanged(QCamera::Status)));
+    connect(this, SIGNAL(stateChanged(QCamera::State)),
+        m_imageSession, SLOT(cameraStateChanged(QCamera::State)));
     connect(this, SIGNAL(statusChanged(QCamera::Status)),
         m_videoSession, SLOT(cameraStatusChanged(QCamera::Status)));
     connect(m_videoSession, SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),

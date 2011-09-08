@@ -298,7 +298,8 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     m_currentImageId(0),
     m_captureWhenReady(false),
     m_previewDecodingOngoing(false),
-    m_previewInWaitLoop(false)
+    m_previewInWaitLoop(false),
+    m_isCameraExternallyStarted(false)
 {
     // Define supported image codecs
     m_supportedImageCodecs << "image/jpeg";
@@ -607,9 +608,14 @@ void S60ImageCaptureSession::releaseImageCapture()
 int S60ImageCaptureSession::capture(const QString &fileName)
 {
     if (!m_cameraStarted) {
-        m_captureWhenReady = true;
-        m_requestedStillCaptureFileName = fileName; // Save name, it will be processed during actual capture
-        return 0;
+        if (m_isCameraExternallyStarted) {
+            m_captureWhenReady = true;
+            m_requestedStillCaptureFileName = fileName; // Save name, it will be processed during actual capture
+            return m_currentImageId + 1;
+        } else {
+            setError(KErrNotReady, tr("Unable to capture image before camera is started."), true);
+            return 0;
+        }
     }
 
     if (m_icState < EImageCapturePrepared) {
@@ -1035,14 +1041,24 @@ void S60ImageCaptureSession::cameraStatusChanged(QCamera::Status status)
 {
     if (status == QCamera::ActiveStatus) {
         m_cameraStarted = true;
-        if (m_captureWhenReady)
+        if (m_captureWhenReady) {
             capture(m_requestedStillCaptureFileName);
+            m_captureWhenReady = false;
+        }
     }else if (status == QCamera::UnloadedStatus) {
         m_cameraStarted = false;
         m_icState = EImageCaptureNotPrepared;
     }
     else
         m_cameraStarted = false;
+}
+
+void S60ImageCaptureSession::cameraStateChanged(QCamera::State state)
+{
+    if (state == QCamera::ActiveState)
+        m_isCameraExternallyStarted = true;
+    else
+        m_isCameraExternallyStarted = false;
 }
 
 void S60ImageCaptureSession::setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination)
