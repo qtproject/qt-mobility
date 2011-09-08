@@ -331,6 +331,32 @@ void S60VideoCaptureSession::resetSession(bool errorHandling)
     updateVideoCaptureContainers();
 }
 
+QList<QSize> S60VideoCaptureSession::sortResolutions(QList<QSize> resolutions)
+{
+    if (resolutions.count() < 2)
+        return resolutions;
+
+    // Sort resolutions
+    QList<QSize> smaller;
+    QList<QSize> larger;
+
+    // Biased midpoint selection (works well on most platforms)
+    QSize mid = resolutions.first();
+    int midMultiplied = mid.width() * mid.height();
+
+    foreach (QSize resolution, resolutions) {
+        if (resolution.width() * resolution.height() <= midMultiplied) {
+            if (resolution != mid)
+                smaller << resolution;
+        } else {
+            larger << resolution;
+        }
+    }
+
+    // Sort to descending order
+    return (sortResolutions(larger) << mid) + sortResolutions(smaller);
+}
+
 QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(bool *continuous)
 {
     QList<QSize> resolutions;
@@ -378,6 +404,19 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(bool *continuous)
     resolutions << QSize(352, 288);
     resolutions << QSize(640,480);
 #endif // Q_CC_NOKIAX86
+
+    // Sort list (from large to small resolution)
+    if (resolutions.count() > 1) {
+        // First check if resolutions already are in correct order
+        bool isDescending = true;
+        for (int i = 0; i < resolutions.count() - 1; ++i) {
+            if (resolutions.at(i).width() * resolutions.at(i).height() <
+                resolutions.at(i+1).width() * resolutions.at(i+1).height())
+                isDescending = false;
+        }
+        if (!isDescending)
+            resolutions = sortResolutions(resolutions);
+    }
 
     return resolutions;
 }
@@ -448,6 +487,19 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
     supportedFrameSizes << QSize(352, 288);
     supportedFrameSizes << QSize(640,480);
 #endif
+
+    // Sort list (from large to small resolution)
+    if (supportedFrameSizes.count() > 1) {
+        // First check if resolutions already are in correct order
+        bool isDescending = true;
+        for (int i = 0; i < supportedFrameSizes.count() - 1; ++i) {
+            if (supportedFrameSizes.at(i).width() * supportedFrameSizes.at(i).height() <
+                supportedFrameSizes.at(i+1).width() * supportedFrameSizes.at(i+1).height())
+                isDescending = false;
+        }
+        if (!isDescending)
+            supportedFrameSizes = sortResolutions(supportedFrameSizes);
+    }
 
     return supportedFrameSizes;
 }
@@ -1021,264 +1073,14 @@ void S60VideoCaptureSession::validateRequestedCodecs()
     }
 }
 
-void S60VideoCaptureSession::setVideoQuality(const QtMultimediaKit::EncodingQuality quality,
-                                                    const VideoQualityDefinition mode)
+void S60VideoCaptureSession::setVideoQuality(const QtMultimediaKit::EncodingQuality quality)
 {
-    // Sensible presets
-    switch (mode) {
-        case ENoVideoQuality:
-            // Do nothing
-            break;
-        case EOnlyVideoQuality:
-            if (quality == QtMultimediaKit::VeryLowQuality) {
-                m_videoSettings.setResolution(QSize(128,96));
-                m_videoSettings.setFrameRate(10);
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::LowQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(128000);
-            } else if (quality == QtMultimediaKit::HighQuality) {
-                m_videoSettings.setResolution(QSize(352,288));
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(384000);
-            } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
-                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
-                else
-                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(2000000);
-            } else {
-                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
-                setError(KErrNotSupported, tr("Unsupported video quality."));
-                return;
-            }
-            break;
-        case EVideoQualityAndResolution:
-            if (quality == QtMultimediaKit::VeryLowQuality) {
-                m_videoSettings.setFrameRate(10);
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::LowQuality) {
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(128000);
-            } else if (quality == QtMultimediaKit::HighQuality) {
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(384000);
-            } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                m_videoSettings.setFrameRate(15);
-                m_videoSettings.setBitRate(2000000);
-            } else {
-                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
-                setError(KErrNotSupported, tr("Unsupported video quality."));
-                return;
-            }
-            break;
-        case EVideoQualityAndFrameRate:
-            if (quality == QtMultimediaKit::VeryLowQuality) {
-                m_videoSettings.setResolution(QSize(128,96));
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::LowQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-                m_videoSettings.setBitRate(128000);
-            } else if (quality == QtMultimediaKit::HighQuality) {
-                m_videoSettings.setResolution(QSize(352,288));
-                m_videoSettings.setBitRate(384000);
-            } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
-                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
-                else
-                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
-                m_videoSettings.setBitRate(2000000);
-            } else {
-                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
-                setError(KErrNotSupported, tr("Unsupported video quality."));
-                return;
-            }
-            break;
-        case EVideoQualityAndBitRate:
-            if (quality == QtMultimediaKit::VeryLowQuality) {
-                m_videoSettings.setResolution(QSize(128,96));
-                m_videoSettings.setFrameRate(10);
-            } else if (quality == QtMultimediaKit::LowQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-                m_videoSettings.setFrameRate(15);
-            } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-                m_videoSettings.setFrameRate(15);
-            } else if (quality == QtMultimediaKit::HighQuality) {
-                m_videoSettings.setResolution(QSize(352,288));
-                m_videoSettings.setFrameRate(15);
-            } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
-                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
-                else
-                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
-                m_videoSettings.setFrameRate(15);
-            } else {
-                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
-                setError(KErrNotSupported, tr("Unsupported video quality."));
-                return;
-            }
-            break;
-        case EVideoQualityAndResolutionAndBitRate:
-            if (quality == QtMultimediaKit::VeryLowQuality) {
-                m_videoSettings.setFrameRate(10);
-            } else if (quality == QtMultimediaKit::LowQuality) {
-                m_videoSettings.setFrameRate(15);
-            } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setFrameRate(15);
-            } else if (quality == QtMultimediaKit::HighQuality) {
-                m_videoSettings.setFrameRate(15);
-            } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                m_videoSettings.setFrameRate(15);
-            } else {
-                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
-                setError(KErrNotSupported, tr("Unsupported video quality."));
-                return;
-            }
-            break;
-        case EVideoQualityAndResolutionAndFrameRate:
-            if (quality == QtMultimediaKit::VeryLowQuality) {
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::LowQuality) {
-                m_videoSettings.setBitRate(64000);
-            } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setBitRate(128000);
-            } else if (quality == QtMultimediaKit::HighQuality) {
-                m_videoSettings.setBitRate(384000);
-            } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                m_videoSettings.setBitRate(2000000);
-            } else {
-                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
-                setError(KErrNotSupported, tr("Unsupported video quality."));
-                return;
-            }
-            break;
-        case EVideoQualityAndFrameRateAndBitRate:
-            if (quality == QtMultimediaKit::VeryLowQuality) {
-                m_videoSettings.setResolution(QSize(128,96));
-            } else if (quality == QtMultimediaKit::LowQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-            } else if (quality == QtMultimediaKit::NormalQuality) {
-                m_videoSettings.setResolution(QSize(176,144));
-            } else if (quality == QtMultimediaKit::HighQuality) {
-                m_videoSettings.setResolution(QSize(352,288));
-            } else if (quality == QtMultimediaKit::VeryHighQuality) {
-                if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
-                    m_videoSettings.setResolution(QSize(640,480)); // Primary camera
-                else
-                    m_videoSettings.setResolution(QSize(352,288)); // Other cameras
-            } else {
-                m_videoSettings.setQuality(QtMultimediaKit::NormalQuality);
-                setError(KErrNotSupported, tr("Unsupported video quality."));
-                return;
-            }
-            break;
-    }
-
     m_videoSettings.setQuality(quality);
     m_uncommittedSettings = true;
 }
 
-void S60VideoCaptureSession::setAudioQuality(const QtMultimediaKit::EncodingQuality quality,
-                                                    const AudioQualityDefinition mode)
+void S60VideoCaptureSession::setAudioQuality(const QtMultimediaKit::EncodingQuality quality)
 {
-    // Based on audio quality definition mode, select proper SampleRate and BitRate
-    switch (mode) {
-        case EOnlyAudioQuality:
-            switch (quality) {
-                case QtMultimediaKit::VeryLowQuality:
-                    m_audioSettings.setBitRate(16000);
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::LowQuality:
-                    m_audioSettings.setBitRate(16000);
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::NormalQuality:
-                    m_audioSettings.setBitRate(32000);
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::HighQuality:
-                    m_audioSettings.setBitRate(64000);
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::VeryHighQuality:
-                    m_audioSettings.setBitRate(64000);
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                default:
-                    m_audioSettings.setQuality(QtMultimediaKit::NormalQuality);
-                    setError(KErrNotSupported, tr("Unsupported audio quality."));
-                    return;
-            }
-            break;
-        case EAudioQualityAndBitRate:
-            switch (quality) {
-                case QtMultimediaKit::VeryLowQuality:
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::LowQuality:
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::NormalQuality:
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::HighQuality:
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                case QtMultimediaKit::VeryHighQuality:
-                    m_audioSettings.setSampleRate(-1);
-                    break;
-                default:
-                    m_audioSettings.setQuality(QtMultimediaKit::NormalQuality);
-                    setError(KErrNotSupported, tr("Unsupported audio quality."));
-                    return;
-            }
-            break;
-        case EAudioQualityAndSampleRate:
-            switch (quality) {
-                case QtMultimediaKit::VeryLowQuality:
-                    m_audioSettings.setBitRate(16000);
-                    break;
-                case QtMultimediaKit::LowQuality:
-                    m_audioSettings.setBitRate(16000);
-                    break;
-                case QtMultimediaKit::NormalQuality:
-                    m_audioSettings.setBitRate(32000);
-                    break;
-                case QtMultimediaKit::HighQuality:
-                    m_audioSettings.setBitRate(64000);
-                    break;
-                case QtMultimediaKit::VeryHighQuality:
-                    m_audioSettings.setBitRate(64000);
-                    break;
-                default:
-                    m_audioSettings.setQuality(QtMultimediaKit::NormalQuality);
-                    setError(KErrNotSupported, tr("Unsupported audio quality."));
-                    return;
-            }
-            break;
-        case ENoAudioQuality:
-            // No actions required, just set quality parameter
-            break;
-
-        default:
-            setError(KErrGeneral, tr("Unexpected camera error."));
-            return;
-    }
-
     m_audioSettings.setQuality(quality);
     m_uncommittedSettings = true;
 }
@@ -1607,16 +1409,41 @@ QList<int> S60VideoCaptureSession::doGetSupportedSampleRatesL(const QAudioEncode
 
 void S60VideoCaptureSession::setAudioSampleRate(const int sampleRate)
 {
-    if (sampleRate != -1)
+    if (sampleRate != -1) {
         m_audioSettings.setSampleRate(sampleRate);
+        m_uncommittedSettings = true;
+    }
 
-    m_uncommittedSettings = true;
+    // Quality has no effect here as sample rate is not supported on Symbian
 }
 
 void S60VideoCaptureSession::setAudioBitRate(const int bitRate)
 {
-    if (bitRate != -1)
+    if (bitRate != -1) {
         m_audioSettings.setBitRate(bitRate);
+    } else {
+        // Use quality to set BitRate
+        switch (m_audioSettings.quality()) {
+        case QtMultimediaKit::VeryLowQuality:
+            m_audioSettings.setBitRate(16000);
+            break;
+        case QtMultimediaKit::LowQuality:
+            m_audioSettings.setBitRate(16000);
+            break;
+        case QtMultimediaKit::NormalQuality:
+            m_audioSettings.setBitRate(32000);
+            break;
+        case QtMultimediaKit::HighQuality:
+            m_audioSettings.setBitRate(64000);
+            break;
+        case QtMultimediaKit::VeryHighQuality:
+            m_audioSettings.setBitRate(64000);
+            break;
+        default:
+            m_audioSettings.setBitRate(64000);
+            break;
+        }
+    }
 
     m_uncommittedSettings = true;
 }
@@ -1769,7 +1596,51 @@ QString S60VideoCaptureSession::determineProfileAndLevel()
 
 void S60VideoCaptureSession::setVideoBitrate(const int bitrate)
 {
-    m_videoSettings.setBitRate(bitrate);
+    if (bitrate != -1) {
+        m_videoSettings.setBitRate(bitrate);
+    } else {
+        // Use one of pre-defined bitrates based on quality requested
+        switch (m_videoSettings.quality()) {
+        case QtMultimediaKit::VeryLowQuality:
+            m_videoSettings.setBitRate(64000);
+            break;
+        case QtMultimediaKit::LowQuality:
+#ifdef SYMBIAN_3_PLATFORM
+            m_videoSettings.setBitRate(128000);
+#else // S60 5.0 or older
+            m_videoSettings.setBitRate(64000);
+#endif // SYMBIAN_3_PLATFORM
+            break;
+        case QtMultimediaKit::NormalQuality:
+#ifdef SYMBIAN_3_PLATFORM
+            m_videoSettings.setBitRate(2000000);
+#else // S60 5.0 or older
+            m_videoSettings.setBitRate(128000);
+#endif // SYMBIAN_3_PLATFORM
+            break;
+        case QtMultimediaKit::HighQuality:
+#ifdef SYMBIAN_3_PLATFORM
+            m_videoSettings.setBitRate(4000000);
+#else // S60 5.0 or older
+            m_videoSettings.setBitRate(384000);
+#endif // SYMBIAN_3_PLATFORM
+            break;
+        case QtMultimediaKit::VeryHighQuality:
+#ifdef SYMBIAN_3_PLATFORM
+            m_videoSettings.setBitRate(14000000);
+#else // S60 5.0 or older
+            m_videoSettings.setBitRate(2000000);
+#endif // SYMBIAN_3_PLATFORM
+            break;
+        default:
+#ifdef SYMBIAN_3_PLATFORM
+            m_videoSettings.setBitRate(2000000);
+#else // S60 5.0 or older
+            m_videoSettings.setBitRate(128000);
+#endif // SYMBIAN_3_PLATFORM
+            break;
+        }
+    }
 
     m_uncommittedSettings = true;
 }
@@ -1795,7 +1666,37 @@ void S60VideoCaptureSession::doSetBitrate(const int &bitrate)
 
 void S60VideoCaptureSession::setVideoResolution(const QSize &resolution)
 {
-    m_videoSettings.setResolution(resolution);
+    if (!resolution.isEmpty()) {
+        m_videoSettings.setResolution(resolution);
+    } else {
+        QList<QSize> supportedResolutions = supportedVideoResolutions(m_videoSettings, 0);
+        switch (m_videoSettings.quality()) {
+        case QtMultimediaKit::VeryLowQuality:
+            m_videoSettings.setResolution(supportedResolutions.last());
+            break;
+        case QtMultimediaKit::LowQuality:
+            if (supportedResolutions.count() > 3)
+                m_videoSettings.setResolution(supportedResolutions.at(supportedResolutions.count() - 2));
+            else
+                m_videoSettings.setResolution(supportedResolutions.last());
+            break;
+        case QtMultimediaKit::NormalQuality:
+            m_videoSettings.setResolution(supportedResolutions.at(supportedResolutions.count() / 2));
+            break;
+        case QtMultimediaKit::HighQuality:
+            if (supportedResolutions.count() > 3)
+                m_videoSettings.setResolution(supportedResolutions.at(1));
+            else
+                m_videoSettings.setResolution(supportedResolutions.first());
+            break;
+        case QtMultimediaKit::VeryHighQuality:
+            m_videoSettings.setResolution(supportedResolutions.first());
+            break;
+        default:
+            m_videoSettings.setResolution(supportedResolutions.first());
+            break;
+        }
+    }
 
     m_uncommittedSettings = true;
 }
@@ -1860,7 +1761,39 @@ void S60VideoCaptureSession::doSetVideoResolution(const QSize &resolution)
 
 void S60VideoCaptureSession::setVideoFrameRate(qreal rate)
 {
-    m_videoSettings.setFrameRate(rate);
+    if (!qFuzzyCompare(rate, qreal(0.0))) {
+        m_videoSettings.setFrameRate(rate);
+    } else {
+        // Use one of pre-defined framerates based on the quality requested
+        switch (m_videoSettings.quality()) {
+        case QtMultimediaKit::VeryLowQuality:
+            m_videoSettings.setFrameRate(qreal(10.0));
+            break;
+        case QtMultimediaKit::LowQuality:
+            m_videoSettings.setFrameRate(qreal(10.0));
+            break;
+        case QtMultimediaKit::NormalQuality:
+            m_videoSettings.setFrameRate(qreal(15.0));
+            break;
+        case QtMultimediaKit::HighQuality:
+#ifdef SYMBIAN_3_PLATFORM
+            m_videoSettings.setFrameRate(qreal(30.0));
+#else // S60 5.0 or older
+            m_videoSettings.setFrameRate(qreal(15.0));
+#endif // SYMBIAN_3_PLATFORM
+            break;
+        case QtMultimediaKit::VeryHighQuality:
+#ifdef SYMBIAN_3_PLATFORM
+            m_videoSettings.setFrameRate(qreal(30.0));
+#else // S60 5.0 or older
+            m_videoSettings.setFrameRate(qreal(15.0));
+#endif // SYMBIAN_3_PLATFORM
+            break;
+        default:
+            m_videoSettings.setFrameRate(qreal(15.0));
+            break;
+        }
+    }
 
     m_uncommittedSettings = true;
 }

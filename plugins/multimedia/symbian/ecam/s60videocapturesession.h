@@ -93,26 +93,6 @@ public: // Enums
         EPaused                 // 8 - Video recording has been started and paused
     };
 
-    enum AudioQualityDefinition
-    {
-        ENoAudioQuality = 0,        // 0 - Both BitRate and SampleRate settings available
-        EOnlyAudioQuality,          // 1 - No BitRate or SampleRate settings available, use Quality to set them
-        EAudioQualityAndBitRate,    // 2 - BitRate setting available, use Quality to set SampleRate
-        EAudioQualityAndSampleRate, // 3 - SampleRate setting available, use Quality to set BitRate
-    };
-
-    enum VideoQualityDefinition
-    {
-        ENoVideoQuality = 0,        // 0 - All, Resolution, FrameRate and BitRate available
-        EOnlyVideoQuality,          // 1 - None available, use Quality to set Resolution, FrameRate and BitRate
-        EVideoQualityAndResolution, // 2 - Only Resolution available, use Quality to set FrameRate and BitRate
-        EVideoQualityAndFrameRate,  // 3 - Only FrameRate available, use Quality to set Resolution and BitRate
-        EVideoQualityAndBitRate,    // 4 - Only BitRate available, use Quality to set Resolution and FrameRate
-        EVideoQualityAndResolutionAndBitRate,   // 5 - No FrameRate available, use Quality to set it
-        EVideoQualityAndResolutionAndFrameRate, // 6 - No BitRate available, use Quality to set it
-        EVideoQualityAndFrameRateAndBitRate     // 7 - No Resolution available, use Quality to set it
-    };
-
 public: // Constructor & Destructor
 
     S60VideoCaptureSession(QObject *parent = 0);
@@ -187,10 +167,8 @@ public: // Methods
     void audioEncoderSettings(QAudioEncoderSettings &audioSettings);
 
     // Quality
-    void setVideoQuality(const QtMultimediaKit::EncodingQuality quality,
-                         const VideoQualityDefinition mode);
-    void setAudioQuality(const QtMultimediaKit::EncodingQuality quality,
-                         const AudioQualityDefinition mode);
+    void setVideoQuality(const QtMultimediaKit::EncodingQuality quality);
+    void setAudioQuality(const QtMultimediaKit::EncodingQuality quality);
 
     // Video Containers
     QString videoContainer() const;
@@ -228,6 +206,7 @@ private: // Internal
 
     void doSetCodecsL();
     QString determineProfileAndLevel();
+    QList<QSize> sortResolutions(QList<QSize> resolutions);
     void doSetVideoResolution(const QSize &resolution);
     void doSetFrameRate(qreal rate);
     void doSetBitrate(const int &bitrate);
