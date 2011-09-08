@@ -41,6 +41,7 @@
 
 #include "camerabincontrol.h"
 #include "camerabincontainer.h"
+#include "camerabinflash.h"
 #include "camerabinaudioencoder.h"
 #include "camerabinvideoencoder.h"
 #include "camerabinimageencoder.h"
@@ -86,6 +87,8 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
     connect(m_session, SIGNAL(viewfinderChanged()),
             SLOT(reloadLater()));
     connect(m_session, SIGNAL(readyChanged(bool)),
+            SLOT(reloadLater()));
+    connect(m_session->cameraFlashControl(), SIGNAL(torchModeChanged(bool)),
             SLOT(reloadLater()));
     connect(m_session, SIGNAL(error(int,QString)),
             SLOT(handleCameraError(int,QString)));
