@@ -386,11 +386,6 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(bool *continuous)
     } else {
 
         if (m_videoParametersForEncoder.count() > 0) {
-
-            // Also arbitrary resolutions are supported
-            if (continuous)
-                *continuous = true;
-
             // Append all supported resolutions to the list
             foreach (MaxResolutionRatesAndTypes parameters, m_videoParametersForEncoder)
                 for (int i = 0; i < parameters.frameRatePictureSizePair.count(); ++i)
@@ -398,6 +393,10 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(bool *continuous)
                         resolutions.append(parameters.frameRatePictureSizePair[i].frameSize);
         }
     }
+
+    // Also arbitrary resolutions are supported
+    if (continuous)
+        *continuous = true;
 
 #ifdef Q_CC_NOKIAX86 // Emulator
     resolutions << QSize(160, 120);
@@ -425,6 +424,31 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
 {
     QList<QSize> supportedFrameSizes;
 
+    if (settings.codec().isEmpty())
+        return supportedFrameSizes;
+
+    if (!m_videoCodecList.contains(settings.codec(), Qt::CaseInsensitive))
+        return supportedFrameSizes;
+
+    // Take generic mime types into account
+    QString codec = settings.codec();
+    codec = codec.toLower();
+    if (codec == QLatin1String("video/h264"))
+#ifdef SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/h264; profile-level-id=42801f");
+#else // SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/h264; profile-level-id=42800d");
+#endif // SYMBIAN_3_PLATFORM
+    else if (codec == QLatin1String("video/mp4v-es"))
+#ifdef SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/mp4v-es; profile-level-id=6");
+#else // SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/mp4v-es; profile-level-id=4");
+#endif // SYMBIAN_3_PLATFORM
+    else if (codec == QLatin1String("video/h263-2000") ||
+             codec == QLatin1String("video/h263-2000; profile=0"))
+        codec = QLatin1String("video/h263-2000; profile=0; level=40");
+
     // Secondary Camera
     if (m_cameraEngine->CurrentCameraIndex() != 0) {
         TCameraInfo *info = m_cameraEngine->CameraInfo();
@@ -436,7 +460,9 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
                     TSize checkedResolution;
                     camera->EnumerateVideoFrameSizes(checkedResolution, i, CCamera::EFormatYUV420Planar);
                     QSize qtResolution(checkedResolution.iWidth, checkedResolution.iHeight);
-                    if (!supportedFrameSizes.contains(qtResolution))
+                    QSize maxForCodec = maximumResolutionForMimeType(codec);
+                    if (!supportedFrameSizes.contains(qtResolution) &&
+                        (qtResolution.width() * qtResolution.height()) <= (maxForCodec.width() * maxForCodec.height()))
                         supportedFrameSizes.append(qtResolution);
                 }
             } else {
@@ -448,26 +474,15 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
 
     // Primary Camera
     } else {
-
-        if (settings.codec().isEmpty())
-            return supportedFrameSizes;
-
-        if (!m_videoCodecList.contains(settings.codec(), Qt::CaseInsensitive))
-            return supportedFrameSizes;
-
-        // Also arbitrary resolutions are supported
-        if (continuous)
-            *continuous = true;
-
         // Find maximum resolution (using defined framerate if set)
         for (int i = 0; i < m_videoParametersForEncoder.count(); ++i) {
             // Check if encoder supports the requested codec
-            if (!m_videoParametersForEncoder[i].mimeTypes.contains(settings.codec(), Qt::CaseInsensitive))
+            if (!m_videoParametersForEncoder[i].mimeTypes.contains(codec, Qt::CaseInsensitive))
                 continue;
 
             foreach (SupportedFrameRatePictureSize pair, m_videoParametersForEncoder[i].frameRatePictureSizePair) {
                 if (!supportedFrameSizes.contains(pair.frameSize)) {
-                    QSize maxForMime = maximumResolutionForMimeType(settings.codec());
+                    QSize maxForMime = maximumResolutionForMimeType(codec);
                     if (settings.frameRate() != 0) {
                         if (settings.frameRate() <= pair.frameRate) {
                             if ((pair.frameSize.width() * pair.frameSize.height()) <= (maxForMime.width() * maxForMime.height()))
@@ -481,6 +496,10 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
             }
         }
     }
+
+    // Also arbitrary resolutions are supported
+    if (continuous)
+        *continuous = true;
 
 #ifdef Q_CC_NOKIAX86 // Emulator
     supportedFrameSizes << QSize(160, 120);
@@ -510,12 +529,8 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(bool *continuous)
 
     if (m_videoParametersForEncoder.count() > 0) {
         // Insert min and max to the list
-        supportedRatesList.append(1.0); // Use 1fps as sensible minimum
+        supportedRatesList.append(10.0); // Use 10fps as sensible minimum
         qreal foundMaxFrameRate(0.0);
-
-        // Also arbitrary framerates are supported
-        if (continuous)
-            *continuous = true;
 
         // Find max framerate
         foreach (MaxResolutionRatesAndTypes parameters, m_videoParametersForEncoder) {
@@ -549,6 +564,10 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(bool *continuous)
         }
     }
 
+    // Also arbitrary framerates are supported
+    if (continuous)
+        *continuous = true;
+
 #ifdef Q_CC_NOKIAX86 // Emulator
     supportedRatesList << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
 #endif
@@ -565,19 +584,34 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
     if (!m_videoCodecList.contains(settings.codec(), Qt::CaseInsensitive))
         return supportedFrameRates;
 
-    // Also arbitrary framerates are supported
-    if (continuous)
-        *continuous = true;
+    // Take generic mime types into account
+    QString codec = settings.codec();
+    codec = codec.toLower();
+    if (codec == QLatin1String("video/h264"))
+#ifdef SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/h264; profile-level-id=42801f");
+#else // SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/h264; profile-level-id=42800d");
+#endif // SYMBIAN_3_PLATFORM
+    else if (codec == QLatin1String("video/mp4v-es"))
+#ifdef SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/mp4v-es; profile-level-id=6");
+#else // SYMBIAN_3_PLATFORM
+        codec = QLatin1String("video/mp4v-es; profile-level-id=4");
+#endif // SYMBIAN_3_PLATFORM
+    else if (codec == QLatin1String("video/h263-2000") ||
+             codec == QLatin1String("video/h263-2000; profile=0"))
+        codec = QLatin1String("video/h263-2000; profile=0; level=40");
 
     // Find maximum framerate (using defined resolution if set)
     for (int i = 0; i < m_videoParametersForEncoder.count(); ++i) {
         // Check if encoder supports the requested codec
-        if (!m_videoParametersForEncoder[i].mimeTypes.contains(settings.codec(), Qt::CaseInsensitive))
+        if (!m_videoParametersForEncoder[i].mimeTypes.contains(codec, Qt::CaseInsensitive))
             continue;
 
         foreach (SupportedFrameRatePictureSize pair, m_videoParametersForEncoder[i].frameRatePictureSizePair) {
             if (!supportedFrameRates.contains(pair.frameRate)) {
-                qreal maxRateForMime = maximumFrameRateForMimeType(settings.codec());
+                qreal maxRateForMime = maximumFrameRateForMimeType(codec);
                 if (settings.resolution().width() != 0 && settings.resolution().height() != 0) {
                     if((settings.resolution().width() * settings.resolution().height()) <= (pair.frameSize.width() * pair.frameSize.height())) {
                         if (pair.frameRate <= maxRateForMime)
@@ -589,6 +623,8 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
                 }
             }
         }
+        if (supportedFrameRates.isEmpty() && maximumFrameRateForMimeType(codec) > 0)
+            supportedFrameRates << maximumFrameRateForMimeType(codec);
     }
 
     // Add also other standard framerates to the list
@@ -610,6 +646,10 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
                 supportedFrameRates.insert(1, 10.0);
         }
     }
+
+    // Also arbitrary framerates are supported
+    if (continuous)
+        *continuous = true;
 
 #ifdef Q_CC_NOKIAX86 // Emulator
     supportedFrameRates << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
