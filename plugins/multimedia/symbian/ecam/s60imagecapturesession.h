@@ -304,6 +304,7 @@ private: // Internal
 
     void doSetFlashModeL(QCameraExposure::FlashModes mode);
     void doSetExposureModeL(QCameraExposure::ExposureMode mode);
+    QList<QSize> sortResolutions(QList<QSize> resolutions);
 
     void saveImageL(TDesC8 *aData, TFileName &aPath);
     void processFileName(const QString &fileName);

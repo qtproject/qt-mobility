@@ -93,26 +93,6 @@ public: // Enums
         EPaused                 // 8 - Video recording has been started and paused
     };
 
-    enum AudioQualityDefinition
-    {
-        ENoAudioQuality = 0,        // 0 - Both BitRate and SampleRate settings available
-        EOnlyAudioQuality,          // 1 - No BitRate or SampleRate settings available, use Quality to set them
-        EAudioQualityAndBitRate,    // 2 - BitRate setting available, use Quality to set SampleRate
-        EAudioQualityAndSampleRate, // 3 - SampleRate setting available, use Quality to set BitRate
-    };
-
-    enum VideoQualityDefinition
-    {
-        ENoVideoQuality = 0,        // 0 - All, Resolution, FrameRate and BitRate available
-        EOnlyVideoQuality,          // 1 - None available, use Quality to set Resolution, FrameRate and BitRate
-        EVideoQualityAndResolution, // 2 - Only Resolution available, use Quality to set FrameRate and BitRate
-        EVideoQualityAndFrameRate,  // 3 - Only FrameRate available, use Quality to set Resolution and BitRate
-        EVideoQualityAndBitRate,    // 4 - Only BitRate available, use Quality to set Resolution and FrameRate
-        EVideoQualityAndResolutionAndBitRate,   // 5 - No FrameRate available, use Quality to set it
-        EVideoQualityAndResolutionAndFrameRate, // 6 - No BitRate available, use Quality to set it
-        EVideoQualityAndFrameRateAndBitRate     // 7 - No Resolution available, use Quality to set it
-    };
-
 public: // Constructor & Destructor
 
     S60VideoCaptureSession(QObject *parent = 0);
@@ -165,32 +145,30 @@ public: // Methods
     QList<QSize> supportedVideoResolutions(const QVideoEncoderSettings &settings, bool *continuous);
 
     // Framerate
-    void setFrameRate(const qreal rate);
+    void setVideoFrameRate(const qreal rate);
     QList<qreal> supportedVideoFrameRates(bool *continuous);
     QList<qreal> supportedVideoFrameRates(const QVideoEncoderSettings &settings, bool *continuous);
 
     // Other Video Settings
-    void setBitrate(const int bitrate);
+    void setVideoBitrate(const int bitrate);
     void setVideoEncodingMode(const QtMultimediaKit::EncodingMode mode);
 
     // Video Codecs
-    void setVideoCaptureCodec(const QString &codecName);
-    QStringList supportedVideoCaptureCodecs();
-    QString videoCaptureCodecDescription(const QString &codecName);
+    void setVideoCodec(const QString &codecName);
+    QStringList supportedVideoCodecs();
+    QString videoCodecDescription(const QString &codecName);
 
     // Audio Codecs
-    void setAudioCaptureCodec(const QString &codecName);
-    QStringList supportedAudioCaptureCodecs();
+    void setAudioCodec(const QString &codecName);
+    QStringList supportedAudioCodecs();
 
     // Encoder Settings
     void videoEncoderSettings(QVideoEncoderSettings &videoSettings);
     void audioEncoderSettings(QAudioEncoderSettings &audioSettings);
 
     // Quality
-    void setVideoCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
-                                const VideoQualityDefinition mode);
-    void setAudioCaptureQuality(const QtMultimediaKit::EncodingQuality quality,
-                                const AudioQualityDefinition mode);
+    void setVideoQuality(const QtMultimediaKit::EncodingQuality quality);
+    void setAudioQuality(const QtMultimediaKit::EncodingQuality quality);
 
     // Video Containers
     QString videoContainer() const;
@@ -200,7 +178,7 @@ public: // Methods
     QString videoContainerDescription(const QString &containerName);
 
     // Audio Settings
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous);
+    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings, bool *continuous);
     void setAudioSampleRate(const int sampleRate);
     void setAudioBitRate(const int bitRate);
     void setAudioChannelCount(const int channelCount);
@@ -209,8 +187,8 @@ public: // Methods
     // Video Options
     QSize pixelAspectRatio();
     void setPixelAspectRatio(const QSize par);
-    int gain();
-    void setGain(const int gain);
+    int audioGain();
+    void setAudioGain(const int gain);
     int maxClipSizeInBytes() const;
     void setMaxClipSizeInBytes(const int size);
 
@@ -228,6 +206,7 @@ private: // Internal
 
     void doSetCodecsL();
     QString determineProfileAndLevel();
+    QList<QSize> sortResolutions(QList<QSize> resolutions);
     void doSetVideoResolution(const QSize &resolution);
     void doSetFrameRate(qreal rate);
     void doSetBitrate(const int &bitrate);

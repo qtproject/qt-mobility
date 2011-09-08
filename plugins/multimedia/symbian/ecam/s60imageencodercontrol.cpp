@@ -92,28 +92,18 @@ QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 
 void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
 {
-    // Notify that settings have been implicitly set and there's no need to
-    // initialize them in case camera is changed
-    m_session->notifySettingsSet();
-
     if (!settings.isNull()) {
-        if (!settings.codec().isEmpty()) {
-            if (settings.resolution() != QSize(-1,-1)) { // Codec, Resolution & Quality
-                m_session->setImageCodec(settings.codec());
-                m_session->setImageResolution(settings.resolution());
-                m_session->setImageQuality(settings.quality());
-            } else { // Codec and Quality
-                m_session->setImageCodec(settings.codec());
-                m_session->setImageQuality(settings.quality());
-            }
-        } else {
-            if (settings.resolution() != QSize(-1,-1)) { // Resolution & Quality
-                m_session->setImageResolution(settings.resolution());
-                m_session->setImageQuality(settings.quality());
-            }
-            else // Only Quality
-                m_session->setImageQuality(settings.quality());
-        }
+        // Notify that settings have been implicitly set and there's no need to
+        // initialize them in case camera is changed
+        m_session->notifySettingsSet();
+
+        if (!settings.codec().isEmpty())
+            m_session->setImageCodec(settings.codec());
+
+        // Set quality before resolution as quality defines the
+        // resolution used in case it's not explicitly set
+        m_session->setImageQuality(settings.quality());
+        m_session->setImageResolution(settings.resolution());
 
         // Prepare ImageCapture with the settings and set error if needed
         int prepareSuccess = m_session->prepareImageCapture();
@@ -121,7 +111,9 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
         // Preparation fails with KErrNotReady if camera has not been started.
         // That can be ignored since settings are set internally in that case.
         if (prepareSuccess != KErrNotReady && prepareSuccess != KErrNone)
-            m_session->setError(prepareSuccess, tr("Failure in preparation of image capture."));
+            m_session->setError(prepareSuccess, tr("Failed to apply image settings."), true);
+    } else {
+        m_session->setError(KErrNotSupported, tr("Unable to set undefined settings."), true);
     }
 }
 
