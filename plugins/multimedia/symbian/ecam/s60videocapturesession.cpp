@@ -1551,12 +1551,25 @@ QString S60VideoCaptureSession::videoCodecDescription(const QString &codecName)
 void S60VideoCaptureSession::doSetCodecsL()
 {
     // Determine Profile and Level for the video codec if needed
-    // (MimeType/Profile-level-id contains "profile" if profile/level info is available)
-    if (!m_videoSettings.codec().contains(QString("profile"), Qt::CaseInsensitive))
+    QString setVideoCodec(m_videoSettings.codec());
+    setVideoCodec = setVideoCodec.toLower();
+    if (setVideoCodec == QLatin1String("video/h264") ||
+        setVideoCodec == QLatin1String("video/mp4v-es") ||
+        setVideoCodec == QLatin1String("video/h263-2000") ||
+        setVideoCodec == QLatin1String("video/h263-2000; profile=0")) {
         m_videoSettings.setCodec(determineProfileAndLevel());
+        setVideoCodec = m_videoSettings.codec();
+    }
 
     if (m_videoRecorder) {
-        TPtrC16 str(reinterpret_cast<const TUint16*>(m_videoSettings.codec().utf16()));
+        // CVideoReorderUtility is CaseSensitive, make sure right format is used
+        QStringList foundList = m_videoCodecList.filter(setVideoCodec, Qt::CaseInsensitive);
+        if (foundList.count() > 0)
+            setVideoCodec = foundList.first();
+        else
+            User::Leave(KErrNotSupported);
+
+        TPtrC16 str(reinterpret_cast<const TUint16*>(setVideoCodec.utf16()));
         HBufC8* videoCodec(0);
         videoCodec = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str);
         CleanupStack::PushL(videoCodec);
@@ -1572,9 +1585,9 @@ void S60VideoCaptureSession::doSetCodecsL()
         User::LeaveIfError(aErr);
 
         CleanupStack::PopAndDestroy(videoCodec);
-    }
-    else
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
 QString S60VideoCaptureSession::determineProfileAndLevel()
@@ -1582,52 +1595,54 @@ QString S60VideoCaptureSession::determineProfileAndLevel()
     QString determinedMimeType = m_videoSettings.codec();
 
     // H.263
-    if (determinedMimeType.contains(QString("video/H263-2000"), Qt::CaseInsensitive)) {
+    if (determinedMimeType.contains(QLatin1String("video/H263-2000"), Qt::CaseInsensitive)) {
+        if (!determinedMimeType.contains(QLatin1String("profile=0"), Qt::CaseInsensitive))
+            determinedMimeType.append(QLatin1String("; profile=0"));
         if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
             if (m_videoSettings.frameRate() > 15.0)
-                determinedMimeType.append("; profile=0; level=20");
+                determinedMimeType.append(QLatin1String("; level=20"));
             else
-                determinedMimeType.append("; profile=0; level=40");
+                determinedMimeType.append(QLatin1String("; level=40"));
         } else {
             if (m_videoSettings.bitRate() > 64000)
-                determinedMimeType.append("; profile=0; level=45");
+                determinedMimeType.append(QLatin1String("; level=45"));
             else
-                determinedMimeType.append("; profile=0; level=10");
+                determinedMimeType.append(QLatin1String("; level=10"));
         }
 
     // MPEG-4
-    } else if (determinedMimeType.contains(QString("video/mp4v-es"), Qt::CaseInsensitive)) {
+    } else if (determinedMimeType.contains(QLatin1String("video/mp4v-es"), Qt::CaseInsensitive)) {
         if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (720*480)) {
-            determinedMimeType.append("; profile-level-id=6");
+            determinedMimeType.append(QLatin1String("; profile-level-id=6"));
         } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (640*480)) {
-            determinedMimeType.append("; profile-level-id=5");
+            determinedMimeType.append(QLatin1String("; profile-level-id=5"));
         } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (352*288)) {
-            determinedMimeType.append("; profile-level-id=4");
+            determinedMimeType.append(QLatin1String("; profile-level-id=4"));
         } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
             if (m_videoSettings.frameRate() > 15.0)
-                determinedMimeType.append("; profile-level-id=3");
+                determinedMimeType.append(QLatin1String("; profile-level-id=3"));
             else
-                determinedMimeType.append("; profile-level-id=2");
+                determinedMimeType.append(QLatin1String("; profile-level-id=2"));
         } else {
             if (m_videoSettings.bitRate() > 64000)
-                determinedMimeType.append("; profile-level-id=9");
+                determinedMimeType.append(QLatin1String("; profile-level-id=9"));
             else
-                determinedMimeType.append("; profile-level-id=1");
+                determinedMimeType.append(QLatin1String("; profile-level-id=1"));
         }
 
     // H.264
-    } else if (determinedMimeType.contains(QString("video/H264"), Qt::CaseInsensitive)) {
+    } else if (determinedMimeType.contains(QLatin1String("video/H264"), Qt::CaseInsensitive)) {
         if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (640*480)) {
-            determinedMimeType.append("; profile-level-id=42801F");
+            determinedMimeType.append(QLatin1String("; profile-level-id=42801F"));
         } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (352*288)) {
-            determinedMimeType.append("; profile-level-id=42801E");
+            determinedMimeType.append(QLatin1String("; profile-level-id=42801E"));
         } else if ((m_videoSettings.resolution().width() * m_videoSettings.resolution().height()) > (176*144)) {
             if (m_videoSettings.frameRate() > 15.0)
-                determinedMimeType.append("; profile-level-id=428015");
+                determinedMimeType.append(QLatin1String("; profile-level-id=428015"));
             else
-                determinedMimeType.append("; profile-level-id=42800C");
+                determinedMimeType.append(QLatin1String("; profile-level-id=42800C"));
         } else {
-            determinedMimeType.append("; profile-level-id=42900B");
+            determinedMimeType.append(QLatin1String("; profile-level-id=42900B"));
         }
     }
 
