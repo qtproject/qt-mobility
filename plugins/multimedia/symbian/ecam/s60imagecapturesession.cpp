@@ -1103,15 +1103,72 @@ QSize S60ImageCaptureSession::imageResolution() const
 
 void S60ImageCaptureSession::setImageResolution(const QSize &size)
 {
-    if (size.isNull() ||
-        size.isEmpty() ||
-        size == QSize(-1,-1)) {
-        // An empty QSize indicates the encoder should make an optimal choice based on what is
-        // available from the image source and the limitations of the codec.
-        m_captureSize = supportedImageResolutionsForCodec(m_currentCodec).last();
-    }
-    else
+    QList<QSize> supportedSizes = supportedImageResolutionsForCodec(m_currentCodec);
+    if (!size.isEmpty()) {
+        if (!supportedSizes.isEmpty()) {
+            if (!supportedSizes.contains(size)) {
+                setError(KErrNotSupported, tr("Requested resolution is not supported."), true);
+                return;
+            }
+        }
         m_captureSize = size;
+
+    } else {
+        // Quality defines the resolution
+        switch (m_symbianImageQuality) {
+        case KJpegQualityVeryLow:
+            m_captureSize = supportedSizes.last();
+            break;
+        case KJpegQualityLow:
+            if (supportedSizes.count() > 3)
+                m_captureSize = supportedSizes.at(supportedSizes.count() - 2);
+            else
+                m_captureSize = supportedSizes.last();
+            break;
+        case KJpegQualityNormal:
+            m_captureSize = supportedSizes.at(supportedSizes.count() / 2);
+            break;
+        case KJpegQualityHigh:
+            if (supportedSizes.count() > 3)
+                m_captureSize = supportedSizes.at(1);
+            else
+                m_captureSize = supportedSizes.first();
+            break;
+        case KJpegQualityVeryHigh:
+            m_captureSize = supportedSizes.first();
+            break;
+        default:
+            // Best as default
+            m_captureSize = supportedSizes.first();
+            break;
+        }
+    }
+}
+
+QList<QSize> S60ImageCaptureSession::sortResolutions(QList<QSize> resolutions)
+{
+    if (resolutions.count() < 2)
+        return resolutions;
+
+    // Sort resolutions
+    QList<QSize> smaller;
+    QList<QSize> larger;
+
+    // Naive midpoint selection
+    QSize mid = resolutions.at(resolutions.count() / 2);
+    int midMultiplied = mid.width() * mid.height();
+
+    foreach (QSize resolution, resolutions) {
+        if (resolution.width() * resolution.height() <= midMultiplied) {
+            if (resolution != mid)
+                smaller << resolution;
+        } else {
+            larger << resolution;
+        }
+    }
+
+    // Sort to descending order
+    return (sortResolutions(larger) << mid) + sortResolutions(smaller);
 }
 
 QList<QSize> S60ImageCaptureSession::supportedImageResolutionsForCodec(const QString &codecName)
@@ -1143,15 +1200,26 @@ QList<QSize> S60ImageCaptureSession::supportedImageResolutionsForCodec(const QSt
     list << QSize(800,600);
 #endif
 
+    // Sort list (from large to small resolution)
+    if (list.count() > 1) {
+        // First check if resolutions already are in correct order
+        bool isDescending = true;
+        for (int i = 0; i < list.count() - 1; ++i) {
+            if (list.at(i).width() * list.at(i).height() <
+                list.at(i+1).width() * list.at(i+1).height())
+                isDescending = false;
+        }
+        if (!isDescending)
+            list = sortResolutions(list);
+    }
+
     return list;
 }
 
 QMap<QString, QString> S60ImageCaptureSession::codecDescriptionMap()
 {
     QMap<QString, QString> formats;
-
     formats.insert("image/jpg", "JPEG image codec");
-
     return formats;
 }
 
@@ -1188,7 +1256,7 @@ void S60ImageCaptureSession::setImageCodec(const QString &codecName)
 {
     if (!codecName.isEmpty()) {
         if (supportedImageCodecs().contains(codecName, Qt::CaseInsensitive) ||
-            codecName == "image/jpg") {
+            codecName == QLatin1String("image/jpg")) {
             m_currentCodec = codecName;
             m_currentFormat = selectFormatForCodec(m_currentCodec);
         } else {
@@ -1247,7 +1315,15 @@ void S60ImageCaptureSession::setImageQuality(const QtMultimediaKit::EncodingQual
             break;
 
         default:
-            m_symbianImageQuality = quality * KSymbianImageQualityCoefficient;
+            // Accept integers between 0-100 which are cast to
+            // QtMultimediaKit::EncodingQuality since image quality actually
+            // defines Jpeg compression quality. Thus it makes sense to let user
+            // define specific Jpeg compression qualitys in this way.
+            if (quality > 0 && quality <= 100) {
+                m_symbianImageQuality = int(quality);
+            } else {
+                setError(KErrNotSupported, tr("Requested image quality is not supported"), true);
+            }
             break;
     }
 }
