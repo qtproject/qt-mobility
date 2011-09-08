@@ -338,6 +338,7 @@ signals: // Notifications
 private slots: // Internal Slots
 
     void cameraStatusChanged(QCamera::Status);
+    void cameraStateChanged(QCamera::State);
 
 private: // Data
 
@@ -371,6 +372,7 @@ private: // Data
     bool                    m_captureWhenReady;
     bool                    m_previewDecodingOngoing;
     bool                    m_previewInWaitLoop;
+    bool                    m_isCameraExternallyStarted;
 };
 
 #endif // S60IMAGECAPTURESESSION_H
