@@ -88,6 +88,7 @@ public: // Static Contructor & Destructor
 public: // Operations
 
     void decode(CFbsBitmap *destBitmap);
+    void cancelDecoding();
     TFrameInfo *frameInfo();
 
 protected: // CActive
@@ -135,6 +136,7 @@ public: // Static Contructor & Destructor
 public: // Operations
 
     void encode(CFbsBitmap *sourceBitmap);
+    void cancelEncoding();
 
 protected: // CActive
 
