@@ -305,7 +305,7 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     m_activeDeviceIndex(KDefaultCameraDevice),
     m_cameraStarted(false),
     m_icState(EImageCaptureNotPrepared),
-    m_captureDestionation(KDefaultCaptureDestination),
+    m_captureDestination(KDefaultCaptureDestination),
     m_currentCodec(QString()),
     m_captureSize(QSize()),
     m_symbianImageQuality(QtMultimediaKit::HighQuality * KSymbianImageQualityCoefficient),
@@ -654,7 +654,7 @@ int S60ImageCaptureSession::capture(const QString &fileName)
 
     emit readyForCaptureChanged(false);
 
-    if (m_captureDestionation & QCameraImageCapture::CaptureToFile)
+    if (m_captureDestination & QCameraImageCapture::CaptureToFile)
         processFileName(fileName);
 
     if (m_cameraEngine) {
@@ -731,10 +731,10 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
     m_icState = EImageCaptureWritingImage;
 
     // Send image buffer
-    if (m_captureDestionation & QCameraImageCapture::CaptureToBuffer) {
+    if (m_captureDestination & QCameraImageCapture::CaptureToBuffer) {
         emit imageAvailable(m_currentImageId, generateImageBuffer(aData));
 
-        if (m_captureDestionation == QCameraImageCapture::CaptureToBuffer) {
+        if (m_captureDestination == QCameraImageCapture::CaptureToBuffer) {
 #ifdef ECAM_PREVIEW_API
             releaseImageBuffer();
             TInt err = KErrNone;
@@ -803,7 +803,7 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
         }
     }
 
-    if (m_captureDestionation & QCameraImageCapture::CaptureToFile) {
+    if (m_captureDestination & QCameraImageCapture::CaptureToFile) {
         TFileName path = convertImagePath();
 
         // Try to save image and inform if it was succcesful
@@ -827,7 +827,7 @@ void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 
     m_icState = EImageCaptureWritingImage;
 
-    if (m_captureDestionation & QCameraImageCapture::CaptureToFile) {
+    if (m_captureDestination & QCameraImageCapture::CaptureToFile) {
         if(aBitmap)
         {
 #ifndef ECAM_PREVIEW_API
@@ -1111,13 +1111,13 @@ void S60ImageCaptureSession::setCaptureDestination(const QCameraImageCapture::Ca
 #endif // SYMBIAN_3_PLATFORM
         } else {
             // Both file and buffer requested, unset BufferCapture flag
-            m_captureDestionation = destination & ~QCameraImageCapture::CaptureToBuffer;
-            emit destinationChanged(m_captureDestionation);
+            m_captureDestination = destination & ~QCameraImageCapture::CaptureToBuffer;
+            emit destinationChanged(m_captureDestination);
             setError(KErrNotSupported, tr("Buffer image capture is not supported with this setup."));
         }
     } else {
-        m_captureDestionation = destination;
-        emit destinationChanged(m_captureDestionation);
+        m_captureDestination = destination;
+        emit destinationChanged(m_captureDestination);
     }
 }
 
@@ -1364,10 +1364,10 @@ void S60ImageCaptureSession::setBufferCaptureFormat(const QVideoFrame::PixelForm
     CCamera::TFormat symbianCaptureFormat = qVideoFrame2SymbianFormat(format);
 
     if (m_currentFormat != symbianCaptureFormat) {
-        if (m_captureDestionation != QCameraImageCapture::CaptureToBuffer) {
+        if (m_captureDestination != QCameraImageCapture::CaptureToBuffer) {
             // Unset FileCapture flag
-            m_captureDestionation = m_captureDestionation & ~QCameraImageCapture::CaptureToFile;
-            emit destinationChanged(m_captureDestionation);
+            m_captureDestination = m_captureDestination & ~QCameraImageCapture::CaptureToFile;
+            emit destinationChanged(m_captureDestination);
         }
     }
 

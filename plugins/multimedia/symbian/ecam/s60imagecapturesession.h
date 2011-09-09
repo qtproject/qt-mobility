@@ -357,7 +357,7 @@ private: // Data
     TInt                    m_activeDeviceIndex;
     bool                    m_cameraStarted;
     ImageCaptureState       m_icState;
-    QCameraImageCapture::CaptureDestinations m_captureDestionation;
+    QCameraImageCapture::CaptureDestinations m_captureDestination;
     QStringList             m_supportedImageCodecs;
     QList<QVideoFrame::PixelFormat> m_supportedBufferCaptureFormats;
     QString                 m_currentCodec;
