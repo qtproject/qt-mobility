@@ -171,32 +171,31 @@ bool S60CameraExposureControl::isParameterSupported(ExposureParameter parameter)
     // Settings supported only if advanced settings available
     if (m_advancedSettings) {
         switch (parameter) {
-            case QCameraExposureControl::ISO:
-                if (m_advancedSettings->supportedIsoSensitivitiesL().count() > 0)
-                    return true;
-                else
-                    return false;
-            case QCameraExposureControl::Aperture:
-                if (m_advancedSettings->supportedApertures().count() > 0)
-                    return true;
-                else
-                    return false;
-            case QCameraExposureControl::ShutterSpeed:
-                if (m_advancedSettings->supportedShutterSpeeds().count() > 0)
-                    return true;
-                else
-                    return false;
-            case QCameraExposureControl::ExposureCompensation:
-                if (m_advancedSettings->supportedExposureCompensationValues().count() > 0)
-                    return true;
-                else
-                    return false;
-            case QCameraExposureControl::FlashPower:
-            case QCameraExposureControl::FlashCompensation:
+        case QCameraExposureControl::ISO:
+            if (m_advancedSettings->supportedIsoSensitivitiesL().count() > 0)
+                return true;
+            else
                 return false;
-
-            default:
+        case QCameraExposureControl::Aperture:
+            if (m_advancedSettings->supportedApertures().count() > 0)
+                return true;
+            else
                 return false;
+        case QCameraExposureControl::ShutterSpeed:
+            if (m_advancedSettings->supportedShutterSpeeds().count() > 0)
+                return true;
+            else
+                return false;
+        case QCameraExposureControl::ExposureCompensation:
+            if (m_advancedSettings->supportedExposureCompensationValues().count() > 0)
+                return true;
+            else
+                return false;
+        case QCameraExposureControl::FlashPower:
+        case QCameraExposureControl::FlashCompensation:
+            return false;
+        default:
+            return false;
         }
     }
 
@@ -261,34 +260,33 @@ QVariantList S60CameraExposureControl::supportedParameterRange(ExposureParameter
 
     if (m_advancedSettings) {
         switch (parameter) {
-            case QCameraExposureControl::ISO: {
-                foreach (int iso, m_advancedSettings->supportedIsoSensitivitiesL())
-                    valueList << QVariant(iso);
-                break;
-            }
-            case QCameraExposureControl::Aperture: {
-                foreach (qreal aperture, m_advancedSettings->supportedApertures())
-                    valueList << QVariant(aperture);
-                break;
-            }
-            case QCameraExposureControl::ShutterSpeed: {
-                foreach (qreal shutterSpeed, m_advancedSettings->supportedShutterSpeeds())
-                    valueList << QVariant(shutterSpeed);
-                break;
-            }
-            case QCameraExposureControl::ExposureCompensation: {
-                foreach (qreal ev, m_advancedSettings->supportedExposureCompensationValues())
-                    valueList << QVariant(ev);
-                break;
-            }
-            case QCameraExposureControl::FlashPower:
-            case QCameraExposureControl::FlashCompensation:
-                // Not supported in Symbian
-                break;
-
-            default:
-                // Not supported in Symbian
-                break;
+        case QCameraExposureControl::ISO: {
+            foreach (int iso, m_advancedSettings->supportedIsoSensitivitiesL())
+                valueList << QVariant(iso);
+            break;
+        }
+        case QCameraExposureControl::Aperture: {
+            foreach (qreal aperture, m_advancedSettings->supportedApertures())
+                valueList << QVariant(aperture);
+            break;
+        }
+        case QCameraExposureControl::ShutterSpeed: {
+            foreach (qreal shutterSpeed, m_advancedSettings->supportedShutterSpeeds())
+                valueList << QVariant(shutterSpeed);
+            break;
+        }
+        case QCameraExposureControl::ExposureCompensation: {
+            foreach (qreal ev, m_advancedSettings->supportedExposureCompensationValues())
+                valueList << QVariant(ev);
+            break;
+        }
+        case QCameraExposureControl::FlashPower:
+        case QCameraExposureControl::FlashCompensation:
+            // Not supported in Symbian
+            break;
+        default:
+            // Not supported in Symbian
+            break;
         }
     }
 

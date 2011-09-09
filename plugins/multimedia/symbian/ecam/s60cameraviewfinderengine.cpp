@@ -742,6 +742,7 @@ void S60CameraViewfinderEngine::checkAndRotateCamera()
         // Request orientation reset
         m_cameraControl->resetCameraOrientation();
     }
+
     m_uiLandscape = isUiNowLandscape;
 }
 
