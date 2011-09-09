@@ -70,6 +70,8 @@ S60ImageCaptureDecoder::S60ImageCaptureDecoder(S60ImageCaptureSession *imageSess
 
 S60ImageCaptureDecoder::~S60ImageCaptureDecoder()
 {
+    cancelDecoding();
+
     if (m_imageDecoder) {
         delete m_imageDecoder;
         m_imageDecoder = 0;
@@ -127,6 +129,13 @@ void S60ImageCaptureDecoder::decode(CFbsBitmap *destBitmap)
     }
 }
 
+void S60ImageCaptureDecoder::cancelDecoding()
+{
+    Cancel();
+    if (IsActive())
+        User::WaitForRequest(iStatus);
+}
+
 TFrameInfo *S60ImageCaptureDecoder::frameInfo()
 {
     if (m_imageDecoder) {
@@ -171,6 +180,8 @@ S60ImageCaptureEncoder::S60ImageCaptureEncoder(S60ImageCaptureSession *imageSess
 
 S60ImageCaptureEncoder::~S60ImageCaptureEncoder()
 {
+    cancelEncoding();
+
     if (m_frameImageData) {
         delete m_frameImageData;
         m_frameImageData = 0;
@@ -232,6 +243,13 @@ void S60ImageCaptureEncoder::encode(CFbsBitmap *sourceBitmap)
     } else {
         m_imageSession->setError(KErrGeneral, QLatin1String("Saving image to file failed."));
     }
+}
+
+void S60ImageCaptureEncoder::cancelEncoding()
+{
+    Cancel();
+    if (IsActive())
+        User::WaitForRequest(iStatus);
 }
 
 void S60ImageCaptureEncoder::RunL()
@@ -970,13 +988,21 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
         RFile file;
         TInt fileWriteErr = KErrNone;
         fileWriteErr = file.Replace(*fileSystemAccess, aPath, EFileWrite);
-        if (fileWriteErr)
+        if (fileWriteErr) {
+#ifndef ECAM_PREVIEW_API
+            imageDecoder->cancelDecoding();
+#endif // ECAM_PREVIEW_API
             User::Leave(fileWriteErr);
+        }
         CleanupClosePushL(file);
 
         fileWriteErr = file.Write(*aData);
-        if (fileWriteErr)
+        if (fileWriteErr) {
+#ifndef ECAM_PREVIEW_API
+            imageDecoder->cancelDecoding();
+#endif // ECAM_PREVIEW_API
             User::Leave(fileWriteErr);
+        }
 
         CleanupStack::PopAndDestroy(&file);
 #ifdef ECAM_PREVIEW_API
