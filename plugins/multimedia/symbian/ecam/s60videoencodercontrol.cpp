@@ -90,8 +90,8 @@ QStringList S60VideoEncoderControl::supportedEncodingOptions(const QString &code
     Q_UNUSED(codec);
 
     QStringList options;
-    options.append("pixelAspectRatio");
-    options.append("maxClipSizeInBytes");
+    options << QLatin1String("pixelAspectRatio");
+    options << QLatin1String("maxClipSizeInBytes");
 
     return options;
 }
@@ -103,14 +103,12 @@ QVariant S60VideoEncoderControl::encodingOption(const QString &codec, const QStr
     // Possible settings: EncodingMode, Codec, Resolution, FrameRate, BitRate, Quality
     // Possible (codec specific) options: PixelAspectRatio, MaxClipSizeInBytes
 
-    QVariant returnValue;
-
     if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
-        returnValue.setValue(m_session->pixelAspectRatio());
+        return QVariant(m_session->pixelAspectRatio());
     else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
-        returnValue.setValue(m_session->maxClipSizeInBytes());
+        return QVariant(m_session->maxClipSizeInBytes());
 
-    return returnValue;
+    return QVariant();
 }
 
 void S60VideoEncoderControl::setEncodingOption(
@@ -119,12 +117,15 @@ void S60VideoEncoderControl::setEncodingOption(
     // Set the codec first if not already set
     m_session->setVideoCodec(codec);
 
-    if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0)
+    if (qstrcmp(name.toLocal8Bit().constData(), "pixelAspectRatio") == 0) {
         m_session->setPixelAspectRatio(value.toSize());
-    else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0)
+        return;
+    } else if (qstrcmp(name.toLocal8Bit().constData(), "maxClipSizeInBytes") == 0) {
         m_session->setMaxClipSizeInBytes(value.toInt());
-    else
-        m_session->setError(KErrNotSupported, tr("Requested encoding option is not supported"));
+        return;
+    }
+
+    m_session->setError(KErrNotSupported, tr("Requested encoding option is not supported"));
 }
 
 QVideoEncoderSettings S60VideoEncoderControl::videoSettings() const

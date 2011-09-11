@@ -55,7 +55,7 @@
 #include "s60cameraadvsettings.h"
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
-#include "s60cameraconstants.h" // Default Jpeg Quality
+#include "s60cameraconstants.h"
 
 #include <icl/imagedata.h> // TFrameInfo
 
@@ -303,7 +303,6 @@ private: // Internal
     void updateImageCaptureFormats();
 
     void doSetWhiteBalanceModeL(QCameraImageProcessing::WhiteBalanceMode mode);
-
     void doSetFlashModeL(QCameraExposure::FlashModes mode);
     void doSetExposureModeL(QCameraExposure::ExposureMode mode);
     QList<QSize> sortResolutions(QList<QSize> resolutions);
@@ -335,7 +334,6 @@ signals: // Notifications
     void imageAvailable(const int, const QVideoFrame&);
     void imageSaved(const int, const QString&);
 
-    // Focus notifications (S60 3.1 Focusing)
     void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
 
 private slots: // Internal Slots
@@ -357,7 +355,7 @@ private: // Data
     TInt                    m_activeDeviceIndex;
     bool                    m_cameraStarted;
     ImageCaptureState       m_icState;
-    QCameraImageCapture::CaptureDestinations m_captureDestionation;
+    QCameraImageCapture::CaptureDestinations m_captureDestination;
     QStringList             m_supportedImageCodecs;
     QList<QVideoFrame::PixelFormat> m_supportedBufferCaptureFormats;
     QString                 m_currentCodec;

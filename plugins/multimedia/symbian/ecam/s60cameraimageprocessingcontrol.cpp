@@ -104,25 +104,24 @@ bool S60CameraImageProcessingControl::isProcessingParameterSupported(ProcessingP
     // First check settings requiring Adv. Settings
     if (m_advancedSettings) {
         switch (parameter) {
-            case QCameraImageProcessingControl::Saturation:
-                return true;
-            case QCameraImageProcessingControl::Sharpening:
-                return isSharpeningSupported();
-            case QCameraImageProcessingControl::Denoising:
-                return isDenoisingSupported();
-            case QCameraImageProcessingControl::ColorTemperature:
-                return false;
+        case QCameraImageProcessingControl::Saturation:
+            return true;
+        case QCameraImageProcessingControl::Sharpening:
+            return isSharpeningSupported();
+        case QCameraImageProcessingControl::Denoising:
+            return isDenoisingSupported();
+        case QCameraImageProcessingControl::ColorTemperature:
+            return false;
         }
     }
 
     // Then the rest
     switch (parameter) {
-        case QCameraImageProcessingControl::Contrast:
-        case QCameraImageProcessingControl::Brightness:
-            return true;
-
-        default:
-            return false;
+    case QCameraImageProcessingControl::Contrast:
+    case QCameraImageProcessingControl::Brightness:
+        return true;
+    default:
+        return false;
     }
 }
 
