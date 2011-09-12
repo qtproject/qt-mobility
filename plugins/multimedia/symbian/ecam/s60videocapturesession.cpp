@@ -2161,9 +2161,12 @@ void S60VideoCaptureSession::MvruoPrepareComplete(TInt aError)
         m_captureState = EPrepared;
         emit stateChanged(EPrepared);
 
-        // Check the actual active settings
-        queryAudioEncoderSettings();
-        queryVideoEncoderSettings();
+        // Check the actual active settings, but only if new settings have not
+        // been set (otherwise the requested settings would be overwritten)
+        if (!m_uncommittedSettings) {
+            queryAudioEncoderSettings();
+            queryVideoEncoderSettings();
+        }
 
         if (m_openWhenReady == true) {
             setOutputLocation(m_requestedSink);
