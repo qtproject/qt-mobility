@@ -780,18 +780,20 @@ bool S60VideoCaptureSession::isMuted() const
 
 void S60VideoCaptureSession::setMuted(const bool muted)
 {
-    // CVideoRecorderUtility can mute/unmute only if not recording
-    if (m_captureState > EPrepared) {
-        if (muted)
-            setError(KErrNotSupported, tr("Muting audio is not supported during recording."));
-        else
-            setError(KErrNotSupported, tr("Unmuting audio is not supported during recording."));
-        return;
-    }
-
     // Check if request is already active
     if (muted == isMuted())
         return;
+
+    // CVideoRecorderUtility can mute/unmute only if not recording
+    if (m_captureState > EPrepared) {
+        // KErrNotFound converts to QMediaRecorder::ResourceError which is sensible here.
+        // KErrNotFound error does not reset the device.
+        if (muted)
+            setError(KErrNotFound, tr("Muting audio is not supported during recording."));
+        else
+            setError(KErrNotFound, tr("Unmuting audio is not supported during recording."));
+        return;
+    }
 
     m_muted = muted;
     m_uncommittedSettings = true;
@@ -1253,10 +1255,6 @@ void S60VideoCaptureSession::stopRecording(const bool reInitialize)
     if (m_videoRecorder) {
         m_videoRecorder->Stop();
         m_videoRecorder->Close();
-
-        // Notify muting is disabled if needed
-        if (m_muted)
-            emit mutedChanged(false);
 
         m_captureState = ENotInitialized;
         emit stateChanged(m_captureState);
@@ -2213,10 +2211,6 @@ void S60VideoCaptureSession::MvruoRecordComplete(TInt aError)
             initializeVideoRecording();
     }
     m_videoRecorder->Close();
-
-    // Notify muting is disabled if needed
-    if (m_muted)
-        emit mutedChanged(false);
 
     if (aError == KErrDiskFull)
         setError(aError, tr("Not enough space for video, recording stopped."));
