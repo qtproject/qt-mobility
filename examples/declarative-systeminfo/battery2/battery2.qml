@@ -50,6 +50,7 @@ Rectangle {
     property int speed: level2Speed(batlevel);
     property bool hasBattery: (batinfo.batteryStatus != -1)
 
+//! [battery2-info1]
     BatteryInfo {
         id: batinfo;
 
@@ -65,6 +66,7 @@ Rectangle {
         monitorCurrentFlowChanges: true
 
         onChargerTypeChanged:  {
+//! [battery2-info1]
             if(batinfo.chargerType == -1) {
                 chargertype.text = "Unknown Charger"
             }
@@ -115,7 +117,9 @@ Rectangle {
                 batStat.text = "Battery Full"
             }
         }
+//! [battery2-doBatteryLevelChange]
         onRemainingCapacityPercentChanged: doBatteryLevelChange(level)
+//! [battery2-doBatteryLevelChange]
         onRemainingChargingTimeChanged: { chargeTime.text = "Time to full: "+ minutesToFull() +" minutes"; }
 
         property alias batState : batinfo.chargingState
@@ -148,15 +152,17 @@ Rectangle {
         }
     }
 
+//! [battery2-info2]
     function doBatteryLevelChange(level) {
         leveltext.text = "Level: "+ level +"%"
         floorParticles.burst(level);
         batlevel = level;
         batinfo.oldstate = img.state;
         img.state = "levelchange"
-        img.state = batinfo.oldstate;
+        //img.state = batinfo.oldstate;
         getPowerState();
     }
+//! [battery2-info2]
 
     function getPowerState() {
         if (batinfo.chargingState == 0) {
@@ -179,7 +185,9 @@ Rectangle {
     Text {
         id: leveltext
         anchors.centerIn: parent
+//! [battery2-level]
         text: "Level: "+batinfo.remainingCapacityPercent +"%"
+//! [battery2-level]
     }
     Text {
         id: voltagetext
@@ -285,7 +293,7 @@ Rectangle {
             if(batinfo.chargingState == 0) {
                 chargeState.text = "Not Charging"
             }
-            if(batinfo.chargingState == 1) {
+            if(batinfsysteminfoo.chargingState == 1) {
                 chargeState.text = "Charging"
             }
         }
@@ -373,20 +381,23 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter;
             }
             PropertyChanges { target: floorParticles; count: batlevel }
-
         },
+
+//! [battery2-level2]
         State {
             name: "levelchange"
+//! [battery2-level2]
             PropertyChanges {
                 target: yAnim
                 running: false;
             }
-
+//! [battery2-level3]
             PropertyChanges {
                 target: bubblebounceanim
                 from: screen.height
                 to: screen.height - (screen.height * (batlevel / 100 ))
             }
+//! [battery2-level3]
             PropertyChanges {
                 target: yAnim
                 running: true;
