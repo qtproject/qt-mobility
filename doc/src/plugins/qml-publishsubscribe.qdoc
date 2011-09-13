@@ -38,8 +38,49 @@
 
     \section1 Overview
 
-    The Publish and Subscribe QML API enables QML applications to access values stored in the Value
-    Space from QML.
+    The Publish and Subscribe QML API enables QML applications to access
+    values stored in the Value Space from QML. The publish/subscribe features
+    therefore allow an easy to use form of IPC.
+
+    \section2 Publisher
+
+    The \l ValueSpacePublisher element allows us to publish key-value pairs
+    of data to a known path. The path has the form of a directory structure
+    path with the keys acting as files at the end of the path. The process
+    is that the developer declares a \l ValueSpacePublisher element and then
+    with a given path defines a list of keys. For example
+
+    \qml
+    ValueSpacePublisher {
+        id: battery
+        path: "/power/battery"
+        keys: ["charge", "charging"]
+    }
+    \endqml
+
+    To publish a value the key need only be set to the value. Here we see
+    that the key is expressed as the last name in the path with dot notation
+    followed by the key name.
+
+    \qml
+        battery.charge = 50
+        battery.charging = true
+    \endqml
+
+    \section2 Subscriber
+
+    The \l ValueSpaceSubscriber element also defines the path to the
+    key/value. For each \i key a different \l ValueSpaceSubscriber needs to be
+    declared. In the above example using the keys 'charge' and 'charging' we
+    will need subscribers for each one
+
+    \snippet ../../examples/battery-charge/battery-subscriber/battery-subscriber.qml 0
+
+    Now the values being published can be read and used
+
+    \snippet ../../examples/battery-charge/battery-subscriber/battery-subscriber.qml 2
+
+
 
     \section1 Examples
     \list
