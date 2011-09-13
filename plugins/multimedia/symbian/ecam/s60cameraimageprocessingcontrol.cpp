@@ -52,21 +52,13 @@ S60CameraImageProcessingControl::S60CameraImageProcessingControl(QObject *parent
 
 S60CameraImageProcessingControl::S60CameraImageProcessingControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraImageProcessingControl(parent),
-    m_session(0),
-    m_advancedSettings(0)
+    m_session(0)
 {
     m_session = session;
-    m_advancedSettings = m_session->advancedSettings();
 }
 
 S60CameraImageProcessingControl::~S60CameraImageProcessingControl()
 {
-    m_advancedSettings = 0;
-}
-
-void S60CameraImageProcessingControl::resetAdvancedSetting()
-{
-    m_advancedSettings = m_session->advancedSettings();
 }
 
 QCameraImageProcessing::WhiteBalanceMode S60CameraImageProcessingControl::whiteBalanceMode() const
@@ -101,25 +93,18 @@ void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature
 
 bool S60CameraImageProcessingControl::isProcessingParameterSupported(ProcessingParameter parameter) const
 {
-    // First check settings requiring Adv. Settings
-    if (m_advancedSettings) {
-        switch (parameter) {
-        case QCameraImageProcessingControl::Saturation:
-            return true;
-        case QCameraImageProcessingControl::Sharpening:
-            return isSharpeningSupported();
-        case QCameraImageProcessingControl::Denoising:
-            return isDenoisingSupported();
-        case QCameraImageProcessingControl::ColorTemperature:
-            return false;
-        }
-    }
-
-    // Then the rest
     switch (parameter) {
     case QCameraImageProcessingControl::Contrast:
     case QCameraImageProcessingControl::Brightness:
-        return true;
+        return m_session->areContrastAndBrightnessSupported();
+    case QCameraImageProcessingControl::Saturation:
+        return isSaturationSupported();
+    case QCameraImageProcessingControl::Sharpening:
+        return isSharpeningSupported();
+    case QCameraImageProcessingControl::Denoising:
+        return isDenoisingSupported();
+    case QCameraImageProcessingControl::ColorTemperature:
+        return false;
     default:
         return false;
     }
@@ -195,57 +180,49 @@ int S60CameraImageProcessingControl::brightness() const
     return m_session->brightness();
 }
 
+bool S60CameraImageProcessingControl::isSaturationSupported() const
+{
+    return m_session->isSaturationSupported();
+}
+
 void S60CameraImageProcessingControl::setSaturation(int value)
 {
-    if (m_advancedSettings)
-        m_advancedSettings->setSaturation(value);
-    else
-        m_session->setError(KErrNotSupported, tr("Setting saturation is not supported."));
+    m_session->setSaturation(value);
 }
 
 int S60CameraImageProcessingControl::saturation() const
 {
-    if (m_advancedSettings)
-        return m_advancedSettings->saturation();
-    return 0;
-}
-
-void S60CameraImageProcessingControl::setDenoisingLevel(int value)
-{
-    m_session->setError(KErrNotSupported, tr("Setting denoising level is not supported."));
-    Q_UNUSED(value); // Not supported for Symbian
+    return m_session->saturation();
 }
 
 bool S60CameraImageProcessingControl::isDenoisingSupported() const
 {
-    return false; // Not supported for Symbian
+    return m_session->isDenoisingSupported();
+}
+
+void S60CameraImageProcessingControl::setDenoisingLevel(int value)
+{
+    m_session->setDenoising(value);
 }
 
 int S60CameraImageProcessingControl::denoisingLevel() const
 {
-    return 0; // Not supported for Symbian
-}
-
-void S60CameraImageProcessingControl::setSharpeningLevel(int value)
-{
-    if (m_advancedSettings)
-        m_advancedSettings->setSharpeningLevel(value);
-    else
-        m_session->setError(KErrNotSupported, tr("Setting sharpening level is not supported."));
+    return m_session->denoising();
 }
 
 bool S60CameraImageProcessingControl::isSharpeningSupported() const
 {
-    if (m_advancedSettings)
-        return m_advancedSettings->isSharpeningSupported();
-    return false;
+    return m_session->isSharpeningSupported();
+}
+
+void S60CameraImageProcessingControl::setSharpeningLevel(int value)
+{
+    m_session->setSharpening(value);
 }
 
 int S60CameraImageProcessingControl::sharpeningLevel() const
 {
-    if (m_advancedSettings)
-        return m_advancedSettings->sharpeningLevel();
-    return 0;
+    return m_session->sharpening();
 }
 
 // End of file

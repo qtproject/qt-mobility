@@ -317,7 +317,21 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     m_captureWhenReady(false),
     m_previewDecodingOngoing(false),
     m_previewInWaitLoop(false),
-    m_isCameraExternallyStarted(false)
+    m_isCameraExternallyStarted(false),
+    m_requestedFocusMode(KDefaultFocusMode),
+    m_requestedDigitalZoomFactor(KDefaultDigitalZoom),
+    m_requestedFlashMode(KDefaultFlashMode),
+    m_requestedExposureMode(KDefaultExposureMode),
+    m_requestedWhiteBalanceMode(KDefaultWhiteBalanceMode),
+    m_requestedContrast(KDefaultProcessingParameter),
+    m_requestedBrightness(KDefaultProcessingParameter),
+    m_requestedSaturation(KDefaultProcessingParameter),
+    m_requestedSharpening(KDefaultProcessingParameter),
+    m_requestedDenoising(KDefaultProcessingParameter),
+    m_requestedIsoSensitivity(KDefaultExposureParameter),
+    m_requestedAperture(KDefaultExposureParameter),
+    m_requestedShutterSpeed(KDefaultExposureParameter),
+    m_reauestedExposureCompensation(KDefaultExposureParameter)
 {
     // Define supported image codecs
     m_supportedImageCodecs << "image/jpeg";
@@ -335,12 +349,6 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
 
 S60ImageCaptureSession::~S60ImageCaptureSession()
 {
-    // Delete AdvancedSettings (Should already be destroyed by CameraControl)
-    deleteAdvancedSettings();
-
-    m_formats.clear();
-    m_supportedImageCodecs.clear();
-
     if (m_imageDecoder) {
         m_imageDecoder->Cancel();
         delete m_imageDecoder;
@@ -454,16 +462,19 @@ void S60ImageCaptureSession::resetSession(bool errorHandling)
             m_cameraEngine->SetAdvancedObserver(m_advancedSettings);
         else
             setError(KErrNotReady, tr("Unexpected camera error."));
+
+        connect(m_advancedSettings, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int, const QString&)));
+        connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
+        connect(m_advancedSettings, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
+            this, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)));
+        connect(m_advancedSettings, SIGNAL(apertureChanged()), this, SIGNAL(apertureChanged()));
+        connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SIGNAL(apertureRangeChanged()));
+        connect(m_advancedSettings, SIGNAL(shutterSpeedChanged()), this, SIGNAL(shutterSpeedChanged()));
+        connect(m_advancedSettings, SIGNAL(isoSensitivityChanged()), this, SIGNAL(isoSensitivityChanged()));
+        connect(m_advancedSettings, SIGNAL(evChanged()), this, SIGNAL(evChanged()));
     }
 
     updateImageCaptureFormats();
-
-    emit advancedSettingChanged();
-}
-
-S60CameraAdvSettings* S60ImageCaptureSession::advancedSettings()
-{
-    return m_advancedSettings;
 }
 
 /*
@@ -520,6 +531,73 @@ QCameraImageCapture::Error S60ImageCaptureSession::fromSymbianErrorToQtMultimedi
 int S60ImageCaptureSession::currentImageId() const
 {
     return m_currentImageId;
+}
+
+void S60ImageCaptureSession::applyCameraSettings()
+{
+    // Zoom Factor
+    if (!qFuzzyCompare(m_requestedDigitalZoomFactor, qreal(1.0))) {
+        TRAPD(err, doSetZoomFactorL(KDefaultOpticalZoom, m_requestedDigitalZoomFactor));
+        if (err)
+            setError(err, tr("Failed to apply zoom factor."));
+    }
+
+    // FocusMode
+    if (focusMode() != m_requestedFocusMode)
+        setFocusMode(m_requestedFocusMode);
+
+    // FlashMode
+    if (flashMode() != m_requestedFlashMode)
+        setFlashMode(m_requestedFlashMode);
+
+    // ExposureMode
+    if (exposureMode() != m_requestedExposureMode)
+        setExposureMode(m_requestedExposureMode);
+
+    // WhiteBalanceMode
+    if (whiteBalanceMode() != m_requestedWhiteBalanceMode)
+        setWhiteBalanceMode(m_requestedWhiteBalanceMode);
+
+    // Contrast
+    if (contrast() != m_requestedContrast)
+        setContrast(m_requestedContrast);
+
+    // Brightness
+    if (brightness() != m_requestedBrightness)
+        setBrightness(m_requestedBrightness);
+
+    // Saturation
+    if (saturation() != m_requestedSaturation && isSaturationSupported())
+        setSaturation(m_requestedSaturation);
+
+    // Sharpening
+    if (sharpening() != m_requestedSharpening && isSharpeningSupported())
+        setSharpening(m_requestedSharpening);
+
+    // Denoising
+    if (denoising() != m_requestedDenoising && isDenoisingSupported())
+        setDenoising(m_requestedDenoising);
+
+    // ISO Sensitivity
+    if (m_requestedIsoSensitivity != 0 &&
+        isoSensitivity() != m_requestedIsoSensitivity &&
+        supportedIsoSensitivities().contains(m_requestedIsoSensitivity))
+        setIsoSensitivity(m_requestedIsoSensitivity);
+
+    // Aperture
+    if (aperture() != m_requestedAperture &&
+        supportedApertures().contains(m_requestedAperture))
+        setAperture(m_requestedAperture);
+
+    // ShutterSpeed
+    if (shutterSpeed() != m_requestedShutterSpeed &&
+        supportedShutterSpeeds().contains(m_requestedShutterSpeed))
+        setShutterSpeed(m_requestedShutterSpeed);
+
+    // ExposureCompensation
+    if (exposureCompensation() != m_reauestedExposureCompensation &&
+        supportedExposureCompensations().contains(m_reauestedExposureCompensation))
+        setExposureCompensation(m_reauestedExposureCompensation);
 }
 
 void S60ImageCaptureSession::initializeImageCaptureSettings()
@@ -1066,12 +1144,21 @@ void S60ImageCaptureSession::cameraStatusChanged(QCamera::Status status)
             capture(m_requestedStillCaptureFileName);
             m_captureWhenReady = false;
         }
-    }else if (status == QCamera::UnloadedStatus) {
+    } else if (status == QCamera::UnloadedStatus || status == QCamera::StandbyStatus) {
         m_cameraStarted = false;
         m_icState = EImageCaptureNotPrepared;
-    }
-    else
+    } else if (status == QCamera::LoadedStatus) {
+        // Loading -> Loaded
+        //    ==> Camera is not started (m_cameraStarted = false)
+        // Starting -> Loaded
+        //    ==> Camera is started (m_cameraStarted = true)
+        if (!m_cameraStarted)
+            applyCameraSettings();
         m_cameraStarted = false;
+    } else if (status != QCamera::StartingStatus) {
+        // Camera is not started
+        m_cameraStarted = false;
+    }
 }
 
 void S60ImageCaptureSession::cameraStateChanged(QCamera::State state)
@@ -1422,8 +1509,18 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
         digitalSymbian = 1; // Make sure zooming out to initial value if requested
 #endif // !USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER & !USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 
-    if (m_cameraEngine && !m_cameraEngine->IsCameraReady())
+    if (m_cameraEngine && !m_cameraEngine->IsCameraReady()) {
+        if ((digital < qreal(1.0) && !qFuzzyCompare(digital, qreal(1.0))) ||
+            (m_cameraInfo && digital > m_cameraInfo->iMaxDigitalZoomFactor &&
+                !qFuzzyCompare(digital, m_cameraInfo->iMaxDigitalZoomFactor))) {
+            setError(KErrNotSupported, tr("Requested digital zoom factor is not supported."));
+            return;
+        }
+
+        // Save the requested zoom factor
+        m_requestedDigitalZoomFactor = digital;
         return;
+    }
 
     if (m_cameraEngine && queryCurrentCameraInfo()) {
         CCamera *camera = m_cameraEngine->Camera();
@@ -1503,13 +1600,13 @@ void S60ImageCaptureSession::doSetZoomFactorL(qreal optical, qreal digital)
 
 qreal S60ImageCaptureSession::opticalZoomFactor()
 {
-    qreal factor = 1.0;
+    qreal factor = KDefaultOpticalZoom;
 
 #if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-    if (m_advancedSettings) {
+    if (m_advancedSettings && m_cameraEngine && m_cameraEngine->IsCameraReady()) {
         TRAPD(err, factor = m_advancedSettings->opticalZoomFactorL());
         if (err)
-            return 1.0;
+            return KDefaultOpticalZoom;
     }
 #else // No advanced settigns
     if (m_cameraEngine && m_cameraInfo) {
@@ -1517,26 +1614,28 @@ qreal S60ImageCaptureSession::opticalZoomFactor()
             if (m_cameraInfo->iMaxZoom != 0)
                 factor = (m_cameraEngine->Camera()->ZoomFactor()* maximumZoom()) / m_cameraInfo->iMaxZoom;
             else
-                factor = 1.0;
+                factor = KDefaultOpticalZoom;
         }
     }
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 
-    if (factor == 0.0) // If not supported
-        factor = 1.0;
+    if (factor == 0.0) // I.e. Not supported
+        factor = KDefaultOpticalZoom;
 
     return factor;
 }
 
 qreal S60ImageCaptureSession::digitalZoomFactor()
 {
-    qreal factor = 1.0;
+    qreal factor = KDefaultDigitalZoom;
 
 #if defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER) | defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER)
-    if (m_advancedSettings) {
+    if (m_advancedSettings && m_cameraEngine && m_cameraEngine->IsCameraReady()) {
         TRAPD(err, factor = m_advancedSettings->digitalZoomFactorL());
         if (err)
-            return 1.0;
+            return KDefaultDigitalZoom;
+    } else {
+        return m_requestedDigitalZoomFactor;
     }
 #else // No advanced settigns
     if (m_cameraEngine && m_cameraInfo) {
@@ -1544,55 +1643,108 @@ qreal S60ImageCaptureSession::digitalZoomFactor()
             if (m_cameraInfo->iMaxDigitalZoom != 0)
                 factor = (m_cameraEngine->Camera()->DigitalZoomFactor()* maxDigitalZoom()) / m_cameraInfo->iMaxDigitalZoom;
             else
-                factor = 1.0;
+                factor = KDefaultDigitalZoom;
         }
     }
 #endif // USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER | USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
 
-    if (factor == 0.0)
-        factor = 1.0;
+    if (factor == 0.0) // I.e. Not supported
+        factor = KDefaultDigitalZoom;
 
     return factor;
+}
+
+void S60ImageCaptureSession::startFocusing()
+{
+    if (m_advancedSettings)
+        m_advancedSettings->startFocusing();
+    else
+        emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+}
+
+void S60ImageCaptureSession::cancelFocusing()
+{
+    if (m_advancedSettings)
+        m_advancedSettings->cancelFocusing();
+    else
+        emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+}
+
+QCameraFocus::FocusMode S60ImageCaptureSession::focusMode()
+{
+    return (m_advancedSettings && m_cameraEngine && m_cameraEngine->IsCameraReady()) ?
+        m_advancedSettings->focusMode() : m_requestedFocusMode;
+}
+
+void S60ImageCaptureSession::setFocusMode(QCameraFocus::FocusMode mode)
+{
+    if (m_advancedSettings && m_cameraEngine && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setFocusMode(mode);
+    m_requestedFocusMode = mode;
+}
+
+bool S60ImageCaptureSession::isFocusModeSupported(QCameraFocus::FocusMode mode) const
+{
+    QCameraFocus::FocusModes supportedFocusModes;
+    if (m_advancedSettings)
+        supportedFocusModes = m_advancedSettings->supportedFocusModes();
+    return supportedFocusModes & mode;
 }
 
 void S60ImageCaptureSession::setFlashMode(QCameraExposure::FlashModes mode)
 {
     TRAPD(err, doSetFlashModeL(mode));
-    setError(err, tr("Failed to set flash mode."));
+    if (err == KErrInUse) // Camera not reserved yet
+        setError(KErrNotSupported, tr("Cannot set flash mode before camera is started."));
+    else
+        setError(err, tr("Failed to set flash mode."));
 }
 
 void S60ImageCaptureSession::doSetFlashModeL(QCameraExposure::FlashModes mode)
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
-        CCamera *camera = m_cameraEngine->Camera();
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         switch(mode) {
         case QCameraExposure::FlashOff:
-            camera->SetFlashL(CCamera::EFlashNone);
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashNone);
             break;
         case QCameraExposure::FlashAuto:
-            camera->SetFlashL(CCamera::EFlashAuto);
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashAuto);
             break;
         case QCameraExposure::FlashOn:
-            camera->SetFlashL(CCamera::EFlashForced);
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashForced);
             break;
         case QCameraExposure::FlashRedEyeReduction:
-            camera->SetFlashL(CCamera::EFlashRedEyeReduce);
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashRedEyeReduce);
             break;
         case QCameraExposure::FlashFill:
-            camera->SetFlashL(CCamera::EFlashFillIn);
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashFillIn);
+            break;
+#ifndef S60_31_PLATFORM
+        case QCameraExposure::FlashTorch:
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashVideoLight);
+            break;
+#endif // S60_31_PLATFORM
+        case QCameraExposure::FlashSlowSyncFrontCurtain:
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashSlowFrontSync);
+            break;
+        case QCameraExposure::FlashSlowSyncRearCurtain:
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashSlowRearSync);
+            break;
+        case QCameraExposure::FlashManual:
+            m_cameraEngine->Camera()->SetFlashL(CCamera::EFlashManual);
             break;
         default:
             setError(KErrNotSupported, tr("Requested flash mode is not suported"));
             break;
         }
-    } else {
-        setError(KErrNotReady, tr("Unexpected camera error."));
     }
+
+    m_requestedFlashMode = mode;
 }
 
 QCameraExposure::FlashModes S60ImageCaptureSession::flashMode()
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         CCamera *camera = m_cameraEngine->Camera();
         switch(camera->Flash()) {
         case CCamera::EFlashAuto:
@@ -1605,14 +1757,22 @@ QCameraExposure::FlashModes S60ImageCaptureSession::flashMode()
             return QCameraExposure::FlashFill;
         case CCamera::EFlashNone:
             return QCameraExposure::FlashOff;
+        case CCamera::EFlashSlowFrontSync:
+            return QCameraExposure::FlashSlowSyncFrontCurtain;
+        case CCamera::EFlashSlowRearSync:
+            return QCameraExposure::FlashSlowSyncRearCurtain;
+#ifndef S60_31_PLATFORM
+        case CCamera::EFlashVideoLight:
+            return QCameraExposure::FlashTorch;
+#endif // S60_31_PLATFORM
+        case CCamera::EFlashManual:
+            return QCameraExposure::FlashManual;
         default:
             return QCameraExposure::FlashAuto; // Most probable default
         }
     } else {
-        setError(KErrNotReady, tr("Unexpected camera error."));
+        return m_requestedFlashMode;
     }
-
-    return QCameraExposure::FlashOff;
 }
 
 QCameraExposure::FlashModes S60ImageCaptureSession::supportedFlashModes()
@@ -1625,8 +1785,8 @@ QCameraExposure::FlashModes S60ImageCaptureSession::supportedFlashModes()
         if (supportedModes == 0)
             return modes;
 
-        if (supportedModes & CCamera::EFlashManual)
-             modes |= QCameraExposure::FlashOff;
+        // Flash off always supported
+        modes |= QCameraExposure::FlashOff;
         if (supportedModes & CCamera::EFlashForced)
              modes |= QCameraExposure::FlashOn;
         if (supportedModes & CCamera::EFlashAuto)
@@ -1635,14 +1795,29 @@ QCameraExposure::FlashModes S60ImageCaptureSession::supportedFlashModes()
              modes |= QCameraExposure::FlashFill;
         if (supportedModes & CCamera::EFlashRedEyeReduce)
              modes |= QCameraExposure::FlashRedEyeReduction;
+        if (supportedModes & CCamera::EFlashSlowFrontSync)
+             modes |= QCameraExposure::FlashSlowSyncFrontCurtain;
+        if (supportedModes & CCamera::EFlashSlowRearSync)
+             modes |= QCameraExposure::FlashSlowSyncRearCurtain;
+#ifndef S60_31_PLATFORM
+        if (supportedModes & CCamera::EFlashVideoLight)
+             modes |= QCameraExposure::FlashTorch;
+#endif // S60_31_PLATFORM
+        if (supportedModes & CCamera::EFlashManual)
+             modes |= QCameraExposure::FlashManual;
     }
 
     return modes;
 }
 
+bool S60ImageCaptureSession::isFlashReady() const
+{
+    return m_advancedSettings ? m_advancedSettings->isFlashReady() : false;
+}
+
 QCameraExposure::ExposureMode S60ImageCaptureSession::exposureMode()
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         CCamera* camera = m_cameraEngine->Camera();
         switch(camera->Exposure()) {
         case CCamera::EExposureManual:
@@ -1662,9 +1837,9 @@ QCameraExposure::ExposureMode S60ImageCaptureSession::exposureMode()
         default:
             return QCameraExposure::ExposureAuto;
         }
+    } else {
+        return m_requestedExposureMode;
     }
-
-    return QCameraExposure::ExposureAuto;
 }
 
 bool S60ImageCaptureSession::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
@@ -1720,29 +1895,28 @@ void S60ImageCaptureSession::setExposureMode(QCameraExposure::ExposureMode mode)
 
 void S60ImageCaptureSession::doSetExposureModeL( QCameraExposure::ExposureMode mode)
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
-        CCamera *camera = m_cameraEngine->Camera();
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         switch(mode) {
         case QCameraExposure::ExposureManual:
-            camera->SetExposureL(CCamera::EExposureManual);
+            m_cameraEngine->Camera()->SetExposureL(CCamera::EExposureManual);
             break;
         case QCameraExposure::ExposureAuto:
-            camera->SetExposureL(CCamera::EExposureAuto);
+            m_cameraEngine->Camera()->SetExposureL(CCamera::EExposureAuto);
             break;
         case QCameraExposure::ExposureNight:
-            camera->SetExposureL(CCamera::EExposureNight);
+            m_cameraEngine->Camera()->SetExposureL(CCamera::EExposureNight);
             break;
         case QCameraExposure::ExposureBacklight:
-            camera->SetExposureL(CCamera::EExposureBacklight);
+            m_cameraEngine->Camera()->SetExposureL(CCamera::EExposureBacklight);
             break;
         case QCameraExposure::ExposureSports:
-            camera->SetExposureL(CCamera::EExposureSport);
+            m_cameraEngine->Camera()->SetExposureL(CCamera::EExposureSport);
             break;
         case QCameraExposure::ExposureSnow:
-            camera->SetExposureL(CCamera::EExposureSnow);
+            m_cameraEngine->Camera()->SetExposureL(CCamera::EExposureSnow);
             break;
         case QCameraExposure::ExposureBeach:
-            camera->SetExposureL(CCamera::EExposureBeach);
+            m_cameraEngine->Camera()->SetExposureL(CCamera::EExposureBeach);
             break;
         case QCameraExposure::ExposureLargeAperture:
         case QCameraExposure::ExposureSmallAperture:
@@ -1753,52 +1927,131 @@ void S60ImageCaptureSession::doSetExposureModeL( QCameraExposure::ExposureMode m
             setError(KErrNotSupported, tr("Requested exposure mode is not suported"));
             break;
         }
-    } else {
-        setError(KErrNotReady, tr("Unexpected camera error."));
     }
+
+    m_requestedExposureMode = mode;
+}
+
+QCameraExposure::MeteringMode S60ImageCaptureSession::meteringMode()
+{
+    return QCameraExposure::MeteringSpot;
+}
+
+void S60ImageCaptureSession::setMeteringMode(QCameraExposure::MeteringMode mode)
+{
+    setError(KErrNotSupported, tr("Setting metering mode is not supported."));
+}
+
+bool S60ImageCaptureSession::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
+{
+    return false;
+}
+
+bool S60ImageCaptureSession::areContrastAndBrightnessSupported() const
+{
+#ifdef SYMBIAN_3_PLATFORM
+    return true;
+#else // Pre-Symbian^3
+    if (m_cameraEngine && m_cameraEngine->CurrentCameraIndex() == 0)
+        return true;
+    else
+        return false;
+#endif // SYMBIAN_3_PLATFORM
 }
 
 int S60ImageCaptureSession::contrast() const
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
         return m_cameraEngine->Camera()->Contrast();
-    } else {
-        return 0;
-    }
+    else
+        return m_requestedContrast;
 }
 
 void S60ImageCaptureSession::setContrast(int value)
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         TRAPD(err, m_cameraEngine->Camera()->SetContrastL(value));
         setError(err, tr("Failed to set contrast."));
-    } else {
-        setError(KErrNotReady, tr("Unexpected camera error."));
     }
+
+    m_requestedContrast = value;
 }
 
 int S60ImageCaptureSession::brightness() const
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
         return m_cameraEngine->Camera()->Brightness();
-    } else {
-        return 0;
-    }
+    else
+        return m_requestedBrightness;
 }
 
 void S60ImageCaptureSession::setBrightness(int value)
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         TRAPD(err, m_cameraEngine->Camera()->SetBrightnessL(value));
         setError(err, tr("Failed to set brightness."));
-    } else {
-        setError(KErrNotReady, tr("Unexpected camera error."));
     }
+
+    m_requestedBrightness = value;
+}
+
+bool S60ImageCaptureSession::isSaturationSupported() const
+{
+    return m_advancedSettings ? m_advancedSettings->isSaturationSupported() : false;
+}
+
+int S60ImageCaptureSession::saturation() const
+{
+    return (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        ? m_advancedSettings->saturation() : m_requestedSaturation;
+}
+
+void S60ImageCaptureSession::setSaturation(int value)
+{
+    if (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setSaturation(value);
+    m_requestedSaturation = value;
+}
+
+bool S60ImageCaptureSession::isSharpeningSupported() const
+{
+    return m_advancedSettings ? m_advancedSettings->isSharpeningSupported() : false;
+}
+
+int S60ImageCaptureSession::sharpening() const
+{
+    return (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        ? m_advancedSettings->sharpeningLevel() : m_requestedSharpening;
+}
+
+void S60ImageCaptureSession::setSharpening(int value)
+{
+    if (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setSharpeningLevel(value);
+    m_requestedSharpening = value;
+}
+
+bool S60ImageCaptureSession::isDenoisingSupported() const
+{
+    return m_advancedSettings ? m_advancedSettings->isDenoisingSupported() : false;
+}
+
+int S60ImageCaptureSession::denoising() const
+{
+    return (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        ? m_advancedSettings->denoising() : m_requestedDenoising;
+}
+
+void S60ImageCaptureSession::setDenoising(int value)
+{
+    if (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setDenoising(value);
+    m_requestedDenoising = value;
 }
 
  QCameraImageProcessing::WhiteBalanceMode S60ImageCaptureSession::whiteBalanceMode()
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         CCamera::TWhiteBalance mode = m_cameraEngine->Camera()->WhiteBalance();
         switch(mode) {
         case CCamera::EWBAuto:
@@ -1822,9 +2075,9 @@ void S60ImageCaptureSession::setBrightness(int value)
         default:
             return  QCameraImageProcessing::WhiteBalanceAuto;
         }
+    } else {
+        return m_requestedWhiteBalanceMode;
     }
-
-    return  QCameraImageProcessing::WhiteBalanceAuto;
 }
 
 void S60ImageCaptureSession::setWhiteBalanceMode( QCameraImageProcessing::WhiteBalanceMode mode)
@@ -1835,7 +2088,7 @@ void S60ImageCaptureSession::setWhiteBalanceMode( QCameraImageProcessing::WhiteB
 
 void S60ImageCaptureSession::doSetWhiteBalanceModeL( QCameraImageProcessing::WhiteBalanceMode mode)
 {
-    if (m_cameraEngine && m_cameraEngine->Camera()) {
+    if (m_cameraEngine && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady()) {
         CCamera* camera = m_cameraEngine->Camera();
         switch(mode) {
         case  QCameraImageProcessing::WhiteBalanceAuto:
@@ -1869,9 +2122,9 @@ void S60ImageCaptureSession::doSetWhiteBalanceModeL( QCameraImageProcessing::Whi
             setError(KErrNotSupported, tr("Requested white balance mode is not suported"));
             break;
         }
-    } else {
-        setError(KErrNotReady, tr("Unexpected camera error."));
     }
+
+    m_requestedWhiteBalanceMode = mode;
 }
 
 bool S60ImageCaptureSession::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
@@ -1885,10 +2138,8 @@ bool S60ImageCaptureSession::isWhiteBalanceModeSupported(QCameraImageProcessing:
             else
                 return false;
         case QCameraImageProcessing::WhiteBalanceAuto:
-            if (supportedModes & CCamera::EWBAuto)
-                return true;
-            else
-                return false;
+            // Always supported
+            return true;
         case QCameraImageProcessing::WhiteBalanceSunlight:
             if (supportedModes & CCamera::EWBDaylight)
                 return true;
@@ -1934,6 +2185,91 @@ bool S60ImageCaptureSession::isWhiteBalanceModeSupported(QCameraImageProcessing:
     return false;
 }
 
+int S60ImageCaptureSession::isoSensitivity() const
+{
+    return (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        ? m_advancedSettings->isoSensitivity() : m_requestedIsoSensitivity;
+}
+
+bool S60ImageCaptureSession::setIsoSensitivity(int iso)
+{
+    if (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setManualIsoSensitivity(iso);
+    m_requestedIsoSensitivity = iso;
+    return true;
+}
+
+void S60ImageCaptureSession::setAutoIsoSensitivity()
+{
+    if (m_advancedSettings)
+        m_advancedSettings->setAutoIsoSensitivity();
+}
+
+QList<int> S60ImageCaptureSession::supportedIsoSensitivities() const
+{
+    QList<int> supportedIsoValues;
+    TRAPD(err, supportedIsoValues = m_advancedSettings->supportedIsoSensitivitiesL());
+    Q_UNUSED(err); // Do not notify error while querying supported values
+    return supportedIsoValues;
+}
+
+qreal S60ImageCaptureSession::aperture() const
+{
+    return (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        ? m_advancedSettings->aperture() : m_requestedAperture;
+}
+
+bool S60ImageCaptureSession::setAperture(qreal aperture)
+{
+    if (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setManualAperture(aperture);
+    m_requestedAperture = aperture;
+    return true;
+}
+
+QList<qreal> S60ImageCaptureSession::supportedApertures() const
+{
+    return m_advancedSettings->supportedApertures();
+}
+
+qreal S60ImageCaptureSession::shutterSpeed() const
+{
+    return (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        ? m_advancedSettings->shutterSpeed() : m_requestedShutterSpeed;
+}
+
+bool S60ImageCaptureSession::setShutterSpeed(qreal seconds)
+{
+    if (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setManualShutterSpeed(seconds);
+    m_requestedShutterSpeed = seconds;
+    return true;
+}
+
+QList<qreal> S60ImageCaptureSession::supportedShutterSpeeds() const
+{
+    return m_advancedSettings->supportedShutterSpeeds();
+}
+
+qreal S60ImageCaptureSession::exposureCompensation() const
+{
+    return (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        ? m_advancedSettings->exposureCompensation() : m_reauestedExposureCompensation;
+}
+
+bool S60ImageCaptureSession::setExposureCompensation(qreal ev)
+{
+    if (m_advancedSettings && m_cameraEngine->Camera() && m_cameraEngine->IsCameraReady())
+        m_advancedSettings->setExposureCompensation(ev);
+    m_reauestedExposureCompensation = ev;
+    return true;
+}
+
+QList<qreal> S60ImageCaptureSession::supportedExposureCompensations() const
+{
+    return m_advancedSettings->supportedExposureCompensationValues();
+}
+
 /*
  * ====================
  * S60 3.1 AutoFocosing
@@ -1948,20 +2284,26 @@ void S60ImageCaptureSession::startFocus()
 {
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->StartFocusL());
-        setError(err, tr("Failed to start focusing."));
-    }
-    else
+        if (!err)
+            emit focusStatusChanged(QCamera::Searching, QCamera::UserRequest);
+        else
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
 void S60ImageCaptureSession::cancelFocus()
 {
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->FocusCancel());
-        setError(err, tr("Failed to cancel focusing."));
-    }
-    else
+        if (!err)
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::UserRequest);
+        else
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+    } else {
         setError(KErrNotReady, tr("Unexpected camera error."));
+    }
 }
 
 void S60ImageCaptureSession::handleImageDecoded(int error)

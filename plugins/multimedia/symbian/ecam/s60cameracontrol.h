@@ -58,7 +58,6 @@ using namespace S60CameraEngineError;
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
-QT_FORWARD_DECLARE_CLASS(S60CameraAdvSettings)
 QT_FORWARD_DECLARE_CLASS(CCameraEngine)
 QT_FORWARD_DECLARE_CLASS(S60CameraViewfinderEngine)
 QT_FORWARD_DECLARE_CLASS(QTimer)
@@ -133,7 +132,6 @@ private slots: // Internal Slots
      *    - If camera has been inactive in LoadedStatus for a long time
      */
     void toStandByStatus();
-    void advancedSettingsCreated();
 
 protected: // MCameraEngineObserver
 
@@ -163,7 +161,6 @@ private: // Data
     S60CameraViewfinderEngine   *m_viewfinderEngine;
     S60ImageCaptureSession      *m_imageSession;
     S60VideoCaptureSession      *m_videoSession;
-    S60CameraAdvSettings        *m_advancedSettings;
     QObject                     *m_videoOutput;
     QTimer                      *m_inactivityTimer;
     QCamera::CaptureMode        m_captureMode;

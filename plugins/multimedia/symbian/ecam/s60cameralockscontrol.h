@@ -49,7 +49,6 @@ QT_USE_NAMESPACE
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
-QT_FORWARD_DECLARE_CLASS(S60CameraAdvSettings)
 QT_FORWARD_DECLARE_CLASS(S60CameraFocusControl)
 
 /*
@@ -88,7 +87,6 @@ Q_SIGNALS: // QCameraLocksControl
 private slots: // Internal Slots
 
     void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
-    void resetAdvancedSetting();
 
 private: // Internal
 
@@ -100,7 +98,6 @@ private: // Data
 
     S60ImageCaptureSession  *m_session;
     S60CameraService        *m_service;
-    S60CameraAdvSettings    *m_advancedSettings;
     S60CameraFocusControl   *m_focusControl;
     QCamera::LockStatus     m_focusStatus;
     QCamera::LockStatus     m_exposureStatus;

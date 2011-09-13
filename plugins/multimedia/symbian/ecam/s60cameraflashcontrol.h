@@ -44,8 +44,6 @@
 
 #include <qcameraflashcontrol.h>
 
-#include "s60cameraadvsettings.h"
-
 QT_USE_NAMESPACE
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
@@ -78,16 +76,10 @@ Q_SIGNALS: // QCameraExposureControl
     void flashReady(bool);
 */
 
-private slots: // Internal Slots
-
-    void resetAdvancedSetting();
-
 private: // Data
 
     S60ImageCaptureSession          *m_session;
     S60CameraService                *m_service;
-    S60CameraAdvSettings            *m_advancedSettings;
-    QCameraExposure::FlashModes     m_flashMode;
 };
 
 #endif // S60CAMERAFLASHCONTROL_H

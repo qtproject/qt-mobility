@@ -45,8 +45,6 @@
 #include <qcameraimageprocessing.h>
 #include <qcameraimageprocessingcontrol.h>
 
-#include "s60cameraadvsettings.h"
-
 QT_USE_NAMESPACE
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
@@ -77,10 +75,6 @@ public: // QCameraImageProcessingControl
     QVariant processingParameter(QCameraImageProcessingControl::ProcessingParameter parameter) const;
     void setProcessingParameter(QCameraImageProcessingControl::ProcessingParameter parameter, QVariant value);
 
-private slots: // Internal Slots
-
-    void resetAdvancedSetting();
-
 private: // Internal operations - Implementing ProcessingParameter
 
     // Manual White Balance (Color Temperature)
@@ -96,6 +90,7 @@ private: // Internal operations - Implementing ProcessingParameter
     void setBrightness(int value);
 
     // Saturation
+    bool isSaturationSupported() const;
     int saturation() const;
     void setSaturation(int value);
 
@@ -112,7 +107,6 @@ private: // Internal operations - Implementing ProcessingParameter
 private: // Data
 
     S60ImageCaptureSession  *m_session;
-    S60CameraAdvSettings    *m_advancedSettings;
 };
 
 #endif // S60CAMERAIMAGEPROCESSINGCONTROL_H

@@ -65,7 +65,6 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     m_viewfinderEngine(0),
     m_imageSession(0),
     m_videoSession(0),
-    m_advancedSettings(0),
     m_videoOutput(0),
     m_inactivityTimer(0),
     m_captureMode(QCamera::CaptureStillImage),  // Default CaptureMode
@@ -113,7 +112,6 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
         m_videoSession, SLOT(cameraStatusChanged(QCamera::Status)));
     connect(m_videoSession, SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),
         this, SLOT(videoStateChanged(S60VideoCaptureSession::TVideoCaptureState)));
-    connect(m_imageSession, SIGNAL(advancedSettingChanged()), this, SLOT(advancedSettingsCreated()));
     connect(this, SIGNAL(cameraReadyChanged(bool)), m_imageSession, SIGNAL(readyForCaptureChanged(bool)));
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
     connect(m_imageSession, SIGNAL(cameraError(int, const QString&)), this, SIGNAL(error(int, const QString&)));
@@ -590,14 +588,6 @@ void S60CameraControl::imageCaptured(const int imageId, const QImage& preview)
 
     if (m_rotateCameraWhenReady)
         resetCameraOrientation();
-}
-
-void S60CameraControl::advancedSettingsCreated()
-{
-    m_advancedSettings = m_imageSession->advancedSettings();
-
-    if (m_advancedSettings)
-        connect(m_advancedSettings, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int, const QString&)));
 }
 
 void S60CameraControl::MceoCameraReady()
