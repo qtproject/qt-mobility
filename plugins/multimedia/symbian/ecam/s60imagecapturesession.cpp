@@ -394,6 +394,11 @@ bool S60ImageCaptureSession::isDeviceReady()
     return false;
 }
 
+bool S60ImageCaptureSession::isImageCapturePrepared() const
+{
+    return m_icState != EImageCaptureNotPrepared;
+}
+
 void S60ImageCaptureSession::deleteAdvancedSettings()
 {
     if (m_advancedSettings) {

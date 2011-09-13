@@ -685,6 +685,18 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
     if (sink.isEmpty()) {
         if (m_captureState == EInitialized) {
             // File is already opened with generated default name
+
+            m_captureState = EOpenComplete;
+            emit stateChanged(m_captureState);
+
+            // Prepare right away if needed
+            if (m_startAfterPrepareComplete || m_prepareAfterOpenComplete) {
+                m_prepareAfterOpenComplete = false; // Reset
+
+                // Commit settings and prepare with them
+                applyAllSettings();
+            }
+            return true;
         } else {
             // Video not yet initialized
             if (m_requestedContainer == QLatin1String("video/mp4"))
@@ -2382,10 +2394,12 @@ void S60VideoCaptureSession::cameraStatusChanged(QCamera::Status status)
             && (m_openWhenReady || m_prepareAfterOpenComplete || m_startAfterPrepareComplete)) {
             setOutputLocation(m_requestedSink);
             m_openWhenReady = false; // Reset
-        } else if ((m_captureState == EOpenComplete || m_captureState == EPrepared)
-            && (m_prepareAfterOpenComplete || m_startAfterPrepareComplete)) {
-            startRecording();
+        } else if (m_captureState == EOpenComplete && m_prepareAfterOpenComplete) {
+            applyAllSettings();
             m_prepareAfterOpenComplete = false; // Reset
+        } else if (m_captureState == EPrepared && m_startAfterPrepareComplete) {
+            startRecording();
+            m_startAfterPrepareComplete = false; // Reset
         }
 
     } else if (status == QCamera::UnloadedStatus) {

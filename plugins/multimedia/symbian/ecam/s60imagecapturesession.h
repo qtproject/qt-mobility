@@ -198,6 +198,7 @@ public: // Methods
     int currentImageId() const;
 
     bool isDeviceReady();
+    bool isImageCapturePrepared() const;
     void setCameraHandle(CCameraEngine* camerahandle);
     void setCurrentDevice(TInt deviceindex);
     void notifySettingsSet();
