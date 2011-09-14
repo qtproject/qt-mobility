@@ -137,8 +137,8 @@ void S60VideoCaptureSession::setError(const TInt error, const QString &descripti
     m_error = error;
     QMediaRecorder::Error recError = fromSymbianErrorToQtMultimediaError(m_error);
 
-    // Stop/Close/Reset only of other than "not supported" error
-    if (m_error != KErrNotSupported) {
+    // Stop/Close/Reset only of other than "not supported" or "not found" error
+    if (m_error != KErrNotSupported && m_error != KErrNotFound) {
         if (m_captureState >= ERecording)
             m_videoRecorder->Stop();
 

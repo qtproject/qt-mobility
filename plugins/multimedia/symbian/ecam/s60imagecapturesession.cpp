@@ -1093,7 +1093,7 @@ void S60ImageCaptureSession::saveImageL(TDesC8 *aData, TFileName &aPath)
 #endif // ECAM_PREVIEW_API
             User::Leave(fileWriteErr);
         }
-
+        file.Close();
         CleanupStack::PopAndDestroy(&file);
 
 #ifdef ECAM_PREVIEW_API

@@ -443,6 +443,7 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
                 m_window = window;
             } else {
                 emit error(QCamera::CameraError, tr("Requesting window for viewfinder failed."));
+                qWarning("Requesting window for viewfinder failed. Viewfinder may not be visible.");
                 return;
             }
 
