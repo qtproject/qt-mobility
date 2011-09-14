@@ -1006,18 +1006,18 @@ void S60VideoCaptureSession::queryVideoEncoderSettings()
 
     // Codec
     const TDesC8 &videoMimeType = m_videoRecorder->VideoFormatMimeType();
-    QString videoMimeTypeString = "";
+    QString videoMimeTypeString;
     if (videoMimeType.Length() > 0) {
         // First convert the 8-bit descriptor to Unicode
-        HBufC16* videoCodec;
-        videoCodec = CnvUtfConverter::ConvertToUnicodeFromUtf8L(videoMimeType);
-        CleanupStack::PushL(videoCodec);
-
-        // Then deep copy QString from that
-        videoMimeTypeString = QString::fromUtf16(videoCodec->Ptr(), videoCodec->Length());
-        m_videoSettings.setCodec(videoMimeTypeString);
-
-        CleanupStack::PopAndDestroy(videoCodec);
+        HBufC16* videoCodec = 0;
+        TRAP(err, videoCodec = CnvUtfConverter::ConvertToUnicodeFromUtf8L(videoMimeType));
+        if (err) {
+            setError(err, tr("Failed to convert video codec to Qt format."));
+        } else {
+            // Successful - Deep copy QString from that
+            videoMimeTypeString = QString::fromUtf16(videoCodec->Ptr(), videoCodec->Length());
+            m_videoSettings.setCodec(videoMimeTypeString);
+        }
     }
 
     // Resolution
@@ -1114,7 +1114,7 @@ void S60VideoCaptureSession::validateRequestedCodecs()
         m_audioSettings.setCodec(KMimeTypeDefaultAudioCodec);
         setError(KErrNotSupported, tr("Currently selected audio codec is not supported by the platform."));
     }
-    if (!m_videoCodecList.contains(m_videoSettings.codec())) {
+    if (!m_videoCodecList.contains(m_videoSettings.codec(), Qt::CaseInsensitive)) {
         m_videoSettings.setCodec(KMimeTypeDefaultVideoCodec);
         setError(KErrNotSupported, tr("Currently selected video codec is not supported by the platform."));
     }
