@@ -466,6 +466,12 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
         } else { // Bitmap ViewFinder
             TSize size = TSize(m_viewfinderSize.width(), m_viewfinderSize.height());
 
+            // Use 4x4 as check for sensible resolution
+            if (m_viewfinderSize.width() < 4 || m_viewfinderSize.height() < 4) {
+                emit error(QCamera::NotSupportedFeatureError, tr("Unable to start viewfinder with such small resolution."));
+                return;
+            }
+
             if( m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
                 if (!m_surfaceFormat.isValid()) {
                     emit error(QCamera::NotSupportedFeatureError, tr("Invalid surface format."));
