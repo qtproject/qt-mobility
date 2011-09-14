@@ -76,6 +76,8 @@ QSymbianCameraKeyListener::QSymbianCameraKeyListener(QWidget *widget):
 
 QSymbianCameraKeyListener::~QSymbianCameraKeyListener()
 {
+// CaptureKey request needs to be unregistered only for Symbian^3 and later
+#ifndef Q_OS_SYMBIAN1
     if (!m_widget)
         return;
 
@@ -98,4 +100,5 @@ QSymbianCameraKeyListener::~QSymbianCameraKeyListener()
         wGroup.Construct(wGroupHandle);
         wGroup.CancelCaptureKey(EKeyCamera);
     }
+#endif // Q_OS_SYMBIAN1
 }
