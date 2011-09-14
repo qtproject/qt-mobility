@@ -275,23 +275,22 @@ void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
     if (m_captureMode == mode)
         return;
 
-    // Setting CaptureMode Internally or Externally (Client)
     if (!m_settingCaptureModeInternally) {
-        // Save the requested mode
+        // External - Check and save the requested mode
+        if (!isCaptureModeSupported(mode)) {
+            setError(KErrNotSupported, tr("Requested capture mode is not supported."));
+            return;
+        }
         m_requestedCaptureMode = mode;
 
         // CaptureMode change pending (backend busy), wait
         if (m_changeCaptureModeWhenReady)
             return;
     } else {
+        // Internal - reset flag and set immediately
         m_changeCaptureModeWhenReady = false; // Reset
     }
     m_settingCaptureModeInternally = false; // Reset
-
-    if (!isCaptureModeSupported(mode)) {
-        setError(KErrNotSupported, tr("Requested capture mode is not supported."));
-        return;
-    }
 
     if (m_inactivityTimer->isActive())
         m_inactivityTimer->stop();
@@ -634,8 +633,8 @@ void S60CameraControl::MceoCameraReady()
             emit statusChanged(QCamera::LoadedStatus);
 
             if (m_changeCaptureModeWhenReady) {
+                m_settingCaptureModeInternally = true;
                 setCaptureMode(m_requestedCaptureMode);
-                m_changeCaptureModeWhenReady = false; // Reset
             }
 
             if (m_requestedState == QCamera::LoadedStatus &&
@@ -655,8 +654,8 @@ void S60CameraControl::MceoCameraReady()
             emit statusChanged(QCamera::LoadedStatus);
 
             if (m_changeCaptureModeWhenReady) {
+                m_settingCaptureModeInternally = true;
                 setCaptureMode(m_requestedCaptureMode);
-                m_changeCaptureModeWhenReady = false; // Reset
             }
             startCamera();
             break;
