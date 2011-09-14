@@ -43,71 +43,84 @@
 
 testcase = {
 
-    // Check installed Dialer services.
-    Run_Test_Application: function()
-    {
-        prompt(twiki('*Run Test Application*
-
-   * Run the qmldialer application
-   * confirm that the above steps did not return an error ;
-        '));
-    },
-
     Dial_Landline_Number: function()
     {
-        prompt(twiki('*Dial Landline number*
+        // Test meta data
+        testTitle = "Serviceframework - Dial Landline Number";
+        testBinary = "qmldialer";
+        testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
+        testGoal = "Verify that landline number can be dialed and hung up";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-   * select the LandLineDialer in the Select dial service: list box
-   * confirm that a status message is seen "LandlineDialer... (1.0)"
-   * use number pad on dialog to enter number , eg 0123
-   * press the call button on dialog
-   * confirm that new messages seen reflect the dialing states:
-      * Dialing 0123
-      * Ringing
-      * Connected
-   * click the hangup button
-   * confirm that new message seen is reflects the dialing state
-      * Hangup
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>    
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select the LandLineDialer in the Select dial service: list box | Verify that a status message is seen \"LandlineDialer... (1.0)\" |
+            | Use number pad on dialog to enter number , eg 0123 | |
+            | Press the *call* button on dialog | Verify that new messages seen reflect the dialing states: <br>Dialing 0123 <br>Ringing <br>Connected |
+            | Click the *hangup* button | Verify that new message seen is reflects the dialing state:<br>Hangup |
+        "));
     },
-
+    
     Dial_First_Voip_Number: function()
     {
-        prompt(twiki('*Dial Voip 1.1 number*
+        // Test meta data
+        testTitle = "Serviceframework - Dial First Voip Number";
+        testBinary = "qmldialer";
+        testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
+        testGoal = "Verify that Voip 1.1 Number can be dialed and hung up";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-   * select VoipDialer (1.1) in the Select dial service: list box
-   * confirm that a status message is seen "VoipDialer (1.1)"
-   * use number pad on dialog to enter number , eg 0123
-   * press the "call" button on dialog
-   * confirm that new messages seen reflect the dialing states:
-      * Dialing 0123
-      * Ringing
-      * Connected
-   * click the "hangup" button
-   * confirm that new message seen is reflects the dialing state
-      * Hang up
-      * Connection terminated
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>    
 
-       '));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select VoipDialer (1.1) in the Select dial service: list box | Verify that a status message is seen \"VoipDialer (1.1)\" |
+            | Use number pad on dialog to enter number , eg 0123 | |
+            | Press the *call* button on dialog | Verify that new messages seen reflect the dialing states: <br>Dialing 0123 <br>Ringing <br>Connected |
+            | Click the *hangup* button | Verify that new message seen is reflects the dialing state: <br>Hangup |
+        "));
     },
 
     Dial_Second_Voip_Number: function()
     {
-        prompt(twiki('*Dial Voip 1.0 number*
+        // Test meta data
+        testTitle = "Serviceframework - Dial Second Voip Number";
+        testBinary = "qmldialer";
+        testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
+        testGoal = "Verify that Voip 1.0 Number can be dialed and hung up";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-   * select the VoipDialer (1.0) in the Select dial service: list box
-   * confirm that a status message is seen "VoipDialer (1.0)"
-   * use number pad on dialog to enter number , eg 0123
-   * press the call button on dialog
-   * confirm that new messages seen reflect the dialing states:
-      * Dialing 0123
-      * Ringing
-      * Connected
-   * clicking the hangup button
-   * confirm that new message seen is reflects the dialing state
-      * Hangup
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>    
 
-        '));
-    }
-
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select VoipDialer (1.0) in the Select dial service: list box | Verify that a status message is seen \"VoipDialer (1.0)\" |
+            | Use number pad on dialog to enter number , eg 0123 | |
+            | Press the *call* button on dialog | Verify that new messages seen reflect the dialing states: <br>Dialing 0123 <br>Ringing <br>Connected |
+            | Click the *hangup* button | Verify that new message seen is reflects the dialing state:<br>Hangup |
+        "));
+    },
 }
