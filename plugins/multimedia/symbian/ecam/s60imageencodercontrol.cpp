@@ -43,6 +43,7 @@
 
 #include "s60imageencodercontrol.h"
 #include "s60imagecapturesession.h"
+#include "s60imagecapturesettings.h"
 
 S60ImageEncoderControl::S60ImageEncoderControl(QObject *parent) :
     QImageEncoderControl(parent)
@@ -66,26 +67,26 @@ QList<QSize> S60ImageEncoderControl::supportedResolutions(
     if (continuous)
         *continuous = false;
 
-    return m_session->supportedImageResolutionsForCodec(settings.codec());
+    return m_session->settings()->supportedImageResolutionsForCodec(settings.codec());
 }
 
 QStringList S60ImageEncoderControl::supportedImageCodecs() const
 {
-    return m_session->supportedImageCodecs();
+    return m_session->settings()->supportedImageCodecs();
 }
 
 QString S60ImageEncoderControl::imageCodecDescription(const QString &codec) const
 {
-    return m_session->imageCodecDescription(codec);
+    return m_session->settings()->imageCodecDescription(codec);
 }
 
 QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 {
     // Update setting values from session
     QImageEncoderSettings settings;
-    settings.setCodec(m_session->imageCodec());
-    settings.setResolution(m_session->imageResolution());
-    settings.setQuality(m_session->imageQuality());
+    settings.setCodec(m_session->settings()->imageCodec());
+    settings.setResolution(m_session->settings()->imageResolution());
+    settings.setQuality(m_session->settings()->imageQuality());
 
     return settings;
 }
@@ -95,15 +96,15 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
     if (!settings.isNull()) {
         // Notify that settings have been implicitly set and there's no need to
         // initialize them in case camera is changed
-        m_session->notifySettingsSet();
+        m_session->settings()->notifySettingsSet();
 
         if (!settings.codec().isEmpty())
-            m_session->setImageCodec(settings.codec());
+            m_session->settings()->setImageCodec(settings.codec());
 
         // Set quality before resolution as quality defines the
         // resolution used in case it's not explicitly set
-        m_session->setImageQuality(settings.quality());
-        m_session->setImageResolution(settings.resolution());
+        m_session->settings()->setImageQuality(settings.quality());
+        m_session->settings()->setImageResolution(settings.resolution());
 
         // Prepare ImageCapture with the settings and set error if needed
         int prepareSuccess = m_session->prepareImageCapture();

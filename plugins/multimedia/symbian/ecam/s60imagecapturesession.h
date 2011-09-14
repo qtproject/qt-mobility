@@ -52,7 +52,6 @@
 #include <qcameraimagecapture.h>
 #include <qvideoframe.h>
 
-#include "s60cameraadvsettings.h"
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 #include "s60cameraconstants.h"
@@ -63,6 +62,7 @@ QT_USE_NAMESPACE
 using namespace S60CameraConstants;
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSettings)
 QT_FORWARD_DECLARE_CLASS(CImageDecoder)
 QT_FORWARD_DECLARE_CLASS(CImageEncoder)
 QT_FORWARD_DECLARE_CLASS(CFrameImageData)
@@ -200,11 +200,6 @@ public: // Methods
     bool isDeviceReady();
     bool isImageCapturePrepared() const;
     void setCameraHandle(CCameraEngine* camerahandle);
-    void setCurrentDevice(TInt deviceindex);
-    void notifySettingsSet();
-
-    // Ecam Advanced Settings
-    void deleteAdvancedSettings();
 
     // Controls
     int prepareImageCapture();
@@ -213,116 +208,8 @@ public: // Methods
     void cancelCapture();
     void releaseImageBuffer();
 
-    // Capture Destination
-    void setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination);
-
-    // Image Resolution
-    QSize imageResolution() const;
-    QList<QSize> supportedImageResolutionsForCodec(const QString &codecName);
-    void setImageResolution(const QSize &size);
-
-    // Image Codec
-    QStringList supportedImageCodecs();
-    QString imageCodec();
-    void setImageCodec(const QString &codecName);
-    QString imageCodecDescription(const QString &codecName);
-
-    // Image Quality
-    QtMultimediaKit::EncodingQuality imageQuality() const;
-    void setImageQuality(const QtMultimediaKit::EncodingQuality &quality);
-
-    // Image Format (Buffer Capture)
-    QList<QVideoFrame::PixelFormat> supportedBufferCaptureFormats() const;
-    void setBufferCaptureFormat(const QVideoFrame::PixelFormat format);
-
-    // S60 3.1 Focus Control (S60 3.2 and later via S60CameraAdvSettings class)
-    bool isFocusSupported() const;
-    void startFocus();
-    void cancelFocus();
-
-    // Zoom Control
-    qreal maximumZoom();
-    qreal minZoom();
-    qreal maxDigitalZoom();
-    void doSetZoomFactorL(qreal optical, qreal digital);
-    qreal opticalZoomFactor();
-    qreal digitalZoomFactor();
-
-    // Focus Control
-    void startFocusing();
-    void cancelFocusing();
-
-    // Focus Mode Control
-    QCameraFocus::FocusMode focusMode();
-    void setFocusMode(QCameraFocus::FocusMode mode);
-    bool isFocusModeSupported(QCameraFocus::FocusMode mode) const;
-
-    // Exposure Mode Control
-    QCameraExposure::ExposureMode exposureMode();
-    void setExposureMode(QCameraExposure::ExposureMode mode);
-    bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;
-
-    // Metering Mode Control
-    QCameraExposure::MeteringMode meteringMode();
-    void setMeteringMode(QCameraExposure::MeteringMode mode);
-    bool isMeteringModeSupported(QCameraExposure::MeteringMode mode) const;
-
-    // Flash Mode Control
-    QCameraExposure::FlashModes flashMode();
-    void setFlashMode(QCameraExposure::FlashModes mode);
-    QCameraExposure::FlashModes supportedFlashModes();
-    bool isFlashReady() const;
-
-    // Contrast Control
-    int contrast() const;
-    void setContrast(int value);
-
-    // Brightness Control
-    int brightness() const;
-    void setBrightness(int value);
-
-    bool areContrastAndBrightnessSupported() const;
-
-    // Saturation Control
-    bool isSaturationSupported() const;
-    int saturation() const;
-    void setSaturation(int value);
-
-    // Sharpening Control
-    bool isSharpeningSupported() const;
-    int sharpening() const;
-    void setSharpening(int value);
-
-    // Denoising Control
-    bool isDenoisingSupported() const;
-    int denoising() const;
-    void setDenoising(int value);
-
-    // White Balance Mode Control
-    QCameraImageProcessing::WhiteBalanceMode whiteBalanceMode();
-    void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode);
-    bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const;
-
-    // ISO Sensitivity
-    int isoSensitivity() const;
-    bool setIsoSensitivity(int iso);
-    void setAutoIsoSensitivity();
-    QList<int> supportedIsoSensitivities() const;
-
-    // Aperture
-    qreal aperture() const;
-    bool setAperture(qreal aperture);
-    QList<qreal> supportedApertures() const;
-
-    // Shutter Speed
-    qreal shutterSpeed() const;
-    bool setShutterSpeed(qreal seconds);
-    QList<qreal> supportedShutterSpeeds() const;
-
-    // Exposure Compensation
-    qreal exposureCompensation() const;
-    bool setExposureCompensation(qreal ev);
-    QList<qreal> supportedExposureCompensations() const;
+    // Settings class
+    S60ImageCaptureSettings *settings() const;
 
 public: // Image Decoding & Encoding Notifications
 
@@ -345,21 +232,7 @@ protected: // MCameraPreviewObserver
 private: // Internal
 
     QCameraImageCapture::Error fromSymbianErrorToQtMultimediaError(int aError);
-
-    void initializeImageCaptureSettings();
-    void applyCameraSettings();
     void resetSession(bool errorHandling = false);
-
-    CCamera::TFormat selectFormatForCodec(const QString &codec);
-    CCamera::TFormat defaultImageFormat();
-    bool queryCurrentCameraInfo();
-    QMap<QString, QString> codecDescriptionMap();
-    void updateImageCaptureFormats();
-
-    void doSetWhiteBalanceModeL(QCameraImageProcessing::WhiteBalanceMode mode);
-    void doSetFlashModeL(QCameraExposure::FlashModes mode);
-    void doSetExposureModeL(QCameraExposure::ExposureMode mode);
-    QList<QSize> sortResolutions(QList<QSize> resolutions);
 
     void saveImageL(TDesC8 *aData, TFileName &aPath);
     void processFileName(const QString &fileName);
@@ -372,10 +245,8 @@ private: // Internal
 signals: // Notifications
 
     void stateChanged(QCamera::State);
-    void advancedSettingChanged();
+    // This is used for updating the output aspect ratio
     void captureSizeChanged(const QSize&);
-    void destinationChanged(const QCameraImageCapture::CaptureDestinations);
-    void bufferCaptureFormatChanged(const QVideoFrame::PixelFormat);
 
     // Error signals
     void cameraError(int, const QString&);          // For QCamera::error
@@ -388,13 +259,6 @@ signals: // Notifications
     void imageAvailable(const int, const QVideoFrame&);
     void imageSaved(const int, const QString&);
 
-    void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
-    void apertureChanged();
-    void apertureRangeChanged();
-    void shutterSpeedChanged();
-    void isoSensitivityChanged();
-    void evChanged();
-
 private slots: // Internal Slots
 
     void cameraStatusChanged(QCamera::Status);
@@ -403,50 +267,24 @@ private slots: // Internal Slots
 private: // Data
 
     CCameraEngine           *m_cameraEngine;
-    S60CameraAdvSettings    *m_advancedSettings;
-    mutable TCameraInfo     *m_cameraInfo;
+    S60ImageCaptureSettings *m_imageSettings;
     CFbsBitmap              *m_previewBitmap;
     CActiveScheduler        *m_activeScheduler;
     RFs                     *m_fileSystemAccess;
     S60ImageCaptureDecoder  *m_imageDecoder;
     S60ImageCaptureEncoder  *m_imageEncoder;
     mutable int             m_error; // Symbian ErrorCode
-    TInt                    m_activeDeviceIndex;
     bool                    m_cameraStarted;
     ImageCaptureState       m_icState;
-    QCameraImageCapture::CaptureDestinations m_captureDestination;
-    QStringList             m_supportedImageCodecs;
-    QList<QVideoFrame::PixelFormat> m_supportedBufferCaptureFormats;
-    QString                 m_currentCodec;
-    CCamera::TFormat        m_currentFormat;
-    QSize                   m_captureSize;
-    int                     m_symbianImageQuality;
-    QVideoFrame::PixelFormat m_bufferCaptureFormat;
-    bool                    m_captureSettingsSet;
     QString                 m_stillCaptureFileName;
     QString                 m_requestedStillCaptureFileName;
     mutable int             m_currentImageId;
-    QList<uint>             m_formats;
     // This indicates that image capture should be triggered right after
     // camera and image setting initialization has completed
     bool                    m_captureWhenReady;
     bool                    m_previewDecodingOngoing;
     bool                    m_previewInWaitLoop;
     bool                    m_isCameraExternallyStarted;
-    QCameraFocus::FocusMode m_requestedFocusMode;
-    qreal                   m_requestedDigitalZoomFactor;
-    QCameraExposure::FlashModes m_requestedFlashMode;
-    QCameraExposure::ExposureMode m_requestedExposureMode;
-    QCameraImageProcessing::WhiteBalanceMode m_requestedWhiteBalanceMode;
-    int                     m_requestedContrast;
-    int                     m_requestedBrightness;
-    int                     m_requestedSaturation;
-    int                     m_requestedSharpening;
-    int                     m_requestedDenoising;
-    int                     m_requestedIsoSensitivity;
-    qreal                   m_requestedAperture;
-    qreal                   m_requestedShutterSpeed;
-    qreal                   m_reauestedExposureCompensation;
 };
 
 #endif // S60IMAGECAPTURESESSION_H

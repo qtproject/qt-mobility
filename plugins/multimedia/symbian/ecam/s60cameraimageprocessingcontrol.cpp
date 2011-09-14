@@ -44,6 +44,7 @@
 #include "s60cameraimageprocessingcontrol.h"
 #include "s60cameraservice.h"
 #include "s60imagecapturesession.h"
+#include "s60imagecapturesettings.h"
 
 S60CameraImageProcessingControl::S60CameraImageProcessingControl(QObject *parent) :
     QCameraImageProcessingControl(parent)
@@ -63,13 +64,13 @@ S60CameraImageProcessingControl::~S60CameraImageProcessingControl()
 
 QCameraImageProcessing::WhiteBalanceMode S60CameraImageProcessingControl::whiteBalanceMode() const
 {
-    return m_session->whiteBalanceMode();
+    return m_session->settings()->whiteBalanceMode();
 }
 
 void S60CameraImageProcessingControl::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
 {
     if (isWhiteBalanceModeSupported(mode))
-        m_session->setWhiteBalanceMode(mode);
+        m_session->settings()->setWhiteBalanceMode(mode);
     else
         m_session->setError(KErrNotSupported, tr("Requested white balance mode is not supported."));
 }
@@ -77,7 +78,7 @@ void S60CameraImageProcessingControl::setWhiteBalanceMode(QCameraImageProcessing
 bool S60CameraImageProcessingControl::isWhiteBalanceModeSupported(
     QCameraImageProcessing::WhiteBalanceMode mode) const
 {
-    return m_session->isWhiteBalanceModeSupported(mode);
+    return m_session->settings()->isWhiteBalanceModeSupported(mode);
 }
 
 int S60CameraImageProcessingControl::manualWhiteBalance() const
@@ -96,7 +97,7 @@ bool S60CameraImageProcessingControl::isProcessingParameterSupported(ProcessingP
     switch (parameter) {
     case QCameraImageProcessingControl::Contrast:
     case QCameraImageProcessingControl::Brightness:
-        return m_session->areContrastAndBrightnessSupported();
+        return m_session->settings()->areContrastAndBrightnessSupported();
     case QCameraImageProcessingControl::Saturation:
         return isSaturationSupported();
     case QCameraImageProcessingControl::Sharpening:
@@ -162,67 +163,67 @@ void S60CameraImageProcessingControl::setProcessingParameter(
 
 void S60CameraImageProcessingControl::setContrast(int value)
 {
-    m_session->setContrast(value);
+    m_session->settings()->setContrast(value);
 }
 
 int S60CameraImageProcessingControl::contrast() const
 {
-    return m_session->contrast();
+    return m_session->settings()->contrast();
 }
 
 void S60CameraImageProcessingControl::setBrightness(int value)
 {
-    m_session->setBrightness(value);
+    m_session->settings()->setBrightness(value);
 }
 
 int S60CameraImageProcessingControl::brightness() const
 {
-    return m_session->brightness();
+    return m_session->settings()->brightness();
 }
 
 bool S60CameraImageProcessingControl::isSaturationSupported() const
 {
-    return m_session->isSaturationSupported();
+    return m_session->settings()->isSaturationSupported();
 }
 
 void S60CameraImageProcessingControl::setSaturation(int value)
 {
-    m_session->setSaturation(value);
+    m_session->settings()->setSaturation(value);
 }
 
 int S60CameraImageProcessingControl::saturation() const
 {
-    return m_session->saturation();
+    return m_session->settings()->saturation();
 }
 
 bool S60CameraImageProcessingControl::isDenoisingSupported() const
 {
-    return m_session->isDenoisingSupported();
+    return m_session->settings()->isDenoisingSupported();
 }
 
 void S60CameraImageProcessingControl::setDenoisingLevel(int value)
 {
-    m_session->setDenoising(value);
+    m_session->settings()->setDenoising(value);
 }
 
 int S60CameraImageProcessingControl::denoisingLevel() const
 {
-    return m_session->denoising();
+    return m_session->settings()->denoising();
 }
 
 bool S60CameraImageProcessingControl::isSharpeningSupported() const
 {
-    return m_session->isSharpeningSupported();
+    return m_session->settings()->isSharpeningSupported();
 }
 
 void S60CameraImageProcessingControl::setSharpeningLevel(int value)
 {
-    m_session->setSharpening(value);
+    m_session->settings()->setSharpening(value);
 }
 
 int S60CameraImageProcessingControl::sharpeningLevel() const
 {
-    return m_session->sharpening();
+    return m_session->settings()->sharpening();
 }
 
 // End of file

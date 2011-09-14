@@ -46,6 +46,7 @@
 #include "s60cameraengine.h"
 #include "s60cameracontrol.h"
 #include "s60imagecapturesession.h"
+#include "s60imagecapturesettings.h"
 #include "s60videowidgetcontrol.h"
 #include "s60cameraviewfinderengine.h"
 #include "s60cameraconstants.h"
@@ -115,7 +116,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     connect(this, SIGNAL(cameraReadyChanged(bool)), m_imageSession, SIGNAL(readyForCaptureChanged(bool)));
     connect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
     connect(m_imageSession, SIGNAL(cameraError(int, const QString&)), this, SIGNAL(error(int, const QString&)));
-    connect(m_imageSession, SIGNAL(captureSizeChanged(const QSize&)),
+    connect(m_imageSession->settings(), SIGNAL(captureSizeChanged(const QSize&)),
         m_viewfinderEngine, SLOT(handleContentAspectRatioChange(const QSize&)));
     connect(m_videoSession, SIGNAL(captureSizeChanged(const QSize&)),
         m_viewfinderEngine, SLOT(handleContentAspectRatioChange(const QSize&)));
@@ -133,7 +134,7 @@ S60CameraControl::~S60CameraControl()
     }
 
     // Make sure AdvancedSettings are destructed before CCamera
-    m_imageSession->deleteAdvancedSettings();
+    m_imageSession->settings()->deleteAdvancedSettings();
 
     if (m_cameraEngine) {
         delete m_cameraEngine;
@@ -787,7 +788,7 @@ void S60CameraControl::resetCamera(bool errorHandling)
     m_videoSession->stopRecording(false); // Don't re-initialize video
 
     // Advanced settings must be destructed before the camera
-    m_imageSession->deleteAdvancedSettings();
+    m_imageSession->settings()->deleteAdvancedSettings();
 
     // Release resources
     stopCamera();
@@ -885,7 +886,7 @@ void S60CameraControl::resetCameraOrientation()
     m_videoSession->stopRecording(false); // Don't re-initialize video
 
     // Advanced settings must be destructed before the camera
-    m_imageSession->deleteAdvancedSettings();
+    m_imageSession->settings()->deleteAdvancedSettings();
 
     // Release resources
     stopCamera();
@@ -926,7 +927,7 @@ void S60CameraControl::resetCameraOrientation()
 
 void S60CameraControl::setCameraHandles()
 {
-    m_imageSession->setCurrentDevice(m_deviceIndex);
+    m_imageSession->settings()->setCurrentDevice(m_deviceIndex);
     m_imageSession->setCameraHandle(m_cameraEngine);
     m_cameraEngine->SetImageCaptureObserver(m_imageSession);
     m_videoSession->setCameraHandle(m_cameraEngine);
