@@ -804,6 +804,12 @@ TSize S60ImageCaptureSession::getScaledPreviewSize(const QSize originalSize) con
 
 void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 {
+    if (!aData) {
+        releaseImageBuffer();
+        setError(KErrGeneral, tr("Captured image is empty."));
+        return;
+    }
+
     emit imageExposed(m_currentImageId);
 
     m_icState = EImageCaptureWritingImage;
@@ -901,6 +907,12 @@ void S60ImageCaptureSession::MceoCapturedDataReady(TDesC8* aData)
 
 void S60ImageCaptureSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 {
+    if (!aBitmap) {
+        releaseImageBuffer();
+        setError(KErrGeneral, tr("Captured image is empty."));
+        return;
+    }
+
     emit imageExposed(m_currentImageId);
 
     m_icState = EImageCaptureWritingImage;
