@@ -116,6 +116,7 @@ HEADERS += \
     $$PWD/s60cameracontrol.h \
     $$PWD/s60mediarecordercontrol.h \
     $$PWD/s60videocapturesession.h \
+    $$PWD/s60videocapturesettings.h \
     $$PWD/s60imagecapturesession.h \
     $$PWD/s60imagecapturesettings.h \
     $$PWD/s60mediacontainercontrol.h \
@@ -143,6 +144,7 @@ SOURCES += \
     $$PWD/s60cameracontrol.cpp \
     $$PWD/s60mediarecordercontrol.cpp \
     $$PWD/s60videocapturesession.cpp \
+    $$PWD/s60videocapturesettings.cpp \
     $$PWD/s60imagecapturesession.cpp \
     $$PWD/s60imagecapturesettings.cpp \
     $$PWD/s60mediacontainercontrol.cpp \

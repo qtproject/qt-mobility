@@ -41,6 +41,7 @@
 
 #include "s60mediacontainercontrol.h"
 #include "s60videocapturesession.h"
+#include "s60videocapturesettings.h"
 #include "s60cameraconstants.h"
 
 using namespace S60CameraConstants;
@@ -56,7 +57,7 @@ S60MediaContainerControl::S60MediaContainerControl(S60VideoCaptureSession *sessi
     m_session = session;
 
     // Set default video container
-    m_supportedContainers = m_session->supportedVideoContainers();
+    m_supportedContainers = m_session->settings()->supportedVideoContainers();
 
     if (!m_supportedContainers.isEmpty()) {
         // Check if default container is supported
@@ -76,22 +77,22 @@ S60MediaContainerControl::~S60MediaContainerControl()
 
 QStringList S60MediaContainerControl::supportedContainers() const
 {
-    return m_session->supportedVideoContainers();
+    return m_session->settings()->supportedVideoContainers();
 }
 
 QString S60MediaContainerControl::containerMimeType() const
 {
-    return m_session->videoContainer();
+    return m_session->settings()->videoContainer();
 }
 
 void S60MediaContainerControl::setContainerMimeType(const QString &containerMimeType)
 {
-    m_session->setVideoContainer(containerMimeType);
+    m_session->settings()->setVideoContainer(containerMimeType);
 }
 
 QString S60MediaContainerControl::containerDescription(const QString &containerMimeType) const
 {
-    return m_session->videoContainerDescription(containerMimeType);
+    return m_session->settings()->videoContainerDescription(containerMimeType);
 }
 
 // End of file

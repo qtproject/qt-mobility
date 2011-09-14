@@ -47,6 +47,7 @@
 #include "s60cameracontrol.h"
 #include "s60imagecapturesession.h"
 #include "s60imagecapturesettings.h"
+#include "s60videocapturesettings.h"
 #include "s60videowidgetcontrol.h"
 #include "s60cameraviewfinderengine.h"
 #include "s60cameraconstants.h"
@@ -118,7 +119,7 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     connect(m_imageSession, SIGNAL(cameraError(int, const QString&)), this, SIGNAL(error(int, const QString&)));
     connect(m_imageSession->settings(), SIGNAL(captureSizeChanged(const QSize&)),
         m_viewfinderEngine, SLOT(handleContentAspectRatioChange(const QSize&)));
-    connect(m_videoSession, SIGNAL(captureSizeChanged(const QSize&)),
+    connect(m_videoSession->settings(), SIGNAL(captureSizeChanged(const QSize&)),
         m_viewfinderEngine, SLOT(handleContentAspectRatioChange(const QSize&)));
 
     setCameraHandles();
