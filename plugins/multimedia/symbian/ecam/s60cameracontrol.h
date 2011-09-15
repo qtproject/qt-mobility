@@ -107,7 +107,8 @@ Q_SIGNALS:
 public: // Internal
 
     void setError(const TInt error, const QString &description);
-    void resetCameraOrientation();
+    void detectNewUiOrientation();
+    void cancelCameraRotation();
 
     // To provide QVideoDeviceControl info
     static int deviceCount();
@@ -125,7 +126,7 @@ private slots: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
     // Needed to detect image capture completion when trying to rotate the camera
-    void imageCaptured(const int imageId, const QImage& preview);
+    void readyToRotateChanged(bool isReady);
     /*
      * This method moves the camera to the StandBy status:
      *    - If camera access was lost
@@ -147,6 +148,7 @@ private: // Internal
     void startCamera();
     void stopCamera();
 
+    void resetCameraOrientation();
     void resetCamera(bool errorHandling = false);
     void setCameraHandles();
 
@@ -154,6 +156,18 @@ signals: // Internal Signals
 
     void cameraReadyChanged(bool);
     void devicesChanged();
+
+private: // Enums
+
+    /*
+     * Defines the orientation of the camera; Converts easily to boolean
+     * (answering question "Is camera on landscape?")
+     */
+    enum CameraOrientation {
+        CameraOrientationPortrait = 0,
+        CameraOrientationLandscape = 1,
+        CameraOrientationNotSet
+    };
 
 private: // Data
 
@@ -171,7 +185,8 @@ private: // Data
     int                         m_deviceIndex;
     mutable int                 m_error;
     bool                        m_changeCaptureModeWhenReady;
-    bool                        m_rotateCameraWhenReady;
+    CameraOrientation           m_cameraOrientation;
+    CameraOrientation           m_requestedCameraOrientation;
     S60VideoCaptureSession::TVideoCaptureState m_videoCaptureState;
 };
 
