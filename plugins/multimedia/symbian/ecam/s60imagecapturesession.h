@@ -69,6 +69,7 @@ QT_FORWARD_DECLARE_CLASS(CFrameImageData)
 QT_FORWARD_DECLARE_CLASS(RFs)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 
+#ifndef ECAM_PREVIEW_API
 /*
  * This class implements asynchronous image decoding service for the
  * S60ImageCaptureSession.
@@ -116,6 +117,7 @@ private: // Data
     TFrameInfo              m_frameInfo;
 
 };
+#endif // ECAM_PREVIEW_API
 
 //=============================================================================
 
@@ -213,7 +215,9 @@ public: // Methods
 
 public: // Image Decoding & Encoding Notifications
 
+#ifndef ECAM_PREVIEW_API
     void handleImageDecoded(int error);
+#endif // ECAM_PREVIEW_API
     void handleImageEncoded(int error);
 
 protected: // MCameraEngineObserver
@@ -271,7 +275,9 @@ private: // Data
     CFbsBitmap              *m_previewBitmap;
     CActiveScheduler        *m_activeScheduler;
     RFs                     *m_fileSystemAccess;
+#ifndef ECAM_PREVIEW_API
     S60ImageCaptureDecoder  *m_imageDecoder;
+#endif // ECAM_PREVIEW_API
     S60ImageCaptureEncoder  *m_imageEncoder;
     mutable int             m_error; // Symbian ErrorCode
     bool                    m_cameraStarted;
