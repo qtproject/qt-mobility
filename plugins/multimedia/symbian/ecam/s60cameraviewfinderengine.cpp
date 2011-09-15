@@ -87,7 +87,6 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
     m_viewfinderType(OutputTypeNotSet),
     m_viewfinderNativeType(EBitmapViewFinder), // Default type
     m_isViewFinderVisible(true),
-    m_uiLandscape(true),
     m_vfErrorsSignalled(0)
 {
     m_cameraControl = control;
@@ -105,13 +104,6 @@ S60CameraViewfinderEngine::S60CameraViewfinderEngine(S60CameraControl *control,
         m_cameraControl->setError(KErrGeneral, tr("Unexpected camera error."));
     }
     // From now on it is safe to assume engine exists
-
-    // Check the UI orientation
-    QRect screenRect = QApplication::desktop()->screenGeometry();
-    if (screenRect.width() > screenRect.height())
-        m_uiLandscape = true;
-    else
-        m_uiLandscape = false;
 
     // Detect UI Rotations
     connect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(handleDesktopResize(int)));
@@ -151,7 +143,7 @@ void S60CameraViewfinderEngine::handleDesktopResize(int screen)
     }
 
     // Rotate Camera if UI has rotated
-    checkAndRotateCamera();
+    m_cameraControl->detectNewUiOrientation();
 }
 
 void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
@@ -161,7 +153,7 @@ void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
         releaseControl(m_viewfinderType);
 
     // Rotate Camera if UI has rotated
-    checkAndRotateCamera();
+    m_cameraControl->detectNewUiOrientation();
 
     S60VideoWidgetControl* viewFinderWidgetControl =
         qobject_cast<S60VideoWidgetControl*>(viewfinderOutput);
@@ -228,7 +220,7 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
         releaseControl(m_viewfinderType);
 
     // Rotate Camera if UI has rotated
-    checkAndRotateCamera();
+    m_cameraControl->detectNewUiOrientation();
 
     S60VideoRendererControl* viewFinderRenderControl =
         qobject_cast<S60VideoRendererControl*>(viewfinderOutput);
@@ -278,7 +270,7 @@ void S60CameraViewfinderEngine::setVideoWindowControl(QObject *viewfinderOutput)
         releaseControl(m_viewfinderType);
 
     // Rotate Camera if UI has rotated
-    checkAndRotateCamera();
+    m_cameraControl->detectNewUiOrientation();
 
     S60VideoWindowControl* viewFinderWindowControl =
         qobject_cast<S60VideoWindowControl*>(viewfinderOutput);
@@ -730,27 +722,6 @@ void S60CameraViewfinderEngine::handleWindowChange(RWindow *handle)
     stopViewfinder(true);
     if (handle) // New handle available, start viewfinder
         startViewfinder(true);
-}
-
-void S60CameraViewfinderEngine::checkAndRotateCamera()
-{
-    bool isUiNowLandscape = false;
-    QRect screenRect = QApplication::desktop()->screenGeometry();
-
-    if (screenRect.width() > screenRect.height())
-        isUiNowLandscape = true;
-    else
-        isUiNowLandscape = false;
-
-    // Rotate camera if possible
-    if (isUiNowLandscape != m_uiLandscape) {
-        stopViewfinder(true);
-
-        // Request orientation reset
-        m_cameraControl->resetCameraOrientation();
-    }
-
-    m_uiLandscape = isUiNowLandscape;
 }
 
 void S60CameraViewfinderEngine::handleContentAspectRatioChange(const QSize& newSize)

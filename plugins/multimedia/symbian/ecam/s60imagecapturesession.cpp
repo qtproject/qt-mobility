@@ -55,6 +55,7 @@
 
 using namespace S60CameraConstants;
 
+#ifndef ECAM_PREVIEW_API
 S60ImageCaptureDecoder::S60ImageCaptureDecoder(S60ImageCaptureSession *imageSession,
                                                RFs *fileSystemAccess,
                                                const TDesC8 *data,
@@ -163,6 +164,7 @@ TInt S60ImageCaptureDecoder::RunError(TInt aError)
     m_imageSession->setError(aError, QLatin1String("Preview image creation failed."));
     return KErrNone;
 }
+#endif // ECAM_PREVIEW_API
 
 //=============================================================================
 
@@ -279,7 +281,9 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
     m_previewBitmap(0),
     m_activeScheduler(0),
     m_fileSystemAccess(0),
+#ifndef ECAM_PREVIEW_API
     m_imageDecoder(0),
+#endif // ECAM_PREVIEW_API
     m_imageEncoder(0),
     m_error(KErrNone),
     m_cameraStarted(false),
@@ -301,11 +305,13 @@ S60ImageCaptureSession::S60ImageCaptureSession(QObject *parent) :
 
 S60ImageCaptureSession::~S60ImageCaptureSession()
 {
+#ifndef ECAM_PREVIEW_API
     if (m_imageDecoder) {
         m_imageDecoder->Cancel();
         delete m_imageDecoder;
         m_imageDecoder = 0;
     }
+#endif // ECAM_PREVIEW_API
     if (m_imageEncoder) {
         m_imageEncoder->Cancel();
         delete m_imageEncoder;
@@ -945,6 +951,7 @@ void S60ImageCaptureSession::cameraStateChanged(QCamera::State state)
         m_isCameraExternallyStarted = false;
 }
 
+#ifndef ECAM_PREVIEW_API
 void S60ImageCaptureSession::handleImageDecoded(int error)
 {
     // Delete unneeded objects
@@ -995,6 +1002,7 @@ void S60ImageCaptureSession::handleImageDecoded(int error)
         m_previewInWaitLoop = false; // Reset
     }
 }
+#endif // ECAM_PREVIEW_API
 
 void S60ImageCaptureSession::handleImageEncoded(int error)
 {

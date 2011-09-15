@@ -171,7 +171,8 @@ void S60ImageCaptureSettings::resetSettings(CCameraEngine *engine, const bool er
         else
             m_session->setError(KErrNotReady, tr("Unexpected camera error."));
 
-        connect(m_advancedSettings, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int, const QString&)));
+        connect(m_advancedSettings, SIGNAL(error(int, const QString&)),
+            m_session, SIGNAL(cameraError(int, const QString&)));
         connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
         connect(m_advancedSettings, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
             this, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)));
