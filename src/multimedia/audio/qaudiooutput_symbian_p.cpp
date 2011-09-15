@@ -179,16 +179,18 @@ void QAudioOutputPrivate::stop()
 
 void QAudioOutputPrivate::reset()
 {
+    if (m_devSound) {
 #ifndef PRE_S60_52_PLATFORM
-    int err =  m_devSound->flush();
-    if (err != 0)
-        setError(QAudio::FatalError);
+        int err =  m_devSound->flush();
+        if (err != 0)
+            setError(QAudio::FatalError);
 #else
-    m_totalSamplesPlayed += getSamplesPlayed();
-    m_devSound->stop();
-    m_bytesPadding = 0;
-    startPlayback();
+        m_totalSamplesPlayed += getSamplesPlayed();
+        m_devSound->stop();
+        m_bytesPadding = 0;
+        startPlayback();
 #endif
+    }
 }
 
 void QAudioOutputPrivate::suspend()

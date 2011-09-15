@@ -1,4 +1,9 @@
-message("camerakeyevent_symbian: Including Symbian camera capture key event register methods")
+contains(S60_VERSION, 5.0) {
+    message("camerakeyevent_symbian: Including Symbian camera capture key event register methods for Symbian^1")
+    DEFINES += Q_OS_SYMBIAN1
+} else {
+    message("camerakeyevent_symbian: Including Symbian camera capture key event register methods")
+}
 
 HEADERS += $$PWD/camerakeyevent_symbian.h
 SOURCES += $$PWD/camerakeyevent_symbian.cpp
