@@ -45,13 +45,18 @@ testcase =  {
 
 // The user opens a list of available sensor types and then selects one sensor. MTMW-98 - QML API: Sensor instance item
 
-    Available_Sensor_Types : function()
+    available_sensor_types : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify list of sensor types and open one sensor*
+        // Test meta data
+        testTitle = "Sensors - Available sensor type";
+        testBinary = "";
+        testGoal = "Verify that list of sensor types and open one sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
@@ -60,26 +65,36 @@ testcase =  {
 // MTMW-95 - QML API: meta-data
 // MTMW-97 - QML API: reading properties
 
-    View_Sensor_Data : function()
+    wiew_sensor_data : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify available data can be viewed*
+        // Test meta data
+        testTitle = "Sensors - View sensor data";
+        testBinary = "";
+        testGoal = "Verify that available data can be viewed";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user changes the values of the sensors such as sample rate etc.
 // MTMW-73 - C++ API: sensor control stuff
 
-    Change_Sensor_Values : function()
+    change_sensor_values : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify sensor values can be Changed*
+        // Test meta data
+        testTitle = "Sensors - Change sensor values";
+        testBinary = "";
+        testGoal = "Verify that sensor values can be changed";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
@@ -87,13 +102,18 @@ testcase =  {
 // and a QML refresh rate of 60 Hz without noticing any UI stutter.
 // MTMW-93 - QML API: buffering
 
-    Sensor_Performance : function()
+    sensor_performance : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify sensor buffering*
+        // Test meta data
+        testTitle = "Sensors - Sensor performance";
+        testBinary = "";
+        testGoal = "Verify sensor buffering";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
@@ -101,65 +121,90 @@ testcase =  {
 // proportions and correct x, y and z orientation relative to the device.
 // MTMW-72 - C++ API: Sensor alignment
 
-    Sensor_Alignment : function()
+    sensor_alignment : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify sensor values align with orientation of the device*
+        // Test meta data
+        testTitle = "Sensors - Sensor alignment";
+        testBinary = "";
+        testGoal = "Verify sensor values align with orientation of the device";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user un-registers a sensor which is currently in use, the user will then receive an alert dialog confirming this.
 // MTMW-31 - Handle unregistering a sensor that is in use
 
-    Unregister_Sensor : function()
+    unregister_sensor : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify unregistering a sensor which is in use*
+        // Test meta data
+        testTitle = "Sensors - Unregister Sensor";
+        testBinary = "";
+        testGoal = "Verify unregistering a sensor which is in use";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user changes the sensor sample rate from the default to some other arbitrary rate.
 // MTMW-33 - Down-sample sensor data in the API
 
-    Down_Sample_Sensor_Data : function()
+    down_sample_sensor_data : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify Down-sampling of sensor data*
+        // Test meta data
+        testTitle = "Sensors - Down Sample Sensor Data";
+        testBinary = "";
+        testGoal = "Verify Down-sampling of sensor data";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user opens several sensors and is able to synchronize the sampling rate from the open sensors.
 // MTMW-32 - Synchronized sensors
 
-    Synchronized_Sensors : function()
+    synchronized_sensors : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify synchronization of data from several sensors*
+        // Test meta data
+        testTitle = "Sensors - Synchronized_Sensors";
+        testBinary = "";
+        testGoal = "Verify synchronization of data from several sensors";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user receives errors for failures in the sensor operation.
 // MTMW-77 - C++ API: Return error codes
 
-    Sensor_Error_Codes : function()
+    sensor_error_codes : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify display of sensor error codes*
+        // Test meta data
+        testTitle = "Sensors - Sensor Error Codes";
+        testBinary = "";
+        testGoal = "Verify display of sensor error codes";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
     Generic_Rotation : function()
