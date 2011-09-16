@@ -101,38 +101,83 @@ testcase = {
         '));
     },
 
-    Device3_Tab: function()
+    device3_tab : function()
     {
-         prompt(twiki('*Verify Device 3 Tab Information
+        // Test meta data
+        testTitle = "systeminfo - Device3 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify charging status changed can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-         1 Start qsysinfo application
-         1 If target is not a phone Verify that *Charging Status* indicates *Wall Power* and skip the rest of this test
-         1 If target is a phone Select *Device 3* tab
-         1 Connect/disconnect the phone fron its charger
-         1 Verify that the charging status has change correctly
-         '));
 
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | If target is not a phone | Verify that *Charging Status* indicates *Wall Power* and skip the rest of this test |
+            | If target is a phone Select *Device 3* tab | |
+            | Connect/disconnect the phone from its charger | Verify that the charging status has change correctly |
+        "));
     },
 
-    Display_Tab: function()
+    display_tab : function()
     {
-          prompt(twiki('*Verify Display Tab Information
+        // Test meta data
+        testTitle = "systeminfo - Display tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify display info can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-          1 Start qsysinfo application
-          1 Select *Display* tab
-          1 Verify the *Brightness* vaue is correct
-          1 Verify the *Color Depth* vaue is correct
-          '));
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Display* tab | Verify the *Brightness* value is correct |
+            | | Verify the *Color Depth* value is correct |
+        "));
     },
 
-    Storage_Tab: function()
-    {
-           prompt(twiki('*Verify Storage Tab Information
 
-           1 Start qsysinfo application
-           1 Select *Storage* tab
-           1 Verify that all expected file system are listed in the table corrected
-           '));
+    storage_tab : function()
+    {
+        // Test meta data
+        testTitle = "systeminfo - Storage tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify storage info can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Storage* tab | Verify that all expected file system are listed in the table corrected |
+        "));
     },
 
     Network_Tab: function()
@@ -144,7 +189,7 @@ testcase = {
         1 Verify that all expected file system are listed in the table corrected
         '));
     },
-
+    
     Network2_Tab: function()
     {
     },
