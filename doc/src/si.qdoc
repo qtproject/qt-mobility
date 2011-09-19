@@ -128,7 +128,7 @@ The backend selection is expected to disappear once the API is integrated into Q
 
 The Qt SystemInfo offers access to system information through declarative
 UI by providing systeminfo elements. Detailed information can be found
-at \l{QML System Information Plugin}.
+at \l{QML SystemInfo QML Plugin}.
 
 \annotatedlist qml-systeminfo
 
