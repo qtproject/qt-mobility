@@ -80,17 +80,32 @@ testcase = {
         vCard1 : ["testdata/testimport1.vcf"]
     },
 
-    importVCardContacts: function(vCardFile) {
+    importVCardContacts: function(vCardFile)
+    {
+        // Test meta data
+        testTitle = "Versit - Import vCard contacts";
+        testBinary = "samplephonebook";
+        testSource = "$MOBILITYDIR/example/samplephonebook";
+        testGoal = "Verify that vCard contacts can be imported";
+        testPreconditions = "There is an testimport1.vcf onto a location on the target";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""
+            
+        var promptText = "| *Name* | *Phone Number* | *Email* | *Address* | *Avatar* |\n";
+        for (var contactIndex=0; contactIndex < checkImportedVCardContactData.length;contactIndex++){
+            for (var contactDataIndex=0; contactDataIndex < checkImportedVCardContactData[0].length; contactDataIndex++){
+                promptText += "|" + checkImportedVCardContactData[contactIndex][contactDataIndex];
+            }
+            promptText += "|\n";
+            }
 
+        // Test Steps
         if (!runAsManualTest()){
             startApplication("samplephonebook");
             var menuItem = importContactsMenu();
             if (menuItem == undefined)
                 skip("Versit support not enabled", SkipAll);
-
             select(menuItem, menuBar());
-
-
             enter(vCardFile, "File name:");
             // need to accept entry due to autocompletion
             keyClick(Qt.Key_Enter);
@@ -106,40 +121,42 @@ testcase = {
                 prompt("Verify that the Avatar looks like the word *BAT*");
                 select("Cancel");
             }
-
         } else {
-            var promptText = "| *Name* | *Phone Number* | *Email* | *Address* | *Avatar* |\n";
-            for (var contactIndex=0; contactIndex < checkImportedVCardContactData.length;contactIndex++){
-                for (var contactDataIndex=0; contactDataIndex < checkImportedVCardContactData[0].length; contactDataIndex++){
-                    promptText += "|" + checkImportedVCardContactData[contactIndex][contactDataIndex];
-                }
-                promptText += "|\n";
-            }
-
-            prompt(twiki('---+++ Verify Can Import vCard Contacts
-
-    1. Launch application *samplephonebook*
-    1. If =Import Contacts...= menu entry is missing skip this test
-    1. Select the =Import Contacts...= menu entry
-    1. Enter the vCard file name of : *' + vCardFile + '*
-    1. Accept the value for vCard file (close file selection dialog)
-    1. Verify that no errors are present on screen
-    1. Verify the imported contacts :\n' + promptText + '
-                '));
+            prompt(twiki("---+++ " + testTitle + "<br><br>
+                *Goal:* " + testGoal + "<br>
+                *Pre-Requisites:* " + testPreconditions + "<br>
+                *Tested Binary:* " + testBinary + "<br>
+                *Requirements:* " + testRequirements + "<br>
+            
+                | *Step* | *Verification* |
+                | Launch " + testBinary + " | Test application started successfully |
+                | Select the Import Contacts... menu entry | |
+                | Enter the vCard file name of : *" + vCardFile + "* | |
+                | Accept the value for vCard file (close file selection dialog) | Verify that no errors are present on screen |
+                |||
+                Verify the imported contacts :\n " + promptText + "                
+            "));
         }
-
-
     },
 
-
     exportVCardContacts_data : {
-        NameSet1 : ["testdata/contacts.vcf", "FN:John Smith", "FN:Bill Smith"]
+        NameSet1 : ["contacts.vcf", "FN:John Smith", "FN:Bill Smith"]
     },
 
     /* Requirement : Verify contact export*/
     /* If versit suport is present test it */
+    
     exportVCardContacts: function(vCardFile, name1, name2)
     {
+        // Test meta data
+        testTitle = "Versit - Export vCard contacts";
+        testBinary = "samplephonebook";
+        testSource = "$MOBILITYDIR/example/samplephonebook";
+        testGoal = "Verify that vCard contacts can be exported";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""
+
         if (!runAsManualTest()){
             startApplication("samplephonebook");
             var menuItem = exportVCardContactsMenu();
@@ -160,15 +177,17 @@ testcase = {
             }
             deletePath(vCardFile);
         }else{
-            prompt(twiki('---+++ Verify Exported vCard Contacts
-
-    1. Launch application *samplephonebook*
-    1. If =Export Contacts...= menu entry is missing skip this test
-    1. Select the =Export Contacts...= menu entry
-    1. Enter name of contacts vCard as *' + vCardFile + '*
-    1. Verify that *' + vCardFile + '* contains *' + name1 + '* and *' + name2 + '*
-                '));
+            prompt(twiki("---+++ " + testTitle + "<br><br>
+                *Goal:* " + testGoal + "<br>
+                *Pre-Requisites:* " + testPreconditions + "<br>
+                *Tested Binary:* " + testBinary + "<br>
+                *Requirements:* " + testRequirements + "<br>
+            
+                | *Step* | *Verification* |
+                | Launch " + testBinary + " | Test application started successfully |
+                | Select the Export Contacts... menu entry | |
+                | Enter name of contacts vCard as *" + vCardFile + "* | Verify that *" + vCardFile + "* contains *" + name1 + "* and *" + name2 + "* |
+            "));
         }
-
     }
 }
