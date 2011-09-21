@@ -229,7 +229,7 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
         m_viewfinderType = OutputTypeRenderer;
         // RendererControl viewfinder is "visible" when surface is set
         m_isViewFinderVisible = false;
-        if (EVFIsConnectedIsStartedIsVisible)
+        if (m_vfState == EVFIsConnectedIsStartedIsVisible)
             m_vfState = EVFIsConnectedIsStartedNotVisible;
 
         // Use display resolution as default viewfinder resolution
@@ -240,7 +240,7 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
             m_vfState = EVFIsConnectedNotStarted;
             break;
         case EVFNotConnectedIsStarted:
-            m_vfState = EVFIsConnectedIsStartedIsVisible; // GraphicsItem "always visible" (FrameWork decides to draw/not draw)
+            m_vfState = EVFIsConnectedIsStartedNotVisible;
             break;
         case EVFIsConnectedNotStarted:
         case EVFIsConnectedIsStartedNotVisible:
@@ -254,6 +254,9 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
 
         if (m_vfState == EVFIsConnectedIsStartedIsVisible)
             startViewfinder(true);
+
+        if (viewFinderRenderControl->surface())
+            rendererSurfaceSet();
     }
 }
 
@@ -492,9 +495,15 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
                 if (m_viewfinderType == OutputTypeRenderer && m_viewfinderSurface) {
                     QVideoSurfaceFormat format = m_viewfinderSurface->surfaceFormat();
                     m_viewfinderSurface->stop();
-                    format.setFrameSize(QSize(m_actualViewFinderSize));
-                    format.setViewport(QRect(0, 0, m_actualViewFinderSize.width(), m_actualViewFinderSize.height()));
-                    m_viewfinderSurface->start(format);
+                    format.setFrameSize(m_actualViewFinderSize);
+                    format.setViewport(QRect(QPoint(0,0), m_actualViewFinderSize));
+                    if (format.isValid() && m_viewfinderSurface->start(format)) {
+                        m_surfaceFormat = format;
+                    } else {
+                        // Viewfinder was already started, stop it
+                        stopViewfinder(true);
+                        emit error(QCamera::NotSupportedFeatureError, tr("Failed to restart surface."));
+                    }
                 }
             }
         }
