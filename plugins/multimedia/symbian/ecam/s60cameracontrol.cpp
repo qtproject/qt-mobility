@@ -482,11 +482,6 @@ void S60CameraControl::startCamera()
     if (m_inactivityTimer->isActive())
         m_inactivityTimer->stop();
 
-    if (m_viewfinderEngine)
-        m_viewfinderEngine->startViewfinder();
-    else
-        setError(KErrGeneral, tr("Failed to start viewfinder."));
-
     // Apply settings if needed
     if (m_captureMode == QCamera::CaptureStillImage) {
         if (!m_imageSession->isImageCapturePrepared())
@@ -495,6 +490,11 @@ void S60CameraControl::startCamera()
         if (m_videoCaptureState == S60VideoCaptureSession::EInitialized)
             m_videoSession->applyAllSettings();
     }
+
+    if (m_viewfinderEngine)
+        m_viewfinderEngine->startViewfinder();
+    else
+        setError(KErrGeneral, tr("Failed to start viewfinder."));
 
     m_internalState = QCamera::ActiveStatus;
     emit statusChanged(m_internalState);
