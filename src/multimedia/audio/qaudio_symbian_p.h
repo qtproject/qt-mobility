@@ -135,6 +135,10 @@ public:
     int flush();
 #endif
 
+    // Volume range 0-100
+    int volume() const;
+    void setVolume(int value);
+
 public:
     // MDevSoundObserver
     void InitializeComplete(TInt aError);
@@ -155,6 +159,7 @@ private:
     void getSupportedCodecs();
     void populateCapabilities();
     bool isResumeSupported() const;
+    void applyVolume();
 
 private:
     const QAudio::Mode              m_mode;
@@ -176,6 +181,8 @@ private:
     QList<QAudioFormat::Endian>     m_supportedByteOrders;
     QList<QAudioFormat::SampleType> m_supportedSampleTypes;
 
+    int                             m_volume;
+    static const int DefaultVolume = 100;
 };
 
 
