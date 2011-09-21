@@ -152,9 +152,6 @@ void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
     if (m_viewfinderOutput)
         releaseControl(m_viewfinderType);
 
-    // Rotate Camera if UI has rotated
-    m_cameraControl->detectNewUiOrientation();
-
     S60VideoWidgetControl* viewFinderWidgetControl =
         qobject_cast<S60VideoWidgetControl*>(viewfinderOutput);
 
@@ -219,9 +216,6 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
     if (m_viewfinderOutput)
         releaseControl(m_viewfinderType);
 
-    // Rotate Camera if UI has rotated
-    m_cameraControl->detectNewUiOrientation();
-
     S60VideoRendererControl* viewFinderRenderControl =
         qobject_cast<S60VideoRendererControl*>(viewfinderOutput);
 
@@ -268,9 +262,6 @@ void S60CameraViewfinderEngine::setVideoWindowControl(QObject *viewfinderOutput)
     // Release old control if it has not already been done
     if (m_viewfinderOutput)
         releaseControl(m_viewfinderType);
-
-    // Rotate Camera if UI has rotated
-    m_cameraControl->detectNewUiOrientation();
 
     S60VideoWindowControl* viewFinderWindowControl =
         qobject_cast<S60VideoWindowControl*>(viewfinderOutput);

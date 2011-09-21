@@ -108,7 +108,6 @@ public: // Internal
 
     void setError(const TInt error, const QString &description);
     void detectNewUiOrientation();
-    void cancelCameraRotation();
 
     // To provide QVideoDeviceControl info
     static int deviceCount();
