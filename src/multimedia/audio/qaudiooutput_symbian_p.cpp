@@ -152,7 +152,9 @@ void QAudioOutputPrivate::start(QIODevice *device)
     open();
 
     if (SymbianAudio::ClosedState != m_internalState) {
-        connect(m_source, SIGNAL(readyRead()), this, SLOT(dataReady()));
+        connect(m_source, SIGNAL(readyRead()),
+                this, SLOT(dataReady()),
+                Qt::QueuedConnection);
         m_elapsed.restart();
     }
 }
