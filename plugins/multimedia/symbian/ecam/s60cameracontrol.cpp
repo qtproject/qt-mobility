@@ -101,10 +101,13 @@ S60CameraControl::S60CameraControl(S60VideoCaptureSession *videosession,
     }
 
     QRect screenRect = QApplication::desktop()->screenGeometry();
-    if (screenRect.width() > screenRect.height())
+    if (screenRect.width() > screenRect.height()) {
         m_requestedCameraOrientation = CameraOrientationLandscape;
-    else
+        m_cameraOrientation = CameraOrientationLandscape;
+    } else {
         m_requestedCameraOrientation = CameraOrientationPortrait;
+        m_cameraOrientation = CameraOrientationPortrait;
+    }
 
     m_viewfinderEngine = new S60CameraViewfinderEngine(this, m_cameraEngine, this);
     if (m_viewfinderEngine == 0) {
@@ -610,22 +613,6 @@ void S60CameraControl::readyToRotateChanged(bool isReady)
 
 void S60CameraControl::MceoCameraReady()
 {
-    // Set camera orientation
-    QRect screenRect = QApplication::desktop()->screenGeometry();
-    if (screenRect.width() > screenRect.height())
-        m_cameraOrientation = CameraOrientationLandscape;
-    else
-        m_cameraOrientation = CameraOrientationPortrait;
-
-    if (m_cameraOrientation == m_requestedCameraOrientation) {
-        // Cancel ongoing rotation request if one is active
-        cancelCameraRotation();
-    } else {
-        // Request camera rotation
-        resetCameraOrientation();
-        return;
-    }
-
     if (m_internalState != QCamera::LoadedStatus) {
 
         switch (m_requestedState) {
@@ -842,6 +829,12 @@ void S60CameraControl::resetCamera(bool errorHandling)
         return;
     }
 
+    QRect screenRect = QApplication::desktop()->screenGeometry();
+    if (screenRect.width() > screenRect.height())
+        m_cameraOrientation = CameraOrientationLandscape;
+    else
+        m_cameraOrientation = CameraOrientationPortrait;
+
     // Notify list of available camera devices has been updated
     emit devicesChanged();
 
@@ -884,12 +877,15 @@ void S60CameraControl::detectNewUiOrientation()
  */
 void S60CameraControl::resetCameraOrientation()
 {
-    // If camera has not been created, it will be created automatically to correct orientation
-    if (!m_cameraEngine || m_cameraOrientation == m_requestedCameraOrientation)
+    // If camera has not been created, it will be created automatically to
+    // correct orientation. Also if the right orientation is already applied
+    // the rotation is not needed.
+    if (!m_cameraEngine ||
+        m_cameraOrientation == m_requestedCameraOrientation)
         return;
 
     // Check Image/VideoCapture allow rotation
-    if ((!m_cameraEngine->IsCameraReady() && m_internalState != QCamera::UnloadedStatus) ||
+    if ((!m_cameraEngine->IsCameraReady() && m_internalState == QCamera::ActiveStatus) ||
         m_videoCaptureState == S60VideoCaptureSession::ERecording ||
         m_videoCaptureState == S60VideoCaptureSession::EPaused) {
 
@@ -897,8 +893,7 @@ void S60CameraControl::resetCameraOrientation()
         // the completion of it. That can be achieved by listening to the
         // readyForCaptureChanged signal.
         if (m_videoCaptureState != S60VideoCaptureSession::ERecording &&
-            m_videoCaptureState != S60VideoCaptureSession::EPaused &&
-            m_internalState == QCamera::ActiveStatus)
+            m_videoCaptureState != S60VideoCaptureSession::EPaused)
             connect(m_imageSession, SIGNAL(readyForCaptureChanged(bool)),
                 this, SLOT(readyToRotateChanged(bool)), Qt::QueuedConnection);
 
@@ -929,6 +924,13 @@ void S60CameraControl::resetCameraOrientation()
         setError(err, tr("Camera device creation failed."));
         return;
     }
+
+    QRect screenRect = QApplication::desktop()->screenGeometry();
+    if (screenRect.width() > screenRect.height())
+        m_cameraOrientation = CameraOrientationLandscape;
+    else
+        m_cameraOrientation = CameraOrientationPortrait;
+
     // Reset CameraEngine to ViewfinderEngine
     m_viewfinderEngine->setNewCameraEngine(m_cameraEngine);
 
@@ -948,13 +950,6 @@ void S60CameraControl::resetCameraOrientation()
     }
 
     setState(originalState);
-}
-
-void S60CameraControl::cancelCameraRotation()
-{
-    // Disconnect signal if connected
-    disconnect(m_imageSession, SIGNAL(readyForCaptureChanged(bool)),
-        this, SLOT(readyToRotateChanged(bool)));
 }
 
 void S60CameraControl::setCameraHandles()

@@ -196,27 +196,31 @@ void S60ImageCaptureSettings::applyCameraSettings()
     }
 
     // FocusMode
-    if (focusMode() != m_requestedFocusMode)
+    if (focusMode() != m_requestedFocusMode &&
+        isFocusModeSupported(m_requestedFocusMode))
         setFocusMode(m_requestedFocusMode);
 
     // FlashMode
-    if (flashMode() != m_requestedFlashMode)
+    if (flashMode() != m_requestedFlashMode &&
+        supportedFlashModes() & m_requestedFlashMode)
         setFlashMode(m_requestedFlashMode);
 
     // ExposureMode
-    if (exposureMode() != m_requestedExposureMode)
+    if (exposureMode() != m_requestedExposureMode &&
+        isExposureModeSupported(m_requestedExposureMode))
         setExposureMode(m_requestedExposureMode);
 
     // WhiteBalanceMode
-    if (whiteBalanceMode() != m_requestedWhiteBalanceMode)
+    if (whiteBalanceMode() != m_requestedWhiteBalanceMode &&
+        isWhiteBalanceModeSupported(m_requestedWhiteBalanceMode))
         setWhiteBalanceMode(m_requestedWhiteBalanceMode);
 
     // Contrast
-    if (contrast() != m_requestedContrast)
+    if (contrast() != m_requestedContrast && areContrastAndBrightnessSupported())
         setContrast(m_requestedContrast);
 
     // Brightness
-    if (brightness() != m_requestedBrightness)
+    if (brightness() != m_requestedBrightness && areContrastAndBrightnessSupported())
         setBrightness(m_requestedBrightness);
 
     // Saturation
