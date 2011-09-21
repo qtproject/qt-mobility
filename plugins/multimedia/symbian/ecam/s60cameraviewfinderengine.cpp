@@ -555,12 +555,8 @@ void S60CameraViewfinderEngine::resetViewfinderSize(const QSize size)
 {
     m_viewfinderSize = size;
 
-    if(m_vfState != EVFIsConnectedIsStartedIsVisible) {
-        // Set native size to Window/Renderer Control
-        if (m_viewfinderDisplay)
-            m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
+    if (m_vfState != EVFIsConnectedIsStartedIsVisible)
         return;
-    }
 
     stopViewfinder(true);
     startViewfinder(true);
@@ -728,8 +724,11 @@ void S60CameraViewfinderEngine::handleContentAspectRatioChange(const QSize& newS
 {
     qreal newAspectRatio = qreal(newSize.width()) / qreal(newSize.height());
     // Check if aspect ratio changed
-    if (qFuzzyCompare(newAspectRatio, m_viewfinderAspectRatio))
+    if (qFuzzyCompare(newAspectRatio, m_viewfinderAspectRatio)) {
+        if (m_viewfinderDisplay)
+            m_viewfinderDisplay->setNativeSize(m_actualViewFinderSize);
         return;
+    }
 
     // Resize viewfinder by reducing either width or height to comply with the new aspect ratio
     QSize newNativeResolution;
