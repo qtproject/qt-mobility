@@ -99,7 +99,12 @@ QTM_BEGIN_NAMESPACE
     MapObjects or the Map item itself.
 
     The Map element is part of the \bold{QtMobility.location 1.2} module.
+
+    Note: compared to preliminary 1.1 API version, the 1.2 API does not have
+    the objects -property.
+
 */
+
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
       plugin_(0),
@@ -564,24 +569,6 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
 }
 
 /*!
-    \qmlproperty list<QGeoMapObject> Map::objects
-    \default
-
-    This property holds the list of objects associated with this map.
-
-    The various objects that can be added include:
-    \list
-    \o MapRectangle
-    \o MapCircle
-    \o MapText
-    \o MapImage
-    \o MapPolygon
-    \o MapPolyline
-    \o MapGroup
-    \endlist
-*/
-
-/*!
     \qmlmethod Map::toCoordinate(QPointF screenPosition)
 
     Returns the coordinate which corresponds to the screen position
@@ -793,6 +780,7 @@ void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
 //    qWarning() << "hover enter";
 }
 
@@ -862,6 +850,7 @@ void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
 //    qWarning() << "hover leave";
 }
 
