@@ -135,35 +135,35 @@ testcase = {
         "));
     },
     
-/*  comment as these function haven't implemented yet
-    Bluetooth_Sockets: function()
+    bluetooth_sockets: function()
     {
-      skip("Not able to test on the device", SkipAll);
-        prompt(twiki('*Bluetooth Sockets*
+        // Test meta data
+        testTitle = "Connectivity - Bluetooth sockets";
+        testBinary = "";
+        testGoal = "";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 unit tests however the unit tests need to be run manually so as to set up the server first, can't do this on a device
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-    1 
-        '));
+        // Test steps
+        //unit tests however the unit tests need to be run manually so as to set up the server first, can't do this on a device
+        skip('Not able to test on the device', SkipAll);
     },
-
-    Bluetooth_Security: function()
+    
+    bluetooth_security: function()
     {
-      skip("No test app", SkipAll);
-        prompt(twiki('*Bluetooth Security*
+        // Test meta data
+        testTitle = "Connectivity - Bluetooth security";
+        testBinary = "";
+        testGoal = "";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 No test app
-        '));
+        // Test steps
+        skip('No test app', SkipAll);
     },
-*/
-
+    
     bluetooth_device_control: function()
     {
         // Test meta data
