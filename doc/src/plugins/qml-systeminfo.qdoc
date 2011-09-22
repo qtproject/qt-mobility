@@ -141,6 +141,10 @@
 
     \section1 QML Elements
     \annotatedlist qml-systeminfo
+
+    \section2 Compatibility Notes
+    \l DeviceInfo
+    \l NetworkInfo
 */
 
 
