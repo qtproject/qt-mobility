@@ -54,7 +54,7 @@ testcase = {
         }
     },
 
-    /*  comment as it reproduces with simple_vibrate_test in sys_feedback.qtt file
+    /*  comment as it reduplicate with simple_vibrate_test in sys_feedback.qtt file
     user_interface_response : function()
     {
         // Test meta data
