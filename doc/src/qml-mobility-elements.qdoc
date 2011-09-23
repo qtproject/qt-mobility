@@ -1,0 +1,80 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms
+** and conditions contained in a signed written agreement between you
+** and Nokia.
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \page qml-mobility-elements.html
+    \group plugins
+
+    \title QtMobility QML Elements
+
+    \ingroup mobility
+
+    \brief A list QtMobility QML elements.
+
+
+
+    \section1 Connectivity Plugin
+    \annotatedlist connectivity-qml
+
+    \section1 Contacts Plugin
+    \annotatedlist  qml-contacts
+
+    \section1 Feedback Plugin
+    \annotatedlist qml-feedback-api
+
+    \section1 Gallery Plugin
+    \annotatedlist qml-gallery-filters
+    \annotatedlist  qml-gallery
+
+    \section1 Location Plugin
+    \annotatedlist qml-location
+    \annotatedlist qml-location-landmarks
+
+    \section1 Messaging Plugin
+    \annotatedlist  qml-messaging
+
+    \section1 Multimedia Plugin
+    \annotatedlist qml-multimedia
+
+    \section1 Organizer Plugin
+    \annotatedlist qml-organizer
+
+    \section1 Publish and Subscribe Plugin
+    \annotatedlist qml-publishsubscribe
+
+    \section1 Sensors Plugin
+    \annotatedlist qml-sensors_type
+    \annotatedlist qml-sensors_reading
+
+    \section1 Service Framework Plugin
+    \annotatedlist qml-serviceframework
+
+    \section1 System Information Plugin
+    \annotatedlist qml-systeminfo
+
+*/
+

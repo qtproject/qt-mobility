@@ -107,10 +107,6 @@ protected: // MCameraViewfinderObserver
 
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
 
-private: // Internal operation
-
-    void checkAndRotateCamera();
-
 signals:
 
     void error(int error, const QString &errorString);
@@ -174,7 +170,6 @@ private: // Data
     NativeViewFinderType    m_viewfinderNativeType;
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
     bool                    m_isViewFinderVisible;
-    bool                    m_uiLandscape; // For detecting UI rotation
     int                     m_vfErrorsSignalled;
 };
 

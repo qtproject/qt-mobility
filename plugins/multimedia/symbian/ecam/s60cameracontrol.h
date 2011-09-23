@@ -53,10 +53,11 @@
 
 QT_USE_NAMESPACE
 
+using namespace S60CameraEngineError;
+
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSession)
-QT_FORWARD_DECLARE_CLASS(S60CameraSettings)
 QT_FORWARD_DECLARE_CLASS(CCameraEngine)
 QT_FORWARD_DECLARE_CLASS(S60CameraViewfinderEngine)
 QT_FORWARD_DECLARE_CLASS(QTimer)
@@ -92,7 +93,8 @@ public: // QCameraControl
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const;
 
     // Property Setting
-    bool canChangeProperty(QCameraControl::PropertyChangeType changeType, QCamera::Status status) const;
+    bool canChangeProperty(QCameraControl::PropertyChangeType changeType,
+                           QCamera::Status status) const;
 
 /*
 Q_SIGNALS:
@@ -105,7 +107,7 @@ Q_SIGNALS:
 public: // Internal
 
     void setError(const TInt error, const QString &description);
-    void resetCameraOrientation();
+    void detectNewUiOrientation();
 
     // To provide QVideoDeviceControl info
     static int deviceCount();
@@ -123,14 +125,13 @@ private slots: // Internal Slots
 
     void videoStateChanged(const S60VideoCaptureSession::TVideoCaptureState state);
     // Needed to detect image capture completion when trying to rotate the camera
-    void imageCaptured(const int imageId, const QImage& preview);
+    void readyToRotateChanged(bool isReady);
     /*
      * This method moves the camera to the StandBy status:
      *    - If camera access was lost
      *    - If camera has been inactive in LoadedStatus for a long time
      */
     void toStandByStatus();
-    void advancedSettingsCreated();
 
 protected: // MCameraEngineObserver
 
@@ -146,6 +147,7 @@ private: // Internal
     void startCamera();
     void stopCamera();
 
+    void resetCameraOrientation();
     void resetCamera(bool errorHandling = false);
     void setCameraHandles();
 
@@ -154,13 +156,24 @@ signals: // Internal Signals
     void cameraReadyChanged(bool);
     void devicesChanged();
 
+private: // Enums
+
+    /*
+     * Defines the orientation of the camera; Converts easily to boolean
+     * (answering question "Is camera on landscape?")
+     */
+    enum CameraOrientation {
+        CameraOrientationPortrait = 0,
+        CameraOrientationLandscape = 1,
+        CameraOrientationNotSet
+    };
+
 private: // Data
 
     CCameraEngine               *m_cameraEngine;
     S60CameraViewfinderEngine   *m_viewfinderEngine;
     S60ImageCaptureSession      *m_imageSession;
     S60VideoCaptureSession      *m_videoSession;
-    S60CameraSettings           *m_advancedSettings;
     QObject                     *m_videoOutput;
     QTimer                      *m_inactivityTimer;
     QCamera::CaptureMode        m_captureMode;
@@ -171,7 +184,8 @@ private: // Data
     int                         m_deviceIndex;
     mutable int                 m_error;
     bool                        m_changeCaptureModeWhenReady;
-    bool                        m_rotateCameraWhenReady;
+    CameraOrientation           m_cameraOrientation;
+    CameraOrientation           m_requestedCameraOrientation;
     S60VideoCaptureSession::TVideoCaptureState m_videoCaptureState;
 };
 

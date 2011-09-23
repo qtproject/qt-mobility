@@ -107,6 +107,8 @@ public:
     static SymbianSettingsLayer *instance();
 
 private:
+    XQSettingsManager * getSettingsManagerForThread();
+
     struct SymbianSettingsHandle {
         SymbianSettingsHandle(const QString &p)
         :   path(p), refCount(1)
@@ -136,7 +138,6 @@ private slots:
 
 private:    //data
     PathMapper m_pathMapper;
-    XQSettingsManager m_settingsManager;
     QHash<QByteArray, SymbianSettingsHandle *> m_monitoringHandles;
     QSet<QString> m_monitoringPaths;
     CFeatureDiscovery *m_featureManager;

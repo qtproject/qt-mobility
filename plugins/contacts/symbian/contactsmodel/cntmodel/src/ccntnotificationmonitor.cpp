@@ -30,6 +30,7 @@
 
 extern void DebugLogNotification(const TDesC& aMethod, const TContactDbObserverEvent &aEvent);
 
+const TInt KWaitTime = 4000000;
 
 CCntNotificationMonitor::CCntNotificationMonitor(RCntModel& aSession) 
 	: CActive(EPriorityStandard), iSession(aSession)
@@ -55,11 +56,17 @@ completed.
 */
 void CCntDbNotifyMonitor::RunL()
 	{
-	if ( iStatus == KErrDied || iStatus == KErrServerTerminated )
+	if ( iStatus == KErrDied || iStatus == KErrServerTerminated || !iIsConnected )
 		{
 		// We have lost our connection to the Server.  Attempt to restart it,
 		// reconnect the session and open the Contacts database.
-		iSession.HandlePrematureServerTerminationL();
+		TRAPD( err, iSession.HandlePrematureServerTerminationL() );
+		if( err )
+		    {
+		    iIsConnected = EFalse;
+		    User::Leave( err );
+		    }
+		iIsConnected = ETrue;
 		// Request another event.
 		Start();
 		return;
@@ -123,7 +130,7 @@ void CCntDbNotifyMonitor::RunL()
 First phase constructor.
 */
 CCntDbNotifyMonitor::CCntDbNotifyMonitor(RCntModel& aSession) 
-	: CCntNotificationMonitor(aSession), iCurrentProcessedObserver(KErrNotFound)
+	: CCntNotificationMonitor(aSession), iCurrentProcessedObserver(KErrNotFound), iIsConnected(ETrue)
 	{}
 
 /**
@@ -311,7 +318,24 @@ TInt CCntDbNotifyMonitor::RunError(TInt aError)
 
 	if (aError != KErrDied && aError != KErrServerTerminated)
 	    {
-	    Start();
+	    if ( iIsConnected )
+	        {
+	        Start();
+	        }
+	    else
+	        {
+	        // This may happen during server update
+	        // when server binary is being replaced.
+	        // Wait and try to restart connection.
+	        iStatus = KRequestPending;
+	        if(!IsActive())
+	            {
+	            SetActive();
+	            }
+	        User::After( KWaitTime );
+	        TRequestStatus* status = &iStatus;
+	        User::RequestComplete(status, KErrServerTerminated);
+	        }
 	    }
 		
 	return KErrNone;

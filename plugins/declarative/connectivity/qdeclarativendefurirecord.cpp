@@ -49,6 +49,7 @@
 
     \ingroup connectivity-qml
     \inmodule QtConnectivity
+    \since Mobility 1.2
 
     \inherits NdefRecord
 
@@ -59,6 +60,7 @@
 
 /*!
     \qmlproperty string NdefUriRecord::uri
+    \since Mobility 1.2
 
     This property hold the URI stored in this URI record.
 */

@@ -50,6 +50,7 @@
   function call.
 
    \ingroup qml-contacts
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -63,6 +64,7 @@ QDeclarativeContactFetchHint::QDeclarativeContactFetchHint(QObject* parent)
 
 /*!
   \qmlproperty list<string> FetchHint::detailDefinitionsHint
+  \since Mobility 1.1
 
   This property holds a list of definition names that identify detail definitions of which details
   the manager should (at a minimum) retrieve when fetching contacts.
@@ -81,6 +83,7 @@ void QDeclarativeContactFetchHint::setDetailDefinitionsHint(const QStringList& d
 
 /*!
   \qmlproperty list<string> FetchHint::relationshipTypesHint
+  \since Mobility 1.1
 
   This property holds a list of relationship types that the manager should (at a minimum) retrieve
   when fetching contacts.
@@ -100,6 +103,7 @@ void QDeclarativeContactFetchHint::setRelationshipTypesHint(const QStringList& r
 
 /*!
   \qmlproperty int FetchHint::imageWidth
+  \since Mobility 1.1
 
   This property holds the preferred pixel width for any images returned
   by the manager for a given request.  This hint may be ignored by the manager.
@@ -120,6 +124,7 @@ void QDeclarativeContactFetchHint::setPreferredImageWidth(int w)
 
 /*!
   \qmlproperty int FetchHint::imageHeight
+  \since Mobility 1.1
 
   This property holds the preferred pixel height for any images returned
   by the manager for a given request.  This hint may be ignored by the manager.
@@ -140,6 +145,7 @@ void QDeclarativeContactFetchHint::setPreferredImageHeight(int h)
 
 /*!
   \qmlproperty FetchHint::OptimizationHints  FetchHint::optimizationHints
+  \since Mobility 1.1
 
   This property holds the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return

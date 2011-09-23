@@ -88,3 +88,4 @@ for(header, publiccntvcardheaders):BLD_INF_RULES.prj_exports += "./cntvcard/$$he
 for(header, publicconfmls ):BLD_INF_RULES.prj_exports += "./conf/$$header APP_LAYER_EXPORTS_CONFML($$header)"
 for(header, publiccrmls):BLD_INF_RULES.prj_exports += "./conf/$$header APP_LAYER_EXPORTS_CRML($$header)"
 
+include(./contactsmodel_tests.pri)								                            

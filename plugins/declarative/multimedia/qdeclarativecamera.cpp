@@ -214,7 +214,7 @@ void QDeclarativeCamera::_q_captureFailed(int id, QCameraImageCapture::Error err
 
 /*!
     \qmlclass Camera QDeclarativeCamera
-    \since 4.7
+    \since Mobility 1.1
     \brief The Camera element allows you to add camera viewfinder to a scene.
     \ingroup qml-multimedia
     \inherits Item
@@ -248,6 +248,7 @@ void QDeclarativeCamera::_q_captureFailed(int id, QCameraImageCapture::Error err
 /*!
     \class QDeclarativeCamera
     \brief The QDeclarativeCamera class provides a camera item that you can add to a QDeclarativeView.
+    \since Mobility 1.1
 */
 
 /*!
@@ -325,6 +326,7 @@ QDeclarativeCamera::~QDeclarativeCamera()
 
 /*!
     Returns any camera error.
+    \since Mobility 1.1
     \sa QDeclarativeCamera::Error
 */
 QDeclarativeCamera::Error QDeclarativeCamera::error() const
@@ -337,11 +339,13 @@ QDeclarativeCamera::Error QDeclarativeCamera::error() const
 
 /*!
     \qmlproperty string Camera::errorString
+    \since Mobility 1.1
 
     A description of the current error, if any.
 */
 /*!
     \property QDeclarativeCamera::errorString
+    \since Mobility 1.1
 
     A description of the current error, if any.
 */
@@ -355,6 +359,7 @@ QString QDeclarativeCamera::errorString() const
 
 /*!
     \qmlproperty enumeration Camera::cameraState
+    \since Mobility 1.1
 
     The current state of the camera object.
 
@@ -384,6 +389,7 @@ QString QDeclarativeCamera::errorString() const
 */
 /*!
     \property QDeclarativeCamera::cameraState
+    \since Mobility 1.1
 
     The current state of the camera object.
 
@@ -470,6 +476,7 @@ void QDeclarativeCamera::setCameraState(QDeclarativeCamera::State state)
 /*!
     \qmlmethod Camera::start()
     \fn QDeclarativeCamera::start()
+    \since Mobility 1.1
 
     Starts the camera.
 */
@@ -482,6 +489,7 @@ void QDeclarativeCamera::start()
 /*!
     \qmlmethod Camera::stop()
     \fn QDeclarativeCamera::stop()
+    \since Mobility 1.1
 
     Stops the camera.
 */
@@ -494,6 +502,7 @@ void QDeclarativeCamera::stop()
 
 /*!
     \qmlproperty enumeration Camera::lockStatus
+    \since Mobility 1.1
 
     The overall status for all the requested camera locks.
 
@@ -520,6 +529,7 @@ void QDeclarativeCamera::stop()
 */
 /*!
     \property QDeclarativeCamera::lockStatus
+    \since Mobility 1.1
 
     The overall status for all the requested camera locks.
 
@@ -575,6 +585,7 @@ QDeclarativeCamera::LockStatus QDeclarativeCamera::lockStatus() const
 /*!
     \qmlmethod Camera::searchAndLock()
     \fn QDeclarativeCamera::searchAndLock()
+    \since Mobility 1.1
 
     Start focusing, exposure and white balance calculation.
     If the camera has keyboard focus, searchAndLock() is called
@@ -589,6 +600,7 @@ void QDeclarativeCamera::searchAndLock()
 /*!
     \qmlmethod Camera::unlock()
     \fn QDeclarativeCamera::unlock()
+    \since Mobility 1.1
 
     Unlock focus.
 
@@ -604,6 +616,7 @@ void QDeclarativeCamera::unlock()
 /*!
     \qmlmethod Camera::captureImage()
     \fn QDeclarativeCamera::captureImage()
+    \since Mobility 1.1
 
     Start image capture.  The \l {imageCaptured()}{onImageCaptured()}
     and \l {imageSaved()}{onImageSaved()} signals will be emitted when
@@ -618,7 +631,8 @@ void QDeclarativeCamera::captureImage()
 // XXX this doesn't seem to be used
 /*!
     \fn QDeclarativeCamera::capturedImagePreview() const
-*/
+    \since Mobility 1.1
+    */
 QImage QDeclarativeCamera::capturedImagePreview() const
 {
     return m_capturedImagePreview;
@@ -626,11 +640,13 @@ QImage QDeclarativeCamera::capturedImagePreview() const
 
 /*!
     \qmlproperty string Camera::capturedImagePath
+    \since Mobility 1.1
 
     The path to the captured image.
 */
 /*!
     \property QDeclarativeCamera::capturedImagePath
+    \since Mobility 1.1
 
     The path to the captured image.
 */
@@ -642,6 +658,7 @@ QString QDeclarativeCamera::capturedImagePath() const
 /*!
     Paint method.
     Takes a \a painter object, a graphics \a style option and a \a widget
+    \since Mobility 1.1
 */
 void QDeclarativeCamera::paint(QPainter *painter, const QStyleOptionGraphicsItem *style, QWidget *widget)
 {
@@ -649,6 +666,7 @@ void QDeclarativeCamera::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
 /*!
     Change viewfinder size to \a newGeometry and returning the \a oldGeometry
+    \since Mobility 1.1
 */
 void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
@@ -661,6 +679,7 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
 /*!
     \fn void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
     Handler for keypress events. The \a event is compared to a small set of events.
+    \since Mobility 1.1
 */
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
@@ -686,6 +705,7 @@ void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 
 /*!
     Handle the release of a key in \a event and take action if needed.
+    \since Mobility 1.1
 */
 void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 {
@@ -710,6 +730,7 @@ void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 
 /*!
     \qmlproperty enumeration Camera::flashMode
+    \since Mobility 1.1
 
     \table
     \header \o Value \o Description
@@ -730,6 +751,7 @@ void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 */
 /*!
     \property QDeclarativeCamera::flashMode
+    \since Mobility 1.1
 
     \table
     \header \o Value \o Description
@@ -782,12 +804,14 @@ void QDeclarativeCamera::setFlashMode(int mode)
 
 /*!
     \qmlproperty real Camera::exposureCompensation
+    \since Mobility 1.1
 
     Adjustment for the automatically calculated exposure.  The value is
     in EV units.
  */
 /*!
     \property QDeclarativeCamera::exposureCompensation
+    \since Mobility 1.1
 
     Adjustment for the automatically calculated exposure.  The value is
     in EV units.
@@ -808,11 +832,13 @@ void QDeclarativeCamera::setExposureCompensation(qreal ev)
 
 /*!
     \qmlproperty real Camera::isoSensitivity
+    \since Mobility 1.1
 
     The sensor's ISO sensitivity.
  */
 /*!
     \property QDeclarativeCamera::iso
+    \since Mobility 1.1
 
     The sensor's ISO sensitivity.
  */
@@ -834,11 +860,13 @@ void QDeclarativeCamera::setManualIsoSensitivity(int iso)
 
 /*!
     \qmlproperty real Camera::shutterSpeed
+    \since Mobility 1.1
 
     The camera's shutter speed, in seconds.
 */
 /*!
     \property QDeclarativeCamera::shutterSpeed
+    \since Mobility 1.1
 
     The camera's shutter speed, in seconds.
 */
@@ -852,11 +880,13 @@ qreal QDeclarativeCamera::shutterSpeed() const
 
 /*!
     \qmlproperty real Camera::aperture
+    \since Mobility 1.1
 
     The lens aperture as an F number (the ratio of the focal length to effective aperture diameter).
 */
 /*!
     \property QDeclarativeCamera::aperture
+    \since Mobility 1.1
 
     The lens aperture as an F number (the ratio of the focal length to effective aperture diameter).
 */
@@ -870,6 +900,7 @@ qreal QDeclarativeCamera::aperture() const
 
 /*!
     \qmlproperty enumeration Camera::exposureMode
+    \since Mobility 1.1
 
     \table
     \header \o Value \o Description
@@ -906,6 +937,7 @@ qreal QDeclarativeCamera::aperture() const
 */
 /*!
     \property QDeclarativeCamera::exposureMode
+    \since Mobility 1.1
 
     Camera exposure modes.
 */
@@ -930,12 +962,14 @@ void QDeclarativeCamera::setExposureMode(QDeclarativeCamera::ExposureMode mode)
 
 /*!
     \qmlproperty size Camera::captureResolution
+    \since Mobility 1.1
 
     The resolution to capture the image at.  If empty, the system will pick
     a good size.
 */
 /*!
     \property QDeclarativeCamera::captureResolution
+    \since Mobility 1.1
 
     The resolution to capture the image at.  If empty, the system will pick
     a good size.
@@ -964,11 +998,13 @@ void QDeclarativeCamera::setCaptureResolution(const QSize &resolution)
 
 /*!
     \qmlproperty real Camera::maximumOpticalZoom
+    \since Mobility 1.1
 
     The maximum optical zoom factor, or 1.0 if optical zoom is not supported.
 */
 /*!
     \property QDeclarativeCamera::maximumOpticalZoom
+    \since Mobility 1.1
 
     The maximum optical zoom factor, or 1.0 if optical zoom is not supported.
 */
@@ -982,11 +1018,13 @@ qreal QDeclarativeCamera::maximumOpticalZoom() const
 
 /*!
     \qmlproperty real Camera::maximumDigitalZoom
+    \since Mobility 1.1
 
     The maximum digital zoom factor, or 1.0 if digital zoom is not supported.
 */
 /*!
     \property  QDeclarativeCamera::maximumDigitalZoom
+    \since Mobility 1.1
 
     The maximum digital zoom factor, or 1.0 if digital zoom is not supported.
 */
@@ -1000,11 +1038,13 @@ qreal QDeclarativeCamera::maximumDigitalZoom() const
 
 /*!
     \qmlproperty real Camera::opticalZoom
+    \since Mobility 1.1
 
     The current optical zoom factor.
 */
 /*!
     \property QDeclarativeCamera::opticalZoom
+    \since Mobility 1.1
 
     The current optical zoom factor.
 */
@@ -1024,11 +1064,13 @@ void QDeclarativeCamera::setOpticalZoom(qreal value)
 
 /*!
     \qmlproperty real Camera::digitalZoom
+    \since Mobility 1.1
 
     The current digital zoom factor.
 */
 /*!
     \property   QDeclarativeCamera::digitalZoom
+    \since Mobility 1.1
 
     The current digital zoom factor.
 */
@@ -1062,6 +1104,7 @@ void QDeclarativeCamera::setDigitalZoom(qreal value)
 */
 /*!
     \qmlproperty enumeration Camera::whiteBalanceMode
+    \since Mobility 1.1
 
     \table
     \header \o Value \o Description
@@ -1082,6 +1125,7 @@ void QDeclarativeCamera::setDigitalZoom(qreal value)
 */
 /*!
     \property QDeclarativeCamera::whiteBalanceMode
+    \since Mobility 1.1
 
     \sa WhiteBalanceMode
 */
@@ -1103,6 +1147,7 @@ void QDeclarativeCamera::setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMod
 
 /*!
     \qmlproperty int Camera::manualWhiteBalance
+    \since Mobility 1.1
 
     The color temperature used when in manual white balance mode (WhiteBalanceManual).
 
@@ -1110,6 +1155,7 @@ void QDeclarativeCamera::setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMod
 */
 /*!
     \property QDeclarativeCamera::manualWhiteBalance
+    \since Mobility 1.1
 
     The color temperature used when in manual white balance mode (WhiteBalanceManual).
 
@@ -1133,6 +1179,7 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
 /*!
     \fn void QDeclarativeCamera::error(QDeclarativeCamera::Error , const QString &)
+    \since Mobility 1.1
     This handler is called when an error occurs.  The enumeration value \a error is one of the
     values defined below, and a descriptive string value is available in \a errorString.
 
@@ -1149,6 +1196,7 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 /*!
     \qmlsignal Camera::onError(error, errorString)
+    \since Mobility 1.1
 
 
     This handler is called when an error occurs.  The enumeration value \a error is one of the
@@ -1165,6 +1213,7 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 /*!
     \qmlsignal Camera::onError(error, errorString)
+    \since Mobility 1.1
 
 
     This handler is called when an error occurs.  The enumeration value \a error is one of the
@@ -1182,17 +1231,20 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
 /*!
     \qmlsignal Camera::onCaptureFailed(message)
+    \since Mobility 1.1
 
     This handler is called when an error occurs during capture.  A descriptive message is available in \a message.
 */
 /*!
     \fn QDeclarativeCamera::captureFailed(const QString &message)
+    \since Mobility 1.1
 
     This handler is called when an error occurs during capture.  A descriptive message is available in \a message.
 */
 
 /*!
     \qmlsignal Camera::onImageCaptured(preview)
+    \since Mobility 1.1
 
     This handler is called when an image has been captured but not yet saved to the filesystem.  The \a preview
     parameter can be used as the URL supplied to an Image element.
@@ -1201,6 +1253,7 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 /*!
     \fn QDeclarativeCamera::imageCaptured(const QString &preview)
+    \since Mobility 1.1
 
     This handler is called when an image has been captured but not yet saved to the filesystem.  The \a preview
     parameter can be used as the URL supplied to an Image element.
@@ -1210,6 +1263,7 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
 /*!
     \qmlsignal Camera::onImageSaved(path)
+    \since Mobility 1.1
 
     This handler is called after the image has been written to the filesystem.  The \a path is a local file path, not a URL.
 
@@ -1217,6 +1271,7 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 */
 /*!
     \fn QDeclarativeCamera::imageSaved(const QString &path)
+    \since Mobility 1.1
 
     This handler is called after the image has been written to the filesystem.  The \a path is a local file path, not a URL.
 
@@ -1226,25 +1281,30 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
 /*!
     \fn void QDeclarativeCamera::lockStatusChanged()
+    \since Mobility 1.1
 */
 /*!
     \qmlsignal Camera::lockStatusChanged()
+    \since Mobility 1.1
 */
 
 /*!
     \fn void QDeclarativeCamera::stateChanged(QDeclarativeCamera::State)
+    \since Mobility 1.1
 
     \qmlsignal Camera::stateChanged(Camera::State)
 */
 
 /*!
     \fn void QDeclarativeCamera::imageCaptured(const QString &)
+    \since Mobility 1.1
 
     \qmlsignal Camera::imageCaptured(string)
 */
 
 /*!
     \fn void QDeclarativeCamera::imageSaved(const QString &)
+    \since Mobility 1.1
 
     \qmlsignal Camera::imageSaved(string)
 */
@@ -1252,67 +1312,88 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
 /*!
     \fn void QDeclarativeCamera::errorChanged()
+    \since Mobility 1.1
 
 */
 /*!
     \qmlsignal Camera::errorChanged()
+    \since Mobility 1.1
 */
 
 /*!
     \fn void QDeclarativeCamera::isoSensitivityChanged(int isoValue)
+    \since Mobility 1.1
 
     The iso value has changed to \a isoValue.
 */
 /*!
     \qmlsignal Camera::isoSensitivityChanged(int)
+    \since Mobility 1.1
 */
 
 /*!
     \fn void QDeclarativeCamera::apertureChanged(qreal aperture)
     Signals the change to a new \a aperture value.
+    \since Mobility 1.1
+
 */
 /*!
     \qmlsignal Camera::apertureChanged(real)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::shutterSpeedChanged(qreal speed)
+    \since Mobility 1.1
 
     The shutter speed has been changed to \a speed.
 
 */
 /*!
     \qmlsignal Camera::shutterSpeedChanged(real)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::exposureCompensationChanged(qreal expComp)
+    \since Mobility 1.1
 
     Compensation has changed to the new value \a expComp.
 */
 /*!
     \qmlsignal Camera::exposureCompensationChanged(real)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::opticalZoomChanged(qreal zoom)
+    \since Mobility 1.1
 
     Optical zoom changed to \a zoom.
 */
 /*!
     \qmlsignal Camera::opticalZoomChanged(real)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::digitalZoomChanged(qreal)
+    \since Mobility 1.1
 
 */
 /*!
     \qmlsignal Camera::digitalZoomChanged(real)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::maximumOpticalZoomChanged(qreal)
+    \since Mobility 1.1
 
     \qmlsignal Camera::maximumOpticalZoomChanged(real)
 */
@@ -1320,27 +1401,36 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 /*!
     \fn void QDeclarativeCamera::maximumDigitalZoomChanged(qreal zoom)
     The maximum digital zoom is now \a zoom.
+    \since Mobility 1.1
+
 */
 /*!
     \qmlsignal Camera::maximumDigitalZoomChanged(real)
+    \since Mobility 1.1
+
 */
 
 
 /*!
     \fn void QDeclarativeCamera::exposureModeChanged(QDeclarativeCamera::ExposureMode mode)
+    \since Mobility 1.1
 
     Signals that the exposure mode is now \a mode.
 */
 /*!
-
     \qmlsignal Camera::exposureModeChanged(Camera::ExposureMode)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::flashModeChanged(int)
+    \since Mobility 1.1
+
 */
 /*!
     \qmlsignal Camera::flashModeChanged(int mode)
+    \since Mobility 1.1
 
     The flash mode is now \a mode.
     \sa QDeclarativeCamera::FlashMode
@@ -1348,38 +1438,50 @@ void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 
 /*!
     \fn void QDeclarativeCamera::whiteBalanceModeChanged(QDeclarativeCamera::WhiteBalanceMode) const
+    \since Mobility 1.1
 
 */
 /*!
     \qmlsignal Camera::whiteBalanceModeChanged(Camera::WhiteBalanceMode)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::manualWhiteBalanceChanged(int newWhiteBal) const
     Indicates that the white balance has been manually changed to \a newWhiteBal.
+    \since Mobility 1.1
+
 */
 /*!
     \qmlsignal Camera::manualWhiteBalanceChanged(int)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn void QDeclarativeCamera::captureResolutionChanged(const QSize &resolution)
+    \since Mobility 1.1
 
     Signal that the resolution has changed to \a resolution.
  */
 /*!
 
     \qmlsignal Camera::captureResolutionChanged(Item)
+    \since Mobility 1.1
+
 */
 
 /*!
     \fn QDeclarativeCamera::cameraStateChanged(QDeclarativeCamera::State state)
+    \since Mobility 1.1
 
     The camera state has changed to value \a state.
 
 */
 /*!
     \qmlsignal Camera::cameraStateChanged(Camera::State)
+    \since Mobility 1.1
 
 */
 

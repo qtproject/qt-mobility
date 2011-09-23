@@ -3,6 +3,7 @@ INCLUDEPATH += ../../../src/multimedia
 CONFIG += testcase
 
 include (../../../common.pri)
+include (../qmultimedia_common/mockplaylist.pri)
 
 symbian*: {
     PLAYLIST_TESTDATA.sources += testdata/testfile

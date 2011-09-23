@@ -69,8 +69,7 @@ QMailStore *mailStoreInstance()
     if (QMailStore::initializationState() == QMailStore::Uninitialized) {
         QtSimulatorPrivate::qt_setQmfPaths();
 #ifdef QTM_PLUGIN_PATH
-        QCoreApplication::addLibraryPath(QTM_PLUGIN_PATH +
-                                         QLatin1String("/plugins"));
+        QCoreApplication::addLibraryPath(QTM_PLUGIN_PATH);
 #endif
     }
 #endif

@@ -232,7 +232,6 @@ Q_SIGNALS:
 
 private:
     QSystemDeviceInfoPrivate *d;
-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
 
 protected:
     void connectNotify(const char *signal);

@@ -82,20 +82,6 @@ public:
     }
 };
 
-class MockProvider_s60 : public QMediaServiceProvider
-{
-public:
-    MockProvider_s60(QMediaService *service):mockService(service) {}
-    QMediaService *requestService(const QByteArray &, const QMediaServiceProviderHint &)
-    {
-        return mockService;
-    }
-
-    void releaseService(QMediaService *service) { delete service; }
-
-    QMediaService *mockService;
-};
-
 class tst_QMediaPlayer_s60: public QObject
 {
     Q_OBJECT

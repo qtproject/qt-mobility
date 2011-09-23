@@ -45,13 +45,18 @@ testcase =  {
 
 // The user opens a list of available sensor types and then selects one sensor. MTMW-98 - QML API: Sensor instance item
 
-    Available_Sensor_Types : function()
+    available_sensor_types : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify list of sensor types and open one sensor*
+        // Test meta data
+        testTitle = "Sensors - Available sensor type";
+        testBinary = "";
+        testGoal = "Verify that list of sensor types and open one sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
@@ -60,26 +65,36 @@ testcase =  {
 // MTMW-95 - QML API: meta-data
 // MTMW-97 - QML API: reading properties
 
-    View_Sensor_Data : function()
+    wiew_sensor_data : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify available data can be viewed*
+        // Test meta data
+        testTitle = "Sensors - View sensor data";
+        testBinary = "";
+        testGoal = "Verify that available data can be viewed";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user changes the values of the sensors such as sample rate etc.
 // MTMW-73 - C++ API: sensor control stuff
 
-    Change_Sensor_Values : function()
+    change_sensor_values : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify sensor values can be Changed*
+        // Test meta data
+        testTitle = "Sensors - Change sensor values";
+        testBinary = "";
+        testGoal = "Verify that sensor values can be changed";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
@@ -87,13 +102,18 @@ testcase =  {
 // and a QML refresh rate of 60 Hz without noticing any UI stutter.
 // MTMW-93 - QML API: buffering
 
-    Sensor_Performance : function()
+    sensor_performance : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify sensor buffering*
+        // Test meta data
+        testTitle = "Sensors - Sensor performance";
+        testBinary = "";
+        testGoal = "Verify sensor buffering";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
@@ -101,313 +121,526 @@ testcase =  {
 // proportions and correct x, y and z orientation relative to the device.
 // MTMW-72 - C++ API: Sensor alignment
 
-    Sensor_Alignment : function()
+    sensor_alignment : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify sensor values align with orientation of the device*
+        // Test meta data
+        testTitle = "Sensors - Sensor alignment";
+        testBinary = "";
+        testGoal = "Verify sensor values align with orientation of the device";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user un-registers a sensor which is currently in use, the user will then receive an alert dialog confirming this.
 // MTMW-31 - Handle unregistering a sensor that is in use
 
-    Unregister_Sensor : function()
+    unregister_sensor : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify unregistering a sensor which is in use*
+        // Test meta data
+        testTitle = "Sensors - Unregister Sensor";
+        testBinary = "";
+        testGoal = "Verify unregistering a sensor which is in use";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user changes the sensor sample rate from the default to some other arbitrary rate.
 // MTMW-33 - Down-sample sensor data in the API
 
-    Down_Sample_Sensor_Data : function()
+    down_sample_sensor_data : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify Down-sampling of sensor data*
+        // Test meta data
+        testTitle = "Sensors - Down Sample Sensor Data";
+        testBinary = "";
+        testGoal = "Verify Down-sampling of sensor data";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user opens several sensors and is able to synchronize the sampling rate from the open sensors.
 // MTMW-32 - Synchronized sensors
 
-    Synchronized_Sensors : function()
+    synchronized_sensors : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify synchronization of data from several sensors*
+        // Test meta data
+        testTitle = "Sensors - Synchronized_Sensors";
+        testBinary = "";
+        testGoal = "Verify synchronization of data from several sensors";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
 
 // The user receives errors for failures in the sensor operation.
 // MTMW-77 - C++ API: Return error codes
 
-    Sensor_Error_Codes : function()
+    sensor_error_codes : function()
     {
-      skip("Not implimented yet", SkipAll);
-        prompt(twiki('*Verify display of sensor error codes*
+        // Test meta data
+        testTitle = "Sensors - Sensor Error Codes";
+        testBinary = "";
+        testGoal = "Verify display of sensor error codes";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 
-        '));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
     },
 
-    Generic_Rotation : function()
+    generic_rotation: function()
     {
-        prompt(twiki('*Verify Generic Rotation values*
+        // Test meta data
+        testTitle = "Sensor - Generic Rotation";
+        testBinary = "Sensor Explorer";
+        testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
+        testGoal = "Verify Generic Rotation values";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *Sensor Explorer* application | |
-    | Select Generic Rotation from the sensors list | |
-    | In *Sensor Properties* click *Start* | |
-    | Position device flat on its back with screen showing upwards | Verify that values for x, y and z gravitate around zero* |
-    | Rotate device on x axis toward user | Verify that x axis value increases from 0 all the way to 90 when held straight up |
-    | Keep rotating device past vertical position | Verify that x axis value decrees from 90 down towards to 0 when held upside down (screen towards ground)  |
-    | Return device flat on its back with screen showing upwards | Verify that value for x has returned to zero** |
-    | Rotate device on y axis to right side | Verify that y axis value increases from 0 all the way to 90 when held straight up |
-    | Keep rotating device past vertical position | Verify that y axis value keeps increasing from 90 towards 180 |
-    | Rotate device on y axis until upside down - screen towards ground | Verify that y axis value gravitates around and switches between 180/-180 |
-    | Keep rotating device on y axis past inverted horizontal  | Verify that y axis value rises from -180 towards 0 |
-    | In this test, z values will always be 0 | |
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-Notes:
-    * * Small variations in value due to sensor sensitivity and large precision employed
-    * ** On some Maemo5 devices, due to camera housing, device is not flat when resting on hard surface, so small variation will be present
-        '));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *generic.rotation* from the sensors list | |
+            | In *Sensor Properties* click *Start* | |
+            | Position device flat on its back with screen showing upwards | Verify that values for x, y and z gravitate around zero* |
+            | Rotate device on x axis toward user | Verify that x axis value increases from 0 all the way to 90 when held straight up |
+            | Keep rotating device past vertical position | Verify that x axis value decrees from 90 down towards to 0 when held upside down (screen towards ground)  |
+            | Return device flat on its back with screen showing upwards | Verify that value for x has returned to zero** |
+            | Rotate device on y axis to right side | Verify that y axis value increases from 0 all the way to 90 when held straight up |
+            | Keep rotating device past vertical position | Verify that y axis value keeps increasing from 90 towards 180 |
+            | Rotate device on y axis until upside down - screen towards ground | Verify that y axis value gravitates around and switches between 180/-180 |
+            | Keep rotating device on y axis past inverted horizontal  | Verify that y axis value rises from -180 towards 0 |
+            | | In this test, z values will always be 0<br>Small variations in value due to sensor sensitivity and large precision employed<br>On some Maemo5 devices, due to camera housing, device is not flat when resting on hard surface, so small variation will be present |
+        "));
     },
 
-    Sym_Rotation : function()
+    sym_rotation : function()
     {
-        prompt(twiki('*Verify Sym Rotation values*
+        // Test meta data
+        testTitle = "Sensor - Sym Rotation";
+        testBinary = "Sensor Explorer";
+        testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
+        testGoal = "Verify Sym Rotation values";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *Sensor Explorer* application | |
-    | Select Sym Rotation from the sensors list | |
-    | In *Sensor Properties* click *Start* | |
-    | Position device flat on its back with screen showing upwards | Verify that values for x, y and z gravitate around zero* |
-    | Rotate device on x axis toward user | Verify that x axis value increases from 0 all the way to 90 when held straight up |
-    | Keep rotating device past vertical position | Verify that x axis value decrees from 90 down towards to 0 when held upside down (screen towards ground)  |
-    | Return device flat on its back with screen showing upwards | Verify that value for x has returned to zero** |
-    | Rotate device on y axis to right side | Verify that y axis value increases from 0 all the way to 90 when held straight up |
-    | Keep rotating device past vertical position | Verify that y axis value keeps increasing from 90 towards 180 |
-    | Rotate device on y axis until upside down - screen towards ground | Verify that y axis value gravitates around and switches between 180/-180 |
-    | Keep rotating device on y axis past inverted horizontal  | Verify that y axis value rises from -180 towards 0 |
-    | In this test, z values will always be 0 | |
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-Notes:
-    * * Small variations in value due to sensor sensitivity and large precision employed
-    * ** On some Maemo5 devices, due to camera housing, device is not flat when resting on hard surface, so small variation will be present
-        '));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *sym.rotation* from the sensors list | |
+            | In *Sensor Properties* click *Start* | |
+            | Position device flat on its back with screen showing upwards | Verify that values for x, y and z gravitate around zero* |
+            | Rotate device on x axis toward user | Verify that x axis value increases from 0 all the way to 90 when held straight up |
+            | Keep rotating device past vertical position | Verify that x axis value decrees from 90 down towards to 0 when held upside down (screen towards ground)  |
+            | Return device flat on its back with screen showing upwards | Verify that value for x has returned to zero** |
+            | Rotate device on y axis to right side | Verify that y axis value increases from 0 all the way to 90 when held straight up |
+            | Keep rotating device past vertical position | Verify that y axis value keeps increasing from 90 towards 180 |
+            | Rotate device on y axis until upside down - screen towards ground | Verify that y axis value gravitates around and switches between 180/-180 |
+            | Keep rotating device on y axis past inverted horizontal  | Verify that y axis value rises from -180 towards 0 |
+            | | In this test, z values will always be 0<br>Small variations in value due to sensor sensitivity and large precision employed<br>On some Maemo5 devices, due to camera housing, device is not flat when resting on hard surface, so small variation will be present |
+
+        "));
     },
 
-
-    Sym_Proximity_values: function()
+    sym_proximity_values: function()
     {
-        prompt(twiki('*Verify Sym Proximity values*
+        // Test meta data
+        testTitle = "Sensor - Sym Proximity";
+        testBinary = "Sensor Explorer";
+        testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
+        testGoal = "Verify Sym Proximity values";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    *Note: On Maemo5 devices, Proximity is a bool value
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-    | *Step* | *Verification* |
-    | Launch *Sensor Explorer* application | |
-    | Select Proximity from the sensors list | |
-    | In *Sensor Properties* click *Start* | Verify that the reading for Close is False |
-    |With an open palm of the hand, approach the device where the proximity sensor is located | Verify that the value of Index 0 changes to True once close enough to the device |
-    | Move hand away from device | Verify that the value of Close changes to False once again one far enough from device |
-        '));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *sym.proximity* from the sensors list | |
+            | In *Sensor Properties* click *Start* | Verify that the value of Index 0 is False |
+            | With an open palm of the hand, approach the device where the proximity sensor is located | Verify that the value of Index 0 changes to True once close enough to the device |
+            | Move hand away from device | Verify that the value of Index 0 changes to False once again one far enough from device |
+        "));
     },
 
-
-    Sym_Accelerometer: function()
+    sym_accelerometer: function()
     {
-        prompt(twiki('*Verify Sym Accelerometer*
+        // Test meta data
+        testTitle = "Sensor - Sym Accelerometer";
+        testBinary = "Sensor Explorer";
+        testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
+        testGoal = "Verify Sym Accelerometer";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *Sensor Explorer* application | |
-    | Select Accelerometer from the sensors list | |
-    | Position device flat on a suffice | |
-    | In *Sensor Properties* click *Start* | Verify that the reading for x and y values are gravitating around zero and that z is around 9.8  |
-    | Lift device on to its x axis | Verify that the value of x changes 0 to 9.8, and that z changes from 9.8 to 0 while y remains 0 |
-    | Lift device on to its y axis | Verify that the value of y changes to 9.8, x changes to 0, while z remains 0 |
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *sym.accelerometer* from the sensors list | |
+            | Position device flat on a suffice | |
+            | In *Sensor Properties* click *Start* | Verify that the reading for x and y values are gravitating around zero and that z is around 9.8  |
+            | Lift device on to its x axis | Verify that the value of x changes 0 to 9.8, and that z changes from 9.8 to 0 while y remains 0 |
+            | Lift device on to its y axis | Verify that the value of y changes to 9.8, x changes to 0, while z remains 0 |
+        "));
      },
 
-
-    Sym_Ambient_Light: function()
+    sym_ambient_light: function()
     {
-        prompt(twiki('*Verify Sym Ambient Light Sensor*
+        // Test meta data
+        testTitle = "Sensor - Sym Ambient Light Sensor";
+        testBinary = "Sensor Explorer";
+        testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
+        testGoal = "Verify Sym Ambient Light Sensor";
+        testPreconditions = "<br>Hand held torch or other light source required for this test<br>Light sensor located at the top-left of the device";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-    | *Step* | *Verification* |
-    | Launch *Sensor Explorer* application | |
-    | Select Ambient Light from the sensors list | |
-    | In *Sensor Properties* click *Start* | Verify that the reading for Light Level is Light |
-    | With the thumb of the left hand, cover the light sensor on the device* | Verify that the value of Index 0 changes from Light through Twilight to Dark |
-    | Move hand away from device | Verify that the value of Light Level changes from Dark through Twilight to Light |
-    | Take torch and point at face of device  | Verify that the value of Light Level changes from Light to Bright |
-    | Move torch in on the light sensor  | Verify that the value of Light Level changes from Bright to Sunny |
-    | Move torch away from device | Verify that the value of Light Level changes from Sunny back to Light |
-
-    Note:
-    * Hand held torch or other light source required for this test
-    * * Located at the top-left of the device
-        '));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *sym.ambientlight* from the sensors list | |
+            | In *Sensor Properties* click *Start* | Verify that the reading for Light Level is Light |
+            | With the thumb of the left hand, cover the light sensor on the device* | Verify that the value of Index 0 changes from Light through Twilight to Dark |
+            | Move hand away from device | Verify that the value of Light Level changes from Dark through Twilight to Light |
+            | Take torch and point at face of device  | Verify that the value of Light Level changes from Light to Bright |
+            | Move torch in on the light sensor  | Verify that the value of Light Level changes from Bright to Sunny |
+            | Move torch away from device | Verify that the value of Light Level changes from Sunny back to Light |
+        "));
     },
 
-    Freefall_Detection : function()
+    freefall_detection : function()
     {
-        prompt(twiki('*Verify Free Fall Detection*
+        // Test meta data
+        testTitle = "Sensors - Freefall Detection";
+        testBinary = "Small Sensors";
+        testSource = "$MOBILITYDIR/demos/small_screen_sensors";
+        testGoal = "Verify Free Fall Detection";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *Small Sensors* application | |
-    | From menu, select Free Fall | |
-    | Click on Setup free fall trigger |  |
-    | Drop device from arbitrary hight * (within reason, preserving device integrity)  | Verify that the value of Free fall time and Hight reflect the the actual test parameters |
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-Note:
-    * * With every intention of catching device before it hits the ground
-            '));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Free Fall* from menu | |
+            | Click on *Setup free fall trigger* | |
+            | Drop device from arbitrary hight (Notes:catch device before it hits the ground to preserve device integrity.) | Verify that the value of Free fall time and Hight reflect the the actual test parameters |
+        "));
     },
 
-
-    Small_Sensor_Orientation: function()
+    small_sensor_orientation : function()
     {
-        prompt(twiki('*Verify Sensor Orientation*
+        // Test meta data
+        testTitle = "Sensors - Small Sensor Orientation";
+        testBinary = "Small Sensors";
+        testSource = "$MOBILITYDIR/demos/small_screen_sensors";
+        testGoal = "Verify Sensor Orientation";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *Small Sensors* application | |
-    | From menu, select *Orientation* | |
-    | Position device flat down on surface | Verify that device recognizes that it is *Face Up*, all sliders should be in middle position |
-    | Lift device on x axis to vertical | Verify that device recognizes that it is *Top Up*, x slider should be in right position and x = 90  |
-    | Return device to the starting position | Verify that device recognizes that it is *Face Up*, all sliders should return to the middle position and all values gravitate towards 0 |
-    | Lift device on y axis to vertical | Verify that device recognizes that it is *Left Up*, y slider should be in right position and y = 90 |
-    | Invert device on x axis to vertical | Verify that device recognizes that it is *Top Down*, x slider should be in left position and x = -90  |
-    | Invert device on y axis to vertical | Verify that device recognizes that it is *Right Up*, y slider should be in left position and y = -90 |
-    | Turn device upside down (face down) | Verify that device recognizes that it is *Face Down*, y slider should be changing from extreme right to extreme left, and y = -180/+ 180  |
-    | Return device to the starting position | Verify that device recognizes that it is *Face Up*, all sliders should be in middle position |
-    | On Harmattan/Meggo devices, z will not change during this test given there is hardware support, this does not apply to Symbian devices and N900. |  |
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Orientation* from menu | |
+            | Position device flat down on surface | Verify that device recognizes that it is *Face Up*, all sliders should be in middle position |
+            | Lift device on x axis to vertical | Verify that device recognizes that it is *Top Up*, x slider should be in right position and x = 90  |
+            | Return device to the starting position | Verify that device recognizes that it is *Face Up*, all sliders should return to the middle position and all values gravitate towards 0 |
+            | Lift device on y axis to vertical | Verify that device recognizes that it is *Left Up*, y slider should be in right position and y = 90 |
+            | Invert device on x axis to vertical | Verify that device recognizes that it is *Top Down*, x slider should be in left position and x = -90  |
+            | Invert device on y axis to vertical | Verify that device recognizes that it is *Right Up*, y slider should be in left position and y = -90 |
+            | Turn device upside down (face down) | Verify that device recognizes that it is *Face Down*, y slider should be changing from extreme right to extreme left, and y = -180/+ 180  |
+            | Return device to the starting position | Verify that device recognizes that it is *Face Up*, all sliders should be in middle position |
+            | | On Harmattan/Meggo devices, z will not change during this test given there is hardware support, this does not apply to Symbian devices and N900 |
+             "));
     },
 
-
-    Small_Sensor_Acceleration : function()
+    small_sensor_acceleration : function()
     {
-        prompt(twiki('*Verify Sensor Acceleration*
+        // Test meta data
+        testTitle = "Sensors - Small Sensor Acceleration";
+        testGoal = "Verify Sensor Acceleration";
+        testBinary = "Small Sensors";
+        testSource = "$MOBILITYDIR/demos/small_screen_sensors";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *Small Sensors* application | |
-    | Position device flat on working surface | Verify the values displayed are close to: x=0, y=0, z=9.8 |
-    | Position device flat on its y axis | Verify the values displayed are close to: x=0, y=9.8, z=0 |
-    | Position device flat on its x axis | Verify the values displayed are close to: x=9.8, y=0, z=0 |
-    | Position device flat on its z axis | Verify the values displayed are close to: x=0, y=0, z=9.8 |
-            '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Acceleration* from menu | |
+            | Position device flat on working surface | Verify the values displayed are close to: x=0, y=0, z=9.8 |
+            | Position device flat on its y axis | Verify the values displayed are close to: x=0, y=9.8, z=0 |
+            | Position device flat on its x axis | Verify the values displayed are close to: x=9.8, y=0, z=0 |
+            | Position device flat on its z axis | Verify the values displayed are close to: x=0, y=0, z=9.8 |
+        "));
+    },
+
+    sym_tap : function()
+    {
+        // Test meta data
+        testTitle = "Sensors - Sym Tap";
+        testBinary = "testQtSensors";
+        testSource = "$MOBILITYDIR/tests/applications/sensors";
+        testGoal = "Verify Sym Tap Sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Click on *Sensor Browser* | |
+            | Select *sym.tap* as sensor type ||
+            | Click on *start* button ||
+            | Select *reading properties* tab ||
+            | Double tap on the device | Verify the values displayed are changed |
+        "));
+    },
+
+    sym_orientation : function()
+    {
+        // Test meta data
+        testTitle = "Sensors - Sym Orientation";
+        testBinary = "testQtSensors";
+        testSource = "$MOBILITYDIR/tests/applications/sensors";
+        testGoal = "Verify that sym orientation";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Click on *Sensor Browser* | |
+            | Select *sym.orientation* as sensor type | |
+            | Click on *start* button | |
+            | Select *reading properties* tab | |
+            | Slowly rotate the device | Verify the values displayed are changed accordingly |
+        "));
+    },
+
+    sym_magnetoMeter : function()
+    {
+        // Test meta data
+        testTitle = "sensors - sym magnetoMeter";
+        testBinary = "testQtSensors";
+        testSource = "$MOBILITYDIR/tests/applications/sensors";
+        testGoal = "Verify sym magnetometer sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Click on *Sensor Browser* | |
+            | Select *sym.magnetometer* as sensor type | |
+            | Click on *start* button | |
+            | Select *reading properties* tab | |
+            | Put the device closer to a iron or steel object | Verify the values displayed are changed accordingly |
+        "));
      },
 
-    Sym_Tap : function()
+    sym_compass : function()
     {
-        prompt(twiki('*Verify Sym Tap Sensor*
+        // Test meta data
+        testTitle = "sensors - sym compass";
+        testBinary = "testQtSensors";
+        testSource = "$MOBILITYDIR/tests/applications/sensors";
+        testGoal = "Verify sym compass sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *bluewheel* application | |
-    | select *Sensors* and click on *sensor explorer* ||
-    | select *sym.tap* as sensor type ||
-    | click on *start* button ||
-    | select *reading properties* tab ||
-    | double tap on the device | Verify the values displayed are changed |
-            '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Click on *Sensor Browser* | |
+            | Select *sym.compass* as sensor type | |
+            | Click on *start* button | |
+            | Select *reading properties* tab | |
+            | Slowly turn the device around | Verify the values displayed are changed accordingly |
+        "));
      },
 
-    Sym_Orientation : function()
+    sym_lux : function()
     {
-        prompt(twiki('*Verify Sym Orientation Sensor*
+      // Test meta data
+        testTitle = "sensors - sym lux";
+        testBinary = "testQtSensors";
+        testSource = "$MOBILITYDIR/tests/applications/sensors";
+        testGoal = "Verify sym lux sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *bluewheel* application | |
-    | select *Sensors* and click on *sensor explorer* ||
-    | select *sym.orientation* as sensor type ||
-    | click on *start* button ||
-    | select *reading properties* tab ||
-    | slowly rotate the device | Verify the values displayed are changed accordingly |
-            '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Click on *Sensor Browser* | |
+            | select *sym.luxsensor* as sensor type ||
+            | click on *start* button ||
+            | select *reading properties* tab ||
+            | change the luminance value around the device | Verify the values displayed are changed accordingly |
+        "));
      },
 
-    Sym_MagnetoMeter : function()
+    sym_dynamic : function()
     {
-        prompt(twiki('*Verify Sym Magneto Meter*
+        // Test meta data
+        testTitle = "sensors - sym dynamic";
+        testBinary = "testQtSensors";
+        testSource = "$MOBILITYDIR/tests/applications/sensors";
+        testGoal = "Verify sym dynamic sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *bluewheel* application | |
-    | select *Sensors* and click on *sensor explorer* ||
-    | select *sym.magnetometer* as sensor type ||
-    | click on *start* button ||
-    | select *reading properties* tab ||
-    | put the device closer to a iron or steel object | Verify the values displayed are changed accordingly |
-            '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Register a dynamic sensor device | |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Click on *Sensor Browser* | Verify the dynamic sensor appears in the sensor list |
+            | Click on *start* button | |
+            | Select *reading properties* tab | |
+            | Change the sensor value depends on the sensor type | Verify the values displayed are changed accordingly |
+        "));
      },
 
-    Sym_Compass : function()
+    sym_gyroscope : function()
     {
-        prompt(twiki('*Verify Sym Compass Sensor*
+     // Test meta data
+        testTitle = "sensors - sym gyroscope";
+        testBinary = "testQtSensors";
+        testSource = "$MOBILITYDIR/tests/applications/sensors";
+        testGoal = "Verify sym gyroscope sensor";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    | *Step* | *Verification* |
-    | Launch *bluewheel* application | |
-    | select *Sensors* and click on *sensor explorer* ||
-    | select *sym.compass* as sensor type ||
-    | click on *start* button ||
-    | select *reading properties* tab ||
-    | slowly turn the device around | Verify the values displayed are changed accordingly |
-            '));
-     },
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-    Sym_Lux : function()
-    {
-        prompt(twiki('*Verify Sym Compass Sensor*
-
-    | *Step* | *Verification* |
-    | Launch *bluewheel* application | |
-    | select *Sensors* and click on *sensor explorer* ||
-    | select *sym.luxsensor* as sensor type ||
-    | click on *start* button ||
-    | select *reading properties* tab ||
-    | change the luminance value around the device | verify the values displayed are changed accordingly |
-            '));
-     },
-
-    Sym_Dynamic : function()
-    {
-        prompt(twiki('*Verify Sym Compass Sensor*
-
-    | *Step* | *Verification* |
-    | Launch *bluewheel* application | |
-    | register a dynamic sensor device ||
-    | select *Sensors* and click on *sensor explorer* | verify the dynamic sensor appears in the sensor list|
-    | click on *start* button ||
-    | select *reading properties* tab ||
-    | change the sensor value depends on the sensor type | verify the values displayed are changed accordingly |
-            '));
-     },
-
-    Sym_Gyroscope : function()
-    {
-        prompt(twiki('*Verify Sym Compass Sensor*
-
-    | *Step* | *Verification* |
-    | Launch *bluewheel* application | |
-    | select *Sensors* and click on *sensor explorer* ||
-    | select *sym.gyroscope* as sensor type ||
-    | click on *start* button ||
-    | select *reading properties* tab ||
-    | slowly turn and move the device around | verify the values displayed are changed accordingly |
-            '));
-     }
-
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Click on *Sensor Browser* | |
+            | Select *sym.gyroscope* as sensor type | |
+            | Click on *start* button | |
+            | Select *reading properties* tab | |
+            | Slowly turn and move the device around | Verify the values displayed are changed accordingly |
+        "));
+    }
 }

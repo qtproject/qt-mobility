@@ -45,20 +45,25 @@
 class CFbsBitmap;
 class TECAMEvent;
 
-enum TCameraEngineError
+namespace S60CameraEngineError
 {
-    EErrReserve,
-    EErrPowerOn,
-    EErrViewFinderReady,
-    EErrImageReady,
-    EErrPreview,
-    EErrAutoFocusInit,
-    EErrAutoFocusMode,
-    EErrAutoFocusArea,
-    EErrAutoFocusRange,
-    EErrAutoFocusType,
-    EErrOptimisedFocusComplete,
-};
+    enum TCameraEngineError
+    {
+        EErrReserve,
+        EErrPowerOn,
+        EErrViewFinderReady,
+        EErrImageReady,
+        EErrPreview,
+        EErrAutoFocusInit,
+        EErrAutoFocusMode,
+        EErrAutoFocusArea,
+        EErrAutoFocusRange,
+        EErrAutoFocusType,
+        EErrOptimisedFocusComplete,
+    };
+} // S60CameraEngineError
+
+using namespace S60CameraEngineError;
 
 /*
  * CameraEngine Observer class towards Camera AdvancedSettings

@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
     \brief The MapMouseEvent object provides information about a mouse event.
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The position of the mouse can be found via the \l x and \l y properties
     or the \l coordinate property.
@@ -71,13 +72,13 @@ QDeclarativeGeoMapMouseEvent::~QDeclarativeGeoMapMouseEvent()
 
 /*!
     \qmlproperty bool MapMouseEvent::accepted
+    \since Mobility 1.2
 
     Setting \a accepted to true prevents the mouse event from being
     propagated to items below this item.
 
     Generally, if the item acts on the mouse event then it should be accepted
-    so that items lower in the stacking order do not also respond to the same ev
-ent.
+    so that items lower in the stacking order do not also respond to the same event.
 */
 
 void QDeclarativeGeoMapMouseEvent::setAccepted(bool accepted)
@@ -92,6 +93,7 @@ bool QDeclarativeGeoMapMouseEvent::accepted() const
 
 /*!
     \qmlproperty enumeration MapMouseEvent::button
+    \since Mobility 1.2
 
     This property holds the button that caused the event.  It can be one of:
     \list
@@ -113,6 +115,7 @@ int QDeclarativeGeoMapMouseEvent::button() const
 
 /*!
     \qmlproperty int MapMouseEvent::modifiers
+    \since Mobility 1.2
 
     This property holds the keyboard modifier flags that existed immediately
     before the event occurred.
@@ -151,6 +154,7 @@ int QDeclarativeGeoMapMouseEvent::modifiers() const
 /*!
     \qmlproperty int MapMouseEvent::x
     \qmlproperty int MapMouseEvent::y
+    \since Mobility 1.2
 
     These properties hold the screen coordinates of the position supplied
     by the mouse event.
@@ -178,6 +182,7 @@ int QDeclarativeGeoMapMouseEvent::y() const
 
 /*!
     \qmlproperty Coordinate MapMouseEvent::coordinate
+    \since Mobility 1.2
 
     This property holds the coordinate corresponding to the latitude
     and longitude of the position on the map at which the mouse event

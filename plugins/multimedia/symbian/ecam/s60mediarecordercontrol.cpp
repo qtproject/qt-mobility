@@ -43,6 +43,7 @@
 #include "s60mediarecordercontrol.h"
 #include "s60cameracontrol.h"
 #include "s60videocapturesession.h"
+#include "s60videocapturesettings.h"
 
 S60MediaRecorderControl::S60MediaRecorderControl(QObject *parent) :
     QMediaRecorderControl(parent)
@@ -63,7 +64,7 @@ S60MediaRecorderControl::S60MediaRecorderControl(S60CameraService *service,
     connect(m_session, SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),
         this, SLOT(updateState(S60VideoCaptureSession::TVideoCaptureState)));
     connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
-    connect(m_session, SIGNAL(mutedChanged(bool)), this, SIGNAL(mutedChanged(bool)));
+    connect(m_session->settings(), SIGNAL(mutedChanged(bool)), this, SIGNAL(mutedChanged(bool)));
     connect(m_session, SIGNAL(error(int,const QString &)), this, SIGNAL(error(int,const QString &)));
 }
 
@@ -92,28 +93,24 @@ bool S60MediaRecorderControl::setOutputLocation(const QUrl& sink)
 QMediaRecorder::State S60MediaRecorderControl::convertInternalStateToQtState(S60VideoCaptureSession::TVideoCaptureState aState) const
 {
     QMediaRecorder::State state;
-
     switch (aState) {
-        case S60VideoCaptureSession::ERecording:
-            state = QMediaRecorder::RecordingState;
-            break;
-        case S60VideoCaptureSession::EPaused:
-            state = QMediaRecorder::PausedState;
-            break;
-
-        default:
-            // All others
-            state = QMediaRecorder::StoppedState;
-            break;
+    case S60VideoCaptureSession::ERecording:
+        state = QMediaRecorder::RecordingState;
+        break;
+    case S60VideoCaptureSession::EPaused:
+        state = QMediaRecorder::PausedState;
+        break;
+    default:
+        // All others
+        state = QMediaRecorder::StoppedState;
+        break;
     }
-
     return state;
 }
 
 void S60MediaRecorderControl::updateState(S60VideoCaptureSession::TVideoCaptureState state)
 {
     QMediaRecorder::State newState = convertInternalStateToQtState(state);
-
     if (m_state != newState) {
         m_state = newState;
         emit stateChanged(m_state);
@@ -156,32 +153,28 @@ void S60MediaRecorderControl::record()
 
 void S60MediaRecorderControl::pause()
 {
-    if (m_state != QMediaRecorder::RecordingState) {
-        // Discard
+    if (m_state != QMediaRecorder::RecordingState)
         return;
-    }
 
     m_session->pauseRecording();
 }
 
 void S60MediaRecorderControl::stop()
 {
-    if (m_state == QMediaRecorder::StoppedState) {
-        // Ignore
+    if (m_state == QMediaRecorder::StoppedState)
         return;
-    }
 
     m_session->stopRecording();
 }
 
 bool S60MediaRecorderControl::isMuted() const
 {
-    return m_session->isMuted();
+    return m_session->settings()->isMuted();
 }
 
 void S60MediaRecorderControl::setMuted(bool muted)
 {
-    m_session->setMuted(muted);
+    m_session->settings()->setMuted(muted);
 }
 
 // End of file

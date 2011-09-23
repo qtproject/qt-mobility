@@ -68,6 +68,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QDeclarativeItem
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The Map element can be used be used to display a map of the world.  The
     bulk of the functionality is provided by a mapping plugin described
@@ -100,9 +101,8 @@ QTM_BEGIN_NAMESPACE
 
     The Map element is part of the \bold{QtMobility.location 1.2} module.
 
-    Note: compared to preliminary 1.1 API version, the 1.2 API does not have
+    \bold{API break notice:} compared to preliminary 1.1 API version, the 1.2 API does not have
     the objects -property.
-
 */
 
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
@@ -241,6 +241,7 @@ void QDeclarativeGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,
 
 /*!
     \qmlproperty Plugin Map::plugin
+    \since Mobility 1.2
 
     This property holds the plugin which provides the mapping functionality.
 
@@ -341,6 +342,7 @@ QDeclarativeGeoServiceProvider* QDeclarativeGraphicsGeoMap::plugin() const
 
 /*!
     \qmlproperty qreal Map::minimumZoomLevel
+    \since Mobility 1.2
 
     This property holds the minimum valid zoom level for the map.
 */
@@ -354,6 +356,7 @@ qreal QDeclarativeGraphicsGeoMap::minimumZoomLevel() const
 
 /*!
     \qmlproperty qreal Map::maximumZoomLevel
+    \since Mobility 1.2
 
     This property holds the maximum valid zoom level for the map.
 */
@@ -371,6 +374,7 @@ qreal QDeclarativeGraphicsGeoMap::maximumZoomLevel() const
 
 /*!
     \qmlproperty QSizeF Map::size
+    \since Mobility 1.2
 
     This property holds the size of the map viewport.
 */
@@ -401,6 +405,7 @@ QSizeF QDeclarativeGraphicsGeoMap::size() const
 
 /*!
     \qmlproperty qreal Map::zoomLevel
+    \since Mobility 1.2
 
     This property holds the zoom level for the map.
 
@@ -433,6 +438,7 @@ qreal QDeclarativeGraphicsGeoMap::zoomLevel() const
 
 /*!
     \qmlproperty Coordinate Map::center
+    \since Mobility 1.2
 
     This property holds the coordinate which occupies the center of the
     mapping viewport.
@@ -496,6 +502,7 @@ void QDeclarativeGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
 
 /*!
     \qmlproperty enumeration Map::mapType
+    \since Mobility 1.2
 
     This property holds the type of map to display.
 
@@ -534,6 +541,7 @@ QDeclarativeGraphicsGeoMap::MapType QDeclarativeGraphicsGeoMap::mapType() const
 
 /*!
     \qmlproperty enumeration Map::connectivityMode
+    \since Mobility 1.2
 
     This property holds the connectivity mode used to fetch the map data.
 
@@ -570,6 +578,7 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
 
 /*!
     \qmlmethod Map::toCoordinate(QPointF screenPosition)
+    \since Mobility 1.2
 
     Returns the coordinate which corresponds to the screen position
     \a screenPosition.
@@ -596,6 +605,7 @@ QDeclarativeCoordinate* QDeclarativeGraphicsGeoMap::toCoordinate(QPointF screenP
 
 /*!
     \qmlmethod Map::toScreenPosition(Coordinate coordinate)
+    \since Mobility 1.2
 
     Returns the screen position which corresponds to the coordinate
     \a coordinate.
@@ -871,6 +881,7 @@ void QDeclarativeGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap
 
 /*!
     \qmlmethod Map::addMapObject(MapObject)
+    \since Mobility 1.2
 
     Adds the given MapOject to the Map. If the object already
     is on the Map, it will not be added again.
@@ -898,6 +909,7 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
 
 /*!
     \qmlmethod Map::removeMapObject(MapObject)
+    \since Mobility 1.2
 
     Removes the given MapObject from the Map. If the MapObject does not
     exist, function does nothing.

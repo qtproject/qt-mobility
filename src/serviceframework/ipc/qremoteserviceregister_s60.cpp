@@ -46,6 +46,9 @@
 #include <QCoreApplication>
 
 #include <e32base.h>
+#include <f32file.h>
+
+#define QT_SFW_SYMBIAN_IPC_DEBUG
 
 /* IPC based on Symbian Client-Server framework
  * This module implements the Symbian specific IPC mechanisms and related control.
@@ -70,6 +73,7 @@ void printServicePackage(const QServicePackage& package)
 }
 #endif
 
+const TInt KSyncSemaphoreTimeout=1000000; //1 Sec 
 
 class SymbianClientEndPoint: public QServiceIpcEndPoint
 {
@@ -204,6 +208,25 @@ void QRemoteServiceRegisterSymbianPrivate::publishServices(const QString &ident)
 #endif
     // If we're started by the client, notify them we're running
     RProcess::Rendezvous(KErrNone);
+    
+    //An attempt to fix Synchronization issues when Rendezvous() is already triggered
+    //by creation of QApplication().
+    RProcess thisProcess;
+    TFileName fileName = thisProcess.FileName();
+    TParse p;
+    p.Set(fileName,NULL,NULL);
+    
+    /* Just try to Open the global semaphore. If for eg a UI service is started by other means
+     * than a client connecting to it then there is no need to create the Semaphore.
+     * (Also for services that are started by default at System startup.
+     */
+    RSemaphore syncSemaphore;
+    TInt semErr = syncSemaphore.OpenGlobal(p.Name(),EOwnerThread);
+    if(semErr == KErrNone)
+        {
+        syncSemaphore.Signal();
+        }
+    syncSemaphore.Close();
 }
 
 void QRemoteServiceRegisterSymbianPrivate::processIncoming(CServiceProviderServerSession* newSession)
@@ -242,6 +265,7 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
     // done at device startup, everything may not be ready yet.
     RServiceSession *session = new RServiceSession(location);
     int err = session->Connect();
+#if 0
     int i = 0;
     while (err != KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG      
@@ -254,6 +278,12 @@ QObject* QRemoteServiceRegisterPrivate::proxyForService(const QRemoteServiceRegi
         User::After(50);
         err = session->Connect();
         i++;
+    }
+#endif
+    //Connecting in loop is now done inside the Connect function.
+    if(err != KErrNone){
+        qWarning() << "QtSFW failed to connect to service provider.";
+        return NULL;
     }
 
     // Create IPC endpoint. In practice binds the communication session and abstracting
@@ -373,15 +403,15 @@ void RServiceSession::addDataSize(TInt dataSize)
     iDataSizes.addSample(dataSize);
 }
 
-// StartServer() checks if the service is already published by someone (i.e. can be found
-// from Kernel side). If not, it will start the process that provides the service.
-TInt RServiceSession::StartServer()
+TInt RServiceSession::doStartServer()
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "RServiceSession::StartServer()";
+    qDebug() << "RServiceSession::doStartServer()";
 #endif
     TInt ret = KErrNone;
+       
     TPtrC serviceAddressPtr(reinterpret_cast<const TUint16*>(iServerAddress.utf16()));
+    
     TFindServer findServer(serviceAddressPtr);
     TFullName name;
     // Looks up from Kernel-side if there are active servers with the given name.
@@ -391,15 +421,25 @@ TInt RServiceSession::StartServer()
           qWarning("WINS Support for QSFW OOP not implemented.");
 #else
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "RServiceSession::StartServer() Service not found. Starting " << iServerAddress;
+        qDebug() << "RServiceSession::doStartServer() Service not found. Starting " << iServerAddress;
 #endif
+        RSemaphore syncSemaphore;
+        TInt symErr = syncSemaphore.CreateGlobal(serviceAddressPtr,0,EOwnerThread);
+        if(symErr!= KErrNone && symErr==KErrAlreadyExists){
+            symErr =   syncSemaphore.OpenGlobal(serviceAddressPtr,EOwnerThread);
+        }
+        if(symErr != KErrNone) {
+            return symErr;
+        }
+        
         TRequestStatus status;
         RProcess serviceServerProcess;
         ret = serviceServerProcess.Create(serviceAddressPtr, KNullDesC);
         if (ret != KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-            qDebug() << "StartServer RProcess::Create failed: " << ret;
+            qDebug() << "doStartServer RProcess::Create failed: " << ret;
 #endif
+            syncSemaphore.Close();
             return ret;
         }
         // Point of synchronization. Waits until the started process calls
@@ -408,14 +448,15 @@ TInt RServiceSession::StartServer()
 
         if (status != KRequestPending) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-            qDebug() << "StartServer Service Server Process Rendezvous() failed, killing process.";
+            qDebug() << "doStartServer Service Server Process Rendezvous() failed, killing process.";
 #endif
             serviceServerProcess.Kill(KErrNone);
             serviceServerProcess.Close();
+            syncSemaphore.Close();
             return KErrGeneral;
         } else {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
-            qDebug() << "StartServer Service Server Process Rendezvous() successful, resuming process.";
+            qDebug() << "doStartServer Service Server Process Rendezvous() successful, resuming process.";
 #endif
             serviceServerProcess.Resume();
         }
@@ -423,16 +464,82 @@ TInt RServiceSession::StartServer()
         if (status != KErrNone){
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
             qDebug("RTR Process Resume failed.");
-#endif            
+#endif      
+            syncSemaphore.Close();
             serviceServerProcess.Close();
             return status.Int();
         }
+      
+        //Wait for signal from Semaphore  
+        //Should there be a timeout as well ?.
+        TInt semRet = KErrNone;
+        do{
+            semRet = syncSemaphore.Wait(KSyncSemaphoreTimeout);
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+            qDebug() << "doStartServer: SyncSemaphore Wait() returned: "<< semRet;
+#endif
+           TFindServer findServer(serviceAddressPtr);
+           if(findServer.Next(name)==KErrNone){
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG          
+            qDebug() << "doStartServer: Found Published server ";
+#endif
+               break;
+           }
+        }while(semRet == KErrTimedOut && serviceServerProcess.ExitType() == EExitPending);
+        
+        if(serviceServerProcess.ExitType() != EExitPending){
+            //Came out loop because server died
+            ret = KErrGeneral;
+        }
+        
         // Free the handle to the process (RHandleBase function, does not 'close process')
         serviceServerProcess.Close();
+        syncSemaphore.Close();
 #endif // __WINS__
     } else {
-        qDebug() << "RServiceSession::StartServer() GTR Service found from Kernel, no need to start process.";
+        qDebug() << "RServiceSession::doStartServer() GTR Service found from Kernel, no need to start process.";
     }
+    return ret;   
+    
+}
+
+// StartServer() checks if the service is already published by someone (i.e. can be found
+// from Kernel side). If not, it will start the process that provides the service.
+TInt RServiceSession::StartServer()
+{
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "RServiceSession::StartServer()";
+#endif
+    TInt ret = KErrNone;
+    
+    QString clientMutexStr = iServerAddress + "_clientsem";
+    TPtrC clientMutexPtr = reinterpret_cast<const TUint16*>(clientMutexStr.utf16());
+    
+    RMutex clientMutex;
+    TInt mutexError = clientMutex.CreateGlobal(clientMutexPtr);
+    if ( KErrAlreadyExists == mutexError ){
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "RServiceSession::StartServer() ClientMutex already exists. Trying to Open";
+#endif
+        mutexError = clientMutex.OpenGlobal( clientMutexPtr );
+     }
+    
+    if(KErrNone != mutexError){
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "RServiceSession::StartServer() ClientMutex Couldnot be opened";
+#endif
+        return mutexError;
+    }
+    
+    clientMutex.Wait();
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "RServiceSession::StartServer() ClientMutex Wait() over. Starting server";
+#endif
+    ret = doStartServer();
+    
+    clientMutex.Signal();
+    clientMutex.Close();
+    
     return ret;
 }
 

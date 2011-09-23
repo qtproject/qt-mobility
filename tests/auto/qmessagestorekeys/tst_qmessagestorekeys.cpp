@@ -765,21 +765,39 @@ void tst_QMessageStoreKeys::testAccountFilter_data()
         << ( QMessageAccountIdList() << accountIds[1] );
 
     // Test matchFlags
+
+    // In Maemo6 QMF account filtering is case sensitive. It is not possible to make the filtering case-insensitive.
+#if !defined(Q_WS_MAEMO_6)
     QMessageAccountFilter caseInsensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
     QTest::newRow("matchFlags:caseInsensitive 1")
         << caseInsensitive1
         << ( QMessageAccountIdList() << accountIds[0] )
         << ( QMessageAccountIdList() << accountIds[1] << accountIds[2] );
+#endif
 
     QMessageAccountFilter caseSensitive1(QMessageAccountFilter::byName("work", QMessageDataComparator::Equal));
+    /*
+       In Maemo6 QMF account filtering is case sensitive. It is not possible to make the filtering case-insensitive.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 1")
         << caseSensitive1
         << QMessageAccountIdList()
         << accountIds;
 
     QMessageAccountFilter caseSensitive2(QMessageAccountFilter::byName("Work", QMessageDataComparator::Equal));
+    /*
+       In Maemo6 QMF account filtering is case sensitive. It is not possible to make the filtering case-insensitive.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageAccountIdList() << accountIds[0] )
@@ -1592,6 +1610,8 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
 #endif
 
+    // In Maemo6 QMF does not support case sensitive search.
+#if !defined(Q_WS_MAEMO_6)
 #ifdef FREESTYLEMAILUSED
     QMessageFolderFilter caseSensitive1(QMessageFolderFilter::byName("dra", QMessageDataComparator::Includes));
 #else
@@ -1602,9 +1622,10 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << caseSensitive1
         << QMessageFolderIdList()
         << folderIds;
+#endif
 
 #ifdef FREESTYLEMAILUSED
-    QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byName("Dra", QMessageDataComparator::Includes));
+    QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byName("Dra", QMessageDataComparator::Includes));    
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
@@ -1612,7 +1633,14 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 #else
     QMessageFolderFilter caseSensitive2(QMessageFolderFilter::byName("X-A", QMessageDataComparator::Includes));
+    /*
+       In Maemo6 QMF does not support case sensitive search.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
@@ -3212,6 +3240,8 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 
+    // In Maemo6 QMF does not support case sensitive search.
+#if !defined(Q_WS_MAEMO_6)
     QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
     caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
     QTest::newRow("matchFlags:caseSensitive 1")
@@ -3219,9 +3249,17 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << messageIds
         << "";
+#endif
 
     QMessageFilter caseSensitive2(QMessageFilter::bySubject("Free beer", QMessageDataComparator::Equal));
+    /*
+       In Maemo6 QMF does not support case sensitive search.
+       So if called x.setMatchFlags(QMessageDataComparator::MatchCaseSensitive)
+       query returns empty list and set error to QMessageManager::NotYetImplemented
+     */
+#if !defined(Q_WS_MAEMO_6)
     caseSensitive2.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
+#endif
     QTest::newRow("matchFlags:caseSensitive 2")
         << caseSensitive2
         << ( QMessageIdList() << messageIds[4] )
@@ -3263,12 +3301,15 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 
+    // Not yet implemented under Maemo6
+#if !defined(Q_WS_MAEMO_6)
     QMessageFilter senderNotLike(QMessageFilter::bySubject("Free beer", QMessageDataComparator::NotLike));
     QTest::newRow("senderNotLike")
         << senderNotLike
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] )
         << "";
+#endif
 
     QMessageFilter recipientsLike1(QMessageFilter::byRecipients("Super%B_b_", QMessageDataComparator::Like));
     QTest::newRow("recipientsLike1")
