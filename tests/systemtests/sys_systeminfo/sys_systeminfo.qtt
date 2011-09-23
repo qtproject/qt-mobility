@@ -239,27 +239,110 @@ testcase = {
         "));
     },
 
-    Network_Tab: function()
+    network_tab: function()
     {
-        prompt(twiki('*Verify Device 2 Tab Information
+        // Test meta data
+        testTitle = "systeminfo - Network tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify network info can be shown correctly";
+        testPreconditions = "Insert a SIM card to the phone";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-        1 Start qsysinfo application
-        1 Select *Storage* tab
-        1 Verify that all expected file system are listed in the table corrected
-        '));
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Network* tab | Verify that all all network info (Network Status, Signal, Name) are listed corrected |
+        "));
     },
     
-    Network2_Tab: function()
+    network2_tab: function()
     {
+        /*
+        // Test meta data
+        testTitle = "systeminfo - Network2 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify network2 info can be shown correctly";
+        testPreconditions = "Insert a SIM card to the phone";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Network2* tab | Verify that all all network2 info (Cell ID, Location Area, Network Mode, Cell Data Technology) are listed corrected |
+        "));
+        */
     },
 
-    Network3_Tab: function()
+    network3_tab: function()
     {
+        /*
+        // Test meta data
+        testTitle = "systeminfo - Network3 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify network3 info can be shown correctly";
+        testPreconditions = "Insert a SIM card to the phone";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Network3* tab | Verify that all all network3 info (Current MNC, MCC, Home MCC and MNC) are listed corrected |
+        "));
+        */
     },
 
-    ScreenSaver_Tab: function()
+    screensaver_tab: function()
     {
-    },
+        /*
+        // Test meta data
+        testTitle = "systeminfo - Screensaver tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify screensaver info can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Screen Saver* tab | Verify that a check box *Screen Saver Inhibited* shown and can be selected |
+        "));
+        */
+    },
 }  // end of testcase
 
