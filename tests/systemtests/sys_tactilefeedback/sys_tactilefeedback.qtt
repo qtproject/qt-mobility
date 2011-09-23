@@ -54,18 +54,49 @@ testcase = {
         }
     },
 
-    user_interface_response: function() {
-        startApplication("hapticsquare");
-        select("Click");
-        prompt("Verify the device emits a short, light vibe");
-        select("Rumble");
-        prompt("Verify the device emits a long vibe that increases in intensity");
-    },
+    /*  comment as it reduplicate with simple_vibrate_test in sys_feedback.qtt file
+    user_interface_response : function()
+    {
+        // Test meta data
+        testTitle = "Tactilefeedback - User interface response";
+        testBinary = "hapticsquare";
+        testSource = "$MOBILITYDIR/examples/hapticsquare";
+        testGoal = "Verify that all interfaces' response are correctly";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""
 
-    gameplay_feedback: function() {
-        prompt("Verify the QML snake game vibrates the device slightly when consuming yellow points.");
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+             | *Step* | *Verification* |
+             | Launch " + testBinary + " | App launches normally |
+             | select *Click* tab | Verify the device emits a short, light vibe |
+             | select *Rumble* tab | Verify the device emits a long vibe that increases in intensity |
+         "));
+    },
+    */
+    gameplay_feedback: function()
+    {
+        // Test meta data
+        testTitle = "Feedback - Gameplay feedback";
+        testBinary = "";
+        testSource = "";
+        testGoal = "";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""    
+        
+        skip('Not implement yet', SkipAll);
+        //prompt("Verify the QML snake game vibrates the device slightly when consuming yellow points.");
     }
 }
+
+
 
 function checkPlatform(platform)
 {
