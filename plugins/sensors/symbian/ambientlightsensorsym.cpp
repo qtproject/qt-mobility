@@ -92,44 +92,29 @@ void CAmbientLightSensorSym::ProcessReading()
     {
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
-    switch (iData.iAmbientLight)
-        {
-        case TSensrvAmbientLightData::KAmbientLightVeryDark:
-        case TSensrvAmbientLightData::KAmbientLightDark:
-            {
-            iReading.setLightLevel(QAmbientLightReading::Dark);
-            }
-            break;
 
-        case TSensrvAmbientLightData::KAmbientLightTwilight:
-            {
-            iReading.setLightLevel(QAmbientLightReading::Twilight);
-            }
-            break;
-
-        case TSensrvAmbientLightData::KAmbientLightLight:
-            {
-            iReading.setLightLevel(QAmbientLightReading::Light);
-            }
-            break;
-
-        case TSensrvAmbientLightData::KAmbientLightBright:
-            {
-            iReading.setLightLevel(QAmbientLightReading::Bright);
-            }
-            break;
-
-        case TSensrvAmbientLightData::KAmbientLightSunny:
-            {
-            iReading.setLightLevel(QAmbientLightReading::Sunny);
-            }
-            break;
-
-        default:
-            {
-            iReading.setLightLevel(QAmbientLightReading::Undefined);
-            }
-        }
+    // Reason why switch/case was changed to separate if clauses is that 
+    // we do not need to use new enums that were addded to Symbian code, 
+    // so this code should work also in case that those new enums are not 
+    // defined in some Symbian platform e.g PS1 where this same QtMobility 
+    // code is used.     
+    if (iData.iAmbientLight < TSensrvAmbientLightData::KAmbientLightTwilight) {
+        // KAmbientLightVeryDark, KAmbientLightDark
+        iReading.setLightLevel(QAmbientLightReading::Dark);	
+    } else if (iData.iAmbientLight < TSensrvAmbientLightData::KAmbientLightLight) {
+        // KAmbientLightTwilight
+        iReading.setLightLevel(QAmbientLightReading::Twilight);
+    } else if (iData.iAmbientLight < TSensrvAmbientLightData::KAmbientLightBright) {
+        // KAmbientLightLight
+        iReading.setLightLevel(QAmbientLightReading::Light);
+    } else if (iData.iAmbientLight < TSensrvAmbientLightData::KAmbientLightSunny) {
+        // KAmbientLightBright
+        iReading.setLightLevel(QAmbientLightReading::Bright);    	  	
+    } else {
+        // KAmbientLightCloudy , KAmbientLightCloudySunny, KAmbientLightSunny
+        iReading.setLightLevel(QAmbientLightReading::Sunny);	
+    }
+    
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
