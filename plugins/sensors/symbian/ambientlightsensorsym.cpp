@@ -93,11 +93,10 @@ void CAmbientLightSensorSym::ProcessReading()
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
 
-    // Reason why switch/case was changed to separate if clauses is that 
-    // we do not need to use new enums that were addded to Symbian code, 
-    // so this code should work also in case that those new enums are not 
-    // defined in some Symbian platform e.g PS1 where this same QtMobility 
-    // code is used.     
+    // Reason why switch/case was changed to separate if clauses is that
+    // we do not need to use new enums that were added to platform code,
+    // so this code should work also in case that those new enums are not
+    // defined in some platform where this same QtMobility code is used.
     if (iData.iAmbientLight < TSensrvAmbientLightData::KAmbientLightTwilight) {
         // KAmbientLightVeryDark, KAmbientLightDark
         iReading.setLightLevel(QAmbientLightReading::Dark);	
