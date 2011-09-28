@@ -76,7 +76,7 @@ class MFPlayerSession : public QObject, public IMFAsyncCallback
     friend class SourceResolver;
 public:
     MFPlayerSession(QObject *parent = 0);
-    ~MFPlayerSession();
+    void shutdown();
 
     STDMETHODIMP QueryInterface(REFIID riid, LPVOID *ppvObject);
 
@@ -132,6 +132,9 @@ private Q_SLOTS:
     void handleSourceError(long hr);
 
 private:
+    long m_cRef;
+    QObject *m_parent;
+
     IMFMediaSession *m_session;
     IMFPresentationClock *m_presentationClock;
     IMFRateControl *m_rateControl;
