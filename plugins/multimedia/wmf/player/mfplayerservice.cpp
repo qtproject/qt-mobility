@@ -79,7 +79,8 @@ MFPlayerService::~MFPlayerService()
     if (m_videoRendererControl)
         delete m_videoRendererControl;
 
-    delete m_session;
+    m_session->shutdown();
+    m_session->Release();
 
     MFShutdown();
     CoUninitialize();

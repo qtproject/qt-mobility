@@ -415,7 +415,7 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     if (m_session)
         m_session->load(source);
     else {
-        QMediaPlayer::MediaStatus status = (source.isNull()) ? QMediaPlayer::NoMedia : QMediaPlayer::InvalidMedia;
+        QMediaPlayer::MediaStatus status = (source.canonicalUrl().isEmpty()) ? QMediaPlayer::NoMedia : QMediaPlayer::InvalidMedia;
         m_mediaSettings.setMediaStatus(status);
         emit stateChanged(QMediaPlayer::StoppedState);
         emit error((source.isNull()) ? QMediaPlayer::NoError : QMediaPlayer::ResourceError, 

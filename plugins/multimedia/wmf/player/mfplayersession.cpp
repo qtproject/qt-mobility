@@ -399,7 +399,8 @@ namespace
 
 
 MFPlayerSession::MFPlayerSession(QObject *parent)
-    : QObject(parent)
+    : m_parent(parent)
+    , m_cRef(1)
     , m_session(0)
     , m_presentationClock(0)
     , m_rateControl(0)
@@ -437,9 +438,8 @@ MFPlayerSession::MFPlayerSession(QObject *parent)
     m_varStart.uhVal.QuadPart = 0;
 }
 
-MFPlayerSession::~MFPlayerSession()
+void MFPlayerSession::shutdown()
 {
-    m_sourceResolver->Release();
     clear();
     HRESULT hr = S_OK;
     if (m_session) {
@@ -452,8 +452,11 @@ MFPlayerSession::~MFPlayerSession()
         }
     }
 
+    m_sourceResolver->shutdown();
+    m_sourceResolver->Release();
+    m_sourceResolver = 0;
+
     if (SUCCEEDED(hr)) {
-        m_sourceResolver->shutdown();
         if (m_session)
             m_session->Shutdown();
     }
@@ -477,6 +480,7 @@ void MFPlayerSession::load(const QMediaContent &media, QIODevice *stream)
         m_sourceResolver->cancel();
 
     if (resources.isEmpty() && !stream) {
+        m_sourceResolver->shutdown();
         changeStatus(QMediaPlayer::NoMedia);
     } else if (stream && (!stream->isReadable())) {
         changeStatus(QMediaPlayer::InvalidMedia);
@@ -513,6 +517,9 @@ void MFPlayerSession::handleSourceError(long hr)
 
 void MFPlayerSession::handleMediaSourceReady()
 {
+    if (!m_sourceResolver)
+        return;
+
     if (QMediaPlayer::LoadingMedia != m_status)
         return;
 #ifdef DEBUG_MEDIAFOUNDATION
@@ -524,7 +531,7 @@ void MFPlayerSession::handleMediaSourceReady()
     hr = mediaSource->CreatePresentationDescriptor(&sourcePD);
     if (SUCCEEDED(hr)) {
         m_duration = 0;
-        static_cast<MFPlayerService*>(this->parent())->metaDataControl()->updateSource(sourcePD, mediaSource);
+        static_cast<MFPlayerService*>(m_parent)->metaDataControl()->updateSource(sourcePD, mediaSource);
         sourcePD->GetUINT64(MF_PD_DURATION, &m_duration);
         //convert from 100 nanosecond to milisecond
         emit durationUpdate(qint64(m_duration / 10000));
@@ -533,6 +540,7 @@ void MFPlayerSession::handleMediaSourceReady()
         changeStatus(QMediaPlayer::InvalidMedia);
         emit error(QMediaPlayer::ResourceError, tr("Can't create presentation descriptor!"), true);
     }
+    sourcePD->Release();
 }
 
 void MFPlayerSession::setupPlaybackTopology(IMFMediaSource *source, IMFPresentationDescriptor *sourcePD)
@@ -585,6 +593,7 @@ void MFPlayerSession::setupPlaybackTopology(IMFMediaSource *source, IMFPresentat
                             break;
                         }
                     }
+                    outputNode->Release();
                 }
                 sourceNode->Release();
             }
@@ -644,7 +653,7 @@ IMFTopologyNode* MFPlayerSession::addOutputNode(IMFStreamDescriptor *streamDesc,
         hr = handler->GetMajorType(&guidMajorType);
         if (SUCCEEDED(hr)) {
             IMFActivate *activate = NULL;
-            MFPlayerService *service = static_cast<MFPlayerService*>(this->parent());
+            MFPlayerService *service = static_cast<MFPlayerService*>(m_parent);
             if (MFMediaType_Audio == guidMajorType) {
                 mediaType = Audio;
                 activate = service->audioEndpointControl()->currentActivate();
@@ -1079,17 +1088,22 @@ HRESULT MFPlayerSession::QueryInterface(REFIID riid, void** ppvObject)
         *ppvObject =  NULL;
         return E_NOINTERFACE;
     }
+    AddRef();
     return S_OK;
 }
 
 ULONG MFPlayerSession::AddRef(void)
 {
-    return 1;
+    return InterlockedIncrement(&m_cRef);
 }
 
 ULONG MFPlayerSession::Release(void)
 {
-    return 1;
+    LONG cRef = InterlockedDecrement(&m_cRef);
+    if (cRef == 0) {
+        this->deleteLater();
+    }
+    return cRef;
 }
 
 HRESULT MFPlayerSession::Invoke(IMFAsyncResult *pResult)
