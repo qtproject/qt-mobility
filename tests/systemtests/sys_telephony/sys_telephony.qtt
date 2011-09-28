@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 //TESTED_COMPONENT=src/telephony
+//There is no TESTED_COMPONENT or test application callmonitor, comment all the test function
 
 testcase = {
     // Under construction
@@ -54,39 +55,62 @@ testcase = {
         inprogress:["Call another device and answer", "callmonitor displays 'call in progress'"],
         inprogress:["Call another device, answer and place on hold", "callmonitor displays 'call on hold'"]
     },
+    current_state: function(action, result) 
+    {
+        /* comment as there is no tested component
+        // Test meta data
+        testTitle = "Telephony - current state";
+        testBinary = "";
+        testGoal = "";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    current_state: function(action, result) {
-        var prompttext = "Start callmonitor\n" + action + "\n" + "Verify that " +result;
-        prompt(twiki(prompttext));
+        // Test steps
+        skip('Not implimented yet', SkipAll);
+        //var prompttext = "Start callmonitor\n" + action + "\n" + "Verify that " +result;
+        //prompt(twiki(prompttext));
+        */
     },
 
-    notified_of_status_change: function() {
+    notified_of_status_change: function() 
+    {
+        /* comment as there is no tested component
         prompt("Start callmonitor
-Call the device from a secondary device
-Verify that the callmonitor shows incoming call
-Answer the call
-Verify that the callmonitor changes the status to connected
-Set the call to held
-Verify that the callmonitor changes the status to on hold
-Terminate the call on the secondary device
-Verify that the callmonitor changes the status to terminated");
+        Call the device from a secondary device
+        Verify that the callmonitor shows incoming call
+        Answer the call
+        Verify that the callmonitor changes the status to connected
+        Set the call to held
+        Verify that the callmonitor changes the status to on hold
+        Terminate the call on the secondary device
+        Verify that the callmonitor changes the status to terminated");
+        */
     },
 
-    current_call_information: function() {
+    current_call_information: function() 
+    {
+        /* comment as there is no tested component
         prompt("Start callmonitor
-Call the device from a secondary device
-Verify that the callmonitor shows incoming call
-Answer the call
-Verify that the callmonitor changes the status to connected
-Verify that the call type shows as 'Voice' and the source phone number matches that of the calling device");
+        Call the device from a secondary device
+        Verify that the callmonitor shows incoming call
+        Answer the call
+        Verify that the callmonitor changes the status to connected
+        Verify that the call type shows as 'Voice' and the source phone number matches that of the calling device");
+        */
     },
 
-    notified_of_list_change: function() {
+    notified_of_list_change: function() 
+    {
+        /* comment as there is no tested component
         prompt("Verify the callmonitor gets a notification on a change of list of calls.");
+        */
     },
 
-    query_the_open_calls: function() {
+    query_the_open_calls: function() 
+    {
+        /* comment as there is no tested component
         prompt("Verify the callmonitor can query open calls at any given time.");
+        */
     }
-
 }
