@@ -43,7 +43,7 @@
 
 testcase = {
 
-    Dial_Landline_Number: function()
+    dial_landline_number: function()
     {
         // Test meta data
         testTitle = "Serviceframework - Dial Landline Number";
@@ -70,7 +70,7 @@ testcase = {
         "));
     },
     
-    Dial_First_Voip_Number: function()
+    dial_first_voip_number: function()
     {
         // Test meta data
         testTitle = "Serviceframework - Dial First Voip Number";
@@ -97,7 +97,7 @@ testcase = {
         "));
     },
 
-    Dial_Second_Voip_Number: function()
+    dial_second_voip_number: function()
     {
         // Test meta data
         testTitle = "Serviceframework - Dial Second Voip Number";
