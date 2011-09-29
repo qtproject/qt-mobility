@@ -1,3 +1,25 @@
+qt-mobility (1.2.1+199) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixes: NB#275161
+  * Fixes: NB#275044
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 29 Sep 2011 11:43:48 +1000
+
+qt-mobility (1.2.1+198) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixed bug 280316
+
+ -- Simo Fält <simo.falt@nokia.com>  Tue, 09 Sep 2011 14:34:48 +1000
+
+qt-mobility (1.2.1+197) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixed bug 264686
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Tue, 02 Sep 2011 14:34:48 +1000
+
 qt-mobility (1.2.1+196) unstable; urgency=low
 
   * Bumped up the version
