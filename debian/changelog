@@ -1,7 +1,6 @@
 qt-mobility (1.2.1+199) unstable; urgency=low
 
   * Bumped up the version
-  * Fixes: NB#275161
   * Fixes: NB#275044
 
  -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 29 Sep 2011 11:43:48 +1000
