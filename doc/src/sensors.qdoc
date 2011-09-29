@@ -225,18 +225,14 @@ The data rates offered by MeeGo are not tied to how fast the hardware runs.
 The default data rate for a sensor is likely to be low when compared to Symbian or Maemo 5. Applications should
 request a suitable data rate, taking care to avoid selecting invalid rates on other devices.
 
-Sensors may be suspended by the system in order to save power. Applications can avoid this by setting a property
-on the sensor object.
+Sensors may be suspended by the system in order to save power, which means that sensorfw will stop sensors
+when a display is blanked. Applications can avoid this by setting a property on the sensor object.
 
 \code
 QAccelerometer *accelerometer = new QAccelerometer(this);
 accelerometer->setProperty("alwaysOn", true);
 accelerometer->start();
 \endcode
-
-Unlike Symbian and N900, MeeGo does not currently provide initial readings. Thus, certain sensors must detect
-a change in value before a value can be reported. Examples include the orientation sensor and ambient light
-sensor.
 
 \section1 Front end, back end
 

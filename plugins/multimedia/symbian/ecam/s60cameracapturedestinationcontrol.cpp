@@ -44,6 +44,7 @@
 #include "s60cameracapturedestinationcontrol.h"
 #include "s60cameraservice.h"
 #include "s60imagecapturesession.h"
+#include "s60imagecapturesettings.h"
 
 S60CameraCaptureDestinationControl::S60CameraCaptureDestinationControl(QObject *parent):
     QCameraCaptureDestinationControl(parent)
@@ -57,7 +58,7 @@ S60CameraCaptureDestinationControl::S60CameraCaptureDestinationControl(S60ImageC
     m_captureDestination(QCameraImageCapture::CaptureToFile)
 {
     m_session = session;
-    connect(m_session, SIGNAL(destinationChanged(const QCameraImageCapture::CaptureDestinations)),
+    connect(m_session->settings(), SIGNAL(destinationChanged(const QCameraImageCapture::CaptureDestinations)),
         this, SLOT(handleCaptureDestinationChange(const QCameraImageCapture::CaptureDestinations)));
 }
 
@@ -86,7 +87,7 @@ void S60CameraCaptureDestinationControl::setCaptureDestination(
     const QCameraImageCapture::CaptureDestinations destination)
 {
     if (isCaptureDestinationSupported(destination))
-        m_session->setCaptureDestination(destination);
+        m_session->settings()->setCaptureDestination(destination);
     else
         m_session->setError(KErrNotSupported, tr("Requested capture destination is not supported."), true);
 }

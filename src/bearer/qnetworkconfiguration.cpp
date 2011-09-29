@@ -59,6 +59,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtNetwork
     \ingroup bearer
     \since 1.0
+    \deprecated
 
     QNetworkConfiguration encapsulates a single access point or service network.
     In most cases a single access point configuration can be mapped to one network

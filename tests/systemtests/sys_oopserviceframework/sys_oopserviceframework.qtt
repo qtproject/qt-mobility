@@ -43,84 +43,160 @@
 
 testcase = {
 
-    Start_out_of_process_Service : function()
+    start_out_of_process_service: function()
     {
+        // Test meta data
+        testTitle = "Serviceframework - Start out of process Service";
+        testBinary = "sfwecho_service";
+        testSource = "$MOBILITYDIR/examples/sfwecho/sfwecho_service";
+        testGoal = "Verify sfwecho_service can be launched and running in background";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-        prompt(twiki('*Start out of process Service*
 
-    1. Start sfwecho_service application (as background process)
-    1. Verify that the application(service) is running in background as Daemon
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " (as background process) | Verify that the application(service) is running in background as Daemon |
+        "));
     },
 
-    Broadcasting_messages_send_correctly : function()
+    broadcasting_messages_send_correctly : function()
     {
-        prompt(twiki('*Broadcasting messages send correctly*
+        // Test meta data
+        testTitle = "Serviceframework - Sending broadcasting messages";
+        testBinary = "sfwecho_client";
+        testSource = "$MOBILITYDIR/examples/sfwecho/sfwecho_client";
+        testGoal = "Verify a Broadcasting message to sfw server which will bounce it back";
+        testPreconditions = "sfwecho_service is running in background";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-    1. The purpose of this test is to send a Broadcasting message to sfw server which will bounce it back
-    1. Start sfwecho_client application (it will ensure the service is running automatically)
-    1. Choose *Shared Chat* radio button
-    1. Input some random text in the Message input box
-    1. Click on Send button
-    1. Verify that the message is echoed to the message box in the middle of current window
-        '));
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Choose *Global Chat* radio button | |
+            | Fill in some random text in the Message input box | |
+            | Click on *Send* button | Verify that the message is echoed to the message box in the middle of current window |
+        "));
     },
 
-
-    Private_messages_send_correctly : function()
+    private_messages_send_correctly : function()
     {
-        prompt(twiki('*Private messages send correctly*
+        // Test meta data
+        testTitle = "Serviceframework - Sending private messages";
+        testBinary = "sfwecho_client";
+        testSource = "$MOBILITYDIR/examples/sfwecho/sfwecho_client";
+        testGoal = "Verify send a private message to sfw server which will bounce it back";
+        testPreconditions = "sfwecho_service is running in background";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-    1. The purpose of this test is to send a private message to sfw server which will bounce it back
-    1. Start sfwecho_client application (it will ensure the service is running automatically)
-    1. Choose *Unique Chat* radio button
-    1. Input some random text in the Message input box
-    1. Click on Send button
-    1. Verify that the message is echoed to the message box in the middle of current window
-        '));
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Choose *Private Chat* radio button | |
+            | Fill in some random text in the Message input box | |
+            | Click on *Send* button | Verify that the message is echoed to the message box in the middle of current window |
+        "));
+    },    
+
+    find_available_services : function()
+    {
+        // Test meta data
+        testTitle = "Serviceframework - Find available services";
+        testBinary = "servicebrowser";
+        testSource = "$MOBILITYDIR/examples/servicebrowser";
+        testGoal = "List all available services";
+        testPreconditions = "sfwecho_service is running in background";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify that a list of available services is displayed |
+            | | Verify that one of the available services is *EchoService* |
+        "));
     },
 
-
-    Find_available_services : function()
+    find_available_interfaces : function()
     {
-        prompt(twiki('*Find available services*
+        // Test meta data
+        testTitle = "Serviceframework - Finding available interfaces";
+        testBinary = "servicebrowser";
+        testSource = "$MOBILITYDIR/examples/servicebrowser";
+        testGoal = "List all available interfaces for a service";
+        testPreconditions = "sfwecho_service running in background";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-    1. The purpose of this test is to list all available services
-    1. Start the sfwecho_client application (it will ensure the sfw server is running automatically)
-    1. Start the servicebrowser application
-    1. Verify that a list of available services is displayed
-    1. Verify that one of the available services is "EchoService"
-        '));
-    },
-    
-    
-    Find_service_interfaces : function()
-    {
-        prompt(twiki('*Find service interfaces*
 
-    1. The purpose of this test is to list all available interfaces for a service
-    1. Start the sfwecho_client application (it will ensure the sfw server is running automatically)
-    1. Start the servicebrowser application
-    1. Select "EchoService" from the list of services (on Symbian select "EchoService" from the list and then "Interfaces" from the pulldown menu)
-    1. Verify the interfaces implemented by Echo Service are displayed
-    1. Repeat this with another service
-    1. Verify the interfaces for this other service are also displayed
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *EchoService* from the list of services (on Symbian select *EchoService* from the list and then *Interfaces* from the pulldown menu) | Verify the interfaces implemented by Echo Service are displayed |
+            | Repeat this with another service | Verify the interfaces for this other service are also displayed |
+        "));
     },
 
-
-    Look_up_interface_attributes : function()
+    look_up_interface_attributes : function()
     {
-        prompt(twiki('*Look up interface attributes*
+        // Test meta data
+        testTitle = "Serviceframework - Look up interface attributes";
+        testBinary = "servicebrowser";
+        testSource = "$MOBILITYDIR/examples/servicebrowser";
+        testGoal = "All available attributes for a service interface are in the list";
+        testPreconditions = "sfwecho_service running in background";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-    1. The purpose of this test is to list all available attributes for a service interface
-    1. Start the sfwecho_client application (it will ensure the sfw server is running automatically)
-    1. Start the servicebrowser application
-    1. Select "EchoService" from the list of services (on Symbian select "EchoService" from the list and then "Interfaces" from the pulldown menu)
-    1. From the list of interfaces select one (on Symbian select an interface then select "Attributes" from the pulldown menu)
-    1. Verify the attributes for this interface are shown
-    1. Repeat this test choosing a different service
-    1. Verify the attributes for this new service are also shown
-        '));
-    }
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *EchoService* from the list of services (on Symbian select *EchoService* from the list and then *Interfaces* from the pulldown menu) | |
+            | From the list of interfaces select one (on Symbian select an interface then select *Attributes* from the pulldown menu) | Verify the attributes for this interface are shown |
+            | Repeat this test choosing a different service | Verify the attributes for this new service are also shown |
+        "));
+    },
+
 }

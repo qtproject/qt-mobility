@@ -43,119 +43,306 @@
 
 testcase = {
 
-    General_Tab: function()
+    general_tab: function()
     {
-        prompt(twiki('*Verify General Tab Information
+        // Test meta data
+        testTitle = "Systeminfo - General tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify General Tab Information";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""
 
-        1 Start qsysinfo application
-        1 Select *General* tab
-        1 Verify that *Current Language* matches the expected language value
-        1 Verify that *Current Country* matches the expected country value
-        1 Verify that the *Available Languages* list the expected languages for
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+            
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |      
+            | Select *General* tab | Verify that *Current Language* matches the expected language value |
+            | | Verify that *Current Country* matches the expected country value |
+            | | Verify that the *Available Languages* list the expected languages for |
+        "));
     },
 
-    General2_Tab: function()
+    general2_tab: function()
     {
-        prompt(twiki('*Verify General 2 Tab Information
+        // Test meta data
+        testTitle = "Systeminfo - General2 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify General 2 Tab Information";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""
 
-        1 Start qsysinfo application
-        1 Select *General 2* tab
-        1 For each choice in *Version* QComboBox verify that the correct value is displayed ( on right)
-        1 For each choice in the *Feature supported* *Version* QComboBox verify that the correct value is displayed ( on right)
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+            
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully | 
+            | Select *General 2* tab | For each choice in *Version* QComboBox verify that the correct value is displayed |
+            | | For each choice in the *Feature supported* *Version* QComboBox verify that the correct value is displayed |
+        "));
     },
 
-    Device_Tab: function()
+    device_tab: function()
     {
-        prompt(twiki('*Verify Device Tab Information
-        1 Start qsysinfo application                     
-        1 Select *Device* tab
-        1 If target is not a phone Verify that *Product* value is correct and skip the rest of this test
-        1 Verify that the *IMEI* value is correct
-        1 Verify that the *IMSEI* value is correct
-        1 Verify that the *Manufacturer* value is correct
-        1 Verify that the *Model* value is correct
-        1 Verify that the *Product* value is correct
-        '));
+        // Test meta data
+        testTitle = "Systeminfo - Device tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify Device Tab Information";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+            
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully | 
+            | Select *Device* tab | |
+            | If target is not a phone | Verify that *Product* value is correct and skip the rest of this test |
+            | If target is a phone | Verify that the *IMEI* value is correct |
+            | | Verify that the *IMSEI* value is correct |
+            | | Verify that the *Manufacturer* value is correct |
+            | | Verify that the *Model* value is correct |
+            | | Verify that the *Product* value is correct |
+        "));
+    },
+    
+    device2_tab: function()
+    {
+        // Test meta data
+        testTitle = "Systeminfo - Device2 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify Device 2 Tab Information";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = ""
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+            
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully | 
+            | Select *Device 2* tab | |
+            | If target is not a phone | Verify that *Input method* value is correct and skip the rest of this test |
+            | If target is a phone | Verify that the *Device Lock* values is correct |
+            | | Verify that the *Sim status* values is correct |
+            | | Verify that the *Currrent Profile* value is correct |
+            | Using the targets settings menu change the current profile | Verify that the *Currrent Profile* value has changed correctly |
+            | | Verify that the *Input method* value is correct |
+            | Using the targets settings menu change the input method | Verify that the *Input method* value has changed correctly |
+            | | Verify that the *Bluetooth* value is correct |
+            | Using the targets settings menu toggle the enabling of Bluetooth | Verify that the *Bluetooth* value has changed correctly | 
+        "));
     },
 
-    Device2_Tab: function()
+    device3_tab : function()
     {
-        prompt(twiki('*Verify Device 2 Tab Information
+        // Test meta data
+        testTitle = "systeminfo - Device3 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify charging status changed can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-        1 Start qsysinfo application
-        1 If target is not a phone Select *Device* tab, Verify that *Input method* value is correct and skip the rest of this test
-        1 Select *Device 2* tab
-        1 Verify that the *Device Lock* values is correct
-        1 Verify that the *Sim status* values is correct
-        1 Verify that the *Currrent Profile* value is correct
-        1 If target is a phone, using the targets settings menu change the current profile
-        1 If target is a phone, verify that the *Currrent Profile* value has changed correctly
-        1 Verify that the *Input method* value is correct
-        1 If target is a phone, using the targets settings menu change the input method
-        1 If target is a phone, verify that the *Input method* value has changed correctly
-        1 Verify that the *Bluetooth* value is correct
-        1 If target is a phone, using the targets settings menu toggle the enabling of Bluetooth
-        1 If target is a phone, verify that the *Input method* value has changed correctly
-        '));
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | If target is not a phone | Verify that *Charging Status* indicates *Wall Power* and skip the rest of this test |
+            | If target is a phone Select *Device 3* tab | |
+            | Connect/disconnect the phone from its charger | Verify that the charging status has change correctly |
+        "));
     },
 
-    Device3_Tab: function()
+    display_tab : function()
     {
-         prompt(twiki('*Verify Device 3 Tab Information
+        // Test meta data
+        testTitle = "systeminfo - Display tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify display info can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-         1 Start qsysinfo application
-         1 If target is not a phone Verify that *Charging Status* indicates *Wall Power* and skip the rest of this test
-         1 If target is a phone Select *Device 3* tab
-         1 Connect/disconnect the phone fron its charger
-         1 Verify that the charging status has change correctly
-         '));
 
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Display* tab | Verify the *Brightness* value is correct |
+            | | Verify the *Color Depth* value is correct |
+        "));
     },
 
-    Display_Tab: function()
-    {
-          prompt(twiki('*Verify Display Tab Information
 
-          1 Start qsysinfo application
-          1 Select *Display* tab
-          1 Verify the *Brightness* vaue is correct
-          1 Verify the *Color Depth* vaue is correct
-          '));
+    storage_tab : function()
+    {
+        // Test meta data
+        testTitle = "systeminfo - Storage tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify storage info can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Storage* tab | Verify that all expected file system are listed in the table corrected |
+        "));
     },
 
-    Storage_Tab: function()
+    network_tab: function()
     {
-           prompt(twiki('*Verify Storage Tab Information
+        // Test meta data
+        testTitle = "systeminfo - Network tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify network info can be shown correctly";
+        testPreconditions = "Insert a SIM card to the phone";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-           1 Start qsysinfo application
-           1 Select *Storage* tab
-           1 Verify that all expected file system are listed in the table corrected
-           '));
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Network* tab | Verify that all all network info (Network Status, Signal, Name) are listed corrected |
+        "));
+    },
+    
+    network2_tab: function()
+    {
+        /*
+        // Test meta data
+        testTitle = "systeminfo - Network2 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify network2 info can be shown correctly";
+        testPreconditions = "Insert a SIM card to the phone";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Network2* tab | Verify that all all network2 info (Cell ID, Location Area, Network Mode, Cell Data Technology) are listed corrected |
+        "));
+        */
     },
 
-    Network_Tab: function()
+    network3_tab: function()
     {
-        prompt(twiki('*Verify Device 2 Tab Information
+        /*
+        // Test meta data
+        testTitle = "systeminfo - Network3 tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify network3 info can be shown correctly";
+        testPreconditions = "Insert a SIM card to the phone";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-        1 Start qsysinfo application
-        1 Select *Storage* tab
-        1 Verify that all expected file system are listed in the table corrected
-        '));
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Network3* tab | Verify that all all network3 info (Current MNC, MCC, Home MCC and MNC) are listed corrected |
+        "));
+        */
     },
 
-    Network2_Tab: function()
+    screensaver_tab: function()
     {
-    },
+        /*
+        // Test meta data
+        testTitle = "systeminfo - Screensaver tab";
+        testBinary = "qsysinfo";
+        testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
+        testGoal = "Verify screensaver info can be shown correctly";
+        testPreconditions = " ";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
 
-    Network3_Tab: function()
-    {
-    },
 
-    ScreenSaver_Tab: function()
-    {
-    },
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | |
+            | Select *Screen Saver* tab | Verify that a check box *Screen Saver Inhibited* shown and can be selected |
+        "));
+        */
+    },
 }  // end of testcase
 

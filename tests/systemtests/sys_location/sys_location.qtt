@@ -612,7 +612,7 @@ testcase = {
           | Launch " + testBinary + " | App launches normally |
           | Run the mapsdemo application | Map is displayed on the screen |
           | Press - button | Map is zoomed out correctly |
-          | Press + button | Map is zoomed in correctly |'
+          | Press + button | Map is zoomed in correctly |"
         ));
     },
 
@@ -719,7 +719,7 @@ testcase = {
          *Tested Binary:* " + testBinary + "<br>
 
          | *Step* | *Verification* |
-         | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
+                     | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |"
         ));
     },
 

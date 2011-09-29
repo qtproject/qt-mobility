@@ -90,7 +90,7 @@ QGeoMapObject::Type QGeoMapPolygonObject::type() const
 
 /*!
     \property QGeoMapPolygonObject::path
-    \brief This property holds the ordered list of coordinates which define the
+    \brief the ordered list of coordinates which define the
     polygon to be drawn by this polygon object.
 
     The default value of this property is an empty list of coordinates.
@@ -123,7 +123,7 @@ QList<QGeoCoordinate> QGeoMapPolygonObject::path() const
 
 /*!
     \property QGeoMapPolygonObject::pen
-    \brief This property holds the pen that will be used to draw this object.
+    \brief the pen that will be used to draw this object.
 
     The pen is used to draw an outline around the polygon. The polygon is
     filled using the QGeoMapPolygonObject::brush property.
@@ -152,7 +152,7 @@ QPen QGeoMapPolygonObject::pen() const
 
 /*!
     \property QGeoMapPolygonObject::brush
-    \brief This property holds the brush that will be used to draw this object.
+    \brief the brush that will be used to draw this object.
 
     The brush is used to fill in polygon.
 

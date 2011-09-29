@@ -43,6 +43,7 @@
 
 #include "s60imageencodercontrol.h"
 #include "s60imagecapturesession.h"
+#include "s60imagecapturesettings.h"
 
 S60ImageEncoderControl::S60ImageEncoderControl(QObject *parent) :
     QImageEncoderControl(parent)
@@ -62,60 +63,48 @@ S60ImageEncoderControl::~S60ImageEncoderControl()
 QList<QSize> S60ImageEncoderControl::supportedResolutions(
         const QImageEncoderSettings &settings, bool *continuous) const
 {
-    QList<QSize> resolutions = m_session->supportedCaptureSizesForCodec(settings.codec());
-
     // Discrete resolutions are returned
     if (continuous)
         *continuous = false;
 
-    return resolutions;
+    return m_session->settings()->supportedImageResolutionsForCodec(settings.codec());
 }
 
 QStringList S60ImageEncoderControl::supportedImageCodecs() const
 {
-    return m_session->supportedImageCaptureCodecs();
+    return m_session->settings()->supportedImageCodecs();
 }
 
 QString S60ImageEncoderControl::imageCodecDescription(const QString &codec) const
 {
-    return m_session->imageCaptureCodecDescription(codec);
+    return m_session->settings()->imageCodecDescription(codec);
 }
 
 QImageEncoderSettings S60ImageEncoderControl::imageSettings() const
 {
     // Update setting values from session
     QImageEncoderSettings settings;
-    settings.setCodec(m_session->imageCaptureCodec());
-    settings.setResolution(m_session->captureSize());
-    settings.setQuality(m_session->captureQuality());
+    settings.setCodec(m_session->settings()->imageCodec());
+    settings.setResolution(m_session->settings()->imageResolution());
+    settings.setQuality(m_session->settings()->imageQuality());
 
     return settings;
 }
 
 void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
 {
-    // Notify that settings have been implicitly set and there's no need to
-    // initialize them in case camera is changed
-    m_session->notifySettingsSet();
-
     if (!settings.isNull()) {
-        if (!settings.codec().isEmpty()) {
-            if (settings.resolution() != QSize(-1,-1)) { // Codec, Resolution & Quality
-                m_session->setImageCaptureCodec(settings.codec());
-                m_session->setCaptureSize(settings.resolution());
-                m_session->setCaptureQuality(settings.quality());
-            } else { // Codec and Quality
-                m_session->setImageCaptureCodec(settings.codec());
-                m_session->setCaptureQuality(settings.quality());
-            }
-        } else {
-            if (settings.resolution() != QSize(-1,-1)) { // Resolution & Quality
-                m_session->setCaptureSize(settings.resolution());
-                m_session->setCaptureQuality(settings.quality());
-            }
-            else // Only Quality
-                m_session->setCaptureQuality(settings.quality());
-        }
+        // Notify that settings have been implicitly set and there's no need to
+        // initialize them in case camera is changed
+        m_session->settings()->notifySettingsSet();
+
+        if (!settings.codec().isEmpty())
+            m_session->settings()->setImageCodec(settings.codec());
+
+        // Set quality before resolution as quality defines the
+        // resolution used in case it's not explicitly set
+        m_session->settings()->setImageQuality(settings.quality());
+        m_session->settings()->setImageResolution(settings.resolution());
 
         // Prepare ImageCapture with the settings and set error if needed
         int prepareSuccess = m_session->prepareImageCapture();
@@ -123,7 +112,9 @@ void S60ImageEncoderControl::setImageSettings(const QImageEncoderSettings &setti
         // Preparation fails with KErrNotReady if camera has not been started.
         // That can be ignored since settings are set internally in that case.
         if (prepareSuccess != KErrNotReady && prepareSuccess != KErrNone)
-            m_session->setError(prepareSuccess, tr("Failure in preparation of image capture."));
+            m_session->setError(prepareSuccess, tr("Failed to apply image settings."), true);
+    } else {
+        m_session->setError(KErrNotSupported, tr("Unable to set undefined settings."), true);
     }
 }
 
