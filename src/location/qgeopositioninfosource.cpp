@@ -298,7 +298,7 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 
 /*!
     \property QGeoPositionInfoSource::updateInterval
-    \brief This property holds the requested interval in milliseconds between each update.
+    \brief the requested interval in milliseconds between each update.
 
     If the update interval is not set (or is set to 0) the
     source will provide updates as often as necessary.
@@ -493,7 +493,7 @@ QStringList QGeoPositionInfoSource::availableSources()
 
 /*!
     \property QGeoPositionInfoSource::minimumUpdateInterval
-    \brief This property holds the minimum time (in milliseconds) required to retrieve a position update.
+    \brief the minimum time (in milliseconds) required to retrieve a position update.
 
     This is the minimum value accepted by setUpdateInterval() and
     requestUpdate().

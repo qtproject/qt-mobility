@@ -109,7 +109,7 @@ QGeoMapObject::Type QGeoMapRouteObject::type() const
 
 /*!
     \property QGeoMapRouteObject::route
-    \brief This property holds the which will be displayed.
+    \brief the which will be displayed.
 
     The default value of this property is an empty route.
 
@@ -130,7 +130,7 @@ void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 
 /*!
     \property QGeoMapRouteObject::pen
-    \brief This property holds the pen that will be used to draw this object.
+    \brief the pen that will be used to draw this object.
 
     The pen is used to draw the route.
 
@@ -157,7 +157,7 @@ void QGeoMapRouteObject::setPen(const QPen &pen)
 
 /*!
     \property QGeoMapRouteObject::detailLevel
-    \brief This property holds the level of detail used to draw this object.
+    \brief the level of detail used to draw this object.
 
     A QGeoRoute instance can contain a large amount of information about the
     path taken by the route. This property is used as a hint to help reduce the
