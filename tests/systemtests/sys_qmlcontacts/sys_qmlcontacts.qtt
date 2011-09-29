@@ -201,13 +201,13 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify test application can run without any error";
+        testGoal = "Verify contact list can be checked";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
-        startTestApp();
 
-        // Test Steps        
+        // Test Steps
+        startTestApp();
         for (var index=0; index < contactSet.length; index++){
             // note the contact list should be the focus widget
             select(contactSet[index].firstName);
@@ -226,11 +226,10 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify test application can run without any error";
+        testGoal = "Verify contact can be export";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
-        startTestApp();
 
         // Test Steps 
         startTestApp();
@@ -253,11 +252,10 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify test application can run without any error";
+        testGoal = "Verify all contact detail can be shown";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
-        startTestApp();
 
         // Test Steps 
         startTestApp();
@@ -280,11 +278,10 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify test application can run without any error";
+        testGoal = "Verify contact details can be checked";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
-        startTestApp();
 
         // Test Steps 
         startTestApp();
