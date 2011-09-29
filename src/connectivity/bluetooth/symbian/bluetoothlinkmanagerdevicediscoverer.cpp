@@ -316,7 +316,8 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     QBluetoothAddress bluetoothAddress = qTBTDevAddrToQBluetoothAddress(symbianDeviceAddress);
 
     // format symbian major/minor numbers
-    quint32 deviceClass = qTPackSymbianDeviceClass(m_addr);
+    TInquirySockAddr& sa = TInquirySockAddr::Cast( m_entry().iAddr );
+    quint32 deviceClass = qTPackSymbianDeviceClass(sa);
 
     QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
 
@@ -333,12 +334,13 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     QBluetoothAddress bluetoothAddress = qTBTDevAddrToQBluetoothAddress(symbianDeviceAddress);
 
     // format symbian major/minor numbers
-    quint32 deviceClass = qTPackSymbianDeviceClass(m_addr);
+    TInquirySockAddr& sa = TInquirySockAddr::Cast( m_entry().iAddr );
+    quint32 deviceClass = qTPackSymbianDeviceClass(sa);
 
     QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
 
-    if (m_addr.Rssi())
-        deviceInfo.setRssi(m_addr.Rssi());
+    if (sa.Rssi())
+        deviceInfo.setRssi(sa.Rssi());
 #endif
     if (!deviceInfo.rssi())
         deviceInfo.setRssi(1);
