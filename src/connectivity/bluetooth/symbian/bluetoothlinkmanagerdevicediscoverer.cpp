@@ -339,8 +339,8 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
 
     QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
 
-    if (symbianDeviceAddress.Rssi())
-        deviceInfo.setRssi(symbianDeviceAddress.Rssi());
+    if (sa.Rssi())
+        deviceInfo.setRssi(sa.Rssi());
 #endif
     if (!deviceInfo.rssi())
         deviceInfo.setRssi(1);
