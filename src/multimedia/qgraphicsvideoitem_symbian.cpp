@@ -85,6 +85,7 @@ public:
     void setZValue(int zValue);
     void setTransform(const QTransform &transform);
     void setWithinViewBounds(bool within);
+    bool hasContent() const;
 
     bool eventFilter(QObject *watched, QEvent *event);
     void customEvent(QEvent *event);
@@ -97,6 +98,9 @@ public:
 public slots:
     void updateWidgetOrdinalPosition();
     void updateItemAncestors();
+
+private slots:
+    void hasContentChanged();
 
 private:
     void clearService();
@@ -167,6 +171,7 @@ bool QGraphicsVideoItemPrivate::setMediaObject(QMediaObject *mediaObject)
                     m_service->requestControl(QVideoWidgetControl_iid));
                 if (m_widgetControl) {
                     connect(m_widgetControl, SIGNAL(nativeSizeChanged()), q_ptr, SLOT(_q_updateNativeSize()));
+                    connect(m_widgetControl, SIGNAL(hasContentChanged()), this, SLOT(hasContentChanged()));
                     m_widgetControl->setAspectRatioMode(Qt::IgnoreAspectRatio);
                     updateGeometry();
                     updateTopWinId();
@@ -275,6 +280,11 @@ void QGraphicsVideoItemPrivate::setWithinViewBounds(bool within)
     }
 }
 
+bool QGraphicsVideoItemPrivate::hasContent() const
+{
+    return m_widgetControl && m_widgetControl->property("hasContent").value<bool>();
+}
+
 bool QGraphicsVideoItemPrivate::eventFilter(QObject *watched, QEvent *event)
 {
     bool updateViewportAncestorEventFiltersRequired = false;
@@ -381,6 +391,11 @@ void QGraphicsVideoItemPrivate::updateItemAncestors()
     }
 }
 
+void QGraphicsVideoItemPrivate::hasContentChanged()
+{
+    q_ptr->update();
+}
+
 void QGraphicsVideoItemPrivate::updateGeometry()
 {
     q_ptr->prepareGeometryChange();
@@ -483,6 +498,7 @@ void QGraphicsVideoItemPrivate::_q_mediaObjectDestroyed()
 {
     m_mediaObject = 0;
     clearService();
+    q_ptr->update();
 }
 
 QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
@@ -570,7 +586,8 @@ void QGraphicsVideoItem::paint(
     }
     const QPainter::CompositionMode oldCompositionMode = painter->compositionMode();
     painter->setCompositionMode(QPainter::CompositionMode_Source);
-    painter->fillRect(d->boundingRect(), Qt::transparent);
+    const QColor color = d->hasContent() ? Qt::transparent : Qt::black;
+    painter->fillRect(d->boundingRect(), color);
     painter->setCompositionMode(oldCompositionMode);
 }
 

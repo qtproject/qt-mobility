@@ -369,6 +369,7 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
     DP0("S60VideoPlayerSession::setVideoRenderer +++");
     if (videoOutput != m_videoOutputControl) {
         if (m_videoOutputDisplay) {
+            m_videoOutputDisplay->setHasContent(false);
             disconnect(m_videoOutputDisplay);
             m_videoOutputDisplay->disconnect(this);
             m_videoOutputDisplay = 0;
@@ -378,6 +379,7 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
                 m_videoOutputDisplay = control->display();
             if (!m_videoOutputDisplay)
                 return;
+            m_videoOutputDisplay->setHasContent(QMediaPlayer::PlayingState == state());
             m_videoOutputDisplay->setNativeSize(m_nativeSize);
             connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
             connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
@@ -580,6 +582,9 @@ void S60VideoPlayerSession::doStop()
 
     if (m_stream)
         m_networkAccessControl->resetIndex();
+
+    if (m_videoOutputDisplay)
+        m_videoOutputDisplay->setHasContent(false);
 
     m_player->Stop();
 
@@ -961,6 +966,8 @@ void S60VideoPlayerSession::MvloLoadingComplete()
     DP0("S60VideoPlayerSession::MvloLoadingComplete +++");
 
     buffered();
+    if (m_videoOutputDisplay)
+        m_videoOutputDisplay->setHasContent(true);
 
     DP0("S60VideoPlayerSession::MvloLoadingComplete ---");
 }
