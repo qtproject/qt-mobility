@@ -5,7 +5,7 @@
         <ipcaddress>%APPNAME%</ipcaddress>
         <description>NFC NDEF message handler for %APPNAME%</description>
         <interface>
-            <name>com.nokia.symbian.NdefMessageHandler</name>
+            <name>com.nokia.qtmobility.nfc.NdefMessageHandler</name>
             <version>1.0</version>
             <description>NFC NDEF message handler for %APPNAME%</description>
             <capabilities></capabilities>
