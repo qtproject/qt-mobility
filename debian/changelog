@@ -4,7 +4,7 @@ qt-mobility (1.2.1+200) unstable; urgency=low
   * add patch to keep binary compatibility with PR1.0
     and PR1.1 versions.
 
- -- Holger Schröder <holger.schroeder.ext@basyskom.de>  Fri, 30 Sep 2011 10:43:48 +1000
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Fri, 30 Sep 2011 10:43:48 +1000
 
 qt-mobility (1.2.1+199) unstable; urgency=low
 
