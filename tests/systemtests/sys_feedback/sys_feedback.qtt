@@ -56,9 +56,11 @@ testcase = {
         // Test meta data
         testTitle = "Feedback - Vibrate Using Low Level API";
         testBinary = "hapticsplayer";
+        testSource = "$MOBILITYDIR/examples/hapticsplayer";
         testGoal = "Verify that vibrate functionality can be called with low level API";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
 //            enter(duration, 'duration');
@@ -68,6 +70,7 @@ testcase = {
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
             | *Step* | *Verification* |
             | Launch " + testBinary + " | App launches normally |
@@ -80,51 +83,56 @@ testcase = {
 
     vibrate_using_highlevel_API: function()
     {
-         // Test meta data
-         testTitle = "Feedback - Vibrate Using High Level API";
-         testBinary = "hapticsplayer";
-         testGoal = "Verify that vibrate functionality can be called with high level API.";
-         testPreconditions = "'High-Level' tab must be enabled";
-         testGroups = "BAT";
+        // Test meta data
+        testTitle = "Feedback - Vibrate Using High Level API";
+        testBinary = "hapticsplayer";
+        testSource = "$MOBILITYDIR/examples/hapticsplayer";
+        testGoal = "Verify that vibrate functionality can be called with high level API.";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-         // Test steps
-         prompt(twiki("---+++ " + testTitle + "<br><br>
-             *Goal:* " + testGoal + "<br>
-             *Pre-Requisites:* " + testPreconditions + "<br>
-             *Tested Binary:* " + testBinary + "<br>
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-             | *Step* | *Verification* |
-             | Launch " + testBinary + " | App launches normally |
-             | Select high-level tab | |
-             | For each value of combobox, Click the 'Play' button | Verify that the expected effect is heard |
-         "));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select high-level tab | |
+            | For each value of combobox, Click the 'Play' button | Verify that the expected effect is heard |
+        "));
     },
 
 
     vibrate_using_file_API: function()
     {
-         // Test meta data
-         testTitle = "Feedback - Play File";
-         testBinary = "hapticsplayer";
-         testGoal = "Verify that feedback mechanism works using a specified files.";
-         testPreconditions = "1. 'File' tab must be enabled.<br>
-   1. Platform specific effect file must be available.";
-         testGroups = "BAT";
+        // Test meta data
+        testTitle = "Feedback - Play File";
+        testBinary = "hapticsplayer";
+        testSource = "$MOBILITYDIR/examples/hapticsplayer";
+        testGoal = "Verify that feedback mechanism works using a specified files.";
+        testPreconditions = "<br>1. 'File' tab must be enabled.<br>2. Platform specific effect file must be available.";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-         // Test steps
-         prompt(twiki("---+++ " + testTitle + "<br><br>
-             *Goal:* " + testGoal + "<br>
-             *Pre-Requisites:* " + testPreconditions + "<br>
-             *Tested Binary:* " + testBinary + "<br>
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-             | *Step* | *Verification* |
-             | Launch " + testBinary + " | App launches normally |
-             | select 'File' | |
-             | select '...' | |
-             | enter location to effect file and select *Open* | |
-             | select 'Play/pause' | Verify that the expected effect is heard |
-             | select 'Play/pause' again and quickly select 'Stop' | Verify that the expected effect is stoped before it is completed |
-         "));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | select 'File' | |
+            | select '...' | |
+            | enter location to effect file and select *Open* | |
+            | select 'Play/pause' | Verify that the expected effect is heard |
+            | select 'Play/pause' again and quickly select 'Stop' | Verify that the expected effect is stoped before it is completed |
+        "));
     },
 
 
@@ -140,20 +148,24 @@ testcase = {
         // Test meta data
         testTitle = "Feedback - Effects";
         testBinary = "hapticsquare";
+        testSource = "$MOBILITYDIR/examples/hapticsquare";
         testGoal = "Verify that feedback mechanism works with selected effects.";
         testPreconditions = "tested device must have a touch screen/mouse";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-          *Goal:* " + testGoal + "<br>
-          *Pre-Requisites:* " + testPreconditions + "<br>
-          *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-          | *Step* | *Verification* |
-          | Launch " + testBinary + " | App launches normally |
-          | select '" + effect + "' | Verify effects sounds like: " + effect + "|"));
-    }
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | select '" + effect + "' | Verify effects sounds like: " + effect + "|
+        "));
+    },
 
 }  // end of testcase
 
