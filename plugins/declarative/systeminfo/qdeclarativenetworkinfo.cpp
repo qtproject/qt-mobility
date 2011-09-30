@@ -59,6 +59,67 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
 
     Note: To use notification signals, you need to set the monitor* properties to true.
 
+    The follow table lists the \b incompatible changes made to the start* functions from QtMobility 1.1 to QtMobility 1.2,
+    where they became Q_PROPERTY
+
+    In QtMobility 1.2, the  NetworkInfo Element was changed to work in one network mode at a time. You use the property \b mode
+    to set which network mode it is in.
+
+
+    \table
+    \header
+        \o QtMobility 1.1 \o QtMobility 1.2 \o Notes
+    \row
+        \o slot void startStatusChanged();
+        \o void startStatusChanged(bool on);
+        \o Became Q_PROPERTY monitoringStatusChanges in QtMobility 1.2
+    \rom
+        \o void startSignalStrengthChanged();
+        \o void startSignalStrengthChanged(bool)
+        \o Became Q_PROPERTY monitorSignalStrengthChanges in QtMobility 1.2
+    \row
+        \o void startNameChanged()
+        \o void startNameChanged(bool on)
+        \o Became Q_PROPERTY monitorNameChanges in QtMobility 1.2
+    \row
+        \o void startModeChanged()
+        \o void startModeChanged(bool on)
+        \o Became Q_PROPERTY monitorModeChanges in QtMobility 1.2
+    \row
+        \o void startCurrentMobileCountryCodeChanged()
+        \o void startCurrentMobileCountryCodeChanged(bool on)
+        \o Became Q_PROPERTY monitorCurrentMobileCountryCodeChanges in QtMobility 1.2
+    \row
+        \o void startCurrentMobileNetworkCodeChanged()
+        \o void startCurrentMobileNetworkCodeChanged(bool on)
+        \o Became Q_PROPERTY startCurrentMobileNetworkCodeChanged in QtMobility 1.2
+    \row
+        \o void useMode();
+        \o void mode()
+        \o Became Q_PROPERTY mode in QtMobility 1.2
+    \endtable
+
+    Example new usage:
+
+
+QtMobility 1.2:
+\code
+        NetworkInfo {
+            id: wlaninfo
+            mode: NetworkInfo.WlanMode;
+
+
+            monitorNameChanges: true;
+            monitorSignalStrengthChanges: true
+            monitorStatusChanges: true
+            monitorModeChanges: true
+
+            onStatusChanged : {
+                img = getImage(newStatus)
+            }
+      }
+\endcode
+
     To use this in a mode other than the default mode given by currentMode, set the mode with
     \a mode.
 

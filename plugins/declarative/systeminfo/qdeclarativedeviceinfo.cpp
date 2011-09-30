@@ -63,6 +63,47 @@ Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
 
     Note: To use notification signals, you need to set the monitor* properties to true.
 
+
+    The follow table lists the \b incompatible changes made to the start* functions from QtMobility 1.1 to QtMobility 1.2,
+    where they became Q_PROPERTY
+
+    \table
+    \header
+        \o QtMobility 1.1 \o QtMobility 1.2 \o Notes
+    \row
+        \o slot void startBatteryLevelChanged();
+        \o void startBatteryLevelChanged(bool on);
+        \o Became Q_PROPERTY monitorBatteryLevelChanges in QtMobility 1.2
+    \row
+        \o slot void startBatteryStatusChanged();
+        \o void startBatteryStatusChanged(bool on);
+        \o Became Q_PROPERTY monitorBatteryStatusChanges in QtMobility 1.2
+    \row
+        \o slot void startPowerStateChanged();
+        \o void startPowerStateChanged(bool on);
+        \o Became Q_PROPERTY monitorPowerStateChanges in QtMobility 1.2
+    \row
+        \o slot void startCurrentProfileChanged();
+        \o void startCurrentProfileChanged(bool on);
+        \o Became Q_PROPERTY monitorCurrentProfileChanges in QtMobility 1.2
+    \row
+        \o slot void startBluetoothStateChanged();
+        \o void startBluetoothStateChanged(bool on);
+        \o Became Q_PROPERTY monitorBluetoothStateChanges in QtMobility 1.2
+    \endtable
+
+    Example new usage:
+
+QtMobility 1.1:
+\code
+      deviceinfo.startBatteryLevelChanged();
+\endcode
+
+QtMobility 1.2:
+\code
+      monitorBatteryLevelChanges: true
+\endcode
+
 \sa QSystemDeviceInfo
 */
 
