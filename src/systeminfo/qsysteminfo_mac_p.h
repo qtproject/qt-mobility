@@ -278,7 +278,6 @@ public:
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
 
     QSystemDeviceInfo::PowerState currentPowerState();
     QSystemDeviceInfo::ThermalState currentThermalState();
