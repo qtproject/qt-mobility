@@ -259,7 +259,6 @@ public:
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoPrivate();
 
-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
     QString imei();
     QString imsi();
     QString manufacturer();

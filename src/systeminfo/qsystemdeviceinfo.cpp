@@ -630,7 +630,7 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
 */
 QSystemDeviceInfo::ProfileDetails QSystemDeviceInfo::activeProfileDetails()
 {
-    return d->currentProfileDetails;
+    return currentProfileDetails;
 }
 
 
