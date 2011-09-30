@@ -361,6 +361,7 @@ private:
     \class QVideoEncoderSettings
 
     \brief The QVideoEncoderSettings class provides a set of video encoder settings.
+    \inmodule QtMultimediaKit
     \since 1.0
 
     A video encoder settings object is used to specify the video encoder
@@ -649,6 +650,7 @@ private:
 
     \brief The QImageEncoderSettings class provides a set of image encoder
     settings.
+    \inmodule QtMultimedia
     \since 1.0
 
     A image encoder settings object is used to specify the image encoder

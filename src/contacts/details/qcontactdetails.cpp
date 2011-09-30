@@ -78,7 +78,7 @@ QTM_BEGIN_NAMESPACE
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
 
-  \inmodule QtContacts
+   \inmodule QtContacts
    \since 1.0
 
    \ingroup contacts-details
@@ -126,6 +126,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
    \brief The QContactEmailAddress class contains an email address of
    a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -164,6 +165,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactEmailAddress::FieldEmailAddress, "EmailAddress"
    \brief The QContactFamily class contains names of
    family members of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.1
 
    This leaf-class has been part of the default schema since version
@@ -222,6 +224,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
    \brief The QContactFavorite class indicates if a contact is a favorite contact as well as the
    position it should appear in an ordered list of favorites.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.1
 
    This leaf-class has been part of the default schema since version
@@ -291,6 +294,7 @@ QContactFilter QContactFavorite::match()
    \class QContactAnniversary
    \brief The QContactAnniversary class contains an anniversary of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -454,6 +458,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
    \class QContactAvatar
    \ingroup contacts-details
+   \inmodule QtContacts
    \brief The QContactAvatar class contains avatar URLs of a contact.
    \since 1.0
 
@@ -532,6 +537,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldVideoUrl, "VideoUrl");
    \class QContactAddress
    \brief The QContactAddress class contains an address of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    The fields in the QContactAddress class are based on the segments
@@ -790,6 +796,7 @@ QContactFilter QContactAddress::match(const QString &subString)
    \brief The QContactUrl class contains a url associated with
    a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -878,10 +885,11 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeBlog, "Blog");
 /* ==================== QContactPhonenumber ======================= */
 
 /*!
-    \class QContactPhoneNumber
-    \brief The QContactPhoneNumber class provides a phone number
-    of a contact.
-    \ingroup contacts-details
+   \class QContactPhoneNumber
+   \brief The QContactPhoneNumber class provides a phone number
+   of a contact.
+   \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1056,6 +1064,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
    \class QContactBirthday
    \brief The QContactBirthday class contains a birthday of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1132,6 +1141,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldCalendarId, "CalendarId");
    \class QContactGender
    \brief The QContactGender class contains the gender of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1195,6 +1205,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGender::GenderUnspecified, "Unspecified");
    \brief The QContactGeoLocation class contains a global location
    coordinate associated with a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
 
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
@@ -1427,6 +1438,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
    \brief The QContactGuid class contains a globally unique
    Id of a contact, for use in synchronization with other datastores.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1467,6 +1479,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGuid::FieldGuid, "Guid");
    \class QContactHobby
    \brief The QContactHobby class contains a hobby of the contact.
    \ingroup contacts-details
+   \inmodule QtContacts
 
    A contact may have one or more hobbies.  Each QContactHobby
    detail contains information about a single hobby of the contact.
@@ -1504,6 +1517,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactHobby::FieldHobby, "Hobby");
    \class QContactName
    \brief The QContactName class contains a name of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1646,6 +1660,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldCustomLabel, "CustomLabel");
    \class QContactNickname
    \brief The QContactNickname class contains a nickname of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1685,6 +1700,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNickname::FieldNickname, "Nickname");
    \brief The QContactNote class contains a note associated
    with a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1725,6 +1741,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
    \brief The QContactTag class contains a tag associated with a
    contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    Typically the tags associated with a contact will be distinct,
@@ -1788,6 +1805,7 @@ QContactFilter QContactTag::match(const QString &subString)
 /*!
    \class QContactThumbnail
    \ingroup contacts-details
+   \inmodule QtContacts
    \brief The QContactThumbnail class contains a thumbnail used
    in display lists to represent the contact.
    \since 1.0
@@ -1850,6 +1868,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactThumbnail::FieldThumbnail, "Thumbnail");
    \brief The QContactTimestamp class contains the creation and
    last-modified timestamp associated with the contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1908,6 +1927,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::FieldCreationTimestamp, "CreationTim
    \class QContactType
    \brief The QContactType class describes the type of the contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -1975,6 +1995,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeGroup, "Group");
    \brief The QContactDisplayLabel class is the (possibly synthesized)
    display label of a contact.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -2028,6 +2049,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::FieldLabel, "Label");
    \sa QContactPresence
 
    \ingroup contacts-details
+   \inmodule QtContacts
  */
 
 /*!
@@ -2270,6 +2292,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::ProtocolYahoo, "yahoo");
    \brief The QContactOrganization class provides details about an
    organization that the contact is either a part of, or stands for.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -2442,6 +2465,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
    \brief The QContactRingtone class provides a ringtone associated
    with a contact
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
@@ -2550,6 +2574,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
    \sa QContactOnlineAccount
 
    \ingroup contacts-details
+   \inmodule QtContacts
  */
 
 /*!
@@ -2721,6 +2746,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
    \brief The QContactGlobalPresence class provides aggregated presence information
    for a contact, synthesized or supplied by the backend.
    \ingroup contacts-details
+   \inmodule QtContacts
    \since 1.0
 
    This leaf-class has been part of the default schema since version
