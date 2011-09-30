@@ -132,7 +132,7 @@ public:
     QString imsi();
     QString model();
     QString productName();
-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+
     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::SimStatus simStatus();
