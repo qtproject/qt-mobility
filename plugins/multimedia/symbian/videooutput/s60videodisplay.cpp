@@ -52,6 +52,7 @@ S60VideoDisplay::S60VideoDisplay(QObject *parent)
 ,   m_aspectRatioMode(Qt::KeepAspectRatio)
 ,   m_paintingEnabled(false)
 ,   m_rotation(0.0f)
+,   m_hasContent(false)
 {
     connect(this, SIGNAL(displayRectChanged(QRect, QRect)),
             this, SLOT(updateContentRect()));
@@ -176,4 +177,18 @@ void S60VideoDisplay::updateContentRect()
         }
     }
 }
+
+bool S60VideoDisplay::hasContent() const
+{
+    return m_hasContent;
+}
+
+void S60VideoDisplay::setHasContent(bool value)
+{
+    if (m_hasContent != value) {
+        m_hasContent = value;
+        emit hasContentChanged();
+    }
+}
+
 

@@ -206,7 +206,7 @@ void S60CameraViewfinderEngine::setVideoWidgetControl(QObject *viewfinderOutput)
         }
 
         if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-            startViewfinder(true); // Internal start (i.e. start if started externally)
+            startViewfinder(true, false); // Internal start (i.e. start if started externally)
     }
 }
 
@@ -253,7 +253,7 @@ void S60CameraViewfinderEngine::setVideoRendererControl(QObject *viewfinderOutpu
         }
 
         if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-            startViewfinder(true);
+            startViewfinder(true, false);
 
         if (viewFinderRenderControl->surface())
             rendererSurfaceSet();
@@ -320,14 +320,14 @@ void S60CameraViewfinderEngine::setVideoWindowControl(QObject *viewfinderOutput)
         }
 
         if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-            startViewfinder(true); // Internal start (i.e. start if started externally)
+            startViewfinder(true, false); // Internal start (i.e. start if started externally)
     }
 }
 
 void S60CameraViewfinderEngine::releaseControl(ViewfinderOutputType type)
 {
     if (m_vfState == EVFIsConnectedIsStartedIsVisible)
-        stopViewfinder(true);
+        stopViewfinder(true, false);
 
     if (m_viewfinderOutput) {
         switch (type) {
@@ -336,6 +336,7 @@ void S60CameraViewfinderEngine::releaseControl(ViewfinderOutputType type)
         case OutputTypeVideoWidget:
             if (m_viewfinderType != OutputTypeVideoWidget)
                 return;
+            m_viewfinderDisplay->setHasContent(false);
             disconnect(m_viewfinderOutput);
             m_viewfinderOutput->disconnect(this);
             Q_ASSERT(m_viewfinderDisplay);
@@ -348,6 +349,7 @@ void S60CameraViewfinderEngine::releaseControl(ViewfinderOutputType type)
         case OutputTypeVideoWindow:
             if (m_viewfinderType != OutputTypeVideoWindow)
                 return;
+            m_viewfinderDisplay->setHasContent(false);
             disconnect(m_viewfinderOutput);
             m_viewfinderOutput->disconnect(this);
             Q_ASSERT(m_viewfinderDisplay);
@@ -393,7 +395,7 @@ void S60CameraViewfinderEngine::releaseControl(ViewfinderOutputType type)
     }
 }
 
-void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
+void S60CameraViewfinderEngine::startViewfinder(bool internalStart, bool suppressHasContentChanged)
 {
     if (!internalStart) {
         switch (m_vfState) {
@@ -501,16 +503,19 @@ void S60CameraViewfinderEngine::startViewfinder(const bool internalStart)
                         m_surfaceFormat = format;
                     } else {
                         // Viewfinder was already started, stop it
-                        stopViewfinder(true);
+                        stopViewfinder(true, true);
                         emit error(QCamera::NotSupportedFeatureError, tr("Failed to restart surface."));
                     }
                 }
             }
         }
     }
+
+    if (m_viewfinderDisplay && !suppressHasContentChanged)
+        m_viewfinderDisplay->setHasContent(true);
 }
 
-void S60CameraViewfinderEngine::stopViewfinder(const bool internalStop)
+void S60CameraViewfinderEngine::stopViewfinder(const bool internalStop, bool suppressHasContentChanged)
 {
     // Stop if viewfinder is started
     if (m_vfState == EVFIsConnectedIsStartedIsVisible) {
@@ -542,6 +547,9 @@ void S60CameraViewfinderEngine::stopViewfinder(const bool internalStop)
             break;
         }
     }
+
+    if (m_viewfinderDisplay && !suppressHasContentChanged)
+        m_viewfinderDisplay->setHasContent(false);
 }
 
 void S60CameraViewfinderEngine::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
@@ -558,8 +566,8 @@ void S60CameraViewfinderEngine::resetViewfinderSize(const QSize size)
     if (m_vfState != EVFIsConnectedIsStartedIsVisible)
         return;
 
-    stopViewfinder(true);
-    startViewfinder(true);
+    stopViewfinder(true, true);
+    startViewfinder(true, true);
 }
 
 void S60CameraViewfinderEngine::resetVideoWindowSize()
@@ -578,13 +586,13 @@ void S60CameraViewfinderEngine::resetViewfinderDisplay()
                 return;
 
             // First stop viewfinder
-            stopViewfinder(true);
+            stopViewfinder(true, true);
 
             if (!m_viewfinderDisplay->windowHandle())
                 return;
 
             // Then start it with the new WindowID
-            startViewfinder(true);
+            startViewfinder(true, true);
             break;
         case OutputTypeRenderer:
         case OutputTypeVideoWindow:
@@ -706,18 +714,18 @@ void S60CameraViewfinderEngine::handleVisibilityChange(const bool isVisible)
             emit error(QCamera::CameraError, tr("General viewfinder error."));
             break;
         }
-        startViewfinder(true);
+        startViewfinder(true, true);
     } else {
         // Stopping takes care of the state change
-        stopViewfinder(true);
+        stopViewfinder(true, true);
     }
 }
 
 void S60CameraViewfinderEngine::handleWindowChange(RWindow *handle)
 {
-    stopViewfinder(true);
+    stopViewfinder(true, true);
     if (handle) // New handle available, start viewfinder
-        startViewfinder(true);
+        startViewfinder(true, true);
 }
 
 void S60CameraViewfinderEngine::handleContentAspectRatioChange(const QSize& newSize)
