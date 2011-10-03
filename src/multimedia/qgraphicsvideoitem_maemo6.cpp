@@ -43,7 +43,9 @@
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qpointer.h>
+#include <QtCore/qsharedpointer.h>
 #include <QtCore/qbasictimer.h>
+#include <QtGui/qapplication.h>
 
 #include <QtGui/qgraphicsscene.h>
 
@@ -54,6 +56,9 @@
 #include <qvideorenderercontrol.h>
 
 #include <qvideosurfaceformat.h>
+
+#include <QMeeGoSwitchEvent>
+#include <QMeeGoGraphicsSystemHelper>
 
 #include <X11/Xlib.h>
 
@@ -82,6 +87,40 @@ Q_DECLARE_METATYPE(QVideoSurfaceFormat)
 
 QT_BEGIN_NAMESPACE
 
+class QMeegoGfxSystemWatcher : public QObject {
+public:
+    QMeegoGfxSystemWatcher(QGraphicsVideoItemPrivate *d_ptr)
+        : q(d_ptr)
+    {
+    }
+
+    ~QMeegoGfxSystemWatcher()
+    {
+        if (!m_activeWindow.isNull())
+            m_activeWindow.data()->removeEventFilter(this);
+    }
+
+    void setActiveWindow(QWidget *activeWindow)
+    {
+        if (m_activeWindow.data() != activeWindow) {
+            if (!m_activeWindow.isNull())
+                m_activeWindow.data()->removeEventFilter(this);
+
+            m_activeWindow = activeWindow;
+
+            if (!m_activeWindow.isNull())
+                m_activeWindow.data()->installEventFilter(this);
+        }
+    }
+
+protected:
+    bool eventFilter(QObject *, QEvent *event);
+
+private:
+    QGraphicsVideoItemPrivate *q;
+    QWeakPointer<QWidget> m_activeWindow;
+};
+
 class QGraphicsVideoItemPrivate
 {
 public:
@@ -94,6 +133,7 @@ public:
         , aspectRatioMode(Qt::KeepAspectRatio)
         , updatePaintDevice(true)
         , rect(0.0, 0.0, 320, 240)
+        , watcher(new QMeegoGfxSystemWatcher(this))
     {
     }
 
@@ -109,6 +149,7 @@ public:
     QRectF boundingRect;
     QRectF sourceRect;
     QSizeF nativeSize;
+    QScopedPointer<QMeegoGfxSystemWatcher> watcher;
 
     void clearService();
     void updateRects();
@@ -118,6 +159,25 @@ public:
     void _q_updateNativeSize();
     void _q_serviceDestroyed();
 };
+
+bool QMeegoGfxSystemWatcher::eventFilter(QObject *, QEvent *event)
+{
+    if (q->rendererControl && event && event->type() == QMeeGoSwitchEvent::eventNumber()) {
+        QMeeGoSwitchEvent *e = reinterpret_cast<QMeeGoSwitchEvent *>(event);
+
+        if (e->state() == QMeeGoSwitchEvent::WillSwitch &&
+                e->graphicsSystemName() != QLatin1String("meego")) {
+            q->rendererControl->setProperty("glEnabled", false);
+            q->surface->setGLContext(0);
+        } else if (e->state() == QMeeGoSwitchEvent::DidSwitch &&
+                   e->graphicsSystemName() == QLatin1String("meego")) {
+            q->rendererControl->setProperty("glEnabled", true);
+            q->updatePaintDevice = true;
+        }
+    }
+
+    return false;
+}
 
 void QGraphicsVideoItemPrivate::clearService()
 {
@@ -245,6 +305,8 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
     connect(d_ptr->surface, SIGNAL(frameChanged()), this, SLOT(_q_present()));
     connect(d_ptr->surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
             this, SLOT(_q_updateNativeSize()), Qt::QueuedConnection);
+
+    QMeeGoGraphicsSystemHelper::enableSwitchEvents();
 }
 
 /*
@@ -413,6 +475,9 @@ void QGraphicsVideoItem::paint(
 
     Q_UNUSED(option);
     Q_UNUSED(widget);
+
+    if (widget)
+        d->watcher->setActiveWindow(widget->window());
 
     if (d->surface && d->rendererControl && d->updatePaintDevice) {
         d->updatePaintDevice = false;
