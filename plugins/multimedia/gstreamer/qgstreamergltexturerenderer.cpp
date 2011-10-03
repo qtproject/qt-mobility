@@ -357,14 +357,7 @@ void QGstreamerGLTextureRenderer::renderGLFrame(int frame)
 
 bool QGstreamerGLTextureRenderer::isReady() const
 {
-    if (!m_surface)
-        return false;
-
-    if (m_winId > 0)
-        return true;
-
-    //winId is required only for EGLImageTextureHandle compatible surfaces
-    return m_surface->supportedPixelFormats(EGLImageTextureHandle).isEmpty();
+    return m_surface != NULL;
 }
 
 void QGstreamerGLTextureRenderer::handleBusMessage(GstMessage* gm)

@@ -417,8 +417,10 @@ void QGraphicsVideoItem::paint(
     if (d->surface && d->rendererControl && d->updatePaintDevice) {
         d->updatePaintDevice = false;
 
+#ifdef ENABLE_OVERLAY
         if (widget)
             d->rendererControl->setProperty("winId", qulonglong(widget->winId()));
+#endif
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
         if (widget)
