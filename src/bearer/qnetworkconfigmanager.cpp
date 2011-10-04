@@ -39,15 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qnetworkconfigmanager.h"
-
-#ifdef Q_OS_SYMBIAN
-#include "qnetworkconfigmanager_s60_p.h"
-#elif (defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5))
-#include "qnetworkconfigmanager_maemo_p.h"
-#else
 #include "qnetworkconfigmanager_p.h"
-#endif
 
 #include <QtCore/QCoreApplication>
 
@@ -220,16 +212,16 @@ QNetworkConfigurationManager::QNetworkConfigurationManager( QObject* parent )
     : QObject(parent)
 {
     QNetworkConfigurationManagerPrivate* priv = connManager();
-    connect(priv, SIGNAL(configurationAdded(QNetworkConfiguration)),
-            this, SIGNAL(configurationAdded(QNetworkConfiguration)));
-    connect(priv, SIGNAL(configurationRemoved(QNetworkConfiguration)),
-            this, SIGNAL(configurationRemoved(QNetworkConfiguration)));
-    connect(priv, SIGNAL(configurationUpdateComplete()),
+    connect(priv, SIGNAL(configurationAdded(const QNetworkConfiguration&)),
+            this, SIGNAL(configurationAdded(const QNetworkConfiguration&)));
+    connect(priv, SIGNAL(configurationRemoved(const QNetworkConfiguration&)),
+            this, SIGNAL(configurationRemoved(const QNetworkConfiguration&)));
+    connect(&(priv->impl), SIGNAL(updateCompleted()),
             this, SIGNAL(updateCompleted()));
-    connect(priv, SIGNAL(onlineStateChanged(bool)),
+    connect(&(priv->impl), SIGNAL(onlineStateChanged(bool)),
             this, SIGNAL(onlineStateChanged(bool)));
-    connect(priv, SIGNAL(configurationChanged(QNetworkConfiguration)),
-            this, SIGNAL(configurationChanged(QNetworkConfiguration)));
+    connect(priv, SIGNAL(configurationChanged(const QNetworkConfiguration&)),
+            this, SIGNAL(configurationChanged(const QNetworkConfiguration&)));
 }
 
 /*!
@@ -251,7 +243,7 @@ QNetworkConfigurationManager::~QNetworkConfigurationManager()
 */
 QNetworkConfiguration QNetworkConfigurationManager::defaultConfiguration() const
 {
-    return connManager()->defaultConfiguration();
+    return connManager()->impl.defaultConfiguration();
 }
 
 /*!
@@ -281,29 +273,12 @@ QNetworkConfiguration QNetworkConfigurationManager::defaultConfiguration() const
 */
 QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNetworkConfiguration::StateFlags filter) const
 {
+    QT_PREPEND_NAMESPACE(QNetworkConfiguration::StateFlags) f((int)filter);
     QList<QNetworkConfiguration> result;
-    QNetworkConfigurationManagerPrivate* conPriv = connManager();
+    QListIterator<QT_PREPEND_NAMESPACE(QNetworkConfiguration)> iter(connManager()->impl.allConfigurations(f));
 
-    //find all InternetAccessPoints
-    foreach (const QString &ii, conPriv->accessPointConfigurations.keys()) {
-        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p =
-            conPriv->accessPointConfigurations.value(ii);
-        if ( (p->state & filter) == filter ) {
-            QNetworkConfiguration pt;
-            pt.d = conPriv->accessPointConfigurations.value(ii);
-            result << pt;
-        }
-    }
-
-    //find all service networks
-    foreach (const QString &ii, conPriv->snapConfigurations.keys()) {
-        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p =
-            conPriv->snapConfigurations.value(ii);
-        if ( (p->state & filter) == filter ) {
-            QNetworkConfiguration pt;
-            pt.d = conPriv->snapConfigurations.value(ii);
-            result << pt;
-        }
+    while (iter.hasNext()) {
+        result.append(iter.next());
     }
 
     return result;
@@ -317,16 +292,7 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
 */
 QNetworkConfiguration QNetworkConfigurationManager::configurationFromIdentifier(const QString& identifier) const
 {
-    QNetworkConfigurationManagerPrivate* conPriv = connManager();
-    QNetworkConfiguration item;
-    if (conPriv->accessPointConfigurations.contains(identifier))
-        item.d = conPriv->accessPointConfigurations.value(identifier);
-    else if (conPriv->snapConfigurations.contains(identifier))
-        item.d = conPriv->snapConfigurations.value(identifier);
-    else if (conPriv->userChoiceConfigurations.contains(identifier))
-        item.d = conPriv->userChoiceConfigurations.value(identifier);
-    return item;
-
+    return connManager()->impl.configurationFromIdentifier(identifier);
 }
 
 /*!
@@ -348,10 +314,7 @@ QNetworkConfiguration QNetworkConfigurationManager::configurationFromIdentifier(
 */
 bool QNetworkConfigurationManager::isOnline() const
 {
-    QNetworkConfigurationManagerPrivate* conPriv = connManager();
-    Q_UNUSED(conPriv);
-    QList<QNetworkConfiguration> activeConfigs = allConfigurations(QNetworkConfiguration::Active);
-    return activeConfigs.count() > 0;
+    return connManager()->impl.isOnline();
 }
 
 /*!
@@ -359,7 +322,7 @@ bool QNetworkConfigurationManager::isOnline() const
 */
 QNetworkConfigurationManager::Capabilities QNetworkConfigurationManager::capabilities() const
 {
-    return connManager()->capFlags;
+    return (QNetworkConfigurationManager::Capabilities)(int)connManager()->impl.capabilities();
 }
 
 /*!
@@ -378,10 +341,36 @@ QNetworkConfigurationManager::Capabilities QNetworkConfigurationManager::capabil
 */
 void QNetworkConfigurationManager::updateConfigurations()
 {
-    connManager()->performAsyncConfigurationUpdate();
+    connManager()->impl.updateConfigurations();
+}
+
+QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
+{
+    connect(&impl, SIGNAL(configurationAdded(const QNetworkConfiguration&)),
+        this, SLOT(_q_configurationAdded(const QNetworkConfiguration&)));
+    connect(&impl, SIGNAL(configurationRemoved(const QNetworkConfiguration&)),
+        this, SLOT(_q_configurationRemoved(const QNetworkConfiguration&)));
+    connect(&impl, SIGNAL(configurationChanged(const QNetworkConfiguration&)),
+        this, SLOT(_q_configurationChanged(const QNetworkConfiguration&)));
+}
+
+void QNetworkConfigurationManagerPrivate::_q_configurationAdded(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config)
+{
+    emit configurationAdded(config);
+}
+
+void QNetworkConfigurationManagerPrivate::_q_configurationRemoved(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config)
+{
+    emit configurationRemoved(config);
+}
+
+void QNetworkConfigurationManagerPrivate::_q_configurationChanged(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config)
+{
+    emit configurationChanged(config);
 }
 
 #include "moc_qnetworkconfigmanager.cpp"
+#include "moc_qnetworkconfigmanager_p.cpp"
 
 QTM_END_NAMESPACE
 

@@ -43,8 +43,8 @@
 
 #include <QtTest/QtTest>
 #include "../qbearertestcommon.h"
-#include "../../../src/bearer/qnetworkconfiguration.h"
-#include "../../../src/bearer/qnetworkconfigmanager.h"
+#include <QNetworkConfiguration>
+#include <QNetworkConfigurationManager>
 
 /*
   Although this unit test doesn't use QNetworkAccessManager

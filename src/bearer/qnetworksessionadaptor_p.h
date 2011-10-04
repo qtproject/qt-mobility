@@ -38,20 +38,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QNETWORKSESSIONADAPTOR_P_H_
+#define QNETWORKSESSIONADAPTOR_P_H_
 
-#include "qnetworksessionengine_p.h"
 
-QTM_BEGIN_NAMESPACE
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QNetworkSessionEngine::QNetworkSessionEngine(QObject *parent)
-:   QObject(parent)
+#include <QObject>
+#include <QtNetwork/QNetworkSession>
+
+QT_BEGIN_NAMESPACE
+//this class exists only to workaround moc issues with namespaces
+class QNetworkSessionAdaptor : public QObject
 {
-}
+    Q_OBJECT
+protected Q_SLOTS:
+    virtual void _q_stateChanged(QNetworkSession::State) = 0;
+    virtual void _q_error(QNetworkSession::SessionError) = 0;
+    virtual void _q_preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless) = 0;
+};
+QT_END_NAMESPACE
 
-QNetworkSessionEngine::~QNetworkSessionEngine()
-{
-}
 
-#include "moc_qnetworksessionengine_p.cpp"
-QTM_END_NAMESPACE
-
+#endif /* QNETWORKSESSIONADAPTOR_P_H_ */
