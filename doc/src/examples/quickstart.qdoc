@@ -173,7 +173,7 @@ on which parts of an API is utilized by an application.
 \row
     \o \l {Multimedia}
     \o UserEnvironment ReadUserData WriteUserData ReadDeviceData WriteDeviceData
-    \o No token requirements known at this stage.
+    \o GRP::video GRP::pulse-access
 \row
     \o \l {Messaging}
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData

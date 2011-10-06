@@ -45,6 +45,7 @@
 
 #include <QHash>
 #include <qcameracontrol.h>
+#include <qmediarecorder.h>
 #include "camerabinsession.h"
 
 QT_USE_NAMESPACE
@@ -86,6 +87,8 @@ private slots:
 
     void handleBusyChanged(bool);
     void handleCameraError(int error, const QString &errorString);
+
+    void updateRecorderResources(QMediaRecorder::State);
 
 private:
     void updateSupportedResolutions(const QString &device);
