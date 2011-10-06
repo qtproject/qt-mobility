@@ -39,28 +39,34 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qdebug.h>
+#ifndef S60MMFTRACE_H
+#define S60MMFTRACE_H
 
-#ifndef __DEBUGMACROS_H__
-#define __DEBUGMACROS_H__
-
-// MACROS
 #ifdef _DEBUG
-#define DP0(string)                                 qDebug()<<string
-#define DP1(string,arg1)                            qDebug()<<string<<arg1
-#define DP2(string,arg1,arg2)                       qDebug()<<string<<arg1<<arg2
-#define DP3(string,arg1,arg2,arg3)                  qDebug()<<string<<arg1<<arg2<<arg3
-#define DP4(string,arg1,arg2,arg3,arg4)             qDebug()<<string<<arg1<<arg2<<arg3<<arg4
-#define DP5(string,arg1,arg2,arg3,arg4,arg5)        qDebug()<<string<<arg1<<arg2<<arg3<<arg4<<arg5
-#define DP6(string,arg1,arg2,arg3,arg4,arg5,arg6)   qDebug()<<string<<arg1<<arg2<<arg3<<arg4<<arg5<<arg6
-#else
-#define DP0(string)
-#define DP1(string,arg1)
-#define DP2(string,arg1,arg2)
-#define DP3(string,arg1,arg2,arg3)
-#define DP4(string,arg1,arg2,arg3,arg4)
-#define DP5(string,arg1,arg2,arg3,arg4,arg5)
-#define DP6(string,arg1,arg2,arg3,arg4,arg5,arg6)
+#define MMF_ENABLE_TRACE
 #endif
 
-#endif //__DEBUGMACROS_H__
+//#define MMF_ENABLE_VERBOSE_TRACE
+
+#ifdef MMF_ENABLE_TRACE
+
+#   include <QtCore/QDebug>
+#   define TRACE(args) qDebug() << "[QtMultimediaKit mmf]" << args
+#   ifdef MMF_ENABLE_VERBOSE_TRACE
+#       define VERBOSE_TRACE(args) TRACE(args)
+#   else // MMF_ENABLE_VERBOSE_TRACE
+#       define VERBOSE_TRACE(args)
+#   endif // MMF_ENABLE_VERBOSE_TRACE
+
+    template <typename T>
+    inline void *qtVoidPtr(T *ptr)
+    { return reinterpret_cast<void *>(ptr); }
+
+#   define qtThisPtr() qtVoidPtr(this)
+
+#else // MMF_ENABLE_TRACE
+#   define TRACE(args)
+#   define VERBOSE_TRACE(args)
+#endif
+
+#endif // S60MMFTRACE_H

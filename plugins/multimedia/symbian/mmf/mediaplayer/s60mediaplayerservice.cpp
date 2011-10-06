@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
@@ -56,6 +54,7 @@
 #include "s60mediaplayeraudioendpointselector.h"
 #include "s60medianetworkaccesscontrol.h"
 #include "s60mediastreamcontrol.h"
+#include "s60mmftrace.h"
 
 #include <qmediaplaylistnavigator.h>
 #include <qmediaplaylist.h>
@@ -75,15 +74,13 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     , m_networkAccessControl(NULL)
     , m_videoOutput(NULL)
 {
-    DP0("S60MediaPlayerService::S60MediaPlayerService +++");
+    TRACE("S60MediaPlayerService::S60MediaPlayerService" << qtThisPtr());
 
     m_control = new S60MediaPlayerControl(*this, this);
     m_metaData = new S60MediaMetaDataProvider(m_control, this);
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
     m_streamControl = new S60MediaStreamControl(m_control, this);
     m_networkAccessControl =  new S60MediaNetworkAccessControl(this);
-
-    DP0("S60MediaPlayerService::S60MediaPlayerService ---");
 }
 
 /*!
@@ -92,8 +89,7 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
 
 S60MediaPlayerService::~S60MediaPlayerService()
 {
-    DP0("S60MediaPlayerService::~S60MediaPlayerService +++");
-    DP0("S60MediaPlayerService::~S60MediaPlayerService ---");
+    TRACE("S60MediaPlayerService::~S60MediaPlayerService" << qtThisPtr());
 }
 
 /*!
@@ -108,22 +104,22 @@ S60MediaPlayerService::~S60MediaPlayerService()
 
 QMediaControl *S60MediaPlayerService::requestControl(const char *name)
 {
-    DP0("S60MediaPlayerService::requestControl");
+    QMediaControl *result = 0;
 
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
-        return m_control;
+        result = m_control;
 
     if (qstrcmp(name, QMediaNetworkAccessControl_iid) == 0)
-        return m_networkAccessControl;
+        result = m_networkAccessControl;
 
     if (qstrcmp(name, QMetaDataReaderControl_iid) == 0)
-        return m_metaData;
+        result = m_metaData;
 
     if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_audioEndpointSelector;
+        result = m_audioEndpointSelector;
 
     if (qstrcmp(name, QMediaStreamsControl_iid) == 0)
-        return m_streamControl;
+        result = m_streamControl;
 
     if (!m_videoOutput) {
         if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
@@ -135,15 +131,17 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
 
         if (m_videoOutput) {
             m_control->setVideoOutput(m_videoOutput);
-            return m_videoOutput;
+            result = m_videoOutput;
         }
     }else {
         if (qstrcmp(name, QVideoWidgetControl_iid) == 0 ||
             qstrcmp(name, QVideoWindowControl_iid) == 0){
-            return m_videoOutput;
+            result = m_videoOutput;
         }
     }
-    return 0;
+    TRACE("S60MediaPlayerService::requestControl" << qtThisPtr()
+          << "name" << name << "result" << result);
+    return result;
 }
 
 /*!
@@ -152,14 +150,13 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
 
 void S60MediaPlayerService::releaseControl(QMediaControl *control)
 {
-    DP0("S60MediaPlayerService::releaseControl ++");
+    TRACE("S60MediaPlayerService::releaseControl" << qtThisPtr()
+          << "control" << control);
 
     if (control == m_videoOutput) {
         m_videoOutput = 0;
         m_control->setVideoOutput(m_videoOutput);
     }
-
-    DP0("S60MediaPlayerService::releaseControl --");
 }
 
 /*!
@@ -168,8 +165,6 @@ void S60MediaPlayerService::releaseControl(QMediaControl *control)
 */
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
-    DP0("S60MediaPlayerService::PlayerSession");
-
     QUrl url = m_control->media().canonicalUrl();
 
     if (url.isEmpty() == true) {
@@ -206,8 +201,6 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 
 S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
 {
-    DP0("S60MediaPlayerService::VideoPlayerSession +++");
-
     if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this, m_networkAccessControl);
 
@@ -252,8 +245,6 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
     m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
     m_videoPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
 
-    DP0("S60MediaPlayerService::VideoPlayerSession ---");
-
     return m_videoPlayerSession;
 }
 
@@ -265,8 +256,6 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
 
 S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
 {
-    DP0("S60MediaPlayerService::AudioPlayerSession +++");
-
     if (!m_audioPlayerSession) {
         m_audioPlayerSession = new S60AudioPlayerSession(this);
 
@@ -308,8 +297,6 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
     m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
     m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
     m_audioPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
-
-    DP0("S60MediaPlayerService::AudioPlayerSession ---");
 
     return m_audioPlayerSession;
 }

@@ -40,10 +40,9 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
+#include "s60mmftrace.h"
 
 #include <QtCore/qdir.h>
 #include <QtCore/qurl.h>
@@ -59,10 +58,7 @@ S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlaye
       m_session(NULL),
       m_stream(NULL)
 {
-    DP0("S60MediaPlayerControl::S60MediaPlayerControl +++");
-
-    DP0("S60MediaPlayerControl::S60MediaPlayerControl ---");
-
+    TRACE("S60MediaPlayerControl::S60MediaPlayerControl" << qtThisPtr());
 }
 
 /*!
@@ -71,8 +67,7 @@ S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlaye
 
 S60MediaPlayerControl::~S60MediaPlayerControl()
 {
-    DP0("S60MediaPlayerControl::~S60MediaPlayerControl +++");
-    DP0("S60MediaPlayerControl::~S60MediaPlayerControl ---");
+    TRACE("S60MediaPlayerControl::~S60MediaPlayerControl" << qtThisPtr());
 }
 
 /*!
@@ -81,8 +76,6 @@ S60MediaPlayerControl::~S60MediaPlayerControl()
 
 qint64 S60MediaPlayerControl::position() const
 {
-   // DP0("S60MediaPlayerControl::position");
-
     if (m_session)
         return m_session->position();
     return 0;
@@ -94,8 +87,6 @@ qint64 S60MediaPlayerControl::position() const
 
 qint64 S60MediaPlayerControl::duration() const
 {
-   // DP0("S60MediaPlayerControl::duration");
-
     if (m_session)
         return m_session->duration();
     return -1;
@@ -107,8 +98,6 @@ qint64 S60MediaPlayerControl::duration() const
 
 QMediaPlayer::State S60MediaPlayerControl::state() const
 {
-    DP0("S60MediaPlayerControl::state");
-
     if (m_session)
         return m_session->state();
     return QMediaPlayer::StoppedState;
@@ -120,8 +109,6 @@ QMediaPlayer::State S60MediaPlayerControl::state() const
 
 QMediaPlayer::MediaStatus S60MediaPlayerControl::mediaStatus() const
 {
-    DP0("QMediaPlayer::mediaStatus");
-
     if (m_session)
         return m_session->mediaStatus();
     return m_mediaSettings.mediaStatus();
@@ -134,8 +121,6 @@ QMediaPlayer::MediaStatus S60MediaPlayerControl::mediaStatus() const
 
 int S60MediaPlayerControl::bufferStatus() const
 {
-   // DP0("S60MediaPlayerControl::bufferStatus");
-
     if (m_session)
         return m_session->bufferStatus();
     return 0;
@@ -147,8 +132,6 @@ int S60MediaPlayerControl::bufferStatus() const
 
 int S60MediaPlayerControl::volume() const
 {
-    DP0("S60MediaPlayerControl::volume");
-
     if (m_session)
         return m_session->volume();
     return m_mediaSettings.volume();
@@ -160,8 +143,6 @@ int S60MediaPlayerControl::volume() const
 
 bool S60MediaPlayerControl::isMuted() const
 {
-    DP0("S60MediaPlayerControl::isMuted");
-
    if (m_session)
        return  m_session->isMuted();
    return m_mediaSettings.isMuted();
@@ -175,8 +156,6 @@ bool S60MediaPlayerControl::isMuted() const
 
 bool S60MediaPlayerControl::isSeekable() const
 {
-    DP0("S60MediaPlayerControl::isSeekable");
-
     if (m_session)
        return  m_session->isSeekable();
     return false;
@@ -192,8 +171,6 @@ bool S60MediaPlayerControl::isSeekable() const
 
 QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 {
-    DP0("S60MediaPlayerControl::availablePlaybackRanges");
-
     QMediaTimeRange ranges;
 
     if(m_session && m_session->isSeekable())
@@ -208,8 +185,6 @@ QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
-    DP0("S60MediaPlayerControl::playbackRate");
-
     return m_mediaSettings.playbackRate();
 }
 
@@ -219,9 +194,7 @@ qreal S60MediaPlayerControl::playbackRate() const
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    DP0("S60MediaPlayerControl::setPlaybackRate +++");
-
-    DP1("S60MediaPlayerControl::setPlaybackRate - ", rate);
+    TRACE("S60MediaPlayerControl::setPlaybackRate" << qtThisPtr() << "rate" << rate);
 
     //getting the current playbackrate
     qreal currentPBrate = m_mediaSettings.playbackRate();
@@ -233,8 +206,6 @@ void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 
         m_mediaSettings.setPlaybackRate(rate);
     }
-
-    DP0("S60MediaPlayerControl::setPlaybackRate ---");
 }
 
 /*!
@@ -244,14 +215,10 @@ void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
 {
-    DP0("S60MediaPlayerControl::setPosition +++");
-
-    DP1("S60MediaPlayerControl::setPosition, Position:", pos);
+    TRACE("S60MediaPlayerControl::setPosition" << qtThisPtr() << "pos" << pos);
 
     if (m_session)
         m_session->setPosition(pos);
-
-    DP0("S60MediaPlayerControl::setPosition ---");
 }
 
 /*!
@@ -263,12 +230,10 @@ void S60MediaPlayerControl::setPosition(qint64 pos)
 
 void S60MediaPlayerControl::play()
 {
-    DP0("S60MediaPlayerControl::play +++");
+    TRACE("S60MediaPlayerControl::play" << qtThisPtr());
 
     if (m_session)
         m_session->play();
-
-    DP0("S60MediaPlayerControl::play ---");
 }
 
 /*!
@@ -280,12 +245,10 @@ void S60MediaPlayerControl::play()
 
 void S60MediaPlayerControl::pause()
 {
-    DP0("S60MediaPlayerControl::pause +++");
+    TRACE("S60MediaPlayerControl::pause" << qtThisPtr());
 
     if (m_session)
         m_session->pause();
-
-    DP0("S60MediaPlayerControl::pause ---");
 }
 
 /*!
@@ -297,12 +260,10 @@ void S60MediaPlayerControl::pause()
 
 void S60MediaPlayerControl::stop()
 {
-    DP0("S60MediaPlayerControl::stop +++");
+    TRACE("S60MediaPlayerControl::stop" << qtThisPtr());
 
     if (m_session)
         m_session->stop();
-
-    DP0("S60MediaPlayerControl::stop ---");
 }
 
 /*!
@@ -311,20 +272,17 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    DP0("S60MediaPlayerControl::setVolume +++");
-
-    DP1("S60MediaPlayerControl::setVolume", volume);
-
     int boundVolume = qBound(0, volume, 100);
     if (boundVolume == m_mediaSettings.volume())
         return;
+
+    TRACE("S60MediaPlayerControl::setVolume" << qtThisPtr()
+          << "volume" << volume << "boundVolume" << boundVolume);
 
     m_mediaSettings.setVolume(boundVolume);
 
     if (m_session)
         m_session->setVolume(boundVolume);
-
-    DP0("S60MediaPlayerControl::setVolume ---");
 }
 
 /*!
@@ -333,19 +291,15 @@ void S60MediaPlayerControl::setVolume(int volume)
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
-    DP0("S60MediaPlayerControl::setMuted +++");
-
-    DP1("S60MediaPlayerControl::setMuted - ", muted);
-
     if (m_mediaSettings.isMuted() == muted)
         return;
+
+    TRACE("S60MediaPlayerControl::setMuted" << qtThisPtr() << "muted" << muted);
 
     m_mediaSettings.setMuted(muted);
 
     if (m_session)
         m_session->setMuted(muted);
-
-    DP0("S60MediaPlayerControl::setMuted ---");
 }
 
 /*!
@@ -354,8 +308,6 @@ void S60MediaPlayerControl::setMuted(bool muted)
 
 QMediaContent S60MediaPlayerControl::media() const
 {
-    DP0("S60MediaPlayerControl::media");
-
     return m_currentResource;
 }
 
@@ -367,8 +319,6 @@ QMediaContent S60MediaPlayerControl::media() const
 
 const QIODevice *S60MediaPlayerControl::mediaStream() const
 {
-    DP0("S60MediaPlayerControl::mediaStream");
-
     return m_stream;
 }
 
@@ -384,7 +334,8 @@ const QIODevice *S60MediaPlayerControl::mediaStream() const
 
 void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *stream)
 {
-    DP0("S60MediaPlayerControl::setMedia +++");
+    TRACE("S60MediaPlayerControl::setMedia" << qtThisPtr()
+          << "source" << source.canonicalUrl().toString());
 
     Q_UNUSED(stream)
 
@@ -423,8 +374,6 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
         emit mediaStatusChanged(status);
     }
     emit mediaChanged(m_currentResource);
-
-    DP0("S60MediaPlayerControl::setMedia ---");
 }
 
 /*!
@@ -432,8 +381,6 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 */
 S60MediaPlayerSession* S60MediaPlayerControl::session()
 {
-    DP0("S60MediaPlayerControl::session");
-
     return m_session;
 }
 
@@ -443,11 +390,10 @@ S60MediaPlayerSession* S60MediaPlayerControl::session()
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
-    DP0("S60MediaPlayerControl::setVideoOutput +++");
+    TRACE("S60MediaPlayerControl::setVideoOutput" << qtThisPtr()
+          << "output" << output);
 
    m_mediaPlayerResolver.VideoPlayerSession()->setVideoRenderer(output);
-
-   DP0("S60MediaPlayerControl::setVideoOutput ---");
 }
 
 /*!
@@ -456,8 +402,6 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
 
 bool S60MediaPlayerControl::isAudioAvailable() const
 {
-    DP0("S60MediaPlayerControl::isAudioAvailable");
-
     if (m_session)
         return m_session->isAudioAvailable(); 
     return false;
@@ -469,8 +413,6 @@ bool S60MediaPlayerControl::isAudioAvailable() const
 
 bool S60MediaPlayerControl::isVideoAvailable() const
 {
-    DP0("S60MediaPlayerControl::isVideoAvailable");
-
     if (m_session)
         return m_session->isVideoAvailable();
     return false;
@@ -483,7 +425,6 @@ bool S60MediaPlayerControl::isVideoAvailable() const
 */
 const S60MediaSettings& S60MediaPlayerControl::mediaControlSettings() const
 {
-    DP0("S60MediaPlayerControl::mediaControlSettings");
     return m_mediaSettings;
 }
 
@@ -493,13 +434,10 @@ const S60MediaSettings& S60MediaPlayerControl::mediaControlSettings() const
 
 void S60MediaPlayerControl::setAudioEndpoint(const QString& name)
 {
-    DP0("S60MediaPlayerControl::setAudioEndpoint +++");
-
-    DP1("S60MediaPlayerControl::setAudioEndpoint - ", name);
+    TRACE("S60MediaPlayerControl::setAudioEndpoint" << qtThisPtr()
+          << "name" << name);
 
     m_mediaSettings.setAudioEndpoint(name);
-
-    DP0("S60MediaPlayerControl::setAudioEndpoint ---");
 }
 
 /*!
@@ -508,11 +446,8 @@ void S60MediaPlayerControl::setAudioEndpoint(const QString& name)
 
 void S60MediaPlayerControl::setMediaType(S60MediaSettings::TMediaType type)
 {
-    DP0("S60MediaPlayerControl::setMediaType +++");
-
-    DP1("S60MediaPlayerControl::setMediaType - ", type);
+    TRACE("S60MediaPlayerControl::setMediaType" << qtThisPtr()
+          << "type" << type);
 
     m_mediaSettings.setMediaType(type);
-
-    DP0("S60MediaPlayerControl::setMediaType ---");
 }
