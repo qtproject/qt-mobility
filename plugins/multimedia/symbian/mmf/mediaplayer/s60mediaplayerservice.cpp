@@ -53,9 +53,6 @@
 #include "s60mediarecognizer.h"
 #include "s60videowidgetcontrol.h"
 #include "s60videowindowcontrol.h"
-#ifdef HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER
-#include "s60videorenderer.h"
-#endif
 #include "s60mediaplayeraudioendpointselector.h"
 #include "s60medianetworkaccesscontrol.h"
 #include "s60mediastreamcontrol.h"
@@ -132,11 +129,6 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
         if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
             m_videoOutput = new S60VideoWidgetControl(this);
         }
-#ifdef HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER
-        else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
-            m_videoOutput = new S60VideoRenderer(this);
-        }
-#endif /* HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER */
         else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
             m_videoOutput = new S60VideoWindowControl(this);
         }
@@ -147,9 +139,6 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
         }
     }else {
         if (qstrcmp(name, QVideoWidgetControl_iid) == 0 ||
-#ifdef HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER
-            qstrcmp(name, QVideoRendererControl_iid) == 0 ||
-#endif /* HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER */
             qstrcmp(name, QVideoWindowControl_iid) == 0){
             return m_videoOutput;
         }
