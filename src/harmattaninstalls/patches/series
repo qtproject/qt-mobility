@@ -1,0 +1,7 @@
+0001-remove-commercial-preview-license-as-required-by-leg.patch
+0002-disable-qdeclarativecontact-test.patch
+0003-disable-qsystemscreensaver-test.patch
+0004-keep-binary-compatibility-with-harmattan-PR1.0.patch
+0005-disable-qgeocoordinate-test.patch
+0006-disable-qmediaplayer-test.patch
+0007-add-patch-for-feedback-test.patch
