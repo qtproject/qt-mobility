@@ -61,7 +61,7 @@ public:
     QMessage getMessage(const QMessageId &id) {
         QMutexLocker locker(&mutex);
         if (messageCache.contains(id)) {
-            return *messageCache.object(id); 
+            return *messageCache.object(id);
         } else {
             if (!messageIdRequests.contains(id)) {
                 messageIdRequests.append(id);
@@ -275,7 +275,7 @@ void MessageModelWorker::serviceStateChanged(QMessageService::State newState)
             break;
         default:
             break;
-    } 
+    }
 }
 
 void MessageModelWorker::messageAdded(const QMessageId &id,const QMessageManager::NotificationFilterIdSet)
@@ -396,6 +396,7 @@ void QDeclarativeMessageModelPrivate::updateFilter()
     \brief The MessageModel element provides access to messages.
 
     \ingroup qml-messaging
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 
@@ -506,6 +507,7 @@ QDeclarativeMessageModel::~QDeclarativeMessageModel()
 
 /*!
     \qmlproperty MessageFilter MessageModel::filter
+    \since Mobility 1.1
 
     The MessageFilter specifying the messages to provide.
 */
@@ -526,6 +528,7 @@ void QDeclarativeMessageModel::setFilter(QDeclarativeMessageFilterBase *filter)
 
 /*!
     \qmlproperty enumeration MessageModel::sortBy
+    \since Mobility 1.1
 
     Specifies the role to sort by:
 
@@ -559,6 +562,7 @@ void QDeclarativeMessageModel::setSortBy(QDeclarativeMessageModel::SortKey k)
 
 /*!
     \qmlproperty enumeration MessageModel::sortOrder
+    \since Mobility 1.1
 
     Specifies the sort order:
 
@@ -583,6 +587,7 @@ void QDeclarativeMessageModel::setSortOrder(QDeclarativeMessageModel::SortOrder 
 
 /*!
     \qmlproperty int MessageModel::count
+    \since Mobility 1.1
     Holds the number of messages matching the filter.
 
     If \l limit is set then there will be at most \l limit messages.
@@ -590,6 +595,7 @@ void QDeclarativeMessageModel::setSortOrder(QDeclarativeMessageModel::SortOrder 
 
 /*!
     \qmlproperty int MessageModel::limit
+    \since Mobility 1.1
     Holds the maximum number of messages to retrieve.
 
     A value of zero (default) will retrieve all messages.
@@ -718,6 +724,7 @@ QVariant QDeclarativeMessageModel::data(const QModelIndex &index, int role) cons
 
 /*!
     \qmlmethod MessageModel::showMessage(index)
+    \since Mobility 1.1
 
     Displays the message at \a index using the system message client.
 */
@@ -730,6 +737,7 @@ void QDeclarativeMessageModel::showMessage(int index) const
 
 /*!
     \qmlmethod MessageModel::removeMessage(index)
+    \since Mobility 1.1
 
     Remove the message at \a index from the mail store and the originating server (if applicable).
 */
@@ -742,6 +750,7 @@ void QDeclarativeMessageModel::removeMessage(int index)
 
 /*!
     \qmlsignal MessageModel::messageAdded()
+    \since Mobility 1.1
 
     This handler is called when a message that matches the filter criteria
     is added to the store.  The model will be updated shortly and will include

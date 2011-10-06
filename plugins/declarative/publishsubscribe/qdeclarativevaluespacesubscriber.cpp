@@ -70,6 +70,7 @@ QDeclarativeValueSpaceSubscriberPrivate::~QDeclarativeValueSpaceSubscriberPrivat
 
     \brief The QValueSpaceSubscriber class allows applications to read and
            subscribe to Value Space paths.
+    \since Mobility 1.2
 
     \ingroup qml-publishsubscribe
 
@@ -110,6 +111,7 @@ QDeclarativeValueSpaceSubscriber::~QDeclarativeValueSpaceSubscriber()
 
 /*!
     \qmlproperty string ValueSpaceSubscriber::path
+    \since Mobility 1.2
 
     This property holds the base path of the subscriber, and is read/write.
 */
@@ -138,6 +140,7 @@ QString QDeclarativeValueSpaceSubscriber::path() const
 
 /*!
     \qmlproperty QVariant ValueSpaceSubscriber::value
+    \since Mobility 1.2
 
     This property holds the value of the key at the set path in the Value Space.
     Read-only.
@@ -151,6 +154,7 @@ QVariant QDeclarativeValueSpaceSubscriber::value(const QString &subPath, const Q
 
 /*!
     \qmlproperty QStringList ValueSpaceSubscriber::subPaths
+    \since Mobility 1.2
 
     This property holds a list of known sub-paths of the currently set path.
 */
@@ -163,6 +167,7 @@ QStringList QDeclarativeValueSpaceSubscriber::subPaths() const
 
 /*!
     \qmlproperty bool ValueSpaceSubscriber::connected
+    \since Mobility 1.2
 
     This property holds whether the subscriber is currently connected to the
     backing store of the Value Space.

@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \qmlclass Address QDeclarativeGeoAddress
     \brief The Address element presents an address.
     \ingroup qml-location
+    \since Mobility 1.2
 
     The Address element presents an address of a location.
     This element is part of the \bold{QtMobility.location 1.1} module.
@@ -90,6 +91,7 @@ QString QDeclarativeGeoAddress::country() const
 
 /*!
   \qmlproperty string Address::country
+  \since Mobility 1.2
 
   This property holds the country of the address.
 
@@ -110,6 +112,7 @@ QString QDeclarativeGeoAddress::countryCode() const
 
 /*!
   \qmlproperty string Address::countryCode
+  \since Mobility 1.2
 
   This property holds the country code of the address.
 
@@ -130,6 +133,7 @@ QString QDeclarativeGeoAddress::state() const
 
 /*!
   \qmlproperty string Address::state
+  \since Mobility 1.2
 
   This property holds the state of the address.
 
@@ -150,6 +154,7 @@ QString QDeclarativeGeoAddress::county() const
 
 /*!
   \qmlproperty string Address::county
+  \since Mobility 1.2
 
   This property holds the county of the address.
 
@@ -170,6 +175,7 @@ QString QDeclarativeGeoAddress::city() const
 
 /*!
   \qmlproperty string Address::city
+  \since Mobility 1.2
 
   This property holds the city of the address.
 
@@ -190,6 +196,7 @@ QString QDeclarativeGeoAddress::district() const
 
 /*!
   \qmlproperty string Address::district
+  \since Mobility 1.2
 
   This property holds the district of the address.
 
@@ -210,6 +217,7 @@ QString QDeclarativeGeoAddress::street() const
 
 /*!
   \qmlproperty string Address::street
+  \since Mobility 1.2
 
   This property holds the street of the address.
 
@@ -230,6 +238,7 @@ QString QDeclarativeGeoAddress::postcode() const
 
 /*!
   \qmlproperty string Address::postcode
+  \since Mobility 1.2
 
   This property holds the post code of the address.
 

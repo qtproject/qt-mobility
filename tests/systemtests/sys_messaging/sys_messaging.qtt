@@ -41,878 +41,682 @@
 
 //TESTED_COMPONENT=src/messaging
 
-// returns true if automated testing can be done, false manual testing is to be done
-function automatedTestEnvironment(){
-      //Automated testing not supported for this test case yet
-
-      return false;
-
-      //return (checkOS("symbian") || checkOS("maemo"));
-      //return (checkOS("symbian") || checkOS("maemo") || checkOS("linux"));
-}
-
 testcase = {
 
-    serviceAction_startQuit : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Write Message: Start and Quit
-    1. Launch *serviceaction* application
-    1. Verify that the UI is shown
-    1. Verify that the UI layout is proper and usable on the specific device
-    1. Exit the application, verify it exits properly without error
-        '));
-        }
+    Send_PlainText_Message: function () {
+        // Test meta data
+        testTitle = "Messaging - Send Message in Plain Text";
+        testBinary = "serviceaction";
+        testGoal = "Verify that a message can be sent in plain text.";
+        testPreconditions = "None";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally, and UI layout is proper and usable on the specific device |
+            | Fill in To, Subject, Content | |
+            | Click 'Add attachment' menu item and select file(s) to attach | |
+            | Click on 'Send' menu entry | Verify that mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) |
+       "));
     },
 
+    Send_HTML_Message : function() {
+         // Test meta data
+         testTitle = "Messaging - Send Message in HTML";
+         testBinary = "serviceaction";
+         testGoal = "Verify that a message can be sent in HTML.";
+         testPreconditions = "None";
+         testGroups = "BAT";
 
-    serviceAction_sendplainTextMessage: function (){
-        if (automatedTestEnvironment()){
-        }else{
-        prompt(twiki('---++++ ServiceAction: Send Message in Plain Text
-    1. Launch *serviceeaction* application
-    1. Fill in To, Subject, Content
-    1. Click "Add attachment" menu item and select file(s) to attach
-    1. Click on "Send" menu entry
-    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
-        '));
-        }
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+             | *Step* | *Verification* |
+             | Launch " + testBinary + " | App launches normally, and UI layout is proper and usable on the specific device |
+             | Fill in To, Subject, Content | |
+             | Click 'Add attachment' menu item and select file(s) to attach | |
+             | Click on 'Send as HTML' menu entry | Verify that mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) |
+         "));
     },
 
-    serviceAction_sendHTMLMessage : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ ServiceAction: Send Message in HTML
-    1. Launch *serviceaction* application
-    1. Fill in To, Subject, Content
-    1. Click "Add attachment" menu item and select file(s) to attach
-    1. Click on "Send as HTML" menu entry
-    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
-        '));
-        }
+    Compose_And_Send_Message_With_Attachment : function() {
+         // Test meta data
+         testTitle = "Messaging - Compose and Send With Attachment";
+         testBinary = "serviceaction";
+         testGoal = "Verify that a message can be sent with an attachment.";
+         testPreconditions = "None";
+         testGroups = "BAT";
+
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally, and UI layout is proper and usable on the specific device |
+            | Fill in To, Subject, Content | |
+            | Click Add attachment' menu item and select file(s) to attach | |
+            | Click on 'Compose menu entry | On Windows, confirm that the Outlook mail client for Windows is now showing |
+            | Click on the 'Send' menu button in Outlook client, on other platforms, choose send from action | Verify that mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) |
+        "));
     },
 
+    Query_Message : function() {
+        // Test meta data
+        testTitle = "Messaging - Query Messages";
+        testBinary = "querymessage";
+        testGoal = "Verify that received messages can be queried.";
+        testPreconditions = "*querymessage* is a console application, it must be launched from command line, and the results are shown on command line only<br>Currently the test is not available for Symbian platforms.";
+        testGroups = "BAT";
 
-    serviceAction_composeAndSend : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ ServiceAction: Compose and Send 
-    1. Launch *serviceaction* application
-    1. Fill in To, Subject, Content
-    1. Click "Add attachment" menu item and select file(s) to attach
-    1. Click on "Compose" menu entry
-    1. On Windows, confirm that the Outlook mail client for Windows is now showing
-    1. Click on the "Send" menu button in Outlook client, on other platforms, choose send from action
-    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
-        '));
-        }
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Synchronize a set of test messages to the phone using Nokia Ovi Suite or an equal tool | |
+           | Launch " + testBinary + " from command line | Verify that all available messages are properly queried and results are correct |
+        "));
     },
 
-    writeMessage_startQuit : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Write Message: Start and Quit
-    1. Launch *writemessage* application
-    1. Verify that the UI is shown
-    1. Verify that the UI layout is proper and usable on the specific device
-    1. Exit the application, verify it exits properly without error
-        '));
-        }
+    /* FIXME
+      This test requires more work!
+      WHat does 'according parameters' mean?
+      Suggestion: search for "Like As" and "Not Like" conditions with wildcard such as %@hotmail.com
+    */
+    Search_Message : function() {
+     // Test meta data
+     testTitle = "Messaging - Search Message";
+     testBinary = "testQtMessaging";
+     testGoal = "Verify that messages can be searched.";
+     testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
+     testGroups = "BAT";
+
+     // Test steps
+     prompt(twiki("---+++ " + testTitle + "<br><br>
+         *Goal:* " + testGoal + "<br>
+         *Pre-Requisites:* " + testPreconditions + "<br>
+         *Tested Binary:* " + testBinary + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Search Messsages tab | |
+        | Select a search type | |
+        | Fill in according parameters | |
+        | Click on Make Query (=Search) | Verify correct messages are shown and can be viewed |
+        | return to search results | |
+        | Select an message and click on Show | |
+        | Answer No to open it within the test application | Verify the message is properly shown |
+      "));
     },
 
+    Receive_Message : function() {
+      // Test meta data
+      testTitle = "Messaging - Receive Message";
+      testBinary = "testQtMessaging";
+      testGoal = "Verify that messages can be received.";
+      testPreconditions = "There are some messages in Email account, and network is available.";
+      testGroups = "BAT";
 
-    writeMessage_sendSMS : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Write Message: Send SMS
-    1. Launch *writemessage* application
-    1. Choose *SMS* in *Account* field
-    1. Fill in a known mobile phone number to *To* field
-    1. Verify that the *Subject* field is disabled
-    1. Fill in some random text to the body text area
-    1. Verify that the *Add*/ *Remove* buttons are disabled for SMS
-    1. Click on *Send*
-    1. On the recever mobile phone, verify the correct SMS is received
-        '));
-        }
-    },
+      // Test steps
+      prompt(twiki("---+++ " + testTitle + "<br><br>
+          *Goal:* " + testGoal + "<br>
+          *Pre-Requisites:* " + testPreconditions + "<br>
+          *Tested Binary:* " + testBinary + "<br>
 
-    writeMessage_sendMMS : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Write Message: Send MMS
-    1. Launch *writemessage* application
-    1. Choose *MMS* in *Account* field
-    1. Fill in a known mobile phone number to *To* field
-    1. Fill in some random subject to *Subject* field
-    1. Fill in some random text to the body text area
-    1. Click on *Add* button to add an attachment file to the message
-    1. Choose the attachment just added, click on *Remove* to remove it
-    1. Click on *Add* button to add two more attachments file to the message
-    1. Click on *Send*
-    1. On the recever mobile phone, verify the correct MMS is received with attachments
-        '));
-        }
-    },
-
-    writeMessage_sendEmail : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Write Message: Send Email
-    1. Create an Email account called *Email* on the device, verify it sends and receives email properly
-    1. Launch *writemessage* application
-    1. Choose *Email* in *Account* field
-    1. Fill in a known email address to *To* field
-    1. Fill in some random subject to *Subject* field
-    1. Fill in some random text to the body text area
-    1. Click on *Add* button to add an attachment file to the message
-    1. Choose the attachment just added, click on *Remove* to remove it
-    1. Click on *Add* button to add two more attachments file to the message
-    1. Click on *Send*
-    1. On the recever email client, verify the correct Email is received with attachments
-        '));
-        }
-    },
-
-    queryMessage_startQuit : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Query Message: Start and Quit
-    Note: *querymessage* is a console application, it must be launched from command line, and the results are shown on command line only
-    
-    1. Launch *querymessage* application using command line
-    1. Verify the application runs with no crash
-    1. Exit the application, verify it exits properly without error
-        '));
-        }
-    },
-
-    queryMessage_queryMessage : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Query Message: Start and Quit
-    Note: *querymessage* is a console application, it must be launched from command line, and the results are shown on command line only
-    Currently the test is not available for Symbian platforms.
-
-    1. Synchronize a set of test messages to the phone using Nokia Ovi Suite or an equal tool
-    1. Launch *querymessage* application using command line
-    1. Verify that the messages are properly queried and results are correct
-    1. Exit the application, verify it exits properly without error
-        '));
-        }
-    },
-
-    keepInTouch_startQuit : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Keep In Touch: Start and Quit
-    
-    1. Launch *keepintouch* application using command line
-    1. Verify the application runs with no crash
-    1. Exit the application, verify it exits properly without error
-        '));
-        }
-    },
-
-
-    keepInTouch_queryContacts : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Keep In Touch: query contacts
-    
-    1. Synchronize a set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool
-    1. Launch *keepintouch* application using command line
-    1. Select *Year* from *Contacted within the last* combo box
-    1. Click on *Search*
-    1. Verify that all contacts contacted in the last year are displayed
-    1. Select *3 Months* from *Contacted within the last* combo box
-    1. Click on *Search*
-    1. Verify that all contacts contacted in the last three months are displayed
-    1. Check the *But not in the last* checkbox
-    1. Choose *Month* in the combo box next to the checkbox
-    1. click on *Search*
-    1. Verify that the contacts contacted in the last three months but not in the last month are shown
-        '));
-        }
-    },
-
-    keepInTouch_showMessages : function() {
-     if (automatedTestEnvironment()){
-     }else{
-         prompt(twiki('---++++ Keep In Touch: show messages
-
-    1. Synchronize a set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool
-    1. Launch *keepintouch* application using command line
-    1. Select *Year* from *Contacted within the last* combo box
-    1. Click on *Search*
-    1. Verify that all contacts contacted in the last year are displayed
-    1. Click on a contact name
-    1. Verify the messages with the contact are shown
-    1. Select one message
-    1. Click on *Show* button and verify the message details are shown
-    1. Go back and click on *Forward* button, verify the forward dialog is shown
-     '));
-     }
-    },
-
-    messagingEx_startQuit : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ MessageEx: Start and Quit
-    1. Launch *messagingex* application
-    1. Verify that the UI is shown
-    1. Verify that the UI layout is proper and usable on the specific device
-    1. Exit the application, verify it exits properly without error
-        '));
-        }
-    },
-
-    messagingEx_sendSMS : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ MessagingEx: Send SMS
-    1. Launch *messagingEx* application
-    1. Choose *SMS* in *Account* field
-    1. Fill in a known mobile phone number to *To* field
-    1. Fill in some random text to the body text area
-    1. Click on *Send Message*
-    1. On the recever mobile phone, verify the correct SMS is received
-        '));
-        }
-    },
-
-    messagingEx_storeSMS : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ MessagingEx: Store SMS
-    1. Launch *messagingEx* application
-    1. Choose *SMS* in *Account* field
-    1. Fill in a known mobile phone number to *To* field
-    1. Fill in some random text to the body text area
-    1. Click on *Store Message*
-    1. Verify the correct SMS is stored in the system
-        '));
-        }
-    },
-
-    messagingEx_sendMMS : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ MessagingEx: Send MMS
-    1. Launch *messagingex* application
-    1. Choose *MMS* in *Account* field
-    1. Fill in a known mobile phone number to *To* field
-    1. Fill in some random subject to *Subject* field
-    1. Fill in some random text to the body text area
-    1. Click on *Add Attachment* button to add an attachment file to the message
-    1. Choose the attachment just added, click on *Remove Attachment* to remove it
-    1. Click on *Add Attachment* button to add two more attachments file to the message
-    1. Click on *Send Message*
-    1. On the recever mobile phone, verify the correct MMS is received with attachments
-        '));
-        }
-    },
-
-    messagingEx_storeMMS : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ MessagingEx: Store MMS
-    1. Launch *messagingex* application
-    1. Choose *MMS* in *Account* field
-    1. Fill in a known mobile phone number to *To* field
-    1. Fill in some random subject to *Subject* field
-    1. Fill in some random text to the body text area
-    1. Click on *Add Attachment* button to add an attachment file to the message
-    1. Choose the attachment just added, click on *Remove Attachment* to remove it
-    1. Click on *Add Attachment* button to add two more attachments file to the message
-    1. Click on *Store Message*
-    1. Verify the correct MMS is stored with attachments
-        '));
-        }
-    },
-
-    messagingEx_sendEmail : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ messagingEx: Send Email
-    1. Create an Email account called *Email* on the device, verify it sends and receives email properly
-    1. Launch *messagingex* application
-    1. Choose *Email* in *Account* field
-    1. Fill in a known email address to *To* field
-    1. Fill in some random subject to *Subject* field
-    1. Fill in some random text to the body text area
-    1. Click on *Add Attachment* button to add an attachment file to the message
-    1. Choose the attachment just added, click on *Remove Attachment* to remove it
-    1. Click on *Add Attachment* button to add two more attachments file to the message
-    1. Click on *Send Message*
-    1. On the recever email client, verify the correct Email is received with attachments
-        '));
-        }
-    },
-
-    messagingEx_storeEmail : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ messagingEx: Store Email
-    1. Create an Email account called *Email* on the device, verify it sends and receives email properly
-    1. Launch *messagingex* application
-    1. Choose *Email* in *Account* field
-    1. Fill in a known email address to *To* field
-    1. Fill in some random subject to *Subject* field
-    1. Fill in some random text to the body text area
-    1. Click on *Add Attachment* button to add an attachment file to the message
-    1. Choose the attachment just added, click on *Remove Attachment* to remove it
-    1. Click on *Add Attachment* button to add two more attachments file to the message
-    1. Click on *Store Message*
-    1. Verify the correct Email is stored with attachments
-        '));
-        }
-    },
-
-    declarativeMessaging_startQuit : function() {
-        if (automatedTestEnvironment()){
-        }else{
-            prompt(twiki('---++++ Declarative Messaging: Start and Quit
-    1. Launch *declarativemessaging* application
-    1. Verify that the UI is shown
-    1. Verify that the UI layout is proper and usable on the specific device
-    1. Exit the application, verify it exits properly without error
-        '));
-        }
-    },
-
-     declarativeMessaging_ShowDetails : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Declarative Messaging: Show Details
-
-      1. Start declarativeMessaging application
-      1. Verify that the sample messages are listed
-      1. Randomly click on a sample message
-      1. Verify that the message details are shown
-          '));
-          }
+         | *Step* | *Verification* |
+         | Launch " + testBinary + " | App launches normally |
+         | Select Search Message item | |
+         | Use By type as search type, Email account, tick Email box | |
+         | click on Make query | |
+         | Send a new message to the selected account from other device | |
+         | In the result page, select a message, click on Send/Receive button | |
+         | Wait for a while | Verify the new message is retrived to the list |
+          "));
       },
 
-     bluewheelMessaging_startQuit : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Start and Quit
+    Show_Message : function() {
+       // Test meta data
+       testTitle = "Messaging - Show Message";
+       testBinary = "keepintouch (alternative: declarativeMessaging, testQtMessaging)";
+       testGoal = "Verify that an messages can be shown.";
+       testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
+       testGroups = "BAT";
 
-      1. Start blue wheel test application
-      1. Verify the application is loaded properly
-      1. Select Messaging from the list
-      1. Verify the messaging test application is launched
-          '));
-          }
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | Select *Year* from *Contacted within the last* combo box | |
+          | Click on *Search* | Verify that all contacts contacted in the last year are displayed |
+          | Click on a contact name | Verify the messages with the contact are shown |
+          | Select one message | |
+          | Click on *Show* button | Verify the message details are shown |
+          | Go back and click on *Forward* button | Verify the forward dialog is shown |
+     "));
+    },
+
+    Delete_Message : function() {
+         // Test meta data
+         testTitle = "Messaging - Delete Message";
+         testBinary = "testQtMessaging";
+         testGoal = "Verify that messages can be deleted.";
+         testPreconditions = "Some messages are available in Email account, and network available.";
+         testGroups = "BAT";
+
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select Search Message item | |
+            | Use By type as search type, Email account, tick Email box | |
+            | click on Make query | |
+            | In the result page, select a message, click on Show button | |
+            | Select No button | Verify the message is properly displayed |
+            | Click on Delete button | Verify the message is deleted from selected account |
+         "));
+     },
+
+    Send_SMS : function() {
+       // Test meta data
+       testTitle = "Messaging - Send SMS";
+       testBinary = "writemessage (alternatives: messagingEx and testQtMessaging)";
+       testGoal = "Verify that an SMS message can be sent.";
+       testPreconditions = "None";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally, and UI layout is proper and usable on the specific device |
+          | Choose *SMS* in *Account* field | |
+          | Fill in a known mobile phone number to *To* field | Verify that the *Subject* field is disabled |
+          | Fill in some random text to the body text area | Verify that the *Add*/ *Remove* buttons are disabled for SMS |
+          | Click on *Send* | On a recever mobile phone, verify the correct SMS is received |
+        "));
+    },
+
+    Store_SMS : function() {
+       // Test meta data
+       testTitle = "Messaging - Store SMS";
+       testBinary = "messagingex (alternatives: testQtMessaging)";
+       testGoal = "Verify that an SMS message can be saved.";
+       testPreconditions = "";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | Choose *SMS* in *Account* field (or the SMS tab) | |
+          | Fill in a known mobile phone number to *To* field | |
+          | Fill in some random text to the body text area | |
+          | Click on *Store Message* | Verify the correct SMS is stored in the system (draft folder) |
+        "));
+    },
+
+    Read_SMS : function() {
+          // Test meta data
+          testTitle = "Messaging - Read SMS";
+          testBinary = "testQtMessaging";
+          testGoal = "Verify that an SMS message can be read.";
+          testPreconditions = "Some messages in SMS account, and network available";
+          testGroups = "BAT";
+
+          // Test steps
+          prompt(twiki("---+++ " + testTitle + "<br><br>
+              *Goal:* " + testGoal + "<br>
+              *Pre-Requisites:* " + testPreconditions + "<br>
+              *Tested Binary:* " + testBinary + "<br>
+
+             | *Step* | *Verification* |
+             | Launch " + testBinary + " | App launches normally |
+             | Select Search Message item | |
+            | Use By type as search type, SMS account, tick SMS box | |
+            | click on Make query | |
+            | In the result page, select a message, click on Show button | |
+            | Select No button | Verify the message is properly displayed |
+            | Click on Close | |
+            | Click on Show button again, select Yes this time | Verify the message is properly displayed using the native client |
+          "));
       },
 
-      bluewheelMessaging_SMS_Compose : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: SMS Compose
+    Compose_SMS : function() {
+         // Test meta data
+         testTitle = "Messaging - Compose SMS";
+         testBinary = "testQtMessaging";
+         testGoal = "Verify that an SMS messages can be composed and transferred to native client.";
+         testPreconditions = "";
+         testGroups = "BAT";
 
-      1. Start messaging test application
-      1. select SMS tab
-      1. Type in destination phone number
-      1. Type in some content
-      1. Click on Compose
-      1. Verify the native SMS client program is launched
-      1. Save draft and return
-          '));
-          }
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | select SMS tab | |
+          | Type in destination phone number | |
+          | Type in some content | |
+          | Click on Compose | Verify the native SMS client program is launched |
+          | Save draft and return | |
+        "));
+    },
+
+    Send_MMS : function() {
+       // Test meta data
+       testTitle = "Messaging - Send MMS";
+       testBinary = "writemessage (alternatives: messagingEx and testQtMessaging)";
+       testGoal = "Verify that an MMS message can be sent.";
+       testPreconditions = "None";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally, and UI layout is proper and usable on the specific device |
+          | Choose *MMS* in *Account* field | |
+          | Fill in a known mobile phone number to *To* field | |
+          | Fill in some random subject to *Subject* field | |
+          | Fill in some random text to the body text area | |
+          | Click on *Add* button to add an attachment file to the message | |
+          | Choose the attachment just added, click on *Remove* to remove it | |
+          | Click on *Add* button to add two more attachments file to the message | |
+          | Click on *Send* | On the recever mobile phone, verify the correct MMS is received with attachments |
+        "));
+    },
+
+    Store_MMS : function() {
+       // Test meta data
+       testTitle = "Messaging - Store MMS";
+       testBinary = "messagingex (alternatives: testQtMessaging)";
+       testGoal = "Verify that an MMS message can be saved.";
+       testPreconditions = "";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | Choose *MMS* in *Account* field (or the MMS tab) | |
+          | Fill in a known mobile phone number to *To* field | |
+          | Fill in some random subject to *Subject* field | |
+          | Fill in some random text to the body text area | |
+          | Click on *Add Attachment* button to add an attachment file to the message | |
+          | Choose the attachment just added, click on *Remove Attachment* to remove it | |
+          | Click on *Add Attachment* button to add two more attachments file to the message | |
+          | Click on *Store Message* | Verify the correct MMS is stored with attachments | |
+        "));
+    },
+
+    Read_MMS : function() {
+          // Test meta data
+          testTitle = "Messaging - Read MMS";
+          testBinary = "testQtMessaging";
+          testGoal = "Verify that an MMS message can be read.";
+          testPreconditions = "Some messages in MMS account, and network available";
+          testGroups = "BAT";
+
+          // Test steps
+          prompt(twiki("---+++ " + testTitle + "<br><br>
+              *Goal:* " + testGoal + "<br>
+              *Pre-Requisites:* " + testPreconditions + "<br>
+              *Tested Binary:* " + testBinary + "<br>
+
+             | *Step* | *Verification* |
+             | Launch " + testBinary + " | App launches normally |
+             | Select Search Message item | |
+             | Use By type as search type, MMS account, tick MMS box | |
+             | click on Make query | |
+             | In the result page, select a message, click on Show button | |
+             | Select No button | Verify the message is properly displayed |
+             | Click on Close | |
+             | Click on Show button again, select Yes this time | Verify the message is properly displayed using the native client |
+       "));
       },
-      bluewheelMessaging_SMS_Store : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: SMS Store
 
-      1. Start messaging test application
-      1. select SMS tab
-      1. Type in destination phone number
-      1. Type in some content
-      1. Click on Store
-      1. Verify the message has been stored in draft folder
-          '));
-          }
+    Compose_MMS : function() {
+         // Test meta data
+         testTitle = "Messaging - Compose MMS";
+         testBinary = "testQtMessaging";
+         testGoal = "Verify that an MMS message can be composed.";
+         testPreconditions = "None";
+         testGroups = "BAT";
+
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select MMS tab | |
+            | Type in destination phone number | |
+            | Type in a subject and some content | |
+            | Insert some attachments | |
+            | Click on Compose | Verify the native SMS client program is launched |
+            | Save draft and return | |
+       "));
+    },
+
+    Send_Email : function() {
+         // Test meta data
+         testTitle = "Messaging - Send Email";
+         testBinary = "writemessage (alternatives: messagingEx and testQtMessaging)";
+         testGoal = "Verify that an EMail message can be sent.";
+         testPreconditions = "an Email account called *Email* exists on the device";
+         testGroups = "BAT";
+
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally, and UI layout is proper and usable on the specific device |
+            | Choose *Email* in *Account* field | |
+            | Fill in a known email address to *To* field | |
+            | Fill the CC and BCC fields with three email addresses each, separated by ';' | |
+            | Fill in some random subject to *Subject* field | |
+            | Fill in some random text to the body text area | |
+            | Click on *Add* button to add an attachment file to the message | |
+            | Choose the attachment just added, click on *Remove* to remove it | |
+            | Click on *Add* button to add two more attachments file to the message | |
+            | Click on *Send* | On the recever email client, verify the correct Email is received with attachments |
+            | | Verify that CC and BCC adresses have received EMail as well and that To and Cc fields are visible, but Bcc adresses are not visible. |
+        "));
+    },
+
+    //FIXME: This test needs to become a lot more specific, e.g. *which* encoding formats to we want to test?
+    // and does that mean the test can (and should) be combined with Send_EMail??
+    Send_EMail_with_Encoding_Formats : function() {
+       // Test meta data
+       testTitle = "Messaging - Supported Encoding Formats";
+       testBinary = "testQtMessaging";
+       testGoal = "Verify that account settings can be send with various encoding formats.";
+       testPreconditions = "None";
+       testGroups = "BAT";
+
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | Select Create Message item | |
+          | Select Email Message button | |
+          | Click on Settings button | |
+          | Click on Charsets button | |
+          | Click on Add button to add some charsets | |
+          | Click on Done button | |
+          | Change the Text/Html settings | |
+          | Click on Done to return to the Email creating dialog | |
+          | Store/compose/send the message | Verify the message has been properly stored/composed/sent using desired charsets and format |
+          "));
       },
 
-      bluewheelMessaging_SMS_Send : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: SMS Send
+    Store_Email : function() {
+         // Test meta data
+         testTitle = "Messaging - Store EMail";
+         testBinary = "messagingex (alternatives: testQtMessaging)";
+         testGoal = "Verify that an EMail message can be saved.";
+         testPreconditions = "Email account called *Email* exists on the device";
+         testGroups = "BAT";
 
-      1. Start messaging test application
-      1. select SMS tab
-      1. Type in destination phone number
-      1. Type in some content
-      1. Click on Send
-      1. Verify the message has been sent correctly
-          '));
-          }
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Choose *Email* in *Account* field | |
+            | Fill in a known email address to *To* field | |
+            | Fill in some random subject to *Subject* field | |
+            | Fill in some random text to the body text area | |
+            | Click on *Add Attachment* button to add an attachment file to the message | |
+            | Choose the attachment just added, click on *Remove Attachment* to remove it | |
+            | Click on *Add Attachment* button to add two more attachments file to the message | |
+            | Click on *Store Message* | Verify the correct Email is stored (in draft folder) with attachments |
+        "));
+    },
+
+    Read_Email : function() {
+        // Test meta data
+        testTitle = "Messaging - Read E-Mail";
+        testBinary = "testQtMessaging";
+        testGoal = "Verify that an EMail message can be read.";
+        testPreconditions = "   1. Email account called *Email* exists on the device<br>   1. Email accounts contains valid messages.<br>   1. Network is available.";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | Select Search Message item | |
+           | Use By type as search type, Email account, tick Email box | |
+           | click on Make query | |
+           | In the result page, select a message, click on Show button | |
+           | Select No button | Verify the message is properly displayed |
+           | Click on Close | |
+           | Click on Show button again, select Yes this time | Verify the message is properly displayed using the native client |
+          "));
       },
 
-      bluewheelMessaging_Email_Compose : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Email Compose
+    Compose_Email : function() {
+        // Test meta data
+        testTitle = "Messaging - Compose EMail";
+        testBinary = "testQtmessaging";
+        testGoal = "Verify that an messages can be composed.";
+        testPreconditions = "At least one email account exists on the phone.";
+        testGroups = "BAT";
 
-      1. Create at least one email account on the phone
-      1. Start messaging test application
-      1. select Email tab
-      1. Select account for From, if necessary, change Settings by clicking on Settings
-      1. Type in destination email address, together with To, CC, BCC
-      1. Type in subject and some content
-      1. Insert some attachments
-      1. Click on Compose
-      1. Verify the native Email client program is launched
-      1. Save draft and return
-          '));
-          }
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | Select Email tab | |
+           | Select account for From, if necessary, change Settings by clicking on Settings | |
+           | Type in destination email address, together with To, CC, BCC | |
+           | Type in subject and some content | |
+           | Insert some attachments | |
+           | Click on Compose | Verify the native Email client program is launched |
+           | Save draft and return | |
+        "));
+    },
+
+    Query_Contacts : function() {
+        // Test meta data
+        testTitle = "Messaging - Query Contacts";
+        testBinary = "keepintouch";
+        testGoal = "Verify that contacts meeting specific parameters can be queried.";
+        testPreconditions = "test messages received on a range of dates from various contacts are available on the phone.";
+        testGroups = "BAT";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+
+           | *Step* | *Verification* |
+           | Launch " + testBinary + " | App launches normally |
+           | Select *Year* from *Contacted within the last* combo box | |
+           | Click on *Search* | Verify that all contacts contacted in the last year are displayed |
+           | Select *3 Months* from *Contacted within the last* combo box | |
+           | Click on *Search* | Verify that all contacts contacted in the last three months are displayed |
+           | Check the *But not in the last* checkbox | |
+           | Choose *Month* in the combo box next to the checkbox | |
+           | click on *Search* | Verify that the contacts contacted in the last three months but not in the last month are shown |
+        "));
+    },
+
+      Search_Accounts_By_Name : function() {
+           // Test meta data
+           testTitle = "Messaging - Search Accounts By Name";
+           testBinary = "testQtMessaging";
+           testGoal = "Verify that accounts can be searched by name.";
+           testPreconditions = "A set of accounts exist on the device.";
+           testGroups = "BAT";
+
+           // Test steps
+           prompt(twiki("---+++ " + testTitle + "<br><br>
+               *Goal:* " + testGoal + "<br>
+               *Pre-Requisites:* " + testPreconditions + "<br>
+               *Tested Binary:* " + testBinary + "<br>
+
+              | *Step* | *Verification* |
+              | Launch " + testBinary + " | App launches normally |
+              | Select Search Accounts tab | |
+              | Type in an account name, eg. sms, which is not case sensitive | |
+              | Click on Search | Verify the correct accounts are found and shown in dialog |
+          "));
       },
 
-      bluewheelMessaging_Email_Store : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Email Store
+      Search_Accounts_By_Id : function() {
+         // Test meta data
+         testTitle = "Messaging - Search Accounts by ID";
+         testBinary = "testQtMessaging";
+         testGoal = "Verify that messages can be searched by account ID.";
+         testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
+         testGroups = "BAT";
 
-      1. Create at least one email account on the phone
-      1. Start messaging test application
-      1. select Email tab
-      1. Select account for From, if necessary, change Settings by clicking on Settings
-      1. Type in destination email address, together with To, CC, BCC
-      1. Type in subject and some content
-      1. Insert some attachments
-      1. Click on Store
-      1. Verify the email is stored in the draft folder of selected account
-          '));
-          }
+         // Test steps
+         prompt(twiki("---+++ " + testTitle + "<br><br>
+             *Goal:* " + testGoal + "<br>
+             *Pre-Requisites:* " + testPreconditions + "<br>
+             *Tested Binary:* " + testBinary + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select Search Accounts tab | |
+            | Type in a full Id, case sensitive. You can find the Id strings by doing a search by name. | |
+            | Click on Search | Verify the correct accounts are found and shown in dialog |
+          "));
       },
 
-      bluewheelMessaging_Email_Send : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Email Send
+    Account_Settings : function() {
+       // Test meta data
+       testTitle = "Messaging - Account Settings";
+       testBinary = "testQtMessaging";
+       testGoal = "Verify that account settings can be set.";
+       testPreconditions = "None";
+       testGroups = "BAT";
 
-      1. Create at least one email account on the phone
-      1. Start messaging test application
-      1. select Email tab
-      1. Select account for From, if necessary, change Settings by clicking on Settings
-      1. Type in destination email address, together with To, CC, BCC
-      1. Type in subject and some content
-      1. Insert some attachments
-      1. Click on Send
-      1. Verify the email has been sent to the receivers, including to, cc, and bcc
-          '));
-          }
+       // Test steps
+       prompt(twiki("---+++ " + testTitle + "<br><br>
+           *Goal:* " + testGoal + "<br>
+           *Pre-Requisites:* " + testPreconditions + "<br>
+           *Tested Binary:* " + testBinary + "<br>
+
+          | *Step* | *Verification* |
+          | Launch " + testBinary + " | App launches normally |
+          | Select Create Message item | |
+          | Select Email Message button | |
+          | Click on Manage Accounts button | |
+          | Click on Select account combo box and choose an Email account | Verify all Email account properties are properly displayed |
+          | Click on Select account button | |
+          | Go back to the Email creating dialog, fill in all fields with valid values | |
+          | Store/Compose/Send the message | Verify the message has been properly stored/composed/sent with desired account |
+          "));
       },
 
 /*
-    New tests proposed
-      bluewheelMessaging_Email_Add_Attachments
-      bluewheelMessaging_Email_Clear_Attachments
-      bluewheelMessaging_Email_Store_with_Attachments
-      bluewheelMessaging_Email_Send_with_Attachments
-      bluewheelMessaging_Email_Settings_Add_Charsets
-      bluewheelMessaging_Email_Settings_Clear_Charsets
-      bluewheelMessaging_Email_Settings_Change_Bodytype
-      bluewheelMessaging_Email_Send_cross_Charsets
-      bluewheelMessaging_Email_Store_cross_Charsets
-      bluewheelMessaging_Email_Compose_cross_Charsets
-      bluewheelMessaging_Email_Send_cross_Bodytype
-      bluewheelMessaging_Email_Store_cross_Bodytype
-      bluewheelMessaging_Email_Compose_cross_Bodytype
-      bluewheelMessaging_Email_ManageAccounts_Select_Account
-      bluewheelMessaging_Email_ManageAccounts_Delete_Account
-*/
+    New tests to be considered
+      Search_Cross_Email_Account_Types
 
-      bluewheelMessaging_MMS_Compose : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: MMS Compose
+      Search_Messages_By_Type
+      Search_Messages_By_Priority
+      Search_Messages_By_Sender
+      Search_Messages_By_Receipient_To
+      Search_Messages_By_Receipient_CC
+      Search_Messages_By_Receipient_BCC
+      Search_Messages_By_Receipient_Any
+      Search_Messages_By_Status
+      Search_Messages_By_Subject
+      Search_Messages_By_Timestamp
+      Search_Messages_By_Receiption_Time
+      Search_Messages_By_Folder
+      Search_Messages_By_Account
+      Synchronize_Message
+      Send_Receive_Message
 
-      1. Start messaging test application
-      1. select MMS tab
-      1. Type in destination phone number
-      1. Type in a subject and some content
-      1. Insert some attachments
-      1. Click on Compose
-      1. Verify the native SMS client program is launched
-      1. Save draft and return
-          '));
-          }
-      },
-      bluewheelMessaging_MMS_Store : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: MMS Store
+      Synchronize_SMS
+      Send_Receive_SMS
 
-      1. Start messaging test application
-      1. select MMS tab
-      1. Type in destination phone number
-      1. Type in a subject and some content
-      1. Insert some attachments
-      1. Click on Store
-      1. Verify the message has been stored in draft folder
-          '));
-          }
-      },
+      Synchronize_EMail
+      Send_Receive_EMail
+      Email_Add_Attachments
+      Email_Clear_Attachments
+      Email_Store_with_Attachments
+      Email_Send_with_Attachments
+      Email_Settings_Add_Charsets
+      Email_Settings_Clear_Charsets
+      Email_Settings_Change_Bodytype
+      Email_Send_cross_Charsets
+      Email_Store_cross_Charsets
+      Email_Compose_cross_Charsets
+      Email_Send_cross_Bodytype
+      Email_Store_cross_Bodytype
+      Email_Compose_cross_Bodytype
+      Email_ManageAccounts_Select_Account
+      Email_ManageAccounts_Delete_Account
 
-      bluewheelMessaging_MMS_Send : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: MMS Send
-
-      1. Start messaging test application
-      1. select MMS tab
-      1. Type in destination phone number
-      1. Type in a subject and some content
-      1. Insert some attachments
-      1. Click on Send
-      1. Verify the message has been sent correctly
-          '));
-          }
-      },
-
-/*
-    New tests proposed
-      bluewheelMessaging_MMS_Add_Attachments
-      bluewheelMessaging_MMS_Clear_Attachments
-      bluewheelMessaging_MMS_Store_with_Attachments
-      bluewheelMessaging_MMS_Send_with_Attachments
-*/
-
-      bluewheelMessaging_Search_Accounts_By_Name : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Search Accounts by Name
-
-      1. Start Messaging test application
-      1. Select Search Accounts tab
-      1. Type in an account name, eg. sms, which is not case sensitive
-      1. Click on Search
-      1. Verify the correct accounts are found and shown in dialog
-          '));
-          }
-      },
-
-      bluewheelMessaging_Search_Accounts_By_Id : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Search Accounts by Id
-
-      1. Start Messaging test application
-      1. Select Search Accounts tab
-      1. Type in a full Id, case sensitive. You can find the Id strings by doing a search by name
-      1. Click on Search
-      1. Verify the correct accounts are found and shown in dialog
-          '));
-          }
-      },
-
-      bluewheelMessaging_Search_Messages : function() {
-          if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Search Messages
-
-      1. Start Messaging test application
-      1. Select Search Messsages tab
-      1. Select a search type
-      1. Fill in according parameters
-      1. Click on Make Query
-      1. Verify correct messages are found and shown
-      1. Select an message and click on Show
-      1. Answer Yes to open it in native client
-      1. Verify the message is properly shown
-http://www.google.com/      1. return to search results
-      1. Select an message and click on Show
-      1. Answer No to open it within the test application
-      1. Verify the message is properly shown
-      1. Repeat the test for each search type with random query parameters
-          '));
-          }
-      },
-
-    bluewheelMessaging_Account_Settings : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Account settings can be set
-
-      1. Start Messaging test application
-      1. Select Create Message item
-      1. Select Email Message button
-      1. Click on Manage Accounts button
-      1. Click on Select account combo box and choose an Email account
-      1. Verify all Email account properties are properly displayed
-      1. Click on Select account button
-      1. Go back to the Email creating dialog, fill in all fields with valid values
-      1. Store/Compose/Send the message
-      1. Verify the message has been properly stored/composed/sent with desired account
-          '));
-          }
-      },
-
-    bluewheelMessaging_Encoding_Format_Settings : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Encoding and format settings can be set
-
-      1. Start Messaging test application
-      1. Select Create Message item
-      1. Select Email Message button
-      1. Click on Settings button
-      1. Click on Charsets button
-      1. Click on Add button to add some charsets
-      1. Click on Done button
-      1. Change the Text/Html settings
-      1. Click on Done to return to the Email creating dialog
-      1. Store/compose/send the message
-      1. Verify the message has been properly stored/composed/sent using desired charsets and format
-          '));
-          }
-      },
-
-
-     bluewheelMessaging_Specify_Addresses : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Can specify addresses for: To, CC, BCC
-
-      1. Start Messaging test application
-      1. Select Create Message item
-      1. Select SMS Message button
-      1. Fill in the To address
-      1. Send the message and verify the message is sent to desired receiver
-      1. Go back and Select MMS Message button
-      1. Fill in the To address and other fields
-      1. Send the message and verify the message is sent to desired receiver
-      1. Go back and Select Email Message button
-      1. Fill in the To/CC/BCC with three email addresses each, separated by ;
-      1. Fill in subject and content, add some attachments
-      1. Send the message
-      1. Verify that all the addresses receives the message correctly
-      1. Verify that all the receivers can see the addresses in To and CC correctly, but not BCC
-          '));
-          }
-      },
-
-      
-    bluewheelMessaging_Read_SMS : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Able to read SMS
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in SMS account, and network available
-      1. Select Search Message item
-      1. Use By type as search type, SMS account, tick SMS box
-      1. click on Make query
-      1. In the result page, select a message, click on Show button
-      1. Select No button
-      1. Verify the message is properly displayed
-      1. Click on Close
-      1. Click on Show button again, select Yes this time
-      1. Verify the message is properly displayed using the native client
-          '));
-          }
-      },
-      
-    bluewheelMessaging_Read_MMS : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Able to read MMS
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in MMS account, and network available
-      1. Select Search Message item
-      1. Use By type as search type, MMS account, tick MMS box
-      1. click on Make query
-      1. In the result page, select a message, click on Show button
-      1. Select No button
-      1. Verify the message is properly displayed
-      1. Click on Close
-      1. Click on Show button again, select Yes this time
-      1. Verify the message is properly displayed using the native client
-          '));
-          }
-      },
-
-      
-    bluewheelMessaging_Read_Email : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Able to read Email
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in Email account, and network available
-      1. Select Search Message item
-      1. Use By type as search type, Email account, tick Email box
-      1. click on Make query
-      1. In the result page, select a message, click on Show button
-      1. Select No button
-      1. Verify the message is properly displayed
-      1. Click on Close
-      1. Click on Show button again, select Yes this time
-      1. Verify the message is properly displayed using the native client
-          '));
-          }
-      },
-
-
-     bluewheelMessaging_Delete_Message : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Able to delete messages
-      1. Start Messaging test application
-      1. Start Messaging test application
-      1. Make sure there are some messages in Email account, and network available
-      1. Select Search Message item
-      1. Use By type as search type, Email account, tick Email box
-      1. click on Make query
-      1. In the result page, select a message, click on Show button
-      1. Select No button
-      1. Verify the message is properly displayed
-      1. Click on Delete button
-      1. Verify the message is deleted from selected account
-      1. Repeat this test for SMS and MMS
-          '));
-          }
-      },
-
- 
-    bluewheelMessaging_Receive_Message : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Able to receive SMS, MMS and Email
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in Email account, and network available
-      1. Select Search Message item
-      1. Use By type as search type, Email account, tick Email box
-      1. click on Make query
-      1. Send a new message to the selected account from other device
-      1. In the result page, select a message, click on Send/Receive button
-      1. Wait for a while, verify the new message is retrived to the list
-      1. Repeat this test for SMS and MMS
-          '));
-          }
-      },
-
-     bluewheelMessaging_Search_Message_Wildcard_Search : function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Wildcard Search
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in Email account, and network available
-      1. Select Search Message item
-      1. Use By Receipient as search type, Email account as account
-      1. Select Like as condition type
-      1. Fill in the Receipient text box with wildcard, eg %@hotmail.com, use SQL like syntax wildcards
-      1. Click on search button to make search
-      1. Verify that the correct results has been returned
-      1. Repeat this test with Not Like condition type
-      1. Repeat this test for SMS and MMS
-          '));
-          }
-      },
-
-     bluewheelMessaging_Synchronize: function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Synchronize
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in Email account, and network available
-      1. Select Search Message item
-      1. Use By Type as search type, Email account as account
-      1. Click on search button to make search
-      1. In the message view, click on Synchronize button
-      1. Verify synchronization returns in reasonable time
-      1. Send a message to the Email account
-      1. Click on the Synchronize button again
-      1. Verify the new message shows up in the view
-      1. Repeat this test for SMS and MMS
-          '));
-          }
-      },
-
-     bluewheelMessaging_Send_Receive: function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Send Receive
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in Email account, and network available
-      1. Select Search Message item
-      1. Use By Type as search type, Email account as account
-      1. Click on search button to make search
-      1. In the message view, click on Send Receive button
-      1. Verify synchronization returns in reasonable time
-      1. Send a message to the Email account
-      1. Click on the Send Receive button again
-      1. Verify the new message shows up in the view
-      1. Repeat this test for SMS and MMS
-          '));
-          }
-      },
-
-     bluewheelMessaging_Show_Message: function(){
-           if (automatedTestEnvironment()){
-          }else{
-              prompt(twiki('---++++ Blue Wheel Messaging: Show_Message
-
-      1. Start Messaging test application
-      1. Make sure there are some messages in Email account, and network available
-      1. Select Search Message item
-      1. Use By Type as search type, Email account as account
-      1. Click on search button to make search
-      1. In the message view, click on a message, and click on Show
-      1. When being asked, choose Yes
-      1. Verify the message is properly shown with native client
-      1. Close the native messaging client
-      1. Click on another message, and click on Show again
-      1. When being asked, choose to download details
-      1. Verify the message is shown in Bluewheel message client
-      1. Click on Attachments, verify the attachments are shown
-      1. Select an attachment, save it and verify it saves fine
-      1. Close attachment dialog
-      1. Click on Properties, verify the properties are properly shown
-      1. Close properties dialog
-      1. Click on Unread, switch to the native message client, verify the message is marked as Unread status
-      1. Go back to the Bluewheel application, click on Read
-      1. Verify the message is marked as Read status
-      1. Click on Reply button, send reply, verify the message is replied
-      1. Go back, click on Forward button, send, verify the message is forwarded
-      1. Go back, click on Edit button, change something in the message, verify the change are saved
-      1. Go back, click on Move button, select a target folder, verify the message is moved to that folder
-      1. Go back, click on Delete button, verify the message is deleted
-      1. Repeat this test for SMS and MMS
-          '));
-          }
-      },
-
- 
-/*
-    New tests proposed
-      bluewheelMessaging_Search_Messages_By_Type
-      bluewheelMessaging_Search_Messages_By_Priority
-      bluewheelMessaging_Search_Messages_By_Sender
-      bluewheelMessaging_Search_Messages_By_Receipient_To
-      bluewheelMessaging_Search_Messages_By_Receipient_CC
-      bluewheelMessaging_Search_Messages_By_Receipient_BCC
-      bluewheelMessaging_Search_Messages_By_Receipient_Any
-      bluewheelMessaging_Search_Messages_By_Status
-      bluewheelMessaging_Search_Messages_By_Subject
-      bluewheelMessaging_Search_Messages_By_Timestamp
-      bluewheelMessaging_Search_Messages_By_Receiption_Time
-      bluewheelMessaging_Search_Messages_By_Folder
-      bluewheelMessaging_Search_Messages_By_Account
-
-      bluewheelMessaging_Search_Messages_Search_SMS
-      bluewheelMessaging_Search_Messages_Search_MMS
-      bluewheelMessaging_Search_Messages_Search_Email
-      bluewheelMessaging_Search_Messages_Search_Cross_Email_Account_Types
-
+      MMS_Add_Attachments
+      MMS_Clear_Attachments
+      MMS_Store_with_Attachments
+      MMS_Send_with_Attachments
+      Synchronize_MMS
+      Send_Receive_MMS
 */
 }

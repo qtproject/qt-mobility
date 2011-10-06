@@ -130,6 +130,8 @@
 
     \section2 Bearer Management
 
+    \bold {[ This API is now deprecated. ]}
+
     Although not a network manager, this component manages the connectivity
     state of the device to the network. So it does not manage network
     configurations, which are the role of the platform provider, but it does
@@ -277,6 +279,12 @@
     or the piezo feedback from the screen.
 
     For more details, see the \l {Feedback}{Feedback API Overview}.
+
+    \section1 \l {QtMobility QML Plugins}
+
+    The various APIs that constitute QtMobility are have QML interfaces to
+    give non-C++ developers the opportunity to produce applications that utilize
+    the power of Qt and QtMobility.
 
     \section1 The QtMobility Namespace
 

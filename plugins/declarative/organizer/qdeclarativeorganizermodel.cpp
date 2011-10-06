@@ -111,6 +111,7 @@ public:
     \qmlclass OrganizerModel QDeclarativeOrganizerModel
     \brief The OrganizerModel element provides access to organizer items from the organizer store.
     \ingroup qml-organizer
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -127,9 +128,9 @@ public:
     Through the \c item role can access any data provided by the OrganizerItem element.
 
 
-    \note Both the \c startPeriod and \c endPeriod are set by default to the current time (when the OrganizerModel was created). 
-     In most cases, both (or at least one) of the startPeriod and endPeriod should be set; otherwise, the OrganizerModel will contain 
-     zero items because the \c startPeriod and \c endPeriod are the same value. For example, if only \c endPeriod is provided, 
+    \note Both the \c startPeriod and \c endPeriod are set by default to the current time (when the OrganizerModel was created).
+     In most cases, both (or at least one) of the startPeriod and endPeriod should be set; otherwise, the OrganizerModel will contain
+     zero items because the \c startPeriod and \c endPeriod are the same value. For example, if only \c endPeriod is provided,
      the OrganizerModel will contain all items from now (the time of the OrganizerModel's creation) to the \c endPeriod time.
 
     \sa OrganizerItem, {QOrganizerManager}
@@ -158,6 +159,7 @@ QDeclarativeOrganizerModel::QDeclarativeOrganizerModel(QObject *parent) :
 
 /*!
   \qmlproperty string OrganizerModel::manager
+  \since Mobility 1.1
 
   This property holds the manager name or manager uri of the organizer backend engine.
   The manager uri format: qtorganizer:<managerid>:<key>=<value>&<key>=<value>.
@@ -189,6 +191,7 @@ QString QDeclarativeOrganizerModel::manager() const
 
 /*!
   \qmlproperty string OrganizerModel::managerName
+  \since Mobility 1.1
 
   This property holds the manager name of the organizer backend engine.
   This property is read only.
@@ -203,6 +206,7 @@ QString QDeclarativeOrganizerModel::managerName() const
 
 /*!
   \qmlproperty list<string> OrganizerModel::availableManagers
+  \since Mobility 1.1
 
   This property holds the list of available manager names.
   This property is read only.
@@ -214,6 +218,7 @@ QStringList QDeclarativeOrganizerModel::availableManagers() const
 
 /*!
   \qmlproperty bool OrganizerModel::autoUpdate
+  \since Mobility 1.1
 
   This property indicates whether or not the organizer model should be updated automatically, default value is true.
 
@@ -234,6 +239,7 @@ bool QDeclarativeOrganizerModel::autoUpdate() const
 
 /*!
   \qmlmethod OrganizerModel::update()
+  \since Mobility 1.1
 
   Manually update the organizer model content.
 
@@ -256,6 +262,7 @@ void QDeclarativeOrganizerModel::doUpdate()
 
 /*!
   \qmlmethod OrganizerModel::cancelUpdate()
+  \since Mobility 1.1
 
   Cancel the running organizer model content update request.
 
@@ -272,6 +279,7 @@ void QDeclarativeOrganizerModel::cancelUpdate()
 }
 /*!
   \qmlproperty date OrganizerModel::startPeriod
+  \since Mobility 1.1
 
   This property holds the start date and time period used by the organizer model to fetch organizer items.
   The default value is the datetime of OrganizerModel creation.
@@ -290,6 +298,7 @@ void QDeclarativeOrganizerModel::setStartPeriod(const QDateTime& start)
 
 /*!
   \qmlproperty date OrganizerModel::endPeriod
+  \since Mobility 1.1
 
   This property holds the end date and time period used by the organizer model to fetch organizer items.
   The default value is the datetime of OrganizerModel creation.
@@ -308,6 +317,7 @@ void QDeclarativeOrganizerModel::setEndPeriod(const QDateTime& end)
 
 /*!
   \qmlmethod OrganizerModel::importItems(url url, list<string> profiles)
+  \since Mobility 1.1
 
   Import organizer items from a vcalendar by the given \a url and optional \a profiles.
   */
@@ -325,6 +335,7 @@ void QDeclarativeOrganizerModel::importItems(const QUrl& url, const QStringList&
 
 /*!
   \qmlmethod OrganizerModel::exportItems(url url, list<string> profiles)
+  \since Mobility 1.1
   Export organizer items into a vcalendar file to the given \a url by optional \a profiles.
   At the moment only the local file url is supported in export method.
   */
@@ -392,6 +403,7 @@ void QDeclarativeOrganizerModel::componentComplete()
 }
 /*!
   \qmlproperty Filter OrganizerModel::filter
+  \since Mobility 1.1
 
   This property holds the filter instance used by the organizer model.
 
@@ -415,6 +427,7 @@ void QDeclarativeOrganizerModel::setFilter(QDeclarativeOrganizerItemFilter* filt
 
 /*!
   \qmlproperty FetchHint OrganizerModel::fetchHint
+  \since Mobility 1.1
 
   This property holds the fetch hint instance used by the organizer model.
 
@@ -437,6 +450,7 @@ void QDeclarativeOrganizerModel::setFetchHint(QDeclarativeOrganizerItemFetchHint
 }
 /*!
   \qmlproperty int OrganizerModel::itemCount
+  \since Mobility 1.1
 
   This property holds the size of organizer items the OrganizerModel currently holds.
 
@@ -448,6 +462,7 @@ int QDeclarativeOrganizerModel::itemCount() const
 }
 /*!
   \qmlproperty string OrganizerModel::error
+  \since Mobility 1.1
 
   This property holds the latest error code returned by the organizer manager.
 
@@ -496,6 +511,7 @@ QString QDeclarativeOrganizerModel::error() const
 
 /*!
   \qmlproperty list<SortOrder> OrganizerModel::sortOrders
+  \since Mobility 1.1
 
   This property holds a list of sort orders used by the organizer model.
 
@@ -629,6 +645,7 @@ QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::createItem(const QOrganiz
 
 /*!
   \qmlmethod OrganizerModel::fetchItems(list<QString> itemIds)
+  \since Mobility 1.1
   Fetch a list of organizer items from the organizer store by given \a itemIds.
   */
 void QDeclarativeOrganizerModel::fetchItems(const QList<QString>& itemIds)
@@ -640,11 +657,11 @@ void QDeclarativeOrganizerModel::fetchItems(const QList<QString>& itemIds)
 
 /*!
   \qmlmethod bool OrganizerModel::containsItems(date start, date end)
+  \since Mobility 1.1
   Returns true if there is at least one OrganizerItem between the given date range.
   Both the \a start and  \a end parameters are optional, if no \a end parameter, returns true
   if there are item(s) after \a start, if neither start nor end date time provided, returns true if
   items in the current model is not empty, otherwise return false.
-  \since organizer 1.1.1
   \sa itemIds()
   */
 bool QDeclarativeOrganizerModel::containsItems(QDateTime start, QDateTime end)
@@ -654,9 +671,9 @@ bool QDeclarativeOrganizerModel::containsItems(QDateTime start, QDateTime end)
 
 /*!
   \qmlmethod OrganizerItem OrganizerModel::item(string itemId)
+  \since Mobility 1.1
   Returns the OrganizerItem object which item id is the given \a itemId.
 
-  \since organizer 1.1.1
   */
 QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
 {
@@ -668,12 +685,12 @@ QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::item(const QString& id)
 
 /*!
   \qmlmethod list<string> OrganizerModel::itemIds(date start, date end)
+  \since Mobility 1.1
   Returns the list of organizer item ids between the given date range \a start and \a end,
   Both the \a start and  \a end parameters are optional, if no \a end parameter, returns all
   item ids from \a start, if neither start nor end date time provided, returns all item ids in the
   current model.
 
-  \since organizer 1.1.1
   \sa containsItems()
   */
 QStringList QDeclarativeOrganizerModel::itemIds(QDateTime start, QDateTime end)
@@ -795,8 +812,8 @@ void QDeclarativeOrganizerModel::requestUpdated()
   \qmlmethod OrganizerModel::saveItem(OrganizerItem item)
   Saves the given \a item into the organizer backend.
 
-  \since organizer 1.1.1
-  */
+  \since Mobility 1.1
+*/
 void QDeclarativeOrganizerModel::saveItem(QDeclarativeOrganizerItem* di)
 {
     if (di) {
@@ -843,9 +860,9 @@ void QDeclarativeOrganizerModel::itemsSaved()
 
 /*!
   \qmlmethod OrganizerModel::removeItem(string itemId)
+  \since Mobility 1.1
   Removes the organizer item with the given \a itemId from the backend.
 
-  \since organizer 1.1.1
   */
 void QDeclarativeOrganizerModel::removeItem(const QString& id)
 {
@@ -856,10 +873,10 @@ void QDeclarativeOrganizerModel::removeItem(const QString& id)
 
 /*!
   \qmlmethod OrganizerModel::removeItems(list<string> itemId)
+  \since Mobility 1.1
   Removes the organizer items with the given \a ids from the backend.
 
-  \since organizer 1.1.1
-  */
+*/
 void QDeclarativeOrganizerModel::removeItems(const QList<QString>& ids)
 {
     QOrganizerItemRemoveRequest* req = new QOrganizerItemRemoveRequest(this);
@@ -982,6 +999,7 @@ QVariant QDeclarativeOrganizerModel::data(const QModelIndex &index, int role) co
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::items
+  \since Mobility 1.1
 
   This property holds a list of organizer items in the organizer model.
 
@@ -994,6 +1012,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::occurrences
+  \since Mobility 1.1
 
   This property holds a list of event or todo occurrence items in the organizer model.
   \note This property is not currently supported yet.
@@ -1009,6 +1028,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::events
+  \since Mobility 1.1
 
   This property holds a list of events in the organizer model.
 
@@ -1022,6 +1042,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::eventOccurrences
+  \since Mobility 1.1
 
   This property holds a list of event occurrences in the organizer model.
 
@@ -1035,6 +1056,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::todos
+  \since Mobility 1.1
 
   This property holds a list of todos in the organizer model.
 
@@ -1048,6 +1070,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::todoOccurrences
+  \since Mobility 1.1
 
   This property holds a list of todo occurrences in the organizer model.
 
@@ -1061,6 +1084,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::journals
+  \since Mobility 1.1
 
   This property holds a list of journal items in the organizer model.
 
@@ -1075,6 +1099,7 @@ QDeclarativeListProperty<QDeclarativeOrganizerItem> QDeclarativeOrganizerModel::
 
 /*!
   \qmlproperty list<OrganizerItem> OrganizerModel::notes
+  \since Mobility 1.1
 
   This property holds a list of note items in the organizer model.
 

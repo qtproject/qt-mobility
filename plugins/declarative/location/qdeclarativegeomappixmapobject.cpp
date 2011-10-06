@@ -62,6 +62,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QGeoMapPixmapObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The image loaded from \l source will be drawn \l offset.x and
     \l offset.y pixels away from the on-screen position of \l coordinate.
@@ -99,6 +100,7 @@ QDeclarativeGeoMapPixmapObject::~QDeclarativeGeoMapPixmapObject()
 
 /*!
     \qmlproperty Coordinate MapImage::coordinate
+    \since Mobility 1.2
 
     This property holds the coordinate at which to anchor the image.
 */
@@ -149,6 +151,7 @@ void QDeclarativeGeoMapPixmapObject::coordinateAltitudeChanged(double /*altitude
 /*!
     \qmlproperty int MapImage::offset.x
     \qmlproperty int MapImage::offset.y
+    \since Mobility 1.2
 
     These properties hold the offset from the on-screen position of
     \l coordinate at which the image should be displayed.
@@ -168,6 +171,7 @@ void QDeclarativeGeoMapPixmapObject::setOffset(const QPoint &offset)
 
 /*!
     \qmlproperty url MapImage::source
+    \since Mobility 1.2
 
     This property holds the URL describing the location of the image to
     display.
@@ -196,6 +200,7 @@ QUrl QDeclarativeGeoMapPixmapObject::source() const
 
 /*!
     \qmlproperty enumeration MapImage::status
+    \since Mobility 1.2
 
     This property holds the status of image loading.  It can be one of:
     \list
@@ -333,6 +338,7 @@ void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
 
 /*!
     \qmlproperty int MapImage::z
+    \since Mobility 1.2
 
     This property holds the z-value of the image.
 
@@ -342,6 +348,7 @@ void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
 
 /*!
     \qmlproperty bool MapImage::visible
+    \since Mobility 1.2
 
     This property holds a boolean corresponding to whether or not the
     image is visible.

@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
     \brief The Landmark element presents one landmark.
     \ingroup qml-location-landmarks
     \inherits Place
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.location 1.1} module.
 
@@ -79,6 +80,7 @@ QString QDeclarativeLandmark::name()
 
 /*!
   \qmlproperty string Landmark::name
+  \since Mobility 1.2
 
   This property holds the name of the landmark.
 
@@ -99,6 +101,7 @@ QString QDeclarativeLandmark::phoneNumber()
 
 /*!
   \qmlproperty string Landmark::phoneNumber
+  \since Mobility 1.2
 
   This property holds the phoneNumber of the landmark.
 
@@ -119,6 +122,7 @@ QString QDeclarativeLandmark::description()
 
 /*!
   \qmlproperty string Landmark::description
+  \since Mobility 1.2
 
   This property holds the description of the landmark.
 
@@ -139,6 +143,7 @@ double QDeclarativeLandmark::radius()
 
 /*!
   \qmlproperty double Landmark::radius
+  \since Mobility 1.2
 
   This property holds the coverage radius of the landmark (in metres).
   The coverage radius is relevant for large landmarks such as cities.
@@ -162,6 +167,7 @@ QUrl QDeclarativeLandmark::iconSource()
 
 /*!
   \qmlproperty url Landmark::iconSource
+  \since Mobility 1.2
 
   This property holds the landmark's icon's URL.
 
@@ -182,6 +188,7 @@ QUrl QDeclarativeLandmark::url()
 
 /*!
   \qmlproperty url Landmark::url
+  \since Mobility 1.2
 
   This property holds the URL of the landmark.
 

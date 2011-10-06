@@ -44,6 +44,7 @@
 #include "s60cameraflashcontrol.h"
 #include "s60cameraservice.h"
 #include "s60imagecapturesession.h"
+#include "s60imagecapturesettings.h"
 
 S60CameraFlashControl::S60CameraFlashControl(QObject *parent) :
     QCameraFlashControl(parent)
@@ -53,57 +54,37 @@ S60CameraFlashControl::S60CameraFlashControl(QObject *parent) :
 S60CameraFlashControl::S60CameraFlashControl(S60ImageCaptureSession *session, QObject *parent) :
     QCameraFlashControl(parent),
     m_session(0),
-    m_service(0),
-    m_advancedSettings(0),
-    m_flashMode(QCameraExposure::FlashOff)
+    m_service(0)
 {
     m_session = session;
-
-    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
-    m_advancedSettings = m_session->advancedSettings();
-
-    if (m_advancedSettings)
-        connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
+    connect(m_session->settings(), SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
 }
 
 S60CameraFlashControl::~S60CameraFlashControl()
 {
-    m_advancedSettings = 0;
-}
-
-void S60CameraFlashControl::resetAdvancedSetting()
-{
-    m_advancedSettings = m_session->advancedSettings();
-    if (m_advancedSettings)
-        connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
 }
 
 QCameraExposure::FlashModes S60CameraFlashControl::flashMode() const
 {
-    return m_session->flashMode();
+    return m_session->settings()->flashMode();
 }
 
 void S60CameraFlashControl::setFlashMode(QCameraExposure::FlashModes mode)
 {
-    if (isFlashModeSupported(mode)) {
-        m_flashMode = mode;
-        m_session->setFlashMode(m_flashMode);
-    }
+    if (isFlashModeSupported(mode))
+        m_session->settings()->setFlashMode(mode);
     else
         m_session->setError(KErrNotSupported, tr("Requested flash mode is not supported."));
 }
 
 bool S60CameraFlashControl::isFlashModeSupported(QCameraExposure::FlashModes mode) const
 {
-    return m_session->supportedFlashModes() & mode;
+    return bool(m_session->settings()->supportedFlashModes() & mode);
 }
 
 bool S60CameraFlashControl::isFlashReady() const
 {
-    if (m_advancedSettings)
-        return m_advancedSettings->isFlashReady();
-
-    return false;
+    return m_session->settings()->isFlashReady();
 }
 
 // End of file

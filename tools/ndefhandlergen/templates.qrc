@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>templates/maemo6/maemo6.conf</file>
-        <file>templates/maemo6/maemo6.postinst</file>
-        <file>templates/maemo6/maemo6.prerm</file>
-        <file>templates/maemo6/maemo6.service</file>
+        <file>templates/harmattan/harmattan.conf</file>
+        <file>templates/harmattan/harmattan.postinst</file>
+        <file>templates/harmattan/harmattan.prerm</file>
+        <file>templates/harmattan/harmattan.service</file>
         <file>templates/symbian/symbian.xml</file>
     </qresource>
 </RCC>

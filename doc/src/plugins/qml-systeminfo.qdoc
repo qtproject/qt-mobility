@@ -1,4 +1,4 @@
-	/****************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -40,9 +40,111 @@
 
     \section1 Overview
 
+    The System Information API gives the developer a convenient way to
+    access various sources of information on a device within the powerful
+    QtQuick environment.
+
+    Many signals that you may wish to use require that a property with a name
+    beginning with 'monitor' be used, for example setting
+    \l {NetworkInfo::monitorStatusChanges}{monitorStatusChanges} to \i true
+    will start status change events being emitted as signals (in the \l NetworkInfo
+    element).
+
+    \section2 AlignedTimer
+
+    The \l {AlignedTimer} element allows timing functions in order to synchronize
+    a number of activities. A one-shot feature is included as well as properties
+    for minimum and maximum timer intervals.
+
+    \section2 BatteryInfo
+
+    The \l {BatteryInfo} element contains a set of functions and properties
+    for interrogating and handling notifications of battery information. We
+    will use the battery example, \i {battery2.qml}, to show how to use the
+    element and the plugin.
+
+    The following QML code enables a number of events and defines several
+    handlers.
+
+    \snippet ../../examples/declarative-systeminfo/battery2/battery2.qml  battery2-info1
+    \dots 8
+
+    In particular, when the battery level changes the handler
+
+    \snippet ../../examples/declarative-systeminfo/battery2/battery2.qml  battery2-doBatteryLevelChange
+
+    calls
+
+    \snippet ../../examples/declarative-systeminfo/battery2/battery2.qml  battery2-info2
+
+    which results in a change of State to \i {levelchange} being handled after the function.
+    The \i levelchange state then causes a suitable animation to run and
+    display the new level.
+
+    \snippet ../../examples/declarative-systeminfo/battery2/battery2.qml  battery2-level2
+    \dots 12
+    \snippet ../../examples/declarative-systeminfo/battery2/battery2.qml  battery2-level3
+    \dots 12
+
+    \section2 DeviceInfo
+
+    In the \i {battery2.qml} example above we saw a \l BatteryInfo element
+    used to set up various signal handlers, one for battery level changes.
+    BatteryInfo is a specialized wrapper of the same class used for \l DeviceInfo.
+    \l DeviceInfo is an element that contains properties, signals and handlers
+    for a variety of components of the device. So it not only caters for the
+    battery but also manufacturer id, the thermal state, keyboard, whether the device
+    locked and so forth.
+
+
+    \section2 DisplayInfo
+
+    The \l DisplayInfo element contains properties relating to the physical
+    display such as width and height, and also resolution information given
+    as the width and height in dpi. Only one signal is available,
+    \l {DisplayInfo::orientationChanged}{orientationChanged}.
+
+    The meaning of the values used in some of the properties and the reported
+    orientation can be found in the \l QSystemDisplayInfo documentation.
+
+
+    \section2 GeneralInfo
+
+    This is a convenience class and is not expected to be used directly by developers.
+
+    \section2 NetworkInfo
+
+    The \l NetworkInfo element provides properties of a network connection and
+    session and various signals. The QML plugin example, \i wifi.qml, gives a
+    simple demonstration on how to use some of these properties.
+
+    \snippet ../../examples/declarative-systeminfo/network/wifi.qml wifi-1
+    \dots 8
+    \snippet ../../examples/declarative-systeminfo/network/wifi.qml wifi-2
+    \dots 8
+    \snippet ../../examples/declarative-systeminfo/network/wifi.qml wifi-3
+
+    The Item element named \i wlan has its declared \i mode property set to the
+    wireless lan mode enum. The NetworkInfo element \i {wlaninfo} also
+    contains the connection status, represented by a string indicating a
+    suitable image to display. The signal handler \i onStatusChanged will
+    call the function that sets the image. Finally, in the NetworkInfo element we find a series of
+    statements that enable signals for name changes, status changes, signal
+    strength changes and mode changes.
+
+    \section2 ScreenSaver
+
+    The \l ScreenSaver element provides information about whether the screensaver
+    has been delayed or inhibited and the ability to set the delayed boolean
+    flag.
+
 
     \section1 QML Elements
     \annotatedlist qml-systeminfo
+
+    \section2 Compatibility Notes
+    \l DeviceInfo
+    \l NetworkInfo
 */
 
 

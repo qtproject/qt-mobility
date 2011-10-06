@@ -47,6 +47,7 @@
     \qmlclass FeedbackEffect QDeclarativeFeedbackEffect
     \brief The FeedbackEffect element is the base class for all feedback effects.
     \ingroup qml-feedback-api
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
@@ -104,6 +105,7 @@ QFeedbackEffect* QDeclarativeFeedbackEffect::feedbackEffect()
   \qmlproperty bool FeedbackEffect::running
 
   This property is true if this feedback effect is running.
+  \since Mobility 1.1
   */
 bool QDeclarativeFeedbackEffect::isRunning() const
 {
@@ -127,6 +129,7 @@ void QDeclarativeFeedbackEffect::setRunning(bool running)
   \qmlproperty bool FeedbackEffect::paused
 
   This property is true if this feedback effect is paused.
+  \since Mobility 1.1
   */
 bool QDeclarativeFeedbackEffect::isPaused() const
 {
@@ -150,6 +153,7 @@ void QDeclarativeFeedbackEffect::setPaused(bool paused)
 /*!
   \qmlproperty int FeedbackEffect::duration
 
+    \since Mobility 1.1
   The duration of the effect, in milliseconds.  This is 0 for effects of unknown
   duration, or Feedback.Infinite for effects that don't stop.
   \sa Feedback
@@ -167,6 +171,7 @@ void QDeclarativeFeedbackEffect::setDuration(int newDuration)
 /*!
   \qmlproperty FeedbackEffect::State FeedbackEffect::state
 
+    \since Mobility 1.1
   This is the current state of the effect.  It is one of:
   \list
   \o Feedback.Stopped - the effect is not playing
@@ -189,6 +194,7 @@ void QDeclarativeFeedbackEffect::setState(QDeclarativeFeedbackEffect::State newS
 /*!
   \qmlproperty Feedback::ErrorType FeedbackEffect::error
 
+    \since Mobility 1.1
   This property holds the error status of the FeedbackEffect.
   The error is one of the following values:
   \list
@@ -207,6 +213,7 @@ QDeclarativeFeedbackEffect::ErrorType QDeclarativeFeedbackEffect::error() const
     \qmlmethod  Feedback::updateState()
 
      updates the state of the effect.
+     \since Mobility 1.1
 */
 void QDeclarativeFeedbackEffect::updateState() {
     bool running = m_effect->state() == QFeedbackEffect::Running;
@@ -225,6 +232,7 @@ void QDeclarativeFeedbackEffect::updateState() {
     \qmlmethod  Feedback::start()
 
     makes sure that the effect associated with the feedback object is started.
+    \since Mobility 1.2
     \sa QFeedbackEffect::start()
 */
 void QDeclarativeFeedbackEffect::start() {
@@ -235,6 +243,7 @@ void QDeclarativeFeedbackEffect::start() {
     \qmlmethod  Feedback::stop()
 
     makes sure that the effect associated with the feedback object is stoped.
+    \since Mobility 1.2
     \sa QFeedbackEffect::stop()
 */
 void QDeclarativeFeedbackEffect::stop() {
@@ -245,6 +254,7 @@ void QDeclarativeFeedbackEffect::stop() {
     \qmlmethod  Feedback::pause()
 
     makes sure that the effect associated with the feedback object is paused.
+    \since Mobility 1.2
     \sa QFeedbackEffect::pause()
 */
 void QDeclarativeFeedbackEffect::pause() {

@@ -71,6 +71,7 @@ void QDeclarativeVideo::_q_error(int errorCode, const QString &errorString)
     \brief The Video element allows you to add videos to a scene.
     \inherits Item
     \ingroup qml-multimedia
+    \since Mobility 1.0
 
     This element is part of the \bold{QtMultimediaKit 1.1} module.
 
@@ -129,12 +130,14 @@ QDeclarativeVideo::~QDeclarativeVideo()
 
 /*!
     \qmlproperty url Video::source
+    \since Mobility 1.0
 
     This property holds the source URL of the media.
 */
 
 /*!
     \qmlproperty url Video::autoLoad
+    \since Mobility 1.0
 
     This property indicates if loading of media should begin immediately.
 
@@ -143,6 +146,7 @@ QDeclarativeVideo::~QDeclarativeVideo()
 
 /*!
     \qmlproperty bool Video::playing
+    \since Mobility 1.0
 
     This property holds whether the media is playing.
 
@@ -151,6 +155,7 @@ QDeclarativeVideo::~QDeclarativeVideo()
 
 /*!
     \qmlproperty bool Video::paused
+    \since Mobility 1.0
 
     This property holds whether the media is paused.
 
@@ -159,24 +164,28 @@ QDeclarativeVideo::~QDeclarativeVideo()
 
 /*!
     \qmlsignal Video::onStarted()
+    \since Mobility 1.0
 
     This handler is called when playback is started.
 */
 
 /*!
     \qmlsignal Video::onResumed()
+    \since Mobility 1.0
 
     This handler is called when playback is resumed from the paused state.
 */
 
 /*!
     \qmlsignal Video::onPaused()
+    \since Mobility 1.0
 
     This handler is called when playback is paused.
 */
 
 /*!
     \qmlsignal Video::onStopped()
+    \since Mobility 1.0
 
     This handler is called when playback is stopped.
 */
@@ -206,6 +215,7 @@ QDeclarativeVideo::Status QDeclarativeVideo::status() const
 
 /*!
     \qmlproperty int Video::duration
+    \since Mobility 1.0
 
     This property holds the duration of the media in milliseconds.
 
@@ -214,24 +224,28 @@ QDeclarativeVideo::Status QDeclarativeVideo::status() const
 
 /*!
     \qmlproperty int Video::position
+    \since Mobility 1.0
 
     This property holds the current playback position in milliseconds.
 */
 
 /*!
     \qmlproperty real Video::volume
+    \since Mobility 1.0
 
     This property holds the volume of the audio output, from 0.0 (silent) to 1.0 (maximum volume).
 */
 
 /*!
     \qmlproperty bool Video::muted
+    \since Mobility 1.0
 
     This property holds whether the audio output is muted.
 */
 
 /*!
     \qmlproperty bool Video::hasAudio
+    \since Mobility 1.0
 
     This property holds whether the media contains audio.
 */
@@ -243,6 +257,7 @@ bool QDeclarativeVideo::hasAudio() const
 
 /*!
     \qmlproperty bool Video::hasVideo
+    \since Mobility 1.0
 
     This property holds whether the media contains video.
 */
@@ -254,6 +269,7 @@ bool QDeclarativeVideo::hasVideo() const
 
 /*!
     \qmlproperty real Video::bufferProgress
+    \since Mobility 1.0
 
     This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0
     (full).
@@ -261,12 +277,14 @@ bool QDeclarativeVideo::hasVideo() const
 
 /*!
     \qmlproperty bool Video::seekable
+    \since Mobility 1.0
 
     This property holds whether position of the video can be changed.
 */
 
 /*!
     \qmlproperty real Video::playbackRate
+    \since Mobility 1.0
 
     This property holds the rate at which video is played at as a multiple of the normal rate.
 */
@@ -295,12 +313,14 @@ QDeclarativeVideo::Error QDeclarativeVideo::error() const
 
 /*!
     \qmlproperty string Video::errorString
+    \since Mobility 1.0
 
     This property holds a string describing the current error condition in more detail.
 */
 
 /*!
     \qmlsignal Video::onError(error, errorString)
+    \since Mobility 1.0
 
     This handler is called when an \l {QMediaPlayer::Error}{error} has
     occurred.  The errorString parameter may contain more detailed
@@ -309,6 +329,7 @@ QDeclarativeVideo::Error QDeclarativeVideo::error() const
 
 /*!
     \qmlproperty enumeration Video::fillMode
+    \since Mobility 1.0
 
     Set this property to define how the video is scaled to fit the target area.
 
@@ -333,6 +354,7 @@ void QDeclarativeVideo::setFillMode(FillMode mode)
 
 /*!
     \qmlmethod Video::play()
+    \since Mobility 1.0
 
     Starts playback of the media.
 
@@ -350,6 +372,7 @@ void QDeclarativeVideo::play()
 
 /*!
     \qmlmethod Video::pause()
+    \since Mobility 1.0
 
     Pauses playback of the media.
 
@@ -367,6 +390,7 @@ void QDeclarativeVideo::pause()
 
 /*!
     \qmlmethod Video::stop()
+    \since Mobility 1.0
 
     Stops playback of the media.
 
@@ -424,6 +448,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.title
+    \since Mobility 1.1
 
     This property holds the tile of the media.
 
@@ -432,6 +457,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.subTitle
+    \since Mobility 1.1
 
     This property holds the sub-title of the media.
 
@@ -440,6 +466,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.author
+    \since Mobility 1.1
 
     This property holds the author of the media.
 
@@ -448,6 +475,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.comment
+    \since Mobility 1.1
 
     This property holds a user comment about the media.
 
@@ -456,6 +484,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.description
+    \since Mobility 1.1
 
     This property holds a description of the media.
 
@@ -464,6 +493,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.category
+    \since Mobility 1.1
 
     This property holds the category of the media
 
@@ -472,6 +502,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.genre
+    \since Mobility 1.1
 
     This property holds the genre of the media.
 
@@ -480,6 +511,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.year
+    \since Mobility 1.1
 
     This property holds the year of release of the media.
 
@@ -488,6 +520,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.date
+    \since Mobility 1.1
 
     This property holds the date of the media.
 
@@ -496,6 +529,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.userRating
+    \since Mobility 1.1
 
     This property holds a user rating of the media in the range of 0 to 100.
 
@@ -504,6 +538,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.keywords
+    \since Mobility 1.1
 
     This property holds a list of keywords describing the media.
 
@@ -512,6 +547,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.language
+    \since Mobility 1.1
 
     This property holds the language of the media, as an ISO 639-2 code.
 
@@ -520,6 +556,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.publisher
+    \since Mobility 1.1
 
     This property holds the publisher of the media.
 
@@ -528,6 +565,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.copyright
+    \since Mobility 1.1
 
     This property holds the media's copyright notice.
 
@@ -536,6 +574,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.parentalRating
+    \since Mobility 1.1
 
     This property holds the parental rating of the media.
 
@@ -544,6 +583,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.ratingOrganisation
+    \since Mobility 1.1
 
     This property holds the name of the rating organisation responsible for the
     parental rating of the media.
@@ -553,6 +593,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.size
+    \since Mobility 1.1
 
     This property property holds the size of the media in bytes.
 
@@ -561,6 +602,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.mediaType
+    \since Mobility 1.1
 
     This property holds the type of the media.
 
@@ -569,6 +611,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.audioBitRate
+    \since Mobility 1.1
 
     This property holds the bit rate of the media's audio stream ni bits per
     second.
@@ -578,6 +621,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.audioCodec
+    \since Mobility 1.1
 
     This property holds the encoding of the media audio stream.
 
@@ -586,6 +630,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.averageLevel
+    \since Mobility 1.1
 
     This property holds the average volume level of the media.
 
@@ -594,6 +639,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.channelCount
+    \since Mobility 1.1
 
     This property holds the number of channels in the media's audio stream.
 
@@ -602,6 +648,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.peakValue
+    \since Mobility 1.1
 
     This property holds the peak volume of media's audio stream.
 
@@ -610,6 +657,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.sampleRate
+    \since Mobility 1.1
 
     This property holds the sample rate of the media's audio stream in hertz.
 
@@ -618,6 +666,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.albumTitle
+    \since Mobility 1.1
 
     This property holds the title of the album the media belongs to.
 
@@ -626,6 +675,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.albumArtist
+    \since Mobility 1.1
 
     This property holds the name of the principal artist of the album the media
     belongs to.
@@ -635,6 +685,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.contributingArtist
+    \since Mobility 1.1
 
     This property holds the names of artists contributing to the media.
 
@@ -643,6 +694,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.composer
+    \since Mobility 1.1
 
     This property holds the composer of the media.
 
@@ -651,6 +703,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.conductor
+    \since Mobility 1.1
 
     This property holds the conductor of the media.
 
@@ -659,6 +712,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.lyrics
+    \since Mobility 1.1
 
     This property holds the lyrics to the media.
 
@@ -667,6 +721,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.mood
+    \since Mobility 1.1
 
     This property holds the mood of the media.
 
@@ -675,6 +730,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.trackNumber
+    \since Mobility 1.1
 
     This property holds the track number of the media.
 
@@ -683,6 +739,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.trackCount
+    \since Mobility 1.1
 
     This property holds the number of track on the album containing the media.
 
@@ -691,6 +748,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.coverArtUrlSmall
+    \since Mobility 1.1
 
     This property holds the URL of a small cover art image.
 
@@ -699,6 +757,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.coverArtUrlLarge
+    \since Mobility 1.1
 
     This property holds the URL of a large cover art image.
 
@@ -707,6 +766,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.resolution
+    \since Mobility 1.1
 
     This property holds the dimension of an image or video.
 
@@ -715,6 +775,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.pixelAspectRatio
+    \since Mobility 1.1
 
     This property holds the pixel aspect ratio of an image or video.
 
@@ -723,6 +784,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.videoFrameRate
+    \since Mobility 1.1
 
     This property holds the frame rate of the media's video stream.
 
@@ -731,6 +793,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.videoBitRate
+    \since Mobility 1.1
 
     This property holds the bit rate of the media's video stream in bits per
     second.
@@ -740,6 +803,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.videoCodec
+    \since Mobility 1.1
 
     This property holds the encoding of the media's video stream.
 
@@ -748,6 +812,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.posterUrl
+    \since Mobility 1.1
 
     This property holds the URL of a poster image.
 
@@ -756,6 +821,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.chapterNumber
+    \since Mobility 1.1
 
     This property holds the chapter number of the media.
 
@@ -764,6 +830,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.director
+    \since Mobility 1.1
 
     This property holds the director of the media.
 
@@ -772,6 +839,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.leadPerformer
+    \since Mobility 1.1
 
     This property holds the lead performer in the media.
 
@@ -780,6 +848,7 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.writer
+    \since Mobility 1.1
 
     This property holds the writer of the media.
 
@@ -792,156 +861,182 @@ QT_END_NAMESPACE
 
 /*!
     \qmlproperty variant Video::metaData.cameraManufacturer
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::CameraManufacturer}
 */
 
 /*!
     \qmlproperty variant Video::metaData.cameraModel
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::CameraModel}
 */
 
 /*!
     \qmlproperty variant Video::metaData.event
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::Event}
 */
 
 /*!
     \qmlproperty variant Video::metaData.subject
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::Subject}
 */
 
 /*!
     \qmlproperty variant Video::metaData.orientation
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::Orientation}
 */
 
 /*!
     \qmlproperty variant Video::metaData.exposureTime
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::ExposureTime}
 */
 
 /*!
     \qmlproperty variant Video::metaData.fNumber
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::FNumber}
 */
 
 /*!
     \qmlproperty variant Video::metaData.exposureProgram
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::ExposureProgram}
 */
 
 /*!
     \qmlproperty variant Video::metaData.isoSpeedRatings
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::ISOSpeedRatings}
 */
 
 /*!
     \qmlproperty variant Video::metaData.exposureBiasValue
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::ExposureBiasValue}
 */
 
 /*!
     \qmlproperty variant Video::metaData.dateTimeDigitized
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::DateTimeDigitized}
 */
 
 /*!
     \qmlproperty variant Video::metaData.subjectDistance
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::SubjectDistance}
 */
 
 /*!
     \qmlproperty variant Video::metaData.meteringMode
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::MeteringMode}
 */
 
 /*!
     \qmlproperty variant Video::metaData.lightSource
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::LightSource}
 */
 
 /*!
     \qmlproperty variant Video::metaData.flash
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::Flash}
 */
 
 /*!
     \qmlproperty variant Video::metaData.focalLength
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::FocalLength}
 */
 
 /*!
     \qmlproperty variant Video::metaData.exposureMode
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::ExposureMode}
 */
 
 /*!
     \qmlproperty variant Video::metaData.whiteBalance
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::WhiteBalance}
 */
 
 /*!
     \qmlproperty variant Video::metaData.DigitalZoomRatio
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::DigitalZoomRatio}
 */
 
 /*!
     \qmlproperty variant Video::metaData.focalLengthIn35mmFilm
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::FocalLengthIn35mmFile}
 */
 
 /*!
     \qmlproperty variant Video::metaData.sceneCaptureType
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::SceneCaptureType}
 */
 
 /*!
     \qmlproperty variant Video::metaData.gainControl
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::GainControl}
 */
 
 /*!
     \qmlproperty variant Video::metaData.contrast
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::contrast}
 */
 
 /*!
     \qmlproperty variant Video::metaData.saturation
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::Saturation}
 */
 
 /*!
     \qmlproperty variant Video::metaData.sharpness
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::Sharpness}
 */
 
 /*!
     \qmlproperty variant Video::metaData.deviceSettingDescription
+    \since Mobility 1.1
 
     \sa {QtMultimediaKit::DeviceSettingDescription}
 */

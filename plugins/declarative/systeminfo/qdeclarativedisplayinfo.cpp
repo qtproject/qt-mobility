@@ -53,6 +53,7 @@ Q_GLOBAL_STATIC(QSystemDisplayInfo, displayInfo)
     \inherits QObject
 
     \ingroup qml-systeminfo
+    \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.systeminfo 1.2} module.
     It is a convience class to make QML usage easier.
@@ -64,12 +65,14 @@ Q_GLOBAL_STATIC(QSystemDisplayInfo, displayInfo)
 
 /*!
     \qmlsignal DisplayInfo::orientationChanged()
+    \since Mobility 1.2
 
     This handler is called when gui orientation has changed.
 */
 
 /*!
-  Constructs the DeviceInfo
+  Constructs the DisplayInfo
+  \since Mobility 1.2
   */
 QDeclarativeDisplayInfo::QDeclarativeDisplayInfo(QObject *parent) :
     QSystemDisplayInfo(parent),currentScreen(0)
@@ -77,7 +80,8 @@ QDeclarativeDisplayInfo::QDeclarativeDisplayInfo(QObject *parent) :
 }
 
 /*!
-    \qmlproperty int DeviceInfo::screen
+    \qmlproperty int DisplayInfo::screen
+    \since Mobility 1.2
 
     Contains the display number of this screen.
 */
@@ -90,6 +94,7 @@ int QDeclarativeDisplayInfo::screen()
    This function sets this DisplayInfo to use screen \a screen.
 
     If not set, the default is the default screen, or display 0.
+    \since Mobility 1.2
 */
 void QDeclarativeDisplayInfo::setCurrentScreen(int screen)
 {
@@ -99,7 +104,8 @@ void QDeclarativeDisplayInfo::setCurrentScreen(int screen)
 /*!
     \qmlproperty int DisplayInfo::displayBrightness
    Returns the brightness of the screen.
-  */
+   \since Mobility 1.2
+*/
 int QDeclarativeDisplayInfo::displayBrightness()
 {
     return displayInfo()->displayBrightness(currentScreen);
@@ -108,7 +114,8 @@ int QDeclarativeDisplayInfo::displayBrightness()
 /*!
     \qmlproperty int DisplayInfo::colorDepth
    Returns the color depth of the screen, in bits per pixel.
-  */
+   \since Mobility 1.2
+*/
 int QDeclarativeDisplayInfo::colorDepth()
 {
     return displayInfo()->colorDepth(currentScreen);
@@ -117,7 +124,8 @@ int QDeclarativeDisplayInfo::colorDepth()
 /*!
     \qmlproperty QSystemDisplayInfo::DisplayOrientation DisplayInfo::orientation
     Returns the QSystemDisplayInfo::DisplayOrientation of the UI QDesktopWidget for the screen.
-  */
+    \since Mobility 1.2
+*/
 QSystemDisplayInfo::DisplayOrientation QDeclarativeDisplayInfo::orientation()
 {
     return displayInfo()->orientation(currentScreen);
@@ -126,7 +134,8 @@ QSystemDisplayInfo::DisplayOrientation QDeclarativeDisplayInfo::orientation()
 /*!
     \qmlproperty float DisplayInfo::contrast
    Returns the contrast of the screen, from 0 to 1.
-  */
+   \since Mobility 1.2
+*/
 float QDeclarativeDisplayInfo::contrast()
 {
     return displayInfo()->contrast(currentScreen);
@@ -135,6 +144,7 @@ float QDeclarativeDisplayInfo::contrast()
 /*!
     \qmlproperty int DisplayInfo::dpiWidth
     Returns the current dots per inch (DPI) for the width.
+    \since Mobility 1.2
 
   */
 int QDeclarativeDisplayInfo::dpiWidth()
@@ -145,6 +155,7 @@ int QDeclarativeDisplayInfo::dpiWidth()
 /*!
     \qmlproperty int DisplayInfo::dpiHeight
     Returns the current dots per inch (DPI) for the width.
+    \since Mobility 1.2
 
   */
 int QDeclarativeDisplayInfo::dpiHeight()
@@ -155,7 +166,8 @@ int QDeclarativeDisplayInfo::dpiHeight()
 /*!
     \qmlproperty int DisplayInfo::physicalHeight
    Returns the physical height of the screen in millimeters.
-  */
+   \since Mobility 1.2
+   */
 int QDeclarativeDisplayInfo::physicalHeight()
 {
     return displayInfo()->physicalHeight(currentScreen);
@@ -164,7 +176,8 @@ int QDeclarativeDisplayInfo::physicalHeight()
 /*!
     \qmlproperty int DisplayInfo::physicalWidth
    Returns the physical width of the screen in millimeters.
-  */
+   \since Mobility 1.2
+   */
 int QDeclarativeDisplayInfo::physicalWidth()
 {
     return displayInfo()->physicalWidth(currentScreen);
@@ -173,7 +186,8 @@ int QDeclarativeDisplayInfo::physicalWidth()
 /*!
     \qmlproperty QSystemDisplayInfo::BacklightState  DisplayInfo::backlightStatus
     Returns whether the QSystemDisplayInfo::BacklightState for the screen
-  */
+    \since Mobility 1.2
+    */
 QSystemDisplayInfo::BacklightState QDeclarativeDisplayInfo::backlightStatus()
 {
     return displayInfo()->backlightStatus(currentScreen);

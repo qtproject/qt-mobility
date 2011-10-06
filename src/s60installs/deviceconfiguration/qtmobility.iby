@@ -122,6 +122,9 @@ data=\epoc32\data\z\resource\qt\imports\qtmobility\serviceframework\qmldir      
 file=ABI_DIR\BUILD_DIR\declarative_systeminfo.dll                                        SHARED_LIB_DIR\declarative_systeminfo.dll
 data=\epoc32\data\z\resource\qt\imports\qtmobility\systeminfo\declarative_systeminfo.qtplugin resource\qt\imports\qtmobility\systeminfo\declarative_systeminfo.qtplugin
 data=\epoc32\data\z\resource\qt\imports\qtmobility\systeminfo\qmldir                     resource\qt\imports\qtmobility\systeminfo\qmldir
+file=ABI_DIR\BUILD_DIR\declarative_connectivity.dll                                      SHARED_LIB_DIR\declarative_connectivity.dll
+data=\epoc32\data\z\resource\qt\imports\qtmobility\connectivity\declarative_connectivity.qtplugin resource\qt\imports\qtmobility\connectivity\declarative_connectivity.qtplugin
+data=\epoc32\data\z\resource\qt\imports\qtmobility\connectivity\qmldir                   resource\qt\imports\qtmobility\connectivity\qmldir
 
 //Resource
 data=\epoc32\data\z\private\2002ac7f\qtserviceframework_4.7_system.db                    private\2002ac7f\qtserviceframework_4.7_system.db

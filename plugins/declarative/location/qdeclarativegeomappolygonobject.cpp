@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QGeoMapPolygonObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The polygon is specified in terms of an ordered list of
     coordinates.  Any invalid coordinates in the list will be ignored.
@@ -95,6 +96,7 @@ QDeclarativeGeoMapPolygonObject::~QDeclarativeGeoMapPolygonObject()
 /*!
     \qmlproperty list<Coordinate> MapPolygon::path
     \default
+    \since Mobility 1.2
 
     This property holds the ordered list of coordinates which
     define the polygon.
@@ -167,6 +169,7 @@ void QDeclarativeGeoMapPolygonObject::componentComplete()
 
 /*!
     \qmlproperty color MapPolygon::color
+    \since Mobility 1.2
 
     This property holds the color used to fill the circle.
 
@@ -192,6 +195,7 @@ QColor QDeclarativeGeoMapPolygonObject::color() const
 /*!
     \qmlproperty int MapPolygon::border.width
     \qmlproperty color MapPolygon::border.color
+    \since Mobility 1.2
 
     These properties hold the width and color used to draw the border of the circle.
 
@@ -227,6 +231,7 @@ void QDeclarativeGeoMapPolygonObject::borderWidthChanged(int width)
 
 /*!
     \qmlmethod MapPolygon::addCoordinate(Coordinate)
+    \since Mobility 1.2
 
     Adds coordinate to the path. The resulting path is derived
     from values at the time of assignment, meaning that later changes
@@ -249,6 +254,7 @@ void QDeclarativeGeoMapPolygonObject::addCoordinate(QDeclarativeCoordinate* coor
 
 /*!
     \qmlmethod MapPolygon::removeCoordinate(Coordinate)
+    \since Mobility 1.2
 
     Remove coordinate from the path. Removed Coordinate is not deleted.
     If there are multiple instances of the same coordinate, the one added
@@ -285,6 +291,7 @@ void QDeclarativeGeoMapPolygonObject::removeCoordinate(QDeclarativeCoordinate* c
 
 /*!
     \qmlproperty int MapPolygon::z
+    \since Mobility 1.2
 
     This property holds the z-value of the polygon.
 
@@ -294,6 +301,7 @@ void QDeclarativeGeoMapPolygonObject::removeCoordinate(QDeclarativeCoordinate* c
 
 /*!
     \qmlproperty bool MapPolygon::visible
+    \since Mobility 1.2
 
     This property holds a boolean corresponding to whether or not the
     polygon is visible.

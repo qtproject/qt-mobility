@@ -45,6 +45,7 @@
     \brief The FileEffect element represents feedback data stored in a file.
     \ingroup qml-feedback-api
     \inherits FeedbackEffect
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.feedback 1.1} module.
 
@@ -63,6 +64,7 @@ QDeclarativeFileEffect::QDeclarativeFileEffect(QObject *parent)
   \qmlproperty bool FileEffect::loaded
 
   This property is true if this feedback effect is loaded.
+  \since Mobility 1.1
   */
 bool QDeclarativeFileEffect::isLoaded() const
 {
@@ -80,6 +82,7 @@ void QDeclarativeFileEffect::setLoaded(bool v)
   \qmlproperty url FileEffect::source
 
   This property stores the url for the feedback data.
+  \since Mobility 1.1
   */
 QUrl QDeclarativeFileEffect::source() const
 {
@@ -97,6 +100,7 @@ void QDeclarativeFileEffect::setSource(const QUrl & url)
   \qmlproperty list<string> FileEffect::supportedMimeTypes
 
   This property holds the MIME types supported for playing effects from file.
+  \since Mobility 1.1
   */
 QStringList QDeclarativeFileEffect::supportedMimeTypes()
 {
@@ -107,6 +111,7 @@ QStringList QDeclarativeFileEffect::supportedMimeTypes()
     \qmlmethod  FileEffect::load()
 
     Makes sure that the file associated with the feedback object is loaded.
+    \since Mobility 1.1
     \sa QFeedbackFileEffect::load()
 */
 void QDeclarativeFileEffect::load()
@@ -121,6 +126,7 @@ void QDeclarativeFileEffect::load()
     \qmlmethod  FileEffect::unload()
 
     Makes sure that the file associated with the feedback object is unloaded.
+    \since Mobility 1.1
     \sa QFeedbackFileEffect::unload()
 */
 void QDeclarativeFileEffect::unload()

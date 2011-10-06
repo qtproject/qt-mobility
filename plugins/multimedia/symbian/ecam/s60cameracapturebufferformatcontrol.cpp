@@ -44,7 +44,10 @@
 #include "s60cameracapturebufferformatcontrol.h"
 #include "s60cameraservice.h"
 #include "s60imagecapturesession.h"
+#include "s60imagecapturesettings.h"
 #include "s60cameraconstants.h"
+
+using namespace S60CameraConstants;
 
 S60CameraCaptureBufferFormatControl::S60CameraCaptureBufferFormatControl(QObject *parent):
 QCameraCaptureBufferFormatControl(parent)
@@ -59,7 +62,7 @@ S60CameraCaptureBufferFormatControl::S60CameraCaptureBufferFormatControl(
     m_bufferCaptureFormat(KDefaultBufferCaptureQtFormat)
 {
     m_session = session;
-    connect(m_session, SIGNAL(bufferCaptureFormatChanged(const QVideoFrame::PixelFormat)),
+    connect(m_session->settings(), SIGNAL(bufferCaptureFormatChanged(const QVideoFrame::PixelFormat)),
         this, SLOT(bufferFormatChanged(const QVideoFrame::PixelFormat)));
 }
 
@@ -69,7 +72,7 @@ S60CameraCaptureBufferFormatControl::~S60CameraCaptureBufferFormatControl()
 
 QList<QVideoFrame::PixelFormat> S60CameraCaptureBufferFormatControl::supportedBufferFormats() const
 {
-    return m_session->supportedBufferCaptureFormats();
+    return m_session->settings()->supportedBufferCaptureFormats();
 }
 
 QVideoFrame::PixelFormat S60CameraCaptureBufferFormatControl::bufferFormat() const
@@ -80,7 +83,7 @@ QVideoFrame::PixelFormat S60CameraCaptureBufferFormatControl::bufferFormat() con
 void S60CameraCaptureBufferFormatControl::setBufferFormat(const QVideoFrame::PixelFormat format)
 {
     if (supportedBufferFormats().contains(format))
-        m_session->setBufferCaptureFormat(format);
+        m_session->settings()->setBufferCaptureFormat(format);
     else
         m_session->setError(KErrNotSupported, tr("Requested buffer capture format is not supported."), true);
 }

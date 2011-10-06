@@ -42,11 +42,7 @@ SOURCES += tst_qdeclarativeorganizer.cpp \
 
 include(../../../plugins/declarative/common/dynamicproperties.pri)
 
-symbian: {
-    importFiles.sources = data
-    importFiles.path = .
-    DEPLOYMENT = importFiles
-} else {
+!symbian {
     DEFINES += SRCDIR=\\\"$$PWD\\\"
 }
 

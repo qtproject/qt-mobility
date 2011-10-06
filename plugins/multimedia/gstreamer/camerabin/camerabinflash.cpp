@@ -71,6 +71,14 @@ QCameraExposure::FlashModes CameraBinFlash::flashMode() const
         modes |= QCameraExposure::FlashAuto;
         break;
     }
+
+#ifdef Q_WS_MAEMO_6
+    gboolean torchEnabled = false;
+    g_object_get(G_OBJECT(m_session->cameraSourceElement()), "video-torch", &torchEnabled, NULL);
+    if (torchEnabled)
+        modes |= QCameraExposure::FlashTorch;
+#endif
+
     return modes;
 }
 
@@ -86,10 +94,35 @@ void CameraBinFlash::setFlashMode(QCameraExposure::FlashModes mode)
     else if (mode.testFlag(QCameraExposure::FlashRedEyeReduction)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_RED_EYE;
 
     gst_photography_set_flash_mode(m_session->photography(), flashMode);
+
+#ifdef Q_WS_MAEMO_6
+    gboolean torchEnabled = false;
+    g_object_get(G_OBJECT(m_session->cameraSourceElement()), "video-torch", &torchEnabled, NULL);
+
+    gboolean enableTorch = mode.testFlag(QCameraExposure::FlashTorch);
+
+    if (bool(enableTorch) != bool(torchEnabled)) {
+        g_object_set(G_OBJECT(m_session->cameraSourceElement()), "video-torch", enableTorch, NULL);
+
+        //it's necessary to restart source element to toggle torch
+        if (m_session->captureMode() == QCamera::CaptureVideo)
+            emit torchModeChanged(bool(torchEnabled));
+    }
+#endif
 }
 
 bool CameraBinFlash::isFlashModeSupported(QCameraExposure::FlashModes mode) const
 {
+
+#ifdef Q_WS_MAEMO_6
+    //torch light is allowed only in video capture mode
+    if (m_session->captureMode() == QCamera::CaptureVideo) {
+        if (mode == QCameraExposure::FlashTorch ||
+            mode == QCameraExposure::FlashTorch | QCameraExposure::FlashOff)
+            return true;
+    }
+#endif
+
     return  mode == QCameraExposure::FlashOff ||
             mode == QCameraExposure::FlashOn ||
             mode == QCameraExposure::FlashAuto ||

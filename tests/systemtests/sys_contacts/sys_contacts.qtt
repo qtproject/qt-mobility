@@ -41,11 +41,6 @@
 
 //TESTED_COMPONENT=src/contacts
 
-function startTestApp()
-{
-    startApplication("samplephonebook");
-}
-
 function selectContactList()
 {
     if (!runAsManualTest()){
@@ -122,7 +117,7 @@ function contactsMenuItem(menuText)
 // otherwise find the oldName then edit contact details
 function updateContact(name, phone, email, address, avatar, oldName) {
     if ((oldName == undefined)  || (oldName == "")){
-        select("Add");        
+        select("Add");
     }else{
         if (!runAsManualTest()){
             var contactList = findWidget( { className: "QListWidget" } );
@@ -230,7 +225,7 @@ function checkContactDetails(name, phone, email, address, avatar){
 }
 
 
-// not ideal, there is need to programaticly check that 
+// not ideal, there is need to programaticly check that
 //  the contact details dialog is not longer showing, ie no "Save" button
 function waitForSave(){
     for (var loop=0; loop < 5; loop++){
@@ -239,7 +234,7 @@ function waitForSave(){
         else
             break;
     }
-    
+
     // should not happen
     verify(!getLabels().contains("&Save"));
 }
@@ -250,7 +245,7 @@ testcase = {
     initTestCase: function()
     {
 /*
-        startTestApp();
+        startApplication("samplephonebook");
 
         if (!runAsManualTest()){
             var contactList = findWidget( { className: "QListWidget" } );
@@ -267,7 +262,7 @@ testcase = {
         if (!runAsManualTest()){
             /* TODO delete contact added by test cases
             // make use we remove all contacts that has been added
-            startTestApp();
+            startApplication("samplephonebook");
 
             var contactWidget = findWidget( { className: "QListWidget" } );
             var contactList = getValue(contactWidget);
@@ -290,10 +285,18 @@ testcase = {
         ] ]
     },
 
-    /* Requirement: Add some contacts */
     addContact: function(contactSet)
     {
-        startTestApp();
+        // Test meta data
+        testTitle = "Contacts - Add Contact";
+        testBinary = "samplephonebook";
+        testGoal = "Verify that contacts can be added";
+        testPreconditions = "None";
+        testGroups = "BAT";
+
+        // Test steps
+        startApplication(testBinary);
+
         for (var index = 0; index < contactSet.length; index++){
             var contact = contactSet[index];
             // create new contact
@@ -310,11 +313,18 @@ testcase = {
         ] ]
     },
 
-    /* Requirement: Verify the contact details and confirm that it can be updated */
-    /* verify added contact details and update contact name */
     updateContactDetails : function(contactSet)
     {
-        startTestApp();
+        // Test meta data
+        testTitle = "Contacts - Update Contact Details";
+        testBinary = "samplephonebook";
+        testGoal = "Verify that contact details can be updated";
+        testPreconditions = "None";
+        testGroups = "BAT";
+
+        // Test steps
+        startApplication(testBinary);
+
         for (var index = 0; index < contactSet.length; index++){
             var contact = contactSet[index];
             var newname = contact.name + '9';
@@ -339,10 +349,17 @@ testcase = {
         Names: ["NameA", "NameB"]
     },
 
-    /* Requirement : Verify the correct match of contacts against a simple filter */
-    /* Test the "Apply &Filter" function */
     filterCheck : function(name, exists, message) {
-        startTestApp();
+        // Test meta data
+        testTitle = "Contacts - Apply Filter";
+        testBinary = "samplephonebook";
+        testGoal = "Verify the correct match of contacts against a simple filter";
+        testPreconditions = "None";
+        testGroups = "BAT";
+
+        // Test steps
+        startApplication(testBinary);
+
         // add some contacts for this tests use
         var extraNames = testcase.filterCheck_extraData['Names'];
         updateContact(extraNames[0]);
@@ -360,9 +377,17 @@ testcase = {
         Names: ["NameC", "NameD"]
     },
 
-    /* Test the "Clear Filter" function */
     clearFilterCheck : function(nameFilter){
-        startTestApp();
+       // Test meta data
+       testTitle = "Contacts - Clear Filter";
+       testBinary = "samplephonebook";
+       testGoal = "Verify that when the filter is cleared all contacts are visible";
+       testPreconditions = "None";
+       testGroups = "BAT";
+
+       // Test steps
+       startApplication(testBinary);
+
         // add some contacts for this tests use
         var extraNames = testcase.clearFilterCheck_extraData['Names'];
         updateContact(extraNames[0]);
@@ -382,13 +407,22 @@ testcase = {
         Name1 : ["NameE", "NameG", "NameH"]
     },
 
-    /* Requirement: Verify that a contact can be deleted */
     deleteContact : function(name1, name2, name3){
-        startTestApp();
+        // Test meta data
+        testTitle = "Contacts - Delete Contact";
+        testBinary = "samplephonebook";
+        testGoal = "Verify that a contact can be deleted";
+        testPreconditions = "None";
+        testGroups = "BAT";
+
+        // Test steps
+        startApplication(testBinary);
+
         // add some contacts for this tests use
         updateContact(name1);
         updateContact(name2);
         updateContact(name3);
+
         // delete contacts in different order to creation
         deleteContact(name2);
         deleteContact(name1);
@@ -400,7 +434,13 @@ testcase = {
             checkContactExists(name2, false);
             checkContactExists(name3, false);
         }else{
-            prompt("Verify that Contacts have been deleted:" + name1 + ", " + name2 + ", " + name3);
+            prompt(twiki("---+++ " + testTitle + "<br><br>
+                *Goal:* " + testGoal + "<br>
+                *Pre-Requisites:* " + testPreconditions + "<br>
+                *Tested Binary:* " + testBinary + "<br>
+
+                | *Step* | *Verification* |
+                | | Verify that Contacts have been deleted:" + name1 + ", " + name2 + ", " + name3 + "|" ));
         }
     }
 
