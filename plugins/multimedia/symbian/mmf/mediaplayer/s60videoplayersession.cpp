@@ -58,6 +58,7 @@
 #include <w32std.h>
 #include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
+#include <mmf/common/mmfvideo.h>
 #include <MMFROPCustomCommandConstants.h>
 #ifdef HTTP_COOKIES_ENABLED
 #include <MMFSessionInfoCustomCommandConstants.h>
@@ -752,7 +753,13 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
-    Q_UNUSED(aEvent);
+    TRACE("S60VideoPlayerSession::MvpuoEvent" << qtThisPtr()
+          << "type" << (void*)aEvent.iEventType.iUid
+          << "error" << aEvent.iErrorCode);
+    if (aEvent.iEventType == KMMFEventCategoryVideoPlayerGeneralError) {
+        setError(aEvent.iErrorCode);
+        doClose();
+    }
 }
 
 /*!
