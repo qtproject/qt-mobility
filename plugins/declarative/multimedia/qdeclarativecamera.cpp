@@ -111,9 +111,9 @@ void QDeclarativeCamera::_q_nativeSizeChanged(const QSizeF &size)
     setImplicitHeight(size.height());
 }
 
-void QDeclarativeCamera::_q_error(int errorCode, const QString &errorString)
+void QDeclarativeCamera::_q_error()
 {
-    emit error(Error(errorCode), errorString);
+    emit error(Error(m_camera->error()), m_camera->errorString());
     emit errorChanged();
 }
 
@@ -275,6 +275,9 @@ QDeclarativeCamera::QDeclarativeCamera(QDeclarativeItem *parent) :
     m_camera->setViewfinder(m_viewfinderItem);
     m_exposure = m_camera->exposure();
     m_focus = m_camera->focus();
+
+    connect(m_camera, SIGNAL(error(QCamera::Error)),
+            this, SLOT(_q_error()));
 
     connect(m_viewfinderItem, SIGNAL(nativeSizeChanged(QSizeF)),
             this, SLOT(_q_nativeSizeChanged(QSizeF)));
