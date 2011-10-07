@@ -301,26 +301,6 @@ void S60MediaPlayerSession::stop()
 }
 
 /*!
- * Stops the playback and closes the controllers.
- * And resets all the flags and status, state to default values.
-*/
-
-void S60MediaPlayerSession::reset()
-{
-    TRACE("S60MediaPlayerSession::reset" << qtThisPtr());
-
-    m_play_requested = false;
-    setError(KErrNone, QString(), true);
-    stopProgressTimer();
-    stopStalledTimer();
-    doStop();
-    doClose();
-    setState(QMediaPlayer::StoppedState);
-    setMediaStatus(QMediaPlayer::NoMedia);
-    setPosition(0);
-}
-
-/*!
  * Sets \a renderer as video renderer.
 */
 
@@ -632,9 +612,9 @@ void S60MediaPlayerSession::endOfMedia()
     setMediaStatus(QMediaPlayer::EndOfMedia);
     //there is a chance that user might have called play from EOF callback
     //if we are already in playing state, do not send state change callback
+    emit positionChanged(m_duration);
     if(m_state == QMediaPlayer::StoppedState)
         emit stateChanged(QMediaPlayer::StoppedState);
-    emit positionChanged(m_duration);
 }
 
 /*!
@@ -801,8 +781,6 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString, bool
         symbianError.append(QString::number(m_error));
     }
 
-    emit this->error(mediaError, symbianError);
-
     if (m_error == KErrInUse) {
         pause();
     } else if (mediaError != QMediaPlayer::NoError) {
@@ -810,6 +788,8 @@ void S60MediaPlayerSession::setError(int error, const QString &errorString, bool
         setMediaStatus(QMediaPlayer::InvalidMedia);
         stop();
     }
+
+    emit this->error(mediaError, symbianError);
 }
 
 void S60MediaPlayerSession::setAndEmitError(int error)

@@ -34,7 +34,6 @@ HEADERS += \
     $$PWD/s60videoplayersession.h \
     $$PWD/s60mediarecognizer.h \
     $$PWD/s60audioplayersession.h \
-    $$PWD/ms60mediaplayerresolver.h \
     $$PWD/s60mediaplayeraudioendpointselector.h \
     $$PWD/s60mediastreamcontrol.h \
     $$PWD/s60medianetworkaccesscontrol.h
