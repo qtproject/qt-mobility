@@ -352,27 +352,18 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     // store to variable as session is created based on the content type.
     m_currentResource = source;
     S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession();
-    m_mediaSettings.setMediaStatus(QMediaPlayer::UnknownMediaStatus);
 
     if (m_session)
         m_session->reset();
-    else {
-        emit mediaStatusChanged(QMediaPlayer::UnknownMediaStatus);
-        emit error(QMediaPlayer::NoError, QString());
-    }
 
     m_session = newSession;
 
-    if (m_session)
+    if (m_session && !source.canonicalUrl().isEmpty())
         m_session->load(source);
-    else {
-        QMediaPlayer::MediaStatus status = (source.canonicalUrl().isEmpty()) ? QMediaPlayer::NoMedia : QMediaPlayer::InvalidMedia;
-        m_mediaSettings.setMediaStatus(status);
-        emit stateChanged(QMediaPlayer::StoppedState);
-        emit error((source.isNull()) ? QMediaPlayer::NoError : QMediaPlayer::ResourceError, 
-                   (source.isNull()) ? "" : tr("Media couldn't be resolved"));
-        emit mediaStatusChanged(status);
-    }
+
+    QMediaPlayer::MediaStatus status = m_session ? m_session->mediaStatus() : QMediaPlayer::NoMedia;
+    m_mediaSettings.setMediaStatus(status);
+
     emit mediaChanged(m_currentResource);
 }
 
