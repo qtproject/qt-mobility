@@ -43,13 +43,15 @@
 
 testcase = {
 
-    Send_PlainText_Message: function () {
+    send_plaintext_message: function () {
         // Test meta data
         testTitle = "Messaging - Send Message in Plain Text";
-        testBinary = "serviceaction";
+        testBinary = "serviceactions";
+        testSource = "$MOBILITYDIR/demos/serviceactions";
         testGoal = "Verify that a message can be sent in plain text.";
         testPreconditions = "None";
         testGroups = "BAT";
+        testRequirements = " ";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -65,13 +67,15 @@ testcase = {
        "));
     },
 
-    Send_HTML_Message : function() {
+    send_html_message : function() {
          // Test meta data
          testTitle = "Messaging - Send Message in HTML";
-         testBinary = "serviceaction";
+         testBinary = "serviceactions";
+         testSource = "$MOBILITYDIR/demos/serviceactions";
          testGoal = "Verify that a message can be sent in HTML.";
          testPreconditions = "None";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -87,13 +91,15 @@ testcase = {
          "));
     },
 
-    Compose_And_Send_Message_With_Attachment : function() {
+    compose_and_send_message_with_attachment : function() {
          // Test meta data
          testTitle = "Messaging - Compose and Send With Attachment";
-         testBinary = "serviceaction";
+         testBinary = "serviceactions";
+         testSource = "$MOBILITYDIR/demos/serviceactions";
          testGoal = "Verify that a message can be sent with an attachment.";
          testPreconditions = "None";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -110,13 +116,15 @@ testcase = {
         "));
     },
 
-    Query_Message : function() {
+    query_message : function() {
         // Test meta data
         testTitle = "Messaging - Query Messages";
         testBinary = "querymessage";
+        testSource = "$MOBILITYDIR/examples/querymessages";
         testGoal = "Verify that received messages can be queried.";
         testPreconditions = "*querymessage* is a console application, it must be launched from command line, and the results are shown on command line only<br>Currently the test is not available for Symbian platforms.";
         testGroups = "BAT";
+        testRequirements = " ";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -135,13 +143,15 @@ testcase = {
       WHat does 'according parameters' mean?
       Suggestion: search for "Like As" and "Not Like" conditions with wildcard such as %@hotmail.com
     */
-    Search_Message : function() {
+    search_message : function() {
      // Test meta data
      testTitle = "Messaging - Search Message";
      testBinary = "testQtMessaging";
+     testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
      testGoal = "Verify that messages can be searched.";
      testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
      testGroups = "BAT";
+     testRequirements = " ";
 
      // Test steps
      prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -161,13 +171,15 @@ testcase = {
       "));
     },
 
-    Receive_Message : function() {
+    receive_message : function() {
       // Test meta data
       testTitle = "Messaging - Receive Message";
       testBinary = "testQtMessaging";
+      testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
       testGoal = "Verify that messages can be received.";
       testPreconditions = "There are some messages in Email account, and network is available.";
       testGroups = "BAT";
+      testRequirements = " ";
 
       // Test steps
       prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -186,13 +198,15 @@ testcase = {
           "));
       },
 
-    Show_Message : function() {
+    show_message : function() {
        // Test meta data
        testTitle = "Messaging - Show Message";
        testBinary = "keepintouch (alternative: declarativeMessaging, testQtMessaging)";
+       testSource = "$MOBILITYDIR/examples/keepintouch";
        testGoal = "Verify that an messages can be shown.";
        testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
        testGroups = "BAT";
+       testRequirements = " ";
 
        // Test steps
        prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -211,13 +225,15 @@ testcase = {
      "));
     },
 
-    Delete_Message : function() {
+    delete_message : function() {
          // Test meta data
          testTitle = "Messaging - Delete Message";
          testBinary = "testQtMessaging";
+         testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that messages can be deleted.";
          testPreconditions = "Some messages are available in Email account, and network available.";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -236,13 +252,15 @@ testcase = {
          "));
      },
 
-    Send_SMS : function() {
+    send_sms : function() {
        // Test meta data
        testTitle = "Messaging - Send SMS";
        testBinary = "writemessage (alternatives: messagingEx and testQtMessaging)";
+       testSource = "$MOBILITYDIR/examples/writemessage";
        testGoal = "Verify that an SMS message can be sent.";
        testPreconditions = "None";
        testGroups = "BAT";
+       testRequirements = " ";
 
        // Test steps
        prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -259,13 +277,15 @@ testcase = {
         "));
     },
 
-    Store_SMS : function() {
+    store_sms : function() {
        // Test meta data
        testTitle = "Messaging - Store SMS";
        testBinary = "messagingex (alternatives: testQtMessaging)";
+       testSource = "$MOBILITYDIR/manual/messagingex";
        testGoal = "Verify that an SMS message can be saved.";
-       testPreconditions = "";
+       testPreconditions = "None";
        testGroups = "BAT";
+       testRequirements = " ";
 
        // Test steps
        prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -282,13 +302,15 @@ testcase = {
         "));
     },
 
-    Read_SMS : function() {
+    read_sms : function() {
           // Test meta data
           testTitle = "Messaging - Read SMS";
           testBinary = "testQtMessaging";
+          testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
           testGoal = "Verify that an SMS message can be read.";
           testPreconditions = "Some messages in SMS account, and network available";
           testGroups = "BAT";
+          testRequirements = " ";
 
           // Test steps
           prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -308,13 +330,15 @@ testcase = {
           "));
       },
 
-    Compose_SMS : function() {
+    compose_sms : function() {
          // Test meta data
          testTitle = "Messaging - Compose SMS";
          testBinary = "testQtMessaging";
+         testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that an SMS messages can be composed and transferred to native client.";
-         testPreconditions = "";
+         testPreconditions = "None";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -332,13 +356,15 @@ testcase = {
         "));
     },
 
-    Send_MMS : function() {
+    send_mms : function() {
        // Test meta data
        testTitle = "Messaging - Send MMS";
        testBinary = "writemessage (alternatives: messagingEx and testQtMessaging)";
+       testSource = "$MOBILITYDIR/examples/writemessage";
        testGoal = "Verify that an MMS message can be sent.";
        testPreconditions = "None";
        testGroups = "BAT";
+       testRequirements = " ";
 
        // Test steps
        prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -359,13 +385,15 @@ testcase = {
         "));
     },
 
-    Store_MMS : function() {
+    store_mms : function() {
        // Test meta data
        testTitle = "Messaging - Store MMS";
        testBinary = "messagingex (alternatives: testQtMessaging)";
+       testSource = "$MOBILITYDIR/manual/messagingex";
        testGoal = "Verify that an MMS message can be saved.";
-       testPreconditions = "";
+       testPreconditions = "None";
        testGroups = "BAT";
+       testRequirements = " ";
 
        // Test steps
        prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -386,13 +414,15 @@ testcase = {
         "));
     },
 
-    Read_MMS : function() {
+    read_mms : function() {
           // Test meta data
           testTitle = "Messaging - Read MMS";
           testBinary = "testQtMessaging";
+          testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
           testGoal = "Verify that an MMS message can be read.";
           testPreconditions = "Some messages in MMS account, and network available";
           testGroups = "BAT";
+          testRequirements = " ";
 
           // Test steps
           prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -412,13 +442,15 @@ testcase = {
        "));
       },
 
-    Compose_MMS : function() {
+    compose_mms : function() {
          // Test meta data
          testTitle = "Messaging - Compose MMS";
          testBinary = "testQtMessaging";
+         testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that an MMS message can be composed.";
          testPreconditions = "None";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -437,13 +469,15 @@ testcase = {
        "));
     },
 
-    Send_Email : function() {
+    send_email : function() {
          // Test meta data
          testTitle = "Messaging - Send Email";
          testBinary = "writemessage (alternatives: messagingEx and testQtMessaging)";
+         testSource = "$MOBILITYDIR/examples/writemessage";
          testGoal = "Verify that an EMail message can be sent.";
          testPreconditions = "an Email account called *Email* exists on the device";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -468,13 +502,15 @@ testcase = {
 
     //FIXME: This test needs to become a lot more specific, e.g. *which* encoding formats to we want to test?
     // and does that mean the test can (and should) be combined with Send_EMail??
-    Send_EMail_with_Encoding_Formats : function() {
+    send_email_with_encoding_formats : function() {
        // Test meta data
        testTitle = "Messaging - Supported Encoding Formats";
        testBinary = "testQtMessaging";
+       testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
        testGoal = "Verify that account settings can be send with various encoding formats.";
        testPreconditions = "None";
        testGroups = "BAT";
+       testRequirements = " ";
 
        // Test steps
        prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -496,13 +532,15 @@ testcase = {
           "));
       },
 
-    Store_Email : function() {
+    store_email : function() {
          // Test meta data
          testTitle = "Messaging - Store EMail";
          testBinary = "messagingex (alternatives: testQtMessaging)";
+         testSource = "$MOBILITYDIR/manual/messagingex";
          testGoal = "Verify that an EMail message can be saved.";
          testPreconditions = "Email account called *Email* exists on the device";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -523,19 +561,24 @@ testcase = {
         "));
     },
 
-    Read_Email : function() {
+    read_email : function() {
         // Test meta data
         testTitle = "Messaging - Read E-Mail";
         testBinary = "testQtMessaging";
+        testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
         testGoal = "Verify that an EMail message can be read.";
-        testPreconditions = "   1. Email account called *Email* exists on the device<br>   1. Email accounts contains valid messages.<br>   1. Network is available.";
+        testPreconditions = " <br>
+   1. Email account called *Email* exists on the device<br>
+   1. Email accounts contains valid messages.<br>
+   1. Network is available.<br>";
         testGroups = "BAT";
+        testRequirements = " ";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
-            *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
 
            | *Step* | *Verification* |
            | Launch " + testBinary + " | App launches normally |
@@ -549,13 +592,15 @@ testcase = {
           "));
       },
 
-    Compose_Email : function() {
+    compose_email : function() {
         // Test meta data
         testTitle = "Messaging - Compose EMail";
         testBinary = "testQtmessaging";
+        testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
         testGoal = "Verify that an messages can be composed.";
         testPreconditions = "At least one email account exists on the phone.";
         testGroups = "BAT";
+        testRequirements = " ";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -575,13 +620,15 @@ testcase = {
         "));
     },
 
-    Query_Contacts : function() {
+    query_contacts : function() {
         // Test meta data
         testTitle = "Messaging - Query Contacts";
         testBinary = "keepintouch";
+        testSource = "$MOBILITYDIR/examples/keepintouch";
         testGoal = "Verify that contacts meeting specific parameters can be queried.";
         testPreconditions = "test messages received on a range of dates from various contacts are available on the phone.";
         testGroups = "BAT";
+        testRequirements = " ";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -601,13 +648,15 @@ testcase = {
         "));
     },
 
-      Search_Accounts_By_Name : function() {
+      search_accounts_by_name : function() {
            // Test meta data
            testTitle = "Messaging - Search Accounts By Name";
            testBinary = "testQtMessaging";
+           testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
            testGoal = "Verify that accounts can be searched by name.";
            testPreconditions = "A set of accounts exist on the device.";
            testGroups = "BAT";
+           testRequirements = " ";
 
            // Test steps
            prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -623,13 +672,15 @@ testcase = {
           "));
       },
 
-      Search_Accounts_By_Id : function() {
+      search_accounts_by_id : function() {
          // Test meta data
          testTitle = "Messaging - Search Accounts by ID";
          testBinary = "testQtMessaging";
+         testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that messages can be searched by account ID.";
          testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
          testGroups = "BAT";
+         testRequirements = " ";
 
          // Test steps
          prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -645,13 +696,15 @@ testcase = {
           "));
       },
 
-    Account_Settings : function() {
+    account_settings : function() {
        // Test meta data
        testTitle = "Messaging - Account Settings";
        testBinary = "testQtMessaging";
+       testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
        testGoal = "Verify that account settings can be set.";
        testPreconditions = "None";
        testGroups = "BAT";
+       testRequirements = " ";
 
        // Test steps
        prompt(twiki("---+++ " + testTitle + "<br><br>
