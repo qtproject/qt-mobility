@@ -437,7 +437,7 @@ void S60RadioTunerControl::MrpoVolumeChange(TInt aVolume)
 void S60RadioTunerControl::MrpoMuteChange(TBool aMute)
 {
     TRACE("S60RadioTunerControl::MrpoMuteChange" << qtThisPtr()
-          << "mute" << mute);
+          << "mute" << aMute);
     m_muted = aMute;
     emit mutedChanged(m_muted);
 }
