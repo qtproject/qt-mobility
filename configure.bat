@@ -69,7 +69,20 @@ set PLATFORM_CONFIG=
 set NFC_SYMBIAN=auto
 
 REM By default, all modules are requested.  Reset this later if -modules is supplied
-set ORGANIZER_REQUESTED=yes
+set MODULE_BEARER_REQUESTED=yes
+set MODULE_CONTACTS_REQUESTED=yes
+set MODULE_CONNECTIVITY_REQUESTED=yes
+set MODULE_FEEDBACK_REQUESTED=yes
+set MODULE_GALLERY_REQUESTED=yes
+set MODULE_LOCATION_REQUESTED=yes
+set MODULE_MESSAGING_REQUESTED=yes
+set MODULE_MULTIMEDIA_REQUESTED=yes
+set MODULE_ORGANIZER_REQUESTED=yes
+set MODULE_PUBLISHSUBSCRIBE_REQUESTED=yes
+set MODULE_SENSORS_REQUESTED=yes
+set MODULE_SERVICEFRAMEWORK_REQUESTED=yes
+set MODULE_SYSTEMINFO_REQUESTED=yes
+set MODULE_VERSIT_REQUESTED=yes
 
 if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
@@ -325,7 +338,20 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
-set ORGANIZER_REQUESTED=no
+set MODULE_BEARER_REQUESTED=no
+set MODULE_CONTACTS_REQUESTED=no
+set MODULE_CONNECTIVITY_REQUESTED=no
+set MODULE_FEEDBACK_REQUESTED=no
+set MODULE_GALLERY_REQUESTED=no
+set MODULE_LOCATION_REQUESTED=no
+set MODULE_MESSAGING_REQUESTED=no
+set MODULE_MULTIMEDIA_REQUESTED=no
+set MODULE_ORGANIZER_REQUESTED=no
+set MODULE_PUBLISHSUBSCRIBE_REQUESTED=no
+set MODULE_SENSORS_REQUESTED=no
+set MODULE_SERVICEFRAMEWORK_REQUESTED=no
+set MODULE_SYSTEMINFO_REQUESTED=no
+set MODULE_VERSIT_REQUESTED=no
 
 echo Checking selected modules:
 :modulesTag2
@@ -339,33 +365,47 @@ for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
 : distinguish between false and correct module names being passed
 if %FIRST% == bearer (
     echo     Bearer Management selected
+    set MODULE_BEARER_REQUESTED=yes
 ) else if %FIRST% == contacts (
     echo     Contacts selected
+    set MODULE_CONTACTS_REQUESTED=yes
 ) else if %FIRST% == location (
     echo     Location selected
+    set MODULE_LOCATION_REQUESTED=yes
 ) else if %FIRST% == messaging (
     echo     Messaging selected
+    set MODULE_MESSAGING_REQUESTED=yes
 ) else if %FIRST% == multimedia (
     echo     Multimedia selected
+    set MODULE_MULTIMEDIA_REQUESTED=yes
 ) else if %FIRST% == publishsubscribe (
     echo     PublishSubscribe selected
+    set MODULE_PUBLISHSUBSCRIBE_REQUESTED=yes
 ) else if %FIRST% == systeminfo (
     echo     Systeminfo selected
+    set MODULE_SYSTEMINFO_REQUESTED=yes
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
+    set MODULE_SERVICEFRAMEWORK_REQUESTED=yes
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
+    set MODULE_CONTACTS_REQUESTED=yes
+    set MODULE_VERSIT_REQUESTED=yes
 ) else if %FIRST% == organizer (
     echo     Organizer selected
-    set ORGANIZER_REQUESTED=yes
+    set MODULE_ORGANIZER_REQUESTED=yes
 ) else if %FIRST% == feedback (
     echo     Feedback selected
+    set MODULE_FEEDBACK_REQUESTED=yes
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+    set MODULE_SENSORS_REQUESTED=yes
 ) else if %FIRST% == gallery (
     echo     Gallery selected
+    set MODULE_GALLERY_REQUESTED=yes
 ) else if %FIRST% == connectivity (
     echo     Connectivity selected
+    set MODULE_CONNECTIVITY_REQUESTED=yes
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -588,52 +628,99 @@ goto windowsTests
 
 :symbianTests
 
-call :compileTest LBT lbt
-call :compileTest location_fix location_fix
-call :compileTest SNAP snap
-call :compileTest OCC occ
-call :compileTest SymbianENote symbianenote
-call :compileTest SymbianContactSIM symbiancntsim
-call :compileTest SymbianContactModel symbiancntmodel
-call :compileTest SymbianContactModelv2 symbiancntmodelv2
-call :compileTest S60_Sensor_API sensors_s60_31
-call :compileTest Symbian_Sensor_Framework sensors_symbian
-call :compileTest Sensor_Framework_Light sensors_symbian_light
-call :compileTest Symbian_Hb hb_symbian
-call :compileTest Audiorouting_s60 audiorouting_s60
-call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
-call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-REM Currently not being supported
-REM call :compileTest OpenMaxAl_support openmaxal_symbian
-call :compileTest Surfaces_s60 surfaces_s60
-call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
-call :compileTest Symbian_Messaging_Freestyle_MAPI12 messaging_freestyle_mapi12
-call :compileTest callinformation_symbian callinformation_symbian
-call :compileTest IMMERSION immersion
-call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus
-call :compileTest Symbian_ECamAdvancedSettings_Post31 symbian_camera_ecamadvsettings
-call :compileTest Symbian_DevVideoRecord symbian_camera_devvideorecord
-call :compileTest Symbian_SnapShotAPI symbian_camera_snapshot
-call :compileTest AdvancedTouchFeedback advancedtouchfeedback
-call :compileTest CHWRMHaptics chwrmhaptics
-call :compileTest MDS mds
-call :compileTest MDS_25 mds_25
-call :compileTest MDS_25_92MCL mds_25_92mcl
-if "%NFC_SYMBIAN%" == "auto" (
-    call :compileTest Symbian_NFC nfc_symbian
-) else (
-    echo nfc_symbian_enabled = no >> %PROJECT_CONFIG%
+if "%MODULE_BEARER_REQUESTED%" == "yes" (
+    call :compileTest OCC occ
+    call :compileTest SNAP snap
 )
-call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
-call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
-call :compileTest LockandFlipKeys LockandFlipPSkeys
-call :compileTest FmTxClientCheck FmTxClient
-call :compileTest DiskNotifyClientCheck DiskNotifyClient
-call :compileTest ThermalStatus_Symbian thermalstatus_symbian
-call :compileTest Flextimer_Symbian symbianflextimer
-call :compileTest ETelPacketservice_symbian etelpacketservice_symbian
-call :compileTest mmf_http_cookies mmf_http_cookies
-call :compileTest networkhandlingengine_symbian networkhandlingengine_symbian
+
+if "%MODULE_CONTACTS_REQUESTED%" == "yes" IF "%MODULE_SYSTEMINFO_REQUESTED%" == "yes" (
+    call :compileTest SymbianContactSIM symbiancntsim
+)
+
+if "%MODULE_CONTACTS_REQUESTED%" == "yes" (
+    call :compileTest SymbianContactModel symbiancntmodel
+    call :compileTest SymbianContactModelv2 symbiancntmodelv2
+)
+
+if "%MODULE_CONNECTIVITY_REQUESTED%" == "yes" (
+    call :compileTest BTEngineConnectionManager_Symbian btengconnman_symbian
+    call :compileTest BTEngineDeviceManager_Symbian btengdevman_symbian
+    if "%NFC_SYMBIAN%" == "auto" (
+        call :compileTest Symbian_NFC nfc_symbian
+    ) else (
+        echo nfc_symbian_enabled = no >> %PROJECT_CONFIG%
+    )
+)
+
+if "%MODULE_FEEDBACK_REQUESTED%" == "yes" (
+    call :compileTest IMMERSION immersion
+    call :compileTest AdvancedTouchFeedback advancedtouchfeedback
+    call :compileTest CHWRMHaptics chwrmhaptics
+)
+
+if "%MODULE_GALLERY_REQUESTED%" == "yes" (
+    call :compileTest MDS mds
+    call :compileTest MDS_25 mds_25
+    call :compileTest MDS_25_92MCL mds_25_92mcl
+)
+
+if "%MODULE_LOCATION_REQUESTED%" == "yes" (
+    call :compileTest LBT lbt
+    call :compileTest location_fix location_fix
+)
+
+if "%MODULE_MESSAGING_REQUESTED%" == "yes" (
+    call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+    call :compileTest Symbian_Messaging_Freestyle_MAPI12 messaging_freestyle_mapi12
+)
+
+if "%MODULE_MULTIMEDIA_REQUESTED%" == "yes" (
+    call :compileTest Audiorouting_s60 audiorouting_s60
+    call :compileTest mmf_http_cookies mmf_http_cookies
+    REM Currently not being supported
+    REM call :compileTest OpenMaxAl_support openmaxal_symbian
+    call :compileTest RadioUtility_for_post_3.1 radioutility_s60
+    call :compileTest Surfaces_s60 surfaces_s60
+    call :compileTest Symbian_CamAutoFocus_31 symbian_camera_camautofocus
+    call :compileTest Symbian_ECamAdvancedSettings_Post31 symbian_camera_ecamadvsettings
+    call :compileTest Symbian_DevVideoRecord symbian_camera_devvideorecord
+    call :compileTest Symbian_SnapShotAPI symbian_camera_snapshot
+    call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
+)
+
+if "%MODULE_ORGANIZER_REQUESTED%" == "yes" (
+    call :compileTest SymbianENote symbianenote
+)
+
+if "%MODULE_PUBLISHSUBSCRIBE_REQUESTED%" == "yes" (
+    REM No module-specific compile tests
+)
+
+if "%MODULE_SENSORS_REQUESTED%" == "yes" (
+    call :compileTest S60_Sensor_API sensors_s60_31
+    call :compileTest Symbian_Sensor_Framework sensors_symbian
+    call :compileTest Sensor_Framework_Light sensors_symbian_light
+)
+
+if "%MODULE_SERVICEFRAMEWORK_REQUESTED%" == "yes" (
+    REM No module-specific compile tests
+)
+
+if "%MODULE_SYSTEMINFO_REQUESTED%" == "yes" (
+    call :compileTest Symbian_Hb hb_symbian
+    call :compileTest FmTxClientCheck FmTxClient
+    call :compileTest LockandFlipKeys LockandFlipPSkeys
+    call :compileTest DiskNotifyClientCheck DiskNotifyClient
+    call :compileTest ThermalStatus_Symbian thermalstatus_symbian
+    call :compileTest Flextimer_Symbian symbianflextimer
+    call :compileTest ETelPacketservice_symbian etelpacketservice_symbian
+    call :compileTest networkhandlingengine_symbian networkhandlingengine_symbian
+)
+
+if "%MODULE_VERSIT_REQUESTED%" == "yes" (
+    REM No module-specific compile tests
+)
+
 goto noTests
 
 :windowsTests
@@ -713,7 +800,7 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
-    if %ORGANIZER_REQUESTED% == yes (
+    if %MODULE_ORGANIZER_REQUESTED% == yes (
         perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersitOrganizer %SOURCE_PATH%\src\versitorganizer
     )
 ) else if %FIRST% == sensors (
@@ -775,13 +862,26 @@ set QT_MOBILITY_PREFIX=
 set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
+set MODULE_BEARER_REQUESTED=
+set MODULE_CONTACTS_REQUESTED=
+set MODULE_CONNECTIVITY_REQUESTED=
+set MODULE_FEEDBACK_REQUESTED=
+set MODULE_GALLERY_REQUESTED=
+set MODULE_LOCATION_REQUESTED=
+set MODULE_MESSAGING_REQUESTED=
+set MODULE_MULTIMEDIA_REQUESTED=
+set MODULE_ORGANIZER_REQUESTED=
+set MODULE_PUBLISHSUBSCRIBE_REQUESTED=
+set MODULE_SENSORS_REQUESTED=
+set MODULE_SERVICEFRAMEWORK_REQUESTED=
+set MODULE_SYSTEMINFO_REQUESTED=
+set MODULE_VERSIT_REQUESTED=
 set MOBILITY_MODULES_UNPARSED=
 set REMAINING=
 set FIRST=
 set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
-set ORGANIZER_REQUESTED=
 set PLATFORM_CONFIG=
 set LANGUAGES_CONFIG=
 exit /b 1
@@ -797,13 +897,26 @@ set QT_MOBILITY_PREFIX=
 set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
+set MODULE_BEARER_REQUESTED=
+set MODULE_CONTACTS_REQUESTED=
+set MODULE_CONNECTIVITY_REQUESTED=
+set MODULE_FEEDBACK_REQUESTED=
+set MODULE_GALLERY_REQUESTED=
+set MODULE_LOCATION_REQUESTED=
+set MODULE_MESSAGING_REQUESTED=
+set MODULE_MULTIMEDIA_REQUESTED=
+set MODULE_ORGANIZER_REQUESTED=
+set MODULE_PUBLISHSUBSCRIBE_REQUESTED=
+set MODULE_SENSORS_REQUESTED=
+set MODULE_SERVICEFRAMEWORK_REQUESTED=
+set MODULE_SYSTEMINFO_REQUESTED=
+set MODULE_VERSIT_REQUESTED=
 set MOBILITY_MODULES_UNPARSED=
 set REMAINING=
 set FIRST=
 set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
-set ORGANIZER_REQUESTED=
 set PLATFORM_CONFIG=
 set LANGUAGES_CONFIG=
 exit /b 0
