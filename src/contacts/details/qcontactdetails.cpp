@@ -814,7 +814,7 @@ QContactFilter QContactAddress::match(const QString &subString)
     f7.setValue(subString);
     f7.setMatchFlags(QContactFilter::MatchContains);
 
-    return (f1 | f2 | f3 | f4 | f5 | f6);
+    return (f1 | f2 | f3 | f4 | f5 | f6 | f7);
 }
 
 /* ==================== QContactUrl ======================= */
