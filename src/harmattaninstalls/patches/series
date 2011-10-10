@@ -5,3 +5,7 @@
 0005-disable-qgeocoordinate-test.patch
 0006-disable-qmediaplayer-test.patch
 0007-add-patch-for-feedback-test.patch
+0008-disable-qdeclarativecontact-test.patch
+0009-connectivity-tests-add-subdirs.patch
+0010-rules-makeshlibs-v.patch
+0011-platformconfig-geoclue-gypsy.patch
