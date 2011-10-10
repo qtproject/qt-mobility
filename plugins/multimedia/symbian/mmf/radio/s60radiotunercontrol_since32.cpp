@@ -424,7 +424,7 @@ void S60RadioTunerControl::MrpoStateChange(TPlayerState aState, TInt aError)
 void S60RadioTunerControl::MrpoVolumeChange(TInt aVolume)
 {
     TRACE("S60RadioTunerControl::MrpoVolumeChange" << qtThisPtr()
-          << "volume" << volume);
+          << "volume" << aVolume);
     m_vol = (aVolume/m_volMultiplier);
     if (!m_volChangeRequired) {
         emit volumeChanged(m_vol);
