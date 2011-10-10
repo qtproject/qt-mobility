@@ -1907,6 +1907,11 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
     } else {
         if (ssTimer && ssTimer->isActive()) {
             ssTimer->stop();
+#if !defined(QT_NO_DBUS)
+            if (mceConnectionInterface->isValid()) {
+                mceConnectionInterface->call("req_display_cancel_blanking_pause");
+            }
+#endif
             isInhibited = false;
         }
     }
