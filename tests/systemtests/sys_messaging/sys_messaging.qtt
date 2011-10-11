@@ -50,7 +50,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/serviceactions";
         testGoal = "Verify that a message can be sent in plain text.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = " ";
 
         // Test steps
@@ -74,7 +74,7 @@ testcase = {
          testSource = "$MOBILITYDIR/demos/serviceactions";
          testGoal = "Verify that a message can be sent in HTML.";
          testPreconditions = "None";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -98,7 +98,7 @@ testcase = {
          testSource = "$MOBILITYDIR/demos/serviceactions";
          testGoal = "Verify that a message can be sent with an attachment.";
          testPreconditions = "None";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -123,7 +123,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/querymessages";
         testGoal = "Verify that received messages can be queried.";
         testPreconditions = "*querymessage* is a console application, it must be launched from command line, and the results are shown on command line only<br>Currently the test is not available for Symbian platforms.";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = " ";
 
         // Test steps
@@ -150,7 +150,7 @@ testcase = {
      testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
      testGoal = "Verify that messages can be searched.";
      testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
-     testGroups = "BAT";
+     testGroups = "BAT_MOBILITY";
      testRequirements = " ";
 
      // Test steps
@@ -178,7 +178,7 @@ testcase = {
       testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
       testGoal = "Verify that messages can be received.";
       testPreconditions = "There are some messages in Email account, and network is available.";
-      testGroups = "BAT";
+      testGroups = "BAT_MOBILITY";
       testRequirements = " ";
 
       // Test steps
@@ -205,7 +205,7 @@ testcase = {
        testSource = "$MOBILITYDIR/examples/keepintouch";
        testGoal = "Verify that an messages can be shown.";
        testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
        testRequirements = " ";
 
        // Test steps
@@ -232,7 +232,7 @@ testcase = {
          testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that messages can be deleted.";
          testPreconditions = "Some messages are available in Email account, and network available.";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -259,7 +259,7 @@ testcase = {
        testSource = "$MOBILITYDIR/examples/writemessage";
        testGoal = "Verify that an SMS message can be sent.";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
        testRequirements = " ";
 
        // Test steps
@@ -284,7 +284,7 @@ testcase = {
        testSource = "$MOBILITYDIR/manual/messagingex";
        testGoal = "Verify that an SMS message can be saved.";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
        testRequirements = " ";
 
        // Test steps
@@ -309,7 +309,7 @@ testcase = {
           testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
           testGoal = "Verify that an SMS message can be read.";
           testPreconditions = "Some messages in SMS account, and network available";
-          testGroups = "BAT";
+          testGroups = "BAT_MOBILITY";
           testRequirements = " ";
 
           // Test steps
@@ -337,7 +337,7 @@ testcase = {
          testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that an SMS messages can be composed and transferred to native client.";
          testPreconditions = "None";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -363,7 +363,7 @@ testcase = {
        testSource = "$MOBILITYDIR/examples/writemessage";
        testGoal = "Verify that an MMS message can be sent.";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
        testRequirements = " ";
 
        // Test steps
@@ -392,7 +392,7 @@ testcase = {
        testSource = "$MOBILITYDIR/manual/messagingex";
        testGoal = "Verify that an MMS message can be saved.";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
        testRequirements = " ";
 
        // Test steps
@@ -421,7 +421,7 @@ testcase = {
           testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
           testGoal = "Verify that an MMS message can be read.";
           testPreconditions = "Some messages in MMS account, and network available";
-          testGroups = "BAT";
+          testGroups = "BAT_MOBILITY";
           testRequirements = " ";
 
           // Test steps
@@ -449,7 +449,7 @@ testcase = {
          testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that an MMS message can be composed.";
          testPreconditions = "None";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -476,7 +476,7 @@ testcase = {
          testSource = "$MOBILITYDIR/examples/writemessage";
          testGoal = "Verify that an EMail message can be sent.";
          testPreconditions = "an Email account called *Email* exists on the device";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -509,7 +509,7 @@ testcase = {
        testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
        testGoal = "Verify that account settings can be send with various encoding formats.";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
        testRequirements = " ";
 
        // Test steps
@@ -539,7 +539,7 @@ testcase = {
          testSource = "$MOBILITYDIR/manual/messagingex";
          testGoal = "Verify that an EMail message can be saved.";
          testPreconditions = "Email account called *Email* exists on the device";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -571,7 +571,7 @@ testcase = {
    1. Email account called *Email* exists on the device<br>
    1. Email accounts contains valid messages.<br>
    1. Network is available.<br>";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = " ";
 
         // Test steps
@@ -599,7 +599,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
         testGoal = "Verify that an messages can be composed.";
         testPreconditions = "At least one email account exists on the phone.";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = " ";
 
         // Test steps
@@ -627,7 +627,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/keepintouch";
         testGoal = "Verify that contacts meeting specific parameters can be queried.";
         testPreconditions = "test messages received on a range of dates from various contacts are available on the phone.";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = " ";
 
         // Test steps
@@ -655,7 +655,7 @@ testcase = {
            testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
            testGoal = "Verify that accounts can be searched by name.";
            testPreconditions = "A set of accounts exist on the device.";
-           testGroups = "BAT";
+           testGroups = "BAT_MOBILITY";
            testRequirements = " ";
 
            // Test steps
@@ -679,7 +679,7 @@ testcase = {
          testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
          testGoal = "Verify that messages can be searched by account ID.";
          testPreconditions = "A set of test messages sent on a range of dates from various contacts to the phone using Nokia Ovi Suite or an equal tool are available on the device.";
-         testGroups = "BAT";
+         testGroups = "BAT_MOBILITY";
          testRequirements = " ";
 
          // Test steps
@@ -703,7 +703,7 @@ testcase = {
        testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
        testGoal = "Verify that account settings can be set.";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
        testRequirements = " ";
 
        // Test steps
@@ -723,6 +723,32 @@ testcase = {
           | Store/Compose/Send the message | Verify the message has been properly stored/composed/sent with desired account |
           "));
       },
+
+filter_message : function() {
+ // Test meta data
+ testTitle = "Messaging - Filter Message";
+ testBinary = "testQtMessaging";
+ testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
+ testGoal = "Verify that messages can be filter by the filter proxy.";
+ testPreconditions = "There are different types of messages in the phone.";
+ testGroups = "BAT_MOBILITY";
+ testRequirements = " ";
+
+ // Test steps
+ prompt(twiki("---+++ " + testTitle + "<br><br>
+     *Goal:* " + testGoal + "<br>
+     *Pre-Requisites:* " + testPreconditions + "<br>
+     *Tested Binary:* " + testBinary + "<br>
+
+    | *Step* | *Verification* |
+    | Launch " + testBinary + " | App launches normally |
+    | Select Search Messsages tab | |
+    | Select a search type | |
+    | Fill in according parameters | |
+    | Click on Make Query (=Search) | Verify correct messages are shown follow the filter proxy |
+    | Repeat these steps with different search type | Verify correct messages are shown follow the filter proxy |
+  "));
+},
 
 /*
     New tests to be considered
