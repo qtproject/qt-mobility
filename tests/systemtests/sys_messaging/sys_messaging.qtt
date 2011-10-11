@@ -724,29 +724,29 @@ testcase = {
           "));
       },
 
-filter_message : function() {
- // Test meta data
- testTitle = "Messaging - Filter Message";
- testBinary = "testQtMessaging";
- testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
- testGoal = "Verify that messages can be filter by the filter proxy.";
- testPreconditions = "There are different types of messages in the phone.";
- testGroups = "BAT_MOBILITY";
- testRequirements = " ";
+    filter_message : function() {
+        // Test meta data
+        testTitle = "Messaging - Filter Message";
+        testBinary = "testQtMessaging";
+        testSource = "$MOBILITYDIR/tests/applications/messaging/testqtmessaging";
+        testGoal = "Verify that messages can be filter by the filter proxy.";
+        testPreconditions = "There are different types of messages in the phone.";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " ";
 
- // Test steps
- prompt(twiki("---+++ " + testTitle + "<br><br>
-     *Goal:* " + testGoal + "<br>
-     *Pre-Requisites:* " + testPreconditions + "<br>
-     *Tested Binary:* " + testBinary + "<br>
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
 
-    | *Step* | *Verification* |
-    | Launch " + testBinary + " | App launches normally |
-    | Select Search Messsages tab | |
-    | Select a search type | |
-    | Fill in according parameters | |
-    | Click on Make Query (=Search) | Verify correct messages are shown follow the filter proxy |
-    | Repeat these steps with different search type | Verify correct messages are shown follow the filter proxy |
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select Search Messsages tab | |
+            | Select a search type | |
+            | Fill in according parameters | |
+            | Click on Make Query (=Search) | Verify correct messages are shown follow the filter proxy |
+            | Repeat these steps with different search type | Verify correct messages are shown follow the filter proxy |
   "));
 },
 
