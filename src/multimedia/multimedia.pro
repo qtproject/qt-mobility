@@ -174,6 +174,8 @@ maemo5 {
 
 maemo6 {
     isEqual(QT_ARCH,armv6) {
+        QT += meegographicssystemhelper
+
         HEADERS += qeglimagetexturesurface_p.h
         SOURCES += qeglimagetexturesurface.cpp
 

@@ -88,6 +88,12 @@ class S60VideoWidgetControl : public QVideoWidgetControl
      */
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
 
+    /**
+     * Specifies whether video content is currently being displayed on the
+     * widget.
+     */
+    Q_PROPERTY(bool hasContent READ hasContent NOTIFY hasContentChanged)
+
 public:
     S60VideoWidgetControl(QObject *parent);
     ~S60VideoWidgetControl();
@@ -119,9 +125,11 @@ public:
     QSize nativeSize() const;
     qreal rotation() const;
     void setRotation(qreal value);
+    bool hasContent() const;
 
 signals:
     void nativeSizeChanged();
+    void hasContentChanged();
 
 private:
     S60VideoWidgetDisplay *m_display;

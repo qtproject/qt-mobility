@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,28 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEORENDERER_H
-#define S60VIDEORENDERER_H
+#ifndef S60MMFTRACE_H
+#define S60MMFTRACE_H
 
-#include <QtCore/qobject.h>
-#include <qvideorenderercontrol.h>
+#ifdef _DEBUG
+#define MMF_ENABLE_TRACE
+#endif
 
-QT_USE_NAMESPACE
+//#define MMF_ENABLE_VERBOSE_TRACE
 
-class S60VideoRenderer : public QVideoRendererControl
-{
-    Q_OBJECT
+#ifdef MMF_ENABLE_TRACE
 
-public:
-    S60VideoRenderer(QObject *parent = 0);
-    virtual ~S60VideoRenderer();
-    
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
+#   include <QtCore/QDebug>
+#   define TRACE(args) qDebug() << "[QtMultimediaKit mmf]" << args
+#   ifdef MMF_ENABLE_VERBOSE_TRACE
+#       define VERBOSE_TRACE(args) TRACE(args)
+#   else // MMF_ENABLE_VERBOSE_TRACE
+#       define VERBOSE_TRACE(args)
+#   endif // MMF_ENABLE_VERBOSE_TRACE
 
-private:    
+    template <typename T>
+    inline void *qtVoidPtr(T *ptr)
+    { return reinterpret_cast<void *>(ptr); }
 
-    QAbstractVideoSurface *m_surface;
-};
+#   define qtThisPtr() qtVoidPtr(this)
 
-#endif // S60VIDEORENDERER_H
+#else // MMF_ENABLE_TRACE
+#   define TRACE(args)
+#   define VERBOSE_TRACE(args)
+#endif
+
+#endif // S60MMFTRACE_H

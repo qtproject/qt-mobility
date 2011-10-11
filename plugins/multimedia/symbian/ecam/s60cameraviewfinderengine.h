@@ -97,8 +97,8 @@ public: // Methods
     void releaseControl(ViewfinderOutputType type);
 
     // Controls
-    void startViewfinder(const bool internalStart = false);
-    void stopViewfinder(const bool internalStop = false);
+    void startViewfinder(bool internalStart = false, bool suppressHasContentChanged = false);
+    void stopViewfinder(bool internalStop = false, bool suppressHasContentChanged = false);
 
     // Start using new CameraEngine
     void setNewCameraEngine(CCameraEngine *engine);

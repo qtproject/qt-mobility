@@ -1,3 +1,75 @@
+qt-mobility (1.2.1+200) unstable; urgency=low
+
+  * Bumped up the version
+  * add patch to keep binary compatibility with PR1.0
+    and PR1.1 versions.
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Fri, 30 Sep 2011 10:43:48 +1000
+
+qt-mobility (1.2.1+199) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixes: NB#275044
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 29 Sep 2011 11:43:48 +1000
+
+qt-mobility (1.2.1+198) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixed bug 280316
+
+ -- Simo Fält <simo.falt@nokia.com>  Tue, 09 Sep 2011 14:34:48 +1000
+
+qt-mobility (1.2.1+197) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixed bug 264686
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Tue, 02 Sep 2011 14:34:48 +1000
+
+qt-mobility (1.2.1+196) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixes: NB#277204
+  * Fixes: NB#274555
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Tue, 23 Aug 2011 14:34:48 +1000
+
+qt-mobility (1.2.1+195) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixes: NB#240747
+  * Fixes: NB#277281
+  * Fixes: NB#277286
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 17 Aug 2011 21:03:48 +1000
+
+qt-mobility (1.2.1+194) unstable; urgency=low
+
+  * Bumped up the version
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Tue, 16 Aug 2011 08:14:48 +1000
+
+qt-mobility (1.2.1+193) unstable; urgency=low
+
+  * Removed LICENSE.PREVIEW.COMMERCIAL file
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Wed, 10 Aug 2011 08:56:48 +1000
+
+qt-mobility (1.2.1+192) unstable; urgency=low
+
+  * Remaining version number issues fixed in src/harmattaninstalls
+  * See version 1.2.1+195 for license headers fix
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Fri, 5 Aug 2011 13:27:48 +1000
+
+qt-mobility (1.2.1+44) unstable; urgency=low
+
+  * Fixed debian version number
+  * See version 1.2.1+195 for battery charge fix.
+
+ -- Janne Hamalainen <janne.a.hamalainen@nokia.com>  Thu, 7 Jul 2011 13:50:48 +1000
+
 qt-mobility (1.2.0+746) unstable; urgency=low
 
   * Fixes: NB#259006

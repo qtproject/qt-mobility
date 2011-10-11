@@ -60,6 +60,7 @@ class QGstreamerGLTextureRenderer : public QVideoRendererControl, public QGstrea
     Q_INTERFACES(QGstreamerVideoRendererInterface)
 
     Q_PROPERTY(bool overlayEnabled READ overlayEnabled WRITE setOverlayEnabled)
+    Q_PROPERTY(bool glEnabled READ glEnabled WRITE setGlEnabled)
     Q_PROPERTY(qulonglong winId READ winId WRITE setWinId)
     Q_PROPERTY(QRect overlayGeometry READ overlayGeometry WRITE setOverlayGeometry)
     Q_PROPERTY(QColor colorKey READ colorKey)
@@ -86,6 +87,7 @@ public:
     int framebufferNumber() const;
 
     bool overlayEnabled() const;
+    bool glEnabled() const;
     WId winId() const;
     QRect overlayGeometry() const;
     QColor colorKey() const;
@@ -95,6 +97,7 @@ public slots:
     void renderGLFrame(int);
 
     void setOverlayEnabled(bool);
+    void setGlEnabled(bool);
     void setWinId(WId id);
     void setOverlayGeometry(const QRect &geometry);
     void repaintOverlay();
@@ -124,6 +127,7 @@ private:
     QColor m_colorKey;
     QRect m_displayRect;
     bool m_overlayEnabled;
+    bool m_glEnabled;
     int m_bufferProbeId;
 
     QMutex m_mutex;
