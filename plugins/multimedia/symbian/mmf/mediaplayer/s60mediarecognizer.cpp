@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60mediarecognizer.h"
+#include "s60mmftrace.h"
 #include <e32def.h>
 #include <e32cmn.h>
 #include <QtCore/qurl.h>
@@ -62,8 +61,7 @@ _LIT(KMimeTypeRingingTone, "application/vnd.nokia.ringing-tone");
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
-    DP0("S60MediaRecognizer::S60MediaRecognizer +++");
-    DP0("S60MediaRecognizer::S60MediaRecognizer ---");
+    TRACE("S60MediaRecognizer::S60MediaRecognizer" << qtThisPtr());
 }
 
 /*!
@@ -72,13 +70,11 @@ S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 
 S60MediaRecognizer::~S60MediaRecognizer()
 {
-    DP0("S60MediaRecognizer::~S60MediaRecognizer +++");
+    TRACE("S60MediaRecognizer::~S60MediaRecognizer" << qtThisPtr());
 
     m_file.Close();
     m_fileServer.Close();
     m_recognizer.Close();
-
-    DP0("S60MediaRecognizer::~S60MediaRecognizer ---");
 }
 
 /*!
@@ -89,14 +85,14 @@ S60MediaRecognizer::~S60MediaRecognizer()
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
 {
-    DP0("S60MediaRecognizer::mediaType");
-
-    bool isStream = (url.scheme() == "file")?false:true;
-
-    if (isStream)
-        return Url;
+    S60MediaRecognizer::MediaType result;
+    if (url.scheme() == "file")
+        result = identifyMediaType(QDir::cleanPath(url.toLocalFile()));
     else
-        return identifyMediaType(QDir::cleanPath(url.toLocalFile()));
+        result = Url;
+    TRACE("S60MediaRecognizer::mediaType" << qtThisPtr()
+          << "url" << url.toString() << "result" << result);
+    return result;
 }
 
 /*!
@@ -105,9 +101,6 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QString& fileName)
 {
-    DP0("S60MediaRecognizer::identifyMediaType +++");
-
-    DP1("S60MediaRecognizer::identifyMediaType - ", fileName);
 
     S60MediaRecognizer::MediaType result = Video; // default to videoplayer
     bool recognizerOpened = false;
@@ -149,8 +142,6 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QStrin
         }
     }
 
-    DP0("S60MediaRecognizer::identifyMediaType ---");
-
     return result;
 }
 
@@ -160,8 +151,6 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QStrin
 
 TPtrC S60MediaRecognizer::QString2TPtrC( const QString& string )
 {
-    DP1("S60MediaRecognizer::QString2TPtrC - ", string);
-
     // Returned TPtrC is valid as long as the given parameter is valid and unmodified
     return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
 }
