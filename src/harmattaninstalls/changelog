@@ -2,8 +2,9 @@ qt-mobility (1.2.1+201) unstable; urgency=low
 
   * Bumped up the version
   * Resynced with qt mobility master
-  * Added patch to fix QTMOBILITY-1749:
-	 adding ContactAddress::FieldExtendedAddress and vcard parsing for it
+  * Added patch to fix QTMOBILITY-1749
+    adding ContactAddress::FieldExtendedAddress and
+    vcard parsing for it
 
  -- Holger Schröder <holger.schroeder.ext@basyskom.de>  Tue, 11 Oct 2011 10:43:48 +1000
 
