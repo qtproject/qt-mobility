@@ -74,7 +74,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
         \o slot void startStatusChanged();
         \o void startStatusChanged(bool on);
         \o Became Q_PROPERTY monitoringStatusChanges in QtMobility 1.2
-    \rom
+    \row
         \o void startSignalStrengthChanged();
         \o void startSignalStrengthChanged(bool)
         \o Became Q_PROPERTY monitorSignalStrengthChanges in QtMobility 1.2
