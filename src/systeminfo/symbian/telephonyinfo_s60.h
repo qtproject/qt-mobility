@@ -74,7 +74,7 @@ public:
     void addObserver(MTelephonyInfoObserver *observer);
     void removeObserver(MTelephonyInfoObserver *observer);
     void makeRequest();
-    //For initilization of variables
+    //For initilisation of variables
     void checkandStartInit() const;
     void checkandStopInit() const;
 
