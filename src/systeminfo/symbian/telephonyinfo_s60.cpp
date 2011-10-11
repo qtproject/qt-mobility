@@ -47,7 +47,7 @@
 
 
 CTelephonyInfo::CTelephonyInfo(CTelephony &telephony) : CActive(EPriorityStandard),
-    m_telephony(telephony)
+    m_initializing(true), m_telephony(telephony)
 {
     CActiveScheduler::Add(this);
     m_wait = new CActiveSchedulerWait();
@@ -55,6 +55,7 @@ CTelephonyInfo::CTelephonyInfo(CTelephony &telephony) : CActive(EPriorityStandar
 
 CTelephonyInfo::~CTelephonyInfo()
 {
+    Cancel();
     delete m_wait;
 }
 
@@ -68,37 +69,33 @@ void CTelephonyInfo::removeObserver(MTelephonyInfoObserver *observer)
     m_observers.removeOne(observer);
 }
 
-void CTelephonyInfo::RunL()
-{
-    m_wait->AsyncStop();
-}
 
 void CTelephonyInfo::makeRequest()
 {
     if (!IsActive())
         SetActive();
+}
 
-    if (!m_wait->IsStarted()) {
-        m_wait->Start();
-    }
+void CTelephonyInfo::checkandStartInit() const
+{
+    if (m_initializing)
+            m_wait->Start();
+}
+
+void CTelephonyInfo::checkandStopInit() const
+{
+    if (m_wait->IsStarted())
+        m_wait->AsyncStop();
 }
 
 CPhoneInfo::CPhoneInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
     m_phoneIdV1Pckg(m_phoneIdV1)
 {
  TRACES (qDebug() << "CPhoneInfo::CPhoneInfo<---");
-    m_telephony.GetPhoneId(iStatus, m_phoneIdV1Pckg);
 
+    m_telephony.GetPhoneId(iStatus, m_phoneIdV1Pckg);
     makeRequest();
 
-    TBuf<CTelephony::KPhoneSerialNumberSize> imei = m_phoneIdV1.iSerialNumber;
-    m_imei = QString::fromUtf16(imei.Ptr(), imei.Length());
-
-    TBuf<CTelephony::KPhoneManufacturerIdSize> manufacturer = m_phoneIdV1.iManufacturer;
-    m_manufacturer = QString::fromUtf16(manufacturer.Ptr(), manufacturer.Length());
-
-    TBuf<CTelephony::KPhoneModelIdSize> model = m_phoneIdV1.iModel;
-    m_model = QString::fromUtf16(model.Ptr(), model.Length());
  TRACES (qDebug() << "CPhoneInfo::CPhoneInfo--->");
 }
 
@@ -107,23 +104,46 @@ CPhoneInfo::~CPhoneInfo()
     Cancel();
 }
 
+void CPhoneInfo::RunL()
+{
+TRACES (qDebug() << "CPhoneInfo::RunL<---");
+    TBuf<CTelephony::KPhoneSerialNumberSize> imei = m_phoneIdV1.iSerialNumber;
+    m_imei = QString::fromUtf16(imei.Ptr(), imei.Length());
+
+    TBuf<CTelephony::KPhoneManufacturerIdSize> manufacturer = m_phoneIdV1.iManufacturer;
+    m_manufacturer = QString::fromUtf16(manufacturer.Ptr(), manufacturer.Length());
+
+    TBuf<CTelephony::KPhoneModelIdSize> model = m_phoneIdV1.iModel;
+    m_model = QString::fromUtf16(model.Ptr(), model.Length());
+    m_initializing = false;
+    checkandStopInit();
+TRACES (qDebug() << "CPhoneInfo::RunL--->");
+}
+
 void CPhoneInfo::DoCancel()
 {
+TRACES (qDebug() << "CPhoneInfo::DoCancel<---");
+   //to avoid deadlocking if someone deletes before RunL is called
+   checkandStopInit();
    m_telephony.CancelAsync(CTelephony::EGetPhoneIdCancel);
+TRACES (qDebug() << "CPhoneInfo::DoCancel--->");
 }
 
 QString CPhoneInfo::imei() const
 {
+    checkandStartInit();
     return m_imei;
 }
 
 QString CPhoneInfo::manufacturer() const
 {
+    checkandStartInit();
     return m_manufacturer;
 }
 
 QString CPhoneInfo::model() const
 {
+    checkandStartInit();
     return m_model;
 }
 
@@ -134,8 +154,6 @@ CSubscriberInfo::CSubscriberInfo(CTelephony &telephony) : CTelephonyInfo(telepho
     m_telephony.GetSubscriberId(iStatus, m_subscriberIdV1Pckg);
     makeRequest();
 
-    TBuf<CTelephony::KIMSISize> imsi = m_subscriberIdV1.iSubscriberId;
-    m_imsi = QString::fromUtf16(imsi.Ptr(), imsi.Length());
  TRACES (qDebug() << "CSubscriberInfo::CSubscriberInfo--->");
 }
 
@@ -144,28 +162,39 @@ CSubscriberInfo::~CSubscriberInfo()
     Cancel();
 }
 
+void CSubscriberInfo::RunL()
+{
+TRACES (qDebug() << "CSubscriberInfo::RunL<---");
+    TBuf<CTelephony::KIMSISize> imsi = m_subscriberIdV1.iSubscriberId;
+    m_imsi = QString::fromUtf16(imsi.Ptr(), imsi.Length());
+    m_initializing = false;
+    checkandStopInit();
+TRACES (qDebug() << "CSubscriberInfo::RunL--->");
+}
+
 void CSubscriberInfo::DoCancel()
 {
-    m_telephony.CancelAsync(CTelephony::EGetSubscriberIdCancel);
+TRACES (qDebug() << "CSubscriberInfo::DoCancel<---");
+   m_telephony.CancelAsync(CTelephony::EGetSubscriberIdCancel);
+   //to avoid deadlocking if someone deletes before RunL is called
+   checkandStopInit();
+TRACES (qDebug() << "CSubscriberInfo::DoCancel--->");
 }
 
 QString CSubscriberInfo::imsi() const
 {
+    checkandStartInit();
     return m_imsi;
 }
 
 CBatteryInfo::CBatteryInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_initializing(true), m_batteryInfoV1Pckg(m_batteryInfoV1)
+    m_batteryInfoV1Pckg(m_batteryInfoV1)
 {
  TRACES (qDebug() << "CBatteryInfo::CBatteryInfo<---");
     m_telephony.GetBatteryInfo(iStatus, m_batteryInfoV1Pckg);
 
     makeRequest();
 
-    m_batteryLevel = m_batteryInfoV1.iChargeLevel;
-    m_previousBatteryLevel = m_batteryLevel;
-
-    startMonitoring();
  TRACES (qDebug() << "CBatteryInfo::CBatteryInfo--->");
 }
 
@@ -178,8 +207,9 @@ void CBatteryInfo::RunL()
 {
  TRACES (qDebug() << "CBatteryInfo::RunL<---");
     if (m_initializing) {
-         CTelephonyInfo::RunL();
-         m_initializing = false;
+        m_batteryLevel = m_batteryInfoV1.iChargeLevel;
+        m_initializing = false;
+        checkandStopInit();
     } else {
         m_batteryLevel = m_batteryInfoV1.iChargeLevel;
         foreach (MTelephonyInfoObserver *observer, m_observers) {
@@ -198,6 +228,9 @@ void CBatteryInfo::DoCancel()
  TRACES (qDebug() << "CBatteryInfo::DoCancel<---");
     if (m_initializing) {
         m_telephony.CancelAsync(CTelephony::EGetBatteryInfoCancel);
+        //to avoid deadlocking if someone deletes before RunL is called
+        m_initializing = false;
+        checkandStopInit();
     } else {
         m_telephony.CancelAsync(CTelephony::EBatteryInfoChangeCancel);
     }
@@ -207,6 +240,7 @@ void CBatteryInfo::DoCancel()
 
 int CBatteryInfo::batteryLevel() const
 {
+    checkandStartInit();
     return m_batteryLevel;
 }
 
@@ -221,38 +255,11 @@ void CBatteryInfo::startMonitoring()
 }
 
 CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_initializing(true), m_networkInfoV1Pckg(m_networkInfoV1)
+    m_networkInfoV1Pckg(m_networkInfoV1)
 {
  TRACES (qDebug() << "CCellNetworkInfo::CCellNetworkInfo<---");
     m_telephony.GetCurrentNetworkInfo(iStatus, m_networkInfoV1Pckg);
     makeRequest();
-
-    m_cellId = m_networkInfoV1.iCellId;
-    m_previouscellId = m_cellId;
-    m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
-
-    TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
-    m_networkId = QString::fromUtf16(networkId.Ptr(), networkId.Length());
-    m_previousNetworkId = m_networkId;
-
-    TBuf<CTelephony::KNetworkCountryCodeSize> countryCode = m_networkInfoV1.iCountryCode;
-    m_countryCode = QString::fromUtf16(countryCode.Ptr(), countryCode.Length());
-    m_previousCountryCode = m_countryCode;
-    TBuf<CTelephony::KNetworkLongNameSize> longName = m_networkInfoV1.iLongName;
-    if (longName.Length() > 0) {
-        m_networkName = QString::fromUtf16(longName.Ptr(), longName.Length());
-    } else {
-        TBuf<CTelephony::KNetworkDisplayTagSize> displayTag = m_networkInfoV1.iDisplayTag;
-        m_networkName = QString::fromUtf16(displayTag.Ptr(), displayTag.Length());
-    }
-    m_previousNetworkName = m_networkName;
-
-    m_networkMode = m_networkInfoV1.iMode;
-    m_previousNetworkMode = m_networkMode;
-
-    m_initializing = false;
-
-    startMonitoring();
  TRACES (qDebug() << "CCellNetworkInfo::CCellNetworkInfo--->");
 }
 
@@ -265,8 +272,30 @@ void CCellNetworkInfo::RunL()
 {
  TRACES (qDebug() << "CCellNetworkInfo::RunL<---");
     if (m_initializing) {
-        CTelephonyInfo::RunL();
+        m_cellId = m_networkInfoV1.iCellId;
+        m_previouscellId = m_cellId;
+        m_locationAreaCode = m_networkInfoV1.iLocationAreaCode;
+
+        TBuf<CTelephony::KNetworkIdentitySize> networkId = m_networkInfoV1.iNetworkId;
+        m_networkId = QString::fromUtf16(networkId.Ptr(), networkId.Length());
+        m_previousNetworkId = m_networkId;
+
+        TBuf<CTelephony::KNetworkCountryCodeSize> countryCode = m_networkInfoV1.iCountryCode;
+        m_countryCode = QString::fromUtf16(countryCode.Ptr(), countryCode.Length());
+        m_previousCountryCode = m_countryCode;
+        TBuf<CTelephony::KNetworkLongNameSize> longName = m_networkInfoV1.iLongName;
+        if (longName.Length() > 0) {
+            m_networkName = QString::fromUtf16(longName.Ptr(), longName.Length());
+        } else {
+            TBuf<CTelephony::KNetworkDisplayTagSize> displayTag = m_networkInfoV1.iDisplayTag;
+            m_networkName = QString::fromUtf16(displayTag.Ptr(), displayTag.Length());
+        }
+        m_previousNetworkName = m_networkName;
+
+        m_networkMode = m_networkInfoV1.iMode;
+        m_previousNetworkMode = m_networkMode;
         m_initializing = false;
+        checkandStopInit();
     } else {
         if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_cellId = m_networkInfoV1.iCellId;
@@ -310,8 +339,8 @@ void CCellNetworkInfo::RunL()
         m_previousNetworkName = m_networkName;
         m_previousNetworkMode = m_networkMode;
         m_previouscellId = m_cellId;
-        startMonitoring();
     }
+    startMonitoring();
  TRACES (qDebug() << "CCellNetworkInfo::RunL--->");
 }
 
@@ -320,6 +349,9 @@ void CCellNetworkInfo::DoCancel()
  TRACES (qDebug() << "CCellNetworkInfo::DoCancel--->");
     if (m_initializing) {
         m_telephony.CancelAsync(CTelephony::EGetCurrentNetworkInfoCancel);
+        //to avoid deadlocking if someone deletes before RunL is called
+        m_initializing = false;
+        checkandStopInit();
     } else {
         m_telephony.CancelAsync(CTelephony::ECurrentNetworkInfoChangeCancel);
     }
@@ -328,26 +360,31 @@ void CCellNetworkInfo::DoCancel()
 
 int CCellNetworkInfo::cellId() const
 {
+    checkandStartInit();
     return m_cellId;
 }
 
 int CCellNetworkInfo::locationAreaCode() const
 {
+    checkandStartInit();
     return m_locationAreaCode;
 }
 
 QString CCellNetworkInfo::countryCode() const
 {
+    checkandStartInit();
     return m_countryCode;
 }
 
 QString CCellNetworkInfo::networkCode() const
 {
+    checkandStartInit();
     return m_networkId;
 }
 
 QString CCellNetworkInfo::networkName() const
 {
+    checkandStartInit();
     return m_networkName;
 }
 
@@ -402,6 +439,7 @@ QString CCellNetworkInfo::homeNetworkCode()
 
 CTelephony::TNetworkMode CCellNetworkInfo::networkMode() const
 {
+    checkandStartInit();
     return m_networkMode;
 }
 
@@ -414,19 +452,12 @@ void CCellNetworkInfo::startMonitoring()
 }
 
 CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_initializing(true), m_networkRegistrationV1Pckg(m_networkRegistrationV1)
+    m_networkRegistrationV1Pckg(m_networkRegistrationV1)
 {
- TRACES (qDebug() << "CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo--->");
+ TRACES (qDebug() << "CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo<---");
     m_telephony.GetNetworkRegistrationStatus(iStatus, m_networkRegistrationV1Pckg);
     makeRequest();
-
-    m_networkStatus = m_networkRegistrationV1.iRegStatus;
-    m_previousNetworkStatus = m_networkStatus;
-
-    m_initializing = false;
-
-    startMonitoring();
- TRACES (qDebug() << "CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo<---");
+ TRACES (qDebug() << "CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo--->");
 }
 
 CCellNetworkRegistrationInfo::~CCellNetworkRegistrationInfo()
@@ -438,8 +469,9 @@ void CCellNetworkRegistrationInfo::RunL()
 {
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::RunL<---");
     if (m_initializing) {
-        CTelephonyInfo::RunL();
+        m_networkStatus = m_networkRegistrationV1.iRegStatus;
         m_initializing = false;
+        checkandStopInit();
     } else {
         if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_networkStatus = m_networkRegistrationV1.iRegStatus;
@@ -449,9 +481,9 @@ void CCellNetworkRegistrationInfo::RunL()
                 observer->cellNetworkStatusChanged();
             }
         }
-        m_previousNetworkStatus = m_networkStatus;
-        startMonitoring();
     }
+    m_previousNetworkStatus = m_networkStatus;
+    startMonitoring();
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::RunL--->");
 }
 
@@ -460,6 +492,7 @@ void CCellNetworkRegistrationInfo::DoCancel()
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::DoCancel<---");
     if (m_initializing) {
         m_telephony.CancelAsync(CTelephony::EGetNetworkRegistrationStatusCancel);
+        checkandStopInit();
     } else {
         m_telephony.CancelAsync(CTelephony::ENetworkRegistrationStatusChangeCancel);
     }
@@ -468,6 +501,7 @@ void CCellNetworkRegistrationInfo::DoCancel()
 
 CTelephony::TRegistrationStatus CCellNetworkRegistrationInfo::cellNetworkStatus() const
 {
+    checkandStartInit();
     return m_networkStatus;
 }
 
@@ -480,21 +514,11 @@ TRACES (qDebug() << "CCellNetworkRegistrationInfo::startMonitoring--->");
 }
 
 CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
-    m_initializing(true), m_signalStrengthV1Pckg(m_signalStrengthV1)
+    m_signalStrengthV1Pckg(m_signalStrengthV1)
 {
  TRACES (qDebug() << "CCellSignalStrengthInfo::CCellSignalStrengthInfo<---");
     m_telephony.GetSignalStrength(iStatus, m_signalStrengthV1Pckg);
     makeRequest();
-
-    m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
-    m_previousCellNetworkSignalStrength = m_cellNetworkSignalStrength;
-
-    m_signalBar = m_signalStrengthV1.iBar;
-    m_previousSignalBar = m_signalBar;
-
-    m_initializing = false;
-
-    startMonitoring();
  TRACES (qDebug() << "CCellSignalStrengthInfo::CCellSignalStrengthInfo--->");
 }
 
@@ -507,7 +531,11 @@ void CCellSignalStrengthInfo::RunL()
 {
  TRACES (qDebug() << "CCellSignalStrengthInfo::RunL<---");
     if (m_initializing) {
-        CTelephonyInfo::RunL();
+        m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
+        m_previousCellNetworkSignalStrength = m_cellNetworkSignalStrength;
+        m_signalBar = m_signalStrengthV1.iBar;
+        m_initializing = false;
+        checkandStopInit();
     } else {
         if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
@@ -518,9 +546,9 @@ void CCellSignalStrengthInfo::RunL()
                 observer->cellNetworkSignalStrengthChanged();
             }
         }
-        m_previousSignalBar = m_signalBar;
-        startMonitoring();
     }
+    m_previousSignalBar = m_signalBar;
+    startMonitoring();
  TRACES (qDebug() << "CCellSignalStrengthInfo::RunL--->");
 }
 
@@ -529,6 +557,7 @@ void CCellSignalStrengthInfo::DoCancel()
  TRACES (qDebug() << "CCellSignalStrengthInfo::DoCancel<---");
     if (m_initializing) {
         m_telephony.CancelAsync(CTelephony::EGetSignalStrengthCancel);
+        checkandStopInit();
     } else {
         m_telephony.CancelAsync(CTelephony::ESignalStrengthChangeCancel);
     }
@@ -537,6 +566,7 @@ void CCellSignalStrengthInfo::DoCancel()
 
 int CCellSignalStrengthInfo::cellNetworkSignalStrength() const
 {
+    checkandStartInit();
     //Workaround solution based on the number of signal bars (max. 7)
     return int((TReal(m_signalBar) * 100.0 + 0.5) / 7.0);
 }
