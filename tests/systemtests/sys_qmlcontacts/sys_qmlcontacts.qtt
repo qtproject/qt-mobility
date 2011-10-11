@@ -168,6 +168,7 @@ function checkContact(contact)
 testcase = {
 
     // prove that the test application starts before anything else is tested.
+    /* commit this function as it doesn't use at this moment.
     run_test_application: function()
     {
         // Test meta data
@@ -188,7 +189,7 @@ testcase = {
             prompt('Verify test application started and closed without issue');
         }
     },
-
+    */
 
     check_contact_list_data : {
         ContactSet : [ exampleContactSet() ]
