@@ -166,4 +166,58 @@ testcase = {
             | Close " + testBinary + " | Test application closed successfully |
         "));
     },
+
+    import_ical_data_format: function()
+    {
+        // Test meta data
+        testTitle = "Versitorganizer - Export ical";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify ical data can be imported";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Import and export organizer data* button | |
+            | Click *Create template* button and press *Import item* | Verify that the type, name, start time and end time in the screen right are the same as the ical data template |
+        "));
+    },
+
+    import_vcal_data_format: function()
+    {
+        // Test meta data
+        testTitle = "Versitorganizer - Export ical";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify vcal data can be imported";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Import and export organizer data* button | |
+            | Click *Create template* button | |
+            | Modify the calendar data as vcal format | |
+            | Press *Import item* | Verify that the type, name, start time and end time in the screen right are the same as the vcal data |
+        "));
+    },
 }
