@@ -54,7 +54,7 @@
 //
 
 #include <QObject>
-#include <QtNetwork/QNetworkSession>
+#include <QtNetwork/qnetworksession.h>
 
 QT_BEGIN_NAMESPACE
 //this class exists only to workaround moc issues with namespaces
