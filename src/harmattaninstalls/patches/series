@@ -9,3 +9,4 @@
 0009-connectivity-tests-add-subdirs.patch
 0010-rules-makeshlibs-v.patch
 0011-platformconfig-geoclue-gypsy.patch
+0012-Fixes-QTMOBILITY-1749-adding-ContactAddress-FieldExt.patch
