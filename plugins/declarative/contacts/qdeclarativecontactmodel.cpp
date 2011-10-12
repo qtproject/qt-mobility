@@ -557,17 +557,19 @@ void QDeclarativeContactModel::requestUpdated()
     if (req && req->isFinished()) {
         QList<QContact> contacts = req->contacts();
         if (d->m_contacts.isEmpty()) {
-            QList<QDeclarativeContact*> dcs;
-            foreach (QContact c, contacts) {
-                QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
-                dcs.append(dc);
-                d->m_contactMap.insert(c.localId(), dc);
-            }
-
             reset();
-            beginInsertRows(QModelIndex(), 0, req->contacts().count());
-            d->m_contacts = dcs;
-            endInsertRows();
+            if (contacts.count()) {
+                QList<QDeclarativeContact*> dcs;
+                foreach (QContact c, contacts) {
+                    QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
+                    dcs.append(dc);
+                    d->m_contactMap.insert(c.localId(), dc);
+                }
+
+                beginInsertRows(QModelIndex(), 0, req->contacts().count() - 1);
+                d->m_contacts = dcs;
+                endInsertRows();
+            }
         } else {
             //Partial updating, insert the fetched contacts into the the exist contact list.
             QList<QDeclarativeContact*> dcs;
