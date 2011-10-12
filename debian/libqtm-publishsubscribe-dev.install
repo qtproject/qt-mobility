@@ -1,0 +1,10 @@
+usr/bin/qcrmlgen
+usr/bin/vsexplorer
+usr/include/qt4/QtPublishSubscribe/QValueSpace
+usr/include/qt4/QtPublishSubscribe/QValueSpacePublisher
+usr/include/qt4/QtPublishSubscribe/QValueSpaceSubscriber
+usr/include/qt4/QtPublishSubscribe/qvaluespace.h
+usr/include/qt4/QtPublishSubscribe/qvaluespacepublisher.h
+usr/include/qt4/QtPublishSubscribe/qvaluespacesubscriber.h
+usr/lib/libQtPublishSubscribe.so
+usr/lib/pkgconfig/QtPublishSubscribe.pc

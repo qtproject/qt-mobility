@@ -1,0 +1,11 @@
+<aegis>
+    <request>
+        <credential name="mce::TKLockControl" />
+        <for path="/usr/tests/qtm/tst_qsystemscreensaver" />
+        <for path="/usr/tests/qtm/tst_qdeclarativescreensaver" />
+    </request>
+    <request>
+        <credential name="mce::DeviceModeControl" />
+        <for path="/usr/tests/qtm/tst_qsystemnetworkinfo" />
+    </request>
+</aegis>

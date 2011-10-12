@@ -1,0 +1,5 @@
+usr/tests/qtm/tst_qmessagestorekeys
+usr/tests/qtm/tst_qmessage
+usr/tests/qtm/tst_qmessagestore
+usr/tests/qtm/tst_qmessageservice
+usr/share/libqtm-messaging-tests/tests.xml
