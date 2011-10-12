@@ -24,5 +24,4 @@ udev_enabled = yes
 iphb_enabled = yes
 nfc_enabled = no
 sensord_enabled = yes
-geoclue-master_enabled = no
-gypsy_enabled = no
+

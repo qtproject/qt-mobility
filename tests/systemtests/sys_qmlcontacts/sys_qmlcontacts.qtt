@@ -174,7 +174,7 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify test application can run without any error";
+        testGoal = "Verify test application run without any error";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
@@ -201,8 +201,8 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify contact list can be checked";
-        testPreconditions = "None";
+        testGoal = "Verify that overview of contact names is correct";
+        testPreconditions = "There are some contact examples";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
 
@@ -212,6 +212,7 @@ testcase = {
             // note the contact list should be the focus widget
             select(contactSet[index].firstName);
         }
+        prompt("Verify that overview of contact names is correct");
     },
 
 
@@ -226,7 +227,7 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify contact can be export";
+        testGoal = "Verify that when selecting a contact its summary is shown";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
@@ -252,7 +253,7 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify all contact detail can be shown";
+        testGoal = "Verify that the details page for contacts can be seen";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";
@@ -278,7 +279,7 @@ testcase = {
         testTitle = "Contacts - Run test application";
         testBinary = "Qmlcontact";
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
-        testGoal = "Verify contact details can be checked";
+        testGoal = "Verify that each contact has the details expec";
         testPreconditions = "None";
         testGroups = "BAT_MOBILITY";
         testRequirements = "";

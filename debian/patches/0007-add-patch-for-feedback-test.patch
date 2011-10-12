@@ -1,3 +1,9 @@
+From 83bacc54813e7004553c6caf0611bc1607fe3cf8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Holger=20Schr=C3=B6der?= <holger.schroeder.ext@basyskom.de>
+Date: Thu, 6 Oct 2011 13:52:09 +0200
+Subject: [PATCH 7/8] add patch for feedback test
+
+---
 diff --git a/plugins/feedback/meegotouch/qfeedback.cpp b/plugins/feedback/meegotouch/qfeedback.cpp
 index 1b00984..b624b27 100644
 --- a/plugins/feedback/meegotouch/qfeedback.cpp
@@ -58,3 +64,6 @@ index 2a531bf..ed1bedd 100644
  };
  
  QT_END_HEADER
+-- 
+1.7.4.1
+
