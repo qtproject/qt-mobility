@@ -229,7 +229,11 @@ void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
                                        QWidget * /*widget*/)
 {
     if (mapData_) {
+        painter->save();
+        painter->setViewport(pos().x(), pos().y(), size().width(), size().height());
+        painter->setWindow(pos().x(), pos().y(), size().width(), size().height());
         mapData_->paint(painter, option);
+        painter->restore();
     }
 }
 
