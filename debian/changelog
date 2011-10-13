@@ -5,10 +5,10 @@ qt-mobility (1.2.1+201) unstable; urgency=low
   * Added patch to fix QTMOBILITY-1749
     adding ContactAddress::FieldExtendedAddress and
     vcard parsing for it
-  * Fixed NB#275161 - Supporting extended address vcard
-    field. Add QContactAddress::FieldExtendedAddress
+  * Fixes: NB#275161
+    Supporting extended address vcard field. Add QContactAddress::FieldExtendedAddress
 
- -- Holger Schröder <holger.schroeder.ext@basyskom.de>  Wed, 12 Oct 2011 18:43:48 +0200
+ -- Holger Schröder <holger.schroeder.ext@basyskom.de>  Thu, 13 Oct 2011 09:43:48 +0200
 
 qt-mobility (1.2.1+200) unstable; urgency=low
 
