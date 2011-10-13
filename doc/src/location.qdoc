@@ -633,6 +633,13 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \o places.token
     \o Client token for the service used for authentication by search manager.
+\row
+    \o logo.position
+    \o Optional parameter for changing logo position. Valid values are:
+    top.left or left.top
+    top.right or right.top
+    bottom.left or left.bottom
+    bottom.right or right.bottom
 \endtable
 
 \section2 Implementing plugins
