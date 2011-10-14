@@ -207,7 +207,7 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
 void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *)
 {
     QColor fontColor(Qt::white);
-    if (mapType() == QGraphicsGeoMap::StreetMap)
+    if (mapType() == QGraphicsGeoMap::StreetMap || mapType() == QGraphicsGeoMap::NoMap)
     {
        fontColor = Qt::black;
        fontColor.setAlphaF(0.5);
@@ -221,7 +221,7 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
     painter->setFont(font);
     painter->setPen(fontColor);
 
-    QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
+    QRect viewport = painter->viewport();
     const int offset = 5;
     viewport.adjust(offset, offset, -offset, -offset);
 
