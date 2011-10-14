@@ -261,28 +261,7 @@ void tst_QVersitContactImporter::testAddress()
     QContact contact = mImporter->contacts().first();
     QContactAddress address = contact.detail<QContactAddress>();
     QCOMPARE(address.postOfficeBox(),QString());
-    QCOMPARE(address.extendedAddress(),QString());
     QCOMPARE(address.street(),QString());
-    QCOMPARE(address.locality(),QString());
-    QCOMPARE(address.region(),QString());
-    QCOMPARE(address.postcode(),QString());
-    QCOMPARE(address.country(),QString());
-
-    // Address with some of the fields present and some of those empty
-    property.setValue(QStringList()
-                      << QLatin1String("")
-                      << QLatin1String("E")
-                      << QLatin1String("My Street")
-                      << QLatin1String("")
-                      );
-    property.setValueType(QVersitProperty::CompoundType);
-    document = createDocumentWithProperty(property);
-    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
-    contact = mImporter->contacts().first();
-    address = contact.detail<QContactAddress>();
-    QCOMPARE(address.postOfficeBox(),QString());
-    QCOMPARE(address.extendedAddress(),QLatin1String("E"));
-    QCOMPARE(address.street(),QLatin1String("My Street"));
     QCOMPARE(address.locality(),QString());
     QCOMPARE(address.region(),QString());
     QCOMPARE(address.postcode(),QString());
@@ -304,7 +283,6 @@ void tst_QVersitContactImporter::testAddress()
     contact = mImporter->contacts().first();
     address = contact.detail<QContactAddress>();
     QCOMPARE(address.postOfficeBox(),QLatin1String("PO Box"));
-    QCOMPARE(address.extendedAddress(),QLatin1String("E"));
     QCOMPARE(address.street(),QLatin1String("My Street"));
     QCOMPARE(address.locality(),QLatin1String("My Town"));
     QCOMPARE(address.region(),QLatin1String("My State"));

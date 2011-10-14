@@ -64,7 +64,6 @@ public:
     static const QLatin1Constant FieldCountry;
     static const QLatin1Constant FieldSubTypes;
     static const QLatin1Constant FieldPostOfficeBox;
-    static const QLatin1Constant FieldExtendedAddress;
     static const QLatin1Constant SubTypeParcel;
     static const QLatin1Constant SubTypePostal;
     static const QLatin1Constant SubTypeDomestic;
@@ -78,7 +77,6 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldCountry, "Country");
     Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
     Q_DECLARE_LATIN1_CONSTANT(FieldPostOfficeBox, "PostOfficeBox");
-    Q_DECLARE_LATIN1_CONSTANT(FieldExtendedAddress, "ExtendedAddress");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeParcel, "Parcel");
     Q_DECLARE_LATIN1_CONSTANT(SubTypePostal, "Postal");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeDomestic, "Domestic");
@@ -97,8 +95,6 @@ public:
     QString country() const {return value(FieldCountry);}
     void setPostOfficeBox(const QString& postOfficeBox) {setValue(FieldPostOfficeBox, postOfficeBox);}
     QString postOfficeBox() const {return value(FieldPostOfficeBox);}
-    void setExtendedAddress(const QString& extendedAddress) {setValue(FieldExtendedAddress, extendedAddress);}
-    QString extendedAddress() const {return value(FieldExtendedAddress);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}

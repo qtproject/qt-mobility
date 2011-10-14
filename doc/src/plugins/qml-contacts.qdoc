@@ -144,7 +144,6 @@
             address.country:"My Country"
             address.subTypes:[Address.Postal, Address.Domestic]
             address.postOfficeBox:"1111"
-            address.extendedAddress:"Suite 2"
 
             Nickname {
                 nickname:"John"

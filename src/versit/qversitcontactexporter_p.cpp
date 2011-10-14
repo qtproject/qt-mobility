@@ -345,7 +345,7 @@ void QVersitContactExporterPrivate::encodeAddress(
     encodeParameters(property, address.contexts(), address.subTypes());
     property.setValue(QStringList()
                       << address.postOfficeBox()
-                      << address.extendedAddress()
+                      << QString() // Leave out the extended address field
                       << address.street()
                       << address.locality()
                       << address.region()
@@ -356,7 +356,6 @@ void QVersitContactExporterPrivate::encodeAddress(
     *processedFields << QContactAddress::FieldContext
                       << QContactAddress::FieldSubTypes
                       << QContactAddress::FieldPostOfficeBox
-                      << QContactAddress::FieldExtendedAddress
                       << QContactAddress::FieldStreet
                       << QContactAddress::FieldLocality
                       << QContactAddress::FieldRegion

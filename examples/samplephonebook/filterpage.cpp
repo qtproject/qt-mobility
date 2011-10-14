@@ -178,7 +178,6 @@ void FilterPage::filterClicked()
         addressFields << QContactAddress::FieldPostOfficeBox;
         addressFields << QContactAddress::FieldRegion;
         addressFields << QContactAddress::FieldStreet;
-        addressFields << QContactAddress::FieldExtendedAddress;
         foreach (const QString& fieldName, addressFields) {
             QContactDetailFilter subFilter;
             subFilter.setDetailDefinitionName(QContactAddress::DefinitionName, fieldName);

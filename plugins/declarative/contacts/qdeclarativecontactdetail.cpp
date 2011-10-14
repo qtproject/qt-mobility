@@ -474,14 +474,6 @@ QString QDeclarativeContactDetail::fieldName(ContactDetailType detailType, int f
   This element is part of the \bold{QtMobility.contacts 1.1} module.
   */
 
-/*!
-  \qmlproperty string Address::extendedAddress
-
-  This property holds the extended address - a note or any data that is not needed for letters to arrive.
-
-  This element is part of the \bold{QtMobility.contacts 1.2} module.
-  */
-
 /* ==================== QDeclarativeContactAnniversary ======================= */
 
 /*!

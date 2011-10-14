@@ -127,9 +127,6 @@ void tst_QContactDetails::address()
     QCOMPARE(a1.street(), QString("1234"));
     a1.setPostOfficeBox("PO Box 5678");
     QCOMPARE(a1.postOfficeBox(), QString("PO Box 5678"));
-    a1.setExtendedAddress("Suite 11");
-    QCOMPARE(a1.extendedAddress(), QString("Suite 11"));
-
 
 
     // Sub types

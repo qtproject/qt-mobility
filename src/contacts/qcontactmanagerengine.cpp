@@ -1174,7 +1174,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactAddress::FieldPostOfficeBox, f);
-    fields.insert(QContactAddress::FieldExtendedAddress, f);
     fields.insert(QContactAddress::FieldStreet, f);
     fields.insert(QContactAddress::FieldLocality, f);
     fields.insert(QContactAddress::FieldRegion, f);
