@@ -190,7 +190,7 @@ void TodoEditPage::todoChanged(QOrganizerManager *manager, const QOrganizerTodo 
         QVariantMap metadata = firstCollection.metaData();
         QList<QString> metaDataKeys = metadata.keys();
         foreach(QString key, metaDataKeys) {
-            if (key.indexOf("name", 0, Qt::CaseInsensitive) != -1) {
+            if (key.compare("name", Qt::CaseInsensitive) == 0) {
                 calendarNameMetadataKey = key;
                 break;
             }
