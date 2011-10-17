@@ -529,6 +529,8 @@ bool S60VideoPlayerSession::isAudioAvailable()
 void S60VideoPlayerSession::doPlay()
 {
     m_player->Play();
+    if (m_videoOutputDisplay)
+        m_videoOutputDisplay->setHasContent(true);
 }
 
 /*!
@@ -890,8 +892,6 @@ void S60VideoPlayerSession::MvloLoadingComplete()
     TRACE("S60VideoPlayerSession::MvloLoadingComplete" << qtThisPtr());
 
     buffered();
-    if (m_videoOutputDisplay)
-        m_videoOutputDisplay->setHasContent(true);
 }
 
 /*!
