@@ -939,6 +939,8 @@ bool MessageViewWidget::cancelRetrieve()
     m_service->cancel();
     m_state = LoadCanceled;
     updateState();
+
+    return true;
 }
 
 //! [cancel-retrieve]
