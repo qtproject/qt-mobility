@@ -101,10 +101,43 @@ The map data is composed of images collected by satellites during the daytime.
 
 \value SatelliteMapNight
 The map data is composed of images collected by satellites during the nighttime.
+For the online nokia plugin the SatelliteMapDay data is being used.
 
 \value TerrainMap
 The map data is a graphical representation of terrain features.  This may also
 include some of the information provided by QGraphicsGeoMap::StreetMap.
+
+\value HybridMap
+The map data is composed of images collected by satellites during the daytime,
+on top of which there is a graphical representation of streets superimposed.
+
+\value TransitMap
+The map data is a graphical representation of streets and building boundaries,
+on top of which there is a public transport scheme superimposed.
+
+\value GrayStreetMap
+The map data is a color-reduced version of the QGraphicsGeoMap::StreetMap map data.
+
+\value MobileStreetMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::StreetMap map data.
+
+\value MobileTerrainMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::TerrainMap map data.
+
+\value MobileHybridMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::HybridMap map data.
+
+\value MobileTransitMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::TransitMap map data.
+
+\value MobileGrayStreetMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::GrayStreetMap map data.
+
 */
 
 /*!
