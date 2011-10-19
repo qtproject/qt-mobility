@@ -1,0 +1,32 @@
+diff --git a/src/contacts/qcontactmanager.cpp b/src/contacts/qcontactmanager.cpp
+index d004efd..f7338d2 100644
+--- a/src/contacts/qcontactmanager.cpp
++++ b/src/contacts/qcontactmanager.cpp
+@@ -559,13 +559,12 @@ QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds
+   default-constructed id, or an id with the manager URI set to the URI of
+   this manager and a local id of zero.
+ 
+-  If the manager URI of the id of the \a contact is neither empty nor equal to the URI of
+-  this manager, or local id of the \a contact is non-zero but does not exist in the
+-  manager, the operation will fail and calling error() will return
+-  \c QContactManager::DoesNotExistError.
+-
+   Alternatively, the function will update the existing contact in the database if \a contact
+-  has a non-zero id and currently exists in the database.
++  has a manager URI set to the URI of this manager and a non-zero local id and currently
++  exists in the database.
++
++  If the id of \a contact does not match any of these two descriptions, the operation will
++  fail and calling error() will return \c QContactManager::DoesNotExistError.
+ 
+   If the \a contact contains one or more details whose definitions have
+   not yet been saved with the manager, the operation will fail and calling
+@@ -580,7 +579,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds
+   \c QContactManager::InvalidRelationshipError.
+ 
+   Returns false on failure, or true on
+-  success.  On successful save of a contact with an id of zero, its
++  success.  On successful save of a contact with a local id of zero, its
+   id will be set to a new, valid id with the manager URI set to the URI of
+   this manager, and the local id set to a new, valid local id.
+   The manager will automatically synthesize the display label of the contact when it is saved.

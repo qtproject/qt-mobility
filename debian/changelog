@@ -1,3 +1,18 @@
+qt-mobility (1.2.1+202) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixes: NB#280433
+    Clarify API dox for QContactManager::saveContact(..)
+  * Fixes: NB#263403
+    Display time-out from Settings are overwritten when youtube video is paused
+  * Fixes: NB#282736
+    QML Camera component segfaults if app is swiped to background when component is 
+    loading (actually already fixed by previous resync to qt mobility master)
+  * Fixes: NB#285892
+    Issue with Chinese map display (fixed by previous resync to qt mobility master)
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Wed, 19 Oct 2011 13:23:48 +0200
+
 qt-mobility (1.2.1+201) unstable; urgency=low
 
   * Bumped up the version

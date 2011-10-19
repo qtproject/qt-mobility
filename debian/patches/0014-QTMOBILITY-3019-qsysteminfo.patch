@@ -1,0 +1,23 @@
+commit 1e6f0534c1e4570e4aefa81667fcbc52790baa60
+Author: Matias Muhonen <ext-matias.muhonen@nokia.com>
+Date:   Mon Oct 10 12:03:42 2011 +0300
+
+    Fix MOBILITY-3019 (NB#263403)
+
+diff --git a/src/systeminfo/qsysteminfo_maemo.cpp b/src/systeminfo/qsysteminfo_maemo.cpp
+index b627adf..9095242 100644
+--- a/src/systeminfo/qsysteminfo_maemo.cpp
++++ b/src/systeminfo/qsysteminfo_maemo.cpp
+@@ -1907,6 +1907,11 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
+     } else {
+         if (ssTimer && ssTimer->isActive()) {
+             ssTimer->stop();
++#if !defined(QT_NO_DBUS)
++            if (mceConnectionInterface->isValid()) {
++                mceConnectionInterface->call("req_display_cancel_blanking_pause");
++            }
++#endif
+             isInhibited = false;
+         }
+     }
+
