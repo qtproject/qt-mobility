@@ -230,6 +230,20 @@ QTM_BEGIN_NAMESPACE
     }
     \endcode
 
+    The NFC auto-start handler on Meego 1.2 Harmattan requires that the applications .desktop file
+    has the same name as the application.  This may not be the case as the .desktop files created
+    by Qt Creator is named \i {%APPNAME%_harmattan.desktop} by default.  The application developer
+    should ensure that the \i {%APPNAME%.desktop} file is installed to the appropriate place.  A
+    .pro file snippet similar to the following may be used:
+
+    \code
+    contains(MEEGO_EDITION,harmattan) {
+        harmattandesktopfile.files = %APPNAME%.desktop
+        harmattandesktopfile.path = /usr/share/applications
+        INSTALLS += harmattandesktopfile
+    }
+    \endcode
+
     The NDEF message handler is registered with the following D-Bus command. Applications should
     ensure that the following command (or similar) is executed once at installation time. For
     example in the packages post-installation script.
