@@ -10,5 +10,3 @@
 0010-rules-makeshlibs-v.patch
 0011-platformconfig-geoclue-gypsy.patch
 0012-Fixes-QTMOBILITY-1749-adding-ContactAddress-FieldExt.patch
-0013-QTMOBILITY-1816-update-qcontactmanager-doc.patch
-0014-QTMOBILITY-3019-qsysteminfo.patch
