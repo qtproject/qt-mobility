@@ -1,6 +1,6 @@
 qt-mobility (1.2.1+203) unstable; urgency=low
 
-  * Bump up version and list 5 bugs already fixed by previous resync to qtm master:
+  * Bump up version and list 6 bugs already fixed by previous resync to qtm master:
   * Fixes: NB#269669
     Angry Birds does not recognize enabling of the NFC "on the fly"
   * Fixes: NB#254434
@@ -11,6 +11,8 @@ qt-mobility (1.2.1+203) unstable; urgency=low
     <coverity> defects from qt-mobility/1.2.1_195_0m6
   * Fixes: NB#282687
     QML ScreenSaver Element, setScreenSaverInhibited is actually setScreenSaverInhibit
+  * Fixes: NB#283209
+    Attachment ids are not returned always by QMessage::attachmentIds() method
 
  -- Stephan Binner <stephan.binner@basyskom.com>  Fri, 21 Oct 2011 09:50:48 +0200
 
