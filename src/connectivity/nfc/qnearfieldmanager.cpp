@@ -381,11 +381,16 @@ bool QNearFieldManager::isAvailable() const
 }
 
 /*!
-    Starts detecting targets of type \a targetTypes. Returns true if target detection is
-    successfully started; otherwise returns false.
-
-    Causes the targetDetected() signal to be emitted when a target with a type in \a targetTypes is
+    Starts detecting targets of type \a targetTypes. Returns \c true if target detection is
+    successfully started; otherwise returns \c false. The application can start to get 
+    notifications when the target detection is successfully started and NFC is switched on.
+    
+    The targetDetected() signal is emitted when a target with the type in \a targetTypes is
     within proximity. If \a targetTypes is empty targets of all types will be detected.
+    
+    \note In a MeeGo 1.2 Harmattan device the method returns \c true regardless of the device’s NFC state 
+    (on or off). In Symbian devices the method returns \c false if NFC is switched off; otherwise 
+    returns \c true.
 
     \sa stopTargetDetection()
 */
