@@ -1,3 +1,19 @@
+qt-mobility (1.2.1+203) unstable; urgency=low
+
+  * Bump up version and list 5 bugs already fixed by previous resync to qtm master:
+  * Fixes: NB#269669
+    Angry Birds does not recognize enabling of the NFC "on the fly"
+  * Fixes: NB#254434
+    tst_qcontactasync contactPartialSave crashes sometimes for tracker backend
+  * Fixes: NB#267249
+    inmodule tags missing from qt-mobility
+  * Fixes: NB#280265
+    <coverity> defects from qt-mobility/1.2.1_195_0m6
+  * Fixes: NB#282687
+    QML ScreenSaver Element, setScreenSaverInhibited is actually setScreenSaverInhibit
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Fri, 21 Oct 2011 09:50:48 +0200
+
 qt-mobility (1.2.1+202) unstable; urgency=low
 
   * Bumped up the version
