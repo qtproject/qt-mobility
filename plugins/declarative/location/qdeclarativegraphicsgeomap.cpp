@@ -229,7 +229,11 @@ void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
                                        QWidget * /*widget*/)
 {
     if (mapData_) {
+        painter->save();
+        painter->setViewport(pos().x(), pos().y(), size().width(), size().height());
+        painter->setWindow(pos().x(), pos().y(), size().width(), size().height());
         mapData_->paint(painter, option);
+        painter->restore();
     }
 }
 
@@ -512,6 +516,14 @@ void QDeclarativeGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
     \o Map.SatelliteMapDay
     \o Map.SatelliteMapNight
     \o Map.TerrainMap
+    \o Map.HybridMap
+    \o Map.TransitMap
+    \o Map.GrayStreetMap
+    \o Map.MobileStreetMap
+    \o Map.MobileTerrainMap
+    \o Map.MobileHybridMap
+    \o Map.MobileTransitMap
+    \o Map.MobileGrayStreetMap
     \endlist
 
     The default value is determined by the plugin.

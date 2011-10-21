@@ -79,7 +79,15 @@ public:
         StreetMap = QGraphicsGeoMap::StreetMap,
         SatelliteMapDay = QGraphicsGeoMap::SatelliteMapDay,
         SatelliteMapNight = QGraphicsGeoMap::SatelliteMapNight,
-        TerrainMap = QGraphicsGeoMap::TerrainMap
+        TerrainMap = QGraphicsGeoMap::TerrainMap,
+        HybridMap = QGraphicsGeoMap::HybridMap,
+        TransitMap = QGraphicsGeoMap::TransitMap,
+        GrayStreetMap = QGraphicsGeoMap::GrayStreetMap,
+        MobileStreetMap = QGraphicsGeoMap::MobileStreetMap,
+        MobileTerrainMap = QGraphicsGeoMap::MobileTerrainMap,
+        MobileHybridMap = QGraphicsGeoMap::MobileHybridMap,
+        MobileTransitMap = QGraphicsGeoMap::MobileTransitMap,
+        MobileGrayStreetMap = QGraphicsGeoMap::MobileGrayStreetMap
     };
 
     enum ConnectivityMode {

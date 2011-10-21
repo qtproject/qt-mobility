@@ -465,7 +465,8 @@ testcase = {
         select("Service Providers");
         select("nokia");
         select("Set Service Provider");
-
+        prompt("Verify selected service provider is indicated as current service provider");
+        /*
         prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
@@ -475,6 +476,7 @@ testcase = {
             | *Step* | *Verification* |
             | | Verify selected service provider is indicated as current service provider |
         "));
+        */
     },
 
     request_route_from_one_GPS_location_to_another_data: {
@@ -505,7 +507,8 @@ testcase = {
         enter(lat2);
         enter(long2);
         select("Ok");
-
+        prompt("Wait until the route is calculated (should be less than 10 seconds), verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'");
+        /*
         prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
@@ -515,7 +518,7 @@ testcase = {
             | *Step* | *Verification* |
             | Wait until the route is calculated (should be less than 10 seconds) | Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St' |
         "));
-
+        */
         select("routes/route");
         compare(getText("distance"), distance1);
         select("Request Route");
@@ -524,7 +527,8 @@ testcase = {
         enter(lat1);
         enter(long1);
         select("Ok");
-
+        prompt("Wait until the route is calculated (should be less than 10 seconds),verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st");
+        /*
         prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
@@ -534,7 +538,7 @@ testcase = {
             | *Step* | *Verification* |
             | Wait until the route is calculated (should be less than 10 seconds) | Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st |
         "));
-
+        */
         compare(getText("distance"), distance2);
     },
     

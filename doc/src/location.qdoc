@@ -486,7 +486,7 @@ is part of QtMobility.  See the section \l{The Nokia plugin} for more details.
 \endcode
 
 \bold {Important notice:} \i {The map data provided by the offline plug-in is
-place-shifted for the area of the Peopleâ€™s Republic of China. To provide
+place-shifted for the area of the People's Republic of China. To provide
 un-shifted maps of China in an application, the application developer must
 first obtain permission from Chinese officials. The Qt Mobility Location
 API cannot offer this on the API level.}
@@ -570,7 +570,7 @@ Note that accepting the terms and conditions only applies those terms and condit
 
 On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services. 
 
-The routing feature of the Nokia plugin is not available for the People’s Republic of China.
+The routing feature of the Nokia plugin is not available for the People's Republic of China.
 
 The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to 10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application on Symbian is 4 MB, it may be good idea to increase the application's heap size using EPOCHEAPSIZE.
 
@@ -591,6 +591,9 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \o mapping.token
     \o Client token for the service used for authentication by mapping manager.
+\row
+    \o mapping.app_id
+    \o Client application id for the serviced used for authentication by mapping manager. Can be obtained from \l {https://api.forum.nokia.com/ovi-api/ui/registration}{here}.
 \row
     \o mapping.cache.directory
     \o Map tile cache directory used as network disk cache.
@@ -621,6 +624,9 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \o routing.token
     \o Client token for the service used for authentication by routing manager.
+\row    
+    \o routing.app_id
+    \o Client application id for the serviced used for authentication by routing manager. Can be obtained from \l {https://api.forum.nokia.com/ovi-api/ui/registration}{here}.   
 \row
     \o places.proxy
     \o Proxy server URL used by search manager.
@@ -633,6 +639,16 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \o places.token
     \o Client token for the service used for authentication by search manager.
+\row    
+    \o places.app_id
+    \o Client application id for the serviced used for authentication by search manager. Can be obtained from \l {https://api.forum.nokia.com/ovi-api/ui/registration}{here}.   
+\row
+    \o logo.position
+    \o Optional parameter for changing logo position. Valid values are:
+    top.left or left.top
+    top.right or right.top
+    bottom.left or left.bottom
+    bottom.right or right.bottom
 \endtable
 
 \section2 Implementing plugins
