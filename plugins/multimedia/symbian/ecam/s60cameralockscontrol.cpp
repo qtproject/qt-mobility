@@ -46,6 +46,7 @@
 #include "s60cameraservice.h"
 #include "s60imagecapturesession.h"
 #include "s60camerafocuscontrol.h"
+#include "s60imagecapturesettings.h"
 
 S60CameraLocksControl::S60CameraLocksControl(QObject *parent) :
     QCameraLocksControl(parent)
@@ -58,7 +59,6 @@ S60CameraLocksControl::S60CameraLocksControl(S60CameraService *service,
     QCameraLocksControl(parent),
     m_session(0),
     m_service(0),
-    m_advancedSettings(0),
     m_focusControl(0),
     m_focusStatus(QCamera::Unlocked),
     m_exposureStatus(QCamera::Unlocked),
@@ -68,22 +68,12 @@ S60CameraLocksControl::S60CameraLocksControl(S60CameraService *service,
     m_service = service;
     m_focusControl = qobject_cast<S60CameraFocusControl *>(m_service->requestControl(QCameraFocusControl_iid));
 
-    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
-    m_advancedSettings = m_session->advancedSettings();
-
-    // Focus Lock Signal
-    //    * S60 3.2 and later (through Adv. Settings)
-    if (m_advancedSettings)
-        connect(m_advancedSettings, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
-            this, SLOT(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)));
-    //    * S60 3.1 (through ImageSession)
-    connect(m_session, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
+    connect(m_session->settings(), SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
         this, SLOT(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)));
 }
 
 S60CameraLocksControl::~S60CameraLocksControl()
 {
-    m_advancedSettings = 0;
 }
 
 QCamera::LockTypes S60CameraLocksControl::supportedLocks() const
@@ -92,14 +82,13 @@ QCamera::LockTypes S60CameraLocksControl::supportedLocks() const
 
 #ifdef S60_CAM_AUTOFOCUS_SUPPORT // S60 3.1
     if (m_session)
-        if (m_session->isFocusSupported())
+        if (m_session->settings()->isFocusSupported())
             supportedLocks |= QCamera::LockFocus;
 #else // S60 3.2 and later
-    if (m_advancedSettings) {
-        QCameraFocus::FocusModes supportedFocusModes = m_advancedSettings->supportedFocusModes();
-        if (supportedFocusModes & QCameraFocus::AutoFocus)
-            supportedLocks |= QCamera::LockFocus;
-    }
+    if (m_session->settings()->isFocusModeSupported(QCameraFocus::AutoFocus) ||
+        m_session->settings()->isFocusModeSupported(QCameraFocus::ContinuousFocus) ||
+        m_session->settings()->isFocusModeSupported(QCameraFocus::MacroFocus))
+        supportedLocks |= QCamera::LockFocus;
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 
     // Exposure/WhiteBalance Locking not implemented in Symbian
@@ -134,19 +123,6 @@ void S60CameraLocksControl::unlock(QCamera::LockTypes locks)
         cancelFocusing();
 }
 
-void S60CameraLocksControl::resetAdvancedSetting()
-{
-    m_advancedSettings = m_session->advancedSettings();
-
-    // Reconnect Lock Signals
-    if (m_advancedSettings) {
-        connect(m_advancedSettings, SIGNAL(exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
-            this, SLOT(exposureStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)));
-        connect(m_advancedSettings, SIGNAL(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)),
-            this, SLOT(focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason)));
-    }
-}
-
 void S60CameraLocksControl::focusStatusChanged(QCamera::LockStatus status,
                                                QCamera::LockChangeReason reason)
 {
@@ -161,26 +137,15 @@ void S60CameraLocksControl::startFocusing()
 #ifndef S60_CAM_AUTOFOCUS_SUPPORT // S60 3.2 or later
     // Focusing is triggered on Symbian by setting the FocusType corresponding
     // to the FocusMode set to FocusControl
-    if (m_focusControl) {
-        if (m_advancedSettings) {
-            m_advancedSettings->startFocusing();
-            m_focusStatus = QCamera::Searching;
-            emit lockStatusChanged(QCamera::LockFocus, QCamera::Searching, QCamera::UserRequest);
-        }
-        else
-            emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::LockFailed);
-    }
-    else
-        emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::LockFailed);
-
+    m_session->settings()->startFocusing();
 #else // S60 3.1
     if (m_focusControl && m_focusControl->focusMode() == QCameraFocus::AutoFocus) {
-        m_session->startFocus();
+        m_session->settings()->startFocus();
         m_focusStatus = QCamera::Searching;
         emit lockStatusChanged(QCamera::LockFocus, QCamera::Searching, QCamera::UserRequest);
-    }
-    else
+    } else {
         emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::LockFailed);
+    }
 #endif // S60_CAM_AUTOFOCUS_SUPPORT
 }
 
@@ -190,16 +155,9 @@ void S60CameraLocksControl::cancelFocusing()
         return;
 
 #ifndef S60_CAM_AUTOFOCUS_SUPPORT // S60 3.2 or later
-    if (m_advancedSettings) {
-        m_advancedSettings->cancelFocusing();
-        m_focusStatus = QCamera::Unlocked;
-        emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::UserRequest);
-    }
-    else
-        emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::LockFailed);
-
+    m_session->settings()->cancelFocusing();
 #else // S60 3.1
-    m_session->cancelFocus();
+    m_session->settings()->cancelFocus();
     m_focusStatus = QCamera::Unlocked;
     emit lockStatusChanged(QCamera::LockFocus, QCamera::Unlocked, QCamera::UserRequest);
 #endif // S60_CAM_AUTOFOCUS_SUPPORT

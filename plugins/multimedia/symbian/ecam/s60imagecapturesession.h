@@ -52,7 +52,6 @@
 #include <qcameraimagecapture.h>
 #include <qvideoframe.h>
 
-#include "s60cameraadvsettings.h"
 #include "s60cameraengine.h"
 #include "s60cameraengineobserver.h"
 #include "s60cameraconstants.h"
@@ -63,12 +62,14 @@ QT_USE_NAMESPACE
 using namespace S60CameraConstants;
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
+QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSettings)
 QT_FORWARD_DECLARE_CLASS(CImageDecoder)
 QT_FORWARD_DECLARE_CLASS(CImageEncoder)
 QT_FORWARD_DECLARE_CLASS(CFrameImageData)
 QT_FORWARD_DECLARE_CLASS(RFs)
 QT_FORWARD_DECLARE_CLASS(S60ImageCaptureSession)
 
+#ifndef ECAM_PREVIEW_API
 /*
  * This class implements asynchronous image decoding service for the
  * S60ImageCaptureSession.
@@ -116,6 +117,7 @@ private: // Data
     TFrameInfo              m_frameInfo;
 
 };
+#endif // ECAM_PREVIEW_API
 
 //=============================================================================
 
@@ -198,13 +200,8 @@ public: // Methods
     int currentImageId() const;
 
     bool isDeviceReady();
+    bool isImageCapturePrepared() const;
     void setCameraHandle(CCameraEngine* camerahandle);
-    void setCurrentDevice(TInt deviceindex);
-    void notifySettingsSet();
-
-    // Ecam Advanced Settings
-    S60CameraAdvSettings* advancedSettings();
-    void deleteAdvancedSettings();
 
     // Controls
     int prepareImageCapture();
@@ -213,67 +210,14 @@ public: // Methods
     void cancelCapture();
     void releaseImageBuffer();
 
-    // Capture Destination
-    void setCaptureDestination(const QCameraImageCapture::CaptureDestinations destination);
-
-    // Image Resolution
-    QSize imageResolution() const;
-    QList<QSize> supportedImageResolutionsForCodec(const QString &codecName);
-    void setImageResolution(const QSize &size);
-
-    // Image Codec
-    QStringList supportedImageCodecs();
-    QString imageCodec();
-    void setImageCodec(const QString &codecName);
-    QString imageCodecDescription(const QString &codecName);
-
-    // Image Quality
-    QtMultimediaKit::EncodingQuality imageQuality() const;
-    void setImageQuality(const QtMultimediaKit::EncodingQuality &quality);
-
-    // Image Format (Buffer Capture)
-    QList<QVideoFrame::PixelFormat> supportedBufferCaptureFormats() const;
-    void setBufferCaptureFormat(const QVideoFrame::PixelFormat format);
-
-    // S60 3.1 Focus Control (S60 3.2 and later via S60CameraAdvSettings class)
-    bool isFocusSupported() const;
-    void startFocus();
-    void cancelFocus();
-
-    // Zoom Control
-    qreal maximumZoom();
-    qreal minZoom();
-    qreal maxDigitalZoom();
-    void doSetZoomFactorL(qreal optical, qreal digital);
-    qreal opticalZoomFactor();
-    qreal digitalZoomFactor();
-
-    // Exposure Mode Control
-    QCameraExposure::ExposureMode exposureMode();
-    void setExposureMode(QCameraExposure::ExposureMode mode);
-    bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;
-
-    // Flash Mode Control
-    QCameraExposure::FlashModes flashMode();
-    void setFlashMode(QCameraExposure::FlashModes mode);
-    QCameraExposure::FlashModes supportedFlashModes();
-
-    // Contrast Control
-    int contrast() const;
-    void setContrast(int value);
-
-    // Brightness Control
-    int brightness() const;
-    void setBrightness(int value);
-
-    // White Balance Mode Control
-    QCameraImageProcessing::WhiteBalanceMode whiteBalanceMode();
-    void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode);
-    bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const;
+    // Settings class
+    S60ImageCaptureSettings *settings() const;
 
 public: // Image Decoding & Encoding Notifications
 
+#ifndef ECAM_PREVIEW_API
     void handleImageDecoded(int error);
+#endif // ECAM_PREVIEW_API
     void handleImageEncoded(int error);
 
 protected: // MCameraEngineObserver
@@ -292,20 +236,7 @@ protected: // MCameraPreviewObserver
 private: // Internal
 
     QCameraImageCapture::Error fromSymbianErrorToQtMultimediaError(int aError);
-
-    void initializeImageCaptureSettings();
     void resetSession(bool errorHandling = false);
-
-    CCamera::TFormat selectFormatForCodec(const QString &codec);
-    CCamera::TFormat defaultImageFormat();
-    bool queryCurrentCameraInfo();
-    QMap<QString, QString> codecDescriptionMap();
-    void updateImageCaptureFormats();
-
-    void doSetWhiteBalanceModeL(QCameraImageProcessing::WhiteBalanceMode mode);
-    void doSetFlashModeL(QCameraExposure::FlashModes mode);
-    void doSetExposureModeL(QCameraExposure::ExposureMode mode);
-    QList<QSize> sortResolutions(QList<QSize> resolutions);
 
     void saveImageL(TDesC8 *aData, TFileName &aPath);
     void processFileName(const QString &fileName);
@@ -318,10 +249,8 @@ private: // Internal
 signals: // Notifications
 
     void stateChanged(QCamera::State);
-    void advancedSettingChanged();
+    // This is used for updating the output aspect ratio
     void captureSizeChanged(const QSize&);
-    void destinationChanged(const QCameraImageCapture::CaptureDestinations);
-    void bufferCaptureFormatChanged(const QVideoFrame::PixelFormat);
 
     // Error signals
     void cameraError(int, const QString&);          // For QCamera::error
@@ -334,8 +263,6 @@ signals: // Notifications
     void imageAvailable(const int, const QVideoFrame&);
     void imageSaved(const int, const QString&);
 
-    void focusStatusChanged(QCamera::LockStatus, QCamera::LockChangeReason);
-
 private slots: // Internal Slots
 
     void cameraStatusChanged(QCamera::Status);
@@ -344,30 +271,20 @@ private slots: // Internal Slots
 private: // Data
 
     CCameraEngine           *m_cameraEngine;
-    S60CameraAdvSettings    *m_advancedSettings;
-    mutable TCameraInfo     *m_cameraInfo;
+    S60ImageCaptureSettings *m_imageSettings;
     CFbsBitmap              *m_previewBitmap;
     CActiveScheduler        *m_activeScheduler;
     RFs                     *m_fileSystemAccess;
+#ifndef ECAM_PREVIEW_API
     S60ImageCaptureDecoder  *m_imageDecoder;
+#endif // ECAM_PREVIEW_API
     S60ImageCaptureEncoder  *m_imageEncoder;
     mutable int             m_error; // Symbian ErrorCode
-    TInt                    m_activeDeviceIndex;
     bool                    m_cameraStarted;
     ImageCaptureState       m_icState;
-    QCameraImageCapture::CaptureDestinations m_captureDestination;
-    QStringList             m_supportedImageCodecs;
-    QList<QVideoFrame::PixelFormat> m_supportedBufferCaptureFormats;
-    QString                 m_currentCodec;
-    CCamera::TFormat        m_currentFormat;
-    QSize                   m_captureSize;
-    int                     m_symbianImageQuality;
-    QVideoFrame::PixelFormat  m_bufferCaptureFormat;
-    bool                    m_captureSettingsSet;
     QString                 m_stillCaptureFileName;
     QString                 m_requestedStillCaptureFileName;
     mutable int             m_currentImageId;
-    QList<uint>             m_formats;
     // This indicates that image capture should be triggered right after
     // camera and image setting initialization has completed
     bool                    m_captureWhenReady;

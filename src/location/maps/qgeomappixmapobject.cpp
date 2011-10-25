@@ -100,7 +100,7 @@ QGeoMapObject::Type QGeoMapPixmapObject::type() const
 
 /*!
     \property QGeoMapPixmapObject::coordinate
-    \brief This property holds the coordinate that specifies where the pixmap
+    \brief the coordinate that specifies where the pixmap
     will be drawn by this pixmap object.
 
     The default value of this property is an invalid coordinate. While the
@@ -122,7 +122,7 @@ void QGeoMapPixmapObject::setCoordinate(const QGeoCoordinate &coordinate)
 
 /*!
     \property QGeoMapPixmapObject::pixmap
-    \brief This property holds the pixmap that will be drawn by this pixmap
+    \brief the pixmap that will be drawn by this pixmap
     object.
 
     The default value of this property is a null pixmap. While the value of
@@ -154,7 +154,7 @@ void QGeoMapPixmapObject::setPixmap(const QPixmap &pixmap)
 
 /*!
     \property QGeoMapPixmapObject::offset
-    \brief This property holds the offset in pixels at which the pixmap will be
+    \brief the offset in pixels at which the pixmap will be
     drawn by this pixmap object.
 
     The default value of this property is QPoint(0, 0). If this value is not

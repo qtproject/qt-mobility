@@ -80,7 +80,15 @@ public:
         StreetMap,
         SatelliteMapDay,
         SatelliteMapNight,
-        TerrainMap
+        TerrainMap,
+        HybridMap,
+        TransitMap,
+        GrayStreetMap,
+        MobileStreetMap,
+        MobileTerrainMap,
+        MobileHybridMap,
+        MobileTransitMap,
+        MobileGrayStreetMap
     };
 
     enum ConnectivityMode {

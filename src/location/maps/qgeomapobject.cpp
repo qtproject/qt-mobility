@@ -178,7 +178,7 @@ QGeoMapObject::Type QGeoMapObject::type() const
 
 /*!
     \property QGeoMapObject::zValue
-    \brief This property holds the z-value of the map object.
+    \brief the z-value of the map object.
 
     The z-value determines the order in which the objects are drawn on the
     screen.  Objects with the same value will be drawn in the order that
@@ -202,7 +202,7 @@ int QGeoMapObject::zValue() const
 
 /*!
     \property QGeoMapObject::visible
-    \brief This property holds whether the map object is visible.
+    \brief whether the map object is visible.
     \since 1.1
 */
 void QGeoMapObject::setVisible(bool visible)
@@ -220,7 +220,7 @@ bool QGeoMapObject::isVisible() const
 
 /*!
     \property QGeoMapObject::selected
-    \brief This property holds whether the map object is selected.
+    \brief whether the map object is selected.
     \since 1.1
 */
 void QGeoMapObject::setSelected(bool selected)
@@ -381,7 +381,7 @@ QGeoMapObjectInfo *QGeoMapObject::info() const
 
 /*!
     \property QGeoMapObject::transformType
-    \brief This property holds the transformation type used to draw the object.
+    \brief the transformation type used to draw the object.
 
     \since 1.2
 
@@ -408,7 +408,7 @@ void QGeoMapObject::setTransformType(const TransformType &type)
 
 /*!
     \property QGeoMapObject::origin
-    \brief This property holds the origin of the object's coordinate system.
+    \brief the origin of the object's coordinate system.
 
     \since 1.2
 
@@ -436,7 +436,7 @@ void QGeoMapObject::setOrigin(const QGeoCoordinate &origin)
 
 /*!
     \property QGeoMapObject::units
-    \brief This property holds the units of measurement for the object.
+    \brief the units of measurement for the object.
 
     \since 1.2
 

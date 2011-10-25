@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QNETWORKSESSIONADAPTOR_P_H_
+#define QNETWORKSESSIONADAPTOR_P_H_
 
-#ifndef QNETWORKCONFIGURATIONPRIVATE_H
-#define QNETWORKCONFIGURATIONPRIVATE_H
 
 //
 //  W A R N I N G
@@ -53,58 +53,20 @@
 // We mean it.
 //
 
-#include "qnetworkconfiguration.h"
-#include <QtCore/qshareddata.h>
-#include <QNetworkInterface>
+#include <QObject>
+#include <QtNetwork/qnetworksession.h>
 
-QTM_BEGIN_NAMESPACE
-
-class QNetworkConfigurationPrivate : public QSharedData
+QT_BEGIN_NAMESPACE
+//this class exists only to workaround moc issues with namespaces
+class QNetworkSessionAdaptor : public QObject
 {
-public:
-    QNetworkConfigurationPrivate ()
-        : isValid(false), type(QNetworkConfiguration::Invalid), 
-          roamingSupported(false), purpose(QNetworkConfiguration::UnknownPurpose)
-    {
-#ifdef BEARER_ENGINE
-        internet = false;
-#endif
-    }
-
-    ~QNetworkConfigurationPrivate()
-    {
-        //release pointers to member configurations
-        serviceNetworkMembers.clear(); 
-    }
-
-    QString name;
-    QString bearer;
-    inline QString bearerName() const
-    {
-        return bearer;
-    }
-
-    bool isValid;
-    QString id;
-    QNetworkConfiguration::StateFlags state;
-    QNetworkConfiguration::Type type;
-    bool roamingSupported;
-    QNetworkConfiguration::Purpose purpose;
-
-#ifdef BEARER_ENGINE
-    bool internet;
-#endif
-
-    QList<QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > serviceNetworkMembers;
-    QNetworkInterface serviceInterface;
-
-private:
-
-    // disallow detaching
-    QNetworkConfigurationPrivate &operator=(const QNetworkConfigurationPrivate &other);
-    QNetworkConfigurationPrivate(const QNetworkConfigurationPrivate &other);
+    Q_OBJECT
+protected Q_SLOTS:
+    virtual void _q_stateChanged(QNetworkSession::State) = 0;
+    virtual void _q_error(QNetworkSession::SessionError) = 0;
+    virtual void _q_preferredConfigurationChanged(const QNetworkConfiguration& config, bool isSeamless) = 0;
 };
+QT_END_NAMESPACE
 
-QTM_END_NAMESPACE
 
-#endif //QNETWORKCONFIGURATIONPRIVATE_H
+#endif /* QNETWORKSESSIONADAPTOR_P_H_ */

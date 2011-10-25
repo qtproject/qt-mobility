@@ -46,6 +46,8 @@
 #include <qcameraimagecapture.h>
 #include <qvideoframe.h>
 #include <qcamerafocus.h>
+#include <qcameraexposure.h>
+#include <qcameraimageprocessing.h>
 
 namespace S60CameraConstants
 {
@@ -61,6 +63,11 @@ const qreal KDefaultOpticalZoom                 = 1.0;
 const qreal KDefaultDigitalZoom                 = 1.0;
 const int KSmoothZoomStep                       = 1;
 const QCameraFocus::FocusMode KDefaultFocusMode = QCameraFocus::AutoFocus;
+const QCameraExposure::FlashMode KDefaultFlashMode = QCameraExposure::FlashOff;
+const QCameraExposure::ExposureMode KDefaultExposureMode = QCameraExposure::ExposureAuto;
+const QCameraImageProcessing::WhiteBalanceMode KDefaultWhiteBalanceMode = QCameraImageProcessing::WhiteBalanceAuto;
+const int KDefaultProcessingParameter           = 0;
+const int KDefaultExposureParameter             = 0;
 
 const QSize KDefaultViewfinderSize              = QSize(320,240);
 const TSize KDefaultSizePreview_Normal          = TSize(640,480);

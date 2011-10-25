@@ -49,19 +49,22 @@ testcase = {
         // Test meta data
         testTitle = "Location - Current Position";
         testBinary = "weatherinfo_with_location";
+        testSource = "$MOBILITYDIR/demos/weatherinfo";
         testGoal = "Verify that current position is detected and displayed.";
         testPreconditions = "Note that GPS connection is required for this test case";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-          *Goal:* " + testGoal + "<br>
-          *Pre-Requisites:* " + testPreconditions + "<br>
-          *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-          | *Step* | *Verification* |
-          | Launch " + testBinary + " | Verify that weather information for your local area is displayed |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify that weather information for your local area is displayed |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-65
@@ -70,20 +73,23 @@ testcase = {
         // Test meta data
         testTitle = "Location - Location Updates";
         testBinary = "lightmaps_with_location (sources are in demos/lightmaps)";
+        testSource = "$MOBILITYDIR/demos/lightmaps";
         testGoal = "Verify that location data is received and map is updated and centered after changing location.";
         testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally. Verify that map is displayed and centered with the current position. |
-        | Move to a different location | Verify that map is updated and centered with new location |"
-       ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally. Verify that map is displayed and centered with the current position. |
+            | Move to a different location | Verify that map is updated and centered with new location |
+        "));
     },
 
     // \groups BAT,1.2,QTMOBILITY-873
@@ -92,22 +98,24 @@ testcase = {
         // Test meta data
         testTitle = "Location - Position Detection via Custom Plugin";
         testBinary = "testQtLocation"; // this is part of BlueWeel project, sources are in git@scm.dev.nokia.troll.no:qtmobility/qtmobility-tests.git
+        testSource = "$MOBILITYDIR/tests/applications/location/testqtlocation";
         testGoal = "Verify that positions can be detected using third party plugins";
         testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = "QTMOBILITY-873: Allow 3rd party position sources";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select the Custom Service | Verify that no 'Unable to register location service' and 'Not valid interface.' messages appear |
-        | Press the Update Map button | Verify that map was loaded and correct current position is displayed |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select the Custom Service | Verify that no 'Unable to register location service' and 'Not valid interface.' messages appear |
+            | Press the Update Map button | Verify that map was loaded and correct current position is displayed |
+         "));
     },
 
     // \groups BAT,1.2,QTMOBILITY-658
@@ -116,38 +124,40 @@ testcase = {
         // Test meta data
         testTitle = "Location - Shift To Given Offset";
         testBinary = "testQtLocation";
+        testSource = "$MOBILITYDIR/tests/applications/location/testqtlocation";
         testGoal = "Verify that coordinates can be calculated as an offset to another position.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = "QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate";
 
         // Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select the MapNavigation | |
-         | Fill in '0' in to Start Latitude field | |
-         | Fill in '100' in to Start Longitude field | |
-    | Select Distance/Bearing from pre-defined dropdown list | |
-         | Fill '1000000, 90' in to the given field | |
-         | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
-         | Fill in '60' in to Start Latitude field | |
-         | Fill in '100' in to Start Longitude field | |
-    | Select Distance/Bearing from pre-defined dropdown list | |
-         | Fill '1000000, 180' in to the given field | |
-         | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
-         | Fill in '60' in to Start Latitude field | |
-         | Fill in '100' in to Start Longitude field | |
-    | Select Distance/Bearing from pre-defined dropdown list | |
-         | Fill '1000000, 20' in to the given field | |
-         | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select the MapNavigation | |
+            | Fill in '0' in to Start Latitude field | |
+            | Fill in '100' in to Start Longitude field | |
+            | Select Distance/Bearing from pre-defined dropdown list | |
+            | Fill '1000000, 90' in to the given field | |
+            | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
+            | Fill in '60' in to Start Latitude field | |
+            | Fill in '100' in to Start Longitude field | |
+            | Select Distance/Bearing from pre-defined dropdown list | |
+            | Fill '1000000, 180' in to the given field | |
+            | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
+            | Fill in '60' in to Start Latitude field | |
+            | Fill in '100' in to Start Longitude field | |
+            | Select Distance/Bearing from pre-defined dropdown list | |
+            | Fill '1000000, 20' in to the given field | |
+            | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |
+        "));
     },
 
     store_and_load_a_landmark_data: {
@@ -161,9 +171,11 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Store and Load Landmarks";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser";        
         testGoal = "Verify that a landmark can be created (and stored)";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         startApplication(testBinary);
@@ -188,9 +200,11 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Handling Invalid Landmark";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser";  
         testGoal = "Verify that invalid landmarks are detected and handled gracefully.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         startApplication(testTitle);
@@ -210,32 +224,35 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Search on Category";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser";  
         testGoal = "Verify that landmarks can be sorted and filtered.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Create Accomodation category | |
-        | Create Businesses category | |
-        | Run the landmarkbrowser application | |
-        | Create A1 landmark  in Accomodation category | |
-        | Create A2 landmark  in Accomodation category | |
-        | Create BB landmark in Businesses category | |
-        | Press the Set Filter button | |
-        | Select the Category checkbox | |
-        | Select Accomodation category | |
-        | Press Ok button | Verify that only A1 and A2 landmark is in the list and they are present in alphabetical order |
-        | Press the Set Filter button | |
-        | Select Education category | |
-        | Press Ok button | Verify that no landmarks are in the list |"
-       ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Create Accomodation category | |
+            | Create Businesses category | |
+            | Run the landmarkbrowser application | |
+            | Create A1 landmark  in Accomodation category | |
+            | Create A2 landmark  in Accomodation category | |
+            | Create BB landmark in Businesses category | |
+            | Press the Set Filter button | |
+            | Select the Category checkbox | |
+            | Select Accomodation category | |
+            | Press Ok button | Verify that only A1 and A2 landmark is in the list and they are present in alphabetical order |
+            | Press the Set Filter button | |
+            | Select Education category | |
+            | Press Ok button | Verify that no landmarks are in the list |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-66
@@ -244,35 +261,38 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Nearest Landmarks";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser";  
         testGoal = "Verify that landmarks can be displayed in sorted order with nearest first.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-          *Goal:* " + testGoal + "<br>
-          *Pre-Requisites:* " + testPreconditions + "<br>
-          *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-          | *Step* | *Verification* |
-          | Launch " + testBinary + " | App launches normally |
-          | Create landmark A(12;0) | |
-          | Create landmark B(10;0) | |
-          | Create landmark C(8;0) | |
-          | Create landmark D(8;0) | |
-          | Press Set Filter button | |
-          | Select Proximity checkbox | |
-          | Fill in 0 in to Lat field | |
-          | Fill in 0 in to Long field | |
-          | Fill in 10000000 in to Radius field| |
-          | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
-          | Press Set Filter button | |
-          | Change radius value to 1000000 | |
-          | Press Ok button | Verify that only C and D landmarks are in the list |
-          | Press Set Filter button | |
-          | Deselect Proximity checkbox | |
-          | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |"
-       ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Create landmark A(12;0) | |
+            | Create landmark B(10;0) | |
+            | Create landmark C(8;0) | |
+            | Create landmark D(8;0) | |
+            | Press Set Filter button | |
+            | Select Proximity checkbox | |
+            | Fill in 0 in to Lat field | |
+            | Fill in 0 in to Long field | |
+            | Fill in 10000000 in to Radius field| |
+            | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
+            | Press Set Filter button | |
+            | Change radius value to 1000000 | |
+            | Press Ok button | Verify that only C and D landmarks are in the list |
+            | Press Set Filter button | |
+            | Deselect Proximity checkbox | |
+            | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-66
@@ -281,30 +301,33 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Within Range of Position";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser"; 
         testGoal = "Verify that landmarks within range of a position can be shown";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Create landmark A(12;0) | |
-        | Create landmark B(10;0) | |
-        | Create landmark C(8;0) | |
-        | Create landmark D(8;0) | |
-        | Press Set Filter button | |
-        | Select Box checkbox | |
-        | Fill in 9 in to Top Left Lat field | |
-        | Fill in 0 in to Top Left Long field | |
-        | Fill in 0 i to Bottom Right Lat filed | |
-        | Fill in 1 in to Bottom Right Long field | |
-        | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |"
-       ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Create landmark A(12;0) | |
+            | Create landmark B(10;0) | |
+            | Create landmark C(8;0) | |
+            | Create landmark D(8;0) | |
+            | Press Set Filter button | |
+            | Select Box checkbox | |
+            | Fill in 9 in to Top Left Lat field | |
+            | Fill in 0 in to Top Left Long field | |
+            | Fill in 0 i to Bottom Right Lat filed | |
+            | Fill in 1 in to Bottom Right Long field | |
+            | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |
+        "));
     },
     
     // \groups BAT,1.1,MOBILITY-66
@@ -313,39 +336,42 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Edit and Delete Landmarks";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser"; 
         testGoal = "Verify that notifications can be send whenever landmarks are added, updated or deleted.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Press Add Landmark button | |
-         | Fill in AAA in to Name field | |
-         | Fill in 30 into Latitude field | |
-         | Fill in 30 into Longitude field | |
-         | Press Ok button | Verify that message 'Landmark(s) have been added' appears on the screen |
-         | Press Ok button | Verify that AAA landmark is in the landmarks list |
-         | Select AAA landmark | |
-         | Press Edit Landmark button | |
-         | Change Latitude value to 40 | |
-         | Change Longitude value to 40 | |
-         | Change Name value to BBB | |
-         | Press Ok button | Verify that message 'Landmark(s) have been edited' appears on the screen |
-         | Press Ok button | Verify that BBB landmark has new latitude and longitude |
-         | Select BBB landmark | |
-         | Press Delete Landmarks button | Verify that message 'Landmark(s) have been removed' appears on the screen |
-         | Press Ok button | Verify that only BBB landmark has been deleted |
-         | Create 2 new landmarks A1 and A2 | |
-         | Select both A1 and A2 landmarks |
-         | Press Delete Landmarks button | Verify that message 'Landmark(s) have been removed' appears on the screen |
-         | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Press Add Landmark button | |
+            | Fill in AAA in to Name field | |
+            | Fill in 30 into Latitude field | |
+            | Fill in 30 into Longitude field | |
+            | Press Ok button | Verify that message 'Landmark(s) have been added' appears on the screen |
+            | Press Ok button | Verify that AAA landmark is in the landmarks list |
+            | Select AAA landmark | |
+            | Press Edit Landmark button | |
+            | Change Latitude value to 40 | |
+            | Change Longitude value to 40 | |
+            | Change Name value to BBB | |
+            | Press Ok button | Verify that message 'Landmark(s) have been edited' appears on the screen |
+            | Press Ok button | Verify that BBB landmark has new latitude and longitude |
+            | Select BBB landmark | |
+            | Press Delete Landmarks button | Verify that message 'Landmark(s) have been removed' appears on the screen |
+            | Press Ok button | Verify that only BBB landmark has been deleted |
+            | Create 2 new landmarks A1 and A2 | |
+            | Select both A1 and A2 landmarks |
+            | Press Delete Landmarks button | Verify that message 'Landmark(s) have been removed' appears on the screen |
+            | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-66
@@ -354,22 +380,25 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Enumerate";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser"; 
         testGoal = "Verify that created categories can be showed in a list.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Category tab | |
-        | Create several categories | |
-        | Swith to the Landmark tab and back to the Category tab | Verify that the created categories are present in the list |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select Category tab | |
+            | Create several categories | |
+            | Swith to the Landmark tab and back to the Category tab | Verify that the created categories are present in the list |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-66
@@ -379,41 +408,44 @@ testcase = {
         // Test meta data
         testTitle = "Landmark - Add and Delete Categories ";
         testBinary = "landmarkbrowser";
+        testSource = "$MOBILITYDIR/examples/landmarkbrowser";
         testGoal = "Verify that the system sends notifications when categories are added or deleted.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Category tab | |
-        | Press Add Category button | |
-        | Fill in AAA in to Name field | |
-        | Press Ok button | Verify that message 'Category(ies) have been added' |
-        | Press Ok button | Verify that AAA is added in list of categories in alphabetical order |
-        | Press Add Category button | |
-        | Fill in AAA in to Name field | |
-        | Press Ok button | Verify that message 'Add Category Failed: category already Exists' appears on the screen |
-        | Press Ok button | |
-        | Press Add Category button | |
-        | Press Ok button | Verify that message 'Category name must not be empty' appears on the screen |
-        | Press Ok button | |
-        | Select AAA category | |
-        | Press Delete Categories button | Verify that message 'Categoty(ies) have been removed' appears on the screen |
-        | Press Ok button | Verify that list of categories does not contain AAA category only|
-        | Add A1 and A2 categories | |
-        | Select A1 and A2 categories | |
-        | Press Delete Categories button | Verify that message 'Categoty(ies) have been removed' appears on the screen |
-        | Press Ok button | Verify that list of categories does not contain A1 and A2 categories only |
-        | Select some of predefined categories | |
-        | Press Delete Category button | Verify tha message 'Cannot delete a global category' appears on the screen |
-        | Press Ok button | Verify that no categories have been deleted |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select Category tab | |
+            | Press Add Category button | |
+            | Fill in AAA in to Name field | |
+            | Press Ok button | Verify that message 'Category(ies) have been added' |
+            | Press Ok button | Verify that AAA is added in list of categories in alphabetical order |
+            | Press Add Category button | |
+            | Fill in AAA in to Name field | |
+            | Press Ok button | Verify that message 'Add Category Failed: category already Exists' appears on the screen |
+            | Press Ok button | |
+            | Press Add Category button | |
+            | Press Ok button | Verify that message 'Category name must not be empty' appears on the screen |
+            | Press Ok button | |
+            | Select AAA category | |
+            | Press Delete Categories button | Verify that message 'Categoty(ies) have been removed' appears on the screen |
+            | Press Ok button | Verify that list of categories does not contain AAA category only|
+            | Add A1 and A2 categories | |
+            | Select A1 and A2 categories | |
+            | Press Delete Categories button | Verify that message 'Categoty(ies) have been removed' appears on the screen |
+            | Press Ok button | Verify that list of categories does not contain A1 and A2 categories only |
+            | Select some of predefined categories | |
+            | Press Delete Category button | Verify tha message 'Cannot delete a global category' appears on the screen |
+            | Press Ok button | Verify that no categories have been deleted |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-538
@@ -422,23 +454,29 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Select Service Provider";
         testBinary = "geoservicedemo";
+        testSource = "$MOBILITYDIR/tests/manual/location-testing-tools/geoservicedemo";
         testGoal = "Verify that service provider can be selected";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         startApplication(testBinary);
         select("Service Providers");
         select("nokia");
         select("Set Service Provider");
-
+        prompt("Verify selected service provider is indicated as current service provider");
+        /*
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | | Verify selected service provider is indicated as current service provider |"));
+            | *Step* | *Verification* |
+            | | Verify selected service provider is indicated as current service provider |
+        "));
+        */
     },
 
     request_route_from_one_GPS_location_to_another_data: {
@@ -451,9 +489,11 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Route Calculation";
         testBinary = "geoservicedemo";
+        testSource = "$MOBILITYDIR/tests/manual/location-testing-tools/geoservicedemo";
         testGoal = "Verify that routes can be calculated from one GPS location to another.";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         startApplication(testBinary);
@@ -467,15 +507,18 @@ testcase = {
         enter(lat2);
         enter(long2);
         select("Ok");
-
+        prompt("Wait until the route is calculated (should be less than 10 seconds), verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'");
+        /*
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Wait until the route is calculated (should be less than 10 seconds) | Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'"));
-
+            | *Step* | *Verification* |
+            | Wait until the route is calculated (should be less than 10 seconds) | Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St' |
+        "));
+        */
         select("routes/route");
         compare(getText("distance"), distance1);
         select("Request Route");
@@ -484,15 +527,18 @@ testcase = {
         enter(lat1);
         enter(long1);
         select("Ok");
-
+        prompt("Wait until the route is calculated (should be less than 10 seconds),verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st");
+        /*
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Wait until the route is calculated (should be less than 10 seconds) | Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st"));
-
+            | *Step* | *Verification* |
+            | Wait until the route is calculated (should be less than 10 seconds) | Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st |
+        "));
+        */
         compare(getText("distance"), distance2);
     },
     
@@ -502,29 +548,31 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Geocoding";
         testBinary = "geoservicedemo"; // (sources are /tests/location-testing-tools/geoservicedemo)
+        testSource = "$MOBILITYDIR/tests/manual/location-testing-tools/geoservicedemo";
         testGoal = "Verify that geocoding searches are supported.";
         testPreconditions = "Note that testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select Search By Adress tab | |
-         | Select One-box Search checkbox | |
-         | Fill in 'Brandl st, Eight Mile Plains, Australia' in search field | |
-         | Select Geocoding search | |
-         | Press Ok button | |
-         | Wait until data is recieved | |
-         | Select places | Verify that count = 1 |
-         | Select place | Verify that latitude is -27.5798, longitude is 153.1 |
-         | Select address | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is Branl St, post code is 4113 |"
-        ));
-
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select Search By Adress tab | |
+            | Select One-box Search checkbox | |
+            | Fill in 'Brandl st, Eight Mile Plains, Australia' in search field | |
+            | Select Geocoding search | |
+            | Press Ok button | |
+            | Wait until data is recieved | |
+            | Select places | Verify that count = 1 |
+            | Select place | Verify that latitude is -27.5798, longitude is 153.1 |
+            | Select address | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is Branl St, post code is 4113 |
+        "));
     },
     
     // \groups BAT,1.1,MOBILITY-538
@@ -533,36 +581,54 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Reverse Geocoding";
         testBinary = "geoservicedemo";
+        testSource = "$MOBILITYDIR/tests/manual/location-testing-tools/geoservicedemo";
         testGoal = "Verify that a geocode can be calculated from a given position.";
         testPreconditions = "Note that testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select Reverse Geocoding tab | |
-         | Press Search By Coordinates button | |
-         | Fill in -27.5798 in Latitude field | |
-         | Fill in 153.1 in Longitude field | |
-         | Press Ok button | |
-         | Wait until data is recieved | |
-         | Select places/place/adress | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is 54 Brandl St, post code is 4113 |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select Reverse Geocoding tab | |
+            | Press Search By Coordinates button | |
+            | Fill in -27.5798 in Latitude field | |
+            | Fill in 153.1 in Longitude field | |
+            | Press Ok button | |
+            | Wait until data is recieved | |
+            | Select places/place/adress | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is 54 Brandl St, post code is 4113 |
+        "));
    },
 
     // \groups BAT,1.1,MOBILITY-538
     displaying_a_map: function()
     {
-        prompt(twiki('---+++ Different views are displayed
-    Note that  internet connection is required for this test case.
-    | *Step* | *Verification* |
-    | Run the mapsdemo application (sources are /examples/mapsdemo) | Map for current location is displayed on the screen |'
-        ));
+        // Test meta data
+        testTitle = "Maps and Navigation - Display a Map";
+        testBinary = "geoservicedemo";
+        testSource = "$MOBILITYDIR/tests/manual/location-testing-tools/geoservicedemo";
+        testGoal = "Verify that a map can be displayed";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+            
+            Note that  internet connection is required for this test case.
+            | *Step* | *Verification* |
+            | Run the mapsdemo application (sources are /examples/mapsdemo) | Map for current location is displayed on the screen |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-538
@@ -571,25 +637,28 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Map View Options";
         testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
+        testSource = "$MOBILITYDIR/tests/location-testing-tools/mapviewer";
         testGoal = "Verify that maps can be shown in street, satellite and terrain mode.";
-        testPreconditions = "1. internet connection is required for this test case.<br>1. Nokia map engine supports only Street, Satellite and Terrain map types";
-        testGroups = "BAT";
+        testPreconditions = "<br>1. internet connection is required for this test case.<br>2. Nokia map engine supports only Street, Satellite and Terrain map types";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally and map for current location is displayed on the screen |
-        | Press Option button | |
-        | Press Street button (if button is enabled) | Map is drawn in Street view |
-        | Press Option button | |
-        | Press Satellite button (if button is enabled) | Map is drawn in Satellite view |
-        | Press Option button | |
-        | Press Terrain button (if button is enabled) | Map is drawn in Satellite view |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally and map for current location is displayed on the screen |
+            | Press Option button | |
+            | Press Street button (if button is enabled) | Map is drawn in Street view |
+            | Press Option button | |
+            | Press Satellite button (if button is enabled) | Map is drawn in Satellite view |
+            | Press Option button | |
+            | Press Terrain button (if button is enabled) | Map is drawn in Satellite view |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-538
@@ -598,22 +667,25 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Zooming";
         testBinary = "mapsdemo"; // (sources are /tests/location-testing-tools/mapviewer)
+        testSource = "$MOBILITYDIR/examples/mapsdemo";
         testGoal = "Verify that maps can be zoomed in and out.";
         testPreconditions = "internet connection is required for this test case.";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-          *Goal:* " + testGoal + "<br>
-          *Pre-Requisites:* " + testPreconditions + "<br>
-          *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-          | *Step* | *Verification* |
-          | Launch " + testBinary + " | App launches normally |
-          | Run the mapsdemo application | Map is displayed on the screen |
-          | Press - button | Map is zoomed out correctly |
-          | Press + button | Map is zoomed in correctly |'
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Run the mapsdemo application | Map is displayed on the screen |
+            | Press - button | Map is zoomed out correctly |
+            | Press + button | Map is zoomed in correctly |
+        "));
     },
 
     // \groups BAT,1.1,MOBILITY-538
@@ -622,23 +694,26 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Coordinate Capturing";
         testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
+        testSource = "$MOBILITYDIR/tests/location-testing-tools/mapviewer";
         testGoal = "Verify that coordinates can be captured when selecting a location on the map.";
         testPreconditions = "internet connection is required for this test case.";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
-        | Navigate and/or zoom in the map to see Brisbane | |
-        | Right mouse click on the square which represents Brisbane | |
-        | Select Coordinates menu item | |
-        | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+            | Navigate and/or zoom in the map to see Brisbane | |
+            | Right mouse click on the square which represents Brisbane | |
+            | Select Coordinates menu item | |
+            | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |
+        "));
     },
 
     // \groups BAT,1.2,QTMOBILITY-757,QTMOBILITY-701
@@ -651,28 +726,30 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Pixmap Object Zooming";
         testBinary = "testQtLocation";
-        testGoal = "Verify that ";
+        testSource = "$MOBILITYDIR/tests/applications/location/testqtlocation";
+        testGoal = "Verify that pixmap object can be zoomed";
         testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = "QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs<br>
                             QTMOBILITY-701: Add a QGraphicsItem based map object.";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select the MapNavigation | |
-         | Go to Map tab | Verify that map is loaded for current position |
-         | Swith to MapObject mode | |
-         | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
-         | Switch to Pan/Zoom mode | |
-         | Increase zoom level | Verify that the blue square is not scaled |
-         | Decrease zoom level | Verify that the blue square is not scaled |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select the MapNavigation | |
+            | Go to Map tab | Verify that map is loaded for current position |
+            | Swith to MapObject mode | |
+            | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
+            | Switch to Pan/Zoom mode | |
+            | Increase zoom level | Verify that the blue square is not scaled |
+            | Decrease zoom level | Verify that the blue square is not scaled |
+        "));
     },
 
     request_landmarks_for_given_coordinate_with_reverse_geocoding: function()
@@ -680,19 +757,22 @@ testcase = {
         // Test meta data
         testTitle = "Maps and Navigation - Landmarks for Coordinate with Reverse Geocoding";
         testBinary = "weatherinfo_with_location";
+        testSource = "$MOBILITYDIR/demos/weatherinfo";
         testGoal = "Verify that ";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
 /*
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |");
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |");
 */
 
         skip( "Nothing tested", SkipAll );
@@ -707,20 +787,22 @@ testcase = {
         // Test meta data
         testTitle = "Location - Map Display";
         testBinary = "testqtlocation";
+        testSource = "$MOBILITYDIR/tests/applications/location/testqtlocation";
         testGoal = "Verify that a map can be loaded for a given position.";
         testPreconditions = "Internet connection is required for this test case.";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = "QTMOBILITY-796: QML for Maps & Navigation:mapping";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
-        ));
+            | *Step* | *Verification* |
+            | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |
+        "));
     },
 
     // \groups BAT,1.2,QTMOBILITY-796
@@ -729,24 +811,26 @@ testcase = {
         // Test meta data
         testTitle = "Location - Zoom In and Out";
         testBinary = "testQtLocation";
+        testSource = "$MOBILITYDIR/tests/applications/location/testqtlocation";
         testGoal = "Verify that ";
         testPreconditions = "GPS and internet connection is required for this test case.";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
         testRequirements = "QTMOBILITY-796: QML for Maps & Navigation:mapping.";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select the MapNavigation.qml | |
-         | Tap on the Mode button | Verify that map is loaded |
-         | Tap on Plus button | Verify that map is zoomed in |
-         | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |"
-        ));
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | App launches normally |
+            | Select the MapNavigation.qml | |
+            | Tap on the Mode button | Verify that map is loaded |
+            | Tap on Plus button | Verify that map is zoomed in |
+            | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |
+        "));
     }
 
 

@@ -38,23 +38,20 @@
 
     \section1 Release Notes - Overview
 
-    These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.2.0 final release. An up-to-date list of known issues with the release can be found via the \l {http://bugreports.qt.nokia.com}{Qt Bug Tracker} which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {index.html#platform-compatibility}{Platform Compatibility}.
+    These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.2.1 final release. An up-to-date list of known issues with the release can be found via the \l {http://bugreports.qt.nokia.com}{Qt Bug Tracker} which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {index.html#platform-compatibility}{Platform Compatibility}.
 
-    \section1 What's New in QtMobility 1.2.0
+    \section1 What's New in QtMobility 1.2.1
 
-    Qt Mobility 1.2.0 Final continues our drive to provide new Qt APIs for mobile application development. This release contains a number of new APIs and also improvements and bug fixes since the Qt Mobility 1.1.3 release. For more details, please refer to the \l {http://qt.nokia.com/doc/qtmobility-1.2.0}{online documentation}  included in this distribution and the change log file.
+    Qt Mobility 1.2.1 release provides bug fixes for some Symbian issues. It also
+    supplies some new documentation and documentation updates. For more details,
+    please refer to the \l {http://qt.nokia.com/doc/qtmobility-1.2.1}{online documentation}
+    included in this distribution and the change log file.
 
-    \section2 New APIs
-
-    Two APIs, Bluetooth and NFC, have been added under the umbrella of the \l Connectivity API.
-
-    \section2 New Features
-
-    Added support for MeeGo.com
-
-    \l Contacts now has maximum result limit hinting. (Note bug: QTMOBILITY-652)
-
-    \l QtMultimediaKit supports choosing the network configuration to use for streaming.
+    Changes include:
+    \list
+        \o Symbian Camera fixes.
+        \o Bearer Management is now marked as \bold {Deprecated}.
+    \endlist
 
 
     \section1 Downloading and Installing
@@ -68,9 +65,6 @@
     \l {http://qt.nokia.com/developer/new-qt-apis}
 
     Please follow the \l {installation.html}{installation procedure}
-
-    \section1 Known issues with this package
-
 
 
 */

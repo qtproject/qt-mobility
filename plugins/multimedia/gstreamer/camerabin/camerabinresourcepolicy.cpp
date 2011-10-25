@@ -108,51 +108,93 @@ void CamerabinResourcePolicy::setResourceSet(CamerabinResourcePolicy::ResourceSe
 
 #ifdef HAVE_RESOURCE_POLICY
     QSet<ResourcePolicy::ResourceType> requestedTypes;
+    QSet<ResourcePolicy::ResourceType> optionalTypes;
 
     switch (set) {
     case NoResources:
         break;
     case LoadedResources:
-        requestedTypes << ResourcePolicy::LensCoverType //to detect lens cover is opened/closed
-                       << ResourcePolicy::VideoRecorderType //to open camera device
+        requestedTypes << ResourcePolicy::VideoRecorderType //to open camera device
                        << ResourcePolicy::SnapButtonType; //to detect capture button events
-        break;
-    case ImageCaptureResources:
-        requestedTypes << ResourcePolicy::LensCoverType
-                       << ResourcePolicy::VideoPlaybackType
-                       << ResourcePolicy::VideoRecorderType
-                       << ResourcePolicy::AudioPlaybackType
-                       << ResourcePolicy::ScaleButtonType
-                       << ResourcePolicy::LedsType
-                       << ResourcePolicy::SnapButtonType;
+
+        optionalTypes  << ResourcePolicy::LensCoverType; //to detect lens cover is opened/closed
         break;
     case VideoCaptureResources:
-        requestedTypes << ResourcePolicy::LensCoverType
-                       << ResourcePolicy::VideoPlaybackType
-                       << ResourcePolicy::VideoRecorderType
-                       << ResourcePolicy::AudioPlaybackType
-                       << ResourcePolicy::AudioRecorderType
+    case ImageCaptureResources:
+        requestedTypes << ResourcePolicy::VideoPlaybackType
+                       << ResourcePolicy::VideoRecorderType;
+
+        optionalTypes  << ResourcePolicy::LensCoverType
                        << ResourcePolicy::ScaleButtonType
                        << ResourcePolicy::LedsType
                        << ResourcePolicy::SnapButtonType;
         break;
+    case VideoRecordingResources:
+        requestedTypes << ResourcePolicy::VideoPlaybackType
+                       << ResourcePolicy::VideoRecorderType;
+
+        //audio resources are marked as optional to avoid losing the resource
+        //on video recording requested
+        optionalTypes  << ResourcePolicy::LensCoverType
+                       << ResourcePolicy::ScaleButtonType
+                       << ResourcePolicy::LedsType
+                       << ResourcePolicy::SnapButtonType
+                       << ResourcePolicy::AudioRecorderType
+                       << ResourcePolicy::AudioPlaybackType;
+        break;
     }
+
+    QSet<ResourcePolicy::ResourceType> allRequestedTypes = requestedTypes+optionalTypes;
 
     QSet<ResourcePolicy::ResourceType> currentTypes;
     foreach (ResourcePolicy::Resource *resource, m_resource->resources())
         currentTypes << resource->type();
 
-    foreach (ResourcePolicy::ResourceType resourceType, currentTypes - requestedTypes)
+    foreach (ResourcePolicy::ResourceType resourceType, currentTypes - allRequestedTypes)
         m_resource->deleteResource(resourceType);
 
-    foreach (ResourcePolicy::ResourceType resourceType, requestedTypes - currentTypes) {
-        if (resourceType == ResourcePolicy::LensCoverType) {
-            ResourcePolicy::LensCoverResource *lensCoverResource = new ResourcePolicy::LensCoverResource;
-            lensCoverResource->setOptional(true);
-            m_resource->addResourceObject(lensCoverResource);
-        } else {
-            m_resource->addResource(resourceType);
+    foreach (ResourcePolicy::ResourceType resourceType, allRequestedTypes - currentTypes) {
+        ResourcePolicy::Resource *resource = 0;
+        switch (resourceType) {
+        case ResourcePolicy::VideoPlaybackType:
+            resource = new ResourcePolicy::VideoResource(QCoreApplication::applicationPid());
+            break;
+        case ResourcePolicy::VideoRecorderType:
+            resource = new ResourcePolicy::VideoRecorderResource;
+            break;
+        case ResourcePolicy::ScaleButtonType:
+            resource = new ResourcePolicy::ScaleButtonResource;
+            break;
+        case ResourcePolicy::LedsType:
+            resource = new ResourcePolicy::LedsResource;
+            break;
+        case ResourcePolicy::SnapButtonType:
+            resource = new ResourcePolicy::SnapButtonResource;
+            break;
+        case ResourcePolicy::LensCoverType:
+            resource = new ResourcePolicy::LensCoverResource;
+            break;
+        case ResourcePolicy::AudioPlaybackType:
+        {
+            ResourcePolicy::AudioResource *audioResource = new ResourcePolicy::AudioResource(QLatin1String("camera"));
+            audioResource->setProcessID(QCoreApplication::applicationPid());
+            resource = audioResource;
+            break;
         }
+        case ResourcePolicy::AudioRecorderType:
+            resource = new ResourcePolicy::AudioRecorderResource;
+            break;
+        default:
+            qWarning() << "unhandled resource type:" << resourceType;
+        }
+
+        if (!resource)
+            continue;
+
+        if (optionalTypes.contains(resourceType))
+            resource->setOptional(true);
+
+        m_resource->addResourceObject(resource);
     }
 
     m_resource->update();

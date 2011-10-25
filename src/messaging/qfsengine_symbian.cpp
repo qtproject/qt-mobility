@@ -199,12 +199,10 @@ void CFSEngine::cleanupFSBackend()
         m_clientApi = NULL;
     }
 
-#ifdef FREESTYLEMAILMAPI12USED
     foreach (EMailSyncRequest* req, m_syncRequests) {
         delete req;
     }
     m_syncRequests.clear();
-#endif
     
     if (m_factory) {
         delete m_factory;
@@ -1176,7 +1174,6 @@ bool CFSEngine::retrieveHeader(QMessageServicePrivate& privateService, const QMe
     return false;
 }
 
-#ifdef FREESTYLEMAILMAPI12USED
 void CFSEngine::synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id)
 {
     TMailboxId mailboxId = fsMailboxIdFromQMessageAccountId(id);
@@ -1214,6 +1211,7 @@ bool CFSEngine::synchronize(QMessageServicePrivate &observer, const QMessageAcco
     return (err == KErrNone);
 }
 
+#ifdef FREESTYLEMAILMAPI12USED
 bool CFSEngine::moveMessages(QMessageServicePrivate& observer, const QMessageIdList &messageIds, 
     const QMessageFolderId &toFolderId)
 {
@@ -1271,42 +1269,10 @@ void CFSEngine::moveMessagesL(QMessageServicePrivate &observer,
             User::Leave(KErrNotFound);
         }
     }
-    
+
     m_mailboxMoveRequestId++;
     mailbox->MoveMessagesL( messages, toFolder, this, m_mailboxMoveRequestId);
     m_moveRequests.insert(m_mailboxMoveRequestId, EMailMoveRequest( &observer, mailboxId ));
-}
-#else
-bool CFSEngine::synchronize(QMessageServicePrivate &observer, const QMessageAccountId &id)
-{
-    TRAPD(err, synchronizeL(observer, id));
-    if (err != KErrNone) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
-void CFSEngine::synchronizeL(QMessageServicePrivate &observer, const QMessageAccountId &id)
-{
-    Q_UNUSED(observer);
-    
-    TMailboxId mailboxId(fsMailboxIdFromQMessageAccountId(id));
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-    
-    // Some older versions of Email client API will return NULL instead of 
-    // leaving with KErrNotFound if mailbox is not found.
-    if (!mailbox) {
-        User::Leave(KErrNotFound);
-    }
-    
-    mailbox->SynchroniseL(*this);
-    mailbox->Release();
-}
-
-void CFSEngine::MailboxSynchronisedL(TInt aResult)
-{
-    Q_UNUSED(aResult);
 }
 #endif
 
@@ -1748,13 +1714,6 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
         delete cfOp;
     }
 
-#ifdef FREESTYLEMAILMAPI12USED
-    CFSContentStructureFetchOperation* csfOp = m_contentStructurefetchOperations.take(&privateService);
-    if (csfOp) {
-        csfOp->cancelFetch();
-        delete csfOp;
-    }
-
     foreach (EMailSyncRequest* req, m_syncRequests) {
         if (&req->m_observer == &privateService) {
             req->m_active = false;
@@ -1765,6 +1724,13 @@ void CFSEngine::cancel(QMessageServicePrivate& privateService)
         }
     }
     
+#ifdef FREESTYLEMAILMAPI12USED
+    CFSContentStructureFetchOperation* csfOp = m_contentStructurefetchOperations.take(&privateService);
+    if (csfOp) {
+        csfOp->cancelFetch();
+        delete csfOp;
+    }
+
     // cancel move requests
     QMap<uint, EMailMoveRequest>::iterator i( m_moveRequests.begin() );
     while( i != m_moveRequests.end() ) {
@@ -3146,7 +3112,6 @@ void CFSEngine::contentFetched(void* service, bool success)
     }
 }
 
-#ifdef FREESTYLEMAILMAPI12USED
 void EMailSyncRequest::MailboxSynchronisedL(TInt aResult)
 {
     m_requestList.removeOne(this);
@@ -3158,7 +3123,6 @@ void EMailSyncRequest::MailboxSynchronisedL(TInt aResult)
     
     delete this;
 }
-#endif
 
 CFSContentFetchOperation::CFSContentFetchOperation(CFSEngine& parentEngine, QMessageServicePrivate& service,
                                                    MEmailMessageContent* content, MEmailMessage* message)

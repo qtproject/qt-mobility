@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QNETWORKSESSION_H
-#define QNETWORKSESSION_H
+#ifndef QTM_NETWORKSESSION_H
+#define QTM_NETWORKSESSION_H
 
 #include "qmobilityglobal.h"
 
@@ -131,4 +131,4 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //QNETWORKSESSION_H
+#endif //QTM_NETWORKSESSION_H

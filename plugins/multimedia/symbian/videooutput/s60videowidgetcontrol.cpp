@@ -48,6 +48,8 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
 {
     connect(m_display, SIGNAL(nativeSizeChanged(QSize)),
             this, SIGNAL(nativeSizeChanged()));
+    connect(m_display, SIGNAL(hasContentChanged()),
+            this, SIGNAL(hasContentChanged()));
 }
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
@@ -169,3 +171,9 @@ void S60VideoWidgetControl::setRotation(qreal value)
 {
     m_display->setRotation(value);
 }
+
+bool S60VideoWidgetControl::hasContent() const
+{
+    return m_display->hasContent();
+}
+

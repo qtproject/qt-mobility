@@ -43,7 +43,6 @@
 #define S60VIDEOCAPTURESESSION_H
 
 #include <QtCore/qurl.h>
-#include <QtCore/qhash.h>
 
 #include <qmediaencodersettings.h>
 #include <qcamera.h>
@@ -53,12 +52,10 @@
 
 #include <e32base.h>
 #include <videorecorder.h> // CVideoRecorderUtility
-#ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
-#include <mmf/devvideo/devvideorecord.h>
-#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 
 QT_USE_NAMESPACE
 
+QT_FORWARD_DECLARE_CLASS(S60VideoCaptureSettings)
 QT_FORWARD_DECLARE_CLASS(QTimer)
 
 /*
@@ -69,9 +66,6 @@ QT_FORWARD_DECLARE_CLASS(QTimer)
  */
 class S60VideoCaptureSession : public QObject,
                                public MVideoRecorderUtilityObserver
-#ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
-                               ,public MMMFDevVideoRecordObserver
-#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 {
     Q_OBJECT
     Q_ENUMS(Error)
@@ -105,25 +99,13 @@ public: // MVideoRecorderUtilityObserver
     void MvruoRecordComplete(TInt aError);
     void MvruoEvent(const TMMFEvent& aEvent);
 
-#ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
-public: // MMMFDevVideoRecordObserver
-    void MdvroReturnPicture(TVideoPicture *aPicture);
-    void MdvroSupplementalInfoSent();
-    void MdvroNewBuffers();
-    void MdvroFatalError(TInt aError);
-    void MdvroInitializeComplete(TInt aError);
-    void MdvroStreamEnd();
-#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
-
 public: // Methods
 
     void setError(const TInt error, const QString &description);
     void setCameraHandle(CCameraEngine* cameraHandle);
-    void notifySettingsSet();
 
     qint64 position();
     TVideoCaptureState state() const;
-    bool isMuted() const;
 
     // Controls
     int initializeVideoRecording();
@@ -133,109 +115,26 @@ public: // Methods
     void startRecording();
     void pauseRecording();
     void stopRecording(const bool reInitialize = true);
-    void setMuted(const bool muted);
 
     // Output Location
     bool setOutputLocation(const QUrl &sink);
     QUrl outputLocation() const;
 
-    // Resolution
-    void setVideoResolution(const QSize &resolution);
-    QList<QSize> supportedVideoResolutions(bool *continuous);
-    QList<QSize> supportedVideoResolutions(const QVideoEncoderSettings &settings, bool *continuous);
-
-    // Framerate
-    void setVideoFrameRate(const qreal rate);
-    QList<qreal> supportedVideoFrameRates(bool *continuous);
-    QList<qreal> supportedVideoFrameRates(const QVideoEncoderSettings &settings, bool *continuous);
-
-    // Other Video Settings
-    void setVideoBitrate(const int bitrate);
-    void setVideoEncodingMode(const QtMultimediaKit::EncodingMode mode);
-
-    // Video Codecs
-    void setVideoCodec(const QString &codecName);
-    QStringList supportedVideoCodecs();
-    QString videoCodecDescription(const QString &codecName);
-
-    // Audio Codecs
-    void setAudioCodec(const QString &codecName);
-    QStringList supportedAudioCodecs();
-
     // Encoder Settings
-    void videoEncoderSettings(QVideoEncoderSettings &videoSettings);
-    void audioEncoderSettings(QAudioEncoderSettings &audioSettings);
-
-    // Quality
-    void setVideoQuality(const QtMultimediaKit::EncodingQuality quality);
-    void setAudioQuality(const QtMultimediaKit::EncodingQuality quality);
-
-    // Video Containers
-    QString videoContainer() const;
-    void setVideoContainer(const QString &containerName);
-    QStringList supportedVideoContainers();
-    bool isSupportedVideoContainer(const QString &containerName);
-    QString videoContainerDescription(const QString &containerName);
-
-    // Audio Settings
-    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings, bool *continuous);
-    void setAudioSampleRate(const int sampleRate);
-    void setAudioBitRate(const int bitRate);
-    void setAudioChannelCount(const int channelCount);
-    void setAudioEncodingMode(const QtMultimediaKit::EncodingMode mode);
-
-    // Video Options
-    QSize pixelAspectRatio();
-    void setPixelAspectRatio(const QSize par);
-    int audioGain();
-    void setAudioGain(const int gain);
-    int maxClipSizeInBytes() const;
-    void setMaxClipSizeInBytes(const int size);
+    S60VideoCaptureSettings *settings();
+    bool isReadyToQueryVideoSettings() const;
 
 private: // Internal
 
     QMediaRecorder::Error fromSymbianErrorToQtMultimediaError(int aError);
 
-    void initializeVideoCaptureSettings();
     void doInitializeVideoRecorderL();
-    void commitVideoEncoderSettings();
-    void queryAudioEncoderSettings();
-    void queryVideoEncoderSettings();
-    void validateRequestedCodecs();
     void resetSession(bool errorHandling = false);
-
-    void doSetCodecsL();
-    QString determineProfileAndLevel();
-    QList<QSize> sortResolutions(QList<QSize> resolutions);
-    void doSetVideoResolution(const QSize &resolution);
-    void doSetFrameRate(qreal rate);
-    void doSetBitrate(const int &bitrate);
-
-    void updateVideoCaptureContainers();
-    void doUpdateVideoCaptureContainersL();
-    void selectController(const QString &format,
-                          TUid &controllerUid,
-                          TUid &formatUid);
-
-    void doPopulateVideoCodecsDataL();
-    void doPopulateVideoCodecsL();
-#ifndef S60_DEVVIDEO_RECORDING_SUPPORTED
-    void doPopulateMaxVideoParameters();
-#endif // S60_DEVVIDEO_RECORDING_SUPPORTED
-    void doPopulateAudioCodecsL();
-
-    QList<int> doGetSupportedSampleRatesL(const QAudioEncoderSettings &settings,
-                                          bool *continuous);
-    QSize maximumResolutionForMimeType(const QString &mimeType) const;
-    qreal maximumFrameRateForMimeType(const QString &mimeType) const;
-    int maximumBitRateForMimeType(const QString &mimeType) const;
 
 signals: // Notification Signals
 
     void stateChanged(S60VideoCaptureSession::TVideoCaptureState);
     void positionChanged(qint64);
-    void mutedChanged(bool);
-    void captureSizeChanged(const QSize&);
     void error(int, const QString&);
 
 private slots: // Internal Slots
@@ -243,75 +142,13 @@ private slots: // Internal Slots
     void cameraStatusChanged(QCamera::Status);
     void durationTimerTriggered();
 
-private: // Structs
-
-    /*
-     * This structure holds the information of supported video mime types for
-     * the format and also description for it.
-     */
-    struct VideoFormatData {
-        QString     description;
-        QStringList supportedMimeTypes;
-    };
-
-    /*
-     * This structure is used to define supported resolutions and framerate
-     * (depending on each other) for each supported encoder mime type (defining
-     * encoder, profile and level)
-     */
-    struct SupportedFrameRatePictureSize {
-        SupportedFrameRatePictureSize() {}
-        SupportedFrameRatePictureSize(qreal rate, QSize size):
-            frameRate(rate),
-            frameSize(size) {}
-        qreal frameRate;
-        QSize frameSize;
-        };
-
-    /*
-     * This structure defines supported resolution/framerate pairs and maximum
-     * bitrate for a single encodec device. It also the supported mime types
-     * (codec, profile and level) of the encoder device.
-     *
-     * Structure defines 2 contructors:
-     *    - First with no attributes
-     *    - Second, which will construct the sructure appending one
-     *      resolution/framerate pair to the list of
-     *      SupportedFrameRatePictureSizes and setting the given bitrate as
-     *      maximum. This second constructor is for convenience.
-     *
-     * This struct is used in m_videoParametersForEncoder (QList).
-     *
-     * Here's a visualization of an example strcuture:
-     * STRUCT:
-     *    |-- Resolution/FrameRate Pairs:
-     *    |      |- VGA / 30fps
-     *    |      |- 720p / 25fps
-     *    |      |- Etc.
-     *    |
-     *    |-- MimeTypes:
-     *    |      |- video/mp4v-es; profile-level-id=1
-     *    |      |- video/mp4v-es; profile-level-id=2
-     *    |      |- Etc.
-     *    |
-     *    |-- Max BitRate: 1Mbps
-     */
-    struct MaxResolutionRatesAndTypes {
-        MaxResolutionRatesAndTypes() {}
-        MaxResolutionRatesAndTypes(QSize size, qreal fRate, int bRate):
-            bitRate(bRate)
-        {
-            frameRatePictureSizePair.append(SupportedFrameRatePictureSize(fRate,size));
-        }
-        QList<SupportedFrameRatePictureSize> frameRatePictureSizePair;
-        QStringList                          mimeTypes;
-        int                                  bitRate;
-    };
-
 private: // Data
+
+    friend class S60VideoCaptureSettings;
 
     CCameraEngine               *m_cameraEngine;
     CVideoRecorderUtility       *m_videoRecorder;
+    S60VideoCaptureSettings     *m_videoSettings;
     QTimer                      *m_durationTimer;
     qint64                      m_position;
     // Symbian ErrorCode
@@ -326,57 +163,6 @@ private: // Data
     // asynchronous operation was ongoing in the CVideoRecorderUtility when new
     // outputLocation was set.
     QUrl                        m_requestedSink;
-    // Requested videoSettings. The may not be active settings before those are
-    // committed (with commitVideoEncoderSettings())
-    QVideoEncoderSettings       m_videoSettings;
-    // Requested audioSettings. The may not be active settings before those are
-    // committed (with commitVideoEncoderSettings())
-    QAudioEncoderSettings       m_audioSettings;
-    // Tells whether settings should be initialized when changing the camera
-    bool                        m_captureSettingsSet;
-    // Active container
-    QString                     m_container;
-    // Requested container, this may be different from m_container if
-    // asynchronous operation was ongoing in the CVideoRecorderUtility when new
-    // container was set.
-    QString                     m_requestedContainer;
-    // Requested muted value. This may not be active value before settings are
-    // committed (with commitVideoEncoderSettings())
-    bool                        m_muted;
-    // Maximum ClipSize in Bytes
-    int                         m_maxClipSize;
-    // List of supported video codec mime types
-    QStringList                 m_videoCodecList;
-    // Hash of supported video codec mime types and corresponding FourCC codes
-    QHash<QString, TFourCC>     m_audioCodecList;
-    // Map of video capture controllers information. It is populated during
-    // doUpdateVideoCaptureContainersL().
-    //
-    // Here's a visualization of an example strcuture:
-    // m_videoControllerMap(HASH):
-    //   |
-    //   |-- Controller 1 : HASH
-    //   |                   |- Container 1 (UID) : FormatData
-    //   |                   |                          |- Description
-    //   |                   |                          |- List of supported MimeTypes
-    //   |                   |- Container 2 (UID) : FormatData
-    //   |                   |                          |- Description
-    //   |                   |                          |- List of supported MimeTypes
-    //   |                   |- Etc.
-    //   |
-    //   |-- Controller 2: HASH
-    //   |                   |- Container 1 (UID) : FormatData
-    //   |                   |                          |- Description
-    //   |                   |                          |- List of supported MimeTypes
-    //   |                   |- Etc.
-    //
-    QHash<TInt, QHash<TInt,VideoFormatData> > m_videoControllerMap;
-    // List of Encoder information. If DevVideoRecord is available info is
-    // gathered during doPopulateVideoCodecsDataL() for each encoder (hw
-    // accelerated and supporting camera input) found. If DevVideoRecord is not
-    // available, the info is set in doPopulateMaxVideoParameters() based on
-    // supported codec list received from CVideoRecorderUtility.
-    QList<MaxResolutionRatesAndTypes> m_videoParametersForEncoder;
     // Set if OpenFileL should be executed when currently ongoing operation
     // is completed.
     bool                        m_openWhenReady;
@@ -384,8 +170,6 @@ private: // Data
     bool                        m_prepareAfterOpenComplete;
     // Set if video capture should be started when Prepare has completed
     bool                        m_startAfterPrepareComplete;
-    // Tells if settings have been set after last Prepare()
-    bool                        m_uncommittedSettings;
     // Tells if settings need to be applied after ongoing operation has finished
     bool                        m_commitSettingsWhenReady;
 };

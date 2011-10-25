@@ -219,14 +219,14 @@ QTM_BEGIN_NAMESPACE
     location the following should be added to the application .pro file:
 
     \code
-    harmattan {
-        ndefhandler_conf.sources = myapplication.conf
+    contains(MEEGO_EDITION,harmattan) {
+        ndefhandler_conf.files = %APPNAME%.conf
         ndefhandler_conf.path = /etc/dbus-1/session.d/
 
-        ndefhandler_service.sources = myapplication.service
+        ndefhandler_service.files = com.nokia.qtmobility.nfc.%APPNAME%.service
         ndefhandler_service.path = /usr/share/dbus-1/services/
 
-        DEPLOYMENT += ndefhandler_conf ndefhandler_service
+        INSTALLS += ndefhandler_conf ndefhandler_service
     }
     \endcode
 

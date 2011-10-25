@@ -39,45 +39,39 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60radiotunerservice.h"
+#include "s60mmftrace.h"
 
 
 S60RadioTunerService::S60RadioTunerService(QObject *parent)
     : QMediaService(parent)
 {
-    DP0("S60RadioTunerService::S60RadioTunerService +++");
+    TRACE("S60RadioTunerService::S60RadioTunerService" << qtThisPtr());
 
 	m_playerControl = new S60RadioTunerControl(this);
-
-  DP0("S60RadioTunerService::S60RadioTunerService ---");
 }
 
 S60RadioTunerService::~S60RadioTunerService()
 {
-    DP0("S60RadioTunerService::~S60RadioTunerService +++");
+    TRACE("S60RadioTunerService::~S60RadioTunerService" << qtThisPtr());
 
 	delete m_playerControl;
-
-  DP0("S60RadioTunerService::~S60RadioTunerService ---");
 }
 
 QMediaControl *S60RadioTunerService::requestControl(const char* name)
 {
-    DP0("S60RadioTunerService::requestControl");
-
-	if (qstrcmp(name, QRadioTunerControl_iid) == 0)
-		return m_playerControl;
-
-	return 0;
+    QMediaControl *control = 0;
+    if (qstrcmp(name, QRadioTunerControl_iid) == 0)
+        control = m_playerControl;
+    TRACE("S60RadioTunerService::requestControl" << qtThisPtr()
+          << "name" << name << "control" << control);
+    return control;
 }
 
 void S60RadioTunerService::releaseControl(QMediaControl *control)
 {
-    DP0("S60RadioTunerService::releaseControl +++");
+    TRACE("S60RadioTunerService::releaseControl" << qtThisPtr()
+          << "control" << control);
 
 	Q_UNUSED(control);
-
-  DP0("S60RadioTunerService::releaseControl ---");
 }

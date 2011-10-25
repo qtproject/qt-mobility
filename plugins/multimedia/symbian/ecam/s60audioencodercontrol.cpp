@@ -41,6 +41,7 @@
 
 #include "s60audioencodercontrol.h"
 #include "s60videocapturesession.h"
+#include "s60videocapturesettings.h"
 
 S60AudioEncoderControl::S60AudioEncoderControl(QObject *parent) :
     QAudioEncoderControl(parent)
@@ -59,7 +60,7 @@ S60AudioEncoderControl::~S60AudioEncoderControl()
 
 QStringList S60AudioEncoderControl::supportedAudioCodecs() const
 {
-    return m_session->supportedAudioCodecs();
+    return m_session->settings()->supportedAudioCodecs();
 }
 
 QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
@@ -93,7 +94,7 @@ QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QStr
     Q_UNUSED(codec);
 
     if (qstrcmp(name.toLocal8Bit().constData(), "gain") == 0)
-        return QVariant(m_session->audioGain());
+        return QVariant(m_session->settings()->audioGain());
 
     return QVariant();
 }
@@ -107,7 +108,7 @@ void S60AudioEncoderControl::setEncodingOption(
         bool convSuccess = false;
         int gain = value.toInt(&convSuccess);
         if (convSuccess) {
-            m_session->setAudioGain(gain);
+            m_session->settings()->setAudioGain(gain);
             return;
         }
     }
@@ -118,15 +119,12 @@ void S60AudioEncoderControl::setEncodingOption(
 QList<int> S60AudioEncoderControl::supportedSampleRates(
     const QAudioEncoderSettings &settings, bool *continuous) const
 {
-    return m_session->supportedAudioSampleRates(settings, continuous);
+    return m_session->settings()->supportedAudioSampleRates(settings, continuous);
 }
 
 QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 {
-    QAudioEncoderSettings settings;
-    m_session->audioEncoderSettings(settings);
-
-    return settings;
+    return m_session->settings()->audioEncoderSettings();
 }
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
@@ -134,18 +132,18 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
     if (!settings.isNull()) {
         // Notify that settings have been implicitly set and there's no need to
         // initialize them in case camera is changed
-        m_session->notifySettingsSet();
+        m_session->settings()->notifySettingsSet();
 
         if (!settings.codec().isEmpty())
-            m_session->setAudioCodec(settings.codec());
+            m_session->settings()->setAudioCodec(settings.codec());
         if (settings.channelCount() != -1)
-            m_session->setAudioChannelCount(settings.channelCount());
+            m_session->settings()->setAudioChannelCount(settings.channelCount());
 
         // Set quality before BitRate and SampleRate (as quality defines unset settings)
-        m_session->setAudioQuality(settings.quality());
-        m_session->setAudioBitRate(settings.bitRate());
-        m_session->setAudioSampleRate(settings.sampleRate());
-        m_session->setAudioEncodingMode(settings.encodingMode());
+        m_session->settings()->setAudioQuality(settings.quality());
+        m_session->settings()->setAudioBitRate(settings.bitRate());
+        m_session->settings()->setAudioSampleRate(settings.sampleRate());
+        m_session->settings()->setAudioEncodingMode(settings.encodingMode());
     } else {
         m_session->setError(KErrNotSupported, tr("Unable to set undefined settings."));
     }

@@ -90,7 +90,7 @@ QGeoMapObject::Type QGeoMapPolylineObject::type() const
 
 /*!
     \property QGeoMapPolylineObject::path
-    \brief This property holds the ordered list of coordinates which define the
+    \brief the ordered list of coordinates which define the
     segmented line to be drawn by this polyline object.
 
     The default value of this property is an empty list of coordinates.
@@ -122,7 +122,7 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 
 /*!
     \property QGeoMapPolylineObject::pen
-    \brief This property holds the pen that will be used to draw this object.
+    \brief the pen that will be used to draw this object.
 
     The pen is used to draw the polyline.
 
