@@ -95,7 +95,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class qoutputrange
-    \relates QSensor
     \brief The qoutputrange class holds the specifics of an output range.
 
     The class is defined as a simple struct.
