@@ -729,8 +729,16 @@ QContact QContactManager::compatibleContact(const QContact& original)
   If you want to update the display label stored in the contact, use the synthesizeContactDisplayLabel()
   function instead.
 
+  Note: Depending on the used engine it is possible that the data
+  that is used to synthesize the display label is not up-to-date
+  after a partial save of the contact, i.e after the contact was
+  saved with \l saveContacts() with a \a definitionMask parameter.
+  It is recommended to fetch the contact from the engine again and
+  use that new contact as a parameter to this function.
+  Right now this is needed for the tracker engine on the Harmattan platform.
+
   \since 1.0
-  \sa synthesizeContactDisplayLabel()
+  \sa synthesizeContactDisplayLabel(), saveContacts()
  */
 QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact) const
 {
@@ -754,8 +762,16 @@ QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact)
  * See the following example for more information:
  * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
  *
+ * Note: Depending on the used engine it is possible that the data
+ * that is used to synthesize the display label is not up-to-date
+ * after a partial save of the contact, i.e after the contact was
+ * saved with \l saveContacts() with a \a definitionMask parameter.
+ * It is recommended to fetch the contact from the engine again and
+ * use that new contact as a parameter to this function.
+ * Right now this is needed for the tracker engine on the Harmattan platform.
+ *
  * \since 1.0
- * \sa synthesizedContactDisplayLabel(), QContact::displayLabel()
+ * \sa synthesizedContactDisplayLabel(), QContact::displayLabel(), saveContacts()
  */
 void QContactManager::synthesizeContactDisplayLabel(QContact *contact) const
 {
