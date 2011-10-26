@@ -94,7 +94,7 @@ symbian:LIBS += \
         -lmediaclientvideo \
         -lecam \
         -lbafl \
-        -lPlatformEnv \
+        -lplatformenv \
         -lcharconv \
         -lconvnames \
         -lgb2312_shared \

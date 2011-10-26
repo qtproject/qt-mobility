@@ -59,7 +59,7 @@
 #include <mmf/common/mmfutilities.h>
 
 #ifdef AUDIOINPUT_ROUTING
-#include <audioinput.h>
+#include <AudioInput.h>
 #endif //AUDIOINPUT_ROUTING
 
 QT_BEGIN_NAMESPACE

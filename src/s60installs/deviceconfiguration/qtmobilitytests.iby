@@ -24,7 +24,7 @@
 
 #include <bldvariant.hrh>
 
-#define UPGRADABLE_APP_REG_RSC(NAME) data=DATAZ_\PRIVATE\10003A3F\IMPORT\APPS\ ## NAME ## _reg.rsc        Private\10003a3f\import\apps\ ## NAME ## _reg.rsc
+#define UPGRADABLE_APP_REG_RSC(NAME) data=DATAZ_\private\10003a3f\import\apps\ ## NAME ## _reg.rsc        Private\10003a3f\import\apps\ ## NAME ## _reg.rsc
 
 S60_APP_EXE(bearerex)
 S60_APP_RESOURCE(bearerex)
@@ -41,7 +41,7 @@ UPGRADABLE_APP_REG_RSC(s60player)
 S60_APP_EXE(publishsubscribeex)
 S60_APP_RESOURCE(publishsubscribeex)
 UPGRADABLE_APP_REG_RSC(publishsubscribeex)
-data=\epoc32\data\z\resource\qt\crml\resources.qcrml                          resource\qt\crml\resources.qcrml
-data=\epoc32\data\z\resource\qt\crml\profile.qcrml                            resource\qt\crml\profile.qcrml
+data=EPOCROOT##epoc32\data\z\resource\qt\crml\resources.qcrml                          resource\qt\crml\resources.qcrml
+data=EPOCROOT##epoc32\data\z\resource\qt\crml\profile.qcrml                            resource\qt\crml\profile.qcrml
 
 #endif //__QT_MOBILITYTESTS_IBY__
