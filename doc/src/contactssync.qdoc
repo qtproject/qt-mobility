@@ -251,7 +251,7 @@ saves it back.
 
     \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Installing a plugin which modifies a definition
 
-\section3 \bold{Modifying an existing contact and saving the modifications}
+\section3 Modifying an existing contact and saving the modifications
 
 The client retrieves a contact, modifies one of its details, adds a new
 detail, and then saves the contact back to the manager.  Note that it uses
