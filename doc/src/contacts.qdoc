@@ -99,7 +99,7 @@ are not derived from QObject, and hence can be used in lists, do not have
 parents, do not emit signals, and so on.  They represent data which may be
 manipulated and retrieved from a \l{Manager}{manager}.
 
-\section3 \bold{Contact}
+\section3 Contact
 
 A \l{QContact}{contact} is the digital representation of a person, group or
 entity, which is stored in a platform-specific manner. Information pertaining
@@ -122,7 +122,7 @@ in that manager.  Note that a contact stored in one manager may have the same
 local id as a different contact stored in another manager; please see the
 QContactId documentation for more information.
 
-\section3 \bold{Detail}
+\section3 Detail
 
 A \l{QContactDetail}{detail} is a single, cohesive unit of information that is
 stored in a contact.  As explained previously, it is valid for a particular
@@ -134,7 +134,7 @@ apply to the the detail (such as read-only, irremovable, etc).
 There are a number of common details defined in the API which are intended
 for use by clients, as listed \l{"Contact Details" Leaf Classes}{here}.
 
-\section3 \bold{Detail Definition}
+\section3 Detail Definition
 
 Each detail stored in a contact has defined semantics of usage and storage.
 The Qt Contacts API allows per-datastore contact
@@ -154,7 +154,7 @@ supported detail definition for that leaf class and modify its behavior
 accordingly (for example, if the \c CustomLabel field of the QContactName
 leaf detail is not supported in a particular manager).
 
-\section3 \bold{Relationships}
+\section3 Relationships
 
 Contacts may participate in \l{QContactRelationship}{relationships} with other
 contacts.  The details of any such relationship is stored by the manager which
@@ -176,7 +176,7 @@ etc) which are reported by the manager on request.  The manager therefore
 provides access to detail definitions, contacts, and relationships stored in
 different datastores, in a platform and datastore independent manner.
 
-\section3 \bold{Meta Data API}
+\section3 Meta Data API
 
 The API offered by the QContactManager exposes functionality which is
 implemented by plugins.  These plugins may be platform specific, and may be
@@ -224,7 +224,7 @@ The functionality that the above functions provide is only available through
 synchronous API.
 
 
-\section3 \bold{Asynchronous API}
+\section3 Asynchronous API
 
 The asynchronous API provides a way to access or modify the
 contact information managed by a particular backend via non-blocking,
@@ -245,7 +245,7 @@ capability or meta data information reporting.
 
 For more detailed documentation on the asynchronous API, see the \l{Contacts Asynchronous API}.
 
-\section3 \bold{Synchronous API}
+\section3 Synchronous API
 
 The synchronous API provides the simplest way to access or modify the
 contact information managed by a particular backend.  It has the
