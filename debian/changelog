@@ -1,7 +1,7 @@
 qt-mobility (1.2.1+205) unstable; urgency=low
 
-  * Fixes: NB#258851 - NFC LLCP server socket has wrong MIU
-  * Fixes: NB#267341 - QMediaPlayer doesn't work with RTSP steaming
+  * Fixes: NB#267249 - inmodule tags missing from qt-mobility
+  * Fixes: NB#287287 - QContactManagerEngine::compareVariant does not handle QVariant::Url
   * Fixes: NB#288049 - QContactStringHolder does extra QString allocations
 
  -- Stephan Binner <stephan.binner@basyskom.com>  Thu, 27 Oct 2011 13:03:00 +0200
