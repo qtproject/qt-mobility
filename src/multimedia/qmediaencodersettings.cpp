@@ -650,7 +650,7 @@ private:
 
     \brief The QImageEncoderSettings class provides a set of image encoder
     settings.
-    \inmodule QtMultimedia
+    \inmodule QtMultimediaKit
     \since 1.0
 
     A image encoder settings object is used to specify the image encoder
