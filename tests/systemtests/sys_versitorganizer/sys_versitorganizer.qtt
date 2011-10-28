@@ -71,7 +71,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that ical file can be imported";
         testPreconditions = "There is an exampleEvents.ics onto a location on the target";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -103,7 +103,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify ical file can be exported";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -175,7 +175,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify ical data can be imported";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -201,7 +201,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify vcal data can be imported";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 

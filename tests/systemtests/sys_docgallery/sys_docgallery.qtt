@@ -51,7 +51,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/mediabrowser"
         testGoal = "Verify that media files can be displayed according to artists ";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -75,7 +75,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/mediabrowser"
         testGoal = "Verify that media files can be displayed according to album artists ";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -147,7 +147,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/mediabrowser"
         testGoal = "Verify that media files can be displayed according to albums ";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -171,7 +171,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/documentproperties"
         testGoal = "Verify that document files can be displayed";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -195,7 +195,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/documentproperties"
         testGoal = "Verify that music files can be displayed";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -219,7 +219,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/documentproperties"
         testGoal = "Verify that photo files can be displayed";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -243,7 +243,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/documentproperties"
         testGoal = "Verify that video files can be displayed";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps

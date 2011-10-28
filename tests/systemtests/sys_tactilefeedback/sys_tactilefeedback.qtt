@@ -63,7 +63,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/hapticsquare";
         testGoal = "Verify that all interfaces' response are correctly";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         // Test Steps
@@ -88,7 +88,7 @@ testcase = {
         testSource = "";
         testGoal = "";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""    
         
         skip('Not implement yet', SkipAll);

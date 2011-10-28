@@ -52,7 +52,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify that list of sensor types and open one sensor";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -72,7 +72,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify that available data can be viewed";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -90,7 +90,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify that sensor values can be changed";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -109,7 +109,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify sensor buffering";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -128,7 +128,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify sensor values align with orientation of the device";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -146,7 +146,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify unregistering a sensor which is in use";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -164,7 +164,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify Down-sampling of sensor data";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -182,7 +182,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify synchronization of data from several sensors";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -200,7 +200,7 @@ testcase =  {
         testBinary = "";
         testGoal = "Verify display of sensor error codes";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -215,7 +215,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
         testGoal = "Verify Generic Rotation values";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -249,7 +249,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
         testGoal = "Verify Sym Rotation values";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -284,7 +284,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
         testGoal = "Verify Sym Proximity values";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -311,7 +311,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
         testGoal = "Verify Sym Accelerometer";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -339,7 +339,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/examples/sensors/sensor_explore";
         testGoal = "Verify Sym Ambient Light Sensor";
         testPreconditions = "<br>Hand held torch or other light source required for this test<br>Light sensor located at the top-left of the device";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -369,7 +369,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/demos/small_screen_sensors";
         testGoal = "Verify Free Fall Detection";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -428,7 +428,7 @@ testcase =  {
         testBinary = "Small Sensors";
         testSource = "$MOBILITYDIR/demos/small_screen_sensors";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -456,7 +456,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/tests/applications/sensors";
         testGoal = "Verify Sym Tap Sensor";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -484,7 +484,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/tests/applications/sensors";
         testGoal = "Verify that sym orientation";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -512,7 +512,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/tests/applications/sensors";
         testGoal = "Verify sym magnetometer sensor";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -540,7 +540,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/tests/applications/sensors";
         testGoal = "Verify sym compass sensor";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -568,7 +568,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/tests/applications/sensors";
         testGoal = "Verify sym lux sensor";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -596,7 +596,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/tests/applications/sensors";
         testGoal = "Verify sym dynamic sensor";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -624,7 +624,7 @@ testcase =  {
         testSource = "$MOBILITYDIR/tests/applications/sensors";
         testGoal = "Verify sym gyroscope sensor";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps

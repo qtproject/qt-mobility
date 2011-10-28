@@ -51,7 +51,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sfwecho/sfwecho_service";
         testGoal = "Verify sfwecho_service can be launched and running in background";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -75,7 +75,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sfwecho/sfwecho_client";
         testGoal = "Verify a Broadcasting message to sfw server which will bounce it back";
         testPreconditions = "sfwecho_service is running in background";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -102,7 +102,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sfwecho/sfwecho_client";
         testGoal = "Verify send a private message to sfw server which will bounce it back";
         testPreconditions = "sfwecho_service is running in background";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -129,7 +129,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/servicebrowser";
         testGoal = "List all available services";
         testPreconditions = "sfwecho_service is running in background";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -154,7 +154,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/servicebrowser";
         testGoal = "List all available interfaces for a service";
         testPreconditions = "sfwecho_service running in background";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -180,7 +180,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/servicebrowser";
         testGoal = "All available attributes for a service interface are in the list";
         testPreconditions = "sfwecho_service running in background";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 

@@ -63,7 +63,7 @@ testcase = {
         testBinary = "";
         testGoal = "";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
