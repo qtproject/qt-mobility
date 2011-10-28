@@ -76,7 +76,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/connectivity/NFC";
         testGoal = "Verify touched target information can be displayed";
         testPreconditions = "An NFC tag";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -103,7 +103,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/annotatedurl";
         testGoal = "Verify NDEF notifications can be Registered";
         testPreconditions = "An NFC tag with an NFC text and NFC URI field";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -126,7 +126,7 @@ testcase = {
         testBinary = "";
         testGoal = "Verify that unregister for NDEF notifications";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -196,7 +196,7 @@ testcase = {
         testBinary = "";
         testGoal = "";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -211,7 +211,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/bttennis";
         testGoal = "Verify LLCP connection";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps

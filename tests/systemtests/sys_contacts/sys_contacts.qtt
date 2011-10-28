@@ -360,7 +360,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/samplephonebook";
         testGoal = "Verify the correct match of contacts against a simple filter";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -390,7 +390,7 @@ testcase = {
        testSource = "$MOBILITYDIR/examples/samplephonebook";
        testGoal = "Verify that when the filter is cleared all contacts are visible";
        testPreconditions = "None";
-       testGroups = "BAT_MOBILITY";
+       testGroups = " ";
        testRequirements = "";
 
        // Test steps
