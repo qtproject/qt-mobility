@@ -727,13 +727,13 @@ testcase = {
     */
 
 // Candidate for future fully described tests, disable for the moment.
-/*
+
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_recurring_event: function()
     {
         prompt(twiki('---++ Edit recursive event
         | *Step* | *Verification* |
-        | Launch the ? application |  |
+        | Launch the application |  |
         | Create recursive event | |
         | Select any event from this seria | |
         | Press Edit button | Verify that user has choice to edit selected event or entire seria |
@@ -742,7 +742,7 @@ testcase = {
         | Press Edit button and edit the event occurrence | Verify that only selected event from the seria is updated |
         '));
     },
-    */
+
 
 
 // Candidate for future fully described tests, disable for the moment.

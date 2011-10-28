@@ -51,7 +51,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
         testGoal = "Verify that landline number can be dialed and hung up";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -78,7 +78,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
         testGoal = "Verify that Voip 1.1 Number can be dialed and hung up";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -105,7 +105,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
         testGoal = "Verify that Voip 1.0 Number can be dialed and hung up";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
