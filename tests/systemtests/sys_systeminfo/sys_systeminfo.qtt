@@ -51,7 +51,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify General Tab Information";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         // Test Steps
@@ -78,7 +78,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify General 2 Tab Information";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         // Test Steps
@@ -104,7 +104,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify Device Tab Information";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         // Test Steps
@@ -135,7 +135,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify Device 2 Tab Information";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         // Test Steps
@@ -168,7 +168,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify charging status changed can be shown correctly";
         testPreconditions = " ";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -195,7 +195,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify display info can be shown correctly";
         testPreconditions = " ";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -222,7 +222,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify storage info can be shown correctly";
         testPreconditions = " ";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -247,7 +247,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify network info can be shown correctly";
         testPreconditions = "Insert a SIM card to the phone";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -273,7 +273,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify network2 info can be shown correctly";
         testPreconditions = "Insert a SIM card to the phone";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -300,7 +300,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify network3 info can be shown correctly";
         testPreconditions = "Insert a SIM card to the phone";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -327,7 +327,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/sysinfo/qsysinfo";
         testGoal = "Verify screensaver info can be shown correctly";
         testPreconditions = " ";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
