@@ -30,7 +30,6 @@
 
 \page multimediabackend.html
 \brief Information for implementing a new multimedia backend.
-\ingroup mobility
 
 \tableofcontents
 
