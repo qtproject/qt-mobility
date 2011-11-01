@@ -65,8 +65,8 @@ Q_GLOBAL_STATIC(QSystemDeviceInfo, deviceInfo)
     Note: To use notification signals, you need to set the monitor* properties to true.
 
 
-    The follow table lists the \b incompatible changes made to the start* functions from QtMobility 1.1 to QtMobility 1.2,
-    where they became Q_PROPERTY
+    The following table lists the \bold{incompatible} changes made to the start* functions between QtMobility 1.1 and 1.2,
+    where they became Q_PROPERTY:
 
     \table
     \header
