@@ -230,6 +230,20 @@ QTM_BEGIN_NAMESPACE
     }
     \endcode
 
+    The NFC auto-start handler on Meego 1.2 Harmattan requires that the applications .desktop file
+    has the same name as the application.  This may not be the case as the .desktop files created
+    by Qt Creator is named \i {%APPNAME%_harmattan.desktop} by default.  The application developer
+    should ensure that the \i {%APPNAME%.desktop} file is installed to the appropriate place.  A
+    .pro file snippet similar to the following may be used:
+
+    \code
+    contains(MEEGO_EDITION,harmattan) {
+        harmattandesktopfile.files = %APPNAME%.desktop
+        harmattandesktopfile.path = /usr/share/applications
+        INSTALLS += harmattandesktopfile
+    }
+    \endcode
+
     The NDEF message handler is registered with the following D-Bus command. Applications should
     ensure that the following command (or similar) is executed once at installation time. For
     example in the packages post-installation script.
@@ -367,11 +381,16 @@ bool QNearFieldManager::isAvailable() const
 }
 
 /*!
-    Starts detecting targets of type \a targetTypes. Returns true if target detection is
-    successfully started; otherwise returns false.
-
-    Causes the targetDetected() signal to be emitted when a target with a type in \a targetTypes is
+    Starts detecting targets of type \a targetTypes. Returns \c true if target detection is
+    successfully started; otherwise returns \c false. The application can start to get 
+    notifications when the target detection is successfully started and NFC is switched on.
+    
+    The targetDetected() signal is emitted when a target with the type in \a targetTypes is
     within proximity. If \a targetTypes is empty targets of all types will be detected.
+    
+    \note In a MeeGo 1.2 Harmattan device the method returns \c true regardless of the device’s NFC state 
+    (on or off). In Symbian devices the method returns \c false if NFC is switched off; otherwise 
+    returns \c true.
 
     \sa stopTargetDetection()
 */

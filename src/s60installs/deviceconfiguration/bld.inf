@@ -53,5 +53,5 @@ PRJ_TESTMMPFILES
 
 PRJ_EXTENSIONS
 START EXTENSION qt/qtmobilityheaders
-OPTION MODULES bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback
+OPTION MODULES bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia gallery organizer feedback connectivity
 END
