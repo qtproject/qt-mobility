@@ -300,7 +300,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     currentMobileCountryCodeChanged(m_networkInfo.currentMobileCountryCode());
 #endif
 
-    if (!isValidParameter(m_applicationId) || !isValidParameter(m_referer)) {
+    if (!isValidParameter(m_applicationId) || !isValidParameter(m_token)) {
         qWarning() << "********************************************************************************";
         qWarning() << "Qt Location requires usage of app_id and token parameters obtained from:";
         qWarning() << "https://api.forum.nokia.com/ovi-api/ui/registration";
@@ -579,8 +579,8 @@ bool QGeoMappingManagerEngineNokia::isValidParameter(const QString &param)
         return false;
 
     foreach (QChar c, param) {
-        if (!c.isLetterOrNumber() || c.toAscii() != '%' || c.toAscii() != '-' ||
-            c.toAscii() != '+' || c.toAscii() != '_') {
+        if (!c.isLetterOrNumber() && c.toAscii() != '%' && c.toAscii() != '-' &&
+            c.toAscii() != '+' && c.toAscii() != '_') {
             return false;
         }
     }
