@@ -1,3 +1,9 @@
+qt-mobility (1.2.1+206) unstable; urgency=low
+
+  * Add GRP::calendar credential to demos and tests as required by NB#287513 change
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Thu, 03 Nov 2011 17:13:00 +0200
+
 qt-mobility (1.2.1+205) unstable; urgency=low
 
   * Fixes: NB#267249 - inmodule tags missing from qt-mobility
