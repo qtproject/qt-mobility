@@ -47,6 +47,7 @@ file=ABI_DIR\BUILD_DIR\qtversitorganizer.dll                                    
 file=ABI_DIR\BUILD_DIR\qtfeedback.dll                                                    SHARED_LIB_DIR\qtfeedback.dll
 file=ABI_DIR\BUILD_DIR\qtgallery.dll                                                     SHARED_LIB_DIR\qtgallery.dll
 file=ABI_DIR\BUILD_DIR\qtorganizer.dll                                                   SHARED_LIB_DIR\qtorganizer.dll
+file=ABI_DIR\BUILD_DIR\qtconnectivity.dll                                                SHARED_LIB_DIR\qtconnectivity.dll
 
 //Plugins
 file=ABI_DIR\BUILD_DIR\qtcontacts_serviceactionmanager.dll                               SHARED_LIB_DIR\qtcontacts_serviceactionmanager.dll
