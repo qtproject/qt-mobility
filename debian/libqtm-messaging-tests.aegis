@@ -1,8 +1,0 @@
-<aegis>
-    <request>
-        <credential name="TrackerReadAccess" />
-        <credential name="TrackerWriteAccess" />
-        <for path="/usr/tests/qtm/tst_qmessagestore" />
-        <for path="/usr/tests/qtm/tst_qmessagestorekeys" />
-    </request>
-</aegis>
