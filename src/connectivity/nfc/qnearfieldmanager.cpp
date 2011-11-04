@@ -185,11 +185,13 @@ QTM_BEGIN_NAMESPACE
 
     \code
         symbian {
-            ndefhandler.sources = myapplication.xml
-            ndefhandler.path = /private/2002AC7F/import/
+            ndefhandler.sources = %APPNAME%.xml
+            ndefhandler.path = c:/private/2002AC7F/import/
             DEPLOYMENT += ndefhandler
         }
     \endcode
+
+    The \i {%APPNAME%} tag need to be changed to match the name of the application.
 
     \section3 Meego 1.2 Harmattan
 
