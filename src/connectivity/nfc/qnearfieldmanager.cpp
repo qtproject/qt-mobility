@@ -176,13 +176,6 @@ QTM_BEGIN_NAMESPACE
     myapplication.xml. To install the above xml file into the correct location the following should
     be added to the application .pro file:
 
-    and for Meego 1.2 Harmattan target:
-
-    \code
-        ndefhandlergen -template harmattan -appname myapplication -apppath /usr/bin/myapplication -datatype urn:nfc:ext:com.example:f
-    \endcode
-
-
     \code
         symbian {
             ndefhandler.sources = %APPNAME%.xml
