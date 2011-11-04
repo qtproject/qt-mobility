@@ -1,0 +1,41 @@
+<aegis>
+    <request policy="add">
+        <!-- Application uses QtDeclarative module. -->
+
+        <!-- QtMobility::QOrganizerManager::QOrganizerManager -->
+        <credential name="GRP::calendar" />
+        <credential name="GRP::metadata-users" />
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+
+        <for path="/usr/tests/qtm/tst_qdeclarativeorganizer" />
+    </request>
+    <request policy="add">
+        <!-- QtMobility::QOrganizerManager::QOrganizerManager -->
+        <credential name="GRP::calendar" />
+        <credential name="GRP::metadata-users" />
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+
+        <for path="/usr/tests/qtm/tst_qorganizercollection" />
+    </request>
+    <request policy="add">
+        <!-- QtMobility::QOrganizerManager::QOrganizerManager -->
+        <credential name="GRP::calendar" />
+        <credential name="GRP::metadata-users" />
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+
+        <for path="/usr/tests/qtm/tst_qorganizeritem" />
+    </request>
+    <request policy="add">
+        <!-- QtMobility::QOrganizerManager::QOrganizerManager -->
+        <credential name="GRP::calendar" />
+        <credential name="GRP::metadata-users" />
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+
+        <for path="/usr/tests/qtm/tst_qorganizermanager" />
+    </request>
+</aegis>
+

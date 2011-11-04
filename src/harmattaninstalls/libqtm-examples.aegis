@@ -51,4 +51,33 @@
         <for path="/usr/lib/qtmobility/examples/camera" />
         <for path="/usr/lib/qtmobility/examples/qml_camera" />
     </request>
+    <request policy="add">
+        <!-- QtMobility::QOrganizerManager::QOrganizerManager -->
+        <credential name="GRP::calendar" />
+        <credential name="GRP::metadata-users" />
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+
+        <for path="/usr/lib/qtmobility/examples/calendardemo" />
+    </request>
+    <request policy="add">
+        <!-- Application uses QtDeclarative module. -->
+
+        <!-- import QtMobility.organizer 1.1 -->
+        <credential name="GRP::calendar" />
+        <credential name="GRP::metadata-users" />
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+
+        <for path="/usr/lib/qtmobility/examples/qmlorganizer" />
+    </request>
+    <request policy="add">
+        <!-- QtMobility::QOrganizerManager::QOrganizerManager -->
+        <credential name="GRP::calendar" />
+        <credential name="GRP::metadata-users" />
+        <credential name="TrackerReadAccess" />
+        <credential name="TrackerWriteAccess" />
+
+        <for path="/usr/lib/qtmobility/examples/todo" />
+    </request>
 </aegis>
