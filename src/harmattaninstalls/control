@@ -1,7 +1,7 @@
 Source: qt-mobility
 Section: libs
 Priority: extra
-Maintainer: Qt Development Frameworks <qt-info@nokia.com>
+Maintainer: Stephan Binner <stephan.binner@basyskom.com>
 Build-Depends: libqt4-dev (>= 4.7.0), cdbs, debhelper (>= 5), quilt, aegis-builder (>= 1.4),
  libicd-network-wlan-dev, libqt4-opengl-dev (>= 4.7.0),
  libconninet0-dev, libcontextsubscriber-dev, libbluetooth3-dev, libcontextprovider-dev,
