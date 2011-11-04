@@ -51,7 +51,7 @@ testcase = {
           testSource = "";
           testGoal = "Verify that ";
           testPreconditions = "None";
-          testGroups = "BAT_MOBILITY";
+          testGroups = " ";
           testRequirements = "";
 
           // Test steps
@@ -68,7 +68,7 @@ testcase = {
           testPreconditions = "   1. target supports removable storage, if not then pass this test<br>
    1. Ensure that target system does not have any removable storage inserted/mounted<br>
                                *Note:* On S60 platforms removing a media might cause qsysinfo to be closed, which is usual";
-          testGroups = "BAT_MOBILITY";
+          testGroups = " ";
           testRequirements = "";
 
           // Test steps
@@ -94,7 +94,7 @@ testcase = {
        testSource = "$MOBILITYDIR/tests/applications/systeminfo/testqtsysteminfo";
        testGoal = "Verify that OS, Qt and Firmware versions numbers can be read";
        testPreconditions = "None";
-       testGroups = "BAT_MOBILITY";
+       testGroups = " ";
        testRequirements = "";
 
        // Test steps
@@ -122,7 +122,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/systeminfo/testqtsysteminfo";
         testGoal = "Verify that device hardware status can be read";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps

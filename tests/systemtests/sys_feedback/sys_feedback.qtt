@@ -59,7 +59,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/hapticsplayer";
         testGoal = "Verify that vibrate functionality can be called with low level API";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -89,7 +89,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/hapticsplayer";
         testGoal = "Verify that vibrate functionality can be called with high level API.";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -115,7 +115,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/hapticsplayer";
         testGoal = "Verify that feedback mechanism works using a specified files.";
         testPreconditions = "<br>1. 'File' tab must be enabled.<br>2. Platform specific effect file must be available.";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -151,7 +151,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/hapticsquare";
         testGoal = "Verify that feedback mechanism works with selected effects.";
         testPreconditions = "tested device must have a touch screen/mouse";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps

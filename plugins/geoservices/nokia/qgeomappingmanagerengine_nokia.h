@@ -76,7 +76,12 @@ public:
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
     int logoPosition() const;
-    const QString & host() const;
+    const QString& host() const;
+    QChar firstSubdomain() const;
+    unsigned char maxSubdomains() const;
+    const QString& token() const;
+    const QString& applicationId() const;
+    const QString& referer() const;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
@@ -87,6 +92,9 @@ private:
     static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
 
     void setupServiceInfo();
+    void setHost(const QString& host);
+
+    bool isValidParameter(const QString& param);
 
 #if defined(Q_OS_SYMBIAN)
     QChar findFirstInternalFlashDrive();
@@ -99,6 +107,8 @@ private:
     QNetworkAccessManager *m_networkManager;
     QNetworkDiskCache *m_cache;
     QString m_host;
+    QChar m_firstSubdomain;
+    unsigned char m_maxSubdomains;
     QString m_token;
     QString m_referer;
     QString m_applicationId;

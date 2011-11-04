@@ -98,7 +98,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class qoutputrange
-    \relates QSensor
     \inmodule QtSensors
     \brief The qoutputrange class holds the specifics of an output range.
 

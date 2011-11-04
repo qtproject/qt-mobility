@@ -79,7 +79,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-music-browser"
         testGoal = "Verify that all available artists can be shown and selected";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -107,7 +107,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-music-browser"
         testGoal = "Verify that available genres are shown correctly";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -135,7 +135,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-music-browser"
         testGoal = "Verify that available songs are listed correctly";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps

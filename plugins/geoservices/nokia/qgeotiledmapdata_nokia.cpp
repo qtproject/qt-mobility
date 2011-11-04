@@ -86,8 +86,25 @@ QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engi
     m_networkManager = new QNetworkAccessManager(this);
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(copyrightReplyFinished(QNetworkReply*)));
 
-    QString copirightUrl = "http://" + engine->host() + "/maptiler/v2/copyright/newest";
-    m_networkManager->get(QNetworkRequest(QUrl(copirightUrl)));
+    QString copyrightUrl = "http://";
+    if (!engine->firstSubdomain().isNull()) {
+        copyrightUrl += engine->firstSubdomain();
+        copyrightUrl += ".";
+    }
+    copyrightUrl += engine->host();
+    copyrightUrl += "/maptiler/v2/copyright/newest?output=json";
+
+    if (!engine->token().isEmpty()) {
+        copyrightUrl += "&token=";
+        copyrightUrl += engine->token();
+    }
+
+    if (!engine->applicationId().isEmpty()) {
+        copyrightUrl += "&app_id=";
+        copyrightUrl += engine->applicationId();
+    }
+
+    m_networkManager->get(QNetworkRequest(QUrl(copyrightUrl)));
 }
 
 QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia()
@@ -107,8 +124,10 @@ static QGeoBoundingBox variantListToBoundingBox(const QVariantList & list) {
 
 void QGeoTiledMapDataNokia::copyrightReplyFinished(QNetworkReply * reply)
 {
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError) {
+        qWarning() << __FUNCTION__ << reply->errorString();
         return;
+    }
 
     JSONParser jp(reply->readAll());
     QVariant root = jp.parse();
@@ -145,24 +164,30 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
 {
     QGeoBoundingBox viewport = this->viewport();
 
-    QString terraintype;
+    QString terraintype = "normal";
 
-    switch (mapType()) {
-        case QGraphicsGeoMap::StreetMap:
-            terraintype = "normal";
-            break;
+    typedef std::map<QGraphicsGeoMap::MapType, QString> MapTypeRegistry;
+    static MapTypeRegistry mapTypes;
 
-        case QGraphicsGeoMap::SatelliteMapDay:
-        case QGraphicsGeoMap::SatelliteMapNight:
-            terraintype = "hybrid";
-            break;
+    if (mapTypes.empty()) {
+        mapTypes[QGraphicsGeoMap::NoMap]                 = "normal";
+        mapTypes[QGraphicsGeoMap::TerrainMap]            = "terrain";
+        mapTypes[QGraphicsGeoMap::StreetMap]             = "normal";
+        mapTypes[QGraphicsGeoMap::SatelliteMapDay]       = "satellite";
+        mapTypes[QGraphicsGeoMap::SatelliteMapNight]     = "satellite";
+        mapTypes[QGraphicsGeoMap::HybridMap]             = "hybrid";
+        mapTypes[QGraphicsGeoMap::TransitMap]            = "normal";
+        mapTypes[QGraphicsGeoMap::GrayStreetMap]         = "normal";
+        mapTypes[QGraphicsGeoMap::MobileStreetMap]       = "normal";
+        mapTypes[QGraphicsGeoMap::MobileTerrainMap]      = "terrain";
+        mapTypes[QGraphicsGeoMap::MobileHybridMap]       = "hybrid";
+        mapTypes[QGraphicsGeoMap::MobileTransitMap]      = "normal";
+        mapTypes[QGraphicsGeoMap::MobileGrayStreetMap]   = "normal";
+    }
 
-        case QGraphicsGeoMap::TerrainMap:
-            terraintype = "terrain";
-            break;
-
-        default:
-            terraintype = "normal";
+    MapTypeRegistry::const_iterator it = mapTypes.find(mapType());
+    if (it != mapTypes.end()) {
+        terraintype = it->second;
     }
 
     CopyrightDescriptor fallback;

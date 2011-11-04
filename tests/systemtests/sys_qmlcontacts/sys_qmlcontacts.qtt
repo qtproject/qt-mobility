@@ -177,7 +177,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
         testGoal = "Verify test application run without any error";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps       
@@ -204,7 +204,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
         testGoal = "Verify that overview of contact names is correct";
         testPreconditions = "There are some contact examples";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -230,7 +230,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
         testGoal = "Verify that when selecting a contact its summary is shown";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps 
@@ -256,7 +256,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
         testGoal = "Verify that the details page for contacts can be seen";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps 
@@ -282,7 +282,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
         testGoal = "Verify that each contact has the details expec";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps 
