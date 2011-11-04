@@ -10,3 +10,7 @@
 0010-rules-makeshlibs-v.patch
 0011-platformconfig-geoclue-gypsy.patch
 0012-Fixes-QTMOBILITY-1749-adding-ContactAddress-FieldExt.patch
+0013-NB288049-qcontactdetail.diff
+0014-NB287287-qcontactmanagerengine.diff
+0015-NB281692-wrong-bold-tags.diff
+0016-NB267249-inmodule.diff

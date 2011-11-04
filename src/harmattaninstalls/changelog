@@ -1,3 +1,60 @@
+qt-mobility (1.2.1+206) unstable; urgency=low
+
+  * Add GRP::calendar credential to demos and tests as required by NB#287513 change
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Thu, 03 Nov 2011 17:13:00 +0200
+
+qt-mobility (1.2.1+205) unstable; urgency=low
+
+  * Fixes: NB#267249 - inmodule tags missing from qt-mobility
+  * Fixes: NB#287287 - QContactManagerEngine::compareVariant does not handle QVariant::Url
+  * Fixes: NB#288049 - QContactStringHolder does extra QString allocations
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Thu, 27 Oct 2011 13:03:00 +0200
+
+qt-mobility (1.2.1+204) unstable; urgency=low
+
+  * Resynced with qt mobility master
+  * Fixes: NB#280437
+    Should a QContact's displayLabel be also updated on partial save?
+  * Fixes: NB#287773
+    qoutputrange documentation is not generated
+  * Fixes: NB#280265
+    <coverity> defects from qt-mobility/1.2.1_195_0m6
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Tue, 25 Oct 2011 11:55:15 +0200
+
+qt-mobility (1.2.1+203) unstable; urgency=low
+
+  * Bump up version and list 5 bugs already fixed by previous resync to qtm master:
+  * Fixes: NB#269669
+    Angry Birds does not recognize enabling of the NFC "on the fly"
+  * Fixes: NB#254434
+    tst_qcontactasync contactPartialSave crashes sometimes for tracker backend
+  * Fixes: NB#267249
+    inmodule tags missing from qt-mobility
+  * Fixes: NB#282687
+    QML ScreenSaver Element, setScreenSaverInhibited is actually setScreenSaverInhibit
+  * Fixes: NB#283209
+    Attachment ids are not returned always by QMessage::attachmentIds() method
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Fri, 21 Oct 2011 09:50:48 +0200
+
+qt-mobility (1.2.1+202) unstable; urgency=low
+
+  * Bumped up the version
+  * Fixes: NB#280433
+    Clarify API dox for QContactManager::saveContact(..)
+  * Fixes: NB#263403
+    Display time-out from Settings are overwritten when youtube video is paused
+  * Fixes: NB#282736
+    QML Camera component segfaults if app is swiped to background when component is 
+    loading (actually already fixed by previous resync to qt mobility master)
+  * Fixes: NB#285892
+    Issue with Chinese map display (fixed by previous resync to qt mobility master)
+
+ -- Stephan Binner <stephan.binner@basyskom.com>  Wed, 19 Oct 2011 13:23:48 +0200
+
 qt-mobility (1.2.1+201) unstable; urgency=low
 
   * Bumped up the version
