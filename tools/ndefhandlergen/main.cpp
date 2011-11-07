@@ -61,7 +61,7 @@ struct Data
 void showHelp()
 {
     qWarning("Generate platform specific NFC message handler registration files.\n"
-             "Usage: nfcxmlgen [options]\n"
+             "Usage: ndefhandlergen [options]\n"
              "\n"
              "    -template TEMPLATE    Template to use.\n"
              "    -appname APPNAME      Name of the application.\n"

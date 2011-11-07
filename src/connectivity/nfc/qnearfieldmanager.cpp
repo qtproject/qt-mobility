@@ -111,7 +111,7 @@ QTM_BEGIN_NAMESPACE
 
     \code
         Generate platform specific NFC message handler registration files.
-        Usage: nfcxmlgen [options]
+        Usage: ndefhandlergen [options]
 
             -template TEMPLATE    Template to use.
             -appname APPNAME      Name of the application.
@@ -121,7 +121,7 @@ QTM_BEGIN_NAMESPACE
 
         The -datatype and -match options are mutually exclusive.
 
-        Available templates: Meego 1.2 Harmattan, symbian
+        Available templates: harmattan, symbian
     \endcode
 
     A typical invocation of the \c ndefhandlergen tool for Symbian^3 target:
