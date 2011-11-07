@@ -192,7 +192,7 @@ QTM_BEGIN_NAMESPACE
     Registration of the NDEF message match criteria is done via a D-Bus call. The
     application must also ensure that it has registered a D-Bus service name so that the
     application can be automatically launched when a notification message is sent to the
-    registered service.
+    registered service.  It is also a requirement that the handler is a singe instance application.
 
     To register the D-Bus service the two files need to be created and installed into particular
     directories on the device. The first file is the D-Bus bus configuration file:
@@ -207,7 +207,9 @@ QTM_BEGIN_NAMESPACE
     \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.service
 
     The \i {%APPNAME%} tag must be replace with the name of your application binary and the
-    \i {%APPPATH%} tag must be replaced with the path to your installed application binary.
+    \i {%APPPATH%} tag must be replaced with the path to your installed application binary.  The
+    use of \c {/usr/bin/single-instance} ensures that only a single instance of your application is
+    started by the service file.
 
     It is recommended to name these files after the application package name. For example
     myapplication.conf and myapplication.service. To install the above files into the correct
