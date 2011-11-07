@@ -383,7 +383,7 @@ bool QNearFieldManager::isAvailable() const
     The targetDetected() signal is emitted when a target with the type in \a targetTypes is
     within proximity. If \a targetTypes is empty targets of all types will be detected.
     
-    \note In a MeeGo 1.2 Harmattan device the method returns \c true regardless of the device’s NFC state 
+    \note In a MeeGo 1.2 Harmattan device the method returns \c true regardless of the device's NFC state
     (on or off). In Symbian devices the method returns \c false if NFC is switched off; otherwise 
     returns \c true.
 
