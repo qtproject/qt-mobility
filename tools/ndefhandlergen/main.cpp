@@ -116,7 +116,7 @@ bool generateHarmattan(Data data)
     const QString outputFile = QLatin1String("ndefhandler_") + data.applicationName;
 
     if (data.matchString.isEmpty())
-        data.matchString = data.dataType + QLatin1String("[1:*];");
+        data.matchString = QLatin1Char('\'') + data.dataType + QLatin1String("'[1:*];");
 
     bool success = false;
 
