@@ -70,11 +70,10 @@ BluetoothSymbianRegistryAdapter::BluetoothSymbianRegistryAdapter(const QBluetoot
     , m_bluetoothDeviceManager(0)
     , m_address(address)
     , m_operation(NoOp)
+    , m_errorCode(KErrNone)
 {
-    TRAP(m_errorCode, m_bluetoothDeviceManager = CBTEngDevMan::NewL(this))
-    if (m_errorCode != KErrNone) 
-        emit registryHandlingError(m_errorCode);
 }
+
 BluetoothSymbianRegistryAdapter::~BluetoothSymbianRegistryAdapter()
 {
     delete m_bluetoothDeviceManager;
@@ -157,6 +156,14 @@ CBTDeviceArray* BluetoothSymbianRegistryAdapter::createDeviceArrayL() const
 
 void BluetoothSymbianRegistryAdapter::removePairing()
 {
+    if (!m_bluetoothDeviceManager) {
+        TRAPD(result, m_bluetoothDeviceManager = CBTEngDevMan::NewL(this));
+        if (result != KErrNone) {
+            emit registryHandlingError(result);
+            return;
+        }
+    }
+
     // setup current values
     int errorCode = 0;
     m_operation = RemovePairing;
