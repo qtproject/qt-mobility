@@ -73,16 +73,14 @@ public:
 
     void addObserver(MTelephonyInfoObserver *observer);
     void removeObserver(MTelephonyInfoObserver *observer);
+
+protected:  //from CActive
+    void RunL();
+
+protected:
     void makeRequest();
-    //For initilisation of variables
-    void checkandStartInit() const;
-    void checkandStopInit() const;
 
 protected:
-
-
-protected:
-    bool m_initializing;
     CTelephony &m_telephony;
     QList<MTelephonyInfoObserver *> m_observers;
     CActiveSchedulerWait *m_wait;
@@ -95,7 +93,6 @@ public:
     ~CPhoneInfo();
 
 protected:
-    void RunL();
     void DoCancel();
 
 public:
@@ -119,7 +116,6 @@ public:
     ~CSubscriberInfo();
 
 protected:
-    void RunL();
     void DoCancel();
 
 public:
@@ -147,6 +143,8 @@ public:
     int batteryLevel() const;
 
 private:
+    bool m_initializing;
+
     CTelephony::TBatteryInfoV1 m_batteryInfoV1;
     CTelephony::TBatteryInfoV1Pckg m_batteryInfoV1Pckg;
 
@@ -176,6 +174,8 @@ public:
     CTelephony::TNetworkMode networkMode() const;
 
 private:
+    bool m_initializing;
+
     CTelephony::TNetworkInfoV1Pckg m_networkInfoV1Pckg;
     CTelephony::TNetworkInfoV1 m_networkInfoV1;
 
@@ -212,6 +212,8 @@ public:
     CTelephony::TRegistrationStatus cellNetworkStatus() const;
 
 private:
+    bool m_initializing;
+
     CTelephony::TNetworkRegistrationV1Pckg m_networkRegistrationV1Pckg;
     CTelephony::TNetworkRegistrationV1 m_networkRegistrationV1;
 
@@ -234,6 +236,8 @@ public:
     int cellNetworkSignalStrength() const;
 
 private:
+    bool m_initializing;
+
     CTelephony::TSignalStrengthV1Pckg m_signalStrengthV1Pckg;
     CTelephony::TSignalStrengthV1 m_signalStrengthV1;
 
