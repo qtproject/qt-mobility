@@ -9,6 +9,7 @@ qtAddLibrary(QtMultimediaKit)
 #includes here so that all defines are added here also
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
+include(../trace/trace.pri)
 
 QT += network
 
@@ -24,7 +25,6 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}/src/multimedia \
     $${SOURCE_DIR}/src/multimedia/audio \
     $${SOURCE_DIR}/src/multimedia/video \
-    $${SOURCE_DIR}/plugins/multimedia/symbian/mmf/inc \
     $${SOURCE_DIR}
 
 

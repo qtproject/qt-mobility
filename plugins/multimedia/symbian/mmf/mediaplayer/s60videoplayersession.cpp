@@ -45,7 +45,7 @@
 #include "s60videowidgetdisplay.h"
 #include "s60videowindowcontrol.h"
 #include "s60videowindowdisplay.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>

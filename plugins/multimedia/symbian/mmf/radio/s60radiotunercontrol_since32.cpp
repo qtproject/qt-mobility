@@ -41,7 +41,7 @@
 
 #include "s60radiotunercontrol_since32.h"
 #include "s60radiotunerservice.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include <RadioFmTunerUtility.h>
 

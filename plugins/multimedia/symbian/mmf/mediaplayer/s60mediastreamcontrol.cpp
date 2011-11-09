@@ -42,7 +42,7 @@
 #include "s60mediastreamcontrol.h"
 #include "s60mediaplayersession.h"
 #include "s60mediaplayercontrol.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 #include <qmediastreamscontrol.h>
 
 #include <QtCore/qdir.h>
