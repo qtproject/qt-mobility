@@ -41,7 +41,7 @@
 
 #include "s60audiomediarecordercontrol.h"
 #include "s60audiocapturesession.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 S60AudioMediaRecorderControl::S60AudioMediaRecorderControl(QObject *session, QObject *parent)
     :QMediaRecorderControl(parent), m_state(QMediaRecorder::StoppedState)

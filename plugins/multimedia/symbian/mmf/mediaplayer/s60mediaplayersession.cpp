@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "s60mediaplayersession.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qdir.h>
@@ -316,7 +316,7 @@ void S60MediaPlayerSession::reset()
     doStop();
     doClose();
     setState(QMediaPlayer::StoppedState);
-    setMediaStatus(QMediaPlayer::UnknownMediaStatus);
+    setMediaStatus(QMediaPlayer::NoMedia);
     setPosition(0);
 }
 

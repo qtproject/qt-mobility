@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "s60radiotunerservice.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 
 S60RadioTunerService::S60RadioTunerService(QObject *parent)

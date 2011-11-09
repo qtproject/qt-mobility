@@ -45,7 +45,7 @@
 #include "s60audioencodercontrol.h"
 #include "s60audiomediarecordercontrol.h"
 #include "s60audiocontainercontrol.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
     QMediaService(parent)

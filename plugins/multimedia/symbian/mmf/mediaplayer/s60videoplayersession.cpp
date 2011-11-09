@@ -45,7 +45,7 @@
 #include "s60videowidgetdisplay.h"
 #include "s60videowindowcontrol.h"
 #include "s60videowindowdisplay.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
@@ -58,6 +58,7 @@
 #include <w32std.h>
 #include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
+#include <mmf/common/mmfvideo.h>
 #include <MMFROPCustomCommandConstants.h>
 #ifdef HTTP_COOKIES_ENABLED
 #include <MMFSessionInfoCustomCommandConstants.h>
@@ -528,6 +529,8 @@ bool S60VideoPlayerSession::isAudioAvailable()
 void S60VideoPlayerSession::doPlay()
 {
     m_player->Play();
+    if (m_videoOutputDisplay)
+        m_videoOutputDisplay->setHasContent(true);
 }
 
 /*!
@@ -752,7 +755,13 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
-    Q_UNUSED(aEvent);
+    TRACE("S60VideoPlayerSession::MvpuoEvent" << qtThisPtr()
+          << "type" << (void*)aEvent.iEventType.iUid
+          << "error" << aEvent.iErrorCode);
+    if (aEvent.iEventType == KMMFEventCategoryVideoPlayerGeneralError) {
+        setError(aEvent.iErrorCode);
+        doClose();
+    }
 }
 
 /*!
@@ -883,8 +892,6 @@ void S60VideoPlayerSession::MvloLoadingComplete()
     TRACE("S60VideoPlayerSession::MvloLoadingComplete" << qtThisPtr());
 
     buffered();
-    if (m_videoOutputDisplay)
-        m_videoOutputDisplay->setHasContent(true);
 }
 
 /*!

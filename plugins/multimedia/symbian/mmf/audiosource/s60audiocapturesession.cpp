@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "s60audiocapturesession.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 #include <QtCore/qurl.h>
 #include <QDir>
 

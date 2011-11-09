@@ -39,24 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef S60MMFTRACE_H
-#define S60MMFTRACE_H
+#ifndef S60MMTRACE_H
+#define S60MMTRACE_H
 
 #ifdef _DEBUG
-#define MMF_ENABLE_TRACE
+#define QTMMK_BACKEND_ENABLE_TRACE
 #endif
 
-//#define MMF_ENABLE_VERBOSE_TRACE
+//#define QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
 
-#ifdef MMF_ENABLE_TRACE
+#ifdef QTMMK_BACKEND_ENABLE_TRACE
 
 #   include <QtCore/QDebug>
-#   define TRACE(args) qDebug() << "[QtMultimediaKit mmf]" << args
-#   ifdef MMF_ENABLE_VERBOSE_TRACE
+#   define TRACE(args) qDebug() << "[QtMultimediaKit]" << args
+#   ifdef QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
 #       define VERBOSE_TRACE(args) TRACE(args)
-#   else // MMF_ENABLE_VERBOSE_TRACE
+#   else // QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
 #       define VERBOSE_TRACE(args)
-#   endif // MMF_ENABLE_VERBOSE_TRACE
+#   endif // QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
 
     template <typename T>
     inline void *qtVoidPtr(T *ptr)
@@ -64,9 +64,10 @@
 
 #   define qtThisPtr() qtVoidPtr(this)
 
-#else // MMF_ENABLE_TRACE
+#else // QTMMK_BACKEND_ENABLE_TRACE
 #   define TRACE(args)
 #   define VERBOSE_TRACE(args)
 #endif
 
-#endif // S60MMFTRACE_H
+#endif // S60MMTRACE_H
+

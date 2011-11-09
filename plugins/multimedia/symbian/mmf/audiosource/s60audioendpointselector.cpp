@@ -41,7 +41,7 @@
 
 #include "s60audiocapturesession.h"
 #include "s60audioendpointselector.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include <qaudiodeviceinfo.h>
 

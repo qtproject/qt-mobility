@@ -54,7 +54,7 @@
 #include "s60mediaplayeraudioendpointselector.h"
 #include "s60medianetworkaccesscontrol.h"
 #include "s60mediastreamcontrol.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include <qmediaplaylistnavigator.h>
 #include <qmediaplaylist.h>
