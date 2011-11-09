@@ -110,7 +110,7 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
     \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
     This signal is emitted whenever the users active profile changes to \a profile.
-    \since 1.2
+    \since 1.1
 */
 
 /*!
@@ -511,7 +511,7 @@ bool QSystemDeviceInfo::isDeviceLocked()
     \brief the device profile
 
     Gets the current QSystemDeviceInfo::currentProfile device profile.
-    \since 1.2
+    \since 1.1
 */
 QSystemDeviceInfo::Profile QSystemDeviceInfo::currentProfile()
 {
