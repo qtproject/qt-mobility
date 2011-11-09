@@ -607,11 +607,11 @@ testcase = {
    },
 
     // \groups BAT,1.1,MOBILITY-538
-    displaying_a_map: function()
+    display_a_map: function()
     {
         // Test meta data
         testTitle = "Maps and Navigation - Display a Map";
-        testBinary = "geoservicedemo";
+        testBinary = "mapsdemo";
         testSource = "$MOBILITYDIR/tests/manual/location-testing-tools/geoservicedemo";
         testGoal = "Verify that a map can be displayed";
         testPreconditions = "None";
@@ -786,8 +786,8 @@ testcase = {
     {
         // Test meta data
         testTitle = "Location - Map Display";
-        testBinary = "testqtlocation";
-        testSource = "$MOBILITYDIR/tests/applications/location/testqtlocation";
+        testBinary = "qml_mapviewer";
+        testSource = "$MOBILITYDIR/tests/examples/declarative-location/mapviewer";
         testGoal = "Verify that a map can be loaded for a given position.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT_MOBILITY";
