@@ -88,7 +88,7 @@ testcase = {
         testSource = "$MOBILITYDIR/example/samplephonebook";
         testGoal = "Verify that vCard contacts can be imported";
         testPreconditions = "There is an testimport1.vcf onto a location on the target";
-        testGroups = " ";
+        testGroups = "BAT_MOBILITY";
         testRequirements = ""
             
         var promptText = "| *Name* | *Phone Number* | *Email* | *Address* | *Avatar* |\n";

@@ -204,7 +204,7 @@ testcase = {
         testSource = "$MOBILITYDIR/demos/qmlcontacts";
         testGoal = "Verify that overview of contact names is correct";
         testPreconditions = "There are some contact examples";
-        testGroups = " ";
+        testGroups = "BAT_MOBILITY";
         testRequirements = "";
 
         // Test Steps
