@@ -1,4 +1,4 @@
 [D-BUS Service]
 Name=com.nokia.qtmobility.nfc.%APPNAME%
-Exec=/usr/bin/single-instance %APPPATH%
+Exec=/usr/bin/invoker --type=e --single-instance %APPPATH%
 User=user
