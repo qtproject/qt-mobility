@@ -136,6 +136,7 @@ public:
     // Own methods
     S60MediaPlayerSession* session();
     void setVideoOutput(QObject *output);
+    QObject *videoOutput() const;
     const S60MediaSettings& mediaControlSettings() const;
     void setAudioEndpoint(const QString& name);
     void setMediaType(S60MediaSettings::TMediaType type);

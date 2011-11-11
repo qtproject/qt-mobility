@@ -47,6 +47,11 @@
 #include "s60videowindowdisplay.h"
 #include "s60mmtrace.h"
 
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+#include "s60videoeglrenderercontrol.h"
+#include "s60nativewindow.h"
+#endif
+
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
@@ -160,7 +165,9 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     , m_screenDevice(CCoeEnv::Static()->ScreenDevice())
     , m_service(service)
     , m_player(0)
-#ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    , m_nativeSurface(TSurfaceId::CreateNullId())
+#else
     , m_dsaActive(false)
     , m_dsaStopped(false)
 #endif
@@ -187,6 +194,9 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
         EMdaPriorityPreferenceNone
         ));
     m_player->RegisterForVideoLoadingNotification(*this);
+    m_dummyWindow = new S60NativeWindow(this);
+    connect(this, SIGNAL(nativeSurfaceChanged(TSurfaceId)),
+            m_dummyWindow, SLOT(setNativeSurface(TSurfaceId)));
 #else
     RWindow *window = 0;
     QRect extentRect;
@@ -351,6 +361,10 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
     TRACE("S60VideoPlayerSession::setVideoRenderer" << qtThisPtr()
           << "output" << videoOutput);
     if (videoOutput != m_videoOutputControl) {
+        if (m_videoOutputControl) {
+            disconnect(m_videoOutputControl);
+            m_videoOutputControl->disconnect(this);
+        }
         if (m_videoOutputDisplay) {
             m_videoOutputDisplay->setHasContent(false);
             disconnect(m_videoOutputDisplay);
@@ -358,10 +372,21 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
             m_videoOutputDisplay = 0;
         }
         if (videoOutput) {
+            TRACE("S60VideoPlayerSession::setVideoRenderer output" << videoOutput);
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+            if (S60VideoEglRendererControl *control = qobject_cast<S60VideoEglRendererControl *>(videoOutput)) {
+                control->setNativeSurface(m_nativeSurface);
+                control->setNativeSize(m_nativeSize);
+                connect(this, SIGNAL(nativeSurfaceChanged(TSurfaceId)), control, SLOT(setNativeSurface(TSurfaceId)));
+                connect(this, SIGNAL(nativeSizeChanged(QSize)), control, SLOT(setNativeSize(QSize)));
+            }
+            else
+#endif
             if (S60VideoWidgetControl *control = qobject_cast<S60VideoWidgetControl *>(videoOutput))
                 m_videoOutputDisplay = control->display();
             else if (S60VideoWindowControl *control = qobject_cast<S60VideoWindowControl *>(videoOutput))
                 m_videoOutputDisplay = control->display();
+            TRACE("S60VideoPlayerSession::setVideoRenderer display" << m_videoOutputDisplay);
             if (m_videoOutputDisplay) {
                 m_videoOutputDisplay->setHasContent(QMediaPlayer::PlayingState == state());
                 m_videoOutputDisplay->setNativeSize(m_nativeSize);
@@ -576,6 +601,10 @@ void S60VideoPlayerSession::doClose()
 
     m_player->Close();
 
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    m_nativeSurface = TSurfaceId::CreateNullId();
+#endif
+
 // close will remove the window handle in media clint video.
 // So mark it in pending changes.
     m_pendingChanges |= WindowHandle;
@@ -708,8 +737,25 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
             } else {
             m_isaudiostream = false;
             }
-            applyPendingChanges(true); // force apply even though state is not Loaded
-            if (KErrNone == this->error()) // applyPendingChanges() can call setError()
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+            // Register for callbacks via MMMFSurfaceEventHandler
+            TRAP(error, m_player->AddDisplayL(*m_wsSession,
+                                              m_screenDevice->GetScreenNumber(),
+                                              *this));
+            if (!error)
+                // When switching from the 'direct' video rendering path (which
+                // sets the video surface as the background of a native window)
+                // to the EGL rendering path (which uses EGL endpoint to extract
+                // video frames as EGL images), the native window is first removed,
+                // then the EGL endpoint is created.  In order to prevent the MMF
+                // from destroying the video surface when the window is removed,
+                // we must also provide a dummy, non-displayed window handle.
+                TRAP(error, m_player->AddDisplayWindowL(*m_wsSession, *m_screenDevice,
+                                                        *m_dummyWindow->windowHandle(),
+                                                        TRect(), TRect()));
+#endif
+                applyPendingChanges(true); // force apply even though state is not Loaded
+            if (KErrNone == error && KErrNone == this->error()) // applyPendingChanges() can call setError()
                 loaded();
         }
     } else {
@@ -765,6 +811,39 @@ void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
         doClose();
     }
 }
+
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+void S60VideoPlayerSession::MmsehSurfaceCreated(TInt aDisplayId, const TSurfaceId& aId,
+                                                const TRect& aCropRect,
+                                                TVideoAspectRatio aAspectRatio)
+{
+    TRACE("S60VideoPlayerSession::MmsehSurfaceCreated" << qtThisPtr() << "id" << (void*)aId.iInternal[3]);
+    Q_UNUSED(aCropRect)
+    Q_UNUSED(aAspectRatio)
+    Q_ASSERT(m_nativeSurface.IsNull());
+    m_nativeSurface = aId;
+    emit nativeSurfaceChanged(m_nativeSurface);
+}
+
+void S60VideoPlayerSession::MmsehSurfaceParametersChanged(const TSurfaceId& aId,
+                                                          const TRect& aCropRect,
+                                                          TVideoAspectRatio aAspectRatio)
+{
+    TRACE("S60VideoPlayerSession::MmsehSurfaceParametersChanged" << qtThisPtr() << "id" << (void*)aId.iInternal[3]);
+    Q_UNUSED(aId)
+    Q_UNUSED(aCropRect)
+    Q_UNUSED(aAspectRatio)
+}
+
+void S60VideoPlayerSession::MmsehRemoveSurface(const TSurfaceId& aId)
+{
+    TRACE("S60VideoPlayerSession::MmsehRemoveSurface" << qtThisPtr() << "id" << (void*)aId.iInternal[3]);
+    if (aId == m_nativeSurface) {
+        m_nativeSurface = TSurfaceId::CreateNullId();
+        emit nativeSurfaceChanged(m_nativeSurface);
+    }
+}
+#endif // VIDEOOUTPUT_GRAPHICS_SURFACES
 
 /*!
 

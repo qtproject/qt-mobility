@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEORENDERERCONTROL_H
-#define S60VIDEORENDERERCONTROL_H
+#ifndef S60EGLENDPOINT_H
+#define S60EGLENDPOINT_H
 
-#include <qvideorenderercontrol.h>
+#include <QtCore/QObject>
+#include <egl/eglext.h>
 
-/*
- * Control for QGraphicsVideoItem. Viewfinder frames are streamed to a surface
- * which is drawn to the display by the Qt Graphics Vide Framework.
- * VideoRendererControl uses only Bitmap Viewfinder.
- */
-class S60VideoRendererControl : public QVideoRendererControl
+QT_USE_NAMESPACE
+
+class QTime;
+class S60EglEndpointEventHandler;
+class S60EglExtensions;
+class TSurfaceId;
+
+class S60EglEndpoint : public QObject
 {
     Q_OBJECT
 
-public: // Constructor & Destructor
+public:
+    S60EglEndpoint(const TSurfaceId &surface, S60EglExtensions *extensions,
+                   QObject *parent);
+    ~S60EglEndpoint();
 
-    S60VideoRendererControl(QObject *parent = 0);
-    virtual ~S60VideoRendererControl();
+    bool isValid() const;
+    void setDelay(qint64 delay);
+    EGLImageKHR acquireImage();
+    void releaseImage();
 
-public: // S60VideoRendererControl
+signals:
+    void imageAvailable();
 
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
+private:
+    void requestImage();
+    void endpointEvent();
 
-signals: // Internal Signals
-
-    void viewFinderSurfaceSet();
-
-private: // Data
-
-    QAbstractVideoSurface   *m_surface;
-
+private:
+    friend class S60EglEndpointEventHandler;
+    S60EglExtensions *m_extensions;
+    EGLContext m_context;
+    EGLenum m_api;
+    EGLDisplay m_display;
+    EGLEndpointNOK m_endpoint;
+    QScopedPointer<S60EglEndpointEventHandler> m_eventHandler;
+    enum State {
+        Null,
+        Created,
+        Active
+    } m_state;
+    EGLImageKHR m_image;
 };
 
-#endif // S60VIDEORENDERERCONTROL_H
+#endif // S60EGLENDPOINT_H
+

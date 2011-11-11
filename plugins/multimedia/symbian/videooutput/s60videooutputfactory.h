@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,35 @@
 **
 ****************************************************************************/
 
-#include <qabstractvideosurface.h>
+#ifndef S60VIDEOOUTPUTFACTORY_H
+#define S60VIDEOOUTPUTFACTORY_H
 
-#include "s60videorenderercontrol.h"
+#include <qmediacontrol.h>
+#include <QtCore/QVector>
 
-S60VideoRendererControl::S60VideoRendererControl(QObject *parent) :
-    QVideoRendererControl(parent),
-    m_surface(0)
+QT_USE_NAMESPACE
+
+class S60EglExtensions;
+
+class S60VideoOutputFactory : public QObject
 {
-}
+public:
+    S60VideoOutputFactory(QObject *parent = 0);
+    ~S60VideoOutputFactory();
 
-S60VideoRendererControl::~S60VideoRendererControl()
-{
-    // Stop surface if still active
-    if (m_surface && m_surface->isActive())
-        m_surface->stop();
-}
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
-QAbstractVideoSurface *S60VideoRendererControl::surface() const
-{
-    return m_surface;
-}
+private:
+    struct ControlData
+    {
+        QString name;
+        QMediaControl *control;
+        int refCount;
+    };
+    QVector<ControlData> m_data;
+    S60EglExtensions *m_eglExtensions;
+};
 
-void S60VideoRendererControl::setSurface(QAbstractVideoSurface *surface)
-{
-    if (surface == 0) {
-        // Stop current surface if needed
-        if (m_surface && m_surface->isActive())
-            m_surface->stop();
-    }
+#endif // S60VIDEOOUTPUTFACTORY_H
 
-    m_surface = surface;
-    emit viewFinderSurfaceSet();
-}
-
-// End of file

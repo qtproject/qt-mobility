@@ -379,6 +379,11 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
         m_session->setVideoRenderer(output);
 }
 
+QObject *S60MediaPlayerControl::videoOutput() const
+{
+    return m_mediaSettings.videoOutput();
+}
+
 /*!
  * \return TRUE if Audio available or else FALSE.
 */

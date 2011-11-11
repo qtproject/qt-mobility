@@ -10,7 +10,7 @@ INCLUDEPATH+= .
 
 QT += network
 
-contains(QT_CONFIG, opengl) | contains(QT_CONFIG, opengles2): !symbian {
+contains(QT_CONFIG, opengl) | contains(QT_CONFIG, opengles2) {
    QT += opengl
 } else {
    DEFINES += QT_NO_OPENGL
@@ -191,9 +191,16 @@ maemo6 {
 
 symbian {
     contains(surfaces_s60_enabled, yes) {
-        SOURCES += qgraphicsvideoitem_symbian.cpp
+        SOURCES += qeglimagevideosurface_symbian.cpp \
+                   qgraphicsvideoitem_symbian.cpp
+        HEADERS += qeglimagevideosurface_symbian_p.h
     } else {
         SOURCES += qgraphicsvideoitem_overlay.cpp
+    }
+    contains(QT_CONFIG, openvg) {
+        LIBS += -llibopenvg
+    } else {
+        DEFINES += QT_NO_OPENVG
     }
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,24 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTINTERFACE_H
-#define S60VIDEOOUTPUTINTERFACE_H
+#include <qabstractvideosurface.h>
 
-#include <QtCore/qglobal.h>
-#include <QtGui/qwindowdefs.h>
-#include <coecntrl.h>
+#include "s60bitmapviewfinderrenderercontrol.h"
 
-class S60VideoOutputInterface
+S60BitmapViewFinderRendererControl::S60BitmapViewFinderRendererControl(QObject *parent) :
+    QVideoRendererControl(parent),
+    m_surface(0)
 {
-public:
-	RWindow *videoWindowHandle() const { return videoWinId() ? static_cast<RWindow *>(videoWinId()->DrawableWindow()) : 0 ; }
-    virtual WId videoWinId() const = 0;
-    // If VIDEOOUTPUT_GRAPHICS_SURFACES is defined, the return value is the video
-    // rectangle relative to the video window.  If not, the return value is the
-    // absolute screen rectangle.
-    virtual QRect videoDisplayRect() const = 0;
-    virtual Qt::AspectRatioMode videoAspectRatio() const = 0;
-};
+}
 
-#endif // S60VIDEOOUTPUTINTERFACE_H
+S60BitmapViewFinderRendererControl::~S60BitmapViewFinderRendererControl()
+{
+    // Stop surface if still active
+    if (m_surface && m_surface->isActive())
+        m_surface->stop();
+}
 
+QAbstractVideoSurface *S60BitmapViewFinderRendererControl::surface() const
+{
+    return m_surface;
+}
+
+void S60BitmapViewFinderRendererControl::setSurface(QAbstractVideoSurface *surface)
+{
+    if (m_surface != surface) {
+        if (surface == 0) {
+            // Stop current surface if needed
+            if (m_surface && m_surface->isActive())
+                m_surface->stop();
+        }
+        m_surface = surface;
+        emit surfaceChanged();
+    }
+}
+
+// End of file

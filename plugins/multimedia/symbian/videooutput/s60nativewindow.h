@@ -1,6 +1,5 @@
-/****************************************************************************
-**
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+/**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,59 +38,36 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef S60NATIVEWINDOW_H
+#define S60NATIVEWINDOW_H
 
-#include <QtCore/qobject.h>
-#include <qmediaservice.h>
+#include <QtCore/QObject>
+#include <graphics/surface.h>
 
-#include "s60mediaplayeraudioendpointselector.h"
-
-QT_BEGIN_NAMESPACE
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-QT_END_NAMESPACE
+class RWindow;
+class RWindowGroup;
 
 QT_USE_NAMESPACE
 
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
-class S60MediaPlayerControl;
-class S60MediaMetaDataProvider;
-class S60MediaStreamControl;
-class S60MediaRecognizer;
-class S60VideoOutputFactory;
-
-class QMediaContent;
-class QMediaPlaylistNavigator;
-class S60MediaNetworkAccessControl;
-
-class S60MediaPlayerService : public QMediaService
+class S60NativeWindow : public QObject
 {
     Q_OBJECT
-
 public:
+    S60NativeWindow(QObject *parent);
+    ~S60NativeWindow();
 
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
+    RWindow *windowHandle() const;
+    TSurfaceId nativeSurface();
 
-    QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
-
-    S60MediaPlayerSession* createPlayerSession(const QMediaContent &content);
-
-private:
-    S60MediaPlayerSession *createAudioPlayerSession();
-    S60MediaPlayerSession *createVideoPlayerSession();
+public slots:
+    void setNativeSurface(const TSurfaceId &surface);
 
 private:
-    S60MediaPlayerControl *m_control;
-    S60MediaMetaDataProvider *m_metaData;
-    S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
-    S60MediaStreamControl *m_streamControl;
-    S60MediaNetworkAccessControl *m_networkAccessControl;
-    S60VideoOutputFactory *m_videoOutputFactory;
+    void getSurface();
+
+private:
+    RWindow *m_window;
+    TSurfaceId m_surface;
 };
 
-#endif
+#endif // S60NATIVEWINDOW_H

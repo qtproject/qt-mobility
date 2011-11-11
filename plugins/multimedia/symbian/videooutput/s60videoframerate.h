@@ -1,6 +1,5 @@
-/****************************************************************************
-**
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+/**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,59 +38,52 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef S60VIDEOFRAMERATE_H
+#define S60VIDEOFRAMERATE_H
 
-#include <QtCore/qobject.h>
-#include <qmediaservice.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QVector>
 
-#include "s60mediaplayeraudioendpointselector.h"
+class QElapsedTimer;
+class QTimer;
 
-QT_BEGIN_NAMESPACE
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
-
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
-class S60MediaPlayerControl;
-class S60MediaMetaDataProvider;
-class S60MediaStreamControl;
-class S60MediaRecognizer;
-class S60VideoOutputFactory;
-
-class QMediaContent;
-class QMediaPlaylistNavigator;
-class S60MediaNetworkAccessControl;
-
-class S60MediaPlayerService : public QMediaService
+/**
+ * Class for measuring video frame rate
+ *
+ * Delivery of a new video frame is notified by the client via the notify() slot.
+ * This class performs regular sampling of the event frequency and calculates a
+ * rolling average which is published via the frequency property.
+ */
+class S60VideoFrameRate : public QObject
 {
     Q_OBJECT
 
 public:
+    S60VideoFrameRate(QObject *parent = 0);
+    ~S60VideoFrameRate();
+    qreal frequency() const;
 
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
+signals:
+    void frequencyChanged(qreal freq) const;
 
-    QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
+public slots:
+    void notify();
 
-    S60MediaPlayerSession* createPlayerSession(const QMediaContent &content);
+private slots:
+    void sample();
+    void trace();
 
 private:
-    S60MediaPlayerSession *createAudioPlayerSession();
-    S60MediaPlayerSession *createVideoPlayerSession();
-
-private:
-    S60MediaPlayerControl *m_control;
-    S60MediaMetaDataProvider *m_metaData;
-    S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
-    S60MediaStreamControl *m_streamControl;
-    S60MediaNetworkAccessControl *m_networkAccessControl;
-    S60VideoOutputFactory *m_videoOutputFactory;
+    QTimer *m_sampleTimer;
+    QTimer *m_traceTimer;
+    QScopedPointer<QElapsedTimer> m_elapsedTimer;
+    int m_count;
+    QVector<qreal> m_history;
+    int m_historyIndex;
+    int m_historyCount;
+    qreal m_frequencySum;
+    qreal m_frequency;
 };
 
-#endif
+#endif // S60VIDEOFRAMERATE_H

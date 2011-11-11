@@ -49,6 +49,8 @@
 
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
 #include <videoplayer2.h>
+#include <graphics/surface.h>
+#include <surfaceeventhandler.h>
 #else
 #include <videoplayer.h>
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
@@ -64,6 +66,7 @@
 
 class QTimer;
 class S60MediaNetworkAccessControl;
+class S60NativeWindow;
 class S60VideoDisplay;
 
 // Helper classes to pass Symbian events from WServ to the S60VideoPlayerSession
@@ -95,6 +98,9 @@ private:
 class S60VideoPlayerSession : public S60MediaPlayerSession
                             , public MVideoPlayerUtilityObserver
                             , public MVideoLoadingObserver
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+                            , public MMMFSurfaceEventHandler
+#endif
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
                             , public MAudioOutputObserver
 #endif // HAS_AUDIOROUTING_IN_VIDEOPLAYER
@@ -130,6 +136,9 @@ public:
 
 signals:
     void nativeSizeChanged(QSize);
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    void nativeSurfaceChanged(TSurfaceId surface);
+#endif
 
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
@@ -181,6 +190,17 @@ private:
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
 
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    // MMMFSurfaceEventHandler
+    void MmsehSurfaceCreated(TInt aDisplayId, const TSurfaceId& aId,
+                             const TRect& aCropRect,
+                             TVideoAspectRatio aAspectRatio);
+    void MmsehSurfaceParametersChanged(const TSurfaceId& aId,
+                                       const TRect& aCropRect,
+                                       TVideoAspectRatio aAspectRatio);
+    void MmsehRemoveSurface(const TSurfaceId& aId);
+#endif
+
 private:
     int m_accessPointId;
     S60MediaNetworkAccessControl* m_networkAccessControl;
@@ -189,6 +209,8 @@ private:
     QMediaService *const m_service;
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
     CVideoPlayerUtility2 *m_player;
+    TSurfaceId m_nativeSurface;
+    S60NativeWindow *m_dummyWindow;
 #else
     CVideoPlayerUtility *m_player;
     bool m_dsaActive;

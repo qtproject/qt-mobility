@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,59 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOPLAYERSERVICE_H
-#define S60VIDEOPLAYERSERVICE_H
+#ifndef S60BITMAPVIEWFINDERRENDERERCONTROL_H
+#define S60BITMAPVIEWFINDERRENDERERCONTROL_H
 
-#include <QtCore/qobject.h>
-#include <qmediaservice.h>
+#include <qvideorenderercontrol.h>
 
-#include "s60mediaplayeraudioendpointselector.h"
-
-QT_BEGIN_NAMESPACE
-class QMediaMetaData;
-class QMediaPlayerControl;
-class QMediaPlaylist;
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
-
-class S60VideoPlayerSession;
-class S60AudioPlayerSession;
-class S60MediaPlayerControl;
-class S60MediaMetaDataProvider;
-class S60MediaStreamControl;
-class S60MediaRecognizer;
-class S60VideoOutputFactory;
-
-class QMediaContent;
-class QMediaPlaylistNavigator;
-class S60MediaNetworkAccessControl;
-
-class S60MediaPlayerService : public QMediaService
+/*
+ * Control for QGraphicsVideoItem. Viewfinder frames are streamed to a surface
+ * which is drawn to the display by the Qt Graphics View Framework.
+ * VideoRendererControl uses only Bitmap Viewfinder.
+ */
+class S60BitmapViewFinderRendererControl : public QVideoRendererControl
 {
     Q_OBJECT
-
 public:
+    S60BitmapViewFinderRendererControl(QObject *parent = 0);
+    virtual ~S60BitmapViewFinderRendererControl();
 
-    S60MediaPlayerService(QObject *parent = 0);
-    ~S60MediaPlayerService();
+    // S60VideoRendererControl
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
 
-    QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
-
-    S60MediaPlayerSession* createPlayerSession(const QMediaContent &content);
-
-private:
-    S60MediaPlayerSession *createAudioPlayerSession();
-    S60MediaPlayerSession *createVideoPlayerSession();
+signals:
+    void surfaceChanged();
 
 private:
-    S60MediaPlayerControl *m_control;
-    S60MediaMetaDataProvider *m_metaData;
-    S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
-    S60MediaStreamControl *m_streamControl;
-    S60MediaNetworkAccessControl *m_networkAccessControl;
-    S60VideoOutputFactory *m_videoOutputFactory;
+    QAbstractVideoSurface   *m_surface;
 };
 
-#endif
+#endif // S60VIEWFINDERRENDERERCONTROL_H

@@ -49,8 +49,7 @@
 #include "s60audioplayersession.h"
 #include "s60mediametadataprovider.h"
 #include "s60mediarecognizer.h"
-#include "s60videowidgetcontrol.h"
-#include "s60videowindowcontrol.h"
+#include "s60videooutputfactory.h"
 #include "s60mediaplayeraudioendpointselector.h"
 #include "s60medianetworkaccesscontrol.h"
 #include "s60mediastreamcontrol.h"
@@ -65,12 +64,12 @@
 
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent)
-    , m_control(NULL)
-    , m_metaData(NULL)
-    , m_audioEndpointSelector(NULL)
-    , m_streamControl(NULL)
-    , m_networkAccessControl(NULL)
-    , m_videoOutput(NULL)
+    , m_control(0)
+    , m_metaData(0)
+    , m_audioEndpointSelector(0)
+    , m_streamControl(0)
+    , m_networkAccessControl(0)
+    , m_videoOutputFactory(0)
 {
     TRACE("S60MediaPlayerService::S60MediaPlayerService" << qtThisPtr());
 
@@ -79,6 +78,7 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
     m_streamControl = new S60MediaStreamControl(m_control, this);
     m_networkAccessControl =  new S60MediaNetworkAccessControl(this);
+    m_videoOutputFactory = new S60VideoOutputFactory(this);
 }
 
 /*!
@@ -119,24 +119,12 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
     if (qstrcmp(name, QMediaStreamsControl_iid) == 0)
         result = m_streamControl;
 
-    if (!m_videoOutput) {
-        if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
-            m_videoOutput = new S60VideoWidgetControl(this);
-        }
-        else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
-            m_videoOutput = new S60VideoWindowControl(this);
-        }
-
-        if (m_videoOutput) {
-            m_control->setVideoOutput(m_videoOutput);
-            result = m_videoOutput;
-        }
-    }else {
-        if (qstrcmp(name, QVideoWidgetControl_iid) == 0 ||
-            qstrcmp(name, QVideoWindowControl_iid) == 0){
-            result = m_videoOutput;
-        }
+    if (!result) {
+        result = m_videoOutputFactory->requestControl(name);
+        if (result)
+            m_control->setVideoOutput(result);
     }
+
     TRACE("S60MediaPlayerService::requestControl" << qtThisPtr()
           << "name" << name << "result" << result);
     return result;
@@ -151,10 +139,9 @@ void S60MediaPlayerService::releaseControl(QMediaControl *control)
     TRACE("S60MediaPlayerService::releaseControl" << qtThisPtr()
           << "control" << control);
 
-    if (control == m_videoOutput) {
-        m_videoOutput = 0;
-        m_control->setVideoOutput(m_videoOutput);
-    }
+    if (m_control->videoOutput() == control)
+        m_control->setVideoOutput(0);
+    m_videoOutputFactory->releaseControl(control);
 }
 
 /*!
