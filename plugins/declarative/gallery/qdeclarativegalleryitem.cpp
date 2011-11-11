@@ -265,6 +265,7 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(const QList<int> &keys)
 
     \brief The DocumentGalleryItem element allows you to request information
     about a single item from the document gallery
+    \since Mobility 1.1
 
     This element is part of the \bold {QtMobility.gallery 1.1} module.
 
@@ -289,6 +290,7 @@ void QDeclarativeDocumentGalleryItem::classBegin()
 
 /*!
     \qmlproperty enum DocumentGalleryItem::status
+    \since Mobility 1.1
 
     This property holds the status of an item request.  It can be one of:
 
@@ -307,6 +309,7 @@ void QDeclarativeDocumentGalleryItem::classBegin()
 
 /*!
     \qmlproperty real DocumentGalleryItem::progress
+    \since Mobility 1.1
 
     This property holds the current progress of the request, from 0.0 (started)
     to 1.0 (finished).
@@ -314,12 +317,14 @@ void QDeclarativeDocumentGalleryItem::classBegin()
 
 /*!
     \qmlproperty QStringList DocumentGalleryItem::properties
+    \since Mobility 1.1
 
     This property holds the item properties a request should return values for.
 */
 
 /*!
     \qmlproperty bool DocumentGalleryItem::autoUpdate
+    \since Mobility 1.1
 
     This property holds whether a request should refresh its results
     automatically.
@@ -327,18 +332,21 @@ void QDeclarativeDocumentGalleryItem::classBegin()
 
 /*!
     \qmlproperty variant DocumentGalleryItem::item
+    \since Mobility 1.1
 
     This property holds the id of the item to return information about.
 */
 
 /*!
     \qmlproperty bool DocumentGalleryItem::available
+    \since Mobility 1.1
 
     This property holds whether the meta-data of an item is available.
 */
 
 /*!
     \qmlproperty enum DocumentGalleryItem::itemType
+    \since Mobility 1.1
 
     This property holds the type of a gallery item. It can be one of:
 
@@ -367,30 +375,35 @@ QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryItem::itemType(
 
 /*!
     \qmlproperty url DocumentGalleryItem::itemUrl
+    \since Mobility 1.1
 
     This property holds the URL of a gallery item.
 */
 
 /*!
     \qmlproperty object DocumentGalleryItem::metaData
+    \since Mobility 1.1
 
     This property holds the meta-data of a gallery item.
 */
 
 /*!
     \qmlmethod DocumentGalleryItem::reload()
+    \since Mobility 1.1
 
     Re-queries the gallery.
 */
 
 /*!
     \qmlmethod DocumentGalleryItem::cancel()
+    \since Mobility 1.1
 
     Cancels an executing request.
 */
 
 /*!
     \qmlmethod DocumentGalleryItem::clear()
+    \since Mobility 1.1
 
     Clears the results of a request.
 */

@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
     \inherits QObject
 
     \ingroup qml-systeminfo
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.systeminfo 1.1} module.
     It is a convience class to make QML usage easier.
@@ -67,7 +68,8 @@ QDeclarativeScreenSaver::QDeclarativeScreenSaver(QObject *parent) :
 
 /*!
   Destroys the QDeclarativeScreenSaver object.
- */
+  \since Mobility 1.1
+  */
 
 QDeclarativeScreenSaver::~QDeclarativeScreenSaver()
 {
@@ -78,10 +80,12 @@ QDeclarativeScreenSaver::~QDeclarativeScreenSaver()
 }
 
 /*!
-    \qmlproperty void ScreenSaver::setScreenSaverDelayed(bool)
+    \qmlproperty bool ScreenSaver::screenSaverDelayed
+    \since Mobility 1.1
 
-    Delays the screensaver if \a on is true, otherwise continues the screensaver.
+    Delays the screensaver if true, otherwise continues the screensaver.
 */
+
 void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
 {
     if(on && !screenSaverDelay) {
@@ -94,19 +98,17 @@ void QDeclarativeScreenSaver::setScreenSaverDelayed(bool on)
     }
 }
 
-/*!
-    \qmlproperty bool ScreenSaver::screenSaverDelayed
-
-    Returns whether the screensaver has been suppressed, or not.
-*/
-
 bool QDeclarativeScreenSaver::screenSaverDelayed()
 {
     return screenSaverDelay;
 }
 
 /*!
-  \brief Set the screensaver to be inhibited.
+   \qmlmethod bool ScreenSaver::setScreenSaverInhibit()
+
+   \since Mobility 1.1
+
+   Set the screensaver to be inhibited.
 
    Temporarily inhibits the screensaver.
 
@@ -118,7 +120,6 @@ bool QDeclarativeScreenSaver::screenSaverDelayed()
     On platforms that support it, if screensaver is secure by policy, the policy will be honored
     and this will fail.
 */
-
 bool QDeclarativeScreenSaver::setScreenSaverInhibit()
 {
     setScreenSaverDelayed(true);
@@ -126,16 +127,18 @@ bool QDeclarativeScreenSaver::setScreenSaverInhibit()
 }
 
 
+/*!
+    \qmlproperty bool ScreenSaver::screenSaverInhibited
+    \since Mobility 1.1
+
+    Inhibits the screensaver if true, otherwise continues the screensaver.
+*/
+
 bool  QDeclarativeScreenSaver::screenSaverInhibited()
 {
     return screenSaverDelay;
 }
 
-/*!
-    \qmlproperty void ScreenSaver::setScreenSaverInhibited(bool)
-
-    Inhibits the screensaver if \a on is true, otherwise continues the screensaver.
-*/
 void QDeclarativeScreenSaver::setScreenSaverInhibited(bool on)
 {
     setScreenSaverDelayed(on);

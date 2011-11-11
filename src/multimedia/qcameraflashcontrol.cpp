@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The QCameraFlashControl class supplies a camera flash control.
 
-    \ingroup camera
+    \ingroup multimedia-serv
     \inmodule QtMultimediaKit
     \since 1.1
 

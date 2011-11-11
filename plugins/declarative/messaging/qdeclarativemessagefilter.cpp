@@ -71,6 +71,7 @@ void QDeclarativeMessageFilterBase::setNegated(bool n)
     \brief The MessageIntersectionFilter element specifies an insection of MessageFilter
 
     \ingroup qml-messaging
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 
@@ -88,12 +89,14 @@ void QDeclarativeMessageFilterBase::setNegated(bool n)
 
 /*!
     \qmlproperty bool MessageIntersectionFilter::negated
+    \since Mobility 1.1
     Setting negated to true will result in the filter being locially negated.
 */
 
 /*!
     \qmlproperty list<MessageFilter> MessageIntersectionFilter::filters
     \default
+    \since Mobility 1.1
 
     The filters to AND together.
 */
@@ -129,6 +132,7 @@ QMessageFilter QDeclarativeMessageIntersectionFilter::filter()
     \brief The MessageUnionFilter element specifies a union of MessageFilter
 
     \ingroup qml-messaging
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 
@@ -146,12 +150,14 @@ QMessageFilter QDeclarativeMessageIntersectionFilter::filter()
 
 /*!
     \qmlproperty bool MessageUnionFilter::negated
+    \since Mobility 1.1
     Setting negated to true will result in the filter being locially negated.
 */
 
 /*!
     \qmlproperty list<MessageFilter> MessageUnionFilter::filters
     \default
+    \since Mobility 1.1
 
     The filters to OR together.
 */
@@ -201,6 +207,7 @@ public:
     \brief The MessageFilter element specifies a message filter for MessageModel
 
     \ingroup qml-messaging
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.messaging 1.1} module.
 
@@ -225,6 +232,7 @@ QDeclarativeMessageFilter::QDeclarativeMessageFilter(QObject *parent)
 
 /*!
     \qmlproperty Variant MessageFilter::value
+    \since Mobility 1.1
     Holds the value to filter on.
 */
 QVariant QDeclarativeMessageFilter::value() const
@@ -243,6 +251,7 @@ void QDeclarativeMessageFilter::setValue(const QVariant &value)
 
 /*!
     \qmlproperty enumeration MessageFilter::type
+    \since Mobility 1.1
     Holds the field to filter on.
 
     type may be one of the following:
@@ -280,7 +289,7 @@ void QDeclarativeMessageFilter::setValue(const QVariant &value)
             \o MessageFilter.Read
             \o MessageFilter.HasAttachments
             \o MessageFilter.Incoming
-            \o MessageFilter.Removed 
+            \o MessageFilter.Removed
             \endlist
     \row \o MessageFilter.Subject
         \o string
@@ -313,6 +322,7 @@ void QDeclarativeMessageFilter::setType(FilterType type)
 
 /*!
     \qmlproperty enumeration MessageFilter::comparator
+    \since Mobility 1.1
     Holds the type of comparison to apply.
 
     comparator may be one of the following:
@@ -348,6 +358,7 @@ void QDeclarativeMessageFilter::setComparator(QDeclarativeMessageFilter::Compara
 
 /*!
     \qmlproperty bool MessageFilter::negated
+    \since Mobility 1.1
     Setting negated to true will result in the filter being locially negated.
 */
 

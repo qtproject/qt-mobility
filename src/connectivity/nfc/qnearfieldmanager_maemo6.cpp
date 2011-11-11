@@ -104,7 +104,8 @@ NdefHandler::NdefHandler(QNearFieldManagerPrivateImpl *manager, const QString &s
     QDBusConnection handlerConnection =
         QDBusConnection::connectToBus(QDBusConnection::SystemBus, connectionUuid);
     if (serviceName != handlerConnection.baseService()) {
-        handlerConnection = QDBusConnection::connectToBus(QDBusConnection::SystemBus, serviceName);
+        handlerConnection = QDBusConnection::connectToBus(QDBusConnection::SessionBus,
+                                                          serviceName);
 
         if (!handlerConnection.registerService(serviceName))
             return;

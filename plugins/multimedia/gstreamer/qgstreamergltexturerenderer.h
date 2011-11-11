@@ -60,10 +60,12 @@ class QGstreamerGLTextureRenderer : public QVideoRendererControl, public QGstrea
     Q_INTERFACES(QGstreamerVideoRendererInterface)
 
     Q_PROPERTY(bool overlayEnabled READ overlayEnabled WRITE setOverlayEnabled)
+    Q_PROPERTY(bool glEnabled READ glEnabled WRITE setGlEnabled)
     Q_PROPERTY(qulonglong winId READ winId WRITE setWinId)
     Q_PROPERTY(QRect overlayGeometry READ overlayGeometry WRITE setOverlayGeometry)
     Q_PROPERTY(QColor colorKey READ colorKey)
     Q_PROPERTY(QSize nativeSize READ nativeSize NOTIFY nativeSizeChanged)
+    Q_PROPERTY(GstBuffer *fallbackBuffer READ fallbackBuffer WRITE setFallbackBuffer)
 
 public:
     QGstreamerGLTextureRenderer(QObject *parent = 0);
@@ -74,6 +76,8 @@ public:
 
     GstElement *videoSink();
 
+    GstBuffer *fallbackBuffer() const;
+
     bool isReady() const;
     void handleBusMessage(GstMessage* gm);
     void handleSyncMessage(GstMessage* gm);
@@ -83,6 +87,7 @@ public:
     int framebufferNumber() const;
 
     bool overlayEnabled() const;
+    bool glEnabled() const;
     WId winId() const;
     QRect overlayGeometry() const;
     QColor colorKey() const;
@@ -92,9 +97,12 @@ public slots:
     void renderGLFrame(int);
 
     void setOverlayEnabled(bool);
+    void setGlEnabled(bool);
     void setWinId(WId id);
     void setOverlayGeometry(const QRect &geometry);
     void repaintOverlay();
+
+    void setFallbackBuffer(GstBuffer *buffer);
 
 signals:
     void sinkChanged();
@@ -113,11 +121,13 @@ private:
     QAbstractVideoSurface *m_surface;
     QGLContext *m_context;
     QSize m_nativeSize;
+    QImage m_fallbackImage; //displayed when renderer is stopped
 
     WId m_winId;
     QColor m_colorKey;
     QRect m_displayRect;
     bool m_overlayEnabled;
+    bool m_glEnabled;
     int m_bufferProbeId;
 
     QMutex m_mutex;

@@ -3818,6 +3818,9 @@ void tst_QContactManager::partialSave()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
+    const bool isAllowingDetailsNotInSchema =
+        (cm->managerName() == QLatin1String("tracker"));
+
     QVersitContactImporter imp;
     QVersitReader reader(QByteArray(
             "BEGIN:VCARD\r\nFN:Alice\r\nN:Alice\r\nTEL:12345\r\nEND:VCARD\r\n"
@@ -3927,18 +3930,18 @@ void tst_QContactManager::partialSave()
     badDetail.setValue("BadField", "BadValue");
     contacts[5].saveDetail(&badDetail);
     QVERIFY(!cm->saveContacts(&contacts, QStringList("BadDetail"), &errorMap));
-    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap.count(), isAllowingDetailsNotInSchema ? 1 : 2);
     QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
-    QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
+    QCOMPARE(errorMap[5], isAllowingDetailsNotInSchema ? QContactManager::NoError : QContactManager::InvalidDetailError);
 
     // 7) Have a non existing contact in the middle followed by a save error
     badId = id4;
     badId.setLocalId(987234); // something nonexistent
     contacts[4].setId(badId);
     QVERIFY(!cm->saveContacts(&contacts, QStringList("BadDetail"), &errorMap));
-    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap.count(), isAllowingDetailsNotInSchema ? 1 : 2);
     QCOMPARE(errorMap[4], QContactManager::DoesNotExistError);
-    QCOMPARE(errorMap[5], QContactManager::InvalidDetailError);
+    QCOMPARE(errorMap[5], isAllowingDetailsNotInSchema ? QContactManager::NoError : QContactManager::InvalidDetailError);
 
     // 8 - New contact, no details in the mask
     newContact = originalContacts[3];
@@ -3976,9 +3979,9 @@ void tst_QContactManager::partialSave()
     contacts2[0].setId(badId);
     contacts2[1].saveDetail(&badDetail);
     QVERIFY(!cm->saveContacts(&contacts2, QStringList("BadDetail"), &errorMap));
-    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap.count(), isAllowingDetailsNotInSchema ? 1 : 2);
     QCOMPARE(errorMap[0], QContactManager::DoesNotExistError);
-    QCOMPARE(errorMap[1], QContactManager::InvalidDetailError);
+    QCOMPARE(errorMap[1], isAllowingDetailsNotInSchema ? QContactManager::NoError : QContactManager::InvalidDetailError);
 }
 #endif
 

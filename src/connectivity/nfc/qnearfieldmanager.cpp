@@ -111,7 +111,7 @@ QTM_BEGIN_NAMESPACE
 
     \code
         Generate platform specific NFC message handler registration files.
-        Usage: nfcxmlgen [options]
+        Usage: ndefhandlergen [options]
 
             -template TEMPLATE    Template to use.
             -appname APPNAME      Name of the application.
@@ -121,7 +121,7 @@ QTM_BEGIN_NAMESPACE
 
         The -datatype and -match options are mutually exclusive.
 
-        Available templates: symbian
+        Available templates: harmattan, symbian
     \endcode
 
     A typical invocation of the \c ndefhandlergen tool for Symbian^3 target:
@@ -129,6 +129,13 @@ QTM_BEGIN_NAMESPACE
     \code
         ndefhandlergen -template symbian -appname myapplication -datatype urn:nfc:ext:com.example:f
     \endcode
+
+    and for the Meego 1.2 Harmattan target:
+
+    \code
+        ndefhandlergen -template harmattan -appname myapplication -apppath /usr/bin/myapplication -datatype urn:nfc:ext:com.example:f
+    \endcode
+
 
     Once the application has been registered as an NDEF message handler, the application only needs
     to call the registerNdefMessageHandler() function:
@@ -171,12 +178,100 @@ QTM_BEGIN_NAMESPACE
 
     \code
         symbian {
-            ndefhandler.sources = myapplication.xml
-            ndefhandler.path = /private/2002AC7F/import/
+            ndefhandler.sources = %APPNAME%.xml
+            ndefhandler.path = c:/private/2002AC7F/import/
             DEPLOYMENT += ndefhandler
         }
     \endcode
 
+    The \i {%APPNAME%} tag need to be changed to match the name of the application.
+
+    \section3 Meego 1.2 Harmattan
+
+    On Meego 1.2 Harmattan the NDEF message handler notifications are passed over D-Bus.
+    Registration of the NDEF message match criteria is done via a D-Bus call. The
+    application must also ensure that it has registered a D-Bus service name so that the
+    application can be automatically launched when a notification message is sent to the
+    registered service.  It is also a requirement that the handler is a singe instance application.
+
+    To register the D-Bus service the two files need to be created and installed into particular
+    directories on the device. The first file is the D-Bus bus configuration file:
+
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.conf
+
+    The \i {%APPNAME%} tag must be replaced with the name of your application binary.
+
+    The second file is a D-Bus service file which is used by the D-Bus daemon to launch your
+    application.
+
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.service
+
+    The \i {%APPNAME%} tag must be replace with the name of your application binary and the
+    \i {%APPPATH%} tag must be replaced with the path to your installed application binary.  The
+    use of \c {/usr/bin/single-instance} ensures that only a single instance of your application is
+    started by the service file.
+
+    It is recommended to name these files after the application package name. For example
+    myapplication.conf and myapplication.service. To install the above files into the correct
+    location the following should be added to the application .pro file:
+
+    \code
+    contains(MEEGO_EDITION,harmattan) {
+        ndefhandler_conf.files = %APPNAME%.conf
+        ndefhandler_conf.path = /etc/dbus-1/session.d/
+
+        ndefhandler_service.files = com.nokia.qtmobility.nfc.%APPNAME%.service
+        ndefhandler_service.path = /usr/share/dbus-1/services/
+
+        INSTALLS += ndefhandler_conf ndefhandler_service
+    }
+    \endcode
+
+    The NFC auto-start handler on Meego 1.2 Harmattan requires that the applications .desktop file
+    has the same name as the application.  This may not be the case as the .desktop files created
+    by Qt Creator is named \i {%APPNAME%_harmattan.desktop} by default.  The application developer
+    should ensure that the \i {%APPNAME%.desktop} file is installed to the appropriate place.  A
+    .pro file snippet similar to the following may be used:
+
+    \code
+    contains(MEEGO_EDITION,harmattan) {
+        harmattandesktopfile.files = %APPNAME%.desktop
+        harmattandesktopfile.path = /usr/share/applications
+        INSTALLS += harmattandesktopfile
+    }
+    \endcode
+
+    The NDEF message handler is registered with the following D-Bus command. Applications should
+    ensure that the following command (or similar) is executed once at installation time. For
+    example in the packages post-installation script.
+
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.postinst
+
+    The \i {%APPNAME%} string must be replaced with the name of the application binary. The
+    \i {%DATATYPE%} string must be replaced with the NDEF record type to match. For example the
+    following would be used to match NDEF messages that contain a RTD-URI record:
+
+    \code
+        string:"'urn:nfc:wkt:U'[1:*];"
+    \endcode
+
+    The following would be used to match NDEF messages that contain a custom type
+    urn:nfc:ext:example.com:f:
+
+    \code
+        string:"'urn:nfc:ext:example.com:f'[1:*];"
+    \endcode
+
+    Note that \c {[1:*]} indicates one or more records of the specified type must be in the NDEF
+    message. The value of the datatype string argument can be set to any valid match string
+    supported by the MeeGo 1.2 Harmattan platform.
+
+    The NDEF message handler should be unregistered at uninstallation time. For example in the
+    packages pre-removal script.
+
+    \quotefile tools/ndefhandlergen/templates/harmattan/harmattan.prerm
+
+    The \i {%APPNAME%} string must be replace with the name of the application binary.
 */
 
 /*!
@@ -283,11 +378,16 @@ bool QNearFieldManager::isAvailable() const
 }
 
 /*!
-    Starts detecting targets of type \a targetTypes. Returns true if target detection is
-    successfully started; otherwise returns false.
-
-    Causes the targetDetected() signal to be emitted when a target with a type in \a targetTypes is
+    Starts detecting targets of type \a targetTypes. Returns \c true if target detection is
+    successfully started; otherwise returns \c false. The application can start to get 
+    notifications when the target detection is successfully started and NFC is switched on.
+    
+    The targetDetected() signal is emitted when a target with the type in \a targetTypes is
     within proximity. If \a targetTypes is empty targets of all types will be detected.
+    
+    \note In a MeeGo 1.2 Harmattan device the method returns \c true regardless of the device's NFC state
+    (on or off). In Symbian devices the method returns \c false if NFC is switched off; otherwise 
+    returns \c true.
 
     \sa stopTargetDetection()
 */

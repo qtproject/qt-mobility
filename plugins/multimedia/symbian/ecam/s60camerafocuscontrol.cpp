@@ -45,6 +45,9 @@
 #include "s60cameraservice.h"
 #include "s60imagecapturesession.h"
 #include "s60cameraconstants.h"
+#include "s60imagecapturesettings.h"
+
+using namespace S60CameraConstants;
 
 S60CameraFocusControl::S60CameraFocusControl(QObject *parent) :
     QCameraFocusControl(parent)
@@ -55,20 +58,10 @@ S60CameraFocusControl::S60CameraFocusControl(S60ImageCaptureSession *session, QO
     QCameraFocusControl(parent),
     m_session(0),
     m_service(0),
-    m_advancedSettings(0),
-    m_isFocusLocked(false),
     m_opticalZoomValue(KDefaultOpticalZoom),
-    m_digitalZoomValue(KDefaultDigitalZoom),
-    m_focusMode(KDefaultFocusMode)
+    m_digitalZoomValue(KDefaultDigitalZoom)
 {
     m_session = session;
-
-    connect(m_session, SIGNAL(advancedSettingChanged()), this, SLOT(resetAdvancedSetting()));
-    m_advancedSettings = m_session->advancedSettings();
-
-    TRAPD(err, m_session->doSetZoomFactorL(m_opticalZoomValue, m_digitalZoomValue));
-    if (err)
-        m_session->setError(KErrNotSupported, tr("Setting default zoom factors failed."));
 }
 
 S60CameraFocusControl::~S60CameraFocusControl()
@@ -77,76 +70,66 @@ S60CameraFocusControl::~S60CameraFocusControl()
 
 QCameraFocus::FocusMode S60CameraFocusControl::focusMode() const
 {
-    return m_focusMode;
+    return m_session->settings()->focusMode();
 }
 
 void S60CameraFocusControl::setFocusMode(QCameraFocus::FocusMode mode)
 {
-    if (isFocusModeSupported(mode)) {
-        // FocusMode and FocusRange are set. Focusing is triggered by setting
-        // the corresponding FocusType active by calling searchAndLock in LocksControl.
-        m_focusMode = mode;
-        if (m_advancedSettings)
-            m_advancedSettings->setFocusMode(m_focusMode);
-        else
-            m_session->setError(KErrGeneral, tr("Unable to set focus mode before camera is started."));
-    } else {
+    if (isFocusModeSupported(mode))
+        // FocusMode and FocusRange will be set. Focusing is triggered by setting
+        // the corresponding FocusType active by calling searchAndLock in LocksControl
+        m_session->settings()->setFocusMode(mode);
+    else
         m_session->setError(KErrNotSupported, tr("Requested focus mode is not supported."));
-    }
 }
 
 bool S60CameraFocusControl::isFocusModeSupported(QCameraFocus::FocusMode mode) const
 {
-    if (m_advancedSettings) {
-        return m_advancedSettings->supportedFocusModes() & mode;
-    } else {
-        if (mode == QCameraFocus::AutoFocus)
-            return m_session->isFocusSupported();
-    }
-
-    return false;
+#ifndef S60_CAM_AUTOFOCUS_SUPPORT
+    return m_session->settings()->isFocusModeSupported(mode);
+#else // S60_CAM_AUTOFOCUS_SUPPORT
+    if (mode == QCameraFocus::AutoFocus)
+        return m_session->settings()->isFocusSupported();
+    else
+        return false;
+#endif // S60_CAM_AUTOFOCUS_SUPPORT
 }
 
 qreal S60CameraFocusControl::maximumOpticalZoom() const
 {
-    return m_session->maximumZoom();
+    return m_session->settings()->maximumZoom();
 }
 
 qreal S60CameraFocusControl::maximumDigitalZoom() const
 {
-    return m_session->maxDigitalZoom();
+    return m_session->settings()->maxDigitalZoom();
 }
 
 qreal S60CameraFocusControl::opticalZoom() const
 {
-    return m_session->opticalZoomFactor();
+    return m_session->settings()->opticalZoomFactor();
 }
 
 qreal S60CameraFocusControl::digitalZoom() const
 {
-    return m_session->digitalZoomFactor();
+    return m_session->settings()->digitalZoomFactor();
 }
 
 void S60CameraFocusControl::zoomTo(qreal optical, qreal digital)
 {
-    TRAPD(err, m_session->doSetZoomFactorL(optical, digital));
+    TRAPD(err, m_session->settings()->doSetZoomFactorL(optical, digital));
     if (err)
         m_session->setError(KErrNotSupported, tr("Requested zoom factor is not supported."));
 
     // Query new values
-    if (m_opticalZoomValue != m_session->opticalZoomFactor()) {
-        m_opticalZoomValue = m_session->opticalZoomFactor();
+    if (m_opticalZoomValue != m_session->settings()->opticalZoomFactor()) {
+        m_opticalZoomValue = m_session->settings()->opticalZoomFactor();
         emit opticalZoomChanged(m_opticalZoomValue);
     }
-    if (m_digitalZoomValue != m_session->digitalZoomFactor()) {
-        m_digitalZoomValue = m_session->digitalZoomFactor();
+    if (m_digitalZoomValue != m_session->settings()->digitalZoomFactor()) {
+        m_digitalZoomValue = m_session->settings()->digitalZoomFactor();
         emit digitalZoomChanged(m_digitalZoomValue);
     }
-}
-
-void S60CameraFocusControl::resetAdvancedSetting()
-{
-    m_advancedSettings = m_session->advancedSettings();
 }
 
 QCameraFocus::FocusPointMode S60CameraFocusControl::focusPointMode() const
@@ -186,7 +169,7 @@ void S60CameraFocusControl::setCustomFocusPoint(const QPointF &point)
 QCameraFocusZoneList S60CameraFocusControl::focusZones() const
 {
     // Not supported in Symbian
-    return QCameraFocusZoneList(); // Return empty list
+    return QCameraFocusZoneList();
 }
 
 // End of file

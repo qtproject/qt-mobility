@@ -345,6 +345,7 @@ DevSoundWrapper::DevSoundWrapper(QAudio::Mode mode, QObject *parent)
     ,   m_state(StateIdle)
     ,   m_devsound(0)
     ,   m_fourcc(0)
+    ,   m_volume(DefaultVolume)
 {
     QT_TRAP_THROWING(m_devsound = CMMFDevSound::NewL());
 
@@ -596,6 +597,7 @@ void DevSoundWrapper::InitializeComplete(TInt aError)
     Q_ASSERT(StateInitializing == m_state);
     if (KErrNone == aError) {
         m_state = StateInitialized;
+        applyVolume();
         populateCapabilities();
     } else {
         m_state = StateIdle;
@@ -656,6 +658,38 @@ int DevSoundWrapper::flush()
     return m_devsound->EmptyBuffers();
 }
 #endif
+
+int DevSoundWrapper::volume() const
+{
+    return m_volume;
+}
+
+void DevSoundWrapper::setVolume(int value)
+{
+    value = qMax(0, value);
+    value = qMin(100, value);
+    if (value != m_volume) {
+        m_volume = value;
+        if (StateInitialized == m_state)
+            applyVolume();
+    }
+}
+
+void DevSoundWrapper::applyVolume()
+{
+    Q_ASSERT(StateInitialized == m_state);
+    Q_ASSERT(m_volume >= 0);
+    Q_ASSERT(m_volume <= 100);
+    switch (m_mode) {
+    case QAudio::AudioOutput:
+        m_devsound->SetVolume(m_volume * m_devsound->MaxVolume() / 100);
+        break;
+    case QAudio::AudioInput:
+        m_devsound->SetGain(m_volume * m_devsound->MaxGain() / 100);
+        break;
+    }
+}
+
 } // namespace SymbianAudio
 
 QT_END_NAMESPACE

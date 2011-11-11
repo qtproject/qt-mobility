@@ -50,6 +50,7 @@
    selection of organizer items which have certain details or properties.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -59,6 +60,7 @@
 
 /*!
   \qmlproperty enumeration Filter::type
+  \since Mobility 1.1
 
   This property holds the type value of this filter. It can be one of:
 
@@ -81,6 +83,7 @@
    \brief The ChangeLogFilter element provides a filter based around a organizer item timestamp criterion.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -89,12 +92,14 @@
 
 /*!
   \qmlproperty date ChangeLogFilter::since
+  \since Mobility 1.1
 
   This property holds the date and time lower-bound criterion of the filter.
   */
 
 /*!
   \qmlproperty enumeration ChangeLogFilter::eventType
+  \since Mobility 1.1
 
   This property holds the type of change that this filter will match against. The value can be one of:
   \list
@@ -108,6 +113,7 @@
    \qmlclass DetailFilter QDeclarativeOrganizerItemDetailFilter
    \brief The \l DetailFilter element provides a filter based around a detail value criterion.
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -116,6 +122,7 @@
 
 /*!
   \qmlproperty variant DetailFilter::detail
+  \since Mobility 1.1
 
   This property holds the detail type of which details will be matched to.
   The property value could be either the enumeration value of Detail::type
@@ -125,6 +132,7 @@
 
 /*!
   \qmlproperty variant DetailFilter::field
+  \since Mobility 1.1
 
   This property holds the detail field type of which detail fields will be matched to.
   Detail field types are enumeration values defined in each detail elements, you can also
@@ -153,12 +161,14 @@
 
 /*!
   \qmlproperty variant DetailFilter::value
+  \since Mobility 1.1
 
   This property holds the value criterion of the detail filter.
   */
 
 /*!
   \qmlproperty enumeration DetailFilter::matchFlags
+  \since Mobility 1.1
 
   This property holds the semantics of the value matching criterion. The valid match flags include:
   \list
@@ -177,6 +187,7 @@
 
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -185,6 +196,7 @@
 
 /*!
   \qmlproperty variant DetailRangeFilter::detail
+  \since Mobility 1.1
 
   This property holds the detail type of which details will be matched to.
   The property value could be either the enumeration value of Detail::type
@@ -196,6 +208,7 @@
 
 /*!
   \qmlproperty variant DetailRangeFilter::field
+  \since Mobility 1.1
 
   This property holds the detail field type of which detail fields will be matched to.
   Detail field types are enumeration values defined in each detail elements, you can also
@@ -225,17 +238,20 @@
   */
 /*!
   \qmlproperty variant DetailRangeFilter::min
+  \since Mobility 1.1
 
   This property holds the lower bound of the value range criterion. By default, there is no lower bound.
   */
 /*!
   \qmlproperty variant DetailRangeFilter::max
+  \since Mobility 1.1
 
   This property holds the upper bound of the value range criterion. By default, there is no upper bound.
   */
 
 /*!
   \qmlproperty enumeration DetailRangeFilter::matchFlags
+  \since Mobility 1.1
 
   This property holds the match flags of the criterion, which define semantics such as case sensitivity, and exact matching.
   \sa DetailFilter::matchFlags
@@ -243,6 +259,7 @@
 
 /*!
   \qmlproperty enumeration DetailRangeFilter::rangeFlags
+  \since Mobility 1.1
 
   This property holds a set of flags which defines the boundary condition semantics of the value range criterion. The valid range flags include:
     \list
@@ -258,6 +275,7 @@
    \brief The IntersectionFilter element provides a filter which intersects the results of other filters.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -266,6 +284,7 @@
 
 /*!
   \qmlproperty list<filter> IntersectionFilter::filters
+  \since Mobility 1.1
 
   This property holds the list of filters which form the intersection filter.
   */
@@ -276,6 +295,7 @@
    \brief The UnionFilter element provides a filter which unions the results of other filters.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -284,6 +304,7 @@
 
 /*!
   \qmlproperty list<filter> UnionFilter::filters
+  \since Mobility 1.1
 
   This property holds the list of filters which form the union filter.
   */
@@ -293,6 +314,7 @@
    \brief The IdFilter element provides a filter based around a list of organizer item ids.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 
@@ -301,6 +323,7 @@
 
 /*!
   \qmlproperty list<string> IdFilter::ids
+  \since Mobility 1.1
 
   This property holds the list of ids of organizer items which match this filter.
   */
@@ -311,6 +334,7 @@
    \brief The CollectionFilter element provides a filter based around a list of organizer item ids.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
    \sa Collection
@@ -319,6 +343,7 @@
 
 /*!
   \qmlproperty list<variant> CollectionFilter::ids
+  \since Mobility 1.1
 
   This property holds the list of ids of organizer items which match this filter.
 
@@ -329,6 +354,7 @@
    \brief the InvalidFilter element provides a filter which will never match any organizer items.
 
    \ingroup qml-organizer
+   \since Mobility 1.1
 
    This element is part of the \bold{QtMobility.organizer 1.1} module.
 

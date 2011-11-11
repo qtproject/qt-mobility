@@ -97,8 +97,8 @@ public: // Methods
     void releaseControl(ViewfinderOutputType type);
 
     // Controls
-    void startViewfinder(const bool internalStart = false);
-    void stopViewfinder(const bool internalStop = false);
+    void startViewfinder(bool internalStart = false, bool suppressHasContentChanged = false);
+    void stopViewfinder(bool internalStop = false, bool suppressHasContentChanged = false);
 
     // Start using new CameraEngine
     void setNewCameraEngine(CCameraEngine *engine);
@@ -106,10 +106,6 @@ public: // Methods
 protected: // MCameraViewfinderObserver
 
     void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
-
-private: // Internal operation
-
-    void checkAndRotateCamera();
 
 signals:
 
@@ -174,7 +170,6 @@ private: // Data
     NativeViewFinderType    m_viewfinderNativeType;
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
     bool                    m_isViewFinderVisible;
-    bool                    m_uiLandscape; // For detecting UI rotation
     int                     m_vfErrorsSignalled;
 };
 

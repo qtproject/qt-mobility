@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60audioplayersession.h"
+#include "s60mmftrace.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qvariant.h>
 
@@ -57,15 +56,13 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     , m_player(0)
     , m_audioEndpoint("Default")
 {
-    DP0("S60AudioPlayerSession::S60AudioPlayerSession +++");
+    TRACE("S60AudioPlayerSession::S60AudioPlayerSession" << qtThisPtr());
 
 #ifdef HAS_AUDIOROUTING
     m_audioOutput = 0;
 #endif //HAS_AUDIOROUTING    
     QT_TRAP_THROWING(m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
     m_player->RegisterForAudioLoadingNotification(*this);
-
-    DP0("S60AudioPlayerSession::S60AudioPlayerSession ---");
 }
 
 
@@ -78,7 +75,7 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
-    DP0("S60AudioPlayerSession::~S60AudioPlayerSession +++");
+    TRACE("S60AudioPlayerSession::~S60AudioPlayerSession" << qtThisPtr());
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
@@ -86,8 +83,6 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 #endif
     m_player->Close();
     delete m_player;
-
-    DP0("S60AudioPlayerSession::~S60AudioPlayerSession ---");
 }
 
 /*!
@@ -98,8 +93,6 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 
 void S60AudioPlayerSession::doLoadL(const TDesC &path)
 {
-    DP0("S60AudioPlayerSession::doLoadL +++");
-
 #ifdef HAS_AUDIOROUTING
     // m_audioOutput needs to be reinitialized after MapcInitComplete
     if (m_audioOutput)
@@ -108,8 +101,6 @@ void S60AudioPlayerSession::doLoadL(const TDesC &path)
     m_audioOutput = NULL;
 #endif //HAS_AUDIOROUTING
     m_player->OpenFileL(path);
-
-    DP0("S60AudioPlayerSession::doLoadL ---");
 }
 
 /*!
@@ -120,8 +111,6 @@ void S60AudioPlayerSession::doLoadL(const TDesC &path)
 
 qint64 S60AudioPlayerSession::doGetDurationL() const
 {
- //  DP0("S60AudioPlayerSession::doGetDurationL");
-
     return m_player->Duration().Int64() / qint64(1000);
 }
 
@@ -132,8 +121,6 @@ qint64 S60AudioPlayerSession::doGetDurationL() const
 
 qint64 S60AudioPlayerSession::doGetPositionL() const
 {
-  //  DP0("S60AudioPlayerSession::doGetPositionL");
-
     TTimeIntervalMicroSeconds ms = 0;
     m_player->GetPosition(ms);
     return ms.Int64() / qint64(1000);
@@ -145,8 +132,6 @@ qint64 S60AudioPlayerSession::doGetPositionL() const
 
 bool S60AudioPlayerSession::isVideoAvailable()
 {
-    DP0("S60AudioPlayerSession::isVideoAvailable");
-
     return false;
 }
 
@@ -155,8 +140,6 @@ bool S60AudioPlayerSession::isVideoAvailable()
  */
 bool S60AudioPlayerSession::isAudioAvailable()
 {
-    DP0("S60AudioPlayerSession::isAudioAvailable");
-
     return true; // this is a bit happy scenario, but we do emit error that we can't play
 }
 
@@ -167,11 +150,9 @@ bool S60AudioPlayerSession::isAudioAvailable()
 
 void S60AudioPlayerSession::MaloLoadingStarted()
 {
-    DP0("S60AudioPlayerSession::MaloLoadingStarted +++");
+    TRACE("S60AudioPlayerSession::MaloLoadingStarted" << qtThisPtr());
 
     buffering();
-
-    DP0("S60AudioPlayerSession::MaloLoadingStarted ---");
 }
 
 
@@ -184,11 +165,9 @@ void S60AudioPlayerSession::MaloLoadingStarted()
 
 void S60AudioPlayerSession::MaloLoadingComplete()
 {
-    DP0("S60AudioPlayerSession::MaloLoadingComplete +++");
+    TRACE("S60AudioPlayerSession::MaloLoadingComplete" << qtThisPtr());
 
     buffered();
-
-    DP0("S60AudioPlayerSession::MaloLoadingComplete ---");
 }
 
 /*!
@@ -197,8 +176,6 @@ void S60AudioPlayerSession::MaloLoadingComplete()
 
 void S60AudioPlayerSession::doPlay()
 {
-    DP0("S60AudioPlayerSession::doPlay +++");
-
     // For some reason loading progress callback are not called on emulator
     // Same is the case with hardware. Will be fixed as part of QTMOBILITY-782.
         
@@ -209,8 +186,6 @@ void S60AudioPlayerSession::doPlay()
     //#ifdef __WINSCW__
         buffered();
     //#endif
-
-    DP0("S60AudioPlayerSession::doPlay ---");
 }
 
 
@@ -221,11 +196,7 @@ void S60AudioPlayerSession::doPlay()
 
 void S60AudioPlayerSession::doPauseL()
 {
-    DP0("S60AudioPlayerSession::doPauseL +++");
-
     m_player->Pause();
-
-    DP0("S60AudioPlayerSession::doPauseL ---");
 }
 
 
@@ -236,11 +207,7 @@ void S60AudioPlayerSession::doPauseL()
 
 void S60AudioPlayerSession::doStop()
 {
-    DP0("S60AudioPlayerSession::doStop +++");
-
     m_player->Stop();
-
-    DP0("S60AudioPlayerSession::doStop ---");
 }
 
 /*!
@@ -249,8 +216,6 @@ void S60AudioPlayerSession::doStop()
 
 void S60AudioPlayerSession::doClose()
 {
-    DP0("S60AudioPlayerSession::doClose +++");
-
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
         m_audioOutput->UnregisterObserver(*this);
@@ -259,8 +224,6 @@ void S60AudioPlayerSession::doClose()
     }
 #endif
     m_player->Close();
-
-    DP0("S60AudioPlayerSession::doClose ---");
 }
 
 /*!
@@ -270,13 +233,7 @@ void S60AudioPlayerSession::doClose()
 
 void S60AudioPlayerSession::doSetVolumeL(int volume)
 {
-    DP0("S60AudioPlayerSession::doSetVolumeL +++");
-
-    DP1("S60AudioPlayerSession::doSetVolumeL, Volume:", volume);
-
     m_player->SetVolume(volume * m_player->MaxVolume() / 100);
-
-    DP0("S60AudioPlayerSession::doSetVolumeL ---");
 }
 
 /*!
@@ -285,13 +242,7 @@ void S60AudioPlayerSession::doSetVolumeL(int volume)
 
 void S60AudioPlayerSession::doSetPositionL(qint64 microSeconds)
 {
-    DP0("S60AudioPlayerSession::doSetPositionL +++");
-
-    DP1("S60AudioPlayerSession::doSetPositionL, Microseconds:", microSeconds);
-
     m_player->SetPosition(TTimeIntervalMicroSeconds(microSeconds));
-
-    DP0("S60AudioPlayerSession::doSetPositionL ---");
 }
 
 /*!
@@ -301,8 +252,6 @@ void S60AudioPlayerSession::doSetPositionL(qint64 microSeconds)
 
 void S60AudioPlayerSession::updateMetaDataEntriesL()
 {
-    DP0("S60AudioPlayerSession::updateMetaDataEntriesL +++");
-
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
 
@@ -316,8 +265,6 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
         delete entry;
     }
     emit metaDataChanged();
-
-    DP0("S60AudioPlayerSession::updateMetaDataEntriesL ---");
 }
 
 /*!
@@ -326,8 +273,7 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
 
 void S60AudioPlayerSession::setPlaybackRate(qreal rate)
 {
-    DP0("S60AudioPlayerSession::setPlaybackRate +++");
-    DP1("S60AudioPlayerSession::setPlaybackRate, Rate:", rate);
+    TRACE("S60AudioPlayerSession::setPlaybackRate" << qtThisPtr() << "rate" << rate);
     /*Since AudioPlayerUtility doesn't support set playback rate hence
      * setPlaybackRate emits playbackRateChanged signal for 1.0x ie normal playback.
      * For all other playBackRates it sets and emits error signal.
@@ -339,7 +285,6 @@ void S60AudioPlayerSession::setPlaybackRate(qreal rate)
         int err = KErrNotSupported;
         setAndEmitError(err);
     }
-    DP0("S60AudioPlayerSession::setPlaybackRate ---");
 }
 
 /*!
@@ -349,13 +294,8 @@ void S60AudioPlayerSession::setPlaybackRate(qreal rate)
 
 int S60AudioPlayerSession::doGetBufferStatusL() const
 {
-    DP0("S60AudioPlayerSession::doGetBufferStatusL +++");
-
     int progress = 0;
     m_player->GetAudioLoadingProgressL(progress);
-
-    DP0("S60AudioPlayerSession::doGetBufferStatusL ---");
-
     return progress;
 }
 
@@ -375,9 +315,7 @@ void S60AudioPlayerSession::MdapcInitComplete(TInt aError, const TTimeIntervalMi
 void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
 #endif
 {
-    DP0("S60AudioPlayerSession::MdapcInitComplete +++");
-
-    DP1("S60AudioPlayerSession::MdapcInitComplete - aError", aError);
+    TRACE("S60AudioPlayerSession::MapcInitComplete" << qtThisPtr() << "error" << aError);
 
     Q_UNUSED(aDuration);
     setError(aError);
@@ -393,8 +331,6 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 #endif //HAS_AUDIOROUTING
     if (KErrNone == aError)
         loaded();
-
-    DP0("S60AudioPlayerSession::MdapcInitComplete ---");
 }
 
 /*!
@@ -411,16 +347,12 @@ void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 #endif
 {
-    DP0("S60AudioPlayerSession::MdapcPlayComplete +++");
-
-    DP1("S60AudioPlayerSession::MdapcPlayComplete", aError);
+    TRACE("S60AudioPlayerSession::MapcPlayComplete" << qtThisPtr() << "error" << aError);
 
     if (KErrNone == aError)
         endOfMedia();
     else
         setError(aError);
-
-    DP0("S60AudioPlayerSession::MdapcPlayComplete ---");
 }
 
 /*!
@@ -431,13 +363,7 @@ void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 
 void S60AudioPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
 {
-    DP0("S60AudioPlayerSession::doSetAudioEndpoint +++");
-
-    DP1("S60AudioPlayerSession::doSetAudioEndpoint - ", audioEndpoint);
-
     m_audioEndpoint = audioEndpoint;
-
-    DP0("S60AudioPlayerSession::doSetAudioEndpoint ---");
 }
 
 /*!
@@ -447,8 +373,6 @@ void S60AudioPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
 
 QString S60AudioPlayerSession::activeEndpoint() const
 {
-    DP0("S60AudioPlayerSession::activeEndpoint +++");
-
     QString outputName = QString("Default");
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
@@ -456,9 +380,6 @@ QString S60AudioPlayerSession::activeEndpoint() const
         outputName = qStringFromTAudioOutputPreference(output);
     }
 #endif
-    DP1("S60AudioPlayerSession::activeEndpoint is :", outputName);
-
-    DP0("S60AudioPlayerSession::activeEndpoint ---");
     return outputName;
 }
 
@@ -468,8 +389,6 @@ QString S60AudioPlayerSession::activeEndpoint() const
 
 QString S60AudioPlayerSession::defaultEndpoint() const
 {
-    DP0("S60AudioPlayerSession::defaultEndpoint +++");
-
     QString outputName = QString("Default");
 #ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
@@ -477,9 +396,6 @@ QString S60AudioPlayerSession::defaultEndpoint() const
         outputName = qStringFromTAudioOutputPreference(output);
     }
 #endif
-    DP1("S60AudioPlayerSession::defaultEndpoint is :", outputName);
-
-    DP0("S60AudioPlayerSession::defaultEndpoint ---");
     return outputName;
 }
 
@@ -489,9 +405,7 @@ QString S60AudioPlayerSession::defaultEndpoint() const
 
 void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
 {
-    DP0("S60AudioPlayerSession::setActiveEndpoint +++");
-
-    DP1("S60AudioPlayerSession::setActiveEndpoint - ", name);
+    TRACE("S60AudioPlayerSession::setActiveEndpoint" << qtThisPtr() << "name" << name);
 
 #ifdef HAS_AUDIOROUTING
     CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
@@ -512,8 +426,6 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
         setError(err);
     }
 #endif
-
-    DP0("S60AudioPlayerSession::setActiveEndpoint ---");
 }
 
 /*!
@@ -529,13 +441,11 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
 void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault)
 {
-    DP0("S60AudioPlayerSession::DefaultAudioOutputChanged +++");
+    TRACE("S60AudioPlayerSession::DefaultAudioOutputChanged" << qtThisPtr() << "newDefault" << aNewDefault);
 
     // Emit already implemented in setActiveEndpoint function
     Q_UNUSED(aAudioOutput)
     Q_UNUSED(aNewDefault)
-
-    DP0("S60AudioPlayerSession::DefaultAudioOutputChanged ---");
 }
 
 
@@ -548,8 +458,6 @@ void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput
 
 QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const
 {
-    DP0("S60AudioPlayerSession::qStringFromTAudioOutputPreference");
-
     if (output == CAudioOutput::ENoPreference)
         return QString("Default");
     else if (output == CAudioOutput::EAll)
@@ -570,8 +478,6 @@ QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
 
 bool S60AudioPlayerSession::getIsSeekable() const
 {
-    DP0("S60AudioPlayerSession::getIsSeekable");
-
     return ETrue;
 }
 

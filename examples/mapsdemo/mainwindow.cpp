@@ -111,9 +111,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::goToMyLocation()
 {
-    mapsWidget->animatedPanTo(markerManager->myLocation());
-    mapsWidget->map()->setFocus();
-    tracking = true;
+    if (markerManager) {
+        mapsWidget->animatedPanTo(markerManager->myLocation());
+        mapsWidget->map()->setFocus();
+        tracking = true;
+    }
 }
 
 void MainWindow::initialize()

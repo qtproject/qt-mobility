@@ -55,6 +55,9 @@ private slots:
     void cleanup();          //after each
     void cleanupTestCase();  //after last
 
+    void threads();
+    void threads2();
+
     void readAndSetCenrep_data();
     void readAndSetCenrep();
     void readAndSetPubsub_data();

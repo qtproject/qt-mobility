@@ -45,6 +45,7 @@
     \brief The HapticsEffect element represents a custom haptic feedback effect.
     \ingroup qml-feedback-api
     \inherits FeedbackEffect
+    \since Mobility 1.1
 
     This element is part of the \bold {QtMobility.feedback 1.1} module.
 
@@ -89,7 +90,8 @@ int QDeclarativeHapticsEffect::duration() const
     \qmlproperty double HapticsEffect::intensity
 
     The intensity of the main part of the haptics effect, from 0.0 to 1.0.
-*/
+    \since Mobility 1.1
+    */
 void QDeclarativeHapticsEffect::setIntensity(qreal intensity)
 {
     if (qFuzzyCompare(intensity, d->intensity())) {
@@ -107,6 +109,7 @@ qreal QDeclarativeHapticsEffect::intensity() const
     \qmlproperty int HapticsEffect::attackTime
 
     The duration of the attack (fade-in) part of the haptics effect.
+    \since Mobility 1.1
 */
 
 void QDeclarativeHapticsEffect::setAttackTime(int msecs)
@@ -123,6 +126,7 @@ int QDeclarativeHapticsEffect::attackTime() const
 }
 /*!
     \qmlproperty double HapticsEffect::attackIntensity
+    \since Mobility 1.1
 
     The intensity of the attack (fade-in) part of the haptics effect, from 0.0 to 1.0.
 */
@@ -140,6 +144,7 @@ qreal QDeclarativeHapticsEffect::attackIntensity() const
 }
 /*!
     \qmlproperty int HapticsEffect::fadeTime
+    \since Mobility 1.1
 
     The duration of the fade-out part of the haptics effect.
 */
@@ -166,6 +171,7 @@ void QDeclarativeHapticsEffect::setFadeIntensity(qreal intensity)
 }
 /*!
     \qmlproperty double HapticsEffect::fadeIntensity
+    \since Mobility 1.1
 
     The intensity of the fade-out part of the haptics effect, from 0.0 to 1.0.
 */
@@ -175,6 +181,7 @@ qreal QDeclarativeHapticsEffect::fadeIntensity() const
 }
 /*!
     \qmlproperty int HapticsEffect::period
+    \since Mobility 1.1
 
     The period of the haptics effect.  If the period is zero, the effect will
     not repeat.  If it is non-zero, the effect will repeat every period milliseconds.
@@ -195,6 +202,7 @@ int QDeclarativeHapticsEffect::period() const
 
 /*!
     \qmlproperty Actuator HapticsEffect::actuator
+    \since Mobility 1.1
 
     The actuator that is used for playing this effect.
     \sa Actuator
@@ -218,6 +226,7 @@ QDeclarativeFeedbackActuator* QDeclarativeHapticsEffect::actuator() const
 }
 /*!
     \qmlproperty list<Actuator> HapticsEffect::availableActuators
+    \since Mobility 1.1
 
     This property holds a list of available actuators.
     This property is read only.

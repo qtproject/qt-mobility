@@ -39,11 +39,10 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60mediametadataprovider.h"
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
+#include "s60mmftrace.h"
 #include <QtCore/qdebug.h>
 
 /*!
@@ -53,11 +52,9 @@ S60MediaMetaDataProvider::S60MediaMetaDataProvider(QObject *control, QObject *pa
     : QMetaDataReaderControl(parent)
     , m_control(NULL)
 {
-    DP0("S60MediaMetaDataProvider::S60MediaMetaDataProvider +++");
+    TRACE("S60MediaMetaDataProvider::S60MediaMetaDataProvider" << qtThisPtr());
 
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
-
-    DP0("S60MediaMetaDataProvider::S60MediaMetaDataProvider ---");
 }
 
 /*!
@@ -66,8 +63,7 @@ S60MediaMetaDataProvider::S60MediaMetaDataProvider(QObject *control, QObject *pa
 
 S60MediaMetaDataProvider::~S60MediaMetaDataProvider()
 {
-    DP0("S60MediaMetaDataProvider::~S60MediaMetaDataProvider +++");
-    DP0("S60MediaMetaDataProvider::~S60MediaMetaDataProvider ---");
+    TRACE("S60MediaMetaDataProvider::~S60MediaMetaDataProvider" << qtThisPtr());
 }
 
 /*!
@@ -76,8 +72,6 @@ S60MediaMetaDataProvider::~S60MediaMetaDataProvider()
 
 bool S60MediaMetaDataProvider::isMetaDataAvailable() const
 {
-    DP0("S60MediaMetaDataProvider::isMetaDataAvailable");
-
     if (m_control->session())
        return m_control->session()->isMetadataAvailable();
     return false;
@@ -88,8 +82,6 @@ bool S60MediaMetaDataProvider::isMetaDataAvailable() const
 */
 bool S60MediaMetaDataProvider::isWritable() const
 {
-    DP0("S60MediaMetaDataProvider::isWritable");
-
     return false;
 }
 
@@ -99,8 +91,6 @@ bool S60MediaMetaDataProvider::isWritable() const
 
 QVariant S60MediaMetaDataProvider::metaData(QtMultimediaKit::MetaData key) const
 {
-    DP0("S60MediaMetaDataProvider::metaData");
-
     if (m_control->session())
         return m_control->session()->metaData(key);
     return QVariant();
@@ -112,8 +102,6 @@ QVariant S60MediaMetaDataProvider::metaData(QtMultimediaKit::MetaData key) const
 
 QList<QtMultimediaKit::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
-    DP0("S60MediaMetaDataProvider::availableMetaData");
-
     if (m_control->session())
         return m_control->session()->availableMetaData();
     return QList<QtMultimediaKit::MetaData>();
@@ -125,8 +113,6 @@ QList<QtMultimediaKit::MetaData> S60MediaMetaDataProvider::availableMetaData() c
 
 QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
 {
-    DP0("S60MediaMetaDataProvider::extendedMetaData");
-
     if (m_control->session())
         return m_control->session()->metaData(key);
     return QVariant();
@@ -138,8 +124,6 @@ QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
 
 QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
 {
-    DP0("S60MediaMetaDataProvider::availableExtendedMetaData");
-
     if (m_control->session())
         return m_control->session()->availableExtendedMetaData();
     return QStringList();

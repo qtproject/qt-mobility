@@ -1,0 +1,107 @@
+From 1320a2718b47b5e3f542736309b52eafc3a896ee Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Holger=20Schr=C3=B6der?= <holger.schroeder.ext@basyskom.de>
+Date: Thu, 6 Oct 2011 13:47:41 +0200
+Subject: [PATCH 4/8] keep binary compatibility with harmattan PR1.0
+
+Revert "fix for bug QTTH-1454"
+
+This reverts commit e73fbe8b06da0d9188a92872135c144368b28d98.
+---
+ src/systeminfo/linux/qsysteminfo_linux_p.h |    2 +-
+ src/systeminfo/qsystemdeviceinfo.cpp       |    2 +-
+ src/systeminfo/qsystemdeviceinfo.h         |    1 +
+ src/systeminfo/qsysteminfo_mac_p.h         |    1 -
+ src/systeminfo/qsysteminfo_maemo_p.h       |    1 -
+ src/systeminfo/qsysteminfo_s60_p.h         |    1 -
+ src/systeminfo/qsysteminfo_win_p.h         |    1 -
+ 7 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/src/systeminfo/linux/qsysteminfo_linux_p.h b/src/systeminfo/linux/qsysteminfo_linux_p.h
+index 0453654..9fd3eae 100644
+--- a/src/systeminfo/linux/qsysteminfo_linux_p.h
++++ b/src/systeminfo/linux/qsysteminfo_linux_p.h
+@@ -132,7 +132,7 @@ public:
+     QString imsi();
+     QString model();
+     QString productName();
+-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
++
+     QSystemDeviceInfo::LockTypeFlags lockStatus(); //1.2
+     QSystemDeviceInfo::Profile currentProfile();
+     QSystemDeviceInfo::SimStatus simStatus();
+diff --git a/src/systeminfo/qsystemdeviceinfo.cpp b/src/systeminfo/qsystemdeviceinfo.cpp
+index 92ab273..8bb3ee5 100644
+--- a/src/systeminfo/qsystemdeviceinfo.cpp
++++ b/src/systeminfo/qsystemdeviceinfo.cpp
+@@ -630,7 +630,7 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfo::lockStatus()
+ */
+ QSystemDeviceInfo::ProfileDetails QSystemDeviceInfo::activeProfileDetails()
+ {
+-    return d->currentProfileDetails;
++    return currentProfileDetails;
+ }
+ 
+ 
+diff --git a/src/systeminfo/qsystemdeviceinfo.h b/src/systeminfo/qsystemdeviceinfo.h
+index ee01027..665f155 100644
+--- a/src/systeminfo/qsystemdeviceinfo.h
++++ b/src/systeminfo/qsystemdeviceinfo.h
+@@ -232,6 +232,7 @@ Q_SIGNALS:
+ 
+ private:
+     QSystemDeviceInfoPrivate *d;
++    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+ 
+ protected:
+     void connectNotify(const char *signal);
+diff --git a/src/systeminfo/qsysteminfo_mac_p.h b/src/systeminfo/qsysteminfo_mac_p.h
+index 4f52601..1b068c4 100644
+--- a/src/systeminfo/qsysteminfo_mac_p.h
++++ b/src/systeminfo/qsysteminfo_mac_p.h
+@@ -278,7 +278,6 @@ public:
+     QSystemDeviceInfo::SimStatus simStatus();
+     bool isDeviceLocked();
+     QSystemDeviceInfo::Profile currentProfile();
+-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+ 
+     QSystemDeviceInfo::PowerState currentPowerState();
+     QSystemDeviceInfo::ThermalState currentThermalState();
+diff --git a/src/systeminfo/qsysteminfo_maemo_p.h b/src/systeminfo/qsysteminfo_maemo_p.h
+index f99b049..b1df90c 100644
+--- a/src/systeminfo/qsysteminfo_maemo_p.h
++++ b/src/systeminfo/qsysteminfo_maemo_p.h
+@@ -210,7 +210,6 @@ public:
+     QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
+     ~QSystemDeviceInfoPrivate();
+ 
+-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+     bool isDeviceLocked();
+     bool isKeyboardFlippedOpen(); //1.2
+     bool keypadLightOn(QSystemDeviceInfo::KeypadType type); //1.2
+diff --git a/src/systeminfo/qsysteminfo_s60_p.h b/src/systeminfo/qsysteminfo_s60_p.h
+index 90fb43d..983d70c 100644
+--- a/src/systeminfo/qsysteminfo_s60_p.h
++++ b/src/systeminfo/qsysteminfo_s60_p.h
+@@ -329,7 +329,6 @@ public:
+     bool isDeviceLocked();
+     QSystemDeviceInfo::SimStatus simStatus();
+     QSystemDeviceInfo::Profile currentProfile();
+-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+ 
+     QSystemDeviceInfo::PowerState currentPowerState();
+     QSystemDeviceInfo::ThermalState currentThermalState();
+diff --git a/src/systeminfo/qsysteminfo_win_p.h b/src/systeminfo/qsysteminfo_win_p.h
+index b461ddc..dada3ac 100644
+--- a/src/systeminfo/qsysteminfo_win_p.h
++++ b/src/systeminfo/qsysteminfo_win_p.h
+@@ -259,7 +259,6 @@ public:
+     QSystemDeviceInfoPrivate(QObject *parent = 0);
+     virtual ~QSystemDeviceInfoPrivate();
+ 
+-    QSystemDeviceInfo::ProfileDetails currentProfileDetails;
+     QString imei();
+     QString imsi();
+     QString manufacturer();
+-- 
+1.7.4.1
+

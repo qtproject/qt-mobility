@@ -80,22 +80,8 @@ BluetoothLinkManagerDeviceDiscoverer::BluetoothLinkManagerDeviceDiscoverer(RSock
     : QObject(parent)
     , CActive(CActive::EPriorityStandard)
     , m_socketServer(socketServer)
-    , m_pendingCancel(false), m_pendingStart(false), m_discoveryType (0)
+    , m_pendingCancel(false), m_pendingStart(false), m_discoveryType(0), m_initialized(false)
 {
-    TInt result;
-
-    /* find Bluetooth protocol */
-    TProtocolDesc protocol;
-    result = m_socketServer.FindProtocol(KBTLinkManagerTxt(),protocol);
-    if (result == KErrNone) {
-        /* Create and initialise an RHostResolver */
-        result = m_hostResolver.Open(m_socketServer, protocol.iAddrFamily, protocol.iProtocol);
-    }
-    // check possible error
-    if (result != KErrNone) {
-        setError(result);
-    }
-
     //add this active object to scheduler
     CActiveScheduler::Add(this);
 }
@@ -112,6 +98,21 @@ BluetoothLinkManagerDeviceDiscoverer::~BluetoothLinkManagerDeviceDiscoverer()
 */
 void BluetoothLinkManagerDeviceDiscoverer::startDiscovery(const uint discoveryType)
 {
+    if (!m_initialized) {
+        /* find Bluetooth protocol */
+        TProtocolDesc protocol;
+        int result = m_socketServer.FindProtocol(KBTLinkManagerTxt(),protocol);
+        if (result == KErrNone) {
+            /* Create and initialise an RHostResolver */
+            result = m_hostResolver.Open(m_socketServer, protocol.iAddrFamily, protocol.iProtocol);
+        }
+        if (result != KErrNone) {
+            setError(result);
+            return;
+        }
+        m_initialized = true;
+    }
+
     m_discoveryType = discoveryType;
     
     if(m_pendingCancel == true) {
@@ -316,7 +317,8 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     QBluetoothAddress bluetoothAddress = qTBTDevAddrToQBluetoothAddress(symbianDeviceAddress);
 
     // format symbian major/minor numbers
-    quint32 deviceClass = qTPackSymbianDeviceClass(m_addr);
+    TInquirySockAddr& sa = TInquirySockAddr::Cast( m_entry().iAddr );
+    quint32 deviceClass = qTPackSymbianDeviceClass(sa);
 
     QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
 
@@ -333,12 +335,13 @@ QBluetoothDeviceInfo BluetoothLinkManagerDeviceDiscoverer::currentDeviceDataToQB
     QBluetoothAddress bluetoothAddress = qTBTDevAddrToQBluetoothAddress(symbianDeviceAddress);
 
     // format symbian major/minor numbers
-    quint32 deviceClass = qTPackSymbianDeviceClass(m_addr);
+    TInquirySockAddr& sa = TInquirySockAddr::Cast( m_entry().iAddr );
+    quint32 deviceClass = qTPackSymbianDeviceClass(sa);
 
     QBluetoothDeviceInfo deviceInfo(bluetoothAddress, deviceName, deviceClass);
 
-    if (m_addr.Rssi())
-        deviceInfo.setRssi(m_addr.Rssi());
+    if (sa.Rssi())
+        deviceInfo.setRssi(sa.Rssi());
 #endif
     if (!deviceInfo.rssi())
         deviceInfo.setRssi(1);
@@ -372,6 +375,11 @@ void BluetoothLinkManagerDeviceDiscoverer::setError(int errorCode)
         case KErrNotReady:
             errorString.append("KErrNotReady");
             emit linkManagerError(QBluetoothDeviceDiscoveryAgent::UnknownError, errorString);
+        case KErrHardwareNotAvailable:
+            // this is returned by Symbian backend when bluetooth is off
+            errorString.append("KErrHardwareNotAvailable");
+            emit linkManagerError(QBluetoothDeviceDiscoveryAgent::PoweredOff, errorString);
+            break;
         case KErrCancel:
             errorString.append("KErrCancel");
             qDebug() << "emitting canceled";

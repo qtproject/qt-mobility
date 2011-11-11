@@ -65,6 +65,9 @@ public:
 
     bool isFlashReady() const;
 
+signals:
+    void torchModeChanged(bool);
+
 private:
     CameraBinSession *m_session;    
 };

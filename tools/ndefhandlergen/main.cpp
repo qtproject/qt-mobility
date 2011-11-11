@@ -61,7 +61,7 @@ struct Data
 void showHelp()
 {
     qWarning("Generate platform specific NFC message handler registration files.\n"
-             "Usage: nfcxmlgen [options]\n"
+             "Usage: ndefhandlergen [options]\n"
              "\n"
              "    -template TEMPLATE    Template to use.\n"
              "    -appname APPNAME      Name of the application.\n"
@@ -95,8 +95,6 @@ bool processTemplateFile(const QString &templateFile, const QString &outputFile,
     output.write(templateData.toUtf8());
     output.close();
 
-    qWarning("%s", qPrintable(templateData));
-
     return true;
 }
 
@@ -113,22 +111,22 @@ bool generateSymbian(Data data)
 
 
 
-bool generateMaemo6(Data data)
+bool generateHarmattan(Data data)
 {
     const QString outputFile = QLatin1String("ndefhandler_") + data.applicationName;
 
     if (data.matchString.isEmpty())
-        data.matchString = data.dataType + QLatin1String("[1:*];");
+        data.matchString = QLatin1Char('\'') + data.dataType + QLatin1String("'[1:*];");
 
     bool success = false;
 
-    success |= processTemplateFile(QLatin1String("/templates/maemo6/maemo6.conf"),
+    success |= processTemplateFile(QLatin1String("/templates/harmattan/harmattan.conf"),
                                    outputFile + QLatin1String(".conf"), data);
-    success |= processTemplateFile(QLatin1String("/templates/maemo6/maemo6.service"),
+    success |= processTemplateFile(QLatin1String("/templates/harmattan/harmattan.service"),
                                    outputFile + QLatin1String(".service"), data);
-    success |= processTemplateFile(QLatin1String("/templates/maemo6/maemo6.postinst"),
+    success |= processTemplateFile(QLatin1String("/templates/harmattan/harmattan.postinst"),
                                    outputFile + QLatin1String(".postinst"), data);
-    success |= processTemplateFile(QLatin1String("/templates/maemo6/maemo6.prerm"),
+    success |= processTemplateFile(QLatin1String("/templates/harmattan/harmattan.prerm"),
                                    outputFile + QLatin1String(".prerm"), data);
 
     return success;
@@ -141,7 +139,7 @@ bool checkInput(const Data &data)
         return false;
     }
     if (data.templateName != QLatin1String("symbian") &&
-        data.templateName != QLatin1String("maemo6")) {
+        data.templateName != QLatin1String("harmattan")) {
         qWarning("Error: Invalid template name specified, %s\n", qPrintable(data.templateName));
         return false;
     }
@@ -149,7 +147,7 @@ bool checkInput(const Data &data)
         qWarning("Error: -appname option must be provided.\n");
         return false;
     }
-    if (data.templateName == QLatin1String("maemo6") && data.applicationPath.isEmpty()) {
+    if (data.templateName == QLatin1String("harmattan") && data.applicationPath.isEmpty()) {
         qWarning("Error: -apppath option must be provided.\n");
         return false;
     }
@@ -197,6 +195,10 @@ int main(int argc, char *argv[])
         }
     }
 
+    // for compatibility
+    if (data.templateName == QLatin1String("maemo6"))
+        data.templateName = QLatin1String("harmattan");
+
     if (!checkInput(data)) {
         showHelp();
         return 1;
@@ -206,8 +208,8 @@ int main(int argc, char *argv[])
 
     if (data.templateName == QLatin1String("symbian"))
         success = generateSymbian(data);
-    else if (data.templateName == QLatin1String("maemo6"))
-        success = generateMaemo6(data);
+    else if (data.templateName == QLatin1String("harmattan"))
+        success = generateHarmattan(data);
 
     return success ? 0 : 1;
 }

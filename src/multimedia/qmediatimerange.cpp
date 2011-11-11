@@ -321,6 +321,7 @@ void QMediaTimeRangePrivate::removeInterval(const QMediaTimeInterval &interval)
     \class QMediaTimeRange
     \brief The QMediaTimeRange class represents a set of zero or more disjoint
     time intervals.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
     \since 1.0
 

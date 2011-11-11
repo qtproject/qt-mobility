@@ -108,20 +108,23 @@ QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
 
 namespace
 {
+
     void getMapTypes(const QDomDocument &doc, QList<QGraphicsGeoMap::MapType> &mapTypes)
     {
         typedef std::map<QString, QGraphicsGeoMap::MapType> MapTypeRegistry;
         static MapTypeRegistry registeredTypes;
-        if (registeredTypes.empty())
-        {
-
-            registeredTypes.insert(std::make_pair("terrain.day", QGraphicsGeoMap::TerrainMap));
-            registeredTypes.insert(std::make_pair("normal.day", QGraphicsGeoMap::StreetMap));
-            registeredTypes.insert(std::make_pair("satellite.day", QGraphicsGeoMap::SatelliteMapDay));
-
-            //registeredTypes.insert(std::make_pair("hybrid.day", QGraphicsGeoMap::));
-            //registeredTypes.insert(std::make_pair("normal.day.transit", QGraphicsGeoMap::));
-            //registeredTypes.insert(std::make_pair("normal.day.grey", QGraphicsGeoMap::));
+        if (registeredTypes.empty()){
+            registeredTypes["terrain.day"] = QGraphicsGeoMap::TerrainMap;
+            registeredTypes["normal.day"] = QGraphicsGeoMap::StreetMap;
+            registeredTypes["satellite.day"] = QGraphicsGeoMap::SatelliteMapDay;
+            registeredTypes["hybrid.day"] = QGraphicsGeoMap::HybridMap;
+            registeredTypes["normal.day.transit"] = QGraphicsGeoMap::TransitMap;
+            registeredTypes["normal.day.grey"] = QGraphicsGeoMap::GrayStreetMap;
+            registeredTypes["normal.day.mobile"] = QGraphicsGeoMap::MobileStreetMap;
+            registeredTypes["terrain.day.mobile"] = QGraphicsGeoMap::MobileTerrainMap;
+            registeredTypes["hybrid.day.mobile"] = QGraphicsGeoMap::MobileHybridMap;
+            registeredTypes["normal.day.transit.mobile"] = QGraphicsGeoMap::MobileTransitMap;
+            registeredTypes["normal.day.grey.mobile"] = QGraphicsGeoMap::MobileGrayStreetMap;
         }
 
         QDomElement response  = doc.firstChildElement("response");
@@ -172,33 +175,38 @@ namespace
     {
         typedef std::map<QString, int> KnownPositionsType;
         static KnownPositionsType knownPositions;
-        if (knownPositions.empty())
-        {
-            knownPositions.insert(std::make_pair("top.left", TopLeft));
-            knownPositions.insert(std::make_pair("left.top", TopLeft));
-            knownPositions.insert(std::make_pair("top.right", ShiftedRight));
-            knownPositions.insert(std::make_pair("right.top", ShiftedRight));
-            knownPositions.insert(std::make_pair("bottom.left", ShiftedDown));
-            knownPositions.insert(std::make_pair("left.bottom", ShiftedDown));
-            knownPositions.insert(std::make_pair("bottom.right", ShiftedRight | ShiftedDown));
-            knownPositions.insert(std::make_pair("right.bottom", ShiftedRight | ShiftedDown));
+        if (knownPositions.empty()) {
+            knownPositions["top.left"] = TopLeft;
+            knownPositions["left.top"] = TopLeft;
+            knownPositions["top.right"] = ShiftedRight;
+            knownPositions["right.top"] = ShiftedRight;
+            knownPositions["bottom.left"] = ShiftedDown;
+            knownPositions["left.bottom"] = ShiftedDown;
+            knownPositions["bottom.right"] = ShiftedRight | ShiftedDown;
+            knownPositions["right.bottom"] = ShiftedRight | ShiftedDown;
         }
 
         KnownPositionsType::const_iterator found = knownPositions.find(positionName);
         return found == knownPositions.end() ? ShiftedDown : found->second;
     }
+    
+    const char* MAPTILES_HOST = "1-4.maptile.lbs.ovi.com";
+    const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 }
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_cache(0),
-        m_host("maptile.maps.svc.ovi.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
-        m_logoPosition(ShiftedDown)
+        m_logoPosition(ShiftedDown),
+        m_firstSubdomain(QChar::Null),
+        m_maxSubdomains(0)
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
+
+    setHost(MAPTILES_HOST);
 
     QList<QGraphicsGeoMap::ConnectivityMode> modes;
     modes << QGraphicsGeoMap::OnlineMode;
@@ -223,7 +231,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     if (parameters.contains("mapping.host")) {
         QString host = parameters.value("mapping.host").toString();
         if (!host.isEmpty())
-            m_host = host;
+            setHost(host);
     }
 
     if (parameters.contains("mapping.referer")) {
@@ -249,7 +257,6 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         m_applicationId = parameters.value("app_id").toString();
     }
 
-     setupServiceInfo();
 #ifdef DISK_CACHE_ENABLED
     QString cacheDir;
     if (parameters.contains("mapping.cache.directory"))
@@ -292,6 +299,17 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(const QString&)), SLOT(currentMobileCountryCodeChanged(const QString&)));
     currentMobileCountryCodeChanged(m_networkInfo.currentMobileCountryCode());
 #endif
+
+    if (!isValidParameter(m_applicationId) || !isValidParameter(m_token)) {
+        qWarning() << "********************************************************************************";
+        qWarning() << "Qt Location requires usage of app_id and token parameters obtained from:";
+        qWarning() << "https://api.forum.nokia.com/ovi-api/ui/registration";
+        qWarning() << "For more information about app_id and token please consult:";
+        qWarning() << "http://doc.qt.nokia.com/qtmobility-latest/location-overview.html#the-nokia-plugin";
+        qWarning() << "********************************************************************************";
+    }
+
+    setupServiceInfo();
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
@@ -331,17 +349,16 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
 QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapRequest &request) const
 {
-    const int maxDomains = 11; // TODO: hmmm....
-    const char subdomain = 'a' + (request.row() + request.column()) % maxDomains; // a...k
+    const char subdomain = m_maxSubdomains ? m_firstSubdomain.toAscii() + (request.row() + request.column()) % m_maxSubdomains : 0;
 
     static const QString http("http://");
-    static const QString path("/maptiler/maptile/newest/");
+    static const QString path("/maptiler/v2/maptile/newest/");
     static const QChar dot('.');
     static const QChar slash('/');
 
     QString requestString = http;
-    if ("maptile.maps.svc.ovi.com" == m_host) // TODO: temporay solution while china DNS does not work
-    {
+
+    if (subdomain != 0) {
         requestString += subdomain;
         requestString += dot;
     }
@@ -373,7 +390,6 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
     }
 
     if (!m_referer.isEmpty()) {
-
         requestString += "&referer=";
         requestString += m_referer;
     }
@@ -399,29 +415,69 @@ QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
 
 QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType type)
 {
-    if (type == QGraphicsGeoMap::StreetMap)
-        return "normal.day";
-    else if (type == QGraphicsGeoMap::SatelliteMapDay ||
-             type == QGraphicsGeoMap::SatelliteMapNight) {
-        return "satellite.day";
-    } else if (type == QGraphicsGeoMap::TerrainMap)
-        return "terrain.day";
-    else
-        return "normal.day";
+    typedef std::map<QGraphicsGeoMap::MapType, QString> MapTypeRegistry;
+    static MapTypeRegistry registeredTypes;
+
+    if (registeredTypes.empty()) {
+        registeredTypes[QGraphicsGeoMap::NoMap] = "normal.day";
+        registeredTypes[QGraphicsGeoMap::TerrainMap] = "terrain.day";
+        registeredTypes[QGraphicsGeoMap::StreetMap] = "normal.day";
+        registeredTypes[QGraphicsGeoMap::SatelliteMapDay] = "satellite.day";
+        registeredTypes[QGraphicsGeoMap::SatelliteMapNight] = "satellite.day";
+        registeredTypes[QGraphicsGeoMap::HybridMap] = "hybrid.day";
+        registeredTypes[QGraphicsGeoMap::TransitMap] = "normal.day.transit";
+        registeredTypes[QGraphicsGeoMap::GrayStreetMap] = "normal.day.grey";
+        registeredTypes[QGraphicsGeoMap::MobileStreetMap] = "normal.day.mobile";
+        registeredTypes[QGraphicsGeoMap::MobileTerrainMap] = "terrain.day.mobile";
+        registeredTypes[QGraphicsGeoMap::MobileHybridMap] = "hybrid.day.mobile";
+        registeredTypes[QGraphicsGeoMap::MobileTransitMap] = "normal.day.transit.mobile";
+        registeredTypes[QGraphicsGeoMap::MobileGrayStreetMap] = "normal.day.grey.mobile";
+    }
+
+    MapTypeRegistry::const_iterator it = registeredTypes.find(type);
+    if (it != registeredTypes.end()) {
+        return it->second;
+    }
+
+    qWarning() << "Unknown QGraphicsGeoMap::MapType: " << type;
+    return "normal.day";
 }
 
 void QGeoMappingManagerEngineNokia::setupServiceInfo()
 {
     QSize maxResolution(256, 256);
-    double minZoomLevel(0.0), maxZoomLevel(18.0);
+    double minZoomLevel(0.0), maxZoomLevel(20.0);
+
     QList<QGraphicsGeoMap::MapType> types;
     types << QGraphicsGeoMap::StreetMap;
     types << QGraphicsGeoMap::SatelliteMapDay;
     types << QGraphicsGeoMap::TerrainMap;
+    types << QGraphicsGeoMap::HybridMap;
+    types << QGraphicsGeoMap::TransitMap;
+    types << QGraphicsGeoMap::GrayStreetMap;
+    types << QGraphicsGeoMap::MobileStreetMap;
+    types << QGraphicsGeoMap::MobileTerrainMap;
+    types << QGraphicsGeoMap::MobileHybridMap;
+    types << QGraphicsGeoMap::MobileTransitMap;
+    types << QGraphicsGeoMap::MobileGrayStreetMap;
 
     QString path = "http://";
+    if (!m_firstSubdomain.isNull()) {
+        path += m_firstSubdomain;
+        path += ".";
+    }
     path += m_host;
-    path += "/maptiler/info";
+    path += "/maptiler/v2/info?output=xml";
+
+    if (!m_token.isEmpty()) {
+        path += "&token=";
+        path += m_token;
+    }
+
+    if (!m_applicationId.isEmpty()) {
+        path += "&app_id=";
+        path += m_applicationId;
+    }
 
     QScopedPointer<QNetworkReply> reply(m_networkManager->get(QNetworkRequest((QUrl(path)))));
 
@@ -448,6 +504,8 @@ void QGeoMappingManagerEngineNokia::setupServiceInfo()
                 maxResolution = *found;
             }
         }
+    } else {
+        qWarning() << __FUNCTION__ << reply->errorString();
     }
 
     setTileSize(maxResolution);
@@ -466,11 +524,66 @@ const QString & QGeoMappingManagerEngineNokia::host() const
     return m_host;
 }
 
+const QString & QGeoMappingManagerEngineNokia::applicationId() const
+{
+    return m_applicationId;
+}
+
+const QString & QGeoMappingManagerEngineNokia::referer() const
+{
+    return m_referer;
+}
+
+const QString & QGeoMappingManagerEngineNokia::token() const
+{
+    return m_token;
+}
+
+QChar QGeoMappingManagerEngineNokia::firstSubdomain() const
+{
+    return m_firstSubdomain;
+}
+
+unsigned char QGeoMappingManagerEngineNokia::maxSubdomains() const
+{
+    return m_maxSubdomains;
+}
+
+void QGeoMappingManagerEngineNokia::setHost(const QString &host)
+{
+    if (host.length() > 4 && host.at(1) == QChar('-') && host.at(3) == QChar('.')) {
+        QString realHost = host.right(host.length() - 4);
+        m_firstSubdomain = host.at(0);
+        m_maxSubdomains = host.at(2).toAscii() - host.at(0).toAscii();
+        m_host = realHost;
+    } else {
+        m_host = host;
+        m_firstSubdomain = QChar::Null;
+        m_maxSubdomains = 0;
+    }
+}
+
 void QGeoMappingManagerEngineNokia::currentMobileCountryCodeChanged(const QString & mcc)
 {
-    if (mcc == "460" || mcc == "461") {
-        m_host ="maptile.maps.svc.nokia.com.cn";
-    } else {
-        m_host ="maptile.maps.svc.ovi.com";
+    if (mcc == "460" || mcc == "461" || mcc == "454" || mcc == "455") {
+        setHost(MAPTILES_HOST_CN);
     }
+}
+
+bool QGeoMappingManagerEngineNokia::isValidParameter(const QString &param)
+{
+    if (param.isEmpty())
+        return false;
+
+    if (param.length() > 512)
+        return false;
+
+    foreach (QChar c, param) {
+        if (!c.isLetterOrNumber() && c.toAscii() != '%' && c.toAscii() != '-' &&
+            c.toAscii() != '+' && c.toAscii() != '_') {
+            return false;
+        }
+    }
+
+    return true;
 }

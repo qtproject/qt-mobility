@@ -1,0 +1,261 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/gallery
+
+testcase = {
+
+    artists_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Artists view shows properly";
+        testBinary = "mediabrowser";
+        testSource = "$MOBILITYDIR/examples/mediabrowser"
+        testGoal = "Verify that media files can be displayed according to artists ";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Artists' in menu | Verify that media files can be displayed according to artists |
+        "));
+    },
+
+    album_artists_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Album artists view shows properly";
+        testBinary = "mediabrowser";
+        testSource = "$MOBILITYDIR/examples/mediabrowser"
+        testGoal = "Verify that media files can be displayed according to album artists ";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Album Artists' in menu | Verify that media files can be displayed according to album artists |
+        "));
+    },
+
+    songs_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Songs view shows properly";
+        testBinary = "mediabrowser";
+        testSource = "$MOBILITYDIR/examples/mediabrowser"
+        testGoal = "Verify that media files can be displayed according to songs ";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Songs' in menu | Verify that media files can be displayed according to songs |
+        "));
+    },
+
+    photos_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Photos view shows properly";
+        testBinary = "mediabrowser";
+        testSource = "$MOBILITYDIR/examples/mediabrowser"
+        testGoal = "Verify that media files can be displayed according to photos ";
+        testPreconditions = "None";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Photos' in menu | Verify that media files can be displayed according to photos |
+        "));
+    },
+
+    albums_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Album view shows properly";
+        testBinary = "mediabrowser";
+        testSource = "$MOBILITYDIR/examples/mediabrowser"
+        testGoal = "Verify that media files can be displayed according to albums ";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Albums' in menu | Verify that media files can be displayed according to albums |
+        "));
+    },
+
+    document_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Document view shows properly";
+        testBinary = "documentproperties";
+        testSource = "$MOBILITYDIR/examples/documentproperties"
+        testGoal = "Verify that document files can be displayed";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Documents' in menu | Verify that document files can be displayed |
+        "));
+    },
+
+    music_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Music view shows properly";
+        testBinary = "documentproperties";
+        testSource = "$MOBILITYDIR/examples/documentproperties"
+        testGoal = "Verify that music files can be displayed";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Audio' in menu | Verify that music files can be displayed |
+        "));
+    },
+    
+    photo_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Photo view shows properly";
+        testBinary = "documentproperties";
+        testSource = "$MOBILITYDIR/examples/documentproperties"
+        testGoal = "Verify that photo files can be displayed";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Images' in menu | Verify that photo files can be displayed |
+        "));
+    },
+    
+    video_view_shows_properly: function()
+    {
+        // Test meta data
+        testTitle = "Gallery - Video view shows properly";
+        testBinary = "documentproperties";
+        testSource = "$MOBILITYDIR/examples/documentproperties"
+        testGoal = "Verify that video files can be displayed";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Verify app launches normally |
+            | Select 'Videos' in menu | Verify that video files can be displayed |
+        "));
+    },
+}

@@ -1,0 +1,164 @@
+How to run auto testing for contacts model on MCL emulator
+
+Description:
+The document is a guide for setting up auto testing environment for contacts model on MCL emulator.
+
+Precondition:
+1.	Coreappstest is the testing component.
+2.	Vcardandvcal was build to testing the Vcard.
+3.	The cntsrv shouldn't be started in non-transient mode, and no program use it exclude auto testing program.
+4.	Don’t do any phonebook operation during the testing.
+
+Step:
+1.	Download TB9.2 SDK
+e.g. S60.TB9.2_201030_hw79_Z.tc
+
+2.	Build coreappstest
+cd \sf\mw\appsupport\commonappservices\coreappstest\Group
+
+comment all #ifdef in bld.inf
+
+sbs -c winscw_udeb reallyclean
+sbs -c winscw_udeb.test reallyclean
+sbs -c winscw_udeb
+sbs -c winscw_udeb.test
+
+3.	Build contacts model:
+
+cd \sf\app\contacts\phonebookengines\contactsmodel\groupsql
+
+sbs -c winscw_udeb reallyclean
+sbs -c winscw_udeb.test reallyclean
+sbs -c winscw_udeb
+sbs -c winscw_udeb.test
+
+
+4.	Delete CntSortPlugin.DLL 
+del \epoc32\release\winscw\udeb\CntSortPlugin.DLL
+
+5.	Edit cntmodel.rsc
+Delete all files in \epoc32\release\winscw\udeb\z\resource\cntmodel except cntmodel.rsc.
+ 
+6.	Edit c:\system\data\testexecute.ini
+Set SystemStarter = OFF (if SystemStarter =ON, running testexecute will get the error “Exit type 2,-263”)
+This file is mapped to X:\epoc32\winscw\c\system\data\testexecute.ini on my PC.
+
+7.	Edit X:\epoc32\data\epoc.ini 
+Add “textshell” at the end.
+For more information, please refer epoc.ini in the folder.
+
+8.	Run all test cases/scripts 
+
+copy the cm_all_tests.bat to X:\epoc32\winscw\c\ from the folder.
+Open carbide -> Import the contactsmodel project into it->Debug the contactsmodel:launch emulator -> cm_all_tests.bat
+
+9.	Expect: no panic and freezing in the testing. [Waiting for 3 hours.]
+Check the logs
+Testexecute:
+Path: c:\logs\testexecute (the path can be changed in c:\system\data\testexecute.ini, the log is html or xml format)
+
+epocwind.out: C:\Documents and Settings\<your account name>\Local Settings\Temp. This file includes all the console logs. 
+
+C:\logs\* : check the log files in the folder which has same name with the test program..
+
+
+
+
+T_AGENT
+T_DBASE2 
+T_DBNAMETEST
+T_EXPDEL
+T_FIELD
+T_FILTERFINDCONTACTS                -fail
+t_geo
+T_ITEM
+T_TEMPL                               -fail
+T_VERS
+T_VIEW
+t_vtel_email               				-fail
+T_TTVERS
+T_NOMACH 
+T_CNTMATCH
+T_CARDTM
+T_OWNCAR
+T_OWNCARDDELETE           		    -fail
+T_GROUPS
+T_CONNEC
+T_CURRENTDB
+T_VIEW2
+T_FILTERVIEW            				- fail
+T_CUSTFILTER           				- fail
+T_GROUPVIEW             				- fail
+T_SERVERSTART
+T_LOCALVIEWDUPLICATES
+T_FILTEREDVIEWUPDATE
+T_GROUPVIEWUPDATE
+T_VIEWSOOM                   	 - fail
+T_REFINEFINDVIEWL             	 - fail
+T_VIEWOBSERVERSBUG
+T_GROUPVIEWPANIC 
+T_ICCENTRY
+T_ICCVIEW
+T_ICCMULTIPLEPHONEBOOK
+T_ICCSTARTUP
+T_CASESENSITIVEDB
+T_CONTACTAT
+t_requeststoretest                   	- fail
+T_FILTEREDVIEWEVENTS 
+T_GROUPDELETEBUG
+
+T_VIEWCONTACTID                 - fail
+T_VIEWSORT
+T_VIEWSORTPLUGIN
+T_PREFIXFULLSEARCH              - fail
+T_DATABASE_KILLER               -fail
+T_WRONGFIELDMATCH
+T_UPDATEFORSYNC
+T_FILTERVIEW_MATCHING_PROFILE  - fail
+T_GROUPVIEW_UNFILED_PROFILE    - fail
+T_GROUPVIEWMODIFIEDCONTACT   - fail – emulator hang
+T_SPEEDDIALTEST                  	 - fail
+T_GENERALADDRESS
+T_APAC
+T_VIEWEVENTS
+T_OWNCARD                 		- fail 
+T_ICCIMPORTLOCK          		- fail – emulator hang
+T_FILTEREDVIEWSORT
+T_LOCALVIEWREMOVE
+T_TIMEIS
+T_CVIEWCONTACT
+T_FILTERBROADCAST
+T_SECONDNAME
+T_REMOTEVIEW              		- fail
+T_FILTERVIEWSPEED
+T_VIEWNOTIFICATIONERROR
+T_VEXPORTBIRTHDAY
+T_VEXPORTTYPE
+T_CONTACTVIEWEVENTS
+T_LONGSQL
+
+T_VEXPORTORG
+T_SEC_CNTDBASE
+T_SEC_ASYNCOPEN
+T_PERFORMANCE
+T_PLATSEC
+T_CNTFINDALL
+T_ASYNCOPEN                		- fail 
+T_PLPERFORMANCE           		- fail 
+T_CONCURRENT
+T_DBFill
+t_contactsramtest
+T_CntPBAPSupport          		 	- fail
+asynaccess
+T_CntDelete
+T_CntIdTest
+T_DB_SORTL_TEST
+t_contactdbevent
+t_subview
+T_GROUPVIEWEVENTS         		 -fail
+
+TESTEXECUTE C:\CITExImvCard\scripts\TestImpExvCard.script
+TESTEXECUTE C:\ContactTestCases.script
+TESTEXECUTE c:\CntPerfTest\scripts\cntperftest.script
+TESTEXECUTE C:\testdata\scripts\TE_Cntsrv_API_Policing.script
+TESTEXECUTE C:\CITExImvCard\scripts\TestImpExvCardPBAP.script

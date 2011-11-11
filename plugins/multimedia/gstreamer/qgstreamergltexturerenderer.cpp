@@ -166,6 +166,7 @@ QGstreamerGLTextureRenderer::QGstreamerGLTextureRenderer(QObject *parent) :
     m_winId(0),
     m_colorKey(49,0,49),
     m_overlayEnabled(false),
+    m_glEnabled(true),
     m_bufferProbeId(-1)
 {
     eglCreateSyncKHR =
@@ -196,7 +197,8 @@ GstElement *QGstreamerGLTextureRenderer::videoSink()
             g_object_set(G_OBJECT(m_videoSink),
                          "x-display", QX11Info::display(),
                          "egl-display", eglGetDisplay((EGLNativeDisplayType)QX11Info::display()),
-                         "egl-context", eglGetCurrentContext(),
+                         "egl-context", m_glEnabled ? eglGetCurrentContext()
+                                                    : EGL_NO_CONTEXT,
                          "colorkey", m_colorKey.rgb(),
                          "autopaint-colorkey", false,
                          "use-framebuffer-memory", true,
@@ -236,7 +238,7 @@ void QGstreamerGLTextureRenderer::setSurface(QAbstractVideoSurface *surface)
 
         bool oldReady = isReady();
 
-        m_context = const_cast<QGLContext*>(QGLContext::currentContext());
+        m_context = m_glEnabled ? const_cast<QGLContext*>(QGLContext::currentContext()) : NULL;
 
         if (m_videoSink)
             gst_object_unref(GST_OBJECT(m_videoSink));
@@ -295,7 +297,7 @@ void QGstreamerGLTextureRenderer::renderGLFrame(int frame)
 #endif
     QMutexLocker locker(&m_mutex);
 
-    if (!m_surface) {
+    if (!m_surface || !m_glEnabled) {
         m_renderCondition.wakeAll();
         return;
     }
@@ -320,6 +322,9 @@ void QGstreamerGLTextureRenderer::renderGLFrame(int frame)
         m_renderCondition.wakeAll();
         return;
     }
+
+    if (m_surface->isActive() && m_surface->surfaceFormat().handleType() != EGLImageTextureHandle)
+        m_surface->stop();
 
     if (!m_surface->isActive()) {
         //find the native video size
@@ -354,14 +359,7 @@ void QGstreamerGLTextureRenderer::renderGLFrame(int frame)
 
 bool QGstreamerGLTextureRenderer::isReady() const
 {
-    if (!m_surface)
-        return false;
-
-    if (m_winId > 0)
-        return true;
-
-    //winId is required only for EGLImageTextureHandle compatible surfaces
-    return m_surface->supportedPixelFormats(EGLImageTextureHandle).isEmpty();
+    return m_surface != NULL;
 }
 
 void QGstreamerGLTextureRenderer::handleBusMessage(GstMessage* gm)
@@ -429,9 +427,19 @@ void QGstreamerGLTextureRenderer::stopRenderer()
     if (m_surface && m_surface->isActive())
         m_surface->stop();
 
-    if (!m_nativeSize.isEmpty()) {
-        m_nativeSize = QSize();
-        emit nativeSizeChanged();
+    if (m_fallbackImage.isNull()) {
+        if (!m_nativeSize.isEmpty()) {
+            m_nativeSize = QSize();
+            emit nativeSizeChanged();
+        }
+    } else {
+        if (m_surface) {
+            QVideoSurfaceFormat format(m_fallbackImage.size(), QVideoFrame::Format_RGB32);
+            format.setPixelAspectRatio(m_nativeSize.width(), m_fallbackImage.width());
+
+            if (m_surface->start(format))
+                m_surface->present(QVideoFrame(m_fallbackImage));
+        }
     }
 }
 
@@ -575,4 +583,114 @@ void QGstreamerGLTextureRenderer::updateNativeVideoSize()
 
     if (m_nativeSize != oldSize)
         emit nativeSizeChanged();
+}
+
+GstBuffer * QGstreamerGLTextureRenderer::fallbackBuffer() const
+{
+    //buffer is not saved, method is only necessary for READ part of Q_PROPERTY
+    return 0;
+}
+
+void QGstreamerGLTextureRenderer::setFallbackBuffer(GstBuffer *buffer)
+{
+#ifdef GL_TEXTURE_SINK_DEBUG
+    qDebug() << Q_FUNC_INFO << buffer;
+#endif
+    m_fallbackImage = QImage();
+
+    if (!buffer)
+        return;
+
+    GstCaps *caps = GST_BUFFER_CAPS(buffer);
+    const uchar *data = GST_BUFFER_DATA(buffer);
+
+    if (!(caps && data))
+        return;
+
+    const GstStructure *structure = gst_caps_get_structure(caps, 0);
+    guint32 fourcc;
+    gst_structure_get_fourcc(structure, "format", &fourcc);
+
+    if (fourcc != GST_MAKE_FOURCC('Y', 'U', 'Y', '2') &&
+        fourcc != GST_MAKE_FOURCC('U', 'Y', 'V', 'Y'))
+        return;
+
+    QSize resolution = QGstUtils::capsResolution(caps);
+    m_fallbackImage = QImage(resolution, QImage::Format_RGB32);
+
+    for (int y=0; y<resolution.height(); y++) {
+        const uchar *src = data + y*GST_ROUND_UP_4(resolution.width())*2;
+        quint32 *dst = (quint32 *)m_fallbackImage.scanLine(y);
+
+        int y1, y2;
+        int u, v;
+
+        int r1, g1, b1;
+        int r2, g2, b2;
+
+        int r, g, b;
+
+        for (int x=0; x<resolution.width(); x+=2) {
+            if (fourcc == GST_MAKE_FOURCC('Y', 'U', 'Y', '2')) {
+                y1 = *src; src++;
+                u  = *src; src++;
+                y2 = *src; src++;
+                v  = *src; src++;
+            } else {
+                u  = *src; src++;
+                y1 = *src; src++;
+                v  = *src; src++;
+                y2 = *src; src++;
+            }
+
+            y1 = 298*y1/256;
+            y2 = 298*y2/256;
+
+            r = 408*v/256 - 223;
+            g = - 100*u/256 - 208*v/256 + 136;
+            b = 516*u/256 - 276;
+
+            r1 = qBound(0, y1 + r, 255);
+            g1 = qBound(0, y1 + g, 255);
+            b1 = qBound(0, y1 + b, 255);
+
+            *dst = qRgb(r1, g1, b1); dst++;
+
+            r2 = qBound(0, y2 + r, 255);
+            g2 = qBound(0, y2 + g, 255);
+            b2 = qBound(0, y2 + b, 255);
+
+            *dst = qRgb(r2, g2, b2); dst++;
+        }
+    }
+}
+
+bool QGstreamerGLTextureRenderer::glEnabled() const
+{
+    return m_glEnabled;
+}
+
+void QGstreamerGLTextureRenderer::setGlEnabled(bool enabled)
+{
+    if (m_glEnabled == enabled)
+        return;
+
+    m_glEnabled = enabled;
+
+    if (enabled) {
+        m_context = const_cast<QGLContext*>(QGLContext::currentContext());
+
+        if (m_videoSink)
+            g_object_set(G_OBJECT(m_videoSink),
+                         "egl-context", eglGetCurrentContext(),
+                         (char *)NULL);
+    } else {
+        m_context = NULL;
+
+        if (m_videoSink)
+            g_object_set(G_OBJECT(m_videoSink),
+                         "egl-context", EGL_NO_CONTEXT,
+                         (char *)NULL);
+
+    }
 }

@@ -41,10 +41,12 @@
 
 #include "camerabincontrol.h"
 #include "camerabincontainer.h"
+#include "camerabinflash.h"
 #include "camerabinaudioencoder.h"
 #include "camerabinvideoencoder.h"
 #include "camerabinimageencoder.h"
 #include "camerabinresourcepolicy.h"
+#include "camerabinrecorder.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qfile.h>
@@ -87,8 +89,12 @@ CameraBinControl::CameraBinControl(CameraBinSession *session)
             SLOT(reloadLater()));
     connect(m_session, SIGNAL(readyChanged(bool)),
             SLOT(reloadLater()));
+    connect(m_session->cameraFlashControl(), SIGNAL(torchModeChanged(bool)),
+            SLOT(reloadLater()));
     connect(m_session, SIGNAL(error(int,QString)),
             SLOT(handleCameraError(int,QString)));
+    connect(m_session->recorderControl(), SIGNAL(stateChanged(QMediaRecorder::State)),
+            SLOT(updateRecorderResources(QMediaRecorder::State)));
 
     m_resourcePolicy = new CamerabinResourcePolicy(this);
     connect(m_resourcePolicy, SIGNAL(resourcesGranted()),
@@ -353,4 +359,23 @@ void CameraBinControl::setViewfinderColorSpaceConversion(bool enabled)
         flags &= ~VIEWFINDER_COLORSPACE_CONVERSION;
 
     g_object_set(G_OBJECT(m_session->cameraBin()), "flags", flags, NULL);
+}
+
+void CameraBinControl::updateRecorderResources(QMediaRecorder::State recorderState)
+{
+    if (m_state == QCamera::ActiveState) {
+        CamerabinResourcePolicy::ResourceSet resourceSet;
+
+        if (recorderState == QMediaRecorder::RecordingState) {
+            resourceSet = CamerabinResourcePolicy::VideoRecordingResources;
+        } else {
+            if (captureMode() == QCamera::CaptureStillImage)
+                resourceSet = CamerabinResourcePolicy::ImageCaptureResources;
+            else
+                resourceSet = CamerabinResourcePolicy::VideoCaptureResources;
+        }
+
+        if (m_resourcePolicy->resourceSet() != resourceSet)
+            m_resourcePolicy->setResourceSet(resourceSet);
+    }
 }

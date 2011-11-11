@@ -45,13 +45,17 @@ testcase = {
 
     initTestCase: function()
     {
-        testcase.qtuitest_platform = getLocalEnv("TESTPLATFORM");
-        if (!checkPlatform(testcase.qtuitest_platform)){
-            fail("TESTPLATFORM "+ testcase.qtuitest_platform +" not valid");
+        if (!runAsManualTest()){
+            testcase.qtuitest_platform = getLocalEnv("TESTPLATFORM");
+            if (!checkPlatform(testcase.qtuitest_platform)){
+                fail("TESTPLATFORM "+ testcase.qtuitest_platform +" not valid");
+            }
+            if (testcase.platform == "linux" || testcase.platform == "mac") {
+                testcase.platform = "unix";
+            }
         }
-        if (testcase.platform == "linux" || testcase.platform == "mac") {
-            testcase.platform = "unix";
-        }
+
+
     },
 
     enumeration: function()
@@ -59,12 +63,13 @@ testcase = {
         // Test meta data
         testApplication = "Bearer - Enumeration of Connections";
         testBinary = "bearermonitor";
+        testSource = "$MOBILITYDIR/examples/bearermonitor";
         testGoal = "Verify the system can detect and display all available networks";
         testPreconditions = "Work out the list of available networks:<br>
    1. On S60 device: use Menu->Settings->Connectivity settings application.<br>
    1. linux/Mac: ifconfig (as superuser)<br>
    1. Windows: ipconfig<br><br>";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
 
          // Test Steps
         prompt(twiki("---+++ " + testApplication + "<br><br>
@@ -83,15 +88,18 @@ testcase = {
           // Test meta data
           testApplication = "Bearer - Added network interfaces";
           testBinary = "bearermonitor";
+          testSource = "$MOBILITYDIR/examples/bearermonitor";
           testGoal = "Verify that network interfaces can be added";
           testPreconditions = "No network access points are defined on the device; a WLAN is available";
-          testGroups = "BAT";
+          testGroups = "BAT_MOBILITY";
+          testRequirements = "";
 
           // Test steps
           prompt(twiki("---+++ " + testApplication + "<br><br>
               *Goal:* " + testGoal + "<br>
               *Pre-Requisites:* " + testPreconditions + "<br>
               *Tested Binary:* " + testBinary + "<br>
+              *Requirements:* " + testRequirements + "<br>
 
               | *Step* | *Verification* |
               | Launch " + testBinary + " | Verify the cloud space is clear of networks |
@@ -109,15 +117,18 @@ testcase = {
         // Test meta data
         testApplication = "Bearer - Removed network interfaces";
         testBinary = "bearercloud";
+        testSource = "$MOBILITYDIR/examples/bearercloud";
         testGoal = "Verify that removal of a network connection is detected correctly";
         testPreconditions = "A connection to a WLAN exists";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         prompt(twiki("---+++ " + testApplication + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
             *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
             | *Step* | *Verification* |
             | Launch " + testBinary + " | Verify the cloud space shows a network in the green circle |
@@ -135,15 +146,18 @@ testcase = {
        // Test meta data
        testApplication = "Bearer - Changing the status of a network";
        testBinary = "bearercloud";
-       testGoal = "Verify that network status changes are detected correctly.";
+       testSource = "$MOBILITYDIR/examples/bearercloud";
+       testGoal = "Verify that network status changes are detected correctly";
        testPreconditions = "no network access points are defined on the device; a WLAN is available";
-       testGroups = "BAT";
+       testGroups = "BAT_MOBILITY";
+       testRequirements = "";
 
        // Test steps
        prompt(twiki("---+++ " + testApplication + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
            *Tested Binary:* " + testBinary + "<br>
+           *Requirements:* " + testRequirements + "<br>
 
            | *Step* | *Verification* |
            | Launch " + testBinary + " | Verify the cloud space is clear of networks |
@@ -165,17 +179,20 @@ testcase = {
 
     interface_priority: function()
     {
-        if (testcase.platform != "symbian" && testcase.platform != "maemo") {
-            skip("This test only applies to Symbian platform");
+        if (!runAsManualTest())
+        {
+            if (testcase.platform != "symbian" && testcase.platform != "maemo") {
+                skip("This test only applies to Symbian platform");
+            }
         }
 
         // Test meta data
         testApplication = "Bearer - Interfaces are used in order of priority";
-        testBinary = "";
+        testBinary = "bearermonitor";
         testGoal = "Verify that network interfaces are used in order of priority";
         testPreconditions = "   1. GPRS is available to the device<br>
    1. WLAN is available to the device";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
 
         // Test steps
         prompt(twiki("---+++ " + testApplication + "<br><br>
@@ -200,7 +217,7 @@ testcase = {
             | Press Back | |
             | Select Options->Default connection | |
             | Select the new Destination | Verify the Destination has a check mark |
-            | Start the bearermonitor example application | |
+            | Launch " + testBinary + " | |
             | In the list, select the new Destination | Verify 'Roaming' is shown as 'Available' |
             | Move the device into an area not covered by the WLAN or simulate an uncovered environment | Verify the application indicates loss of WLAN network (may take 1 - 2 minutes) |
             | Wait a bit longer (1 - 2 minutes) | Verify the application indicates a change of bearer to the GPRS network |

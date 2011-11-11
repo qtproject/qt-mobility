@@ -42,7 +42,14 @@
 #include "clientservercommon.h"
 
 #include <QDir>
+#include <QMutex>
 #include <QDebug>
+
+// Requests to pathmapper server consist of two separate subrequests (first
+// asking the length of the reply, and second actually receiving the reply).
+// No other requests can be handled between those requests, so we need to
+// protect the requests with a mutex.
+static QMutex requestGuardMutex;
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,16 +65,19 @@ PathMapper::~PathMapper()
 
 bool PathMapper::getChildren(const QString &path, QSet<QString> &children) const
 {
+    QMutexLocker locker(&requestGuardMutex);
     return m_pathMapperServerSession.getChildren(path, children);
 }
 
 QStringList PathMapper::childPaths(const QString &path) const
 {
+    QMutexLocker locker(&requestGuardMutex);
     return m_pathMapperServerSession.childPaths(path);
 }
 
 bool PathMapper::resolvePath(const QString &path, Target &target, quint32 &category, quint32 &key) const
 {
+    QMutexLocker locker(&requestGuardMutex);
     return m_pathMapperServerSession.resolvePath(path, target, category, key);
 }
 

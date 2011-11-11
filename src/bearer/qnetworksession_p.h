@@ -55,110 +55,22 @@
 
 #include "qnetworkconfigmanager_p.h"
 #include "qnetworksession.h"
-#ifdef BEARER_ENGINE
-#include "qnetworksessionengine_p.h"
-#endif
-
-#include "qnetworksession.h"
-#include <QNetworkInterface>
-#include <QDateTime>
+#include "qnetworksessionadaptor_p.h"
+#include <QtNetwork/qnetworksession.h>
 
 QTM_BEGIN_NAMESPACE
-#ifdef BEARER_ENGINE
-class QNetworkSessionEngine;
-#endif
 
-class QNetworkSessionPrivate : public QObject
+class QNetworkSessionPrivate : public QNetworkSessionAdaptor
 {
     Q_OBJECT
 public:
-    QNetworkSessionPrivate() : 
-        tx_data(0), rx_data(0), m_activeTime(0), isOpen(false)
-    {
-    }
-
-    ~QNetworkSessionPrivate()
-    {
-    }
-
-    //called by QNetworkSession constructor and ensures
-    //that the state is immediately updated (w/o actually opening
-    //a session). Also this function should take care of 
-    //notification hooks to discover future state changes.
-    void syncStateWithInterface();
-
-    QNetworkInterface currentInterface() const;
-    QVariant sessionProperty(const QString& key) const;
-    void setSessionProperty(const QString& key, const QVariant& value);
-    QString bearerName() const;
-
-    void open();
-    void close();
-    void stop();
-    void migrate();
-    void accept();
-    void ignore();
-    void reject();
-
-    QString errorString() const; //must return translated string
-    QNetworkSession::SessionError error() const;
-
-    quint64 bytesWritten() const;
-    quint64 bytesReceived() const;
-    quint64 activeTime() const;
-
-private:
-    void updateStateFromServiceNetwork();
-    void updateStateFromActiveConfig();
-
-Q_SIGNALS:
-    //releases any pending waitForOpened() calls
-    void quitPendingWaitsForOpened();
-
-private Q_SLOTS:
-#ifdef BEARER_ENGINE
-    void networkConfigurationsChanged();
-    void configurationChanged(const QNetworkConfiguration &config);
-    void forcedSessionClose(const QNetworkConfiguration &config);
-    void connectionError(const QString &id, QNetworkSessionEngine::ConnectionError error);
-#endif
-
-private:
-    QNetworkConfigurationManager manager;
-
-    quint64 tx_data;
-    quint64 rx_data;
-    quint64 m_activeTime;
-
-    // The config set on QNetworkSession.
-    QNetworkConfiguration publicConfig;
-
-    // If publicConfig is a ServiceNetwork this is a copy of publicConfig.
-    // If publicConfig is an UserChoice that is resolved to a ServiceNetwork this is the actual
-    // ServiceNetwork configuration.
-    QNetworkConfiguration serviceConfig;
-
-    // This is the actual active configuration currently in use by the session.
-    // Either a copy of publicConfig or one of serviceConfig.children().
-    QNetworkConfiguration activeConfig;
-
-    QNetworkSession::State state;
-    bool isOpen;
-
-#ifdef BEARER_ENGINE
-    bool opened;
-
-    QNetworkSessionEngine *engine;
-#endif
-    QNetworkSession::SessionError lastError;
-
-    QNetworkSession* q;
-    friend class QNetworkSession;
-
-#if defined(BEARER_ENGINE) && defined(BACKEND_NM)
-    QDateTime startTime;
-    void setActiveTimeStamp();
-#endif
+    QNetworkSessionPrivate(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config);
+    QT_PREPEND_NAMESPACE(QNetworkSession) impl;
+    QNetworkSession *q;
+protected:
+    void _q_stateChanged(QT_PREPEND_NAMESPACE(QNetworkSession::State));
+    void _q_error(QT_PREPEND_NAMESPACE(QNetworkSession::SessionError));
+    void _q_preferredConfigurationChanged(const QT_PREPEND_NAMESPACE(QNetworkConfiguration&) config, bool isSeamless);
 };
 
 QTM_END_NAMESPACE

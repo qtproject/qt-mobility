@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \typedef qtimestamp
     \relates QSensor
+    \inmodule QtSensors
 
     Sensor timestamps are represented by this typedef which is a 64 bit unsigned integer.
 
@@ -70,6 +71,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \typedef qrange
     \relates QSensor
+    \inmodule QtSensors
 
     This type is defined as a QPair.
 
@@ -83,6 +85,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \typedef qrangelist
     \relates QSensor
+    \inmodule QtSensors
 
     This type is defined as a list of qrange values.
 
@@ -95,7 +98,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class qoutputrange
-    \relates QSensor
+    \inmodule QtSensors
     \brief The qoutputrange class holds the specifics of an output range.
 
     The class is defined as a simple struct.
@@ -151,6 +154,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \typedef qoutputrangelist
     \relates QSensor
+    \inmodule QtSensors
 
     This type is defined as a list of qoutputrange values.
 

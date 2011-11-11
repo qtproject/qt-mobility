@@ -52,6 +52,7 @@
     #include "pathmapper_proxy_symbian.cpp"
 #endif
 
+#include <QThreadStorage>
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -74,13 +75,24 @@ static QString getUrlParameter(const QString &path)
         return QString();
 }
 
+QThreadStorage<XQSettingsManager *> settingsManagers;
+
+XQSettingsManager * SymbianSettingsLayer::getSettingsManagerForThread()
+{
+    if (!settingsManagers.hasLocalData()) {
+        XQSettingsManager *settingsManager = new XQSettingsManager;
+        settingsManagers.setLocalData(settingsManager);
+        connect(settingsManager, SIGNAL(valueChanged(const XQSettingsKey&, const QVariant&)),
+                this, SLOT(notifyChange(const XQSettingsKey&)));
+        connect(settingsManager, SIGNAL(itemDeleted(const XQSettingsKey&)),
+                this, SLOT(notifyChange(const XQSettingsKey&)));
+    }
+
+    return settingsManagers.localData();
+}
+
 SymbianSettingsLayer::SymbianSettingsLayer()
 {
-    connect(&m_settingsManager, SIGNAL(valueChanged(const XQSettingsKey&, const QVariant&)),
-            this, SLOT(notifyChange(const XQSettingsKey&)));
-    connect(&m_settingsManager, SIGNAL(itemDeleted(const XQSettingsKey&)),
-            this, SLOT(notifyChange(const XQSettingsKey&)));
-
     m_featureManager = 0;
 
     try {
@@ -182,7 +194,7 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
     fullPath.append(value);
 
     QString typeParameter = getUrlParameter(fullPath);
-    
+
     bool success = false;
     PathMapper::Target target;
     quint32 category;
@@ -196,7 +208,7 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
             }
         } else {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
-            QVariant readValue = m_settingsManager.readItemValue(settingsKey);
+            QVariant readValue = getSettingsManagerForThread()->readItemValue(settingsKey);
             if (readValue.type() == QVariant::ByteArray && typeParameter == KeyTypeParameterString) {
                 // interpret the bytearray as utf-16 string
                 QTextCodec *codec = QTextCodec::codecForName("UTF-16");
@@ -300,11 +312,11 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
             hash += qHash((unsigned long)key);
 
             if (properties & QAbstractValueSpaceLayer::Publish) {
-                m_settingsManager.startMonitoring(settingsKey);
+                getSettingsManagerForThread()->startMonitoring(settingsKey);
                 m_monitoringHandles[hash] = sh;
                 m_monitoringPaths.insert(fullPath);
             } else {
-                m_settingsManager.stopMonitoring(settingsKey);
+                getSettingsManagerForThread()->stopMonitoring(settingsKey);
                 m_monitoringHandles.remove(hash);
                 m_monitoringPaths.remove(fullPath);
             }
@@ -363,7 +375,7 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
         fullPath.append(QLatin1Char('/'));
 
     fullPath.append(value);
-    
+
     QString typeParameter = getUrlParameter(fullPath);
 
     bool success = false;
@@ -375,7 +387,7 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
             success = false;
         } else {
             if (target == PathMapper::TargetRPropery) {
-                XQPublishAndSubscribeUtils utils(m_settingsManager);
+                XQPublishAndSubscribeUtils utils(*(getSettingsManagerForThread()));
 
                 XQSettingsManager::Type type = XQSettingsManager::TypeVariant;
                 if (data.type() == QVariant::Int) {
@@ -390,27 +402,27 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
 
             if (m_monitoringPaths.contains(fullPath)) {
-                m_settingsManager.startMonitoring(settingsKey);
+                getSettingsManagerForThread()->startMonitoring(settingsKey);
             }
 
             if (data.type() == QVariant::Int || data.type() == QVariant::ByteArray ||
                     (target == PathMapper::TargetCRepository && data.type() == QVariant::Double)) {
                 //Write integers and bytearrays as such (and doubles to cenrep)
-                success = m_settingsManager.writeItemValue(settingsKey, data);
+                success = getSettingsManagerForThread()->writeItemValue(settingsKey, data);
             } else if (data.type() == QVariant::String && typeParameter == KeyTypeParameterString) {
                 // write native type string. need to convert it to utf-16, and write that into bytearray
                 QByteArray stringByteArray;
                 QTextCodec *codec = QTextCodec::codecForName("UTF-16");
                 if (codec) {
                     stringByteArray = codec->fromUnicode(data.toString());
-                    success = m_settingsManager.writeItemValue(settingsKey, QVariant(stringByteArray));
+                    success = getSettingsManagerForThread()->writeItemValue(settingsKey, QVariant(stringByteArray));
                 }
             } else {
                 //Write other data types serialized into a bytearray
                 QByteArray byteArray;
                 QDataStream writeStream(&byteArray, QIODevice::WriteOnly);
                 writeStream << data;
-                success = m_settingsManager.writeItemValue(settingsKey, QVariant(byteArray));
+                success = getSettingsManagerForThread()->writeItemValue(settingsKey, QVariant(byteArray));
             }
         }
     }
@@ -478,7 +490,7 @@ bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
         if (target == PathMapper::TargetFeatureManager) {
                 success = false;
         } else if (target == PathMapper::TargetRPropery) {
-            XQPublishAndSubscribeUtils utils(m_settingsManager);
+            XQPublishAndSubscribeUtils utils(*(getSettingsManagerForThread()));
             utils.deleteProperty(XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key));
         }
     }

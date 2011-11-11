@@ -66,6 +66,7 @@ QTM_USE_NAMESPACE
 // in their processing.  So we do multiple loops until things work out.. or not
 #define MAX_OPTIMISTIC_SCHEDULING_LIMIT 100
 
+const QString trackerEngineName = QLatin1String("tracker");
 
 // Thread capable QThreadSignalSpy (to avoid data races with count/appendArgS)
 class QThreadSignalSpy: public QObject
@@ -201,6 +202,8 @@ private slots:
     void contactPartialSave_data() { addManagers(); }
     void contactPartialSaveAsync();
     void contactPartialSaveAsync_data() {addManagers();}
+    void contactPartialSaveLastError();
+    void contactPartialSaveLastError_data() {addManagers();}
 
     void definitionFetch();
     void definitionFetch_data() { addManagers(); }
@@ -828,10 +831,27 @@ void tst_QContactAsync::contactIdFetch()
 
 }
 
+/// Returns @p first with the elements of @p second removed if contained.
+static QList<QContactLocalId>
+operator-(QList<QContactLocalId> first, const QList<QContactLocalId> &second)
+{
+    foreach(QContactLocalId localId, second) {
+        first.removeOne(localId);
+    }
+    return first;
+}
+
 void tst_QContactAsync::contactRemove()
 {
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(prepareModel(uri));
+    // tracker backend cannot remove selfContact
+    const QList<QContactLocalId> unremovableIds =
+        (cm->managerName() == QLatin1String("tracker")) ?
+        QList<QContactLocalId>() << cm->selfContactId() :
+        QList<QContactLocalId>();
+    const int unremovableCount = unremovableIds.count();
+
     QContactRemoveRequest crr;
     QVERIFY(crr.type() == QContactAbstractRequest::ContactRemoveRequest);
 
@@ -877,8 +897,8 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(cm->contactIds(dfil).isEmpty());
 
     // remove all contacts
-    dfil.setDetailDefinitionName(QContactDisplayLabel::DefinitionName); // delete everything.
-    crr.setContactIds(cm->contactIds(dfil));
+    const QContactFilter noFilter; // delete everything.
+    crr.setContactIds(cm->contactIds(noFilter)-unremovableIds);
     
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
@@ -888,7 +908,7 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(crr.waitForFinished());
     QVERIFY(crr.isFinished());
 
-    QCOMPARE(cm->contactIds().size(), 0); // no contacts should be left.
+    QCOMPARE(cm->contactIds().size(), unremovableCount); // no contacts should be left, besides unremovable
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -898,7 +918,7 @@ void tst_QContactAsync::contactRemove()
     nameDetail.setFirstName("Should not be removed");
     temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
-    crr.setContactIds(cm->contactIds(dfil));
+    crr.setContactIds(cm->contactIds(noFilter)-unremovableIds);
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -910,11 +930,11 @@ void tst_QContactAsync::contactRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             crr.waitForFinished();
-            crr.setContactIds(cm->contactIds(dfil));
             temp.setId(QContactId());
             if (!cm->saveContact(&temp)) {
                 QSKIP("Unable to save temporary contact for remove request cancellation test!", SkipSingle);
             }
+            crr.setContactIds(cm->contactIds(noFilter)-unremovableIds);
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -928,8 +948,9 @@ void tst_QContactAsync::contactRemove()
         // if we get here, then we are cancelling the request.
         QVERIFY(crr.waitForFinished());
         QVERIFY(crr.isCanceled());
-        QCOMPARE(cm->contactIds().size(), 1);
-        QCOMPARE(cm->contactIds(), crr.contactIds());
+        const QList<QContactLocalId> cmRemovableContactIds = cm->contactIds()-unremovableIds;
+        QCOMPARE(cmRemovableContactIds.size(), 1);
+        QCOMPARE(cmRemovableContactIds, crr.contactIds());
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -944,9 +965,9 @@ void tst_QContactAsync::contactRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             crr.waitForFinished();
-            crr.setContactIds(cm->contactIds(dfil));
             temp.setId(QContactId());
             cm->saveContact(&temp);
+            crr.setContactIds(cm->contactIds(noFilter));
             bailoutCount -= 1;
             if (!bailoutCount) {
 //                qWarning("Unable to test cancelling due to thread scheduling!");
@@ -958,8 +979,9 @@ void tst_QContactAsync::contactRemove()
         }
         crr.waitForFinished();
         QVERIFY(crr.isCanceled());
-        QCOMPARE(cm->contactIds().size(), 1);
-        QCOMPARE(cm->contactIds(), crr.contactIds());
+        const QList<QContactLocalId> cmRemovableContactIds = cm->contactIds()-unremovableIds;
+        QCOMPARE(cmRemovableContactIds.size(), 1);
+        QCOMPARE(cmRemovableContactIds, crr.contactIds());
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
@@ -1151,6 +1173,10 @@ void tst_QContactAsync::contactPartialSave()
     QScopedPointer<QContactManager> cm(prepareModel(uri));
 
     QList<QContact> contacts(cm->contacts());
+
+    const bool isAllowingDetailsNotInSchema =
+        (cm->managerName() == QLatin1String("tracker"));
+
     QList<QContact> originalContacts(contacts);
     QCOMPARE(contacts.count(), 3);
 
@@ -1197,6 +1223,7 @@ void tst_QContactAsync::contactPartialSave()
     // 3) Remove an email address and a phone number
     QCOMPARE(contacts[1].details<QContactPhoneNumber>().count(), 1);
     QCOMPARE(contacts[1].details<QContactEmailAddress>().count(), 1);
+    email = contacts[1].detail<QContactEmailAddress>();
     QVERIFY(contacts[1].removeDetail(&email));
     phn = contacts[1].detail<QContactPhoneNumber>();
     QVERIFY(contacts[1].removeDetail(&phn));
@@ -1262,9 +1289,9 @@ void tst_QContactAsync::contactPartialSave()
     QVERIFY(csr.waitForFinished());
     QVERIFY(csr.error() != QContactManager::NoError);
     QMap<int, QContactManager::Error> errorMap(csr.errorMap());
-    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap.count(), isAllowingDetailsNotInSchema ? 1 : 2);
     QCOMPARE(errorMap[3], QContactManager::DoesNotExistError);
-    QCOMPARE(errorMap[4], QContactManager::InvalidDetailError);
+    QCOMPARE(errorMap[4], isAllowingDetailsNotInSchema ? QContactManager::NoError : QContactManager::InvalidDetailError);
 
     // 7) Have a non existing contact in the middle followed by a save error
     badId = id3;
@@ -1276,9 +1303,9 @@ void tst_QContactAsync::contactPartialSave()
     QVERIFY(csr.waitForFinished());
     QVERIFY(csr.error() != QContactManager::NoError);
     errorMap = csr.errorMap();
-    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap.count(), isAllowingDetailsNotInSchema ? 1 : 2);
     QCOMPARE(errorMap[3], QContactManager::DoesNotExistError);
-    QCOMPARE(errorMap[4], QContactManager::InvalidDetailError);
+    QCOMPARE(errorMap[4], isAllowingDetailsNotInSchema ? QContactManager::NoError : QContactManager::InvalidDetailError);
 
     // 8) A list entirely of new contacts, with no details in the mask
     QList<QContact> contacts2;
@@ -1331,9 +1358,9 @@ void tst_QContactAsync::contactPartialSave()
     QVERIFY(csr.waitForFinished());
     QVERIFY(csr.error() != QContactManager::NoError);
     errorMap = csr.errorMap();
-    QCOMPARE(errorMap.count(), 2);
+    QCOMPARE(errorMap.count(), isAllowingDetailsNotInSchema ? 1 : 2);
     QCOMPARE(errorMap[0], QContactManager::DoesNotExistError);
-    QCOMPARE(errorMap[1], QContactManager::InvalidDetailError);
+    QCOMPARE(errorMap[1], isAllowingDetailsNotInSchema ? QContactManager::NoError : QContactManager::InvalidDetailError);
 }
 
 void tst_QContactAsync::contactPartialSaveAsync()
@@ -1376,6 +1403,121 @@ void tst_QContactAsync::contactPartialSaveAsync()
     saveRequest->start();
     QTest::qWait(1000);
     QVERIFY(saveRequest->isFinished());
+}
+
+void tst_QContactAsync::contactPartialSaveLastError()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QContactManager> cm(prepareModel(uri));
+    QContactSaveRequest csr;
+    QVERIFY(csr.type() == QContactAbstractRequest::ContactSaveRequest);
+
+    // initial state - not started, no manager.
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
+    QVERIFY(!csr.start());
+    QVERIFY(!csr.cancel());
+    QVERIFY(!csr.waitForFinished());
+
+    // Save a group of contacts.
+    QContact testContact1, testContact2, testContact3, testContact4, testContact5, testContact6;
+    QContactName nameDetail;
+    nameDetail.setFirstName("Test Contact1");
+    testContact1.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact2");
+    testContact2.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact3");
+    testContact3.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact4");
+    testContact4.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact5");
+    testContact5.saveDetail(&nameDetail);
+    nameDetail.setFirstName("Test Contact6");
+    testContact6.saveDetail(&nameDetail);
+    QList<QContact> testContacts;
+    testContacts << testContact1 << testContact2 << testContact3 << testContact4 << testContact5 << testContact6;
+    csr.setContacts(testContacts);
+    csr.setManager(cm.data());
+    QCOMPARE(csr.manager(), cm.data());
+    QVERIFY(!csr.isActive());
+    QVERIFY(!csr.isFinished());
+    QVERIFY(!csr.cancel());
+    QVERIFY(!csr.waitForFinished());
+    qRegisterMetaType<QContactSaveRequest*>("QContactSaveRequest*");
+    QThreadSignalSpy spy(&csr, SIGNAL(stateChanged(QContactAbstractRequest::State)));
+    QVERIFY(!csr.cancel()); // not started
+    QVERIFY(csr.start());
+    QVERIFY((csr.isActive() && csr.state() == QContactAbstractRequest::ActiveState) || csr.isFinished());
+    QVERIFY(csr.waitForFinished());
+    QVERIFY(csr.isFinished());
+    QVERIFY(spy.count() >= 1); // active + finished progress signals
+    spy.clear();
+
+    // Store contacts with their local ids they got when saved.
+    testContacts = csr.contacts();
+    QList<QContactLocalId> localIdsForSavedContacts;
+    foreach (QContact contact, csr.contacts()) {
+        localIdsForSavedContacts << contact.localId();
+    }
+
+    // Partially saving emails for contacts and causing two errors.
+    QContactEmailAddress email;
+    email.setEmailAddress("me@example.com");
+    testContacts[0].saveDetail(&email);
+    testContacts[1].saveDetail(&email);
+    testContacts[2].saveDetail(&email);
+    testContacts[3].saveDetail(&email);
+    testContacts[4].saveDetail(&email);
+    testContacts[5].saveDetail(&email);
+
+    QContactId contactId1(testContacts[5].id());
+    QContactId badId1(contactId1);
+    badId1.setLocalId(987234); // something nonexistent (hopefully)
+    testContacts[5].setId(badId1);
+
+    QContactId contactId2(testContacts[3].id());
+    QContactId badId2(contactId2);
+    badId2.setManagerUri(QString());
+    badId2.setLocalId(987344); // something nonexistent (hopefully)
+    testContacts[3].setId(badId2);
+
+    csr.setContacts(testContacts);
+    csr.setDefinitionMask(QStringList(QContactEmailAddress::DefinitionName));
+    QVERIFY(csr.start());
+    QVERIFY(csr.waitForFinished());
+
+    // Check we got two errors for invalid contact ids.
+
+    QVERIFY(csr.errorMap().size() == 2);
+    QCOMPARE(csr.errorMap().value(5), QContactManager::DoesNotExistError);
+    QCOMPARE(csr.errorMap().value(3), QContactManager::DoesNotExistError);
+
+    // The rest contacts in the request should have been updated ok and there should be no errors in the map for them.
+    QCOMPARE(csr.errorMap().value(4), QContactManager::NoError);
+    QCOMPARE(csr.errorMap().value(2), QContactManager::NoError);
+    QCOMPARE(csr.errorMap().value(1), QContactManager::NoError);
+    QCOMPARE(csr.errorMap().value(0), QContactManager::NoError);
+
+    // The error in request must be te same as last error in the error map.
+    QCOMPARE(csr.error(), csr.errorMap().value(5));
+
+    // They also must have the email detail updated as requested except for failed ones. Fetch them and check.
+    QList<QContact> fetchedContacts;
+    fetchedContacts = cm->contacts(localIdsForSavedContacts);
+
+    /* foreach (QContact contact, fetchedContacts) {
+            qDebug() << "Name in saved contact: " << contact.detail<QContactName>().firstName();
+            qDebug() << "Email in saved contact: " << contact.detail<QContactEmailAddress>().emailAddress();
+            qDebug() << "ManagerUri in saved contact: " << contact.id().managerUri();
+            qDebug() << "Local id in saved contact: " << contact.id().localId();
+    }*/
+
+    QCOMPARE(fetchedContacts[0].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[1].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[2].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[3].detail<QContactEmailAddress>().emailAddress(), QString(""));
+    QCOMPARE(fetchedContacts[4].detail<QContactEmailAddress>().emailAddress(), QString("me@example.com"));
+    QCOMPARE(fetchedContacts[5].detail<QContactEmailAddress>().emailAddress(), QString(""));
 }
 
 void tst_QContactAsync::definitionFetch()
@@ -2053,6 +2195,9 @@ void tst_QContactAsync::relationshipRemove()
     if (cm->managerName() == "symbian") {
         QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
     }
+    if (cm->managerName() == trackerEngineName) {
+        QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
+    }
     
     QContactRelationshipRemoveRequest rrr;
     QVERIFY(rrr.type() == QContactAbstractRequest::RelationshipRemoveRequest);
@@ -2211,6 +2356,9 @@ void tst_QContactAsync::relationshipSave()
     if (cm->managerName() == "symbian") {
         QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
     }    
+    if (cm->managerName() == trackerEngineName) {
+        QSKIP("This contact manager does not support the required relationship types for this test to pass!", SkipSingle);
+    }
     
     QContactRelationshipSaveRequest rsr;
     QVERIFY(rsr.type() == QContactAbstractRequest::RelationshipSaveRequest);
@@ -2553,6 +2701,10 @@ void tst_QContactAsync::addManagers(QStringList stringlist)
     if (!stringlist.contains("com.nokia.messaging.contacts.engines.mail.contactslookup"))
         managers.removeAll("com.nokia.messaging.contacts.engines.mail.contactslookup");
 
+    // Telepathy not passing all tests here.
+    // if (!stringlist.contains("telepathy"))
+    //    managers.removeAll("telepathy");
+
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
         QTest::newRow(QString("mgr='%1'").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
@@ -2570,6 +2722,10 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     // XXX TODO: ensure that this is the case:
     // there should be no contacts in the database.
     QList<QContactLocalId> toRemove = cm->contactIds();
+    // tracker backend cannot remove selfContact
+    if (cm->managerName() == QLatin1String("tracker")) {
+        toRemove.removeOne(cm->selfContactId());
+    }
     foreach (const QContactLocalId& removeId, toRemove)
         cm->removeContact(removeId);
 

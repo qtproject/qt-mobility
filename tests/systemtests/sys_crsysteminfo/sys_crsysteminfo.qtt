@@ -43,34 +43,39 @@
 
 testcase = {
 
-    Configurable_Signal_Strength: function()
+    configurable_signal_strength: function()
     {
           // Test meta data
-          testApplication = "System Info - Configurable Signal Strength";
+          testTitle = "System Info - Configurable Signal Strength";
           testBinary = "";
+          testSource = "";
           testGoal = "Verify that ";
           testPreconditions = "None";
-          testGroups = "BAT";
+          testGroups = " ";
+          testRequirements = "";
 
           // Test steps
           skip('Configurable Signal Strength not implemented yet', SkipAll);
     },
 
-    Storage_changed_notification: function()
+    storage_changed_notification: function()
     {
           // Test meta data
-          testApplication = "System Info - Storage Changed Notification";
-          testBinary = "examples/qsysinfo";
+          testTitle = "System Info - Storage Changed Notification";
+          testBinary = "qsysinfo";
+          testSource = "$MOBILITYDIR/examples/sysinfo";
           testGoal = "Verify that the system detects changes to storage media correctly and sends notifications";
           testPreconditions = "   1. target supports removable storage, if not then pass this test<br>
    1. Ensure that target system does not have any removable storage inserted/mounted<br>
                                *Note:* On S60 platforms removing a media might cause qsysinfo to be closed, which is usual";
-          testGroups = "BAT";
+          testGroups = " ";
+          testRequirements = "";
 
           // Test steps
-          prompt(twiki("---+++ " + testApplication + "<br><br>
+          prompt(twiki("---+++ " + testTitle + "<br><br>
               *Goal:* " + testGoal + "<br>
               *Tested Binary:* " + testBinary + "<br>
+              *Requirements:* " + testRequirements + "<br>
               *Pre-Requisites:* " + testPreconditions + "<br>
 
               | *Step* | *Verification* |
@@ -81,19 +86,22 @@ testcase = {
         "));
     },
 
-    Query_OS_Qt_firmware_versions: function()
+    query_OS_Qt_firmware_versions: function()
     {
        // Test meta data
-       testApplication = "System Info - OS Qt Firmware Version";
-       testBinary = "BlueWheel/SystemInfo";
+       testTitle = "System Info - OS Qt Firmware Version";
+       testBinary = "testQtSystemInfo";//"BlueWheel/SystemInfo";
+       testSource = "$MOBILITYDIR/tests/applications/systeminfo/testqtsysteminfo";
        testGoal = "Verify that OS, Qt and Firmware versions numbers can be read";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = " ";
+       testRequirements = "";
 
        // Test steps
-       prompt(twiki("---+++ " + testApplication + "<br><br>
+       prompt(twiki("---+++ " + testTitle + "<br><br>
            *Goal:* " + testGoal + "<br>
            *Pre-Requisites:* " + testPreconditions + "<br>
+           *Requirements:* " + testRequirements + "<br>
            *Tested Binary:* " + testBinary + "<br>
 
            | *Step* | *Verification* |
@@ -106,19 +114,22 @@ testcase = {
         "));
     },
 
-    Query_device_hardware_features: function()
+    query_device_hardware_features: function()
     {
         // Test meta data
-        testApplication = "System Info - Device Hardware Features";
-        testBinary = "BlueWheel/SystemInfo";
+        testTitle = "System Info - Device Hardware Features";
+        testBinary = "testQtSystemInfo";//"BlueWheel/SystemInfo";
+        testSource = "$MOBILITYDIR/tests/applications/systeminfo/testqtsysteminfo";
         testGoal = "Verify that device hardware status can be read";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = " ";
+        testRequirements = "";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
             *Goal:* " + testGoal + "<br>
             *Pre-Requisites:* " + testPreconditions + "<br>
+            *Requirements:* " + testRequirements + "<br>
             *Tested Binary:* " + testBinary + "<br>
 
             | *Step* | *Verification* |

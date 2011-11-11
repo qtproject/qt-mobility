@@ -5,8 +5,6 @@ CONFIG += testcase
 
 QT = core network
 
-INCLUDEPATH += ../../../../src/bearer
-
 include(../../../../common.pri)
 CONFIG += mobility
 MOBILITY = bearer

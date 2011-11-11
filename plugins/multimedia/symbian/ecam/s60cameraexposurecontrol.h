@@ -44,8 +44,6 @@
 
 #include <qcameraexposurecontrol.h>
 
-#include "s60camerasettings.h"
-
 QT_USE_NAMESPACE
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
@@ -93,7 +91,6 @@ Q_SIGNALS: // QCameraExposureControl
 
 private slots: // Internal Slots
 
-    void resetAdvancedSetting();
     void apertureChanged();
     void apertureRangeChanged();
     void shutterSpeedChanged();
@@ -130,9 +127,6 @@ private: // Data
 
     S60ImageCaptureSession          *m_session;
     S60CameraService                *m_service;
-    S60CameraSettings               *m_advancedSettings;
-    QCameraExposure::ExposureMode   m_exposureMode;
-    QCameraExposure::MeteringMode   m_meteringMode;
 };
 
 #endif // S60CAMERAEXPOSURECONTROL_H

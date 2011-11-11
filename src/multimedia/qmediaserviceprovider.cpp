@@ -85,7 +85,7 @@ public:
     \brief The QMediaServiceProviderHint class describes what is required of a QMediaService.
 
     \inmodule QtMultimediaKit
-    \ingroup multimedia
+    \ingroup multimedia-serv
     \since 1.0
 
     The QMediaServiceProvider class uses hints to select an appropriate media service.
@@ -539,6 +539,8 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
     \class QMediaServiceProvider
 
     \brief The QMediaServiceProvider class provides an abstract allocator for media services.
+    \inmodule QtMultimediaKit
+    \ingroup multimedia-serv
     \since 1.0
 */
 
@@ -662,6 +664,7 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
     \brief The QMediaServiceProviderPlugin class interface provides an interface for QMediaService
     plug-ins.
+    \inmodule QtMultimediaKit
     \since 1.0
 
     A media service provider plug-in may implement one or more of
@@ -698,6 +701,7 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     \class QMediaServiceSupportedFormatsInterface
     \brief The QMediaServiceSupportedFormatsInterface class interface
     identifies if a media service plug-in supports a media format.
+    \inmodule QtMultimediaKit
     \since 1.0
 
     A QMediaServiceProviderPlugin may implement this interface.
@@ -728,6 +732,7 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     \class QMediaServiceSupportedDevicesInterface
     \brief The QMediaServiceSupportedDevicesInterface class interface
     identifies the devices supported by a media service plug-in.
+    \inmodule QtMultimediaKit
     \since 1.0
 
     A QMediaServiceProviderPlugin may implement this interface.
@@ -757,6 +762,7 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     \class QMediaServiceFeaturesInterface
     \brief The QMediaServiceFeaturesInterface class interface identifies
     features supported by a media service plug-in.
+    \inmodule QtMultimediaKit
     \since 1.0
 
     A QMediaServiceProviderPlugin may implement this interface.

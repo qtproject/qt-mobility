@@ -143,6 +143,9 @@ public:
     void setRotation(qreal value);
     qreal rotation() const;
 
+    bool hasContent() const;
+    void setHasContent(bool value);
+
 public slots:
     void setNativeSize(const QSize &size);
 
@@ -170,6 +173,7 @@ signals:
     void rotationChanged(qreal);
     void beginVideoWindowNativePaint();
     void endVideoWindowNativePaint();
+    void hasContentChanged();
 
 private slots:
     void updateContentRect();
@@ -182,6 +186,7 @@ private:
     QSize m_nativeSize;
     bool m_paintingEnabled;
     qreal m_rotation;
+    bool m_hasContent;
 };
 
 #endif // S60VIDEODISPLAY_H

@@ -61,6 +61,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QObject
 
     \ingroup qml-location
+    \since Mobility 1.2
 
     The PositionSource element allows you to get information about your current position.
     You can receive information about things such as latitude, longitude, altitude, and
@@ -195,6 +196,7 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
 
 /*!
     \qmlproperty url PositionSource::nmeaSource
+    \since Mobility 1.2
 
     This property holds the source for NMEA data (file). One purpose of this
     property is to be of development convenience.
@@ -215,6 +217,7 @@ QUrl QDeclarativePositionSource::nmeaSource() const
 
 /*!
     \qmlproperty bool PositionSource::updateInterval
+    \since Mobility 1.2
 
     This property holds the desired interval between updates (milliseconds).
 
@@ -229,6 +232,7 @@ int QDeclarativePositionSource::updateInterval() const
 
 /*!
     \qmlproperty enumeration PositionSource::positioningMethod
+    \since Mobility 1.2
 
     This property holds the supported positioning methods of the
     current source.
@@ -263,6 +267,7 @@ QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positi
 
 /*!
     \qmlmethod PositionSource::start()
+    \since Mobility 1.2
 
     Requests updates from the location source.
     Uses \l updateInterval if set, default interval otherwise.
@@ -286,6 +291,7 @@ void QDeclarativePositionSource::start()
 
 /*!
     \qmlmethod PositionSource::update()
+    \since Mobility 1.2
 
     A convenience method to request single update from the location source.
     If there is no source available, this method has no effect.
@@ -310,6 +316,7 @@ void QDeclarativePositionSource::update()
 
 /*!
     \qmlmethod PositionSource::stop()
+    \since Mobility 1.2
 
     Stops updates from the location source.
     If there is no source available or it is not active,
@@ -331,6 +338,7 @@ void QDeclarativePositionSource::stop()
 
 /*!
     \qmlsignal PositionSource::positionChanged()
+    \since Mobility 1.2
 
     This signal is sent when a position update has been received
     from the location source. Upon receiving this signal, at least
@@ -343,6 +351,7 @@ void QDeclarativePositionSource::stop()
 
 /*!
     \qmlproperty bool PositionSource::active
+    \since Mobility 1.2
 
     This property indicates whether the position source is (/should be)
     active. Setting this property to false equals calling \l stop, and
@@ -370,6 +379,7 @@ bool QDeclarativePositionSource::isActive() const
 
 /*!
     \qmlproperty Position PositionSource::position
+    \since Mobility 1.2
 
     This property holds the last known positional data.
 

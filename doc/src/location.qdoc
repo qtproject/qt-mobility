@@ -253,16 +253,16 @@ For details on the QML support provided for the Location API see the documentati
 
 \section2 Examples
 
-\section3 \bold{Flickr Demo}
+\section3 Flickr Demo
 
 The \l{flickrdemo}{Flickr Demo} uses the Location to download thumbnail
 images from Flickr relevant to the current location.
 
-\section3 \bold{Weather Info Demo}
+\section3 Weather Info Demo
 The \l{weatherinfo}{Weather Info demo} uses Location display data about the
 weather for the current location.
 
-\section3 \bold{Light Maps Demo}
+\section3 Light Maps Demo
 The \l{lightmaps}{Light Maps demo} uses Location display a street map for
 the current location.
 
@@ -271,7 +271,7 @@ the current location.
 Examples using the Location QML Plugin demonstrate how to use the QML/C++
 bindings to easily access the Location API features.
 
-\section3 \bold{Flickr QML Example}
+\section3 Flickr QML Example
 The Flickr example now in the form of a QML application. This also displays
 in the form of a mobile application.
 
@@ -422,11 +422,11 @@ that landmark is not exported.
 
 \section2 Landmark classes
 
-\section3 \bold{Main Landmark Classes}
+\section3 Main Landmark Classes
 
 \annotatedlist landmarks-main
 
-\section3 \bold{Landmark Selection classes}
+\section3 Landmark Selection classes
 
 Landmark selection is facilitated by filter and sort order classes.  The filter classes
 define what criteria that landmarks must match and the sort order classes specify how
@@ -437,22 +437,22 @@ filter in an intersection filter will sort results in order of ascending distanc
 the QLandmarkManager class (for synchronous landmark selection) or the request classes
 for (asynchronous landmark selection)
 
-\section3 \bold{Filters}
+\section3 Filters
 
 \annotatedlist landmarks-filter
 
-\section3 \bold{SortOrders}
+\section3 SortOrders
 
 \annotatedlist landmarks-sort
 
 \target Asynchronous Landmark Requests
-\section3 \bold{Asynchronous Requests}
+\section3 Asynchronous Requests
 
 Asynchronous operations are facilitates by the request classes listed below:
 
 \annotatedlist landmarks-request
 
-\section3 \bold{Implementing backends}
+\section3 Implementing backends
 
 A manager backend may be implemented by subclassing QLandmarkManagerEngine, and providing
 a QLandmarkManagerEngineFactory which can instantiate it when required.
@@ -486,7 +486,7 @@ is part of QtMobility.  See the section \l{The Nokia plugin} for more details.
 \endcode
 
 \bold {Important notice:} \i {The map data provided by the offline plug-in is
-place-shifted for the area of the People’s Republic of China. To provide
+place-shifted for the area of the People's Republic of China. To provide
 un-shifted maps of China in an application, the application developer must
 first obtain permission from Chinese officials. The Qt Mobility Location
 API cannot offer this on the API level.}
@@ -512,7 +512,7 @@ QGeoMappingManager outside of the QGraphicsGeoMap constructor:
 
 \annotatedlist maps-mapping
 
-\section3 \bold{Map objects}
+\section3 Map objects
 
 QGeoMapObject and its subclasses provide the ability to add graphics to the map
 specified in terms of coordinates and distances. QGeoMapObject instances can
@@ -570,7 +570,9 @@ Note that accepting the terms and conditions only applies those terms and condit
 
 On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services. 
 
-The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to 10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application on Symbian is 4 MB, it may be good idea to increase the application's heap size (depending on the app of course). Otherwise somewhat misleading error popups may appear, e.g. "<application name>: Memory full. Close some applications and try again." See e.g.  \l {http://library.forum.nokia.com/index.jsp?topic=/Qt_for_Symbian_Developers_Library/GUID-4427F6F8-AB72-489B-BB9C-3261A0568E4E.html}{Forum Nokia documentation.}
+The routing feature of the Nokia plugin is not available for the People's Republic of China.
+
+The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to 10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application on Symbian is 4 MB, it may be good idea to increase the application's heap size using EPOCHEAPSIZE.
 
 The following table lists optional parameters that can be passed to the Nokia plugin.
 \table
@@ -589,6 +591,9 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \o mapping.token
     \o Client token for the service used for authentication by mapping manager.
+\row
+    \o mapping.app_id
+    \o Client application id for the serviced used for authentication by mapping manager. Can be obtained from \l {https://api.forum.nokia.com/ovi-api/ui/registration}{here}.
 \row
     \o mapping.cache.directory
     \o Map tile cache directory used as network disk cache.
@@ -619,6 +624,9 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \o routing.token
     \o Client token for the service used for authentication by routing manager.
+\row    
+    \o routing.app_id
+    \o Client application id for the serviced used for authentication by routing manager. Can be obtained from \l {https://api.forum.nokia.com/ovi-api/ui/registration}{here}.   
 \row
     \o places.proxy
     \o Proxy server URL used by search manager.
@@ -631,6 +639,16 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \o places.token
     \o Client token for the service used for authentication by search manager.
+\row    
+    \o places.app_id
+    \o Client application id for the serviced used for authentication by search manager. Can be obtained from \l {https://api.forum.nokia.com/ovi-api/ui/registration}{here}.   
+\row
+    \o logo.position
+    \o Optional parameter for changing logo position. Valid values are:
+    top.left or left.top
+    top.right or right.top
+    bottom.left or left.bottom
+    bottom.right or right.bottom
 \endtable
 
 \section2 Implementing plugins

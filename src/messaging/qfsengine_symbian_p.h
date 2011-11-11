@@ -109,7 +109,6 @@ struct FSSearchOperation
     TEmailSortCriteria m_emailSortCriteria;
 };
 
-#ifdef FREESTYLEMAILMAPI12USED
 class EMailSyncRequest : public MMailboxSyncObserver
 {
 public:
@@ -130,6 +129,8 @@ public:
     
     bool m_active;
 };
+
+#ifdef FREESTYLEMAILMAPI12USED
 
 /*!
  * Helper class for tracking multiple move requests.
@@ -156,7 +157,7 @@ public:
 #ifdef FREESTYLEMAILMAPI12USED
 class CFSEngine : public QObject, public MMailboxContentObserver, public MEmailClientApiObserver, public MEmailRequestObserver
 #else
-class CFSEngine : public QObject, public MMailboxContentObserver, public MMailboxSyncObserver
+class CFSEngine : public QObject, public MMailboxContentObserver
 #endif
 {
     Q_OBJECT
@@ -215,10 +216,6 @@ public:
     void cancel(QMessageServicePrivate& privateService);
 
 public:
-#ifndef FREESTYLEMAILMAPI12USED
-        // from MMailboxSyncObserver
-    void MailboxSynchronisedL(TInt aResult);
-#endif
     void setPluginObserversL();
     
 public:
@@ -344,8 +341,8 @@ private:
 
     mutable bool m_cleanedup;
 
-#ifdef FREESTYLEMAILMAPI12USED
     QList<EMailSyncRequest*> m_syncRequests;
+#ifdef FREESTYLEMAILMAPI12USED
     QMap<uint, EMailMoveRequest> m_moveRequests;
     uint m_mailboxMoveRequestId;
     QMessageStorePrivate* m_messageStorePrivateSingleton;

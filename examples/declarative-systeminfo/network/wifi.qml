@@ -46,13 +46,18 @@ Rectangle {
     height: 480
     color: "#343434"
 
+//! [wifi-1]
     Item {
         id: wlan
+//! [wifi-1]
         x:(parent.width / 2) - (parent.width / 4);
         y: parent.height / 2
 
+//! [wifi-2]
         property int mode: NetworkInfo.WlanMode;
+//! [wifi-2]
 
+//! [wifi-3]
         NetworkInfo {
             id: wlaninfo
             mode: wlan.mode;
@@ -73,6 +78,7 @@ Rectangle {
             monitorStatusChanges: true
             monitorModeChanges: true
         }
+//! [wifi-3]
 
         Image {
             id: wifiimg

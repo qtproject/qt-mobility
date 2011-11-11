@@ -56,6 +56,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QGeoMapRectangleObject
 
     \ingroup qml-location-maps
+    \since Mobility 1.2
 
     The rectangle is specified in terms of the top left and bottom
     right coordinates.
@@ -92,6 +93,7 @@ QDeclarativeGeoMapRectangleObject::~QDeclarativeGeoMapRectangleObject()
 
 /*!
     \qmlproperty Coordinate MapRectangle::topLeft
+    \since Mobility 1.2
 
     This property holds the coordinate corresponding to the top left
     corner of the rectangle.
@@ -145,6 +147,7 @@ void QDeclarativeGeoMapRectangleObject::topLeftAltitudeChanged(double /*altitude
 
 /*!
     \qmlproperty Coordinate MapRectangle::bottomRight
+    \since Mobility 1.2
 
     This property holds the coordinate corresponding to the bottom right
     corner of the rectangle.
@@ -198,6 +201,7 @@ void QDeclarativeGeoMapRectangleObject::bottomRightAltitudeChanged(double /*alti
 
 /*!
     \qmlproperty color MapRectangle::color
+    \since Mobility 1.2
 
     This property holds the color used to fill the circle.
 
@@ -223,6 +227,7 @@ QColor QDeclarativeGeoMapRectangleObject::color() const
 /*!
     \qmlproperty int MapRectangle::border.width
     \qmlproperty color MapRectangle::border.color
+    \since Mobility 1.2
 
     These properties hold the width and color used to draw the border of the circle.
 
@@ -258,6 +263,7 @@ void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
 
 /*!
     \qmlproperty int MapRectangle::z
+    \since Mobility 1.2
 
     This property holds the z-value of the rectangle.
 
@@ -267,6 +273,7 @@ void QDeclarativeGeoMapRectangleObject::borderWidthChanged(int width)
 
 /*!
     \qmlproperty bool MapRectangle::visible
+    \since Mobility 1.2
 
     This property holds a boolean corresponding to whether or not the
     rectangle is visible.

@@ -46,6 +46,8 @@
 #include "s60cameracontrol.h"
 #include "s60cameraconstants.h"
 
+using namespace S60CameraConstants;
+
 S60VideoDeviceControl::S60VideoDeviceControl(QObject *parent) :
     QVideoDeviceControl(parent)
 {

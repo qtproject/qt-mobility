@@ -123,7 +123,7 @@ QGeoMapObject::Type QGeoMapCircleObject::type() const
 
 /*!
     \property QGeoMapCircleObject::pen
-    \brief This property holds the pen that will be used to draw this object.
+    \brief the pen that will be used to draw this object.
 
     The pen is used to draw an outline around the circle. The circle is
     filled using the QGeoMapCircleObject::brush property.
@@ -161,7 +161,7 @@ bool QGeoMapCircleObject::contains(const QGeoCoordinate &coordinate) const
 
 /*!
     \property QGeoMapCircleObject::brush
-    \brief This property holds the brush that will be used to draw this object.
+    \brief the brush that will be used to draw this object.
 
     The brush is used to fill in circle.
 
@@ -184,7 +184,7 @@ QBrush QGeoMapCircleObject::brush() const
 
 /*!
     \property QGeoMapCircleObject::pointCount
-    \brief This property holds the number of vertices used in an approximate polygon.
+    \brief the number of vertices used in an approximate polygon.
 
     \since 1.2
 
@@ -252,7 +252,7 @@ void QGeoMapCircleObject::setCircle(const QGeoBoundingCircle &circle)
 /*!
     \property QGeoMapCircleObject::center
 
-    \brief This property holds the coordinate of the center of the circle to be
+    \brief the coordinate of the center of the circle to be
     drawn by this circle object.
 
     The default value of this property is an invalid coordinate.  While the
@@ -275,7 +275,7 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 
 /*!
     \property QGeoMapCircleObject::radius
-    \brief This property holds the radius in metres of the circle that will be
+    \brief the radius in metres of the circle that will be
     drawn by this circle object.
 
     The default value of this property is -1.0. While the value of this

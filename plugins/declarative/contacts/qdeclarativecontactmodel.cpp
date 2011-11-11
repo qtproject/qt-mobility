@@ -62,6 +62,7 @@
     \qmlclass ContactModel QDeclarativeContactModel
     \brief The ContactModel element provides access to contacts from the contacts store.
     \ingroup qml-contacts
+    \since Mobility 1.1
 
     This element is part of the \bold{QtMobility.contacts 1.1} module.
 
@@ -134,7 +135,7 @@ QDeclarativeContactModel::QDeclarativeContactModel(QObject *parent) :
     connect(this, SIGNAL(filterChanged()), SLOT(update()));
     connect(this, SIGNAL(fetchHintChanged()), SLOT(update()));
     connect(this, SIGNAL(sortOrdersChanged()), SLOT(update()));
-    
+
     //import vcard
     connect(&d->m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
     connect(&d->m_writer, SIGNAL(stateChanged(QVersitWriter::State)), this, SLOT(contactsExported(QVersitWriter::State)));
@@ -176,6 +177,7 @@ void QDeclarativeContactModel::componentComplete()
 }
 /*!
   \qmlproperty bool ContactModel::autoUpdate
+  \since Mobility 1.1
 
   This property indicates whether or not the contact model should be updated automatically, default value is true.
   */
@@ -212,6 +214,7 @@ void QDeclarativeContactModel::cancelUpdate()
 
 /*!
   \qmlproperty string ContactModel::error
+  \since Mobility 1.1
 
   This property holds the latest error code returned by the contact manager.
 
@@ -259,6 +262,7 @@ QString QDeclarativeContactModel::error() const
 
 /*!
   \qmlproperty list<string> ContactModel::availableManagers
+  \since Mobility 1.1
 
   This property holds the list of available manager names.
   This property is read only.
@@ -281,6 +285,7 @@ static QString urlToLocalFileName(const QUrl& url)
 
 /*!
   \qmlmethod ContactModel::importContacts(url url, list<string> profiles)
+  \since Mobility 1.1
 
   Import contacts from a vcard by the given \a url and optional \a profiles.
   Supported profiles are:
@@ -310,6 +315,7 @@ void QDeclarativeContactModel::importContacts(const QUrl& url, const QStringList
 
 /*!
   \qmlmethod ContactModel::exportContacts(url url, list<string> profiles)
+  \since Mobility 1.1
 
   Export contacts into a vcard file to the given \a url by optional \a profiles.
   At the moment only the local file url is supported in export method.
@@ -365,6 +371,7 @@ int QDeclarativeContactModel::rowCount(const QModelIndex &parent) const
 
 /*!
   \qmlproperty Filter ContactModel::filter
+  \since Mobility 1.1
 
   This property holds the filter instance used by the contact model.
 
@@ -386,6 +393,7 @@ void QDeclarativeContactModel::setFilter(QDeclarativeContactFilter* filter)
 
 /*!
   \qmlproperty FetchHint ContactModel::fetchHint
+  \since Mobility 1.1
 
   This property holds the fetch hint instance used by the contact model.
 
@@ -407,6 +415,7 @@ void QDeclarativeContactModel::setFetchHint(QDeclarativeContactFetchHint* fetchH
 
 /*!
   \qmlproperty list<Contact> ContactModel::contacts
+  \since Mobility 1.1
 
   This property holds a list of contacts.
 
@@ -451,6 +460,7 @@ void QDeclarativeContactModel::contacts_clear(QDeclarativeListProperty<QDeclarat
 
 /*!
   \qmlproperty list<SortOrder> ContactModel::sortOrders
+  \since Mobility 1.1
 
   This property holds a list of sort orders used by the organizer model.
 
@@ -491,6 +501,7 @@ void QDeclarativeContactModel::startImport(QVersitReader::State state)
 /*!
   \qmlmethod ContactModel::fetchContacts(list<int> contactIds)
   Fetch a list of contacts from the contacts store by given \a contactIds.
+  \since Mobility 1.1
 
   \sa Contact::contactId
   */
@@ -546,17 +557,19 @@ void QDeclarativeContactModel::requestUpdated()
     if (req && req->isFinished()) {
         QList<QContact> contacts = req->contacts();
         if (d->m_contacts.isEmpty()) {
-            QList<QDeclarativeContact*> dcs;
-            foreach (QContact c, contacts) {
-                QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
-                dcs.append(dc);
-                d->m_contactMap.insert(c.localId(), dc);
-            }
-
             reset();
-            beginInsertRows(QModelIndex(), 0, req->contacts().count());
-            d->m_contacts = dcs;
-            endInsertRows();
+            if (contacts.count()) {
+                QList<QDeclarativeContact*> dcs;
+                foreach (QContact c, contacts) {
+                    QDeclarativeContact* dc = new QDeclarativeContact(c, d->m_manager->detailDefinitions(c.type()), this);
+                    dcs.append(dc);
+                    d->m_contactMap.insert(c.localId(), dc);
+                }
+
+                beginInsertRows(QModelIndex(), 0, req->contacts().count() - 1);
+                d->m_contacts = dcs;
+                endInsertRows();
+            }
         } else {
             //Partial updating, insert the fetched contacts into the the exist contact list.
             QList<QDeclarativeContact*> dcs;
@@ -581,6 +594,7 @@ void QDeclarativeContactModel::requestUpdated()
 /*!
   \qmlmethod ContactModel::saveContact(Contact contact)
   Save the given \a contact into the contacts store. Once saved successfully, the dirty flags of this contact will be reset.
+  \since Mobility 1.1
 
   \sa Contact::modified
   */
@@ -625,6 +639,7 @@ void QDeclarativeContactModel::contactsSaved()
 
 /*!
   \qmlmethod ContactModel::removeContact(int contactId)
+  \since Mobility 1.1
   Remove the contact from the contacts store by given \a contactId.
   \sa Contact::contactId
   */
@@ -635,6 +650,7 @@ void QDeclarativeContactModel::removeContact(QContactLocalId id)
 
 /*!
   \qmlmethod ContactModel::removeContacts(list<int> contactIds)
+  \since Mobility 1.1
   Remove the list of contacts from the contacts store by given \a contactIds.
   \sa Contact::contactId
   */

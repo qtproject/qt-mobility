@@ -221,6 +221,8 @@ void tst_qnearfieldtagtype3::testRawAccessAndNdefAccess(const QList<QNdefMessage
     QNdefMessage message;
     QNdefNfcTextRecord textRecord;
     textRecord.setText("nfc");
+    textRecord.setEncoding(QNdefNfcTextRecord::Utf8);
+    textRecord.setLocale(QString("en"));
     message.append(textRecord);
 
     QByteArray expectedNdefContent = message.toByteArray();
@@ -232,15 +234,25 @@ void tst_qnearfieldtagtype3::testRawAccessAndNdefAccess(const QList<QNdefMessage
     newAttribInfo[13] = len&0xFF;
     newAttribInfo[12] = (len>>8)&0xFF;
     newAttribInfo[11] = (len>>16)&0xFF;
-    newAttribInfo[9] = 0x0F;
-
+    newAttribInfo[9] = 0x00;
+    
+    int checksum = 0;
+    for (int i = 0; i <= 13; ++i)
+        {
+        checksum += newAttribInfo[i];
+        }
+    newAttribInfo[15] = checksum&0xFF;
+    newAttribInfo[14] = (checksum>>8)&0xFF;
+    
+    
     QByteArray ndefData;
     ndefData.append(newAttribInfo);
     ndefData.append(expectedNdefContent);
 
     qDebug()<<"updated ndef len = "<<len;
 
-    for (int i = 0; i < 16 - ndefData.count()%16; ++i)
+    int padcount = 16 - ndefData.count()%16;
+    for (int i = 0; i < padcount; ++i)
     {
         // appending padding data
         ndefData.append((char)0);
@@ -261,7 +273,7 @@ void tst_qnearfieldtagtype3::testRawAccessAndNdefAccess(const QList<QNdefMessage
     serviceBlockList.clear();
     serviceBlockList.insert(serviceCode, updatedBlockList);
     QNearFieldTarget::RequestId id2 = tester.target->update(serviceBlockList, ndefData);
-    QVERIFY(tester.target->waitForRequestCompleted(id2));
+    QVERIFY(tester.target->waitForRequestCompleted(id2, 1000));
     QVERIFY(tester.target->requestResponse(id2).toBool());
     ++okCount;
     QCOMPARE(okSpy.count(), okCount);
