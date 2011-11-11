@@ -49,7 +49,6 @@
 //#define QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
 
 #ifdef QTMMK_BACKEND_ENABLE_TRACE
-
 #   include <QtCore/QDebug>
 #   define TRACE(args) qDebug() << "[QtMultimediaKit]" << args
 #   ifdef QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
@@ -57,17 +56,16 @@
 #   else // QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
 #       define VERBOSE_TRACE(args)
 #   endif // QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
-
-    template <typename T>
-    inline void *qtVoidPtr(T *ptr)
-    { return reinterpret_cast<void *>(ptr); }
-
-#   define qtThisPtr() qtVoidPtr(this)
-
 #else // QTMMK_BACKEND_ENABLE_TRACE
 #   define TRACE(args)
 #   define VERBOSE_TRACE(args)
 #endif
+
+template <typename T>
+inline void *qtVoidPtr(T *ptr)
+{ return reinterpret_cast<void *>(ptr); }
+
+#define qtThisPtr() qtVoidPtr(this)
 
 #endif // S60MMTRACE_H
 
