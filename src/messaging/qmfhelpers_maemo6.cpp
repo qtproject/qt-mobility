@@ -81,19 +81,18 @@ struct TextPartLocator
 
 struct AttachmentLocator
 {
-    QList<QMailMessagePart::Location> *_locations;
+    QList<QMailMessagePart::Location> _locations;
     bool _foundText;
 
-    AttachmentLocator(QList<QMailMessagePart::Location> *list) :
-        _locations(list), _foundText(false) {}
+    AttachmentLocator() : _foundText(false) {}
 
     bool operator()(const QMailMessagePart &part)
     {
         if (!_foundText && part.contentType().type().toLower() == "text") {
             _foundText = true;
-        } else if (part.multipartType() == QMailMessagePart::MultipartNone) {
-            QMailMessagePart::Location loc(part.location());
-            _locations->append(loc);
+        } else if (part.multipartType() == QMailMessagePart::MultipartNone &&
+		   part.contentDisposition().filename().size() > 0) {
+            _locations.append(part.location());
         }
 
         return true;
@@ -312,12 +311,9 @@ public:
 	    }
 	}
 
-        QList<QMailMessagePart::Location> locations;
-        AttachmentLocator locator(&locations);
-
-        _message.foreachPart<AttachmentLocator&>(locator);
-
-        foreach (const QMailMessagePart::Location &location, locations) {
+	AttachmentLocator locator;
+	_message.foreachPart<AttachmentLocator&>(locator);
+	foreach (const QMailMessagePart::Location &location, locator._locations) {
 	    const QMailMessagePart &bodyPart = _message.partAt(location);
 	    QMailMessageContentType contentType = bodyPart.contentType();
 	    QMessageContentContainer attachment;
