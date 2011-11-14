@@ -52,9 +52,9 @@
     Constructs a new media player control with the given \a parent.
 */
 
-S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
-    : QMediaPlayerControl(parent),
-      m_mediaPlayerResolver(mediaPlayerResolver),
+S60MediaPlayerControl::S60MediaPlayerControl(S60MediaPlayerService *service)
+    : QMediaPlayerControl(service),
+      m_service(service),
       m_session(NULL),
       m_stream(NULL)
 {
@@ -308,7 +308,7 @@ void S60MediaPlayerControl::setMuted(bool muted)
 
 QMediaContent S60MediaPlayerControl::media() const
 {
-    return m_currentResource;
+    return m_media;
 }
 
 /*!
@@ -336,35 +336,26 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 {
     TRACE("S60MediaPlayerControl::setMedia" << qtThisPtr()
           << "source" << source.canonicalUrl().toString());
-
     Q_UNUSED(stream)
-
-    if ((m_session && m_currentResource == source) && m_session->isStreaming())
-        {
+    if (m_session && (m_media == source)) {
+        if (m_session->isStreaming())
             m_session->load(source);
-            return;
+    } else {
+        delete m_session;
+        m_session = 0;
+        m_session = m_service->createPlayerSession(source);
+        QMediaPlayer::MediaStatus mediaStatus = QMediaPlayer::NoMedia;
+        if (m_session && !source.canonicalUrl().isEmpty()) {
+            m_session->load(source);
+            mediaStatus = m_session->mediaStatus();
         }
-
-    // we don't want to set & load media again when it is already loaded
-    if (m_session && m_currentResource == source)
-        return;
-
-    // store to variable as session is created based on the content type.
-    m_currentResource = source;
-    S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession();
-
-    if (m_session)
-        m_session->reset();
-
-    m_session = newSession;
-
-    if (m_session && !source.canonicalUrl().isEmpty())
-        m_session->load(source);
-
-    QMediaPlayer::MediaStatus status = m_session ? m_session->mediaStatus() : QMediaPlayer::NoMedia;
-    m_mediaSettings.setMediaStatus(status);
-
-    emit mediaChanged(m_currentResource);
+        m_mediaSettings.setMediaStatus(mediaStatus);
+    }
+    emit stateChanged(QMediaPlayer::StoppedState);
+    if (m_media != source) {
+        m_media = source;
+        emit mediaChanged(m_media);
+    }
 }
 
 /*!
@@ -383,8 +374,9 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
     TRACE("S60MediaPlayerControl::setVideoOutput" << qtThisPtr()
           << "output" << output);
-
-   m_mediaPlayerResolver.VideoPlayerSession()->setVideoRenderer(output);
+    m_mediaSettings.setVideoOutput(output);
+    if (m_session)
+        m_session->setVideoRenderer(output);
 }
 
 /*!

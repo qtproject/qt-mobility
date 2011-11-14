@@ -46,7 +46,6 @@
 
 #include <qmediaplayercontrol.h>
 
-#include "ms60mediaplayerresolver.h"
 #include <QtCore/qdebug.h>
 
 QT_BEGIN_NAMESPACE
@@ -70,6 +69,7 @@ public:
         , m_playbackRate(0)
         , m_mediaStatus(QMediaPlayer::NoMedia)
         , m_audioEndpoint(QString("Default"))
+        , m_videoOutput(0)
     {
     }
     
@@ -81,6 +81,7 @@ public:
     void setMediaStatus(QMediaPlayer::MediaStatus status) {m_mediaStatus=status;}
     void setAudioEndpoint(const QString& audioEndpoint) { m_audioEndpoint = audioEndpoint; }
     void setMediaType(S60MediaSettings::TMediaType type) { m_mediaType = type; }
+    void setVideoOutput(QObject *value) { m_videoOutput = value; }
     
     int volume() const { return m_volume; }
     bool isMuted() const { return m_muted; }
@@ -88,6 +89,7 @@ public:
     QMediaPlayer::MediaStatus mediaStatus() const {return m_mediaStatus;}
     QString audioEndpoint() const { return m_audioEndpoint; }
     S60MediaSettings::TMediaType mediaType() const { return m_mediaType; }
+    QObject *videoOutput() const { return m_videoOutput; }
     
 private:
     int m_volume;
@@ -96,6 +98,7 @@ private:
     QMediaPlayer::MediaStatus m_mediaStatus;
     QString m_audioEndpoint;
     S60MediaSettings::TMediaType m_mediaType;
+    QObject *m_videoOutput;
 };
 
 class S60MediaPlayerControl : public QMediaPlayerControl
@@ -103,7 +106,7 @@ class S60MediaPlayerControl : public QMediaPlayerControl
     Q_OBJECT
 
 public:
-    S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
+    S60MediaPlayerControl(S60MediaPlayerService *service);
     ~S60MediaPlayerControl();
 
     // from QMediaPlayerControl
@@ -138,9 +141,9 @@ public:
     void setMediaType(S60MediaSettings::TMediaType type);
 
 private:
-    MS60MediaPlayerResolver &m_mediaPlayerResolver;
+    S60MediaPlayerService *m_service;
     S60MediaPlayerSession *m_session;
-    QMediaContent m_currentResource; 
+    QMediaContent m_media;
     QIODevice *m_stream;
     S60MediaSettings m_mediaSettings;
 };
