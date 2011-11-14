@@ -48,18 +48,18 @@
 #include "qmobilitypluginsearch.h"
 
 #if defined(Q_OS_SYMBIAN)
-#   include "qgeopositioninfosource_s60_p.h"
-#   if defined(LOCATION_FIX_QTM_1550)
-#       include "qgeopositioninfosource_symbian_p.h"
-#   endif
+#include "qgeopositioninfosource_s60_p.h"
+#if defined(LOCATION_FIX_QTM_1550)
+#include "qgeopositioninfosource_symbian_p.h"
+#endif
 #elif defined(QT_SIMULATOR)
-#   include "qgeopositioninfosource_simulator_p.h"
+#include "qgeopositioninfosource_simulator_p.h"
 #elif defined(Q_OS_WINCE)
-#   include "qgeopositioninfosource_wince_p.h"
+#include "qgeopositioninfosource_wince_p.h"
 #elif defined(Q_WS_MAEMO_6)
-#   include "qgeopositioninfosource_maemo_p.h"
+#include "qgeopositioninfosource_maemo_p.h"
 #elif defined(Q_WS_MAEMO_5)
-#   include "qgeopositioninfosource_maemo5_p.h"
+#include "qgeopositioninfosource_maemo5_p.h"
 #endif
 
 #if defined (Q_WS_MEEGO)
@@ -390,7 +390,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #if defined(Q_OS_SYMBIAN)
     QGeoPositionInfoSource *ret = NULL;
     
-#   if defined(LOCATION_FIX_QTM_1550)
+#if defined(LOCATION_FIX_QTM_1550)
     TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceSymbian::NewL(parent)));
 #else
     TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceS60::NewL(parent)));
