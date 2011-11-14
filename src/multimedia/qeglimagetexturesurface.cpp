@@ -533,7 +533,10 @@ void QEglImageTextureSurface::setGLContext(QGLContext *context)
     m_context = context;
 
     m_fallbackSurface->setGLContext(context);
-    if (m_fallbackSurface->supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
+
+    if (!context) {
+        m_fallbackSurface->setShaderType(QPainterVideoSurface::NoShaders);
+    } else if (m_fallbackSurface->supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
         m_fallbackSurface->setShaderType(QPainterVideoSurface::GlslShader);
     } else {
         m_fallbackSurface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
