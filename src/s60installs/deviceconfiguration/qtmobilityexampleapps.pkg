@@ -2,7 +2,7 @@
 &EN
 
 ; SIS header: name, uid, version
-#{"QtMobilityExamples"},(0xE001E61D),1,2,0,TYPE=SA
+#{"QtMobilityExamples"},(0xE001E61D),1,2,2,TYPE=SA
 
 ; Localised Vendor name
 %{"Nokia"}
@@ -11,7 +11,7 @@
 :"Nokia"
 
 ; Default dependency to Qt libraries
-(0x2001E61C), 4, 7, 2, {"Qt"}
+(0x2001E61C), 4, 7, 4, {"Qt"}
 ; Default HW/platform dependencies
 [0x101F7961],0,0,0,{"S60ProductID"}
 [0x102032BE],0,0,0,{"S60ProductID"}
@@ -20,7 +20,7 @@
 [0x20022E6D],0,0,0,{"S60ProductID"}
 [0x20032DE7],0,0,0,{"S60ProductID"}
 ; Default dependency to QtMobility libraries
-(0x2002AC89), 1, 2, 0, {"QtMobility"}
+(0x2002AC89), 1, 2, 2, {"QtMobility"}
 
 ;Bearer
 "/epoc32/release/armv5/urel/bearercloud.exe"                        - "!:\sys\bin\bearercloud.exe"

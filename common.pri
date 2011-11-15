@@ -94,7 +94,7 @@ contains(build_unit_tests, yes) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
             symbian:DEF_FILE=../s60installs
-            VERSION = 1.2.1
+            VERSION = 1.2.2
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
@@ -102,7 +102,7 @@ contains(build_unit_tests, yes) {
         testplugin {
             DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
         } else {
-            symbian:VERSION = 1.2.1
+            symbian:VERSION = 1.2.2
             #check that plugin_type is set or warn otherwise
             isEmpty(PLUGIN_TYPE) {
                 message(PLUGIN_TYPE not specified - install rule may not work)
