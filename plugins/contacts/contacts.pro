@@ -5,21 +5,24 @@ CONFIG += ordered
 include(../../common.pri)
 
 symbian {
-    SUBDIRS += symbian
+   #symbian contactsmodel,plugin,symbian is part of new contactsrv pkg
+   !exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.4.sis){
+        SUBDIRS += symbian
 
-    ## build symbian-specific unit tests.
-    contains(build_unit_tests, yes):SUBDIRS += symbian/plugin/tsrc
+        ## build symbian-specific unit tests.
+        contains(build_unit_tests, yes):SUBDIRS += symbian/plugin/tsrc
 
-    # SIM backend depends on etel MM APIs
-    contains(symbiancntsim_enabled, yes) {
-        SUBDIRS += symbiansim
+        # SIM backend depends on etel MM APIs
+        contains(symbiancntsim_enabled, yes) {
+            SUBDIRS += symbiansim
 
-        ## build symbiansim-specific unit tests.
-        contains(build_unit_tests, yes):SUBDIRS += symbiansim/tsrc
+            ## build symbiansim-specific unit tests.
+            contains(build_unit_tests, yes):SUBDIRS += symbiansim/tsrc
 
-        message("Symbian SIM backend enabled")
-    } else {
-        message("Symbian SIM backend disabled")
+            message("Symbian SIM backend enabled")
+        } else {
+            message("Symbian SIM backend disabled")
+        }
     }
 }
 wince*:SUBDIRS += wince
