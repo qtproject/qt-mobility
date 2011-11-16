@@ -377,7 +377,7 @@ publish.
 \code
 QCoreApplication::setOrganizationDomain("example.com");
 QCoreApplication::setApplicationName("Test Application");
-// will register with 'com.example.Test-Application'
+// will register with 'com.example.TestApplication'
 \endcode
 
 \section3 Declaring Value Space Paths Using Property Declaration Files
@@ -389,7 +389,7 @@ saved in \c /usr/share/contextkit/providers with the \c .context file extension.
 For example, the following \c .context file describes a simple example service:
 \code
 <?xml version="1.0"?>
-<provider bus="session" service="com.example.Test-Application">
+<provider bus="session" service="com.example.TestApplication">
   <key name="/com/example/test/value" />
 </provider>
 \endcode
@@ -399,19 +399,14 @@ Note: 1) The \c service attribute must match the organization domain and applica
 
 Example qmake snippet to deploy the \c .context file
 \code
-meego {
-    contextreg.sources = example.context
+contains(MEEGO_EDITION,harmattan) {
+    contextreg.files = example.context
     contextreg.path = /usr/share/contextkit/providers
     INSTALLS += contextreg
 }
 \endcode
 
-Additionally, it is common on ContextKit platforms to make use of a database cache of the registry,
-which can usually be regenerated with the command \c update-contextkit-providers. This is the case
-on Maemo, where the command should be appended to the bottom of the \c debian/postinst script
-during packaging.
-
-For more detailed information on this, please refer to
+For more detailed information on ContextKit platform, please refer to
 \l{http://maemo.gitorious.org/maemo-af/contextkit/blobs/master/doc/context-providers.txt}{How to provide context properties}.
 
 \section3 Limitations of ContextKit Layer
