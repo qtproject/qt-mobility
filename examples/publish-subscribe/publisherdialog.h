@@ -64,9 +64,12 @@ public:
     PublisherDialog(QWidget *parent = 0);
     ~PublisherDialog();
 
-#ifdef QTM_EXAMPLES_SMALL_SCREEN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
 signals:
     void switchRequested();
+#elif defined(MEEGO_EDITION_HARMATTAN)
+signals:
+    void closeApp();
 #endif
 
 protected:

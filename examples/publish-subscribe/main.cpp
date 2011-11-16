@@ -71,8 +71,7 @@ int main(int argc, char *argv[])
     PublisherDialog *publisher = 0;
     if (createDefault || createPublisher) {
         publisher = new PublisherDialog;
-        QObject::connect(publisher, SIGNAL(rejected()), &app, SLOT(quit()));
-#ifndef QTM_EXAMPLES_SMALL_SCREEN
+#if defined(MEEGO_EDITION_HARMATTAN)
         publisher->show();
 #endif
     }
@@ -80,15 +79,14 @@ int main(int argc, char *argv[])
     SubscriberDialog *subscriber = 0;
     if (createDefault || createSubscriber) {
         subscriber = new SubscriberDialog;
-        QObject::connect(subscriber, SIGNAL(rejected()), &app, SLOT(quit()));
-#ifndef QTM_EXAMPLES_SMALL_SCREEN
+#if defined(MEEGO_EDITION_HARMATTAN)
         subscriber->show();
-#else
+#elif defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
         subscriber->showMaximized();
 #endif
     }
 
-#ifdef QTM_EXAMPLES_SMALL_SCREEN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
     QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showMaximized()));
     QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(repaint()));
     QObject::connect(publisher, SIGNAL(switchRequested()), publisher, SLOT(hide()));
@@ -96,6 +94,9 @@ int main(int argc, char *argv[])
     QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(showMaximized()));
     QObject::connect(subscriber, SIGNAL(switchRequested()), publisher, SLOT(repaint()));
     QObject::connect(subscriber, SIGNAL(switchRequested()), subscriber, SLOT(hide()));
+#elif defined(MEEGO_EDITION_HARMATTAN)
+    QObject::connect(publisher, SIGNAL(closeApp()), &app, SLOT(quit()));
+    QObject::connect(subscriber, SIGNAL(closeApp()), &app, SLOT(quit()));
 #endif
 
     int result = app.exec();
