@@ -259,17 +259,8 @@ QDeclarativeCamera::QDeclarativeCamera(QDeclarativeItem *parent) :
     m_viewfinderItem(0),
     m_imageSettingsChanged(false),
     m_pendingState(ActiveState),
-    m_isStateSet(false),
-    m_isValid(true)
+    m_isStateSet(false)
 {
-#if defined(Q_OS_SYMBIAN)
-    RProcess thisProcess;
-    if (!thisProcess.HasCapability(ECapabilityUserEnvironment)) {
-        qmlInfo(this) << "Camera Element requires UserEnvironment Capability to be successfully used on Symbian";
-	m_isValid = false;
-	return;
-    }
-#endif
     m_camera = new QCamera(this);
     m_viewfinderItem = new QGraphicsVideoItem(this);
     m_camera->setViewfinder(m_viewfinderItem);
@@ -317,13 +308,12 @@ QDeclarativeCamera::QDeclarativeCamera(QDeclarativeItem *parent) :
 /*! Destructor, clean up memory */
 QDeclarativeCamera::~QDeclarativeCamera()
 {
-    if (m_isValid) {
+    if (m_camera)
         m_camera->unload();
 
-        delete m_viewfinderItem;
-        delete m_capture;
-        delete m_camera;
-    }
+    delete m_viewfinderItem;
+    delete m_capture;
+    delete m_camera;
 }
 
 /*!
@@ -332,9 +322,6 @@ QDeclarativeCamera::~QDeclarativeCamera()
 */
 QDeclarativeCamera::Error QDeclarativeCamera::error() const
 {
-    if (!m_isValid)
-        return QDeclarativeCamera::CameraError;
-
     return QDeclarativeCamera::Error(m_camera->error());
 }
 
@@ -350,9 +337,6 @@ QDeclarativeCamera::Error QDeclarativeCamera::error() const
 */
 QString QDeclarativeCamera::errorString() const
 {
-    if (!m_isValid)
-        return QString();
-
     return m_camera->errorString();
 }
 
@@ -441,17 +425,11 @@ QString QDeclarativeCamera::errorString() const
 
 QDeclarativeCamera::State QDeclarativeCamera::cameraState() const
 {
-    if (!m_isValid)
-        return QDeclarativeCamera::UnloadedState;
-
     return m_isStateSet ? QDeclarativeCamera::State(m_camera->state()) : m_pendingState;
 }
 
 void QDeclarativeCamera::setCameraState(QDeclarativeCamera::State state)
 {
-    if (!m_isValid)
-        return;
-
     if (!m_isStateSet) {
         m_pendingState = state;
         return;
@@ -478,8 +456,7 @@ void QDeclarativeCamera::setCameraState(QDeclarativeCamera::State state)
 */
 void QDeclarativeCamera::start()
 {
-    if (m_isValid)
-        m_camera->start();
+    m_camera->start();
 }
 
 /*!
@@ -490,8 +467,7 @@ void QDeclarativeCamera::start()
 */
 void QDeclarativeCamera::stop()
 {
-    if (m_isValid)
-        m_camera->stop();
+    m_camera->stop();
 }
 
 
@@ -569,9 +545,6 @@ void QDeclarativeCamera::stop()
 */
 QDeclarativeCamera::LockStatus QDeclarativeCamera::lockStatus() const
 {
-    if (!m_isValid)
-        return QDeclarativeCamera::Unlocked;
-
     return QDeclarativeCamera::LockStatus(m_camera->lockStatus());
 }
 
@@ -585,8 +558,7 @@ QDeclarativeCamera::LockStatus QDeclarativeCamera::lockStatus() const
 */
 void QDeclarativeCamera::searchAndLock()
 {
-    if (m_isValid)
-        m_camera->searchAndLock();
+    m_camera->searchAndLock();
 }
 
 /*!
@@ -600,8 +572,7 @@ void QDeclarativeCamera::searchAndLock()
  */
 void QDeclarativeCamera::unlock()
 {
-    if (m_isValid)
-        m_camera->unlock();
+    m_camera->unlock();
 }
 
 /*!
@@ -614,8 +585,7 @@ void QDeclarativeCamera::unlock()
 */
 void QDeclarativeCamera::captureImage()
 {
-    if (m_isValid)
-        m_capture->capture();
+    m_capture->capture();
 }
 
 // XXX this doesn't seem to be used
@@ -667,7 +637,7 @@ void QDeclarativeCamera::geometryChanged(const QRectF &newGeometry, const QRectF
 */
 void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 {
-    if (!m_isValid || event->isAutoRepeat())
+    if (event->isAutoRepeat())
         return;
 
     switch (event->key()) {
@@ -692,7 +662,7 @@ void QDeclarativeCamera::keyPressEvent(QKeyEvent * event)
 */
 void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 {
-    if (!m_isValid || event->isAutoRepeat())
+    if (event->isAutoRepeat())
         return;
 
     switch (event->key()) {
@@ -769,15 +739,12 @@ void QDeclarativeCamera::keyReleaseEvent(QKeyEvent * event)
 */
 int QDeclarativeCamera::flashMode() const
 {
-    if (!m_isValid)
-        return 0;
-
     return m_exposure->flashMode();
 }
 
 void QDeclarativeCamera::setFlashMode(int mode)
 {
-    if (m_isValid && m_exposure->flashMode() != mode) {
+    if (m_exposure->flashMode() != mode) {
         m_exposure->setFlashMode(QCameraExposure::FlashModes(mode));
         emit flashModeChanged(mode);
     }
@@ -797,16 +764,12 @@ void QDeclarativeCamera::setFlashMode(int mode)
  */
 qreal QDeclarativeCamera::exposureCompensation() const
 {
-    if (!m_isValid)
-        return 0.0;
-
     return m_exposure->exposureCompensation();
 }
 
 void QDeclarativeCamera::setExposureCompensation(qreal ev)
 {
-    if (m_isValid)
-        m_exposure->setExposureCompensation(ev);
+    m_exposure->setExposureCompensation(ev);
 }
 
 /*!
@@ -821,17 +784,11 @@ void QDeclarativeCamera::setExposureCompensation(qreal ev)
  */
 int QDeclarativeCamera::isoSensitivity() const
 {
-    if (!m_isValid)
-        return 0;
-
     return m_exposure->isoSensitivity();
 }
 
 void QDeclarativeCamera::setManualIsoSensitivity(int iso)
 {
-    if (!m_isValid)
-        return;
-
     m_exposure->setManualIsoSensitivity(iso);
 }
 
@@ -847,9 +804,6 @@ void QDeclarativeCamera::setManualIsoSensitivity(int iso)
 */
 qreal QDeclarativeCamera::shutterSpeed() const
 {
-    if (!m_isValid)
-        return 0.0;
-
     return m_exposure->shutterSpeed();
 }
 
@@ -865,9 +819,6 @@ qreal QDeclarativeCamera::shutterSpeed() const
 */
 qreal QDeclarativeCamera::aperture() const
 {
-    if (!m_isValid)
-        return 0.0;
-
     return m_exposure->aperture();
 }
 
@@ -914,17 +865,11 @@ qreal QDeclarativeCamera::aperture() const
 */
 QDeclarativeCamera::ExposureMode QDeclarativeCamera::exposureMode() const
 {
-    if (!m_isValid)
-        return QDeclarativeCamera::ExposureAuto;
-
     return ExposureMode(m_exposure->exposureMode());
 }
 
 void QDeclarativeCamera::setExposureMode(QDeclarativeCamera::ExposureMode mode)
 {
-    if (!m_isValid)
-        return;
-
     if (exposureMode() != mode) {
         m_exposure->setExposureMode(QCameraExposure::ExposureMode(mode));
         emit exposureModeChanged(exposureMode());
@@ -945,15 +890,12 @@ void QDeclarativeCamera::setExposureMode(QDeclarativeCamera::ExposureMode mode)
 */
 QSize QDeclarativeCamera::captureResolution() const
 {
-    if (!m_isValid)
-        return QSize();
-
     return m_imageSettings.resolution();
 }
 
 void QDeclarativeCamera::setCaptureResolution(const QSize &resolution)
 {
-    if (m_isValid && m_imageSettings.resolution() != resolution) {
+    if (m_imageSettings.resolution() != resolution) {
         m_imageSettings.setResolution(resolution);
 
         if (!m_imageSettingsChanged) {
@@ -977,9 +919,6 @@ void QDeclarativeCamera::setCaptureResolution(const QSize &resolution)
 */
 qreal QDeclarativeCamera::maximumOpticalZoom() const
 {
-    if (!m_isValid)
-        return 0.0;
-
     return m_focus->maximumOpticalZoom();
 }
 
@@ -995,9 +934,6 @@ qreal QDeclarativeCamera::maximumOpticalZoom() const
 */
 qreal QDeclarativeCamera::maximumDigitalZoom() const
 {
-    if (!m_isValid)
-        return 0.0;
-
     return m_focus->maximumDigitalZoom();
 }
 
@@ -1013,16 +949,12 @@ qreal QDeclarativeCamera::maximumDigitalZoom() const
 */
 qreal QDeclarativeCamera::opticalZoom() const
 {
-    if (!m_isValid)
-        return 0.0;
-
     return m_focus->opticalZoom();
 }
 
 void QDeclarativeCamera::setOpticalZoom(qreal value)
 {
-    if (m_isValid)
-        m_focus->zoomTo(value, digitalZoom());
+    m_focus->zoomTo(value, digitalZoom());
 }
 
 /*!
@@ -1037,16 +969,12 @@ void QDeclarativeCamera::setOpticalZoom(qreal value)
 */
 qreal QDeclarativeCamera::digitalZoom() const
 {
-    if (!m_isValid)
-        return 0.0;
-
     return m_focus->digitalZoom();
 }
 
 void QDeclarativeCamera::setDigitalZoom(qreal value)
 {
-    if (m_isValid)
-        m_focus->zoomTo(opticalZoom(), value);
+    m_focus->zoomTo(opticalZoom(), value);
 }
 
 /*!
@@ -1090,15 +1018,12 @@ void QDeclarativeCamera::setDigitalZoom(qreal value)
 */
 QDeclarativeCamera::WhiteBalanceMode QDeclarativeCamera::whiteBalanceMode() const
 {
-    if (!m_isValid)
-        return QDeclarativeCamera::WhiteBalanceAuto;
-
     return WhiteBalanceMode(m_camera->imageProcessing()->whiteBalanceMode());
 }
 
 void QDeclarativeCamera::setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMode mode) const
 {
-    if (m_isValid && whiteBalanceMode() != mode) {
+    if (whiteBalanceMode() != mode) {
         m_camera->imageProcessing()->setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode(mode));
         emit whiteBalanceModeChanged(whiteBalanceMode());
     }
@@ -1120,15 +1045,12 @@ void QDeclarativeCamera::setWhiteBalanceMode(QDeclarativeCamera::WhiteBalanceMod
 */
 int QDeclarativeCamera::manualWhiteBalance() const
 {
-    if (!m_isValid)
-        return 0;
-
     return m_camera->imageProcessing()->manualWhiteBalance();
 }
 
 void QDeclarativeCamera::setManualWhiteBalance(int colorTemp) const
 {
-    if (m_isValid && manualWhiteBalance() != colorTemp) {
+    if (manualWhiteBalance() != colorTemp) {
         m_camera->imageProcessing()->setManualWhiteBalance(colorTemp);
         emit manualWhiteBalanceChanged(manualWhiteBalance());
     }
