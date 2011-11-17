@@ -29,7 +29,7 @@
     \example battery-charge
     \title Accessing Publish and Subscribe from QML
 
-    This examples shows how to access published context values from within QML.  The example
+    This example shows how to access published context values from within QML.  The example
     consists of two programs.  The first, battery-publisher, is a standard Qt GUI application that
     is used to emulate a battery for the sole purpose of demonstrating the second program.  It
     publishes the keys
@@ -43,8 +43,9 @@
 
     \image battery-publisher.png
 
-    The second program, battery-subscriber, is implemented in QML with some C++ code to display the
-    QML and makes QValueSpaceSubscriber available from within QML.
+    The second program, namely battery-subscriber, consists of a QML application that accesses 
+    the actual value of the published battery-charge property via the ValueSpaceSubscriber QML element 
+    and displays the value to the end-user.
 
     The user interface of the battery subscriber program is described in QML.  It has the following
     features: A rectangular area representing the percent charge of the battery.  It indicates a
