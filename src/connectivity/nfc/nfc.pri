@@ -178,7 +178,7 @@ contains(nfc_symbian_enabled, yes):symbian {
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/mw
 
-    LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension
+    LIBS += -lnfc -lndef -lndefaccess -lnfcdiscoveryservice -lllcp -lnfctagextension -lcentralrepository
 }
 
 isEmpty(NFC_BACKEND_AVAILABLE) {

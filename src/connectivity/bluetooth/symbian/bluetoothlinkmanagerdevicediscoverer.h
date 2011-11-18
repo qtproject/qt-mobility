@@ -116,6 +116,7 @@ private:
     bool m_pendingCancel;
     bool m_pendingStart;
     uint m_discoveryType;
+    bool m_initialized;
 };
 
 QTM_END_NAMESPACE

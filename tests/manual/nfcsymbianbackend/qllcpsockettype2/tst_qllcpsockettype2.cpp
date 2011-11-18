@@ -245,7 +245,7 @@ void tst_qllcpsockettype2::echo_data()
     QTest::newRow("0") << TestUri
             << "echo";
     QString longStr4k;
-    for (int i = 0; i < 4000; i++)
+    for (int i = 0; i < 40; i++)
         longStr4k.append((char)(i%26 + 'a'));
     QTest::newRow("1") << TestUri << longStr4k;
 }
@@ -354,7 +354,7 @@ void tst_qllcpsockettype2::echo_wait_data()
     QTest::newRow("0") << TestUri
             << "echo";
     QString longStr4k;
-    for (int i = 0; i < 4000; i++)
+    for (int i = 0; i < 40; i++)
         longStr4k.append((char)(i%26 + 'a'));
     QTest::newRow("1") << TestUri << longStr4k;
 }
@@ -546,7 +546,7 @@ void tst_qllcpsockettype2::multipleWrite_data()
     QTest::newRow("0") << TestUri
             << "1234567890";
     QString longStr4k;
-    for (int i = 0; i < 4000; i++)
+    for (int i = 0; i < 40; i++)
         longStr4k.append((char)(i%26 + 'a'));
     QTest::newRow("1") << TestUri << longStr4k;
 }
@@ -719,7 +719,7 @@ void tst_qllcpsockettype2::waitReadyReadInSlot()
     QTRY_VERIFY(!connectedSpy.isEmpty());
 
     QString echo;
-    for (int i = 0; i < 2000; i++)
+    for (int i = 0; i < 20; i++)
         echo.append((char)(i%26 + 'a'));
     //Send data to server
     QByteArray block;
@@ -819,7 +819,7 @@ void tst_qllcpsockettype2::deleteSocketWhenInUse()
     QTRY_VERIFY(!connectedSpy.isEmpty());
 
     QString echo;
-    for (int i = 0; i < 2000; i++)
+    for (int i = 0; i < 20; i++)
         echo.append((char)(i%26 + 'a'));
     //Send data to server
     QByteArray block;
