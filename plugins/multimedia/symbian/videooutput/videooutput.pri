@@ -1,7 +1,5 @@
 INCLUDEPATH += $$PWD
 
-message("VideoOutput: using common implementation")
-
 include(../trace/trace.pri)
 
 HEADERS += $$PWD/s60videodisplay.h           \
@@ -62,9 +60,15 @@ contains(surfaces_s60_enabled, yes) {
     message("VideoOutput: no graphics surface rendering support - DSA only")
 }
 
-exists($$[QT_INSTALL_HEADERS]/QtGui/private/qwidget_p.h) {
-    DEFINES += PRIVATE_QTGUI_HEADERS_AVAILABLE
-    message("VideoOutput: private QtGui headers are available")
+exists($$[QT_INSTALL_HEADERS]/QtGui/qgraphicssystemhelper_symbian.h) {
+    message("VideoOutput: QSymbianGraphicsSystemHelper is available")
+    DEFINES += QSYMBIANGRAPHICSSYSTEMHELPER_AVAILABLE
 } else {
-    message("VideoOutput: private QtGui headers not available - video and viewfinder may not be rendered correctly")
+    exists($$[QT_INSTALL_HEADERS]/QtGui/private/qwidget_p.h) {
+        DEFINES += PRIVATE_QTGUI_HEADERS_AVAILABLE
+        message("VideoOutput: private QtGui headers are available")
+    } else {
+        message("VideoOutput: neither QSymbianGraphicsSystemHelper nor private QtGui headers not available - video and viewfinder may not be rendered correctly")
+    }
 }
+

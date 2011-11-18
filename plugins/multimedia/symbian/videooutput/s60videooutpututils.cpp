@@ -40,32 +40,76 @@
 ****************************************************************************/
 
 #include "s60videooutpututils.h"
+#include <QtCore/QDebug>
 
-#ifdef PRIVATE_QTGUI_HEADERS_AVAILABLE
-#if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
-#include <QtGui/private/qt_s60_p.h>
-#include <QtGui/private/qwidget_p.h>
-#define USE_PRIVATE_QTGUI_APIS
-#endif // QT_VERSION >= 0x040601 && !defined(__WINSCW__)
-#endif // PRIVATE_QTGUI_HEADERS_AVAILABLE
+#ifdef QSYMBIANGRAPHICSSYSTEMHELPER_AVAILABLE
+#   include <QtGui/qgraphicssystemhelper_symbian.h>
+#else
+#   ifdef PRIVATE_QTGUI_HEADERS_AVAILABLE
+#       if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
+#           include <QtGui/private/qt_s60_p.h>
+#           include <QtGui/private/qwidget_p.h>
+#           define USE_PRIVATE_QTGUI_APIS
+#       endif
+#   else
+#       define QTGUI_SUPPORT_UNAVAILABLE
+#   endif
+#endif
 
 namespace S60VideoOutputUtils
 {
 
+// Helper function
+void warnQtGuiSupportUnavailable()
+{
+    qWarning() << "QtMobility was compiled against Qt which lacked some extension functions";
+    qWarning() << "Video and viewfinder may not render correctly";
+}
+
+#ifdef QSYMBIANGRAPHICSSYSTEMHELPER_AVAILABLE
+QSymbianGraphicsSystemHelper::NativePaintMode helperNativePaintMode(NativePaintMode mode)
+{
+    QSymbianGraphicsSystemHelper::NativePaintMode result =
+        QSymbianGraphicsSystemHelper::NativePaintModeDefault;
+    switch (mode) {
+    case Default:
+        break;
+    case ZeroFill:
+        result = QSymbianGraphicsSystemHelper::NativePaintModeZeroFill;
+        break;
+    case BlitWriteAlpha:
+        result = QSymbianGraphicsSystemHelper::NativePaintModeWriteAlpha;
+        break;
+    case Disable:
+        result = QSymbianGraphicsSystemHelper::NativePaintModeDisable;
+        break;
+    }
+    return result;
+}
+#endif
+
 void setIgnoreFocusChanged(QWidget *widget)
 {
+#ifdef QSYMBIANGRAPHICSSYSTEMHELPER_AVAILABLE
+    QSymbianGraphicsSystemHelper::setIgnoreFocusChanged(widget, true);
+#endif
 #ifdef USE_PRIVATE_QTGUI_APIS
     // Warning: if this flag is not set, the application may crash due to
     // CGraphicsContext being called from within the context of
     // QGraphicsVideoItem::paint(), when the video widget is shown.
     static_cast<QSymbianControl *>(widget->winId())->setIgnoreFocusChanged(true);
-#else
+#endif
+#ifdef QTGUI_SUPPORT_UNAVAILABLE
     Q_UNUSED(widget)
+    warnQtGuiSupportUnavailable();
 #endif
 }
 
 void setNativePaintMode(QWidget *widget, NativePaintMode mode)
 {
+#ifdef QSYMBIANGRAPHICSSYSTEMHELPER_AVAILABLE
+    QSymbianGraphicsSystemHelper::setNativePaintMode(widget, helperNativePaintMode(mode));
+#endif
 #ifdef USE_PRIVATE_QTGUI_APIS
     QWidgetPrivate *widgetPrivate = qt_widget_private(widget->window());
     widgetPrivate->createExtra();
@@ -77,41 +121,53 @@ void setNativePaintMode(QWidget *widget, NativePaintMode mode)
         widgetMode = QWExtra::ZeroFill;
         break;
     case BlitWriteAlpha:
-#if QT_VERSION >= 0x040704
+#   if QT_VERSION >= 0x040704
         widgetMode = QWExtra::BlitWriteAlpha;
-#endif
+#   endif
         break;
     case Disable:
         widgetMode = QWExtra::Disable;
         break;
     }
     widgetPrivate->extraData()->nativePaintMode = widgetMode;
-#else
+#endif
+#ifdef QTGUI_SUPPORT_UNAVAILABLE
     Q_UNUSED(widget)
     Q_UNUSED(mode)
+    warnQtGuiSupportUnavailable();
 #endif
 }
 
 void setNativePaintMode(WId wid, NativePaintMode mode)
 {
+#ifdef QSYMBIANGRAPHICSSYSTEMHELPER_AVAILABLE
+    QSymbianGraphicsSystemHelper::setNativePaintMode(wid, helperNativePaintMode(mode));
+#endif
 #ifdef USE_PRIVATE_QTGUI_APIS
     QWidget *window = static_cast<QSymbianControl *>(wid)->widget()->window();
     setNativePaintMode(window, mode);
-#else
+#endif
+#ifdef QTGUI_SUPPORT_UNAVAILABLE
     Q_UNUSED(wid)
     Q_UNUSED(mode)
+    warnQtGuiSupportUnavailable();
 #endif
 }
 
 void setReceiveNativePaintEvents(QWidget *widget, bool enabled)
 {
+#ifdef QSYMBIANGRAPHICSSYSTEMHELPER_AVAILABLE
+    QSymbianGraphicsSystemHelper::setReceiveNativePaintEvents(widget, enabled);
+#endif
 #ifdef USE_PRIVATE_QTGUI_APIS
     QWidgetPrivate *widgetPrivate = qt_widget_private(widget);
     widgetPrivate->createExtra();
     widgetPrivate->extraData()->receiveNativePaintEvents = enabled;
-#else
+#endif
+#ifdef QTGUI_SUPPORT_UNAVAILABLE
     Q_UNUSED(widget)
     Q_UNUSED(enabled)
+    warnQtGuiSupportUnavailable();
 #endif
 }
 

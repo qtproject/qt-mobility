@@ -52,6 +52,8 @@ QT_FORWARD_DECLARE_CLASS(QWidget)
 namespace S60VideoOutputUtils
 {
 
+void setIgnoreFocusChanged(QWidget *widget);
+
 enum NativePaintMode
 {
     Default,
@@ -60,7 +62,6 @@ enum NativePaintMode
     Disable
 };
 
-void setIgnoreFocusChanged(QWidget *widget);
 void setNativePaintMode(QWidget *widget, NativePaintMode mode);
 void setNativePaintMode(WId wid, NativePaintMode mode);
 void setReceiveNativePaintEvents(QWidget *widget, bool enabled);
