@@ -328,13 +328,14 @@ void S60AudioCaptureSession::record()
         return;
 
     if (m_captureState == EInitialized || m_captureState == ERecordComplete) {
-        prepareSinkL();
-        QString filename = m_sink.toString();
-        TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));
-        TUid controllerUid(TUid::Uid(m_controllerIdMap.value(m_container).controllerUid));
-        TUid formatUid(TUid::Uid(m_controllerIdMap.value(m_container).destinationFormatUid));
-
-        TRAPD(err,m_recorderUtility->OpenFileL(sink));
+        TRAPD(err, prepareSinkL());
+        if (!err) {
+            QString filename = m_sink.toString();
+            TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));
+            TUid controllerUid(TUid::Uid(m_controllerIdMap.value(m_container).controllerUid));
+            TUid formatUid(TUid::Uid(m_controllerIdMap.value(m_container).destinationFormatUid));
+            TRAP(err, m_recorderUtility->OpenFileL(sink));
+        }
         setError(err);
     }else if (m_captureState == EPaused) {
         m_recorderUtility->SetPosition(m_pausedPosition);
