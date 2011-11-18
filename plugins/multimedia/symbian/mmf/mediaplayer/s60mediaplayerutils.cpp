@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,44 +40,25 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOENCODERCONTROL_H
-#define AUDIOENCODERCONTROL_H
+#include "s60mediaplayerutils.h"
 
-#include <qaudioencodercontrol.h>
-#include <QtCore/qstringlist.h>
-#include "qaudioformat.h"
-
-QT_USE_NAMESPACE
-
-class S60AudioCaptureSession;
-
-class S60AudioEncoderControl : public QAudioEncoderControl
+QString TDesC2QString(const TDesC &des)
 {
-    Q_OBJECT
-public:
-    S60AudioEncoderControl(QObject *session, QObject *parent = 0);
-    virtual ~S60AudioEncoderControl();
+    return QString::fromUtf16(des.Ptr(), des.Length());
+}
 
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName) const;
-    
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
-    
-    QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings &settings);
-    
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
-    
-private:
-    QtMultimediaKit::EncodingQuality quality() const;
-    void setQuality(QtMultimediaKit::EncodingQuality, QAudioFormat &format);
+TPtrC QString2TPtrC(const QString &string)
+{
+    // Returned TPtrC is valid as long as the given parameter is valid and unmodified
+    return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
+}
 
-private:
-    S60AudioCaptureSession* m_session;
-    QAudioEncoderSettings m_settings;
-    QtMultimediaKit::EncodingQuality m_quality;
-};
+QRect TRect2QRect(const TRect &tr)
+{
+    return QRect(tr.iTl.iX, tr.iTl.iY, tr.Width(), tr.Height());
+}
 
-#endif
+TRect QRect2TRect(const QRect &qr)
+{
+    return TRect(TPoint(qr.left(), qr.top()), TSize(qr.width(), qr.height()));
+}

@@ -44,33 +44,25 @@
 
 #include <QtCore/qobject.h>
 #include <QUrl>
-
 #include "qmediarecorder.h"
 #include "qmediarecordercontrol.h"
-
 #include "s60audiocapturesession.h"
 
 QT_USE_NAMESPACE
-
-//class S60AudioCaptureSession;
 
 class S60AudioMediaRecorderControl : public QMediaRecorderControl
 {
     Q_OBJECT
 public:
-    S60AudioMediaRecorderControl(QObject *session,QObject *parent = 0);
+    S60AudioMediaRecorderControl(QObject *session, QObject *parent = 0);
     ~S60AudioMediaRecorderControl();
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &sink);
-
     QMediaRecorder::State state() const;
-
     qint64 duration() const;
-
     bool isMuted() const;
-
-    void applySettings() {}
+    void applySettings();
 
 private:                    
     QMediaRecorder::State convertState(S60AudioCaptureSession::TAudioCaptureState aState) const;

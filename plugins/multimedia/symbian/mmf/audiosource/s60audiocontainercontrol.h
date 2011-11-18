@@ -45,14 +45,13 @@
 #include "qmediacontainercontrol.h"
 #include <QtCore/qstringlist.h>
 
-
 QT_USE_NAMESPACE
 
 class S60AudioCaptureSession;
 
 class S60AudioContainerControl : public QMediaContainerControl
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     S60AudioContainerControl(QObject *parent = 0);
     S60AudioContainerControl(QObject *session, QObject *parent = 0);

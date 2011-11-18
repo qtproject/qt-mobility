@@ -39,44 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOENCODERCONTROL_H
-#define AUDIOENCODERCONTROL_H
+#ifndef S60MEDIAPLAYERUTILS_H
+#define S60MEDIAPLAYERUTILS_H
 
-#include <qaudioencodercontrol.h>
-#include <QtCore/qstringlist.h>
-#include "qaudioformat.h"
+#include <QtCore/QString>
+#include <QtCore/QRect>
+#include <e32cmn.h>
 
-QT_USE_NAMESPACE
+QString TDesC2QString(const TDesC &des);
+TPtrC QString2TPtrC(const QString &string);
+QRect TRect2QRect(const TRect &tr);
+TRect QRect2TRect(const QRect &qr);
 
-class S60AudioCaptureSession;
-
-class S60AudioEncoderControl : public QAudioEncoderControl
-{
-    Q_OBJECT
-public:
-    S60AudioEncoderControl(QObject *session, QObject *parent = 0);
-    virtual ~S60AudioEncoderControl();
-
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName) const;
-    
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
-    
-    QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings &settings);
-    
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
-    
-private:
-    QtMultimediaKit::EncodingQuality quality() const;
-    void setQuality(QtMultimediaKit::EncodingQuality, QAudioFormat &format);
-
-private:
-    S60AudioCaptureSession* m_session;
-    QAudioEncoderSettings m_settings;
-    QtMultimediaKit::EncodingQuality m_quality;
-};
-
-#endif
+#endif // S60MEDIAPLAYERUTILS_H

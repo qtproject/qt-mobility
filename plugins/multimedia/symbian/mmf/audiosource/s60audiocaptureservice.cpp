@@ -47,15 +47,14 @@
 #include "s60audiocontainercontrol.h"
 #include "s60mmtrace.h"
 
-S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
-    QMediaService(parent)
+S60AudioCaptureService::S60AudioCaptureService(QObject *parent)
+    : QMediaService(parent)
 {
     TRACE("S60AudioCaptureService::S60AudioCaptureService" << qtThisPtr());
-
     m_session = new S60AudioCaptureSession(this);
-    m_encoderControl = new S60AudioEncoderControl(m_session,this);
-    m_recorderControl = new S60AudioMediaRecorderControl(m_session,this);
-    m_endpointSelector = new S60AudioEndpointSelector(m_session,this); 
+    m_encoderControl = new S60AudioEncoderControl(m_session, this);
+    m_recorderControl = new S60AudioMediaRecorderControl(m_session, this);
+    m_endpointSelector = new S60AudioEndpointSelector(m_session, this);
     m_containerControl = new S60AudioContainerControl(m_session, this);
 }
 
@@ -67,22 +66,16 @@ S60AudioCaptureService::~S60AudioCaptureService()
 QMediaControl *S60AudioCaptureService::requestControl(const char *name)
 {
     QMediaControl *result = 0;
-
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         result = m_recorderControl;
-
     if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
         result =  m_encoderControl;
-
     if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
         result =  m_endpointSelector;
-    
     if (qstrcmp(name,QMediaContainerControl_iid) == 0)
         result =  m_containerControl;
-
     TRACE("S60AudioCaptureService::requestControl" << qtThisPtr()
           << "name" << name << "result" << result);
-
     return result;
 }
 
@@ -90,6 +83,5 @@ void S60AudioCaptureService::releaseControl(QMediaControl *control)
 {
     TRACE("S60AudioCaptureService::releaseControl" << qtThisPtr()
           << "control" << control);
-
     Q_UNUSED(control)
 }

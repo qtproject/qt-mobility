@@ -41,6 +41,7 @@
 
 #include "s60videoplayersession.h"
 #include "s60mediaplayerservice.h"
+#include "s60mediaplayerutils.h"
 #include "s60videowidgetcontrol.h"
 #include "s60videowidgetdisplay.h"
 #include "s60videowindowcontrol.h"
@@ -71,8 +72,10 @@
 
 const QString DefaultAudioEndpoint = QLatin1String("Default");
 const TUid KHelixUID = {0x101F8514};
+_LIT(KSeekable, "Seekable" );
+_LIT(KFalse, "0");
 
-//Hard-coding the command to support older versions.
+// Hard-coding the command to support older versions.
 const TInt KMMFROPControllerEnablePausedLoadingStatus = 7;
 
 TVideoRotation videoRotation(qreal angle)
@@ -154,13 +157,10 @@ bool S60VideoPlayerEventHandler::filterEvent(void *message, long *result)
     return ret;
 }
 
-/*!
-    Constructs the CVideoPlayerUtility2 object with given \a service and \a object.
-    And Registers for Video Loading Notifications.
-*/
 S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNetworkAccessControl *object)
     : S60MediaPlayerSession(service)
     , m_accessPointId(0)
+    , m_networkAccessControl(object)
     , m_wsSession(&CCoeEnv::Static()->WsSession())
     , m_screenDevice(CCoeEnv::Static()->ScreenDevice())
     , m_service(service)
@@ -185,8 +185,6 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
 #endif
 {
     TRACE("S60VideoPlayerSession::S60VideoPlayerSession" << qtThisPtr());
-
-    m_networkAccessControl = object;
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility2::NewL(
         *this,
@@ -227,12 +225,6 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     S60VideoPlayerEventHandler::instance()->addApplicationFocusObserver(this);
 }
 
-/*!
-   Destroys the CVideoPlayerUtility2 object.
-
-  And Unregister the observer.
-*/
-
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
     TRACE("S60VideoPlayerSession::~S60VideoPlayerSession" << qtThisPtr());
@@ -264,16 +256,11 @@ void S60VideoPlayerSession::applicationLostFocus()
     TRACE("S60VideoPlayerSession::applicationLostFocus" << qtThisPtr());
     if (QMediaPlayer::PlayingState == state()) {
         if (!m_isaudiostream) {
-        m_backendInitiatedPause = true;
-        pause();
+            m_backendInitiatedPause = true;
+            pause();
         }
     }
 }
-
-/*!
-
-   Opens the a file from \a path.
-*/
 
 void S60VideoPlayerSession::doLoadL(const TDesC &path)
 {
@@ -282,29 +269,18 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
-    m_audioOutput = NULL;
+    m_audioOutput = 0;
 #endif
     m_player->OpenFileL(path, KHelixUID);
 }
 
-/*!
-    Sets the playbackRate with \a rate.
-*/
-
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
-    /*
-     * setPlaybackRate is not supported in S60 3.1 and 3.2
-     * This flag will be defined for 3.1 and 3.2
-    */
 #ifdef PLAY_RATE_NOT_SUPPORTED
     TRACE("S60VideoPlayerSession::setPlaybackRate" << qtThisPtr()
           << "rate" << rate << "not supported");
 #else
     TRACE("S60VideoPlayerSession::setPlaybackRate" << qtThisPtr() << "rate" << rate);
-    //setPlayVelocity requires rate in the form of
-    //50 = 0.5x ;100 = 1.x ; 200 = 2.x ; 300 = 3.x
-    //so multiplying rate with 100
     TRAPD(err, m_player->SetPlayVelocityL((TInt)(rate*100)));
     if (KErrNone == err)
         emit playbackRateChanged(rate);
@@ -313,11 +289,6 @@ void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 #endif
 }
 
-/*!
-
-   Opens the a Url from \a path for streaming the source.
-*/
-
 void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
 {
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
@@ -325,16 +296,11 @@ void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
-    m_audioOutput = NULL;
+    m_audioOutput = 0;
 #endif
     m_accessPointId = m_networkAccessControl->accessPointId();
     m_player->OpenUrlL(path, m_accessPointId, KNullDesC8, KHelixUID);
 }
-
-/*!
-
-    Returns the percentage of the video clip loaded.
-*/
 
 int S60VideoPlayerSession::doGetBufferStatusL() const
 {
@@ -343,18 +309,10 @@ int S60VideoPlayerSession::doGetBufferStatusL() const
     return progress;
 }
 
-/*!
-  Returns the duration of the video sample in microseconds.
-*/
-
 qint64 S60VideoPlayerSession::doGetDurationL() const
 {
     return m_player->DurationL().Int64() / qint64(1000);
 }
-
-/*!
- * Sets the \a videooutput for video rendering.
-*/
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
@@ -406,9 +364,6 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
     }
 }
 
-/*!
- * Apply the pending changes for window.
-*/
 void S60VideoPlayerSession::applyPendingChanges(bool force)
 {
     TRACE("S60VideoPlayerSession::applyPendingChanges" << qtThisPtr()
@@ -498,10 +453,6 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
     }
 }
 
-/*!
- * \return TRUE if video is available.
-*/
-
 bool S60VideoPlayerSession::isVideoAvailable()
 {
 #ifdef PRE_S60_50_PLATFORM
@@ -526,10 +477,6 @@ bool S60VideoPlayerSession::isVideoAvailable()
 
 }
 
-/*!
- * \return TRUE if Audio available.
-*/
-
 bool S60VideoPlayerSession::isAudioAvailable()
 {
     if ( mediaStatus() == QMediaPlayer::LoadingMedia
@@ -549,10 +496,6 @@ bool S60VideoPlayerSession::isAudioAvailable()
     }
 }
 
-/*!
-    Start or resume playing the current source.
-*/
-
 void S60VideoPlayerSession::doPlay()
 {
     m_player->Play();
@@ -560,34 +503,19 @@ void S60VideoPlayerSession::doPlay()
         m_videoOutputDisplay->setHasContent(true);
 }
 
-/*!
-    Pause playing the current source.
-*/
-
 void S60VideoPlayerSession::doPauseL()
 {
     m_player->PauseL();
 }
 
-/*!
-
-    Stop playing, and reset the play position to the beginning.
-*/
-
 void S60VideoPlayerSession::doStop()
 {
     if (m_stream)
         m_networkAccessControl->resetIndex();
-
     if (m_videoOutputDisplay)
         m_videoOutputDisplay->setHasContent(false);
-
     m_player->Stop();
 }
-
-/*!
-    Closes the current audio clip (allowing another clip to be opened)
-*/
 
 void S60VideoPlayerSession::doClose()
 {
@@ -595,60 +523,39 @@ void S60VideoPlayerSession::doClose()
     if (m_audioOutput) {
         m_audioOutput->UnregisterObserver(*this);
         delete m_audioOutput;
-        m_audioOutput = NULL;
+        m_audioOutput = 0;
     }
 #endif
-
     m_player->Close();
 
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
     m_nativeSurface = TSurfaceId::CreateNullId();
 #endif
 
-// close will remove the window handle in media clint video.
-// So mark it in pending changes.
+    // Close will remove the window handle from m_player, so mark
+    // it in pending changes.
     m_pendingChanges |= WindowHandle;
 }
-
-/*!
- *  Returns the current playback position in microseconds from the start of the clip.
-
-*/
 
 qint64 S60VideoPlayerSession::doGetPositionL() const
 {
     return m_player->PositionL().Int64() / qint64(1000);
 }
 
-/*!
-    Sets the current playback position to \a microSeconds from the start of the clip.
-*/
-
 void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
 {
     m_player->SetPositionL(TTimeIntervalMicroSeconds(microSeconds));
 }
-
-/*!
-
-    Changes the current playback volume to specified \a value.
-*/
 
 void S60VideoPlayerSession::doSetVolumeL(int volume)
 {
     m_player->SetVolumeL(volume * m_player->MaxVolume() / 100);
 }
 
-/*!
- * Notification to the client that the opening of the video clip has completed.
- * If successful then an \a aError will be ZERO else system wide error.
-*/
-
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
     TRACE("S60VideoPlayerSession::MvpuoOpenComplete" << qtThisPtr()
           << "error" << aError);
-
     setError(aError);
 #ifdef HTTP_COOKIES_ENABLED
     if (KErrNone == aError) {
@@ -689,26 +596,19 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
     if (KErrNone == aError)
         m_player->Prepare();
 #endif
-    const TMMFMessageDestinationPckg dest( KUidInterfaceMMFROPController );
+    const TMMFMessageDestinationPckg dest(KUidInterfaceMMFROPController);
     TRAP_IGNORE(m_player->CustomCommandSync(dest, KMMFROPControllerEnablePausedLoadingStatus, KNullDesC8, KNullDesC8));
 }
-
-/*!
- * Notification to the client that the opening of the video clip has been preapred.
- * If successful then an \a aError will be ZERO else system wide error.
-*/
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     TRACE("S60VideoPlayerSession::MvpuoPrepareComplete" << qtThisPtr()
           << "error" << aError);
-
-    if (KErrNone == aError && m_stream) {
+    if (KErrNone == aError && m_stream)
         emit accessPointChanged(m_accessPointId);
-        }
     if (KErrCouldNotConnect == aError && !(m_networkAccessControl->isLastAccessPoint())) {
         load(m_source);
-    return;
+        return;
     }
     TInt error = aError;
     if (KErrNone == error || KErrMMPartialPlayback == error) {
@@ -729,13 +629,12 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 #endif
         }
         if (KErrNone == error) {
-        // changes made to play without pausing in case of audio streaming use case
             if (m_player->VideoFormatMimeType().Length() == 0) {
-            m_isaudiostream = true;
-            m_backendInitiatedPause = false;
-            play();
+                m_isaudiostream = true;
+                m_backendInitiatedPause = false;
+                play();
             } else {
-            m_isaudiostream = false;
+                m_isaudiostream = false;
             }
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
             // Register for callbacks via MMMFSurfaceEventHandler
@@ -763,30 +662,18 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
     }
 }
 
-/*!
- * Notification that frame requested by a call to GetFrameL is ready.
-*/
-
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 {
     Q_UNUSED(aFrame);
     Q_UNUSED(aError);
 }
 
-/*!
- * Notification that video playback has completed.
- * If successful then \a aError will be ZERO else system wide error.
- * This not called if playback is explicitly stopped by calling stop.
-*/
-
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
     TRACE("S60VideoPlayerSession::MvpuoPlayComplete" << qtThisPtr()
           << "error" << aError);
-
     if (m_stream)
-    m_networkAccessControl->resetIndex();
-
+        m_networkAccessControl->resetIndex();
     if (aError != KErrNone) {
         setError(aError);
         doClose();
@@ -794,12 +681,6 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
         endOfMedia();
     }
 }
-
-
-/*!
- * General \a event notification from controller.
- * These events are specified by the supplier of the controller.
-*/
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
@@ -845,18 +726,13 @@ void S60VideoPlayerSession::MmsehRemoveSurface(const TSurfaceId& aId)
 }
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
 
-/*!
-
-    Updates meta data entries in the current video clip.
-*/
-
 void S60VideoPlayerSession::updateMetaDataEntriesL()
 {
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
     numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();
-    for (int i = 0; i < numberOfMetaDataEntries; i++) {
-        CMMFMetaDataEntry *entry = NULL;
+    for (int i=0; i<numberOfMetaDataEntries; ++i) {
+        CMMFMetaDataEntry *entry = 0;
         entry = m_player->MetaDataEntryL(i);
         metaDataEntries().insert(TDesC2QString(entry->Name()), TDesC2QString(entry->Value()));
         delete entry;
@@ -864,38 +740,23 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
     emit metaDataChanged();
 }
 
-/*!
- * Apply the window changes when window handle changes.
-*/
-
 void S60VideoPlayerSession::windowHandleChanged()
 {
     TRACE("S60VideoPlayerSession::windowHandleChanged" << qtThisPtr());
-
     m_pendingChanges |= WindowHandle;
     applyPendingChanges();
 }
 
-/*!
- * Apply the window changes when display Rect changes.
-*/
-
 void S60VideoPlayerSession::displayRectChanged()
 {
     TRACE("S60VideoPlayerSession::displayRectChanged" << qtThisPtr());
-
     m_pendingChanges |= DisplayRect;
     applyPendingChanges();
 }
 
-/*!
- * Apply the window changes when aspect Ratio changes.
-*/
-
 void S60VideoPlayerSession::aspectRatioChanged()
 {
     TRACE("S60VideoPlayerSession::aspectRatioChanged" << qtThisPtr());
-
     m_pendingChanges |= ScaleFactors;
     applyPendingChanges();
 }
@@ -903,7 +764,6 @@ void S60VideoPlayerSession::aspectRatioChanged()
 void S60VideoPlayerSession::rotationChanged()
 {
     TRACE("S60VideoPlayerSession::rotationChanged" << qtThisPtr());
-
     m_pendingChanges |= ScaleFactors;
     m_pendingChanges |= Rotation;
     applyPendingChanges();
@@ -913,14 +773,12 @@ void S60VideoPlayerSession::rotationChanged()
 void S60VideoPlayerSession::suspendDirectScreenAccess()
 {
     TRACE("S60VideoPlayerSession::suspendDirectScreenAccess" << qtThisPtr());
-
     m_dsaStopped = stopDirectScreenAccess();
 }
 
 void S60VideoPlayerSession::resumeDirectScreenAccess()
 {
     TRACE("S60VideoPlayerSession::resumeDirectScreenAccess" << qtThisPtr());
-
     if (!m_dsaStopped)
         return;
     startDirectScreenAccess();
@@ -930,7 +788,6 @@ void S60VideoPlayerSession::resumeDirectScreenAccess()
 void S60VideoPlayerSession::startDirectScreenAccess()
 {
     TRACE("S60VideoPlayerSession::startDirectScreenAccess" << qtThisPtr());
-
     if (m_dsaActive)
         return;
     TRAPD(err, m_player->StartDirectScreenAccessL());
@@ -942,7 +799,6 @@ void S60VideoPlayerSession::startDirectScreenAccess()
 bool S60VideoPlayerSession::stopDirectScreenAccess()
 {
     TRACE("S60VideoPlayerSession::stopDirectScreenAccess" << qtThisPtr());
-
     if (!m_dsaActive)
         return false;
     TRAPD(err, m_player->StopDirectScreenAccessL());
@@ -953,43 +809,22 @@ bool S60VideoPlayerSession::stopDirectScreenAccess()
 }
 #endif
 
-/*!
- *  The percentage of the temporary buffer filling before playback begins.
-*/
-
 void S60VideoPlayerSession::MvloLoadingStarted()
 {
     TRACE("S60VideoPlayerSession::MvloLoadingStarted" << qtThisPtr());
-
     buffering();
 }
-
-/*!
- * Buffer is filled with data and to for continuing/start playback.
-*/
 
 void S60VideoPlayerSession::MvloLoadingComplete()
 {
     TRACE("S60VideoPlayerSession::MvloLoadingComplete" << qtThisPtr());
-
     buffered();
 }
-
-/*!
-    Defiens which Audio End point to use.
-
-    \a audioEndpoint audioEndpoint name.
-*/
 
 void S60VideoPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
 {
     m_audioEndpoint = audioEndpoint;
 }
-
-/*!
-
-    Returns audioEndpoint name.
-*/
 
 QString S60VideoPlayerSession::activeEndpoint() const
 {
@@ -1003,10 +838,6 @@ QString S60VideoPlayerSession::activeEndpoint() const
     return outputName;
 }
 
-/*!
- *  Returns default Audio End point in use.
-*/
-
 QString S60VideoPlayerSession::defaultEndpoint() const
 {
     QString outputName = DefaultAudioEndpoint;
@@ -1019,14 +850,9 @@ QString S60VideoPlayerSession::defaultEndpoint() const
     return outputName;
 }
 
-/*!
-   Sets active end \a name as an Audio End point.
-*/
-
 void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 {
     TRACE("S60VideoPlayerSession::setActiveEndpoint" << qtThisPtr() << "name" << name);
-
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
     if (name == DefaultAudioEndpoint)
@@ -1046,29 +872,16 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 #endif
 }
 
-/*!
-    The default Audio output has been changed.
-
-    \a aAudioOutput Audio Output object.
-
-    \a aNewDefault is CAudioOutput::TAudioOutputPreference.
-*/
-
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
-void S60VideoPlayerSession::DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
-                                        CAudioOutput::TAudioOutputPreference aNewDefault)
+void S60VideoPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
+                                                      CAudioOutput::TAudioOutputPreference aNewDefault)
 {
     TRACE("S60VideoPlayerSession::DefaultAudioOutputChanged" << qtThisPtr()
           << "newDefault" << aNewDefault);
-
     // Emit already implemented in setActiveEndpoint function
     Q_UNUSED(aAudioOutput)
     Q_UNUSED(aNewDefault)
 }
-
-/*!
- * \return  CAudioOutput::ENoOutput by converting it to QString.
-*/
 
 QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const
 {
@@ -1086,32 +899,24 @@ QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
 }
 #endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER)
 
-/*!
- * \return TRUE if video is Seekable else FALSE.
-*/
-
 bool S60VideoPlayerSession::getIsSeekable() const
 {
     bool seekable = ETrue;
     int numberOfMetaDataEntries = 0;
-
     TRAPD(err, numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL());
     if (err)
         return seekable;
-
-    for (int i = 0; i < numberOfMetaDataEntries; i++) {
-        CMMFMetaDataEntry *entry = NULL;
+    for (int i=0; i<numberOfMetaDataEntries; ++i) {
+        CMMFMetaDataEntry *entry = 0;
         TRAP(err, entry = m_player->MetaDataEntryL(i));
-
         if (err)
             return seekable;
-
         if (!entry->Name().Compare(KSeekable)) {
             if (!entry->Value().Compare(KFalse))
                 seekable = EFalse;
             break;
         }
     }
-
     return seekable;
 }
+

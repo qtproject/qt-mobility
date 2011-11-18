@@ -48,19 +48,20 @@ S60MediaNetworkAccessControl::S60MediaNetworkAccessControl(QObject *parent)
     , m_iapId(KUseDefaultIap)
     , m_currentIndex(0)
 {
+
 }
 
 void S60MediaNetworkAccessControl::accessPointChanged(int id)
 {
-    if (!m_IapIdList.isEmpty())
-        m_NetworkObject = m_NetworkObjectList.at(m_IapIdList.indexOf(id));
-    emit configurationChanged(m_NetworkObject);
+    if (!m_iapIdList.isEmpty())
+        m_networkObject = m_networkObjectList.at(m_iapIdList.indexOf(id));
+    emit configurationChanged(m_networkObject);
 }
 
 S60MediaNetworkAccessControl::~S60MediaNetworkAccessControl()
 {
-    m_NetworkObjectList.clear();
-    m_IapIdList.clear();
+    m_networkObjectList.clear();
+    m_iapIdList.clear();
 }
 
 void S60MediaNetworkAccessControl::resetIndex()
@@ -74,44 +75,41 @@ void S60MediaNetworkAccessControl::setConfigurations(const QList<QNetworkConfigu
         m_currentIndex =0;
         TRAPD(error, retriveAccesspointIDL(configurations));
         if (error != KErrNone) {
-            m_NetworkObjectList.clear();
-            m_IapIdList.clear();
+            m_networkObjectList.clear();
+            m_iapIdList.clear();
         }
      }
 }
 
-TBool S60MediaNetworkAccessControl::isLastAccessPoint()
+bool S60MediaNetworkAccessControl::isLastAccessPoint()
 {
-    if (m_currentIndex == m_NetworkObjectList.size())
-        return TRUE;
+    if (m_currentIndex == m_networkObjectList.size())
+        return true;
     else
-        return FALSE;
+        return false;
 }
 
 int S60MediaNetworkAccessControl::accessPointId()
 {
-    if (m_IapIdList.isEmpty())
+    if (m_iapIdList.isEmpty())
         return m_iapId;
-
-    m_iapId = m_IapIdList.at(m_currentIndex);
-
+    m_iapId = m_iapIdList.at(m_currentIndex);
     if (isLastAccessPoint())
         m_currentIndex = 0;
     else
         m_currentIndex ++;
-
     return m_iapId;
 }
 
 QNetworkConfiguration S60MediaNetworkAccessControl::currentConfiguration() const
 {
-    return m_NetworkObject;
+    return m_networkObject;
 }
 
 void S60MediaNetworkAccessControl::retriveAccesspointIDL(const QList<QNetworkConfiguration> &configurationList)
 {
-     m_NetworkObjectList.clear();
-     m_IapIdList.clear();
+     m_networkObjectList.clear();
+     m_iapIdList.clear();
      TBuf<KBuffersize> iapName;
      TUint32 iapId;
      TInt err;
@@ -123,22 +121,22 @@ void S60MediaNetworkAccessControl::retriveAccesspointIDL(const QList<QNetworkCon
      // Open the IAP table
      CCommsDbTableView* view = commDB->OpenTableLC(TPtrC(IAP));
 
-     for (int i=0;i<=configurationList.size()- 1;i++) {
-     QString accesspointname = configurationList.at(i).name();
-     TBuf<KBuffersize> accesspointbuffer(accesspointname.utf16());
+     for (int i=0; i<=configurationList.size()- 1; ++i) {
+         QString accesspointname = configurationList.at(i).name();
+         TBuf<KBuffersize> accesspointbuffer(accesspointname.utf16());
          // Point to the first entry
          if (view->GotoFirstRecord() == KErrNone) {
-              do {
-                  view->ReadTextL(TPtrC(COMMDB_NAME), iapName);
-                  view->ReadUintL(TPtrC(COMMDB_ID), iapId);
-                  if (accesspointbuffer == iapName) {
-                      m_NetworkObjectList<<configurationList.at(i);
-                      m_IapIdList<<iapId;
-                  }
-                   // Store name and ID to where you want to
-               } while (err = view->GotoNextRecord(), err == KErrNone);
-           }
-      }
+             do {
+                 view->ReadTextL(TPtrC(COMMDB_NAME), iapName);
+                 view->ReadUintL(TPtrC(COMMDB_ID), iapId);
+                 if (accesspointbuffer == iapName) {
+                     m_networkObjectList << configurationList.at(i);
+                     m_iapIdList << iapId;
+                 }
+                 // Store name and ID to where you want to
+             } while (err = view->GotoNextRecord(), err == KErrNone);
+         }
+    }
     CleanupStack::PopAndDestroy(); // view
     CleanupStack::PopAndDestroy(); // commDB
 }

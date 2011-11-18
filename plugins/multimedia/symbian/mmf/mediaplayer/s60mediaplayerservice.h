@@ -44,7 +44,6 @@
 
 #include <QtCore/qobject.h>
 #include <qmediaservice.h>
-
 #include "s60mediaplayeraudioendpointselector.h"
 
 QT_BEGIN_NAMESPACE
@@ -61,21 +60,19 @@ class S60MediaPlayerControl;
 class S60MediaMetaDataProvider;
 class S60MediaStreamControl;
 class S60MediaRecognizer;
+class S60MediaNetworkAccessControl;
 class S60VideoOutputFactory;
-
 class QMediaContent;
 class QMediaPlaylistNavigator;
-class S60MediaNetworkAccessControl;
 
 class S60MediaPlayerService : public QMediaService
 {
     Q_OBJECT
-
 public:
-
     S60MediaPlayerService(QObject *parent = 0);
     ~S60MediaPlayerService();
 
+    // QMediaService
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *control);
 

@@ -39,11 +39,9 @@
 **
 ****************************************************************************/
 
-
 #ifndef S60SERVICEPLUGIN_H
 #define S60SERVICEPLUGIN_H
 
-#include <QtCore/qobject.h>
 #include <qmediaservice.h>
 #include <qmediaserviceproviderplugin.h>
 #include "s60formatsupported.h"
@@ -62,6 +60,7 @@ public:
 
     QtMultimediaKit::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const;
     QStringList supportedMimeTypes() const;
+
 private:
     mutable QStringList m_supportedmimetypes;
 };

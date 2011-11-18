@@ -35,6 +35,8 @@ HEADERS += \
     $$PWD/s60mediarecognizer.h \
     $$PWD/s60audioplayersession.h \
     $$PWD/s60mediaplayeraudioendpointselector.h \
+    $$PWD/s60mediaplayerutils.h \
+    $$PWD/s60mediasettings.h \
     $$PWD/s60mediastreamcontrol.h \
     $$PWD/s60medianetworkaccesscontrol.h
 
@@ -47,6 +49,8 @@ SOURCES += \
     $$PWD/s60mediarecognizer.cpp \
     $$PWD/s60audioplayersession.cpp \
     $$PWD/s60mediaplayeraudioendpointselector.cpp \
+    $$PWD/s60mediaplayerutils.cpp \
+    $$PWD/s60mediasettings.cpp \
     $$PWD/s60mediastreamcontrol.cpp \
     $$PWD/s60medianetworkaccesscontrol.cpp
 

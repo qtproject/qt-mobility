@@ -43,39 +43,21 @@
 #include "s60mediaplayersession.h"
 #include "s60mediaplayercontrol.h"
 #include "s60mmtrace.h"
-#include <qmediastreamscontrol.h>
-
-#include <QtCore/qdir.h>
-#include <QtCore/qurl.h>
-#include <QtCore/qdebug.h>
-
-/*!
-    Constructs a new media streams control with the given \a control.
-*/
 
 S60MediaStreamControl::S60MediaStreamControl(QObject *control, QObject *parent)
     : QMediaStreamsControl(parent)
-    , m_control(NULL)
+    , m_control(0)
     , m_mediaType(S60MediaSettings::Unknown)
 {
     TRACE("S60MediaStreamControl::S60MediaStreamControl" << qtThisPtr());
-
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
     m_mediaType = m_control->mediaControlSettings().mediaType();
 }
-
-/*!
-    Destroys a media streams control.
-*/
 
 S60MediaStreamControl::~S60MediaStreamControl()
 {
     TRACE("S60MediaStreamControl::~S60MediaStreamControl" << qtThisPtr());
 }
-
-/*!
-    \return the number of media streams.
-*/
 
 int S60MediaStreamControl::streamCount()
 {
@@ -87,44 +69,26 @@ int S60MediaStreamControl::streamCount()
     return streamCount;
 }
 
-/*!
-    \return the type of a media \a streamNumber.
-*/
-
 QMediaStreamsControl::StreamType S60MediaStreamControl::streamType(int streamNumber)
 {
     Q_UNUSED(streamNumber);
-
     QMediaStreamsControl::StreamType type = QMediaStreamsControl::UnknownStream;
-
     if (m_control->mediaControlSettings().mediaType() ==  S60MediaSettings::Video)
         type = QMediaStreamsControl::VideoStream;
     else
         type = QMediaStreamsControl::AudioStream;
-
     return type;
 }
-
-/*!
-    \return the meta-data value of \a key for a given \a streamNumber.
-
-    Useful metadata keya are QtMultimediaKit::Title, QtMultimediaKit::Description and QtMultimediaKit::Language.
-*/
 
 QVariant S60MediaStreamControl::metaData(int streamNumber, QtMultimediaKit::MetaData key)
 {
     Q_UNUSED(streamNumber);
-
     if (m_control->session()) {
         if (m_control->session()->isMetadataAvailable())
             return m_control->session()->metaData(key);
     }
     return QVariant();
 }
-
-/*!
-    \return true if the media \a streamNumber is active else false.
-*/
 
 bool S60MediaStreamControl::isActive(int streamNumber)
 {
@@ -138,37 +102,20 @@ bool S60MediaStreamControl::isActive(int streamNumber)
             break;
         }
     }
-
     return m_control->isAudioAvailable();
 }
-
-/*!
-    Sets the active \a streamNumber of a media \a state.
-
-    Symbian MMF does not support enabling or disabling specific media streams.
-
-    Setting the active state of a media stream to true will activate it.  If any other stream
-    of the same type was previously active it will be deactivated. Setting the active state fo a
-    media stream to false will deactivate it.
-*/
 
 void S60MediaStreamControl::setActive(int streamNumber, bool state)
 {
     TRACE("S60MediaStreamControl::setActive" << qtThisPtr()
           << "streamNumber" << streamNumber << "state" << state);
-
     Q_UNUSED(streamNumber);
     Q_UNUSED(state);
     // Symbian MMF does not support enabling or disabling specific media streams
 }
 
-/*!
-     The signal is emitted when the available streams list is changed.
-*/
-
 void S60MediaStreamControl::handleStreamsChanged()
 {
     TRACE("S60MediaStreamControl::handleStreamsChanged" << qtThisPtr());
-
     emit streamsChanged();
 }

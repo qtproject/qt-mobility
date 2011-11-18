@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,44 +40,86 @@
 **
 ****************************************************************************/
 
-#ifndef AUDIOENCODERCONTROL_H
-#define AUDIOENCODERCONTROL_H
+#include "s60mediasettings.h"
 
-#include <qaudioencodercontrol.h>
-#include <QtCore/qstringlist.h>
-#include "qaudioformat.h"
-
-QT_USE_NAMESPACE
-
-class S60AudioCaptureSession;
-
-class S60AudioEncoderControl : public QAudioEncoderControl
+S60MediaSettings::S60MediaSettings(QObject *parent)
+    : QObject(parent)
+    , m_volume(30)
+    , m_muted(false)
+    , m_playbackRate(0)
+    , m_mediaStatus(QMediaPlayer::NoMedia)
+    , m_audioEndpoint(QString("Default"))
+    , m_videoOutput(0)
 {
-    Q_OBJECT
-public:
-    S60AudioEncoderControl(QObject *session, QObject *parent = 0);
-    virtual ~S60AudioEncoderControl();
 
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName) const;
-    
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
-    
-    QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings &settings);
-    
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
-    
-private:
-    QtMultimediaKit::EncodingQuality quality() const;
-    void setQuality(QtMultimediaKit::EncodingQuality, QAudioFormat &format);
+}
 
-private:
-    S60AudioCaptureSession* m_session;
-    QAudioEncoderSettings m_settings;
-    QtMultimediaKit::EncodingQuality m_quality;
-};
+void S60MediaSettings::setVolume(int volume)
+{
+    m_volume = volume;
+}
 
-#endif
+void S60MediaSettings::setMuted(bool muted)
+{
+    m_muted = muted;
+}
+
+void S60MediaSettings::setPlaybackRate(qreal rate)
+{
+    m_playbackRate = rate;
+}
+
+void S60MediaSettings::setMediaStatus(QMediaPlayer::MediaStatus status)
+{
+    m_mediaStatus = status;
+}
+
+void S60MediaSettings::setAudioEndpoint(const QString &audioEndpoint)
+{
+    m_audioEndpoint = audioEndpoint;
+}
+
+void S60MediaSettings::setMediaType(MediaType type)
+{
+    m_mediaType = type;
+}
+
+void S60MediaSettings::setVideoOutput(QObject *value)
+{
+    m_videoOutput = value;
+}
+
+int S60MediaSettings::volume() const
+{
+    return m_volume;
+}
+
+bool S60MediaSettings::isMuted() const
+{
+    return m_muted;
+}
+
+qreal S60MediaSettings::playbackRate() const
+{
+    return m_playbackRate;
+}
+
+QMediaPlayer::MediaStatus S60MediaSettings::mediaStatus() const
+{
+    return m_mediaStatus;
+}
+
+QString S60MediaSettings::audioEndpoint() const
+{
+    return m_audioEndpoint;
+}
+
+S60MediaSettings::MediaType S60MediaSettings::mediaType() const
+{
+    return m_mediaType;
+}
+
+QObject *S60MediaSettings::videoOutput() const
+{
+    return m_videoOutput;
+}

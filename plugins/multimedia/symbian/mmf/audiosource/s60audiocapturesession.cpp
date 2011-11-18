@@ -43,7 +43,6 @@
 #include "s60mmtrace.h"
 #include <QtCore/qurl.h>
 #include <QDir>
-
 #include <mda/common/audio.h>
 #include <mda/common/resource.h>
 #include <mda/client/utility.h>
@@ -60,9 +59,9 @@ const QString S60AudioCaptureSession::voiceCall("Voice Call");
 const QString S60AudioCaptureSession::fmRadio("FM Radio");
 #endif
 
-S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
-    QObject(parent)
-    , m_recorderUtility(NULL)
+S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent)
+    : QObject(parent)
+    , m_recorderUtility(0)
     , m_captureState(ENotInitialized)
     , m_controllerIdMap(QHash<QString, ControllerData>())
     , m_audioCodeclist(QHash<QString, CodecData>())
@@ -71,8 +70,8 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
 {
     TRACE("S60AudioCaptureSession::S60AudioCaptureSession" << qtThisPtr());
 #ifdef AUDIOINPUT_ROUTING
-    m_audioInput = NULL;
-    m_setActiveEndPoint = FALSE;
+    m_audioInput = 0;
+    m_setActiveEndPoint = false;
     m_audioEndpoint = S60AudioCaptureSession::microPhone;
 #endif //AUDIOINPUT_ROUTING
     TRAPD(err, initializeSessionL());
@@ -143,7 +142,6 @@ QMediaRecorder::Error S60AudioCaptureSession::fromSymbianErrorToMultimediaError(
 S60AudioCaptureSession::~S60AudioCaptureSession()
 {
     TRACE("S60AudioCaptureSession::~S60AudioCaptureSession" << qtThisPtr());
-    //stop the utility before deleting it
     stop();
     if (m_recorderUtility)
         delete m_recorderUtility;
@@ -220,9 +218,8 @@ bool S60AudioCaptureSession::setAudioCodec(const QString &codecName)
 {
     TRACE("S60AudioCaptureSession::setAudioCodec" << qtThisPtr()
           << "codec" << codecName);
-
     QStringList codecs = supportedAudioCodecs();
-    if(codecs.contains(codecName)) {
+    if (codecs.contains(codecName)) {
         m_format.setCodec(codecName);
         return true;
     }
@@ -233,14 +230,12 @@ bool S60AudioCaptureSession::setAudioContainer(const QString &containerMimeType)
 {
     TRACE("S60AudioCaptureSession::setAudioContainer" << qtThisPtr()
           << "mimeType" << containerMimeType);
-
     QStringList containers = supportedAudioContainers();
-    if (containerMimeType == "audio/mpeg")
-        {
+    if (containerMimeType == "audio/mpeg") {
         m_container = "audio/mp4";
         return true;
-        }
-    if(containers.contains(containerMimeType)) {
+    }
+    if (containers.contains(containerMimeType)) {
         m_container = containerMimeType;
         return true;
     }
@@ -262,11 +257,10 @@ QUrl S60AudioCaptureSession::outputLocation() const
     return m_sink;
 }
 
-bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
+bool S60AudioCaptureSession::setOutputLocation(const QUrl &sink)
 {
     TRACE("S60AudioCaptureSession::setOutputLocation" << qtThisPtr()
           << "location" << sink);
-
     QString filename = QDir::toNativeSeparators(sink.toString());
     TPtrC16 path(reinterpret_cast<const TUint16*>(filename.utf16()));
     TRAPD(err, BaflUtils::EnsurePathExistsL(m_fsSession,path));
@@ -274,7 +268,7 @@ bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
         m_sink = sink;
         setError(err);
         return true;
-    }else {
+    } else {
         setError(err);
         return false;
     }
@@ -284,7 +278,6 @@ qint64 S60AudioCaptureSession::position() const
 {
     if ((m_captureState != ERecording) || !m_recorderUtility)
         return 0;
-
     return m_recorderUtility->Duration().Int64() / 1000;
 }
 
@@ -297,20 +290,21 @@ void S60AudioCaptureSession::prepareSinkL()
         QDir outputDir(QDir::rootPath());
         int lastImage = 0;
         int fileCount = 0;
-        foreach(QString fileName, outputDir.entryList(QStringList() << "recordclip_*")) {
+        foreach (QString fileName, outputDir.entryList(QStringList() << "recordclip_*")) {
             int imgNumber = fileName.mid(5, fileName.size() - 9).toInt();
             lastImage = qMax(lastImage, imgNumber);
             if (outputDir.exists(fileName))
                 fileCount += 1;
         }
         lastImage += fileCount;
-        m_sink = QUrl(QDir::toNativeSeparators(outputDir.canonicalPath() + QString("/recordclip_%1").arg(lastImage + 1, 4, 10, QLatin1Char('0'))));
+        m_sink = QUrl(QDir::toNativeSeparators(outputDir.canonicalPath()
+                      + QString("/recordclip_%1").arg(lastImage + 1, 4, 10, QLatin1Char('0'))));
     }
 
     QString sink = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 path(reinterpret_cast<const TUint16*>(sink.utf16()));
     if (BaflUtils::FileExists(m_fsSession, path))
-            BaflUtils::DeleteFile(m_fsSession, path);
+        BaflUtils::DeleteFile(m_fsSession, path);
 
     int index = sink.lastIndexOf('.');
     if (index != -1)
@@ -337,7 +331,7 @@ void S60AudioCaptureSession::record()
             TRAP(err, m_recorderUtility->OpenFileL(sink));
         }
         setError(err);
-    }else if (m_captureState == EPaused) {
+    } else if (m_captureState == EPaused) {
         m_recorderUtility->SetPosition(m_pausedPosition);
         TRAPD(error, m_recorderUtility->RecordL());
         setError(error);
@@ -349,15 +343,12 @@ void S60AudioCaptureSession::record()
 void S60AudioCaptureSession::mute(bool muted)
 {
     TRACE("S60AudioCaptureSession::mute" << qtThisPtr() << "muted" << muted);
-
     if (!m_recorderUtility)
         return;
-
     if (muted)
         m_recorderUtility->SetGain(0);
     else
         m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
-
     m_isMuted = muted;
 }
 
@@ -372,7 +363,7 @@ void S60AudioCaptureSession::setDefaultSettings()
 
     // Setting AMR to default format if supported
     if (m_controllerIdMap.count() > 0) {
-        if ( m_controllerIdMap.contains("audio/amr"))
+        if (m_controllerIdMap.contains("audio/amr"))
             m_container = QString("audio/amr");
         else
             m_container = m_controllerIdMap.keys()[0];
@@ -384,18 +375,17 @@ void S60AudioCaptureSession::setDefaultSettings()
             m_format.setFrequency(8000);
             m_format.setSampleType(QAudioFormat::SignedInt);
             m_format.setCodec("AMR");
-        }else
+        } else {
             m_format.setCodec(m_audioCodeclist.keys()[0]);
+        }
     }
 }
 
 void S60AudioCaptureSession::pause()
 {
     TRACE("S60AudioCaptureSession::pause" << qtThisPtr());
-
     if (!m_recorderUtility)
         return;
-
     m_pausedPosition = m_recorderUtility->Position();
     m_recorderUtility->Stop();
     m_captureState = EPaused;
@@ -405,21 +395,15 @@ void S60AudioCaptureSession::pause()
 void S60AudioCaptureSession::stop()
 {
     TRACE("S60AudioCaptureSession::stop" << qtThisPtr());
-
     if (!m_recorderUtility)
         return;
-
     m_recorderUtility->Stop();
-
 #ifdef AUDIOINPUT_ROUTING
-    //delete audio input instance before closing the utility.
-    if (m_audioInput)
-     {
+    if (m_audioInput) {
         delete m_audioInput;
-        m_audioInput = NULL;
-     }
-#endif //AUDIOINPUT_ROUTING
-
+        m_audioInput = 0;
+    }
+#endif
     m_recorderUtility->Close();
     m_captureState = ERecordComplete;
     emit stateChanged(m_captureState);
@@ -430,28 +414,25 @@ void S60AudioCaptureSession::stop()
 void S60AudioCaptureSession::initAudioInputs()
 {
     TRACE("S60AudioCaptureSession::initAudioInputs" << qtThisPtr());
-
     m_audioInputs[S60AudioCaptureSession::microPhone] = QString("Microphone associated with the currently active speaker.");
     m_audioInputs[S60AudioCaptureSession::voiceCall] = QString("Audio stream associated with the current phone call.");
     m_audioInputs[S60AudioCaptureSession::fmRadio] = QString("Audio of the currently tuned FM radio station.");
 }
 
-#endif //AUDIOINPUT_ROUTING
+#endif
 
 void S60AudioCaptureSession::setActiveEndpoint(const QString& audioEndpoint)
 {
     TRACE("S60AudioCaptureSession::setActiveEndpoint" << qtThisPtr()
           << "endpoint" << audioEndpoint);
-
     if (!m_audioInputs.keys().contains(audioEndpoint))
         return;
-
     if (activeEndpoint().compare(audioEndpoint) != 0) {
         m_audioEndpoint = audioEndpoint;
 #ifdef AUDIOINPUT_ROUTING
-        m_setActiveEndPoint = TRUE;
+        m_setActiveEndPoint = true;
 #endif
-       }
+    }
 }
 
 QList<QString> S60AudioCaptureSession::availableEndpoints() const
@@ -468,13 +449,13 @@ QString S60AudioCaptureSession::endpointDescription(const QString& name) const
 
 QString S60AudioCaptureSession::activeEndpoint() const
 {
-    QString inputSourceName = NULL;
+    QString inputSourceName;
 #ifdef AUDIOINPUT_ROUTING
     if (m_audioInput) {
         CAudioInput::TAudioInputArray input = m_audioInput->AudioInput();
         inputSourceName = qStringFromTAudioInputPreference(input[0]);
     }
-#endif //AUDIOINPUT_ROUTING
+#endif
     return inputSourceName;
 }
 
@@ -483,17 +464,17 @@ QString S60AudioCaptureSession::defaultEndpoint() const
 #ifdef AUDIOINPUT_ROUTING
     return QString(S60AudioCaptureSession::microPhone);
 #else
-    return NULL;
+    return QString();
 #endif
 }
 
 #ifdef AUDIOINPUT_ROUTING
 
-void S60AudioCaptureSession::doSetAudioInputL(const QString& name)
+void S60AudioCaptureSession::doSetAudioInputL(const QString &name)
 {
     TRACE("S60AudioCaptureSession::doSetAudioInputL" << qtThisPtr()
           << "name" << name);
-    TInt err(KErrNone);
+    TInt err = KErrNone;
 
     if (!m_recorderUtility)
         return;
@@ -508,22 +489,18 @@ void S60AudioCaptureSession::doSetAudioInputL(const QString& name)
     else // S60AudioCaptureSession::microPhone
         input = CAudioInput::EDefaultMic;
 
-        RArray<CAudioInput::TAudioInputPreference> inputArray;
-        inputArray.Append(input);
+    RArray<CAudioInput::TAudioInputPreference> inputArray;
+    inputArray.Append(input);
 
-        if (m_audioInput){
-            TRAP(err,m_audioInput->SetAudioInputL(inputArray.Array()));
-
-            if (err == KErrNone) {
-                emit activeEndpointChanged(name);
-            }
-            else{
-                setError(err);
-            }
-        }
-        inputArray.Close();
+    if (m_audioInput){
+        TRAP(err,m_audioInput->SetAudioInputL(inputArray.Array()));
+        if (err == KErrNone)
+            emit activeEndpointChanged(name);
+        else
+            setError(err);
+    }
+    inputArray.Close();
 }
-
 
 QString S60AudioCaptureSession::qStringFromTAudioInputPreference(CAudioInput::TAudioInputPreference input) const
 {
@@ -536,19 +513,16 @@ QString S60AudioCaptureSession::qStringFromTAudioInputPreference(CAudioInput::TA
 }
 #endif //AUDIOINPUT_ROUTING
 
-
 void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt aErrorCode)
 {
     TRACE("S60AudioCaptureSession::MoscoStateChangeEvent" << qtThisPtr()
           << "prevState" << aPreviousState << "currentState" << aCurrentState
           << "error" << aErrorCode);
-
     if (aErrorCode==KErrNone) {
 	    TRAPD(err, MoscoStateChangeEventL(aObject, aPreviousState, aCurrentState, NULL));
 	    setError(err);
-	}
-    else {
+	} else {
         setError(aErrorCode);
     }
 }
@@ -558,33 +532,29 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 {
 	if (aObject != m_recorderUtility)
 	    return;
-
-		switch(aCurrentState) {
-        case CMdaAudioClipUtility::EOpen: {
-            if(aPreviousState == CMdaAudioClipUtility::ENotReady) {
-                applyAudioSettingsL();
-                m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
-                TRAPD(err, m_recorderUtility->RecordL());
-                setError(err);
-                m_captureState = EOpenCompelete;
-                emit stateChanged(m_captureState);
-            }
-            break;
-        }
-        case CMdaAudioClipUtility::ENotReady: {
-            m_captureState = EInitialized;
+    switch(aCurrentState) {
+    case CMdaAudioClipUtility::EOpen: {
+        if (aPreviousState == CMdaAudioClipUtility::ENotReady) {
+            applyAudioSettingsL();
+            m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
+            TRAPD(err, m_recorderUtility->RecordL());
+            setError(err);
+            m_captureState = EOpenCompelete;
             emit stateChanged(m_captureState);
-            break;
         }
-        case CMdaAudioClipUtility::ERecording: {
-            m_captureState = ERecording;
-            emit stateChanged(m_captureState);
-            break;
-        }
-        default: {
-            break;
-        }
-		}
+        break;
+    }
+    case CMdaAudioClipUtility::ENotReady:
+        m_captureState = EInitialized;
+        emit stateChanged(m_captureState);
+        break;
+    case CMdaAudioClipUtility::ERecording:
+        m_captureState = ERecording;
+        emit stateChanged(m_captureState);
+        break;
+    default:
+        break;
+    }
 }
 
 void S60AudioCaptureSession::updateAudioContainersL()
@@ -609,10 +579,10 @@ void S60AudioCaptureSession::updateAudioContainersL()
 	//Get all audio record controllers/formats that are supported
 	pluginParameters->ListImplementationsL(controllers);
 
-	for (TInt index=0; index<controllers.Count(); index++) {
+	for (TInt index=0; index<controllers.Count(); ++index) {
 		const RMMFFormatImplInfoArray& recordFormats =
 			controllers[index]->RecordFormats();
-		for (TInt j=0; j<recordFormats.Count(); j++) {
+		for (TInt j=0; j<recordFormats.Count(); ++j) {
 			const CDesC8Array& mimeTypes = recordFormats[j]->SupportedMimeTypes();
 			const CDesC8Array& fileExtensions = recordFormats[j]->SupportedFileExtensions();
 			TInt mimeCount = mimeTypes.Count();
@@ -623,7 +593,7 @@ void S60AudioCaptureSession::updateAudioContainersL()
                 TPtrC8 mimeType = mimeTypes[0];
                 QString type = QString::fromUtf8((char *)mimeType.Ptr(), mimeType.Length());
 
-            if (type != "audio/basic") {
+                if (type != "audio/basic") {
                     ControllerData data;
                     data.controllerUid = controllers[index]->Uid().iUid;
                     data.destinationFormatUid = recordFormats[j]->Uid().iUid;
@@ -641,66 +611,58 @@ void S60AudioCaptureSession::updateAudioContainersL()
 
 void S60AudioCaptureSession::retrieveSupportedAudioSampleRatesL()
 {
-    if (!m_recorderUtility) {
+    if (!m_recorderUtility)
         return;
-    }
-
     m_supportedSampleRates.clear();
-
     RArray<TUint> supportedSampleRates;
     CleanupClosePushL(supportedSampleRates);
     m_recorderUtility->GetSupportedSampleRatesL(supportedSampleRates);
-    for (TInt j = 0; j < supportedSampleRates.Count(); j++ )
+    for (TInt j=0; j<supportedSampleRates.Count(); ++j)
         m_supportedSampleRates.append(supportedSampleRates[j]);
-
     CleanupStack::PopAndDestroy(&supportedSampleRates);
 }
 
 QList<int> S60AudioCaptureSession::supportedAudioSampleRates(const QAudioEncoderSettings &settings) const
 {
     QList<int> supportedSampleRates;
-
     if (!settings.codec().isEmpty()) {
         if (settings.codec() == "AMR")
             supportedSampleRates.append(8000);
         else
             supportedSampleRates = m_supportedSampleRates;
-    }else
+    } else {
         supportedSampleRates = m_supportedSampleRates;
-
+    }
     return supportedSampleRates;
 }
 
 void S60AudioCaptureSession::populateAudioCodecsDataL()
 {
-    if (!m_recorderUtility) {
+    if (!m_recorderUtility)
         return;
-    }
-
     if (m_controllerIdMap.contains("audio/amr")) {
         CodecData data;
         data.codecDescription = QString("GSM AMR Codec");
-        m_audioCodeclist[QString("AMR")]=data;
+        m_audioCodeclist[QString("AMR")] = data;
     }
     if (m_controllerIdMap.contains("audio/basic")) {
         CodecData data;
         data.fourCC = KMMFFourCCCodeALAW;
         data.codecDescription = QString("Sun/Next ""Au"" audio codec");
-        m_audioCodeclist[QString("AULAW")]=data;
+        m_audioCodeclist[QString("AULAW")] = data;
     }
     if (m_controllerIdMap.contains("audio/wav")) {
         CodecData data;
         data.fourCC = KMMFFourCCCodePCM16;
         data.codecDescription = QString("Pulse code modulation");
-        m_audioCodeclist[QString("PCM")]=data;
+        m_audioCodeclist[QString("PCM")] = data;
     }
     if (m_controllerIdMap.contains("audio/mp4")) {
         CodecData data;
         data.fourCC = KMMFFourCCCodeAAC;
         data.codecDescription = QString("Advanced Audio Codec");
-        m_audioCodeclist[QString("AAC")]=data;
+        m_audioCodeclist[QString("AAC")] = data;
     }
-
     // default samplerates
     m_supportedSampleRates << 96000 << 88200 << 64000 << 48000 << 44100 << 32000 << 24000 << 22050 << 16000 << 12000 << 11025 << 8000;
 }
@@ -708,7 +670,6 @@ void S60AudioCaptureSession::populateAudioCodecsDataL()
 void S60AudioCaptureSession::applyAudioSettingsL()
 {
     TRACE("S60AudioCaptureSession::applyAudioSettingsL" << qtThisPtr());
-
     if (!m_recorderUtility)
         return;
 
@@ -716,14 +677,14 @@ void S60AudioCaptureSession::applyAudioSettingsL()
     //CAudioInput needs to be re-initialized every time recording starts
     if (m_audioInput) {
         delete m_audioInput;
-        m_audioInput = NULL;
+        m_audioInput = 0;
     }
 
     if (m_setActiveEndPoint) {
         m_audioInput = CAudioInput::NewL(*m_recorderUtility);
         doSetAudioInputL(m_audioEndpoint);
     }
-#endif //AUDIOINPUT_ROUTING
+#endif
 
     if (m_format.codec() == "AMR")
         return;
@@ -737,29 +698,27 @@ void S60AudioCaptureSession::applyAudioSettingsL()
     CleanupClosePushL(supportedDataTypes);
     TRAP_IGNORE(m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes));
     TInt num = supportedDataTypes.Count();
-    if (num > 0 ) {
+    if (num > 0) {
         supportedDataTypes.SortUnsigned();
         int index = supportedDataTypes.Find(fourCC.FourCC());
-         if (index != KErrNotFound) {
+        if (index != KErrNotFound)
             TRAP_IGNORE(m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[index]));
-        }
     }
 
     supportedDataTypes.Reset();
     CleanupStack::PopAndDestroy(&supportedDataTypes);
 
     if (m_recorderUtility->DestinationSampleRateL() != m_format.frequency()) {
-
         RArray<TUint> supportedSampleRates;
         CleanupClosePushL(supportedSampleRates);
         m_recorderUtility->GetSupportedSampleRatesL(supportedSampleRates);
-    for (TInt i = 0; i < supportedSampleRates.Count(); i++ ) {
-        TUint supportedSampleRate = supportedSampleRates[i];
-        if (supportedSampleRate == m_format.frequency()) {
-            m_recorderUtility->SetDestinationSampleRateL(m_format.frequency());
-            break;
+        for (TInt i=0; i<supportedSampleRates.Count(); ++i) {
+            TUint supportedSampleRate = supportedSampleRates[i];
+            if (supportedSampleRate == m_format.frequency()) {
+                m_recorderUtility->SetDestinationSampleRateL(m_format.frequency());
+                break;
+            }
         }
-    }
         supportedSampleRates.Reset();
         CleanupStack::PopAndDestroy(&supportedSampleRates);
     }
@@ -769,7 +728,7 @@ void S60AudioCaptureSession::applyAudioSettingsL()
         RArray<TUint> supportedChannels;
         CleanupClosePushL(supportedChannels);
         m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
-        for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
+        for (TInt l=0; l < supportedChannels.Count(); ++l) {
             if (supportedChannels[l] == m_format.channels()) {
                 m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
                 break;
@@ -784,7 +743,7 @@ void S60AudioCaptureSession::applyAudioSettingsL()
             RArray<TUint> supportedBitRates;
             CleanupClosePushL(supportedBitRates);
             m_recorderUtility->GetSupportedBitRatesL(supportedBitRates);
-            for (TInt l = 0; l < supportedBitRates.Count(); l++ ) {
+            for (TInt l=0; l<supportedBitRates.Count(); ++l) {
                 if (supportedBitRates[l] == m_audioEncoderSettings.bitRate()) {
                     m_recorderUtility->SetDestinationBitRateL(m_audioEncoderSettings.bitRate());
                     break;
@@ -799,44 +758,36 @@ void S60AudioCaptureSession::applyAudioSettingsL()
 TFourCC S60AudioCaptureSession::determinePCMFormat()
 {
     TFourCC fourCC;
-
     if (m_format.sampleSize() == 8) {
         // 8 bit
         switch (m_format.sampleType()) {
-        case QAudioFormat::SignedInt: {
+        case QAudioFormat::SignedInt:
             fourCC.Set(KMMFFourCCCodePCM8);
             break;
-        }
-        case QAudioFormat::UnSignedInt: {
+        case QAudioFormat::UnSignedInt:
             fourCC.Set(KMMFFourCCCodePCMU8);
             break;
-        }
         case QAudioFormat::Float:
         case QAudioFormat::Unknown:
-        default: {
+        default:
             fourCC.Set(KMMFFourCCCodePCM8);
             break;
-        }
         }
     } else if (m_format.sampleSize() == 16) {
         // 16 bit
         switch (m_format.sampleType()) {
-        case QAudioFormat::SignedInt: {
+        case QAudioFormat::SignedInt:
             fourCC.Set(m_format.byteOrder()==QAudioFormat::BigEndian?
                 KMMFFourCCCodePCM16B:KMMFFourCCCodePCM16);
             break;
-        }
-        case QAudioFormat::UnSignedInt: {
+        case QAudioFormat::UnSignedInt:
             fourCC.Set(m_format.byteOrder()==QAudioFormat::BigEndian?
                 KMMFFourCCCodePCMU16B:KMMFFourCCCodePCMU16);
             break;
-        }
-        default: {
+        default:
             fourCC.Set(KMMFFourCCCodePCM16);
             break;
         }
-        }
     }
-
     return fourCC;
 }
