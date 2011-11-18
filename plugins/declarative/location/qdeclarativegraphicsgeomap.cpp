@@ -100,7 +100,11 @@ QTM_BEGIN_NAMESPACE
     MapObjects or the Map item itself.
 
     The Map element is part of the \bold{QtMobility.location 1.2} module.
+
+    \bold{API break notice:} compared to preliminary 1.1 API version, the 1.2 API does not have
+    the objects -property.
 */
+
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
       plugin_(0),
@@ -225,7 +229,11 @@ void QDeclarativeGraphicsGeoMap::paint(QPainter *painter,
                                        QWidget * /*widget*/)
 {
     if (mapData_) {
+        painter->save();
+        painter->setViewport(pos().x(), pos().y(), size().width(), size().height());
+        painter->setWindow(pos().x(), pos().y(), size().width(), size().height());
         mapData_->paint(painter, option);
+        painter->restore();
     }
 }
 
@@ -508,6 +516,14 @@ void QDeclarativeGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
     \o Map.SatelliteMapDay
     \o Map.SatelliteMapNight
     \o Map.TerrainMap
+    \o Map.HybridMap
+    \o Map.TransitMap
+    \o Map.GrayStreetMap
+    \o Map.MobileStreetMap
+    \o Map.MobileTerrainMap
+    \o Map.MobileHybridMap
+    \o Map.MobileTransitMap
+    \o Map.MobileGrayStreetMap
     \endlist
 
     The default value is determined by the plugin.
@@ -571,25 +587,6 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
     else
         return connectivityMode_;
 }
-
-/*!
-    \qmlproperty list<QGeoMapObject> Map::objects
-    \default
-    \since Mobility 1.2
-
-    This property holds the list of objects associated with this map.
-
-    The various objects that can be added include:
-    \list
-    \o MapRectangle
-    \o MapCircle
-    \o MapText
-    \o MapImage
-    \o MapPolygon
-    \o MapPolyline
-    \o MapGroup
-    \endlist
-*/
 
 /*!
     \qmlmethod Map::toCoordinate(QPointF screenPosition)
@@ -805,6 +802,7 @@ void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
 //    qWarning() << "hover enter";
 }
 
@@ -874,6 +872,7 @@ void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
 //    qWarning() << "hover leave";
 }
 

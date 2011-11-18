@@ -42,9 +42,9 @@
 #include <QCoreApplication>
 #include <QStringList>
 #include <QLocalSocket>
-#include "../../../../src/bearer/qnetworkconfigmanager.h"
-#include "../../../../src/bearer/qnetworkconfiguration.h"
-#include "../../../../src/bearer/qnetworksession.h"
+#include <QNetworkConfigurationManager>
+#include <QNetworkConfiguration>
+#include <QNetworkSession>
 
 #include <QEventLoop>
 #include <QTimer>

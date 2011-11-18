@@ -90,6 +90,7 @@ QMediaPlaylistReader::~QMediaPlaylistReader()
 
     \brief The QMediaPlaylistWriter class provides an interface for writing a playlist file.
 
+    \inmodule QtMultimediaKit
     \since 1.0
     \sa QMediaPlaylistIOPlugin
 */
@@ -120,6 +121,7 @@ QMediaPlaylistWriter::~QMediaPlaylistWriter()
 /*!
     \class QMediaPlaylistIOPlugin
     \brief The QMediaPlaylistIOPlugin class provides an interface for media playlist I/O plug-ins.
+    \inmodule QtMultimediaKit
     \since 1.0
 */
 

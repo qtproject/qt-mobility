@@ -71,21 +71,21 @@ public:
         int minor = 1;
         qmlRegisterUncreatableType<QSensorReading       >(package, major, minor, "SensorReading",        QLatin1String("Cannot create SensorReading"));
         qmlRegisterType           <QAccelerometer       >(package, major, minor, "Accelerometer");
-        qmlRegisterUncreatableType<QAccelerometerReading>(package, major, minor, "AccelerometerReading", QLatin1String("Cannot create AccelerometerReading"));
+        qmlRegisterType           <QAccelerometerReading>(package, major, minor, "AccelerometerReading");
         qmlRegisterType           <QAmbientLightSensor  >(package, major, minor, "AmbientLightSensor");
-        qmlRegisterUncreatableType<QAmbientLightReading >(package, major, minor, "AmbientLightReading",  QLatin1String("Cannot create AmbientLightReading"));
+        qmlRegisterType           <QAmbientLightReading >(package, major, minor, "AmbientLightReading");
         qmlRegisterType           <QCompass             >(package, major, minor, "Compass");
-        qmlRegisterUncreatableType<QCompassReading      >(package, major, minor, "CompassReading",       QLatin1String("Cannot create CompassReading"));
+        qmlRegisterType           <QCompassReading      >(package, major, minor, "CompassReading");
         qmlRegisterType           <QMagnetometer        >(package, major, minor, "Magnetometer");
-        qmlRegisterUncreatableType<QMagnetometerReading >(package, major, minor, "MagnetometerReading",  QLatin1String("Cannot create MagnetometerReading"));
+        qmlRegisterType           <QMagnetometerReading >(package, major, minor, "MagnetometerReading");
         qmlRegisterType           <QOrientationSensor   >(package, major, minor, "OrientationSensor");
-        qmlRegisterUncreatableType<QOrientationReading  >(package, major, minor, "OrientationReading",   QLatin1String("Cannot create OrientationReading"));
+        qmlRegisterType           <QOrientationReading  >(package, major, minor, "OrientationReading");
         qmlRegisterType           <QProximitySensor     >(package, major, minor, "ProximitySensor");
-        qmlRegisterUncreatableType<QProximityReading    >(package, major, minor, "ProximityReading",     QLatin1String("Cannot create ProximityReading"));
+        qmlRegisterType           <QProximityReading    >(package, major, minor, "ProximityReading");
         qmlRegisterType           <QRotationSensor      >(package, major, minor, "RotationSensor");
-        qmlRegisterUncreatableType<QRotationReading     >(package, major, minor, "RotationReading",      QLatin1String("Cannot create RotationReading"));
+        qmlRegisterType           <QRotationReading     >(package, major, minor, "RotationReading");
         qmlRegisterType           <QTapSensor           >(package, major, minor, "TapSensor");
-        qmlRegisterUncreatableType<QTapReading          >(package, major, minor, "TapReading",           QLatin1String("Cannot create TapReading"));
+        qmlRegisterType           <QTapReading          >(package, major, minor, "TapReading");
 
         // Register the 1.2 interfaces
         major = 1;

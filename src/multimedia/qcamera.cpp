@@ -184,8 +184,11 @@ void QCameraPrivate::setState(QCamera::State newState)
         return;
     }
 
-    if (state == newState)
+    if (state == newState) {
+        if (control->status() == QCamera::StandbyStatus)
+            control->setState(state);
         return;
+    }
 
     restartPending = false;
     state = newState;

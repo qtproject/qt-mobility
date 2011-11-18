@@ -39,14 +39,13 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60videoplayersession.h"
 #include "s60mediaplayerservice.h"
 #include "s60videowidgetcontrol.h"
 #include "s60videowidgetdisplay.h"
 #include "s60videowindowcontrol.h"
 #include "s60videowindowdisplay.h"
+#include "s60mmftrace.h"
 
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
@@ -177,7 +176,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     , m_destinationPckg(KUidInterfaceMMFControllerSessionInfo)
 #endif
 {
-    DP0("S60VideoPlayerSession::S60VideoPlayerSession +++");
+    TRACE("S60VideoPlayerSession::S60VideoPlayerSession" << qtThisPtr());
 
     m_networkAccessControl = object;
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
@@ -215,7 +214,6 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     m_player->RegisterForVideoLoadingNotification(*this);
 #endif // VIDEOOUTPUT_GRAPHICS_SURFACES
     S60VideoPlayerEventHandler::instance()->addApplicationFocusObserver(this);
-    DP0("S60VideoPlayerSession::S60VideoPlayerSession ---");
 }
 
 /*!
@@ -226,7 +224,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
-    DP0("S60VideoPlayerSession::~S60VideoPlayerSession +++");
+    TRACE("S60VideoPlayerSession::~S60VideoPlayerSession" << qtThisPtr());
     S60VideoPlayerEventHandler::instance()->removeApplicationFocusObserver(this);
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput)
@@ -235,12 +233,11 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
 #endif
     m_player->Close();
     delete m_player;
-
-    DP0("S60VideoPlayerSession::~S60VideoPlayerSession ---");
 }
 
 void S60VideoPlayerSession::applicationGainedFocus()
 {
+    TRACE("S60VideoPlayerSession::applicationGainedFocus" << qtThisPtr());
     if (m_backendInitiatedPause) {
         m_backendInitiatedPause = false;
         play();
@@ -253,6 +250,7 @@ void S60VideoPlayerSession::applicationGainedFocus()
 
 void S60VideoPlayerSession::applicationLostFocus()
 {
+    TRACE("S60VideoPlayerSession::applicationLostFocus" << qtThisPtr());
     if (QMediaPlayer::PlayingState == state()) {
         if (!m_isaudiostream) {
         m_backendInitiatedPause = true;
@@ -268,8 +266,6 @@ void S60VideoPlayerSession::applicationLostFocus()
 
 void S60VideoPlayerSession::doLoadL(const TDesC &path)
 {
-    DP0("S60VideoPlayerSession::doLoadL +++");
-
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     // m_audioOutput needs to be reinitialized after MapcInitComplete
     if (m_audioOutput)
@@ -278,8 +274,6 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
     m_audioOutput = NULL;
 #endif
     m_player->OpenFileL(path, KHelixUID);
-
-    DP0("S60VideoPlayerSession::doLoadL ---");
 }
 
 /*!
@@ -288,15 +282,15 @@ void S60VideoPlayerSession::doLoadL(const TDesC &path)
 
 void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 {
-    DP0("S60VideoPlayerSession::setPlaybackRate +++");
-
-    DP1("S60VideoPlayerSession::setPlaybackRate - ", rate);
-
     /*
      * setPlaybackRate is not supported in S60 3.1 and 3.2
      * This flag will be defined for 3.1 and 3.2
     */
-#ifndef PLAY_RATE_NOT_SUPPORTED
+#ifdef PLAY_RATE_NOT_SUPPORTED
+    TRACE("S60VideoPlayerSession::setPlaybackRate" << qtThisPtr()
+          << "rate" << rate << "not supported");
+#else
+    TRACE("S60VideoPlayerSession::setPlaybackRate" << qtThisPtr() << "rate" << rate);
     //setPlayVelocity requires rate in the form of
     //50 = 0.5x ;100 = 1.x ; 200 = 2.x ; 300 = 3.x
     //so multiplying rate with 100
@@ -306,8 +300,6 @@ void S60VideoPlayerSession::setPlaybackRate(qreal rate)
     else
         setError(err);
 #endif
-
-    DP0("S60VideoPlayerSession::setPlaybackRate ---");
 }
 
 /*!
@@ -317,8 +309,6 @@ void S60VideoPlayerSession::setPlaybackRate(qreal rate)
 
 void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
 {
-    DP0("S60VideoPlayerSession::doLoadUrlL +++");
-
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     // m_audioOutput needs to be reinitialized after MapcInitComplete
     if (m_audioOutput)
@@ -328,8 +318,6 @@ void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
 #endif
     m_accessPointId = m_networkAccessControl->accessPointId();
     m_player->OpenUrlL(path, m_accessPointId, KNullDesC8, KHelixUID);
-
-    DP0("S60VideoPlayerSession::doLoadUrlL ---");
 }
 
 /*!
@@ -339,13 +327,8 @@ void S60VideoPlayerSession::doLoadUrlL(const TDesC &path)
 
 int S60VideoPlayerSession::doGetBufferStatusL() const
 {
- //   DP0("S60VideoPlayerSession::doGetBufferStatusL +++");
-
     int progress = 0;
     m_player->GetVideoLoadingProgressL(progress);
-
-  //  DP0("S60VideoPlayerSession::doGetBufferStatusL ---");
-
     return progress;
 }
 
@@ -355,8 +338,6 @@ int S60VideoPlayerSession::doGetBufferStatusL() const
 
 qint64 S60VideoPlayerSession::doGetDurationL() const
 {
-  //  DP0("S60VideoPlayerSession::doGetDurationL");
-
     return m_player->DurationL().Int64() / qint64(1000);
 }
 
@@ -366,9 +347,11 @@ qint64 S60VideoPlayerSession::doGetDurationL() const
 
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
-    DP0("S60VideoPlayerSession::setVideoRenderer +++");
+    TRACE("S60VideoPlayerSession::setVideoRenderer" << qtThisPtr()
+          << "output" << videoOutput);
     if (videoOutput != m_videoOutputControl) {
         if (m_videoOutputDisplay) {
+            m_videoOutputDisplay->setHasContent(false);
             disconnect(m_videoOutputDisplay);
             m_videoOutputDisplay->disconnect(this);
             m_videoOutputDisplay = 0;
@@ -378,6 +361,7 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
                 m_videoOutputDisplay = control->display();
             if (!m_videoOutputDisplay)
                 return;
+            m_videoOutputDisplay->setHasContent(QMediaPlayer::PlayingState == state());
             m_videoOutputDisplay->setNativeSize(m_nativeSize);
             connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
             connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
@@ -392,8 +376,6 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
         m_videoOutputControl = videoOutput;
         windowHandleChanged();
     }
-
-    DP0("S60VideoPlayerSession::setVideoRenderer ---");
 }
 
 /*!
@@ -401,7 +383,9 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 */
 void S60VideoPlayerSession::applyPendingChanges(bool force)
 {
-    DP0("S60VideoPlayerSession::applyPendingChanges +++");
+    TRACE("S60VideoPlayerSession::applyPendingChanges" << qtThisPtr()
+          << "mediaStatus" << mediaStatus() << "force" << force
+          << "pendingChanges" << m_pendingChanges);
 
     if (   force
         || QMediaPlayer::LoadedMedia == mediaStatus()
@@ -484,8 +468,6 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
         }
         setError(error);
     }
-
-    DP0("S60VideoPlayerSession::applyPendingChanges ---");
 }
 
 /*!
@@ -494,8 +476,6 @@ void S60VideoPlayerSession::applyPendingChanges(bool force)
 
 bool S60VideoPlayerSession::isVideoAvailable()
 {
-    DP0("S60VideoPlayerSession::isVideoAvailable");
-
 #ifdef PRE_S60_50_PLATFORM
     return true; // this is not supported in pre 5th platforms
 #else
@@ -524,8 +504,6 @@ bool S60VideoPlayerSession::isVideoAvailable()
 
 bool S60VideoPlayerSession::isAudioAvailable()
 {
-    DP0("S60VideoPlayerSession::isAudioAvailable");
-
     if ( mediaStatus() == QMediaPlayer::LoadingMedia
         || mediaStatus() == QMediaPlayer::UnknownMediaStatus
         || mediaStatus() == QMediaPlayer::NoMedia
@@ -549,11 +527,7 @@ bool S60VideoPlayerSession::isAudioAvailable()
 
 void S60VideoPlayerSession::doPlay()
 {
-    DP0("S60VideoPlayerSession::doPlay +++");
-
     m_player->Play();
-
-    DP0("S60VideoPlayerSession::doPlay ---");
 }
 
 /*!
@@ -562,11 +536,7 @@ void S60VideoPlayerSession::doPlay()
 
 void S60VideoPlayerSession::doPauseL()
 {
-    DP0("S60VideoPlayerSession::doPauseL +++");
-
     m_player->PauseL();
-
-    DP0("S60VideoPlayerSession::doPauseL ---");
 }
 
 /*!
@@ -576,14 +546,13 @@ void S60VideoPlayerSession::doPauseL()
 
 void S60VideoPlayerSession::doStop()
 {
-    DP0("S60VideoPlayerSession::doStop +++");
-
     if (m_stream)
         m_networkAccessControl->resetIndex();
 
-    m_player->Stop();
+    if (m_videoOutputDisplay)
+        m_videoOutputDisplay->setHasContent(false);
 
-    DP0("S60VideoPlayerSession::doStop ---");
+    m_player->Stop();
 }
 
 /*!
@@ -592,8 +561,6 @@ void S60VideoPlayerSession::doStop()
 
 void S60VideoPlayerSession::doClose()
 {
-    DP0("S60VideoPlayerSession::doClose +++");
-
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput) {
         m_audioOutput->UnregisterObserver(*this);
@@ -607,8 +574,6 @@ void S60VideoPlayerSession::doClose()
 // close will remove the window handle in media clint video.
 // So mark it in pending changes.
     m_pendingChanges |= WindowHandle;
-
-    DP0("S60VideoPlayerSession::doClose ---");
 }
 
 /*!
@@ -618,8 +583,6 @@ void S60VideoPlayerSession::doClose()
 
 qint64 S60VideoPlayerSession::doGetPositionL() const
 {
-  //  DP0("S60VideoPlayerSession::doGetPositionL");
-
     return m_player->PositionL().Int64() / qint64(1000);
 }
 
@@ -629,8 +592,6 @@ qint64 S60VideoPlayerSession::doGetPositionL() const
 
 void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
 {
- //   DP0("S60VideoPlayerSession::doSetPositionL");
-
     m_player->SetPositionL(TTimeIntervalMicroSeconds(microSeconds));
 }
 
@@ -641,13 +602,7 @@ void S60VideoPlayerSession::doSetPositionL(qint64 microSeconds)
 
 void S60VideoPlayerSession::doSetVolumeL(int volume)
 {
-    DP0("S60VideoPlayerSession::doSetVolumeL +++");
-
-    DP1("S60VideoPlayerSession::doSetVolumeL - ", volume);
-
     m_player->SetVolumeL(volume * m_player->MaxVolume() / 100);
-
-    DP0("S60VideoPlayerSession::doSetVolumeL ---");
 }
 
 /*!
@@ -657,9 +612,8 @@ void S60VideoPlayerSession::doSetVolumeL(int volume)
 
 void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 {
-    DP0("S60VideoPlayerSession::MvpuoOpenComplete +++");
-
-    DP1("S60VideoPlayerSession::MvpuoOpenComplete - aError:", aError);
+    TRACE("S60VideoPlayerSession::MvpuoOpenComplete" << qtThisPtr()
+          << "error" << aError);
 
     setError(aError);
 #ifdef HTTP_COOKIES_ENABLED
@@ -703,8 +657,6 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 #endif
     const TMMFMessageDestinationPckg dest( KUidInterfaceMMFROPController );
     TRAP_IGNORE(m_player->CustomCommandSync(dest, KMMFROPControllerEnablePausedLoadingStatus, KNullDesC8, KNullDesC8));
-
-    DP0("S60VideoPlayerSession::MvpuoOpenComplete ---");
 }
 
 /*!
@@ -714,9 +666,8 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
-    DP0("S60VideoPlayerSession::MvpuoPrepareComplete +++");
-
-    DP1("S60VideoPlayerSession::MvpuoPrepareComplete - aError:", aError);
+    TRACE("S60VideoPlayerSession::MvpuoPrepareComplete" << qtThisPtr()
+          << "error" << aError);
 
     if (KErrNone == aError && m_stream) {
         emit accessPointChanged(m_accessPointId);
@@ -759,8 +710,6 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
     } else {
         setError(error);
     }
-
-    DP0("S60VideoPlayerSession::MvpuoPrepareComplete ---");
 }
 
 /*!
@@ -769,12 +718,8 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 {
-    DP0("S60VideoPlayerSession::MvpuoFrameReady +++");
-
     Q_UNUSED(aFrame);
     Q_UNUSED(aError);
-
-    DP0("S60VideoPlayerSession::MvpuoFrameReady ---");
 }
 
 /*!
@@ -785,9 +730,8 @@ void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 
 void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 {
-    DP0("S60VideoPlayerSession::MvpuoPlayComplete +++");
-
-    DP1("S60VideoPlayerSession::MvpuoPlayComplete - aError", aError);
+    TRACE("S60VideoPlayerSession::MvpuoPlayComplete" << qtThisPtr()
+          << "error" << aError);
 
     if (m_stream)
     m_networkAccessControl->resetIndex();
@@ -798,8 +742,6 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
     } else {
         endOfMedia();
     }
-
-    DP0("S60VideoPlayerSession::MvpuoPlayComplete ---");
 }
 
 
@@ -810,11 +752,7 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
-    DP0("S60VideoPlayerSession::MvpuoEvent +++");
-
     Q_UNUSED(aEvent);
-
-    DP0("S60VideoPlayerSession::MvpuoEvent ---");
 }
 
 /*!
@@ -824,8 +762,6 @@ void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 
 void S60VideoPlayerSession::updateMetaDataEntriesL()
 {
-    DP0("S60VideoPlayerSession::updateMetaDataEntriesL +++");
-
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
     numberOfMetaDataEntries = m_player->NumberOfMetaDataEntriesL();
@@ -836,8 +772,6 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
         delete entry;
     }
     emit metaDataChanged();
-
-    DP0("S60VideoPlayerSession::updateMetaDataEntriesL ---");
 }
 
 /*!
@@ -846,12 +780,10 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
 
 void S60VideoPlayerSession::windowHandleChanged()
 {
-    DP0("S60VideoPlayerSession::windowHandleChanged +++");
+    TRACE("S60VideoPlayerSession::windowHandleChanged" << qtThisPtr());
 
     m_pendingChanges |= WindowHandle;
     applyPendingChanges();
-
-    DP0("S60VideoPlayerSession::windowHandleChanged ---");
 }
 
 /*!
@@ -860,12 +792,10 @@ void S60VideoPlayerSession::windowHandleChanged()
 
 void S60VideoPlayerSession::displayRectChanged()
 {
-    DP0("S60VideoPlayerSession::displayRectChanged +++");
+    TRACE("S60VideoPlayerSession::displayRectChanged" << qtThisPtr());
 
     m_pendingChanges |= DisplayRect;
     applyPendingChanges();
-
-    DP0("S60VideoPlayerSession::displayRectChanged ---");
 }
 
 /*!
@@ -874,16 +804,16 @@ void S60VideoPlayerSession::displayRectChanged()
 
 void S60VideoPlayerSession::aspectRatioChanged()
 {
-    DP0("S60VideoPlayerSession::aspectRatioChanged +++");
+    TRACE("S60VideoPlayerSession::aspectRatioChanged" << qtThisPtr());
 
     m_pendingChanges |= ScaleFactors;
     applyPendingChanges();
-
-    DP0("S60VideoPlayerSession::aspectRatioChanged ---");
 }
 
 void S60VideoPlayerSession::rotationChanged()
 {
+    TRACE("S60VideoPlayerSession::rotationChanged" << qtThisPtr());
+
     m_pendingChanges |= ScaleFactors;
     m_pendingChanges |= Rotation;
     applyPendingChanges();
@@ -892,28 +822,24 @@ void S60VideoPlayerSession::rotationChanged()
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
 void S60VideoPlayerSession::suspendDirectScreenAccess()
 {
-    DP0("S60VideoPlayerSession::suspendDirectScreenAccess +++");
+    TRACE("S60VideoPlayerSession::suspendDirectScreenAccess" << qtThisPtr());
 
     m_dsaStopped = stopDirectScreenAccess();
-
-    DP0("S60VideoPlayerSession::suspendDirectScreenAccess ---");
 }
 
 void S60VideoPlayerSession::resumeDirectScreenAccess()
 {
-    DP0("S60VideoPlayerSession::resumeDirectScreenAccess +++");
+    TRACE("S60VideoPlayerSession::resumeDirectScreenAccess" << qtThisPtr());
 
     if (!m_dsaStopped)
         return;
     startDirectScreenAccess();
     m_dsaStopped = false;
-
-    DP0("S60VideoPlayerSession::resumeDirectScreenAccess ---");
 }
 
 void S60VideoPlayerSession::startDirectScreenAccess()
 {
-    DP0("S60VideoPlayerSession::startDirectScreenAccess +++");
+    TRACE("S60VideoPlayerSession::startDirectScreenAccess" << qtThisPtr());
 
     if (m_dsaActive)
         return;
@@ -921,13 +847,11 @@ void S60VideoPlayerSession::startDirectScreenAccess()
     if (err == KErrNone)
         m_dsaActive = true;
     setError(err);
-
-    DP0("S60VideoPlayerSession::startDirectScreenAccess ---");
 }
 
 bool S60VideoPlayerSession::stopDirectScreenAccess()
 {
-    DP0("S60VideoPlayerSession::stopDirectScreenAccess");
+    TRACE("S60VideoPlayerSession::stopDirectScreenAccess" << qtThisPtr());
 
     if (!m_dsaActive)
         return false;
@@ -945,11 +869,9 @@ bool S60VideoPlayerSession::stopDirectScreenAccess()
 
 void S60VideoPlayerSession::MvloLoadingStarted()
 {
-    DP0("S60VideoPlayerSession::MvloLoadingStarted +++");
+    TRACE("S60VideoPlayerSession::MvloLoadingStarted" << qtThisPtr());
 
     buffering();
-
-    DP0("S60VideoPlayerSession::MvloLoadingStarted ---");
 }
 
 /*!
@@ -958,11 +880,11 @@ void S60VideoPlayerSession::MvloLoadingStarted()
 
 void S60VideoPlayerSession::MvloLoadingComplete()
 {
-    DP0("S60VideoPlayerSession::MvloLoadingComplete +++");
+    TRACE("S60VideoPlayerSession::MvloLoadingComplete" << qtThisPtr());
 
     buffered();
-
-    DP0("S60VideoPlayerSession::MvloLoadingComplete ---");
+    if (m_videoOutputDisplay)
+        m_videoOutputDisplay->setHasContent(true);
 }
 
 /*!
@@ -973,13 +895,7 @@ void S60VideoPlayerSession::MvloLoadingComplete()
 
 void S60VideoPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
 {
-    DP0("S60VideoPlayerSession::doSetAudioEndpoint +++");
-
-    DP1("S60VideoPlayerSession::doSetAudioEndpoint - ", audioEndpoint);
-
     m_audioEndpoint = audioEndpoint;
-
-    DP0("S60VideoPlayerSession::doSetAudioEndpoint ---");
 }
 
 /*!
@@ -989,8 +905,6 @@ void S60VideoPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
 
 QString S60VideoPlayerSession::activeEndpoint() const
 {
-    DP0("S60VideoPlayerSession::activeEndpoint +++");
-
     QString outputName = m_audioEndpoint;
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput) {
@@ -998,9 +912,6 @@ QString S60VideoPlayerSession::activeEndpoint() const
         outputName = qStringFromTAudioOutputPreference(output);
     }
 #endif
-
-    DP1("S60VideoPlayerSession::activeEndpoint- outputName:", outputName);
-    DP0("S60VideoPlayerSession::activeEndpoint ---");
     return outputName;
 }
 
@@ -1010,8 +921,6 @@ QString S60VideoPlayerSession::activeEndpoint() const
 
 QString S60VideoPlayerSession::defaultEndpoint() const
 {
-    DP0("S60VideoPlayerSession::defaultEndpoint +++");
-
     QString outputName = DefaultAudioEndpoint;
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     if (m_audioOutput) {
@@ -1019,10 +928,6 @@ QString S60VideoPlayerSession::defaultEndpoint() const
         outputName = qStringFromTAudioOutputPreference(output);
     }
 #endif
-
-    DP1("S60VideoPlayerSession::defaultEndpoint, outputName:", outputName);
-    DP0("S60VideoPlayerSession::defaultEndpoint ---");
-
     return outputName;
 }
 
@@ -1032,9 +937,7 @@ QString S60VideoPlayerSession::defaultEndpoint() const
 
 void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 {
-    DP0("S60VideoPlayerSession::setActiveEndpoint +++");
-
-    DP1("S60VideoPlayerSession::setActiveEndpoint - ", name);
+    TRACE("S60VideoPlayerSession::setActiveEndpoint" << qtThisPtr() << "name" << name);
 
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
@@ -1053,8 +956,6 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
         setError(err);
     }
 #endif
-
-    DP0("S60VideoPlayerSession::setActiveEndpoint ---");
 }
 
 /*!
@@ -1069,13 +970,12 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 void S60VideoPlayerSession::DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault)
 {
-    DP0("S60VideoPlayerSession::DefaultAudioOutputChanged +++");
+    TRACE("S60VideoPlayerSession::DefaultAudioOutputChanged" << qtThisPtr()
+          << "newDefault" << aNewDefault);
 
     // Emit already implemented in setActiveEndpoint function
     Q_UNUSED(aAudioOutput)
     Q_UNUSED(aNewDefault)
-
-    DP0("S60VideoPlayerSession::DefaultAudioOutputChanged ---");
 }
 
 /*!
@@ -1084,8 +984,6 @@ void S60VideoPlayerSession::DefaultAudioOutputChanged( CAudioOutput& aAudioOutpu
 
 QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const
 {
-    DP0("S60VideoPlayerSession::qStringFromTAudioOutputPreference");
-
     if (output == CAudioOutput::ENoPreference)
         return QString("Default");
     else if (output == CAudioOutput::EAll)
@@ -1106,8 +1004,6 @@ QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
 
 bool S60VideoPlayerSession::getIsSeekable() const
 {
-    DP0("S60VideoPlayerSession::getIsSeekable +++");
-
     bool seekable = ETrue;
     int numberOfMetaDataEntries = 0;
 
@@ -1128,7 +1024,6 @@ bool S60VideoPlayerSession::getIsSeekable() const
             break;
         }
     }
-    DP0("S60VideoPlayerSession::getIsSeekable ---");
 
     return seekable;
 }

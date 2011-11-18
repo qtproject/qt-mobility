@@ -54,11 +54,6 @@ QBluetoothDeviceDiscoveryAgentPrivate::QBluetoothDeviceDiscoveryAgentPrivate()
     , errorString(QString())
     , m_deviceDiscovery(0)
 {
-    /* connect to socker server */
-    TInt result = m_socketServer.Connect();
-    if (result != KErrNone)
-        _q_setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
-                QString("RSocketServ.Connect() failed with error"));
 }
 
 QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
@@ -71,6 +66,13 @@ QBluetoothDeviceDiscoveryAgentPrivate::~QBluetoothDeviceDiscoveryAgentPrivate()
 void QBluetoothDeviceDiscoveryAgentPrivate::allocate()
 {
     Q_Q(QBluetoothDeviceDiscoveryAgent);
+    /* connect to socker server */
+    int result = m_socketServer.Connect();
+    if (result != KErrNone) {
+        _q_setError(QBluetoothDeviceDiscoveryAgent::UnknownError, 
+                QString("RSocketServ.Connect() failed with error"));
+        return;
+    }
     // create link manager device discoverer
     if (m_socketServer.Handle() != NULL) {
         // create new active object for querying devices
@@ -91,7 +93,6 @@ void QBluetoothDeviceDiscoveryAgentPrivate::allocate()
 
 void QBluetoothDeviceDiscoveryAgentPrivate::start()
 {
-
     // clear list of found devices
     discoveredDevices.clear();
     if (!m_deviceDiscovery) {

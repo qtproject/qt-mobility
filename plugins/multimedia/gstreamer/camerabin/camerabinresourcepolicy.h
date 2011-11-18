@@ -56,7 +56,8 @@ public:
         NoResources,
         LoadedResources,
         ImageCaptureResources,
-        VideoCaptureResources
+        VideoCaptureResources,
+        VideoRecordingResources //video recording is active
     };
 
     CamerabinResourcePolicy(QObject *parent);

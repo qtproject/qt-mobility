@@ -91,7 +91,7 @@ of the following functions:
   \o removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 \endlist
 
-\section3 \bold{Relationship Manipulation}
+\section3 Relationship Manipulation
 
 Contacts may be related in various ways.  The contacts API allows clients to define relationships between contacts.
 For in-depth information about relationship manipulation, please refer to the \l{Contacts Synchronous API}.

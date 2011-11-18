@@ -87,6 +87,15 @@
 
     \section2 Map Elements
 
+    While the Maps elements were already available as an early preview in QtMobility 1.1
+    the elements received considerable API and behavior changes in QtMobility 1.2. Therefore
+    the elements are \bold{no longer available as 1.1 import}. QML applications \bold{have to change}
+    their import statement to 1.2. Applications using any Map element in QtMobility 1.2
+    via a QML 1.1 import will fail to work.
+
+    Applications wanting to target QtMobility 1.1 and 1.2 at the same time must deploy
+    two different QML import statements based on the QtMobility version being used.
+
     \annotatedlist qml-location-maps
 
     \section1 Landmarks

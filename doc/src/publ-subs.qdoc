@@ -194,7 +194,7 @@ to somehow specify how particular paths are turned into RProperty, CRepository a
 key definitions. There are two ways to accomplish this. The keys can be accessed using numeric
 uids, or the paths can be mapped to textual paths using QCRML files.
 
-\section3 \bold{Accessing Properties, Central Repository and Feature Manager Using UIDs}
+\section3 Accessing Properties, Central Repository and Feature Manager Using UIDs
 
 Accessing Symbian OS Properties, Central Repository keys and Feature Manager flags using numeric
 UIDs is done with reserved paths where the first part of the path is either \c /ps/, \c /cr/ or
@@ -218,7 +218,7 @@ For example following two paths point to the same Property:
 When using numeric paths, it is possible to get change notifications only using full path to a specific
 key. I.e. key \c /ps/<uid> is not considered changed when any of the keys under that UID change.
 
-\section3 \bold{Declaring Value Space Paths Using QCRML}
+\section3 Declaring Value Space Paths Using QCRML
 
 QCRML files are XML files that can be used to declare available Value Space paths that are visible
 to the clients.  Each path defines whether the actual value is stored in CRepository, RPropery or
@@ -256,7 +256,7 @@ flags:
 
 The \c qcrmlgen tool located in the \c tools directory can be used to create QCRML files.
 
-\section3 \bold{Location of QCRML Files}
+\section3 Location of QCRML Files
 
 All the QCRML files need to be located in \c {\resource\qt\crml} directory (in any available drive)
 in Symbian file system.
@@ -273,7 +273,7 @@ symbian {
 }
 \endcode
 
-\section3 \bold{Usage and limitations of Symbian Settings Layer}
+\section3 Usage and limitations of Symbian Settings Layer
 
 The capabilities needed for reading and writing Symbian OS Properties and Central Repository files
 are defined when the keys are created. Thus, the capability requirements to access existing keys
@@ -305,7 +305,7 @@ supported or it does not exist, the value is false.
 For more information about Symbian OS Properties, Central Repository and Feature Manager refer to
 Symbian Developer's Library at \l {http://forum.nokia.com/}{Forum Nokia}.
 
-\section3 \bold{Interoperability with native Symbian code}
+\section3 Interoperability with native Symbian code
 
 If interoperability between native Symbian code is needed for non-integer types, the values have
 to be converted to bytearray before writing them to RProperty or CRepository. When data stored by
@@ -324,7 +324,7 @@ For example:
 /ps/0x100012ab/0xd?string
 \endcode
 
-\section3 \bold{Discovering Symbian key ids}
+\section3 Discovering Symbian key ids
 
 Symbian Value Space keys are closely tied with the related Symbian C++ APIs. 
 The information about available keys is usually found from the native
@@ -347,7 +347,7 @@ the keys, in addition to above:
 
 Publish and Subscribe API can be used to access the GConf configuration system.
 
-\section3 \bold{Limitations of GConf Layer}
+\section3 Limitations of GConf Layer
 
 GConf can natively store only a limited set of QVariant data types. These types are Bool, Int, Double,
 String, StringList and List. When publishing other data types the values are automatically serialized
@@ -366,7 +366,7 @@ You can force the selection of one or the other path scheme by passing the flags
 QValueSpace::PermanentLayer and QValueSpace::TransientLayer to the constructors of QValueSpaceSubscriber
 and QValueSpacePublisher along with the path name.
 
-\section3 \bold{Organization and application name}
+\section3 Organization and application name
 
 ContextKit requires providers to register with a valid DBus service name in order to publish values.
 The ContextKit Layer automatically builds this name from QCoreApplication::organizationDomain() and
@@ -380,7 +380,7 @@ QCoreApplication::setApplicationName("Test Application");
 // will register with 'com.example.Test-Application'
 \endcode
 
-\section3 \bold{Declaring Value Space Paths Using Property Declaration Files}
+\section3 Declaring Value Space Paths Using Property Declaration Files
 
 ContextKit also requires that an entry be present in the ContextKit Registry on the system before
 subscribers will be able to find an advertised property. The Registry is a set of XML files, normally
@@ -414,7 +414,7 @@ during packaging.
 For more detailed information on this, please refer to
 \l{http://maemo.gitorious.org/maemo-af/contextkit/blobs/master/doc/context-providers.txt}{How to provide context properties}.
 
-\section3 \bold{Limitations of ContextKit Layer}
+\section3 Limitations of ContextKit Layer
 
 Similar to both the Symbian and Gconf backends, ContextKit supports only a limited range of QVariant data
 types. Types not supported are serialized in a manner transparent to the API user, but interoperatibility

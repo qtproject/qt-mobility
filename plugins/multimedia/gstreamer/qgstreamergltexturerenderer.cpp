@@ -166,6 +166,7 @@ QGstreamerGLTextureRenderer::QGstreamerGLTextureRenderer(QObject *parent) :
     m_winId(0),
     m_colorKey(49,0,49),
     m_overlayEnabled(false),
+    m_glEnabled(true),
     m_bufferProbeId(-1)
 {
     eglCreateSyncKHR =
@@ -196,7 +197,8 @@ GstElement *QGstreamerGLTextureRenderer::videoSink()
             g_object_set(G_OBJECT(m_videoSink),
                          "x-display", QX11Info::display(),
                          "egl-display", eglGetDisplay((EGLNativeDisplayType)QX11Info::display()),
-                         "egl-context", eglGetCurrentContext(),
+                         "egl-context", m_glEnabled ? eglGetCurrentContext()
+                                                    : EGL_NO_CONTEXT,
                          "colorkey", m_colorKey.rgb(),
                          "autopaint-colorkey", false,
                          "use-framebuffer-memory", true,
@@ -236,7 +238,7 @@ void QGstreamerGLTextureRenderer::setSurface(QAbstractVideoSurface *surface)
 
         bool oldReady = isReady();
 
-        m_context = const_cast<QGLContext*>(QGLContext::currentContext());
+        m_context = m_glEnabled ? const_cast<QGLContext*>(QGLContext::currentContext()) : NULL;
 
         if (m_videoSink)
             gst_object_unref(GST_OBJECT(m_videoSink));
@@ -295,7 +297,7 @@ void QGstreamerGLTextureRenderer::renderGLFrame(int frame)
 #endif
     QMutexLocker locker(&m_mutex);
 
-    if (!m_surface) {
+    if (!m_surface || !m_glEnabled) {
         m_renderCondition.wakeAll();
         return;
     }
@@ -357,14 +359,7 @@ void QGstreamerGLTextureRenderer::renderGLFrame(int frame)
 
 bool QGstreamerGLTextureRenderer::isReady() const
 {
-    if (!m_surface)
-        return false;
-
-    if (m_winId > 0)
-        return true;
-
-    //winId is required only for EGLImageTextureHandle compatible surfaces
-    return m_surface->supportedPixelFormats(EGLImageTextureHandle).isEmpty();
+    return m_surface != NULL;
 }
 
 void QGstreamerGLTextureRenderer::handleBusMessage(GstMessage* gm)
@@ -667,5 +662,35 @@ void QGstreamerGLTextureRenderer::setFallbackBuffer(GstBuffer *buffer)
 
             *dst = qRgb(r2, g2, b2); dst++;
         }
+    }
+}
+
+bool QGstreamerGLTextureRenderer::glEnabled() const
+{
+    return m_glEnabled;
+}
+
+void QGstreamerGLTextureRenderer::setGlEnabled(bool enabled)
+{
+    if (m_glEnabled == enabled)
+        return;
+
+    m_glEnabled = enabled;
+
+    if (enabled) {
+        m_context = const_cast<QGLContext*>(QGLContext::currentContext());
+
+        if (m_videoSink)
+            g_object_set(G_OBJECT(m_videoSink),
+                         "egl-context", eglGetCurrentContext(),
+                         (char *)NULL);
+    } else {
+        m_context = NULL;
+
+        if (m_videoSink)
+            g_object_set(G_OBJECT(m_videoSink),
+                         "egl-context", EGL_NO_CONTEXT,
+                         (char *)NULL);
+
     }
 }

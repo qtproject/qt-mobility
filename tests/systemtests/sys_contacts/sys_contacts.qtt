@@ -290,9 +290,11 @@ testcase = {
         // Test meta data
         testTitle = "Contacts - Add Contact";
         testBinary = "samplephonebook";
+        testSource = "$MOBILITYDIR/examples/samplephonebook";
         testGoal = "Verify that contacts can be added";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         startApplication(testBinary);
@@ -318,9 +320,11 @@ testcase = {
         // Test meta data
         testTitle = "Contacts - Update Contact Details";
         testBinary = "samplephonebook";
+        testSource = "$MOBILITYDIR/examples/samplephonebook";
         testGoal = "Verify that contact details can be updated";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         startApplication(testBinary);
@@ -353,9 +357,11 @@ testcase = {
         // Test meta data
         testTitle = "Contacts - Apply Filter";
         testBinary = "samplephonebook";
+        testSource = "$MOBILITYDIR/examples/samplephonebook";
         testGoal = "Verify the correct match of contacts against a simple filter";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = " ";
+        testRequirements = "";
 
         // Test steps
         startApplication(testBinary);
@@ -381,9 +387,11 @@ testcase = {
        // Test meta data
        testTitle = "Contacts - Clear Filter";
        testBinary = "samplephonebook";
+       testSource = "$MOBILITYDIR/examples/samplephonebook";
        testGoal = "Verify that when the filter is cleared all contacts are visible";
        testPreconditions = "None";
-       testGroups = "BAT";
+       testGroups = " ";
+       testRequirements = "";
 
        // Test steps
        startApplication(testBinary);
@@ -411,9 +419,11 @@ testcase = {
         // Test meta data
         testTitle = "Contacts - Delete Contact";
         testBinary = "samplephonebook";
+        testSource = "$MOBILITYDIR/examples/samplephonebook";
         testGoal = "Verify that a contact can be deleted";
         testPreconditions = "None";
-        testGroups = "BAT";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
         // Test steps
         startApplication(testBinary);
@@ -434,6 +444,8 @@ testcase = {
             checkContactExists(name2, false);
             checkContactExists(name3, false);
         }else{
+            prompt("Verify that Contacts have been deleted");
+            /*
             prompt(twiki("---+++ " + testTitle + "<br><br>
                 *Goal:* " + testGoal + "<br>
                 *Pre-Requisites:* " + testPreconditions + "<br>
@@ -441,6 +453,7 @@ testcase = {
 
                 | *Step* | *Verification* |
                 | | Verify that Contacts have been deleted:" + name1 + ", " + name2 + ", " + name3 + "|" ));
+            */
         }
     }
 

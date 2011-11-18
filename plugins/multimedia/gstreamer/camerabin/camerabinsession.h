@@ -91,6 +91,7 @@ public:
 
     GstPhotography *photography();
     GstElement *cameraBin() { return m_pipeline; }
+    GstElement *cameraSourceElement() { return m_videoSrc; }
 
     CameraRole cameraRole() const;
 

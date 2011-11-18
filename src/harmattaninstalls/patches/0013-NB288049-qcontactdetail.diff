@@ -1,0 +1,19 @@
+commit 6b1d5694873ee928a1d733f98d0f44f0487411fc
+Author: Adrien Bustany <adrien.bustany@nokia.com>
+Date:   Mon Oct 10 14:00:18 2011 +0300
+
+    Fill s_qstrings in QContactStringHolder::operator=(const QString&)
+
+diff --git a/src/contacts/qcontactdetail.cpp b/src/contacts/qcontactdetail.cpp
+index a281d84..d41cf0b 100644
+--- a/src/contacts/qcontactdetail_p.h
++++ b/src/contacts/qcontactdetail_p.h
+@@ -117,6 +117,7 @@ public:
+         if (!m_str) {
+             m_str = qstrdup(str.toLatin1().constData());
+             s_allocated.insert(str, const_cast<char*>(m_str)); // it's my pointer
++            s_qstrings.insert(m_str, str);
+         }
+         return *this;
+     }
+

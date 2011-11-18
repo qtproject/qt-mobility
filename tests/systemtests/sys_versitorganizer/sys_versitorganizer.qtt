@@ -50,7 +50,7 @@ function startTestApp()
 
 // Note for test cases relating to  functionality such as add event see test relating to src/organizer
 testcase = {
-
+    /* commented as it doesn't use at the moment.
         // prove that the test application starts before anything else is tested.
         runTestApplication: function()
         {
@@ -61,106 +61,163 @@ testcase = {
                 //print('Focus widget is' + focusWidget());
             }
         },
+    */
+
+    import_ical : function()
+    {
+        // Test meta data
+        testTitle = "versitorganizer - Import ical";
+        testBinary = "calendardemo";
+        testSource = "$MOBILITYDIR/examples/calendardemo";
+        testGoal = "Verify that ical file can be imported";
+        testPreconditions = "There is an exampleEvents.ics onto a location on the target";
+        testGroups = " ";
+        testRequirements = " "
 
 
-        import_ical: function()
-        {
-            prompt(twiki('---++ Import iCalendar items
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
 
-        1. Launch the *calendardemo* application
-        1. On app menu, select \'Delete all items\' to insure you are dealing with a pristine calendar
-        1. As required transfer exampleEvents.ics onto a location on the target
-        1. On app menu, select \'Import items\' menu entry
-        1. In file dialog that presents select the exampleEvents.ics that was transfer to the target
-        1. Click \'Open\'
-        1. In the case of the importing exampleEvents.ics:
-            1. Verify there is now the following event:
-                | Subject       | \'Bastille Day Party\'        |
-                | Start time    | July 14, 1997 17:00 (UTC)     |
-                | End time      | July 15, 1997 03:59:59 (UTC)  |
-            1. Verify there is the following Todo:
-                | Subject   | \'Submit Income Taxes\'   |
-                | Time      | April 15, 1998 |
-            1. if the platform(backend) supports journal entries:
-                | Subject   | \'Project xyz Review Meeting Minutes\' |
-                | Time      | March 24, 1997 |
-           * *Hint:* Possibly using the target system\'s Todo, Calendar and Journal applications will be easiest to verify above details
-        1. On app menu, select \'Delete all items\'
-        1. Close the *calendardemo* application
-            '));
-        },
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | On app menu, select *Delete all items* | Verify there is no item in calendar | 
+            | On app menu, select *Import items* menu entry | |
+            | In file dialog that presents select the exampleEvents.ics that was transfer to the target | |
+            | Click *Open* and import exampleEvents.ics | Verify there is now the following event:<br>*Subject*:Bastille Day Party<br>*Start time*:July 14, 1997 17:00 (UTC)<br>*End time*:July 15, 1997 03:59:59 (UTC) |
+            |  | Verify there is the following Todo:<br>*Subject*:Submit Income Taxes<br>*Time*:April 15, 1998 |
+            | If the platform(backend) supports journal entries: | Verify there is the following entries<br>*Subject*:Project xyz Review Meeting Minutes<br>*Time*:March 24, 1997 |
+            | On app menu, select *Delete all items* | All items are deleted |
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
+    },
 
-        export_ical: function()
-        {
-             prompt(twiki('---++ Export iCalendar items
+    export_ical : function()
+    {
+        // Test meta data
+        testTitle = "Versitorganizer - Export ical";
+        testBinary = "calendardemo";
+        testSource = "$MOBILITYDIR/examples/calendardemo";
+        testGoal = "Verify ical file can be exported";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = " "
 
-        1. Launch the *calendardemo* application
-        1. On app menu, select \'Delete all items\' to insure you are dealing with a pristine calendar
-        1. Verify that the current backend is the best to suit device
-        1. Add *valid* events
-            1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-            1. Enter event details:
-                | Subject      | \'Event 1\' |
-                | Start time   | today\'s date, 08:00 AM |
-                | End time     | today\'s date, 01:00 PM |
-                | Alarm        | \'30 minutes before\' |
-                | Repeat       | \'None\' |
-            1. Click \'Save\' button
-            1. Select \'Add Event\' menu entry (maybe listed under \'Options\' menu)
-            1. Enter event details:
-                | Subject      | \'Event 2\' |
-                | Start time   | tomorrow\'s date, 02:00 PM |
-                | End time     | tomorrow\'s date, 03:00 PM |
-                | Alarm        | \'15 minutes before\' |
-                | Repeat       | \'None\' |
-            1. Click \'Save\' button
-        1. Add a *valid* Todos:
-            1. Select: \'Add Todo\' menu entry (maybe listed under \'Options\' menu)
-            1. Enter Todo detail:
-                | Subject       | \'Todo 1\'                    |
-                | Start time    | today\'s date 08:00 AM        |
-                | End time      | today\'s date 04:00 PM        |
-                | Priority      | \'High\'                      |
-                | Status        | default                       |
-                | Alarm option  | \'30 minutes before\'         |
-            1. Click \'Save\' button
-            1. Select: \'Add Todo\' menu entry (maybe listed under \'Options\' menu)
-            1. Enter Todo detail:
-                | Subject       | \'Todo 2\'                    |
-                | Start time    | tomorrow\'s date 03:00 PM     |
-                | End time      | tomorrow\'s date 04:00 PM     |
-                | Priority      | \'Low\'                       |
-                | Status        | default                       |
-                | Alarm option  | \'5   minutes before\'        |
-            1. Click \'Save\' button
-        1. If platform(backend) supports Journal entries then add a Journal entry:
-            1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-            1. Enter event details:
-                | Subject    | \'Journal 1\' |
-                | Time       | today\'s date, 08:00 AM |
-                | Alarm      | \'30 minutes before\' |
-            1. Click \'Save\' button
-        1. If platform(backend) supports Journal entries then add a journal entry for later today:
-            1. Select \'Add Journal\' menu entry (maybe listed under \'Options\' menu)
-            1. Enter event details:
-                | Subject    | \'Journal 2\' |
-                | Time       | today\'s date at 02:00 PM |
-                | Alarm      | \'15 minutes before\' |
-            1. Click \'Save\' button
-        1. On app menu, select \'Export items\' menu entry
-        1  Enter/select suitable location saving as testcalendar.ics
-        1. Click on \'Save\'
-        1. Ideally the testcalendar.ics be opened on a separate system and its contents validated, if that is not possible then ..
-            1. On app menu, select \'Delete all items\' to remove all calendar items
-            1. Close the *calendardemo* application
-            1. Launch the *calendardemo* application
-            1. On app menu, select menu entry \'Import items\'
-            1. Select location for testcalendar.ics entered earlier
-            1. Click \'Select\' button
-            1. Verify that calendar items \'Event 1\', \'Event 2\', \'Todo 1\' and \'Todo 2\' are present and have expected details
-            1. If platform(backend) supports Journal entries then Verify that calendar items \'Journal 1\' and \'Journal 2\' are present and have expected details
-        1. Delete events \'Event 1\', \'Event 2\', \'Todo 1\', \'Todo 2\', \'Journal 1\' and \'Journal 2\' (using native calendar application if neccessary)
-        1. Close the *calendardemo* application
-             '));
-        },
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | On app menu, select *Delete all items* | Verify there is no item in calendar | 
+            | | Verify that the current backend is the best to suit device |
+            | Select *Add Event* menu entry (maybe list under *Options* menu) | |
+            | Enter Subject: 'Event 1' | |
+            | Enter Start time: today's date, 08:00 AM | |
+            | Enter End time: today's date, 01:00 PM | |
+            | Select Alarm: '30 minutes before' | |
+            | Select Repeat: 'None' | |
+            | Click *Save* button | |
+            | Select *Add Event* menu entry | |
+            | Enter Subject: 'Event 2' | |
+            | Enter Start time: today's date, 08:00 AM | |
+            | Enter End time: today's date, 01:00 PM | |
+            | Select Alarm: '30 minutes before' | |
+            | Select Repeat: 'None' | |
+            | Click *Save* button | Verify that 'Event 1' and 'Event 2' are listed |
+            | Select *Add Todo* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject: 'Todo 1' | |
+            | Enter Start time: today's date 08:00 AM  and End time: today's date 04:00 PM | |
+            | Select Priority: 'High', Status: default and Alarm option : '30 minutes before' | |
+            | Click *Save* button | |
+            | Select *Add Todo* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject: 'Todo 2' | |
+            | Enter Start time: tomorrow's date 03:00 PM and End time: tomorrow's date 04:00 PM | |
+            | Select Priority: 'Low', Status: 'default' and Alarm option: '15 minutes before' | |
+            | Click *Save* button | Verify that 'Todo 1' and 'Todo 2' are listed |
+            | If platform(backend) supports Journal entries then add a Journal entry: | |
+            | Select *Add Journal* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject: 'Journal 1' | |
+            | Enter Start time: today\'s date 08:00 AM | |
+            | Alarm : '30 minutes before' | |
+            | Click *Save* button | |
+            | Select *Add Journal* menu entry (maybe listed under *Options* menu) | |
+            | Enter Subject: 'Journal 2' | |
+            | Enter Start time: today's date 02:00 PM | |
+            | Alarm : '15 minutes before' | |
+            | Click *Save* button | Verify that 'Journal 1' and 'Journal 2' are listed |
+            | On app menu, select *Export items* menu entry | |
+            | Select suitable location saving as testcalendar.ics | |
+            | Click *Save* | Ideally the testcalendar.ics be opened on a separate system and its contents validated |
+            | On app menu, select *Delete all items* | Verify there is no item in calendar | 
+            | Close " + testBinary + " | Test application closed successfully |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select location for testcalendar.ics entered earlier | | 
+            | Click *Select* button | Verify that calendar items 'Event 1', 'Event 2', 'Todo 1' and 'Todo 2' are present and have expected details |
+            | If platform(backend) supports Journal entries then Verify that calendar items | Verify that calendar items 'Journal 1' and 'Journal 2' are present and have expected details | 
+            | Delete events 'Event 1', 'Event 2', 'Todo 1', 'Todo 2', 'Journal 1' and 'Journal 2'(using native calendar application if neccessary) | | 
+            | Close " + testBinary + " | Test application closed successfully |
+        "));
+    },
+
+    import_ical_data_format: function()
+    {
+        // Test meta data
+        testTitle = "Versitorganizer - Export ical";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify ical data can be imported";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Import and export organizer data* button | |
+            | Click *Create template* button and press *Import item* | Verify that the type, name, start time and end time in the screen right are the same as the ical data template |
+        "));
+    },
+
+    import_vcal_data_format: function()
+    {
+        // Test meta data
+        testTitle = "Versitorganizer - Export ical";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify vcal data can be imported";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Import and export organizer data* button | |
+            | Click *Create template* button | |
+            | Modify the calendar data as vcal format | |
+            | Press *Import item* | Verify that the type, name, start time and end time in the screen right are the same as the vcal data |
+        "));
+    },
 }

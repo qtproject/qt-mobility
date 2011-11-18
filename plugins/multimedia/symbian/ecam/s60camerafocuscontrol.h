@@ -44,8 +44,6 @@
 
 #include <qcamerafocuscontrol.h>
 
-#include "s60cameraadvsettings.h"
-
 QT_USE_NAMESPACE
 
 QT_FORWARD_DECLARE_CLASS(S60CameraService)
@@ -95,18 +93,11 @@ Q_SIGNALS: // QCameraFocusControl
     void focusZonesChanged();
 */
 
-private slots: // Internal Slots
-
-    void resetAdvancedSetting();
-
 private: // Data
     S60ImageCaptureSession  *m_session;
     S60CameraService        *m_service;
-    S60CameraAdvSettings    *m_advancedSettings;
-    bool                    m_isFocusLocked;
     qreal                   m_opticalZoomValue;
     qreal                   m_digitalZoomValue;
-    QCameraFocus::FocusMode m_focusMode;
 };
 
 #endif // S60CAMERAFOCUSCONTROL_H

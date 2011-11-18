@@ -1,0 +1,25 @@
+From 42774a44ef091459e8a5a61618174368d73b81c1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Holger=20Schr=C3=B6der?= <holger.schroeder.ext@basyskom.de>
+Date: Thu, 6 Oct 2011 13:44:16 +0200
+Subject: [PATCH 2/8] disable qdeclarativecontact test
+
+---
+ .../qdeclarativecontact/qdeclarativecontact.pro    |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/tests/auto/qdeclarativecontact/qdeclarativecontact.pro b/tests/auto/qdeclarativecontact/qdeclarativecontact.pro
+index ed80c15..c2c86ba 100644
+--- a/tests/auto/qdeclarativecontact/qdeclarativecontact.pro
++++ b/tests/auto/qdeclarativecontact/qdeclarativecontact.pro
+@@ -80,6 +80,8 @@ SOURCES += tst_qdeclarativecontact.cpp \
+ 
+ include(../../../plugins/declarative/common/dynamicproperties.pri)
+ 
++maemo*:CONFIG += insignificant_test
++
+ # reserved for future use
+ #symbian: {
+ #    importFiles.sources = data
+-- 
+1.7.4.1
+

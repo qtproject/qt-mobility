@@ -74,11 +74,8 @@ BluetoothSymbianPairingAdapter::BluetoothSymbianPairingAdapter(const QBluetoothA
     , m_errorCode(0)
     , m_pairingErrorString()
 {
-    TRAP(m_errorCode, m_pairingEngine = CBTEngConnMan::NewL(this))
-
-    if (m_errorCode != KErrNone)
-        emit pairingError(m_errorCode);
 }
+
 BluetoothSymbianPairingAdapter::~BluetoothSymbianPairingAdapter()
 {
     delete m_pairingEngine;
@@ -97,12 +94,21 @@ QString BluetoothSymbianPairingAdapter::pairingErrorString() const
 void BluetoothSymbianPairingAdapter::startPairing(QBluetoothLocalDevice::Pairing pairing)
 {
     TBTDevAddr btAddress(m_address.toUInt64());
+
+    if (!m_pairingEngine) {
+        TRAPD(result, m_pairingEngine = CBTEngConnMan::NewL(this))
+        if (result != KErrNone) {
+            PairingComplete(btAddress, result);
+            return;
+        }
+    }
+
     // start async pairing process
     m_pairingOngoing = true;
     int error = KErrBadHandle;
 
     if (m_pairingEngine) {
-        error =KErrNone;
+        error = KErrNone;
         error = m_pairingEngine->PairDevice(btAddress);
     }
 

@@ -101,10 +101,43 @@ The map data is composed of images collected by satellites during the daytime.
 
 \value SatelliteMapNight
 The map data is composed of images collected by satellites during the nighttime.
+For the online nokia plugin the SatelliteMapDay data is being used.
 
 \value TerrainMap
 The map data is a graphical representation of terrain features.  This may also
 include some of the information provided by QGraphicsGeoMap::StreetMap.
+
+\value HybridMap
+The map data is composed of images collected by satellites during the daytime,
+on top of which there is a graphical representation of streets superimposed.
+
+\value TransitMap
+The map data is a graphical representation of streets and building boundaries,
+on top of which there is a public transport scheme superimposed.
+
+\value GrayStreetMap
+The map data is a color-reduced version of the QGraphicsGeoMap::StreetMap map data.
+
+\value MobileStreetMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::StreetMap map data.
+
+\value MobileTerrainMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::TerrainMap map data.
+
+\value MobileHybridMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::HybridMap map data.
+
+\value MobileTransitMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::TransitMap map data.
+
+\value MobileGrayStreetMap
+The map data is a mobile scheme (increased font and line size) of
+the QGraphicsGeoMap::GrayStreetMap map data.
+
 */
 
 /*!
@@ -234,7 +267,7 @@ void QGraphicsGeoMap::updateMapDisplay(const QRectF &target)
 
 /*!
     \property QGraphicsGeoMap::minimumZoomLevel
-    \brief This property holds the minimum zoom level supported by the
+    \brief the minimum zoom level supported by the
     QGeoMappingManager associated with this widget.
 
     Larger values of the zoom level correspond to more detailed views of the
@@ -251,7 +284,7 @@ qreal QGraphicsGeoMap::minimumZoomLevel() const
 
 /*!
     \property QGraphicsGeoMap::maximumZoomLevel
-    \brief This property holds the maximum zoom level supported by the
+    \brief the maximum zoom level supported by the
     QGeoMappingManager associated with this widget.
 
     Larger values of the zoom level correspond to more detailed views of the
@@ -268,7 +301,7 @@ qreal QGraphicsGeoMap::maximumZoomLevel() const
 
 /*!
     \property QGraphicsGeoMap::zoomLevel
-    \brief This property holds the zoom level of the map.
+    \brief the zoom level of the map.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -293,7 +326,7 @@ qreal QGraphicsGeoMap::zoomLevel() const
 }
 /*!
     \property QGraphicsGeoMap::supportsBearing
-    \brief This property holds whether bearing is supported by the
+    \brief  whether bearing is supported by the
     QGeoMappingManager associated with this widget.
     \since 1.2
 */
@@ -307,7 +340,7 @@ bool QGraphicsGeoMap::supportsBearing() const
 
 /*!
     \property QGraphicsGeoMap::bearing
-    \brief This property holds the bearing of the map.
+    \brief the bearing of the map.
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
@@ -332,7 +365,7 @@ qreal QGraphicsGeoMap::bearing() const
 
 /*!
     \property QGraphicsGeoMap::supportsTilting
-    \brief This property holds whether tilting is supported by the
+    \brief whether tilting is supported by the
     QGeoMappingManager associated with this widget.
     \since 1.2
 */
@@ -346,7 +379,7 @@ bool QGraphicsGeoMap::supportsTilting() const
 
 /*!
     \property QGraphicsGeoMap::minimumTilt
-    \brief This property holds the minimum tilt supported by the
+    \brief the minimum tilt supported by the
     QGeoMappingManager associated with this widget.
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
@@ -363,7 +396,7 @@ qreal QGraphicsGeoMap::minimumTilt() const
 
 /*!
     \property QGraphicsGeoMap::maximumTilt
-    \brief This property holds the maximum tilt supported by the
+    \brief the maximum tilt supported by the
     QGeoMappingManager associated with this widget.
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
@@ -380,7 +413,7 @@ qreal QGraphicsGeoMap::maximumTilt() const
 
 /*!
     \property QGraphicsGeoMap::tilt
-    \brief This property holds the tilt of the map.
+    \brief the tilt of the map.
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
@@ -429,7 +462,7 @@ void QGraphicsGeoMap::pan(int dx, int dy)
 
 /*!
     \property QGraphicsGeoMap::center
-    \brief This property holds the coordinate at the center of the map viewport.
+    \brief the coordinate at the center of the map viewport.
 
     Panning the map can be more efficient than changing the center by small
     increments.
@@ -464,7 +497,7 @@ QList<QGraphicsGeoMap::MapType> QGraphicsGeoMap::supportedMapTypes() const
 
 /*!
   \property QGraphicsGeoMap::mapType
-  \brief This property holds the type of map data displayed by the map.
+  \brief the type of map data displayed by the map.
 
   Setting mapType to a type not present in supportedMapTypes() will do
   nothing.
@@ -503,7 +536,7 @@ QList<QGraphicsGeoMap::ConnectivityMode> QGraphicsGeoMap::supportedConnectivityM
 
 /*!
   \property QGraphicsGeoMap::connectivityMode
-  \brief This property holds the connectivity mode used to obtain the map data.
+  \brief the connectivity mode used to obtain the map data.
 
   Setting connectivityMode to a mode not present in supportedConnectivityModes() will do
   nothing.

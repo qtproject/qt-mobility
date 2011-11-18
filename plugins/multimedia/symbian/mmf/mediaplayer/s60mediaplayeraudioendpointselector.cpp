@@ -39,11 +39,10 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
 #include "s60mediaplayeraudioendpointselector.h"
+#include "s60mmftrace.h"
 
 #include <QtGui/QIcon>
 #include <QtCore/QDebug>
@@ -56,7 +55,7 @@ S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector(QObject
    :QAudioEndpointSelector(parent)
     , m_control(0)
 {
-    DP0("S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector +++");
+    TRACE("S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector" << qtThisPtr());
 
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
     m_audioEndpointNames.append("Default");
@@ -64,8 +63,6 @@ S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector(QObject
     m_audioEndpointNames.append("None");
     m_audioEndpointNames.append("Earphone");
     m_audioEndpointNames.append("Speaker");
-
-    DP0("S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector ---");
 }
 
 /*!
@@ -74,8 +71,7 @@ S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector(QObject
 
 S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector()
 {
-    DP0("S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector +++");
-    DP0("S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector ---");
+    TRACE("S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector" << qtThisPtr());
 }
 
 /*!
@@ -84,8 +80,6 @@ S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector()
 
 QList<QString> S60MediaPlayerAudioEndpointSelector::availableEndpoints() const
 {
-    DP0("S60MediaPlayerAudioEndpointSelector::availableEndpoints");
-
     return m_audioEndpointNames;
 }
 
@@ -95,8 +89,6 @@ QList<QString> S60MediaPlayerAudioEndpointSelector::availableEndpoints() const
 
 QString S60MediaPlayerAudioEndpointSelector::endpointDescription(const QString& name) const
 {
-    DP0("S60MediaPlayerAudioEndpointSelector::endpointDescription");
-
     if (name == QString("Default")) //ENoPreference
         return QString("Used to indicate that the playing audio can be routed to"
             "any speaker. This is the default value for audio.");
@@ -122,16 +114,10 @@ QString S60MediaPlayerAudioEndpointSelector::endpointDescription(const QString& 
 
 QString S60MediaPlayerAudioEndpointSelector::activeEndpoint() const
 {
-    DP0("S60MediaPlayerAudioEndpointSelector::activeEndpoint");
-
     if (m_control->session()) {
-        DP1("S60MediaPlayerAudioEndpointSelector::activeEndpoint - ",
-                m_control->session()->activeEndpoint());
         return m_control->session()->activeEndpoint();
     }
     else {
-        DP1("S60MediaPlayerAudioEndpointSelector::activeEndpoint - ",
-                m_control->mediaControlSettings().audioEndpoint());
         return m_control->mediaControlSettings().audioEndpoint();
     }
 }
@@ -142,16 +128,10 @@ QString S60MediaPlayerAudioEndpointSelector::activeEndpoint() const
 
 QString S60MediaPlayerAudioEndpointSelector::defaultEndpoint() const
 {
-    DP0("S60MediaPlayerAudioEndpointSelector::defaultEndpoint");
-
     if (m_control->session()) {
-        DP1("S60MediaPlayerAudioEndpointSelector::defaultEndpoint - ",
-                m_control->session()->defaultEndpoint());
         return m_control->session()->defaultEndpoint();
     }
     else {
-        DP1("S60MediaPlayerAudioEndpointSelector::defaultEndpoint - ",
-                m_control->mediaControlSettings().audioEndpoint());
         return m_control->mediaControlSettings().audioEndpoint();
     }
 }
@@ -162,21 +142,16 @@ QString S60MediaPlayerAudioEndpointSelector::defaultEndpoint() const
 
 void S60MediaPlayerAudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
-    DP0("S60MediaPlayerAudioEndpointSelector::setActiveEndpoin +++");
-
-    DP1("S60MediaPlayerAudioEndpointSelector::setActiveEndpoint - ", name);
-
     QString oldEndpoint = m_control->mediaControlSettings().audioEndpoint();
 
     if (name != oldEndpoint && (name == QString("Default") || name == QString("All") ||
         name == QString("None") || name == QString("Earphone") || name == QString("Speaker"))) {
-
+        TRACE("S60MediaPlayerAudioEndpointSelector::setActiveEndpoint" << qtThisPtr()
+              << "name" << name);
         if (m_control->session()) {
             m_control->session()->setActiveEndpoint(name);
             emit activeEndpointChanged(name);
         }
         m_control->setAudioEndpoint(name);
     }
-
-    DP0("S60MediaPlayerAudioEndpointSelector::setActiveEndpoin ---");
 }

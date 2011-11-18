@@ -128,7 +128,7 @@ data=\epoc32\data\z\resource\qt\imports\qtmobility\connectivity\declarative_conn
 data=\epoc32\data\z\resource\qt\imports\qtmobility\connectivity\qmldir                   resource\qt\imports\qtmobility\connectivity\qmldir
 
 //Resource
-data=\epoc32\data\z\private\2002ac7f\qtserviceframework_4.7_system.db                    private\2002ac7f\qtserviceframework_4.7_system.db
+data=\epoc32\data\z\private\2002ac7f\qtserviceframework_4.8_system.db                    private\2002ac7f\qtserviceframework_4.8_system.db
 data=\epoc32\data\z\private\10202D56\import\packages\2002AC89\backup_registration.xml    private\10202D56\import\packages\2002AC89\backup_registration.xml
 
 // Symbian3 PS1 support

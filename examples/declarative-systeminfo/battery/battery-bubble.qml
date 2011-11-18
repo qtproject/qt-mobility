@@ -50,6 +50,7 @@ Rectangle{
 
     property int speed: 1000;
 
+//! [battery-info]
     DeviceInfo {
         id: deviceinfo;
         //        onBatteryStatusChanged : doBatteryStatusChange(status);
@@ -63,31 +64,36 @@ Rectangle{
         monitorCurrentProfileChanges: true
         monitorBluetoothStateChanges: true
     }
+//! [battery-info]
 
     property alias batlevel: deviceinfo.battlevel;
     property string oldstate;
 
+//! [battery1-doBatteryLevelChange1]
     function doBatteryLevelChange(level) {
-         if(level > 90) {
+//! [battery1-doBatteryLevelChange1]
+        if (level > 90) {
             speed = 1000;
-        } else if(level > 70) {
+        } else if (level > 70) {
             speed = 1500;
-        } else if(level > 60) {
+        } else if (level > 60) {
             speed = 2000;
-        } else if(level > 50) {
+        } else if (level > 50) {
             speed = 2500;
-        } else if(level > 40) {
+        } else if (level > 40) {
             speed = 3000;
-        } else if(level > 10) {
+        } else if (level > 10) {
             speed = 3500;
-        } else if(level < 11) {
+        } else if (level < 11) {
             speed = 4000;
         }
         floorParticles.burst(level);
+//! [battery1-doBatteryLevelChange2]
         batlevel = level;
         oldstate = img.state;
         img.state = "levelchange"
         img.state = oldstate;
+//! [battery1-doBatteryLevelChange2]
         console.debug("batteryChangeLevel: " );
         getPowerState();
 }
@@ -148,7 +154,7 @@ Rectangle{
     }
 
     function particleState() {
-        if(img.state == "Battery") {
+        if (img.state == "Battery") {
             particles.burst(50,200);
         }
     }
@@ -197,6 +203,7 @@ Rectangle{
             PropertyChanges { target: floorParticles; count:0 }
         },
 
+//! [battery1-state]
         State {
             name: "Battery"
             when: deviceinfo.currentPowerState == 1
@@ -207,6 +214,8 @@ Rectangle{
             }
             PropertyChanges { target: floorParticles; count: batlevel }
         },
+//! [battery1-state]
+//! [battery1-state2]
         State {
             name: "levelchange"
             PropertyChanges {
@@ -224,6 +233,7 @@ Rectangle{
                 running: true;
             }
         }
+//! [battery1-state2]
         ]
 
 

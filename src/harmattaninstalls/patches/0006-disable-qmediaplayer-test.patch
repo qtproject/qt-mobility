@@ -1,0 +1,19 @@
+From d7e3d56befd60b079447031254676480b1f2a188 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Holger=20Schr=C3=B6der?= <holger.schroeder.ext@basyskom.de>
+Date: Thu, 6 Oct 2011 13:50:52 +0200
+Subject: [PATCH 6/8] disable qmediaplayer test
+
+---
+diff --git a/tests/auto/qmediaplayer/qmediaplayer.pro b/tests/auto/qmediaplayer/qmediaplayer.pro
+index 238ac26..986cb6c 100644
+--- a/tests/auto/qmediaplayer/qmediaplayer.pro
++++ b/tests/auto/qmediaplayer/qmediaplayer.pro
+@@ -30,3 +30,5 @@ include (../../../common.pri)
+ CONFIG += mobility
+ MOBILITY = multimedia
+ 
++maemo*:CONFIG += insignificant_test
++
+-- 
+1.7.4.1
+

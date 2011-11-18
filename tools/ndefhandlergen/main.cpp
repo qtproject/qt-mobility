@@ -61,7 +61,7 @@ struct Data
 void showHelp()
 {
     qWarning("Generate platform specific NFC message handler registration files.\n"
-             "Usage: nfcxmlgen [options]\n"
+             "Usage: ndefhandlergen [options]\n"
              "\n"
              "    -template TEMPLATE    Template to use.\n"
              "    -appname APPNAME      Name of the application.\n"
@@ -116,7 +116,7 @@ bool generateHarmattan(Data data)
     const QString outputFile = QLatin1String("ndefhandler_") + data.applicationName;
 
     if (data.matchString.isEmpty())
-        data.matchString = data.dataType + QLatin1String("[1:*];");
+        data.matchString = QLatin1Char('\'') + data.dataType + QLatin1String("'[1:*];");
 
     bool success = false;
 

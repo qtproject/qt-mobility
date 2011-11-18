@@ -41,14 +41,6 @@
 
 #include "qnetworkconfiguration.h"
 
-#ifdef Q_OS_SYMBIAN
-#include "qnetworkconfiguration_s60_p.h"
-#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
-#include "qnetworkconfiguration_maemo_p.h"
-#else
-#include "qnetworkconfiguration_p.h"
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -59,6 +51,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtNetwork
     \ingroup bearer
     \since 1.0
+    \deprecated
 
     QNetworkConfiguration encapsulates a single access point or service network.
     In most cases a single access point configuration can be mapped to one network
@@ -194,7 +187,7 @@ QTM_BEGIN_NAMESPACE
     \sa isValid()
 */
 QNetworkConfiguration::QNetworkConfiguration()
-    : d(0)
+    : QT_PREPEND_NAMESPACE(QNetworkConfiguration)()
 {
 }
 
@@ -202,16 +195,22 @@ QNetworkConfiguration::QNetworkConfiguration()
     Creates a copy of the QNetworkConfiguration object contained in \a other.
 */
 QNetworkConfiguration::QNetworkConfiguration(const QNetworkConfiguration& other)
-    : d(other.d)
+    : QT_PREPEND_NAMESPACE(QNetworkConfiguration)(other)
 {
 }
+
+QNetworkConfiguration::QNetworkConfiguration(const QT_PREPEND_NAMESPACE(QNetworkConfiguration) &other)
+    : QT_PREPEND_NAMESPACE(QNetworkConfiguration)(other)
+{
+}
+
 
 /*!
     Copies the content of the QNetworkConfiguration object contained in \a other into this one.
 */
 QNetworkConfiguration& QNetworkConfiguration::operator=(const QNetworkConfiguration& other)
 {
-    d = other.d;
+    QT_PREPEND_NAMESPACE(QNetworkConfiguration)::operator=(other);
     return *this;
 }
 
@@ -228,13 +227,7 @@ QNetworkConfiguration::~QNetworkConfiguration()
 */
 bool QNetworkConfiguration::operator==(const QNetworkConfiguration& other) const
 {
-    if (!d)
-        return !other.d;
-
-    if (!other.d)
-        return false;
-
-    return (d == other.d);
+    return QT_PREPEND_NAMESPACE(QNetworkConfiguration)::operator==(other);
 }
 
 /*!
@@ -252,7 +245,7 @@ bool QNetworkConfiguration::operator==(const QNetworkConfiguration& other) const
 */
 QString QNetworkConfiguration::name() const
 {
-    return d ? d->name : QString();
+    return QT_PREPEND_NAMESPACE(QNetworkConfiguration)::name();
 }
 
 /*!
@@ -261,7 +254,7 @@ QString QNetworkConfiguration::name() const
 */
 QString QNetworkConfiguration::identifier() const
 {
-    return d ? d->id : QString();
+    return QT_PREPEND_NAMESPACE(QNetworkConfiguration)::identifier();
 }
 
 /*!
@@ -274,7 +267,7 @@ QString QNetworkConfiguration::identifier() const
 */
 QNetworkConfiguration::Type QNetworkConfiguration::type() const
 {
-    return d ? d->type : QNetworkConfiguration::Invalid;
+    return (QNetworkConfiguration::Type)QT_PREPEND_NAMESPACE(QNetworkConfiguration)::type();
 }
 
 /*!
@@ -289,7 +282,7 @@ QNetworkConfiguration::Type QNetworkConfiguration::type() const
 */
 bool QNetworkConfiguration::isValid() const
 {
-    return d ? d->isValid : false;
+    return QT_PREPEND_NAMESPACE(QNetworkConfiguration)::isValid();
 }
 
 /*!
@@ -297,7 +290,8 @@ bool QNetworkConfiguration::isValid() const
 */
 QNetworkConfiguration::StateFlags QNetworkConfiguration::state() const
 {
-    return d ? d->state : QNetworkConfiguration::Undefined;
+    int rv = QT_PREPEND_NAMESPACE(QNetworkConfiguration)::state();
+    return (QNetworkConfiguration::StateFlags)rv;
 }
 
 /*!
@@ -309,7 +303,8 @@ QNetworkConfiguration::StateFlags QNetworkConfiguration::state() const
 */
 QNetworkConfiguration::Purpose QNetworkConfiguration::purpose() const
 {
-    return d ? d->purpose : QNetworkConfiguration::UnknownPurpose;
+    int rv = QT_PREPEND_NAMESPACE(QNetworkConfiguration)::purpose();
+    return (QNetworkConfiguration::Purpose)rv;
 }
 
 /*!
@@ -317,7 +312,7 @@ QNetworkConfiguration::Purpose QNetworkConfiguration::purpose() const
 */
 bool QNetworkConfiguration::isRoamingAvailable() const
 {
-    return d ? d->roamingSupported : false;
+    return QT_PREPEND_NAMESPACE(QNetworkConfiguration)::isRoamingAvailable();
 }
 
 /*!
@@ -327,24 +322,12 @@ bool QNetworkConfiguration::isRoamingAvailable() const
 */
 QList<QNetworkConfiguration> QNetworkConfiguration::children() const
 {
-    QList<QNetworkConfiguration> results;
-    if (type() != QNetworkConfiguration::ServiceNetwork || !isValid() )
-        return results;
-
-    QMutableListIterator<QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> > iter(d->serviceNetworkMembers);
-    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p(0);
-    while(iter.hasNext()) {
-        p = iter.next();
-        //if we have an invalid member get rid of it -> was deleted earlier on
-        if (!p->isValid)
-            iter.remove();
-
-        QNetworkConfiguration item;
-        item.d = p;
-        results << item;
+    QList<QNetworkConfiguration> rv;
+    QList<QT_PREPEND_NAMESPACE(QNetworkConfiguration)> result = QT_PREPEND_NAMESPACE(QNetworkConfiguration)::children();
+    foreach (const QT_PREPEND_NAMESPACE(QNetworkConfiguration) &item, result) {
+        rv.append(QNetworkConfiguration(item));
     }
-
-    return results;
+    return rv;
 }
 
 /*!
@@ -391,10 +374,7 @@ QList<QNetworkConfiguration> QNetworkConfiguration::children() const
 */
 QString QNetworkConfiguration::bearerName() const
 {
-    if (!isValid())
-        return QString();
-
-    return d->bearerName();
+    return QT_PREPEND_NAMESPACE(QNetworkConfiguration)::bearerName();
 }
 
 

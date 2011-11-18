@@ -330,7 +330,4 @@ void QGeoSearchManagerEngineNokia::currentMobileCountryCodeChanged(const QString
     if (mcc == "460" || mcc == "461" || mcc == "454" || mcc == "455") {
         m_host="pr.geo.maps.svc.nokia.com.cn";
     }
-     else{
-        m_host ="loc.desktop.maps.svc.ovi.com";
-    }
 }

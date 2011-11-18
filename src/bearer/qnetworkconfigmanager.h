@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QNETWORKCONFIGURATIONMANAGER_H
-#define QNETWORKCONFIGURATIONMANAGER_H
+#ifndef QTM_NETWORKCONFIGURATIONMANAGER_H
+#define QTM_NETWORKCONFIGURATIONMANAGER_H
 
 #include "qmobilityglobal.h"
 
@@ -98,5 +98,5 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //QNETWORKCONFIGURATIONMANAGER_H
+#endif //QTM_NETWORKCONFIGURATIONMANAGER_H
 

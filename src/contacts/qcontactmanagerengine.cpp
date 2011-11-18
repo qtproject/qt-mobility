@@ -1840,10 +1840,6 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
                 return (a < b) ? -1 : ((a == b) ? 0 : 1);
             }
 
-        case QVariant::Char: // Needs to do proper string comparison
-        case QVariant::String:
-            return compareStrings(first.toString(), second.toString(), sensitivity);
-
         case QVariant::Double:
             {
                 const double a = first.toDouble();
@@ -1896,8 +1892,11 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
                 return 0; // they are equal
             }
 
+        case QVariant::Char:
+        case QVariant::String:
         default:
-            return 0;
+            // use lexical comparison as fallback...
+            return compareStrings(first.toString(), second.toString(), sensitivity);
     }
 }
 
