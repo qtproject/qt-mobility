@@ -521,11 +521,9 @@ qint64 S60MediaPlayerSession::position() const
 
     qint64 pos = 0;
     TRAP_IGNORE(pos = doGetPositionL());
-    if (pos >= m_progressduration)
-        return pos;
-    else if (pos < m_progressduration)
-        return m_duration;
-
+    if (pos < m_progressduration)
+        pos = m_duration;
+    return pos;
 }
 
 /*!
