@@ -474,7 +474,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         case QSystemNetworkInfo::LteMode:
         {
         #ifndef ETELMM_SUPPORTED
-            CTelephony::TRegistrationStatus networkStatus = deviceInfo
+            CTelephony::TRegistrationStatus networkStatus = m_deviceInfo
                 ->cellNetworkRegistrationInfo()->cellNetworkStatus();
 
             CTelephony::TNetworkMode networkMode = m_deviceInfo->cellNetworkInfo()->networkMode();
