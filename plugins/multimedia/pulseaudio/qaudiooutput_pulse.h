@@ -104,7 +104,6 @@ private:
     qint64 write(const char *data, qint64 len);
 
 private Q_SLOTS:
-    bool deviceReady();
     void userFeed();
 
 private:
@@ -116,7 +115,6 @@ private:
     bool m_pullMode;
     bool m_opened;
     QIODevice *m_audioSource;
-    int m_bytesAvailable;
     QTimer m_periodTimer;
     pa_stream *m_stream;
     int m_notifyInterval;
