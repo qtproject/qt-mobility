@@ -22,7 +22,7 @@
 
 ; DEPLOYMENT
 "/epoc32/release/armv5/urel/qtbearer.dll"                  - "!:\sys\bin\qtbearer.dll"
-"qtbearer{000a0000}.dll"                                   - "!:\sys\bin\qtbearer{000a0000}.dll"
+"/epoc32/release/armv5/urel/qtbearer{000a0000}.dll"        - "!:\sys\bin\qtbearer{000a0000}.dll"
 "/epoc32/release/armv5/urel/qtlocation.dll"                - "!:\sys\bin\qtlocation.dll"
 "/epoc32/release/armv5/urel/qtpublishsubscribe.dll"        - "!:\sys\bin\qtpublishsubscribe.dll"
 "/epoc32/release/armv5/urel/qpspathmapperserver.exe"       - "!:\sys\bin\qpspathmapperserver.exe"
