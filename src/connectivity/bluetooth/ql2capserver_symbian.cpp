@@ -71,7 +71,6 @@ void QL2capServer::close()
         // so just ignore the problem.
         return;
         }
-    d->socket->setSocketState(QBluetoothSocket::ClosingState);
     d->socket->close();
     // force active object (socket) to run and shutdown socket.
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -166,9 +165,9 @@ bool QL2capServer::listen(const QBluetoothAddress &address, quint16 port)
         }
     QBluetoothSocketPrivate *pd = pendingSocket->d_ptr;
     pd->ensureBlankNativeSocket(QBluetoothSocket::L2capSocket);
-    connect(d->socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(d->socket, SIGNAL(connected()), this, SLOT(connected()));
-    connect(d->socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socketError(QBluetoothSocket::SocketError)));
+    connect(d->socket, SIGNAL(disconnected()), this, SLOT(_q_disconnected()));
+    connect(d->socket, SIGNAL(connected()), this, SLOT(_q_connected()));
+    connect(d->socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(_q_socketError(QBluetoothSocket::SocketError)));
     if (d->ds->iSocket->Accept(*pd->iSocket) == KErrNone)
         {
         d->socket->setSocketState(QBluetoothSocket::ListeningState);
