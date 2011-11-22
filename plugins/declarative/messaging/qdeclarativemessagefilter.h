@@ -111,11 +111,11 @@ class QDeclarativeMessageFilter : public QDeclarativeMessageFilterBase
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(Comparator comparator READ comparator WRITE setComparator NOTIFY comparatorChanged)
 
-    Q_ENUMS(FilterType);
-    Q_ENUMS(Priority);
-    Q_ENUMS(Comparator);
-    Q_ENUMS(Type);
-    Q_ENUMS(Status);
+    Q_ENUMS(FilterType)
+    Q_ENUMS(Priority)
+    Q_ENUMS(Comparator)
+    Q_ENUMS(Type)
+    Q_ENUMS(Status)
 
 public:
     QDeclarativeMessageFilter(QObject *parent=0);

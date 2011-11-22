@@ -29,7 +29,7 @@ MOBILITY = versit \
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3 = 0x20034591
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.CAPABILITY = ALL -TCB
 
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}

@@ -90,7 +90,10 @@
 #include <etelmm.h>
 #endif
 
+#ifdef LOCKANDFLIP_SUPPORTED
 const TUint32 KAknKeyboardType = 0x0000000B;
+#endif
+
 const float KMMPerTwip  = 0.0177f; //Milimeter Per Twip
 
 QTM_BEGIN_NAMESPACE

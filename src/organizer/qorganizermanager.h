@@ -179,8 +179,8 @@ private:
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);
     Q_DISABLE_COPY(QOrganizerManager)
 
-    Q_PRIVATE_SLOT(d, void _q_itemsUpdated(const QList<QOrganizerItemId>& ids));
-    Q_PRIVATE_SLOT(d, void _q_itemsDeleted(const QList<QOrganizerItemId>& ids));
+    Q_PRIVATE_SLOT(d, void _q_itemsUpdated(const QList<QOrganizerItemId>& ids))
+    Q_PRIVATE_SLOT(d, void _q_itemsDeleted(const QList<QOrganizerItemId>& ids))
 
     // private data pointer
     QOrganizerManagerData* d;

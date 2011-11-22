@@ -70,8 +70,8 @@ class QDeclarativeDeviceInfo : public QSystemDeviceInfo
     Q_PROPERTY(int voiceRingtoneVolume READ voiceRingtoneVolume CONSTANT)
     Q_PROPERTY(bool vibrationActive READ vibrationActive CONSTANT)
 
-    Q_PROPERTY(bool primaryKeypadLightOn READ primaryKeypadLightOn CONSTANT);
-    Q_PROPERTY(bool secondaryKeypadLightOn READ secondaryKeypadLightOn CONSTANT);
+    Q_PROPERTY(bool primaryKeypadLightOn READ primaryKeypadLightOn CONSTANT)
+    Q_PROPERTY(bool secondaryKeypadLightOn READ secondaryKeypadLightOn CONSTANT)
 
 public:
     explicit QDeclarativeDeviceInfo(QObject *parent = 0);
