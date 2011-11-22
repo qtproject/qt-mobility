@@ -1280,7 +1280,7 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
-    virtual ExpressionStatementAST *clone(MemoryPool *pool) const;;
+    virtual ExpressionStatementAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);

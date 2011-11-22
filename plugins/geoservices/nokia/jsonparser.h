@@ -76,7 +76,7 @@ public:
         if (pos < data.size())
             return data[pos].toLatin1();
         else
-            return -1;
+            return static_cast<char>(-1);
     }
 
     QChar peekQ() const {

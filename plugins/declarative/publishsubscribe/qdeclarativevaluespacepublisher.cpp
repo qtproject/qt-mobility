@@ -115,10 +115,10 @@ QDeclarativeValueSpacePublisherQueueItem::QDeclarativeValueSpacePublisherQueueIt
 QDeclarativeValueSpacePublisher::QDeclarativeValueSpacePublisher(QObject *parent)
     : QObject(parent),
       d(new QDeclarativeValueSpacePublisherMetaObject(this)),
-      m_publisher(0),
-      m_pathSet(false),
       m_hasSubscribers(false),
-      m_complete(false)
+      m_complete(false),
+      m_publisher(0),
+      m_pathSet(false)
 {
 }
 

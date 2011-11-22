@@ -104,6 +104,7 @@ class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserSt
     Q_PROPERTY(QDeclarativeComponent* delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
+    Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     QDeclarativeGeoMapObjectView(QDeclarativeItem *parent = 0);
