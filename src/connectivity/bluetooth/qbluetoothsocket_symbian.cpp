@@ -352,6 +352,7 @@ void QBluetoothSocketPrivate::HandleShutdownCompleteL(TInt aErr)
     transmitting = false;
     writeSize = 0;
     iSocket->AsyncDelete();
+    iSocket = 0;
     emit q->disconnected();
 }
 

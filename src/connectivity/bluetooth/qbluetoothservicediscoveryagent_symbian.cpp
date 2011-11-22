@@ -190,18 +190,21 @@ void QBluetoothServiceDiscoveryAgentPrivate::AttributeRequestComplete(TSdpServRe
   qDebug() << "AttributeRequestComplete";
     Q_Q(QBluetoothServiceDiscoveryAgent);
 
-    if (aError == KErrNone && m_sdpAgent) {
+    if (aError == KErrNone) {
         m_serviceInfo.setDevice(discoveredDevices.at(0));
         discoveredServices.append(m_serviceInfo);
         m_serviceInfo = QBluetoothServiceInfo();
         if (discoveredServices.last().isValid())
-            {
             emit q->serviceDiscovered(discoveredServices.last());
+
+        // If the search is stopped as a result of serviceDiscovered signal,
+        // m_sdpAgent will get deleted => need to check the pointer here
+        if (m_sdpAgent) {
+            TRAPD(err, m_sdpAgent->NextRecordRequestL());
+            if (err != KErrNone && singleDevice) {
+                error = QBluetoothServiceDiscoveryAgent::UnknownError;
+                emit q->error(error);
             }
-        TRAPD(err, m_sdpAgent->NextRecordRequestL());
-        if (err != KErrNone && singleDevice) {
-            error = QBluetoothServiceDiscoveryAgent::UnknownError;
-            emit q->error(error);
         }
     } else if (aError != KErrEof && singleDevice) {
         error = QBluetoothServiceDiscoveryAgent::UnknownError;

@@ -72,7 +72,6 @@ void QRfcommServer::close()
         // so just ignore the problem.
         return;
         }
-    d->socket->setSocketState(QBluetoothSocket::ClosingState);
     d->socket->close();
     // force active object (socket) to run and shutdown socket.
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -121,7 +120,7 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
     else
         addr.SetPort(port);
 
-		TBTServiceSecurity security;
+    TBTServiceSecurity security;
     switch (d->securityFlags) {
         case QBluetooth::Authentication:
             security.SetAuthentication(EMitmDesired);
@@ -239,7 +238,7 @@ void QRfcommServerPrivate::_q_connected()
     QBluetoothSocket *pendingSocket = new QBluetoothSocket(QBluetoothSocket::UnknownSocketType);
     if(!pendingSocket)
         {
-        delete socket;
+        socket->deleteLater();
         socket = 0;
         return;
         }
@@ -255,7 +254,8 @@ void QRfcommServerPrivate::_q_connected()
         {
         // we might reach this statement if we have reach
         // maxPendingConnections
-        delete socket, pendingSocket;
+        delete pendingSocket;
+        socket->deleteLater();
         socket = 0;
         return;
         }
@@ -263,13 +263,13 @@ void QRfcommServerPrivate::_q_connected()
 
 void QRfcommServerPrivate::_q_disconnected()
 {
-    delete socket;
+    socket->deleteLater();
     socket = 0;
 }
 
 void QRfcommServerPrivate::_q_socketError(QBluetoothSocket::SocketError err)
 {
-    delete socket;
+    socket->deleteLater();
     socket = 0;
 }
 
