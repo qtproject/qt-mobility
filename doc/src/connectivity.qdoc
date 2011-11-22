@@ -118,7 +118,19 @@ Some interesting examples for the API exist.
     \row
         \o \l{declarative-connectivity/poster}{QML Poster}
         \o A QML implementation of the NFC Annotated URL example.
+    \row
+        \o \l{https://projects.developer.nokia.com/nfcinfo}{Nfc Info}
+        \o Shows all information about NFC tags.
+    \row
+        \o \l{https://projects.developer.nokia.com/nfccorkboards}{Nfc Corkboard}
+        \o Example how to autolauch an application by touching a NFC tag.
+    \row
+        \o \l{https://projects.developer.nokia.com/nfcchat}{Nfc Chat}
+        \o NFC chat application. 
+    
 \endtable
+
+See also \l{http://www.developer.nokia.com/Develop/NFC/Code_examples/}{Nfc Code Examples} link.
 
 \section1 Main Classes
 
