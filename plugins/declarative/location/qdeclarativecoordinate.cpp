@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     \inherits QObject
     \since Mobility 1.2
 
-    \ingroup qml-location
+    \ingroup qml-location-plugin
 
     The Coordinate element is part of the \bold{QtMobility.location 1.1} module.
 */

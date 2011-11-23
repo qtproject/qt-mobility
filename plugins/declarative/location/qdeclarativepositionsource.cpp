@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
     current position.
     \inherits QObject
 
-    \ingroup qml-location
+    \ingroup qml-location-plugin
     \since Mobility 1.2
 
     The PositionSource element allows you to get information about your current position.
