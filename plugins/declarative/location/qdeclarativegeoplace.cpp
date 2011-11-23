@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass Place QDeclarativeGeoPlace
     \brief The A Place element presents basic information about a place.
-    \ingroup qml-location
+    \ingroup qml-location-plugin
     \since Mobility 1.2
 
     This element is part of the \bold{QtMobility.location 1.1} module.

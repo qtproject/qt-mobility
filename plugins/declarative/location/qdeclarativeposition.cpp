@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     \brief The Position element holds various positional data, such as coordinate
     (longitude, latitude, altitude) and speed.
     \inherits QObject
-    \ingroup qml-location
+    \ingroup qml-location-plugin
     \since Mobility 1.2
 
     The Position element holds various positional data, such as \l coordinate,

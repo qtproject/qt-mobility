@@ -46,7 +46,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass Address QDeclarativeGeoAddress
     \brief The Address element presents an address.
-    \ingroup qml-location
+    \ingroup qml-location-plugin
     \since Mobility 1.2
 
     The Address element presents an address of a location.

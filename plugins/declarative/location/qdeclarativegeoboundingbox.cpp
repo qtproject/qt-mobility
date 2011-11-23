@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \qmlclass BoundingBox QDeclarativeGeoBoundingBox
     \brief The QGeoBoundingBox class defines a rectangular geographic area.
-    \ingroup qml-location
+    \ingroup qml-location-plugin
     \since Mobility 1.2
 
     The BoundingBox class defines a rectangular geographic area.
