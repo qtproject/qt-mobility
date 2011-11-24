@@ -84,12 +84,12 @@ define CNTMODEL_DATA Core-Apps\App-Engines\CntModel\Databases
 data=DATAZ_\CNTMODEL_DATA\SQLite__Contacts.cdb		CNTMODEL_DATA\SQLite__Contacts.cdb
 data=DATAZ_\CNTMODEL_DATA\SQLite__Contacts58920.cdb	CNTMODEL_DATA\SQLite__Contacts58920.cdb
 
-file=ABI_DIR\BUILD_DIR\t_launchTest.exe	System\Programs\cntmodeltest\t_launchTest.exe
+file=ABI_DIR\BUILD_DIR\t_launchtest.exe	System\Programs\cntmodeltest\t_launchtest.exe
 file=ABI_DIR\BUILD_DIR\t_item.exe	System\Programs\cntmodeltest\t_item.exe
 file=ABI_DIR\BUILD_DIR\t_field.exe	System\Programs\cntmodeltest\t_field.exe
 file=ABI_DIR\BUILD_DIR\t_dbase2.exe	System\Programs\cntmodeltest\t_dbase2.exe
 file=ABI_DIR\BUILD_DIR\t_view.exe	System\Programs\cntmodeltest\t_view.exe
-file=ABI_DIR\BUILD_DIR\t_templ.EXE	System\Programs\cntmodeltest\t_templ.exe
+file=ABI_DIR\BUILD_DIR\t_templ.exe	System\Programs\cntmodeltest\t_templ.exe
 file=ABI_DIR\BUILD_DIR\t_vers.exe	System\Programs\cntmodeltest\t_vers.exe
 file=ABI_DIR\BUILD_DIR\t_expdel.exe	System\Programs\cntmodeltest\t_expdel.exe
 file=ABI_DIR\BUILD_DIR\t_ttvers.exe	System\Programs\cntmodeltest\t_ttvers.exe

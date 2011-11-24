@@ -22,8 +22,8 @@
 
 #include <cntperftestserver.iby>
 #include <te_performancefunctionalitysuite.iby>
-#include <TE_Cntsrv_API_Policing.IBY>
-#include <TestContactSuite.iby>
+#include <te_cntsrv_api_policing.iby>
+#include <testcontactsuite.iby>
 #include <tef_cntmodelcit.iby>
 
 
