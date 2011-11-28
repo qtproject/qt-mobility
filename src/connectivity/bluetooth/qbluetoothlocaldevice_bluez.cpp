@@ -156,13 +156,30 @@ void QBluetoothLocalDevice::powerOn()
     if (!d_ptr)
         return;
 
+    // Ensure that mode change is confirmed by first requesting a session
+    QDBusPendingReply<void> reply = d_ptr->adapter->RequestSession();
+    reply.waitForFinished();
+    if (reply.isError())
+        return;
+
     d_ptr->adapter->SetProperty(QLatin1String("Powered"), QDBusVariant(QVariant::fromValue(true)));
+
+    // Release requested session in order to keep Bluez happy
+    d_ptr->adapter->ReleaseSession();
 }
 
 void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
 {
     if (!d_ptr)
         return;
+
+    if (mode != HostPoweredOff) {
+        // Ensure that mode change is confirmed by first requesting a session
+        QDBusPendingReply<void> reply = d_ptr->adapter->RequestSession();
+        reply.waitForFinished();
+        if (reply.isError())
+            return;
+    }
 
     switch (mode) {
     case HostDiscoverableLimitedInquiry:
@@ -182,6 +199,11 @@ void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
 //        d->adapter->SetProperty(QLatin1String("Discoverable"),
 //                                QDBusVariant(QVariant::fromValue(false)));
         break;
+    }
+
+    if (mode != HostPoweredOff) {
+        // Release requested session in order to keep Bluez happy
+        d_ptr->adapter->ReleaseSession();
     }
 }
 
