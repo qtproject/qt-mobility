@@ -45,7 +45,7 @@
 #include "s60videowidgetdisplay.h"
 #include "s60videowindowcontrol.h"
 #include "s60videowindowdisplay.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
@@ -58,6 +58,7 @@
 #include <w32std.h>
 #include <mmf/common/mmferrors.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
+#include <mmf/common/mmfvideo.h>
 #include <MMFROPCustomCommandConstants.h>
 #ifdef HTTP_COOKIES_ENABLED
 #include <MMFSessionInfoCustomCommandConstants.h>
@@ -359,19 +360,21 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
         if (videoOutput) {
             if (S60VideoWidgetControl *control = qobject_cast<S60VideoWidgetControl *>(videoOutput))
                 m_videoOutputDisplay = control->display();
-            if (!m_videoOutputDisplay)
-                return;
-            m_videoOutputDisplay->setHasContent(QMediaPlayer::PlayingState == state());
-            m_videoOutputDisplay->setNativeSize(m_nativeSize);
-            connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
-            connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
-            connect(m_videoOutputDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(displayRectChanged()));
-            connect(m_videoOutputDisplay, SIGNAL(aspectRatioModeChanged(Qt::AspectRatioMode)), this, SLOT(aspectRatioChanged()));
-            connect(m_videoOutputDisplay, SIGNAL(rotationChanged(qreal)), this, SLOT(rotationChanged()));
+            else if (S60VideoWindowControl *control = qobject_cast<S60VideoWindowControl *>(videoOutput))
+                m_videoOutputDisplay = control->display();
+            if (m_videoOutputDisplay) {
+                m_videoOutputDisplay->setHasContent(QMediaPlayer::PlayingState == state());
+                m_videoOutputDisplay->setNativeSize(m_nativeSize);
+                connect(this, SIGNAL(nativeSizeChanged(QSize)), m_videoOutputDisplay, SLOT(setNativeSize(QSize)));
+                connect(m_videoOutputDisplay, SIGNAL(windowHandleChanged(RWindow *)), this, SLOT(windowHandleChanged()));
+                connect(m_videoOutputDisplay, SIGNAL(displayRectChanged(QRect, QRect)), this, SLOT(displayRectChanged()));
+                connect(m_videoOutputDisplay, SIGNAL(aspectRatioModeChanged(Qt::AspectRatioMode)), this, SLOT(aspectRatioChanged()));
+                connect(m_videoOutputDisplay, SIGNAL(rotationChanged(qreal)), this, SLOT(rotationChanged()));
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
-            connect(m_videoOutputDisplay, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
-            connect(m_videoOutputDisplay, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
+                connect(m_videoOutputDisplay, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
+                connect(m_videoOutputDisplay, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
 #endif
+            }
         }
         m_videoOutputControl = videoOutput;
         windowHandleChanged();
@@ -528,6 +531,8 @@ bool S60VideoPlayerSession::isAudioAvailable()
 void S60VideoPlayerSession::doPlay()
 {
     m_player->Play();
+    if (m_videoOutputDisplay)
+        m_videoOutputDisplay->setHasContent(true);
 }
 
 /*!
@@ -752,7 +757,13 @@ void S60VideoPlayerSession::MvpuoPlayComplete(TInt aError)
 
 void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
 {
-    Q_UNUSED(aEvent);
+    TRACE("S60VideoPlayerSession::MvpuoEvent" << qtThisPtr()
+          << "type" << (void*)aEvent.iEventType.iUid
+          << "error" << aEvent.iErrorCode);
+    if (aEvent.iEventType == KMMFEventCategoryVideoPlayerGeneralError) {
+        setError(aEvent.iErrorCode);
+        doClose();
+    }
 }
 
 /*!
@@ -883,8 +894,6 @@ void S60VideoPlayerSession::MvloLoadingComplete()
     TRACE("S60VideoPlayerSession::MvloLoadingComplete" << qtThisPtr());
 
     buffered();
-    if (m_videoOutputDisplay)
-        m_videoOutputDisplay->setHasContent(true);
 }
 
 /*!

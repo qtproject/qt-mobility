@@ -505,7 +505,7 @@ void CPsyContainer::HandleSettingsChangeL(TPosModulesEvent aEvent)
 
 void CPsyContainer::InitAllPsysL()
 {
-    TUint totalModules;
+    TUint totalModules = 0;
 
     iPosServer.GetNumModules(totalModules);
     TInt insertCount = 0 ;

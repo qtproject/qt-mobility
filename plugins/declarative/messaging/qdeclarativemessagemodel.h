@@ -62,8 +62,8 @@ class QDeclarativeMessageModel : public QAbstractListModel, public QDeclarativeP
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
-    Q_ENUMS(SortKey);
-    Q_ENUMS(SortOrder);
+    Q_ENUMS(SortKey)
+    Q_ENUMS(SortOrder)
 
 public:
     QDeclarativeMessageModel(QObject *parent=0);

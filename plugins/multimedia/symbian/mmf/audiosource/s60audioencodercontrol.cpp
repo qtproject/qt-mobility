@@ -41,7 +41,7 @@
 
 #include "s60audioencodercontrol.h"
 #include "s60audiocapturesession.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 #include "qaudioformat.h"
 

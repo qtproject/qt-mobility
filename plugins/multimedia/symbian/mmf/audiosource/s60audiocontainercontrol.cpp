@@ -41,7 +41,7 @@
 
 #include "s60audiocontainercontrol.h"
 #include "s60audiocapturesession.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 
 S60AudioContainerControl::S60AudioContainerControl(QObject *parent)
     : QMediaContainerControl(parent)

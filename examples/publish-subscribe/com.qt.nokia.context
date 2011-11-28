@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+ <provider bus="session" service="com.nokia.qt.PublishSubscribeExample">
+   <key name="/example/intValue" />
+   <key name="/example/stringValue" />
+   <key name="/example/byteArrayValue" />
+ </provider>

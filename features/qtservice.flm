@@ -12,13 +12,16 @@ SFWTOOL := $(EPOCROOT)/epoc32/tools/servicedbgen$(DOTEXE)
 ifeq ($(PLATFORM), WINSCW)
 QTSERVICE_TARGET := -twinscw
 DES_PATH := ${EPOCROOT}/epoc32/winscw/c/private/2002AC7F/des/$(QTSERVICE_DESCRIPTOR)
+RELEASEABLES := ${EPOCROOT}/epoc32/winscw/c/private/2002AC7F/QtServiceFramework_4.8_system.db
 else
 ifeq ($(PLATFORM), ARMV5)
 QTSERVICE_TARGET := -tarmv5
 DES_PATH := $(EPOCROOT)/epoc32/data/z/private/2002AC7F/des/$(QTSERVICE_DESCRIPTOR)
+RELEASEABLES := $(EPOCROOT)/epoc32/data/z/private/2002AC7F/QtServiceFramework_4.8_system.db
 else
 QTSERVICE_TARGET := -tall
 DES_PATH := $(EPOCROOT)/epoc32/data/z/private/2002AC7F/des/$(QTSERVICE_DESCRIPTOR)
+RELEASEABLES := $(EPOCROOT)/epoc32/data/z/private/2002AC7F/QtServiceFramework_4.8_system.db
 endif
 endif
 
@@ -41,4 +44,7 @@ SINGLETON:=done_$(call sanitise,$(DES_PATH))
 ifeq ($($(SINGLETON)),)
 $(SINGLETON):=1
 $(eval $(handle_service))
+# this is going to cause some problems when several component are trying to register to the db...
+$(eval $(call whatmacro,$(RELEASEABLES),WHATMAKEFILE))
 endif
+

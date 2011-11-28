@@ -44,8 +44,8 @@
 
 #include <lbs.h>
 #include <lbscommon.h>
-#include <epos_mposmodulesobserver.h>
-#include <epos_cposmodules.h>
+#include <EPos_MPosModulesObserver.h>
+#include <EPos_CPosModules.h>
 
 #include <QObject>
 #include "qmobilityglobal.h"

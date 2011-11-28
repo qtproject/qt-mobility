@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,17 +38,34 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MS60MEDIAPLAYERRESOLVER_H
-#define MS60MEDIAPLAYERRESOLVER_H
 
-class S60MediaPlayerSession;
+#ifndef S60MMTRACE_H
+#define S60MMTRACE_H
 
-class MS60MediaPlayerResolver
-{
-    public:
-        virtual S60MediaPlayerSession* PlayerSession() = 0;
-        virtual S60MediaPlayerSession* VideoPlayerSession() = 0;
-        virtual S60MediaPlayerSession* AudioPlayerSession() = 0;
-};
-
+#ifdef _DEBUG
+#define QTMMK_BACKEND_ENABLE_TRACE
 #endif
+
+//#define QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
+
+#ifdef QTMMK_BACKEND_ENABLE_TRACE
+#   include <QtCore/QDebug>
+#   define TRACE(args) qDebug() << "[QtMultimediaKit]" << args
+#   ifdef QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
+#       define VERBOSE_TRACE(args) TRACE(args)
+#   else // QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
+#       define VERBOSE_TRACE(args)
+#   endif // QTMMK_BACKEND_ENABLE_VERBOSE_TRACE
+#else // QTMMK_BACKEND_ENABLE_TRACE
+#   define TRACE(args)
+#   define VERBOSE_TRACE(args)
+#endif
+
+template <typename T>
+inline void *qtVoidPtr(T *ptr)
+{ return reinterpret_cast<void *>(ptr); }
+
+#define qtThisPtr() qtVoidPtr(this)
+
+#endif // S60MMTRACE_H
+

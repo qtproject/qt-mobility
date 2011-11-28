@@ -710,6 +710,7 @@ QFeedbackFileEffect::QFeedbackFileEffect(QObject *parent) : QFeedbackEffect(pare
 */
 QFeedbackFileEffect::~QFeedbackFileEffect()
 {
+    stop();
     setLoaded(false); //ensures we unload the file and frees resources
 }
 

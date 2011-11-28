@@ -428,7 +428,8 @@ void S60CameraControl::setVideoOutput(QObject *output,
 
 void S60CameraControl::releaseVideoOutput(const S60CameraViewfinderEngine::ViewfinderOutputType type)
 {
-    m_viewfinderEngine->releaseControl(type);
+    if (m_viewfinderEngine)
+        m_viewfinderEngine->releaseControl(type);
 }
 
 void S60CameraControl::loadCamera()
@@ -800,8 +801,8 @@ void S60CameraControl::resetCamera(bool errorHandling)
     stopCamera();
     unloadCamera();
 
-    disconnect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
     if (m_viewfinderEngine) {
+        disconnect(m_viewfinderEngine, SIGNAL(error(int, const QString&)), this, SIGNAL(error(int,const QString&)));
         delete m_viewfinderEngine;
         m_viewfinderEngine = 0;
     }

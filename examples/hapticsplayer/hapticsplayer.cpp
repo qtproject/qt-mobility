@@ -87,6 +87,8 @@ HapticsPlayer::HapticsPlayer() : actuator(0)
     connect(ui.browse, SIGNAL(pressed()), SLOT(browseClicked()));
     connect(ui.filePlayPause, SIGNAL(pressed()), SLOT(filePlayPauseClicked()));
     connect(ui.fileStop, SIGNAL(pressed()), &fileEffect, SLOT(stop()));
+    // if pausing a playing effect is not supported then stop playback
+    connect(&fileEffect, SIGNAL(error(QFeedbackEffect::ErrorType)), &fileEffect, SLOT(stop()));
 
     foreach(QFeedbackActuator *dev, QFeedbackActuator::actuators()) {
         ui.actuators->addItem(dev->name());

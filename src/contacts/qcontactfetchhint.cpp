@@ -278,6 +278,7 @@ int QContactFetchHint::maxCountHint() const
 
   A negative value for count denotes that the client wishes to
   retrieve all results.  The default value is -1.
+  \since 1.2
 */
 void QContactFetchHint::setMaxCountHint(int count)
 {

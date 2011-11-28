@@ -48,7 +48,7 @@
 #include <e32base.h>
 #include <f32file.h>
 
-#define QT_SFW_SYMBIAN_IPC_DEBUG
+//#define QT_SFW_SYMBIAN_IPC_DEBUG
 
 /* IPC based on Symbian Client-Server framework
  * This module implements the Symbian specific IPC mechanisms and related control.

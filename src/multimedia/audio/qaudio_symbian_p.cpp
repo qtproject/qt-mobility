@@ -181,7 +181,7 @@ bool findValue(const Input *inputArray, int length, Input input, int &index) {
 template<typename Input, typename Output>
 bool convertValue(const Input *inputArray, const Output *outputArray,
     int length, Input input, Output &output) {
-    int index;
+    int index = -1;
     const bool result = findValue<Input>(inputArray, length, input, index);
     if (result)
         output = outputArray[index];

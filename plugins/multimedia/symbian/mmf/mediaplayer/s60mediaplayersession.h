@@ -84,7 +84,6 @@ public:
     void play();
     void pause();
     void stop();
-    void reset();
     bool isMetadataAvailable() const; 
     QVariant metaData(const QString &key) const;
     QVariant metaData(QtMultimediaKit::MetaData key) const;

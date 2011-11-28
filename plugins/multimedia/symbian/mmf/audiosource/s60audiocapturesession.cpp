@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "s60audiocapturesession.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 #include <QtCore/qurl.h>
 #include <QDir>
 
@@ -734,13 +734,13 @@ void S60AudioCaptureSession::applyAudioSettingsL()
 
     RArray<TFourCC> supportedDataTypes;
     CleanupClosePushL(supportedDataTypes);
-    TRAPD(err,m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes));
+    TRAP_IGNORE(m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes));
     TInt num = supportedDataTypes.Count();
     if (num > 0 ) {
         supportedDataTypes.SortUnsigned();
         int index = supportedDataTypes.Find(fourCC.FourCC());
          if (index != KErrNotFound) {
-            TRAPD(err,m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[index]));
+            TRAP_IGNORE(m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[index]));
         }
     }
 

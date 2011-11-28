@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "s60audioplayersession.h"
-#include "s60mmftrace.h"
+#include "s60mmtrace.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qvariant.h>
 

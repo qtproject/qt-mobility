@@ -219,7 +219,9 @@ unix:!simulator {
             DEFINES += SYMBIAN_3_1
         }
 
-        contains(S60_VERSION, 5.2) {
+        contains(S60_VERSION, 5.2) | contains(S60_VERSION, 5.3) | contains(S60_VERSION, 5.4)  {
+            message("Symbian3 defined")
+            CONFIG += symbian3platform
             DEFINES += SYMBIAN_3_PLATFORM
         }
 
@@ -308,7 +310,8 @@ unix:!simulator {
             -lhwrmlightclient \
             -letel
 
-        contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) {
+        symbian3platform {
+            message ("USBMan and powerclient included")
             LIBS += -lhwrmpowerclient -lusbman
         }
 

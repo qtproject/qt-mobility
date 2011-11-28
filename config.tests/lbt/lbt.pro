@@ -8,7 +8,7 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += $${EPOCROOT}epoc32\include\lbtheaders
+INCLUDEPATH += $${EPOCROOT}epoc32/include/lbtheaders
 
 # Input
 SOURCES += main.cpp

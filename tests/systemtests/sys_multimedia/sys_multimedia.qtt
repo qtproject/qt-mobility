@@ -506,7 +506,7 @@ A device specific headset is required to be connected to device for radio testin
             | *Step* | *Verification* |
             | Launch " + testBinary + " | App launches normally |
             | If device has lens cover, make sure it is open | |
-            | Select Video tab to put camera in video mode |  Verify the intended scene is reproduced in the preview/viewfinder |
+            | Select Video tab to put camera in video mode | Verify the intended scene is reproduced in the preview/viewfinder |
             | Select Record Video | Verify that video is shown on screen for preview |
             | Select Pause | Verify that the Recorded counter has stopped |
             | Select Record again | Verify that the Recorded counter has continued counting |
