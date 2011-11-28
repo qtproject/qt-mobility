@@ -4,6 +4,7 @@
 #
 ######################################################################
 
+include($$PWD/features/utils.pri)
 
 CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=debug
