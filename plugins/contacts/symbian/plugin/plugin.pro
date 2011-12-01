@@ -2,12 +2,13 @@ include(../../../../features/utils.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$mobilityPluginTarget(qtcontacts_symbian)
+TARGET = qtcontacts_symbian
 PLUGIN_TYPE=contacts
 
 include(symbian_defines.pri)
 PUBLIC_HEADERS += inc/cntbackendsdefs.h
 CONFIG += middleware
+include(../../../../features/deploy.pri)
 symbian: { 
     load(data_caging_paths)
 
