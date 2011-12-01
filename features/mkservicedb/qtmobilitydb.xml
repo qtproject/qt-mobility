@@ -5,9 +5,6 @@
 
 	<!-- Tools interfaces -->
 
-	<interface name="qt.qtservice" extends="Symbian.UserFLM" flm="qtservice.flm">
-		<param name='QTSERVICE_DESCRIPTOR' default='' />
-		<param name='QTSERVICE_INITIALIZE' default='' />
-	</interface>
+	<interface name="qt.qtmobilitydb" extends="Symbian.UserFLM" flm="qtmobilitydb.flm"/>
 
 </build>
