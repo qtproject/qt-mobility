@@ -211,7 +211,7 @@ void CDatabaseManagerServer::DiscoverServices()
       if(old.contains('/'))
         continue;
       QString servicename = settings.value(old + "/service_name").toString();
-      iDb->unregisterService(servicename, QString("Auto Registration"));
+      iDb->unregisterService(servicename, tok);
       settings.remove(old);
   }
 }
