@@ -571,8 +571,9 @@ Symbian provides 3 different methods to register services.
 \section4 Automatic Registration
 Automatic registration is the prefered method for services that are not
 Symbian Signed and don't require high levels of security.  The XML
-file is copied into the import directory of the IPC backend.  In Qt
-project files this can be done by:
+file is copied into the import directory of the IPC backend. The service framework 
+scans system drive, in most of the cases system drive is by default c: drive.
+In Qt project files this can be done by:
 
 \code
 xmlautoimport.path = /private/2002AC7F/import/
