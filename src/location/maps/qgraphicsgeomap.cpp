@@ -256,8 +256,13 @@ QPainterPath QGraphicsGeoMap::shape() const
 */
 void QGraphicsGeoMap::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
-    if (d_ptr->mapData)
+    if (d_ptr->mapData) {
+        painter->save();
+        painter->setViewport(pos().x(), pos().y(), size().width(), size().height());
+        painter->setWindow(pos().x(), pos().y(), size().width(), size().height());
         d_ptr->mapData->paint(painter, option);
+        painter->restore();
+    }
 }
 
 void QGraphicsGeoMap::updateMapDisplay(const QRectF &target)
