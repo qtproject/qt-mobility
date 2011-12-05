@@ -49,3 +49,10 @@ nfc_symbian_enabled = yes
 btengconnman_symbian_enabled = yes
 btengdevman_symbian_enabled = yes
 MOBILITY_SD_MCL_BUILD = yes
+LockandFlipPSkeys_enabled = yes
+DiskNotifyClient_enabled = yes
+thermalstatus_symbian_enabled = yes
+FmTxClient_enabled = yes
+etelpacketservice_symbian_enabled = yes
+networkhandlingengine_symbian_enabled = yes
+
