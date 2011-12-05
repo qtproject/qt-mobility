@@ -53,8 +53,10 @@
 // TODO: get rid of these magic numbers
 const QAbstractVideoBuffer::HandleType EGLImageTextureHandle =
       QAbstractVideoBuffer::HandleType(QAbstractVideoBuffer::UserHandle + 128);
+#ifndef QT_NO_OPENVG
 const QAbstractVideoBuffer::HandleType VGImageTextureHandle =
       QAbstractVideoBuffer::HandleType(QAbstractVideoBuffer::UserHandle + 129);
+#endif // !QT_NO_OPENVG
 
 // Dummy pointer returned by map() - see comments below
 static uchar* const DummyMapReturnValue = reinterpret_cast<uchar *>(1);
@@ -206,7 +208,7 @@ QVariant S60GlTextureVideoBuffer::handle() const
 // S60VGImageVideoBuffer
 //-----------------------------------------------------------------------------
 
-#ifndef QT_NO_OPENGL
+#ifndef QT_NO_OPENVG
 
 S60VgImageVideoBuffer::S60VgImageVideoBuffer(S60VideoEglRendererControl *control,
                                              S60EglEndpoint *endpoint,
@@ -247,5 +249,5 @@ QVariant S60VgImageVideoBuffer::handle() const
     return static_cast<quint32>(m_vgImage);
 }
 
-#endif // !QT_NO_OPENGL
+#endif // !QT_NO_OPENVG
 

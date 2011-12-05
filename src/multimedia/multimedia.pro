@@ -197,6 +197,7 @@ symbian {
     } else {
         SOURCES += qgraphicsvideoitem_overlay.cpp
     }
+    contains(QT_CONFIG, egl): LIBS *= -llibegl
     contains(QT_CONFIG, openvg) {
         LIBS += -llibopenvg
     } else {

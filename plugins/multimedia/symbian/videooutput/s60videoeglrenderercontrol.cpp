@@ -154,12 +154,16 @@ void S60VideoEglRendererControl::imageAvailable()
         m_buffer = new S60EglImageVideoBuffer(this, m_eglEndpoint);
     } else {
         switch (api) {
+#ifndef QT_NO_OPENGL
         case EGL_OPENGL_ES_API:
             m_buffer = new S60GlTextureVideoBuffer(this, m_eglEndpoint, m_eglExtensions);
             break;
+#endif
+#ifndef QT_NO_OPENVG
         case EGL_OPENVG_API:
             m_buffer = new S60VgImageVideoBuffer(this, m_eglEndpoint, m_eglExtensions);
             break;
+#endif
         }
     }
     Q_ASSERT(m_buffer);
