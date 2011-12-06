@@ -418,7 +418,7 @@ QGraphicsVideoItemWidgetImpl::QGraphicsVideoItemWidgetImpl(QGraphicsVideoItemPri
         m_widgetControl->setAspectRatioMode(q->aspectRatioMode());
         updateGeometry();
         updateTopWinId();
-        // Delay invokation of updateWidgetOrdinalPosition until after construction is
+        // Delay invocation of updateWidgetOrdinalPosition until after construction is
         // complete, because it relies on this item having been added to the
         // QGraphicsScene
         QMetaObject::invokeMethod(this, "updateWidgetOrdinalPosition", Qt::QueuedConnection);
