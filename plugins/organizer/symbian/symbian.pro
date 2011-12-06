@@ -1,6 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtorganizer_symbian)
+TARGET = $$mobilityPluginTarget(qtorganizer_symbian)
 PLUGIN_TYPE=organizer
 
 # support for S^4-specific types
@@ -24,7 +26,7 @@ symbian: {
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x2002BFC9
+    TARGET.UID3 = $$mobilityUID(0x2002BFC9)
   
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE

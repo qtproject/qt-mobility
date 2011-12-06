@@ -1,6 +1,7 @@
+
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +40,25 @@
 **
 ****************************************************************************/
 
-#include <qabstractvideosurface.h>
+#include "s60mediaplayerutils.h"
 
-#include "s60videorenderercontrol.h"
-
-S60VideoRendererControl::S60VideoRendererControl(QObject *parent) :
-    QVideoRendererControl(parent),
-    m_surface(0)
+QString TDesC2QString(const TDesC &des)
 {
+    return QString::fromUtf16(des.Ptr(), des.Length());
 }
 
-S60VideoRendererControl::~S60VideoRendererControl()
+TPtrC QString2TPtrC(const QString &string)
 {
-    // Stop surface if still active
-    if (m_surface && m_surface->isActive())
-        m_surface->stop();
+    // Returned TPtrC is valid as long as the given parameter is valid and unmodified
+    return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
 }
 
-QAbstractVideoSurface *S60VideoRendererControl::surface() const
+QRect TRect2QRect(const TRect &tr)
 {
-    return m_surface;
+    return QRect(tr.iTl.iX, tr.iTl.iY, tr.Width(), tr.Height());
 }
 
-void S60VideoRendererControl::setSurface(QAbstractVideoSurface *surface)
+TRect QRect2TRect(const QRect &qr)
 {
-    if (surface == 0) {
-        // Stop current surface if needed
-        if (m_surface && m_surface->isActive())
-            m_surface->stop();
-    }
-
-    m_surface = surface;
-    emit viewFinderSurfaceSet();
+    return TRect(TPoint(qr.left(), qr.top()), TSize(qr.width(), qr.height()));
 }
-
-// End of file

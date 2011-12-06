@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 DEFINES += QT_BUILD_BEARER_LIB QT_MAKEDLL
 
 #DEFINES += BEARER_MANAGEMENT_DEBUG
@@ -17,9 +19,8 @@ HEADERS += qnetworksession.h \
 symbian: {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x2002AC81
-
-    QtBearerManagement.sources = QtBearer.dll
+    TARGET.UID3 = $$mobilityUID(0x2002AC81)
+    QtBearerManagement.sources = QtBearer$${QT_LIBINFIX}.dll
     QtBearerManagement.path = /sys/bin
     QtBearerManagement.pkg_prerules += $${LITERAL_HASH}{\"QtBearer\"},(0x2002AC81),1,2,1,TYPE=SA,RU
     DEPLOYMENT += QtBearerManagement

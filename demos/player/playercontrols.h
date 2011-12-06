@@ -41,9 +41,17 @@
 #ifndef PLAYERCONTROLS_H
 #define PLAYERCONTROLS_H
 
-#include <qmediaplayer.h>
+#include <QtCore/qglobal.h>
+
+#ifdef Q_OS_SYMBIAN
 
 #include <QtGui/qwidget.h>
+#include <qmediaplayer.h>
+
+#include <remconcoreapitarget.h>
+#include <remconcoreapitargetobserver.h>
+#include <remconinterfaceselector.h>
+
 
 QT_BEGIN_NAMESPACE
 class QAbstractButton;
@@ -53,17 +61,25 @@ QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-class PlayerControls : public QWidget
+class PlayerControls : public QWidget, public MRemConCoreApiTargetObserver
 {
     Q_OBJECT
 public:
-    PlayerControls(QWidget *parent = 0);
+
+    PlayerControls(QWidget *parent, QMediaPlayer *player);
+    ~PlayerControls();
 
     QMediaPlayer::State state() const;
 
     int volume() const;
     bool isMuted() const;
     qreal playbackRate() const;
+
+protected:
+    void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
+
+private:
+    void initRemCon();
 
 public slots:
     void setState(QMediaPlayer::State state);
@@ -96,6 +112,11 @@ private:
     QAbstractButton *muteButton;
     QAbstractSlider *volumeSlider;
     QComboBox *rateBox;
+
+    CRemConInterfaceSelector *interfaceSelector;
+    CRemConCoreApiTarget *coreTarget;
+    QMediaPlayer *iplayer;
 };
 
-#endif
+#endif // Q_OS_SYMBIAN
+#endif // PLAYERCONTROLS_H

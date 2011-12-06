@@ -42,7 +42,6 @@
 #ifndef S60RADIOTUNERCONTROL_H
 #define S60RADIOTUNERCONTROL_H
 
-#include <QtCore/qobject.h>
 #include <qradiotunercontrol.h>
 #include <qradiotuner.h>
 #include <tuner.h>
@@ -103,59 +102,52 @@ public:
     QRadioTuner::Error error() const;
     QString errorString() const;
     
-    //MMMTunerObserver
+    // MMMTunerObserver
     void MToTuneComplete(TInt aError);
     
-    //MMMTunerChangeObserver
+    // MMMTunerChangeObserver
     void MTcoFrequencyChanged(const TFrequency& aOldFrequency, const TFrequency& aNewFrequency);
     void MTcoStateChanged(const TUint32& aOldState, const TUint32& aNewState);
     void MTcoAntennaDetached();
     void MTcoAntennaAttached();
     void FlightModeChanged(TBool aFlightMode);
     
-    //MMMTunerStereoObserver
+    // MMMTunerStereoObserver
     void MTsoStereoReceptionChanged(TBool aStereo);
     void MTsoForcedMonoChanged(TBool aForcedMono);
     
-    //MMMSignalStrengthObserver
+    // MMMSignalStrengthObserver
     void MssoSignalStrengthChanged(TInt aNewSignalStrength);
     
-    //MMMTunerAudioPlayerObserver
+    // MMMTunerAudioPlayerObserver
     void MTapoInitializeComplete(TInt aError);
     void MTapoPlayEvent(TEventType aEvent, TInt aError, TAny* aAdditionalInfo);
-
-private slots:
-
 
 private:
     bool initRadio();
     CMMTunerUtility::TTunerBand getNativeBand(QRadioTuner::Band b) const;
 
+private:
     mutable int m_error;
     CMMTunerUtility *m_tunerUtility;
     CMMTunerAudioPlayerUtility *m_audioPlayerUtility;
-    
     bool m_audioInitializationComplete;
     bool m_muted;
     bool m_isStereo;
     bool m_available;
     int  m_step;
     int  m_vol;
-    mutable int  m_signal;
+    mutable int m_signal;
     bool m_scanning;
     bool forward;
     QRadioTuner::Band m_currentBand;
     qint64 m_currentFreq;
-    
     QRadioTuner::Error m_radioError;
     QRadioTuner::StereoMode m_stereoMode;
     QString m_errorString;
-    //caps meaning what the tuner can do.
     TTunerCapabilities m_currentTunerCapabilities;
     long m_tunerState; 
     QRadioTuner::State m_apiTunerState;
-    
 };
 
 #endif
-

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEORENDERERCONTROL_H
-#define S60VIDEORENDERERCONTROL_H
+#ifndef S60MEDIASETTINGS_H
+#define S60MEDIASETTINGS_H
 
-#include <qvideorenderercontrol.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <qmediaplayer.h>
 
-/*
- * Control for QGraphicsVideoItem. Viewfinder frames are streamed to a surface
- * which is drawn to the display by the Qt Graphics Vide Framework.
- * VideoRendererControl uses only Bitmap Viewfinder.
- */
-class S60VideoRendererControl : public QVideoRendererControl
+class S60MediaSettings : public QObject
 {
-    Q_OBJECT
+public:
+    S60MediaSettings(QObject *parent = 0);
 
-public: // Constructor & Destructor
+    enum MediaType {
+        Unknown,
+        Video,
+        Audio,
+        Data
+    };
 
-    S60VideoRendererControl(QObject *parent = 0);
-    virtual ~S60VideoRendererControl();
+    void setVolume(int volume);
+    void setMuted(bool muted);
+    void setPlaybackRate(qreal rate);
+    void setMediaStatus(QMediaPlayer::MediaStatus status);
+    void setAudioEndpoint(const QString &audioEndpoint);
+    void setMediaType(MediaType type);
+    void setVideoOutput(QObject *value);
 
-public: // S60VideoRendererControl
+    int volume() const;
+    bool isMuted() const;
+    qreal playbackRate() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
+    QString audioEndpoint() const;
+    MediaType mediaType() const;
+    QObject *videoOutput() const;
 
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
-
-signals: // Internal Signals
-
-    void viewFinderSurfaceSet();
-
-private: // Data
-
-    QAbstractVideoSurface   *m_surface;
-
+private:
+    int m_volume;
+    bool m_muted;
+    qreal m_playbackRate;
+    QMediaPlayer::MediaStatus m_mediaStatus;
+    QString m_audioEndpoint;
+    MediaType m_mediaType;
+    QObject *m_videoOutput;
 };
 
-#endif // S60VIDEORENDERERCONTROL_H
+#endif // S60MEDIASETTINGS_H

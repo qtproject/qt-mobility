@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef S60FORMATSUPPORTED_H_
-#define S60FORMATSUPPORTED_H_
+#ifndef S60FORMATSUPPORTED_H
+#define S60FORMATSUPPORTED_H
 
 #include <mmf/common/mmfcontrollerpluginresolver.h>
 #include <mmf/server/mmfdatasourcesink.hrh>
@@ -57,9 +57,9 @@ public:
     QStringList supportedPlayMimeTypesL();
 
 private:
-
     CMMFFormatSelectionParameters* m_playformatparam;
     CMMFControllerPluginSelectionParameters* m_controllerparam;
     QStringList m_supportedplaymime;
 };
-#endif /* S60FORMATSUPPORTED_H_ */
+
+#endif // S60FORMATSUPPORTED_H

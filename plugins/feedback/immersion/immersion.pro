@@ -1,7 +1,9 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
 QT = core
-TARGET = $$qtLibraryTarget(qtfeedback_immersion)
+TARGET = $$mobilityPluginTarget(qtfeedback_immersion)
 PLUGIN_TYPE=feedback
 
 include(../../../common.pri)
@@ -18,7 +20,6 @@ MOBILITY = feedback
 symbian: {
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
-    TARGET = $${TARGET}$${QT_LIBINFIX}
     load(armcc_warnings)
 
     target.path = /sys/bin

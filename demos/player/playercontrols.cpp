@@ -46,7 +46,7 @@
 #include <QtGui/qtoolbutton.h>
 #include <QtGui/qcombobox.h>
 
-PlayerControls::PlayerControls(QWidget *parent)
+PlayerControls::PlayerControls(QWidget *parent, QMediaPlayer *player)
     : QWidget(parent)
     , playerState(QMediaPlayer::StoppedState)
     , playerMuted(false)
@@ -58,6 +58,9 @@ PlayerControls::PlayerControls(QWidget *parent)
     , volumeSlider(0)
     , rateBox(0)
 {
+    initRemCon();
+    iplayer = player;
+
     playButton = new QToolButton(this);
     playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 
@@ -113,6 +116,26 @@ PlayerControls::PlayerControls(QWidget *parent)
     if (rateBox)
         layout->addWidget(rateBox);
     setLayout(layout);
+}
+
+PlayerControls::~PlayerControls()
+{
+    delete interfaceSelector;
+}
+
+void PlayerControls::initRemCon()
+{
+    try{
+        QT_TRAP_THROWING(
+        interfaceSelector = CRemConInterfaceSelector::NewL();
+        coreTarget = CRemConCoreApiTarget::NewL(*interfaceSelector, *this);
+        interfaceSelector->OpenTargetL());
+   }  catch (const std::exception &e) {
+       delete interfaceSelector;
+       interfaceSelector = 0;
+       coreTarget = 0;
+   }
+
 }
 
 QMediaPlayer::State PlayerControls::state() const
@@ -208,4 +231,41 @@ void PlayerControls::setPlaybackRate(float rate)
 void PlayerControls::updateRate()
 {
     emit changeRate(playbackRate());
+}
+
+void PlayerControls::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct)
+{
+    if (!coreTarget)
+        return;
+
+    switch (aOperationId){
+        case ERemConCoreApiVolumeUp:
+            if ((aButtonAct == ERemConCoreApiButtonClick) ||
+                (aButtonAct == ERemConCoreApiButtonPress) ||
+                (aButtonAct == ERemConCoreApiButtonRelease))
+             emit changeVolume((iplayer->volume()) + 10);
+             break;
+        case ERemConCoreApiVolumeDown:
+            if ((aButtonAct == ERemConCoreApiButtonClick) ||
+                (aButtonAct == ERemConCoreApiButtonPress) ||
+                (aButtonAct == ERemConCoreApiButtonRelease))
+             emit changeVolume((iplayer->volume()) - 10);
+             break;
+        case ERemConCoreApiPausePlayFunction:
+            if (aButtonAct == ERemConCoreApiButtonClick)
+             playClicked();
+             break;
+        case ERemConCoreApiStop:
+            if (aButtonAct == ERemConCoreApiButtonClick)
+             emit stop();
+             break;
+        case ERemConCoreApiBackward:
+            if (aButtonAct == ERemConCoreApiButtonClick)
+             emit previous();
+             break;
+        case ERemConCoreApiForward:
+            if (aButtonAct == ERemConCoreApiButtonClick)
+             emit next();
+             break;
+    }
 }

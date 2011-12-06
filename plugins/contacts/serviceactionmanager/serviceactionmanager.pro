@@ -1,6 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtcontacts_serviceactionmanager)
+TARGET = $$mobilityPluginTarget(qtcontacts_serviceactionmanager)
 PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
@@ -19,7 +21,7 @@ MOBILITY = contacts serviceframework
 symbian: {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3=0x200315FD
+    TARGET.UID3 = $$mobilityUID(0x200315FD)
 
     target.path = /sys/bin
     INSTALLS += target

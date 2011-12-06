@@ -54,16 +54,20 @@
 #include "s60mediarecordercontrol.h"
 #include "s60videocapturesession.h"
 #include "s60imagecapturesession.h"
-#include "s60videowidgetcontrol.h"
 #include "s60mediacontainercontrol.h"
 #include "s60videoencodercontrol.h"
 #include "s60audioencodercontrol.h"
 #include "s60imageencodercontrol.h"
 #include "s60cameralockscontrol.h"
-#include "s60videorenderercontrol.h"
-#include "s60videowindowcontrol.h"
+#include "s60bitmapviewfinderrenderercontrol.h"
 #include "s60cameracapturedestinationcontrol.h"
 #include "s60cameracapturebufferformatcontrol.h"
+#include "s60videooutputfactory.h"
+#include "s60videowidgetcontrol.h"
+#include "s60videowindowcontrol.h"
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+#include "s60videoeglrenderercontrol.h"
+#endif
 
 #include "s60cameraviewfinderengine.h" // ViewfinderOutputType
 
@@ -87,13 +91,12 @@ S60CameraService::S60CameraService(QObject *parent) :
         m_mediaFormat = new S60MediaContainerControl(m_videosession, this);
         m_videoEncoder = new S60VideoEncoderControl(m_videosession, this);
         m_audioEncoder = new S60AudioEncoderControl(m_videosession, this);
-        m_viewFinderWidget = new S60VideoWidgetControl(this);
         m_imageEncoderControl = new S60ImageEncoderControl(m_imagesession, this);
         m_locksControl = new S60CameraLocksControl(this, m_imagesession, this);
-        m_rendererControl = new S60VideoRendererControl(this);
-        m_windowControl = new S60VideoWindowControl(this);
+        m_bitmapRendererControl = new S60BitmapViewFinderRendererControl(this);
         m_captureDestinationControl = new S60CameraCaptureDestinationControl(m_imagesession, this);
         m_bufferFormatControl = new S60CameraCaptureBufferFormatControl(m_imagesession, this);
+        m_videoOutputFactory = new S60VideoOutputFactory(this);
     }
 }
 
@@ -135,15 +138,6 @@ S60CameraService::~S60CameraService()
     if (m_control)
         delete m_control;
 
-    // Delete viewfinder controls after CameraControl to be sure that
-    // ViewFinder gets stopped before widget (and window) is destroyed
-    if (m_viewFinderWidget)
-        delete m_viewFinderWidget;
-    if (m_rendererControl)
-        delete m_rendererControl;
-    if (m_windowControl)
-        delete m_windowControl;
-
     // Delete sessions
     if (m_videosession)
         delete m_videosession;
@@ -174,36 +168,6 @@ QMediaControl *S60CameraService::requestControl(const char *name)
     if (qstrcmp(name, QCameraFlashControl_iid) == 0)
         return m_flashControl;
 
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
-        if (m_viewFinderWidget) {
-            m_control->setVideoOutput(m_viewFinderWidget,
-                                      S60CameraViewfinderEngine::OutputTypeVideoWidget);
-            return m_viewFinderWidget;
-        } else {
-            return 0;
-        }
-    }
-
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
-        if (m_rendererControl) {
-            m_control->setVideoOutput(m_rendererControl,
-                                      S60CameraViewfinderEngine::OutputTypeRenderer);
-            return m_rendererControl;
-        } else {
-            return 0;
-        }
-    }
-
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
-        if (m_windowControl) {
-            m_control->setVideoOutput(m_windowControl,
-                                      S60CameraViewfinderEngine::OutputTypeVideoWindow);
-            return m_windowControl;
-        } else {
-            return 0;
-        }
-    }
-
     if (qstrcmp(name, QCameraFocusControl_iid) == 0)
         return m_focusControl;
 
@@ -228,23 +192,38 @@ QMediaControl *S60CameraService::requestControl(const char *name)
     if (qstrcmp(name, QCameraCaptureBufferFormatControl_iid) == 0)
         return m_bufferFormatControl;
 
-    return 0;
+    QMediaControl *videoOutputControl = m_videoOutputFactory->requestControl(name);
+    if (!videoOutputControl && qstrcmp(name, QVideoRendererControl_iid) == 0)
+        videoOutputControl = m_bitmapRendererControl;
+    if (qobject_cast<S60VideoWidgetControl *>(videoOutputControl))
+        m_control->setVideoOutput(videoOutputControl,
+                                  S60CameraViewfinderEngine::OutputTypeVideoWidget);
+    else if (qobject_cast<S60VideoWindowControl *>(videoOutputControl))
+        m_control->setVideoOutput(videoOutputControl,
+                                  S60CameraViewfinderEngine::OutputTypeVideoWindow);
+    else if (qobject_cast<S60BitmapViewFinderRendererControl *>(videoOutputControl)
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+             || qobject_cast<S60VideoEglRendererControl *>(videoOutputControl)
+#endif
+        )
+        m_control->setVideoOutput(videoOutputControl,
+                                  S60CameraViewfinderEngine::OutputTypeRenderer);
+    return videoOutputControl;
 }
 
 void S60CameraService::releaseControl(QMediaControl *control)
 {
-    if (control == 0)
-        return;
-
-    // Release viewfinder output
-    if (control == m_viewFinderWidget)
+    if (qobject_cast<S60VideoWidgetControl *>(control))
         m_control->releaseVideoOutput(S60CameraViewfinderEngine::OutputTypeVideoWidget);
-
-    if (control == m_rendererControl)
-        m_control->releaseVideoOutput(S60CameraViewfinderEngine::OutputTypeRenderer);
-
-    if (control == m_windowControl)
+    else if (qobject_cast<S60VideoWindowControl *>(control))
         m_control->releaseVideoOutput(S60CameraViewfinderEngine::OutputTypeVideoWindow);
+    else if (qobject_cast<S60BitmapViewFinderRendererControl *>(control)
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+             || qobject_cast<S60VideoEglRendererControl *>(control)
+#endif
+        )
+        m_control->releaseVideoOutput(S60CameraViewfinderEngine::OutputTypeRenderer);
+    m_videoOutputFactory->releaseControl(control);
 }
 
 int S60CameraService::deviceCount()

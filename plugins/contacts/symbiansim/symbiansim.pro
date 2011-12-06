@@ -4,9 +4,11 @@
 #
 ######################################################################
 
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtcontacts_symbiansim)
+TARGET = $$mobilityPluginTarget(qtcontacts_symbiansim)
 PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
@@ -17,7 +19,7 @@ symbian: {
     
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x2002AC85
+    TARGET.UID3 = $$mobilityUID(0x2002AC85)
 
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 

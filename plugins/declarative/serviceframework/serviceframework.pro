@@ -1,10 +1,12 @@
+include(../../../features/utils.pri)
+
 INCLUDEPATH += ../../../src/serviceframework
 INCLUDEPATH += ../../../src/global
 INCLUDEPATH += .
 
 TEMPLATE = lib
 CONFIG += qt plugin
-TARGET  = $$qtLibraryTarget(declarative_serviceframework)
+TARGET  = $$mobilityPluginTarget(declarative_serviceframework)
 TARGETPATH = QtMobility/serviceframework
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
@@ -29,7 +31,7 @@ INSTALLS += qmldir
 symbian {
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
-    TARGET.UID3 = 0x20021323
+    TARGET.UID3 = $$mobilityUID(0x20021323)
     load(armcc_warnings)
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_serviceframework$${QT_LIBINFIX}.dll qmldir 

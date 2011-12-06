@@ -42,17 +42,10 @@
 #ifndef S60MEDIAPLAYERSESSION_H
 #define S60MEDIAPLAYERSESSION_H
 
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include <QtCore/qpair.h>
+#include <QtCore/QUrl>
+#include <QtCore/QRect>
 #include <qmediaplayer.h>
-#include <e32cmn.h> // for TDesC
-#include <QRect>
 #include "s60mediaplayerservice.h"
-
-
-_LIT( KSeekable, "Seekable" );
-_LIT( KFalse, "0");
 
 QT_BEGIN_NAMESPACE
 class QMediaTimeRange;
@@ -68,7 +61,6 @@ public:
     S60MediaPlayerSession(QObject *parent);
     virtual ~S60MediaPlayerSession();
 
-    // for player control interface to use
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
     qint64 duration() const;
@@ -95,9 +87,9 @@ public:
     virtual void setVideoRenderer(QObject *renderer);
     void setMediaStatus(QMediaPlayer::MediaStatus);
     void setState(QMediaPlayer::State state);
-    void setAudioEndpoint(const QString& audioEndpoint);
+    void setAudioEndpoint(const QString &audioEndpoint);
     virtual void setPlaybackRate(qreal rate) = 0;
-    virtual bool getIsSeekable() const { return ETrue; }
+    virtual bool getIsSeekable() const;
     TBool isStreaming();
 
 protected:
@@ -113,33 +105,30 @@ protected:
     virtual void updateMetaDataEntriesL() = 0;
     virtual int doGetBufferStatusL() const = 0;
     virtual qint64 doGetDurationL() const = 0;
-    virtual void doSetAudioEndpoint(const QString& audioEndpoint) = 0;
+    virtual void doSetAudioEndpoint(const QString &audioEndpoint) = 0;
 
 public:
-    // From S60MediaPlayerAudioEndpointSelector
+    // S60MediaPlayerAudioEndpointSelector
     virtual QString activeEndpoint() const = 0;
     virtual QString defaultEndpoint() const = 0;
+
 public Q_SLOTS:
-    virtual void setActiveEndpoint(const QString& name) = 0;
+    virtual void setActiveEndpoint(const QString &name) = 0;
 
 protected:
     int error() const;
-    void setError(int error,  const QString &errorString = QString(), bool forceReset = false);
+    void setError(int error, const QString &errorString = QString(), bool forceReset = false);
     void setAndEmitError(int error);
     void loaded();
     void buffering();
     void buffered();
     void endOfMedia();
-    QMap<QString, QVariant>& metaDataEntries();
+    QMap<QString, QVariant> &metaDataEntries();
     QMediaPlayer::Error fromSymbianErrorToMultimediaError(int error);
     void startProgressTimer();
     void stopProgressTimer();
     void startStalledTimer();
     void stopStalledTimer();
-    QString TDesC2QString(const TDesC& aDescriptor);
-	TPtrC QString2TPtrC( const QString& string );
-	QRect TRect2QRect(const TRect& tr);
-	TRect QRect2TRect(const QRect& qr);
 
 protected slots:
     void tick();
@@ -154,7 +143,7 @@ signals:
     void audioAvailableChanged(bool audioAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);     
-    void availablePlaybackRangesChanged(const QMediaTimeRange&);
+    void availablePlaybackRangesChanged(const QMediaTimeRange &range);
     void metaDataChanged();
     void error(int error, const QString &errorString);
     void activeEndpointChanged(const QString &name);
@@ -164,7 +153,7 @@ signals:
     void mutedChanged(bool muted);
 
 protected:
-    QUrl m_UrlPath;
+    QUrl m_url;
     bool m_stream;
     QMediaContent m_source;
     bool m_isaudiostream;

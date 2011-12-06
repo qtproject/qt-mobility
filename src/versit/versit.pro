@@ -1,6 +1,9 @@
 # #####################################################################
 # Versit
 # #####################################################################
+
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtVersit
 include(../../common.pri)
@@ -75,13 +78,13 @@ HEADERS += \
     $$PRIVATE_HEADERS
 
 symbian { 
-    TARGET.UID3 = 0x2002BFBF
+    TARGET.UID3 = $$mobilityUID(0x2002BFBF)
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
     LIBS += -lefsrv
 
-    VERSIT_DEPLOYMENT.sources = QtVersit.dll
+    VERSIT_DEPLOYMENT.sources = QtVersit$${QT_LIBINFIX}.dll
     VERSIT_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += VERSIT_DEPLOYMENT
 }

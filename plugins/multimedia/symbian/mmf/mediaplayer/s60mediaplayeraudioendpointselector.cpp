@@ -44,19 +44,11 @@
 #include "s60mediaplayeraudioendpointselector.h"
 #include "s60mmtrace.h"
 
-#include <QtGui/QIcon>
-#include <QtCore/QDebug>
-
-/*!
-    Constructs a new audio endpoint selector with the given \a parent.
-*/
-
 S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector(QObject *control, QObject *parent)
-   :QAudioEndpointSelector(parent)
+    : QAudioEndpointSelector(parent)
     , m_control(0)
 {
     TRACE("S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector" << qtThisPtr());
-
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
     m_audioEndpointNames.append("Default");
     m_audioEndpointNames.append("All");
@@ -65,87 +57,66 @@ S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector(QObject
     m_audioEndpointNames.append("Speaker");
 }
 
-/*!
-    Destroys an audio endpoint selector.
-*/
-
 S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector()
 {
     TRACE("S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector" << qtThisPtr());
 }
 
-/*!
-    \return a list of available audio endpoints.
-*/
 
 QList<QString> S60MediaPlayerAudioEndpointSelector::availableEndpoints() const
 {
     return m_audioEndpointNames;
 }
 
-/*!
-    \return the description of the endpoint name.
-*/
-
 QString S60MediaPlayerAudioEndpointSelector::endpointDescription(const QString& name) const
 {
-    if (name == QString("Default")) //ENoPreference
+    if (name == QString("Default")) // ENoPreference
         return QString("Used to indicate that the playing audio can be routed to"
-            "any speaker. This is the default value for audio.");
-    else if (name == QString("All")) //EAll
+                       "any speaker. This is the default value for audio.");
+    else if (name == QString("All")) // EAll
         return QString("Used to indicate that the playing audio should be routed to all speakers.");
-    else if (name == QString("None")) //ENoOutput
+    else if (name == QString("None")) // ENoOutput
         return QString("Used to indicate that the playing audio should not be routed to any output.");
-    else if (name == QString("Earphone")) //EPrivate
+    else if (name == QString("Earphone")) // EPrivate
         return QString("Used to indicate that the playing audio should be routed to"
-            "the default private speaker. A private speaker is one that can only"
-            "be heard by one person.");
-    else if (name == QString("Speaker")) //EPublic
+                       "the default private speaker. A private speaker is one that can only"
+                       "be heard by one person.");
+    else if (name == QString("Speaker")) // EPublic
         return QString("Used to indicate that the playing audio should be routed to"
-            "the default public speaker. A public speaker is one that can "
-            "be heard by multiple people.");
-
+                       "the default public speaker. A public speaker is one that can "
+                       "be heard by multiple people.");
     return QString();
 }
 
-/*!
-    \return the name of the currently selected audio endpoint.
-*/
-
 QString S60MediaPlayerAudioEndpointSelector::activeEndpoint() const
 {
-    if (m_control->session()) {
+    if (m_control->session())
         return m_control->session()->activeEndpoint();
-    }
-    else {
+    else
         return m_control->mediaControlSettings().audioEndpoint();
-    }
 }
-
-/*!
-    \return the name of the default audio endpoint.
-*/
 
 QString S60MediaPlayerAudioEndpointSelector::defaultEndpoint() const
 {
-    if (m_control->session()) {
+    if (m_control->session())
         return m_control->session()->defaultEndpoint();
-    }
-    else {
+    else
         return m_control->mediaControlSettings().audioEndpoint();
-    }
 }
 
-/*!
-    Set the audio endpoint to \a name.
-*/
-
-void S60MediaPlayerAudioEndpointSelector::setActiveEndpoint(const QString& name)
+void S60MediaPlayerAudioEndpointSelector::setActiveEndpoint(const QString &name)
 {
     QString oldEndpoint = m_control->mediaControlSettings().audioEndpoint();
 
-    if (name != oldEndpoint && (name == QString("Default") || name == QString("All") ||
-        name == QString("None") || name == QString("Earphone") || name == QString("Speaker"))) {
+    if (name != oldEndpoint &&
+           (
+              name == QString("Default")
+           || name == QString("All")
+           || name == QString("None")
+           || name == QString("Earphone")
+           || name == QString("Speaker")
+           )
+        ) {
         TRACE("S60MediaPlayerAudioEndpointSelector::setActiveEndpoint" << qtThisPtr()
               << "name" << name);
         if (m_control->session()) {

@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtMessaging
 include(../../common.pri)
@@ -289,8 +291,8 @@ symbian|win32|maemo6|maemo5|mac:!simulator {
             -lecom 
         TARGET.CAPABILITY = ALL \
             -TCB
-        TARGET.UID3 = 0x2002AC82
-        QtMessaging.sources = QtMessaging.dll
+        TARGET.UID3 = $$mobilityUID(0x2002AC82)
+        QtMessaging.sources = QtMessaging$${QT_LIBINFIX}.dll
         QtMessaging.path = /sys/bin
         DEPLOYMENT += QtMessaging
     }

@@ -39,24 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTINTERFACE_H
-#define S60VIDEOOUTPUTINTERFACE_H
+#ifndef S60MEDIAPLAYERUTILS_H
+#define S60MEDIAPLAYERUTILS_H
 
-#include <QtCore/qglobal.h>
-#include <QtGui/qwindowdefs.h>
-#include <coecntrl.h>
+#include <QtCore/QString>
+#include <QtCore/QRect>
+#include <e32cmn.h>
 
-class S60VideoOutputInterface
-{
-public:
-	RWindow *videoWindowHandle() const { return videoWinId() ? static_cast<RWindow *>(videoWinId()->DrawableWindow()) : 0 ; }
-    virtual WId videoWinId() const = 0;
-    // If VIDEOOUTPUT_GRAPHICS_SURFACES is defined, the return value is the video
-    // rectangle relative to the video window.  If not, the return value is the
-    // absolute screen rectangle.
-    virtual QRect videoDisplayRect() const = 0;
-    virtual Qt::AspectRatioMode videoAspectRatio() const = 0;
-};
+QString TDesC2QString(const TDesC &des);
+TPtrC QString2TPtrC(const QString &string);
+QRect TRect2QRect(const TRect &tr);
+TRect QRect2TRect(const QRect &qr);
 
-#endif // S60VIDEOOUTPUTINTERFACE_H
-
+#endif // S60MEDIAPLAYERUTILS_H

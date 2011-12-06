@@ -43,8 +43,6 @@
 #include "s60radiotunerservice.h"
 #include "s60mmtrace.h"
 
-#include <QFile>
-
 // from AudioPreference.h
 const TInt KAudioPriorityFMRadio = 79;
 const TUint KAudioPrefRadioAudioEvent = 0x03000001;
@@ -66,23 +64,18 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_vol(50)
 {
     TRACE("S60RadioTunerControl::S60RadioTunerControl" << qtThisPtr());
-
     initRadio();
 }
 
 S60RadioTunerControl::~S60RadioTunerControl()
 {
     TRACE("S60RadioTunerControl::~S60RadioTunerControl" << qtThisPtr());
-
 	if (m_tunerUtility) {
 	    m_tunerUtility->Close();
 		m_tunerUtility->CancelNotifyChange();
 		m_tunerUtility->CancelNotifySignalStrength();
 		m_tunerUtility->CancelNotifyStereoChange();
 		delete m_tunerUtility;
-	}
-	if (m_audioPlayerUtility) {
-		m_audioPlayerUtility = NULL;
 	}
 }
 
@@ -91,7 +84,7 @@ bool S60RadioTunerControl::initRadio()
 	m_available = false;
 
 	TRAPD(tunerError, m_tunerUtility = CMMTunerUtility::NewL(*this, CMMTunerUtility::ETunerBandFm, 1, 
-												CMMTunerUtility::ETunerAccessPriorityNormal));
+	  										                 CMMTunerUtility::ETunerAccessPriorityNormal));
 	if (tunerError != KErrNone) {
         m_radioError = QRadioTuner::OpenError;
         return m_available;
@@ -104,7 +97,7 @@ bool S60RadioTunerControl::initRadio()
 	}
 	
 	TRAPD(initializeError, m_audioPlayerUtility->InitializeL(KAudioPriorityFMRadio, 
-												TMdaPriorityPreference(KAudioPrefRadioAudioEvent)));
+												             TMdaPriorityPreference(KAudioPrefRadioAudioEvent)));
 	if (initializeError != KErrNone) {
 		m_radioError = QRadioTuner::OpenError;
 		return m_available;
@@ -125,14 +118,12 @@ bool S60RadioTunerControl::initRadio()
 void S60RadioTunerControl::start()
 {
     TRACE("S60RadioTunerControl::start" << qtThisPtr());
-
 	if (!m_audioInitializationComplete) {
 		TFrequency freq(m_currentFreq);
 		m_tunerUtility->Tune(freq);
 	} else {
 		m_audioPlayerUtility->Play();
 	}
-
 	m_apiTunerState = QRadioTuner::ActiveState;
 	emit stateChanged(m_apiTunerState);
 }
@@ -140,7 +131,6 @@ void S60RadioTunerControl::start()
 void S60RadioTunerControl::stop()
 {
     TRACE("S60RadioTunerControl::stop" << qtThisPtr());
-
     if (m_audioPlayerUtility) {
 		m_audioPlayerUtility->Stop();
 		m_apiTunerState = QRadioTuner::StoppedState;
@@ -190,7 +180,6 @@ int S60RadioTunerControl::frequency() const
 void S60RadioTunerControl::setFrequency(int frequency)
 {
     TRACE("S60RadioTunerControl::setFrequency" << qtThisPtr() << "frequency" << frequency);
-
     m_currentFreq = frequency;
     TFrequency freq(m_currentFreq);
     m_tunerUtility->Tune(freq);
@@ -199,7 +188,6 @@ void S60RadioTunerControl::setFrequency(int frequency)
 int S60RadioTunerControl::frequencyStep(QRadioTuner::Band b) const
 {
     int step = 0;
-
     if(b == QRadioTuner::FM)
         step = 100000; // 100kHz steps
     else if(b == QRadioTuner::LW)
@@ -208,7 +196,6 @@ int S60RadioTunerControl::frequencyStep(QRadioTuner::Band b) const
         step = 1000; // 1kHz steps
     else if(b == QRadioTuner::SW)
         step = 500; // 500Hz steps
-
     return step;
 }
 
@@ -217,14 +204,11 @@ QPair<int,int> S60RadioTunerControl::frequencyRange(QRadioTuner::Band band) cons
 	TFrequency bottomFreq;
 	TFrequency topFreq;
 	int bandError = KErrNone;
-   
 	if (m_tunerUtility){
 		bandError = m_tunerUtility->GetFrequencyBandRange(bottomFreq, topFreq);	   
-		if (!bandError) {
+		if (!bandError)
 			return qMakePair<int,int>(bottomFreq.iFrequency, topFreq.iFrequency);
-		}
     }
-
    return qMakePair<int,int>(0,0);
 }
 
@@ -254,7 +238,6 @@ QRadioTuner::StereoMode S60RadioTunerControl::stereoMode() const
 void S60RadioTunerControl::setStereoMode(QRadioTuner::StereoMode mode)
 {
     TRACE("S60RadioTunerControl::setStereoMode" << qtThisPtr() << "mode" << mode);
-
 	m_stereoMode = mode;
 	if (m_tunerUtility) {	    
 	    if (QRadioTuner::ForceMono == mode)
@@ -281,7 +264,6 @@ int S60RadioTunerControl::signalStrength() const
             }           
         }
     }
-
     return m_signal;
 }
 
@@ -293,7 +275,6 @@ int S60RadioTunerControl::volume() const
 void S60RadioTunerControl::setVolume(int volume)
 {
     TRACE("S60RadioTunerControl::setVolume" << qtThisPtr() << "volume" << volume);
-
     if (m_audioPlayerUtility) {
 		m_vol = volume;
 		TInt error = m_audioPlayerUtility->SetVolume(volume/10);
@@ -309,7 +290,6 @@ bool S60RadioTunerControl::isMuted() const
 void S60RadioTunerControl::setMuted(bool muted)
 {
     TRACE("S60RadioTunerControl::setMuted" << qtThisPtr() << "muted" << muted);
-
     if (m_audioPlayerUtility && m_audioInitializationComplete) {
         m_muted = muted;
         m_audioPlayerUtility->Mute(m_muted);
@@ -333,7 +313,6 @@ bool S60RadioTunerControl::isSearching() const
 void S60RadioTunerControl::cancelSearch()
 {
     TRACE("S60RadioTunerControl::cancelSearch" << qtThisPtr());
-
 	m_tunerUtility->CancelRetune();
 	m_scanning = false;
 	emit searchingChanged(false);
@@ -342,7 +321,6 @@ void S60RadioTunerControl::cancelSearch()
 void S60RadioTunerControl::searchForward()
 {
     TRACE("S60RadioTunerControl::searchForward" << qtThisPtr());
-
 	m_scanning = true;
 	setVolume(m_vol);
 	m_tunerUtility->StationSeek(CMMTunerUtility::ESearchDirectionUp);
@@ -352,7 +330,6 @@ void S60RadioTunerControl::searchForward()
 void S60RadioTunerControl::searchBackward()
 {
     TRACE("S60RadioTunerControl::searchBackward" << qtThisPtr());
-
 	m_scanning = true;
 	setVolume(m_vol);
 	m_tunerUtility->StationSeek(CMMTunerUtility::ESearchDirectionDown);
@@ -390,16 +367,14 @@ QString S60RadioTunerControl::errorString() const
 void S60RadioTunerControl::MToTuneComplete(TInt aError)
 {
     TRACE("S60RadioTunerControl::MToTuneComplete" << qtThisPtr() << "error" << error);
-
 	if (aError == KErrNone) {
 		m_scanning = false;
 		m_audioPlayerUtility->Play();
 		if (!m_audioInitializationComplete) {
 		TRAPD(initializeError, m_audioPlayerUtility->InitializeL(KAudioPriorityFMRadio, 
-                                                        TMdaPriorityPreference(KAudioPrefRadioAudioEvent)));
-			if (initializeError != KErrNone) {
-				m_radioError = QRadioTuner::OpenError;
-			}
+                                                                 TMdaPriorityPreference(KAudioPrefRadioAudioEvent)));
+        if (initializeError != KErrNone)
+            m_radioError = QRadioTuner::OpenError;
 		}
 	}
 }
@@ -408,7 +383,6 @@ void S60RadioTunerControl::MTcoFrequencyChanged(const TFrequency& aOldFrequency,
 {
     TRACE("S60RadioTunerControl::MTcoFrequencyChanged" << qtThisPtr()
           << "oldFreq" << aOldFrequency.iFrequency << "newFreq" << aNewFrequency.iFrequency);
-
 	m_currentFreq = aNewFrequency.iFrequency;
 	m_scanning = false;
 	emit frequencyChanged(m_currentFreq);
@@ -418,29 +392,23 @@ void S60RadioTunerControl::MTcoStateChanged(const TUint32& aOldState, const TUin
 {
     TRACE("S60RadioTunerControl::MTcoStateChanged" << qtThisPtr()
           << "oldState" << aOldState << "newState" << aNewState);
-
-	if (aNewState == CMMTunerUtility::ETunerStateActive) {
+	if (aNewState == CMMTunerUtility::ETunerStateActive)
 		m_apiTunerState = QRadioTuner::ActiveState;
-	}
-	if (aNewState == CMMTunerUtility::ETunerStatePlaying) {
+	if (aNewState == CMMTunerUtility::ETunerStatePlaying)
 		m_apiTunerState = QRadioTuner::ActiveState;
-	}	
-	if (aOldState != aNewState){
+	if (aOldState != aNewState)
 		emit stateChanged(m_apiTunerState);
-	}
 }
 
 void S60RadioTunerControl::MTcoAntennaDetached()
 {
     TRACE("S60RadioTunerControl::MTcoAntennaDetached" << qtThisPtr());
-
 	// no actions
 }
 
 void S60RadioTunerControl::MTcoAntennaAttached()
 {
     TRACE("S60RadioTunerControl::MTcoAntennaAttached" << qtThisPtr());
-
 	// no actions
 }
 
@@ -448,7 +416,6 @@ void S60RadioTunerControl::FlightModeChanged(TBool aFlightMode)
 {
     TRACE("S60RadioTunerControl::FlightModeChanged" << qtThisPtr()
           << "enabled" << aFlightMode);
-
 	// no actions
 }
 
@@ -464,16 +431,14 @@ void S60RadioTunerControl::MTsoForcedMonoChanged(TBool aForcedMono)
 {
     TRACE("S60RadioTunerControl::MTsoForcedMonoChanged" << qtThisPtr()
           << "forcedMono" << aForcedMono);
-	if (aForcedMono) {
+	if (aForcedMono)
 		m_stereoMode = QRadioTuner::ForceMono;
-	}
 }
 
 void S60RadioTunerControl::MssoSignalStrengthChanged(TInt aNewSignalStrength)
 {
     TRACE("S60RadioTunerControl::MssoSignalStrengthChanged" << qtThisPtr()
           << "signalStrength" << aNewSignalStrength);
-
 	m_signal = aNewSignalStrength;
 	emit signalStrengthChanged(m_signal);
 }
@@ -482,7 +447,6 @@ void S60RadioTunerControl::MTapoInitializeComplete(TInt aError)
 {
     TRACE("S60RadioTunerControl::MTapoInitializeComplete" << qtThisPtr()
           << "error" << aError);
-
 	if (aError == KErrNone) {
 		m_audioInitializationComplete = true;
 		m_available = true;
@@ -498,9 +462,5 @@ void S60RadioTunerControl::MTapoPlayEvent(TEventType aEvent, TInt aError, TAny* 
 {
     TRACE("S60RadioTunerControl::MTapoPlayEvent" << qtThisPtr()
           << "event" << aEvent << "error" << aError);
-
 	// no actions
 }
-
-
-
