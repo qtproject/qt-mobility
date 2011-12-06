@@ -58,7 +58,9 @@ PlayerControls::PlayerControls(QWidget *parent, QMediaPlayer *player)
     , volumeSlider(0)
     , rateBox(0)
 {
+#ifdef Q_OS_SYMBIAN
     initRemCon();
+#endif // Q_OS_SYMBIAN
     iplayer = player;
 
     playButton = new QToolButton(this);
@@ -120,22 +122,9 @@ PlayerControls::PlayerControls(QWidget *parent, QMediaPlayer *player)
 
 PlayerControls::~PlayerControls()
 {
+#ifdef Q_OS_SYMBIAN
     delete interfaceSelector;
-}
-
-void PlayerControls::initRemCon()
-{
-    try{
-        QT_TRAP_THROWING(
-        interfaceSelector = CRemConInterfaceSelector::NewL();
-        coreTarget = CRemConCoreApiTarget::NewL(*interfaceSelector, *this);
-        interfaceSelector->OpenTargetL());
-   }  catch (const std::exception &e) {
-       delete interfaceSelector;
-       interfaceSelector = 0;
-       coreTarget = 0;
-   }
-
+#endif
 }
 
 QMediaPlayer::State PlayerControls::state() const
@@ -233,6 +222,7 @@ void PlayerControls::updateRate()
     emit changeRate(playbackRate());
 }
 
+#ifdef Q_OS_SYMBIAN
 void PlayerControls::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct)
 {
     if (!coreTarget)
@@ -269,3 +259,18 @@ void PlayerControls::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRem
              break;
     }
 }
+
+void PlayerControls::initRemCon()
+{
+    try {
+        QT_TRAP_THROWING(
+            interfaceSelector = CRemConInterfaceSelector::NewL();
+            coreTarget = CRemConCoreApiTarget::NewL(*interfaceSelector, *this);
+            interfaceSelector->OpenTargetL());
+    } catch (const std::exception &e) {
+        delete interfaceSelector;
+        interfaceSelector = 0;
+        coreTarget = 0;
+    }
+}
+#endif // Q_OS_SYMBIAN
