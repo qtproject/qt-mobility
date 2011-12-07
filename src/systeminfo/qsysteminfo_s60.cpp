@@ -1936,7 +1936,7 @@ int QSystemBatteryInfoPrivate::remainingChargingTime() const
 int QSystemBatteryInfoPrivate::currentFlow() const
 {
     if ( m_batteryHWRM )
-        return m_batteryHWRM->GetAvergaeCurrent( );
+        return m_batteryHWRM->GetAverageCurrent( );
     else
         return -1;
 }
