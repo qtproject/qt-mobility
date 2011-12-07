@@ -291,12 +291,9 @@ CBatteryHWRM::~CBatteryHWRM()
         iHwrmPower = NULL;
         }
     #endif
-    if ( m_eventLoop )
-        {
-        delete m_eventLoop;
-        m_eventLoop = NULL;
-        }
+        delete iEventLoop;
     }
+
 #ifdef SYMBIAN_3_PLATFORM
 void CBatteryHWRM::PowerMeasurement(TInt aErr, CHWRMPower::TBatteryPowerMeasurementData& aMeasurement)
     {
@@ -306,15 +303,16 @@ void CBatteryHWRM::PowerMeasurement(TInt aErr, CHWRMPower::TBatteryPowerMeasurem
         if ( iAverageCurrent != aMeasurement.iAverageCurrent )
             {
             TRACES (qDebug() << "Average current changed");
-            if ( m_eventLoop ) //for initializing average current
-                {
-                TRACES (qDebug() << "m_eventLoop::exiting");
-                if ( m_eventLoop->isRunning()) m_eventLoop->exit();
-                }
             //currentFlowChanged SIGNAL
             iAverageCurrent = aMeasurement.iAverageCurrent;
             if ( iObserver ){
                 iObserver->changedCurrentFlow(iAverageCurrent);
+                }
+
+            if ( iEventLoop ) //for initializing average current
+                {
+                TRACES (qDebug() << "EventLoop::exiting");
+                if ( iEventLoop->isRunning()) iEventLoop->exit();
                 }
             }
         }
@@ -327,12 +325,13 @@ TInt CBatteryHWRM::GetAverageCurrent()
     {
 #ifdef SYMBIAN_3_PLATFORM
     TInt result = StartCurrentFlowMeasurement();
-    if ( !m_eventLoop ) //Wait until PowerMeasurement callback is received
+    if ( !iEventLoop ) //Wait until PowerMeasurement callback is received
             {
-            m_eventLoop = new QEventLoop();
+            iEventLoop = new QEventLoop();
             TRACES ( qDebug() << "started event loop...");
-            m_eventLoop->exec();
             }
+
+    iEventLoop->exec();
     StopCurrentFlowMeasurement();
 #endif
     return iAverageCurrent;

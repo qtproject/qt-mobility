@@ -144,7 +144,7 @@ private:
     CHWRMPower *iHwrmPower;
     #endif
     TBool iPowerReportingON;
-    QEventLoop* m_eventLoop;
+    QEventLoop* iEventLoop;
     };
 
 #endif //BATTERYCOMMONINFO_H
