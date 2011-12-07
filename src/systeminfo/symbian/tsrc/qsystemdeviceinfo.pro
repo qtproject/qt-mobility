@@ -32,7 +32,7 @@ symbian:
             -ldisknotifyhandler \
             -lusbman \
             -lprofileeng
-            
+
             contains(S60_VERSION, 5.1) | contains(S60_VERSION, 5.2) | contains(S60_VERSION, 5.3) | contains(S60_VERSION, 5.4){
             LIBS += -lhwrmpowerclient
         }
