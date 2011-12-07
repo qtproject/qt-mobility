@@ -40,6 +40,7 @@ immersion_enabled = no
 symbian_camera_camautofocus_enabled = no
 symbian_camera_ecamadvsettings_enabled = yes
 symbian_camera_devvideorecord_enabled = yes
+symbian_camera_snapshot_enabled = yes
 advancedtouchfeedback_enabled = yes
 chwrmhaptics_enabled = yes
 mds_enabled = yes
