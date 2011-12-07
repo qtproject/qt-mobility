@@ -47,6 +47,7 @@
 #endif
 #include <e32debug.h>
 #include <QList>
+#include <QEventLoop>
 //#include <QtDebug>
 
 #ifndef BATTERYCOMMONINFO_H
@@ -124,7 +125,7 @@ private :
     CBatteryHWRM();
 public:
     static CBatteryHWRM* New( );
-    TInt GetAvergaeCurrent() const;
+    TInt GetAverageCurrent();
     ~CBatteryHWRM();
     TInt StartMeasurementAndSetObserver(MBatteryHWRMObserver* );
     void StopCurrentFlowMeasurement();
@@ -143,6 +144,7 @@ private:
     CHWRMPower *iHwrmPower;
     #endif
     TBool iPowerReportingON;
+    QEventLoop* m_eventLoop;
     };
 
 #endif //BATTERYCOMMONINFO_H
