@@ -46,7 +46,7 @@
 #include <e32property.h>
 #include <QList>
 #include "trace.h"
-#include <internal\ThermalManagerUserIF.h>
+#include <internal/ThermalManagerUserIF.h>
 #define KThermalerror 0xFF
 
 
