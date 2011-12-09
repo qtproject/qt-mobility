@@ -51,7 +51,7 @@
 #include <featmgr.h>*/
 #include "trace.h"
 #include <QString>
-#include <Qlist>
+#include <QList>
 
 #include "networkoperatornamelistener_s60.h"
 
