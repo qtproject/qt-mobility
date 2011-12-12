@@ -6,7 +6,7 @@ include(../../common.pri)
 
 symbian {
    #symbian contactsmodel,plugin,symbian is part of new contactsrv pkg
-   !exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.4.sis){
+   !contains(S60_VERSION, 5.4) {
         SUBDIRS += symbian
 
         ## build symbian-specific unit tests.
