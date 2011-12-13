@@ -24,7 +24,7 @@ symbian|contains(MEEGO_EDITION,harmattan): {
 }
 
 symbian {
-    DEFINES += USE_OPENGL_GRAPHICSSYSTEM
+    DEFINES += USE_OPENGL_GRAPHICS_SYSTEM
     TARGET.CAPABILITY += UserEnvironment
 }
 

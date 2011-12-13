@@ -57,7 +57,7 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef USE_OPENGL_GRAPHICSSYSTEM
+#ifdef USE_OPENGL_GRAPHICS_SYSTEM
     QApplication::setGraphicsSystem("opengl");
 #endif
 
