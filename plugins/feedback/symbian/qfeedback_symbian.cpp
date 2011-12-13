@@ -78,12 +78,19 @@ QFeedbackSymbian::QFeedbackSymbian()
 #endif
 
     initActuators();
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(freeResources()));
 }
 
 QFeedbackSymbian::~QFeedbackSymbian()
 {
+    freeResources();
+}
+
+void QFeedbackSymbian::freeResources()
+{
 #ifdef USE_CHWRMHAPTICS_PLZ
     qDeleteAll(m_haptics);
+    m_haptics.clear();
 #endif
 }
 
