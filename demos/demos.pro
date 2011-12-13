@@ -5,7 +5,8 @@ TEMPLATE = subdirs
 #Multimedia demos
 contains(mobility_modules,multimedia) {
     SUBDIRS += \
-        player
+        player \
+        video
 }
 
 #Messaging demos

@@ -1,0 +1,45 @@
+On Symbian, graphics memory consumption is an important consideration,
+because many of the current devices have a limited amount of graphics
+memory, which is shared by both the graphics stack (for OpenGLES /
+OpenVG rendering) and the camera/video stack.  For this reason, being
+able to track the amount of graphics memory being consumed by a given
+use case can be useful during application development.  This application
+demonstrates how this can be done, by using some native code to query
+graphics memory consumption information from a platform API, and a QML
+element to display this on screen in an overlay item.
+
+Starting with Symbian Anna, the platform implements an EGL extension
+called EGL_NOK_resource_profiling.  This allows the client to query
+
+\list
+    \o Total graphics memory
+    \o Total currently used graphics memory
+    \o Graphics memory used by calling process
+\endlist
+
+Being an EGL extension, this API isn't particularly friendly to use, so
+this example provides a simple Qt wrapper:
+
+\quotefromfile video/snippets/graphicsmemorymonitor/graphicsmemorymonitor.h
+\skipto class GraphicsMemoryMonitor : public QObject
+\printuntil updateIntervalChanged)
+\dots
+\skipto };
+\printline };
+
+This class is exposed to QML like this:
+
+\quotefromfile video/snippets/graphicsmemorymonitor/graphicsmemorymonitordeclarative.cpp
+\skipto GraphicsMemoryMonitor::qmlRegisterType
+\printuntil }
+
+And then the information is displayed by the GraphicsMemoryItem element:
+
+\quotefromfile video/snippets/graphicsmemorymonitor/qml/graphicsmemorymonitor/GraphicsMemoryItem.qml
+\skipto import
+\printuntil /^\}/
+
+The result looks like this:
+
+\image video-graphics-memory.png
+
