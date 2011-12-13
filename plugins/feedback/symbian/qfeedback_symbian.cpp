@@ -101,7 +101,6 @@ void QFeedbackSymbian::initActuators()
     // Retrieve the supported actuators from the haptics backend
     // XXX TODO: is this correct?  What about user-installed actuators?
     TUint32 supportedActuators(0);
-    TInt err(KErrNone);
     CHWRMHaptics* haptics(0);
     QT_TRAP_THROWING(haptics = CHWRMHaptics::NewL(NULL, NULL));
     if (!haptics)
