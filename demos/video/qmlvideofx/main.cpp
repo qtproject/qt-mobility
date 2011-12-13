@@ -30,6 +30,11 @@
 ** Other Usage
 ** Alternatively, this file may be used in accordance with the terms and
 ** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -134,7 +139,7 @@ int main(int argc, char *argv[])
     viewer.showExpanded();
 #endif
 
-    // Delay invokation of init until the event loop has started, to work around
+    // Delay invocation of init until the event loop has started, to work around
     // a GL context issue on Harmattan: without this, we get the following error
     // when the first ShaderEffectItem is created:
     // "QGLShaderProgram::addShader: Program and shader are not associated with same context"
