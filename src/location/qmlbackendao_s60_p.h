@@ -105,8 +105,18 @@ public:
     int setUpdateInterval(int aMilliSec);
 
     void startUpdates();
-
-
+    
+    bool getPosUpdState() {
+    	return mPosUpdate;
+    }
+    
+     void resetPosUpdState() {
+    	mPosUpdate = false;
+    }
+/*public:
+	Q_SIGNALS:
+    void startPsys();
+    void stopPsys();*/
 
 private:
     // C++ constructor
@@ -125,6 +135,8 @@ private:
     void CancelAll();
 
     bool initializePosInfo();
+    
+    
 
 private:
     // From CActive
@@ -156,6 +168,11 @@ private:
 
 
     TPositionSatelliteInfo mPosSatInfo;
+    
+    bool mPosUpdate;
+    
+    bool mUpdateHold;
+  
 };
 
 QTM_END_NAMESPACE

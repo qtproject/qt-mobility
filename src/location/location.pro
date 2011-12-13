@@ -36,7 +36,8 @@ PUBLIC_HEADERS += \
                     qgeosatelliteinfo.h \
                     qgeosatelliteinfosource.h \
                     qnmeapositioninfosource.h \
-                    qgeopositioninfosourcefactory.h
+                    qgeopositioninfosourcefactory.h 
+                 
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
@@ -47,14 +48,15 @@ PRIVATE_HEADERS += \
                     qnmeapositioninfosource_p.h \
                     qgeoareamonitor_polling_p.h \
                     projwrapper_p.h \
-                    qgeocoordinate_p.h
+                    qgeocoordinate_p.h \
+                    qmlTimer.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
                        notificationcallback_s60_p.h \
-                       notificationsatellitecallback_s60_p.h
+                       notificationsatellitecallback_s60_p.h 
 
     contains(lbt_enabled, yes) {
         PRIVATE_HEADERS += \
@@ -76,7 +78,7 @@ symbian {
 
     SOURCES += qgeopositioninfosource_s60.cpp \
                qgeosatelliteinfosource_s60.cpp \
-               qmlbackendao_s60.cpp
+               qmlbackendao_s60.cpp 
 
     contains(lbt_enabled, yes) {
         SOURCES += \
@@ -179,7 +181,8 @@ SOURCES += \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
             projwrapper_p.cpp \
-            qgeopositioninfosourcefactory.cpp
+            qgeopositioninfosourcefactory.cpp \
+            qmlTimer.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
