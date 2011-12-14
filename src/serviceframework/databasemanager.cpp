@@ -230,7 +230,7 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
 
     If the system scope database cannot be opened when performing
     user scope operations.  The operations are carried out as per normal
-    but only acting on the user scope database.  Each operation invokation
+    but only acting on the user scope database.  Each operation invocation
     will try to open a connection with the system scope database.
 
     Terminology note:
@@ -659,7 +659,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
 }
 
 /*
-    Sets the default interface implemenation for \a interfaceName to the matching
+    Sets the default interface implementation for \a interfaceName to the matching
     interface implementation provided by \a service.
 
     If \a service provides more than one interface implementation, the newest
