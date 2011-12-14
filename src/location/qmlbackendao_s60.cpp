@@ -42,7 +42,6 @@
 #include "qgeopositioninfosource_s60_p.h"
 #include "qgeosatelliteinfosource_s60_p.h"
 #include "qmlbackendao_s60_p.h"
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,12 +54,8 @@ CQMLBackendAO::CQMLBackendAO() :
         mPosInfo(NULL),
         mRequester(NULL),
         mRequesterSatellite(NULL),
-        mRequestType(RequestType(0)),
-        mPosUpdate(false),
-        mUpdateHold(false)        
+        mRequestType(RequestType(0))
 {
-	qDebug() << "CQMLBackendAO::CQMLBackendAO\n" ;
-	mPosUpdate = false;
 }
 
 //
@@ -69,7 +64,6 @@ CQMLBackendAO::CQMLBackendAO() :
 CQMLBackendAO* CQMLBackendAO::NewLC(QObject *aRequester,
                                     RequestType  aRequestType, TPositionModuleId  aModId)
 {
-	qDebug() << "CQMLBackendAO::NewLC\n" ;
     CQMLBackendAO* self = new(ELeave) CQMLBackendAO();
     CleanupStack::PushL(self);
     self->ConstructL(aRequester, aRequestType, aModId);
@@ -82,7 +76,6 @@ CQMLBackendAO* CQMLBackendAO::NewLC(QObject *aRequester,
 CQMLBackendAO* CQMLBackendAO::NewL(QObject *aRequester,
                                    RequestType  aRequestType, TPositionModuleId  aModId)
 {
-	qDebug() << "CQMLBackendAO::NewL\n" ;
     CQMLBackendAO* self = CQMLBackendAO::NewLC(aRequester, aRequestType, aModId);
     CleanupStack::Pop(); // self;
     return self;
@@ -94,7 +87,6 @@ CQMLBackendAO* CQMLBackendAO::NewL(QObject *aRequester,
 TInt CQMLBackendAO::ConstructL(QObject *aRequester, RequestType  aRequestType,
                                TPositionModuleId  aModId)
 {
-	qDebug() << "CQMLBackendAO::ConstructL\n" ;
     TInt error = KErrNone;
     RPositionServer PosServer;
 
@@ -136,7 +128,6 @@ TInt CQMLBackendAO::ConstructL(QObject *aRequester, RequestType  aRequestType,
 //
 CQMLBackendAO::~CQMLBackendAO()
 {
-	qDebug() << "CQMLBackendAO::CQMLBackendAO\n" ;
     Cancel();
 
     if ((mRequestType == OnceUpdate) || (mRequestType == RegularUpdate)) {
@@ -166,7 +157,6 @@ CQMLBackendAO::~CQMLBackendAO()
 //
 void CQMLBackendAO::DoCancel()
 {
-	qDebug() << "CQMLBackendAO::DoCancel\n" ;
     CancelAll();
 }
 
@@ -174,7 +164,6 @@ void CQMLBackendAO::DoCancel()
 //
 void CQMLBackendAO::RunL()
 {
-	qDebug() << "CQMLBackendAO::RunL\n" ;
     switch (mRequestType) {
         case DeviceStatus :
             handleDeviceNotification(iStatus.Int());
@@ -191,7 +180,6 @@ void CQMLBackendAO::RunL()
 //
 TInt CQMLBackendAO::RunError(TInt aError)
 {
-	qDebug() << "CQMLBackendAO::RunError\n" ;
     return aError;
 }
 
@@ -199,7 +187,6 @@ TInt CQMLBackendAO::RunError(TInt aError)
 // checks any pending request in activeobject
 bool CQMLBackendAO::isRequestPending()
 {
-	qDebug() << "CQMLBackendAO::isRequestPending\n" ;
     if (IsActive())
         return true;
     else
@@ -211,7 +198,6 @@ bool CQMLBackendAO::isRequestPending()
 // Async call to get notifications about device status.
 void CQMLBackendAO::notifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEvent)
 {
-	qDebug() << "CQMLBackendAO::notifyDeviceStatus\n" ;
     RPositionServer PosServ;
 
     if (mRequester)
@@ -221,7 +207,7 @@ void CQMLBackendAO::notifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEv
 
     //register for device status events
     TPositionModuleStatusEventBase::TModuleEvent RequestedEvents(
-        TPositionModuleStatusEventBase::EEventAll);
+        TPositionModuleStatusEventBase::EEventDeviceStatus);
 
     aStatusEvent.SetRequestedEvents(RequestedEvents);
 
@@ -233,7 +219,6 @@ void CQMLBackendAO::notifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEv
 
 void CQMLBackendAO::CancelAll()
 {
-	qDebug() << "CQMLBackendAO::CancelAll\n" ;
 
     RPositionServer PosServer;
     if (mRequestType == DeviceStatus) {
@@ -252,7 +237,6 @@ void CQMLBackendAO::CancelAll()
 //Initialize the posInfo with appropriate fields
 bool CQMLBackendAO::initializePosInfo()
 {
-	qDebug() << "CQMLBackendAO::initializePosInfo\n" ;
     if (!mPosInfo) {
         mPosInfo = HPositionGenericInfo::New();
 
@@ -302,8 +286,6 @@ bool CQMLBackendAO::initializePosInfo()
 //requestUpdate : request for position update once
 void CQMLBackendAO::requestUpdate(int aTimeout)
 {
-	
-	qDebug() << "CQMLBackendAO::requestUpdate\n" ;
     TPositionUpdateOptions  aPosOption;
 
     mPositioner.GetUpdateOptions(aPosOption);
@@ -321,8 +303,6 @@ void CQMLBackendAO::requestUpdate(int aTimeout)
 //
 void CQMLBackendAO::cancelUpdate()
 {
-	mUpdateHold = true;
-	qDebug() << "CQMLBackendAO::cancelUpdate\n" ;
     Cancel();
 
 }
@@ -331,18 +311,14 @@ void CQMLBackendAO::cancelUpdate()
 //
 void CQMLBackendAO::handleDeviceNotification(int aError)
 {
-	qDebug() << "CQMLBackendAO::handleDeviceNotification\n" ;
     switch (aError) {
             //NotifyPositionModulestatusEvent successfully completed
         case KErrNone :
 
             //module not found
         case KErrNotFound :
-            if (mRequester){
-            	if (mRequester->isUpdateOn()){
+            if (mRequester)
                 mRequester->updateDeviceStatus();
-              }
-            }
             else
                 mRequesterSatellite->updateDeviceStatus();
             break;
@@ -361,7 +337,7 @@ void CQMLBackendAO::handleDeviceNotification(int aError)
 //
 void CQMLBackendAO::handlePosUpdateNotification(int aError)
 {
-qDebug() << "CQMLBackendAO::handlePosUpdateNotification\n" ;
+
     HPositionGenericInfo *positionInfo = NULL;
 
     TPositionSatelliteInfo satInfo;
@@ -402,13 +378,10 @@ qDebug() << "CQMLBackendAO::handlePosUpdateNotification\n" ;
             }
 
             if (mRequester) {
-            	if ((mRequester->isUpdateOn())|| mRequester->isRqUpdateOn()){
                 mRequester->updatePosition(positionInfo, aError);
                 delete positionInfo;
-                mPosUpdate = true;
-              }
             } else {
-                if (mRequesterSatellite && ((aError != KErrTimedOut) || (mRequestType != RegularUpdate))) {
+                if ((aError != KErrTimedOut) || (mRequestType != RegularUpdate)) {
                     mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
                 }
             }
@@ -417,10 +390,7 @@ qDebug() << "CQMLBackendAO::handlePosUpdateNotification\n" ;
 
         default :
             if (mRequester) {
-            		if ((mRequester->isUpdateOn()) || mRequester->isRqUpdateOn()){
-                	mRequester->updatePosition(positionInfo, aError); // positionInfo will be NULL
-                	mPosUpdate = true;
-                }
+                mRequester->updatePosition(positionInfo, aError); // positionInfo will be NULL
             } else {
                 mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
             }
@@ -435,7 +405,6 @@ qDebug() << "CQMLBackendAO::handlePosUpdateNotification\n" ;
 //////////////////////////////////////////////////////////////
 int CQMLBackendAO::setUpdateInterval(int aMilliSec)
 {
-	qDebug() << "CQMLBackendAO::setUpdateInterval\n" ;
     int minimumUpdateInterval = 0;
     TInt64 mUpdateInterval = 0 ;
 
@@ -492,12 +461,10 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
 
 void CQMLBackendAO::startUpdates()
 {
-	qDebug() << "CQMLBackendAO::startUpdates\n" ;
     if (!IsActive()) {
         if (mRequester) {
             initializePosInfo();
             mPositioner.NotifyPositionUpdate(*mPosInfo , iStatus);
-            mUpdateHold = false;
         } else {
 			mPosSatInfo.ClearSatellitesInView();
             mPositioner.NotifyPositionUpdate(mPosSatInfo , iStatus);

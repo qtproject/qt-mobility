@@ -61,9 +61,6 @@
 #include "qgeopositioninfosource.h"
 #include "qmlbackendao_s60_p.h"
 #include "notificationcallback_s60_p.h"
-#include  "PosThread.h"
-#include <QTimer>
-#include "qmlTimer.h"
 
 #define MAX_SIZE 25
 
@@ -105,7 +102,6 @@ class CQGeoPositionInfoSourceS60 : public INotificationCallback,
         public QGeoPositionInfoSource
 
 {
-	
 public:
     // Constructors and destructor
     /**
@@ -189,23 +185,10 @@ public:
     inline TPositionModuleId getRequestUpdateModuleID() {
         return mReqModuleId;
     }
-    
-    TBool isUpdateOn(){
-    	return mStartUpdates;
-    }
-    
-    TBool isRqUpdateOn(){
-    	return mReqUpdates;
-    }
-    
-    TBool isUpdates();
-    
-    TBool startBackupUpdates();
-    
 
 public slots :
     // for request update
-    void requestUpdate(int timeout = 15000);
+    void requestUpdate(int timeout = 5000);
 
     // starts the regular updates
     virtual void startUpdates();
@@ -241,13 +224,6 @@ private:
 
     void TPositionInfo2QGeoPositionInfo(HPositionGenericInfo *mPosInfo,
                                         QGeoPositionInfo& posUpdate);
-                                        
-    TInt getAccurateSatMethod();
-    
-    TInt getAccurateNwMethod();
-    
-    void StartTimer();
-    
 
 protected:
     void connectNotify(const char *aSignal);
@@ -274,15 +250,11 @@ private:
     * Active object for requestUpdate
     */
     CQMLBackendAO * mReqUpdateAO;
-    
-    CQMLBackendAO * mReqBkUpdateAO;
 
     /**
     * Active object for regular updates.
     */
     CQMLBackendAO * mRegUpdateAO;
-    
-    CQMLBackendAO * mRegBkUpdateAO;
 
     /**
      * Positioner server
@@ -324,22 +296,16 @@ private:
      * maintain the startUpdates status
      */
     TBool mStartUpdates;
-    TBool mReqUpdates;
 
     TBool mRegularUpdateTimedOut;
 
     // To check if update interval is already set from application
     TBool mUpdateIntervalSet;
-    
-    TBool mPositionUpdate;
 
     /*
      * flags for the modules
      */
     TUint8 mModuleFlags;
-    
-    CQMLTimer* mTimer;
-
 };
 
 QTM_END_NAMESPACE
