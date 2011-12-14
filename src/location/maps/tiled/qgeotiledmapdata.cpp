@@ -158,9 +158,13 @@ QGeoTiledMapData::~QGeoTiledMapData()
 
 QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(double lon, double lat) const
 {
+    Q_Q(const QGeoTiledMapData);
     QPointF offset = windowOffset();
 
-    QPoint pos(coordinateToWorldReferencePosition(lon, lat));
+    QGeoCoordinate coordinate;
+    coordinate.setLatitude(lat);
+    coordinate.setLongitude(lon);
+    QPoint pos(q->coordinateToWorldReferencePosition(coordinate));
 
     const int x = pos.x() - worldReferenceViewportRect.left();
 //    if (x < 0)
