@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-// Based on http://www.geeks3d.com/20101029/shader-library-pixelation-post-processing-effect-glsl/
-
 import QtQuick 1.0
 
 Effect {
@@ -53,26 +51,5 @@ Effect {
 
     property real granularity: param1Value * 20
 
-    fragmentShader: fragmentShaderCommon + "
-        uniform float dividerValue;
-        uniform float granularity;
-        uniform float targetWidth;
-        uniform float targetHeight;
-
-        uniform sampler2D source;
-        uniform lowp float qt_Opacity;
-        varying vec2 qt_TexCoord0;
-
-        void main()
-        {
-            vec2 uv = qt_TexCoord0.xy;
-            vec2 tc = qt_TexCoord0;
-            if (uv.x < dividerValue && granularity > 0.0) {
-                float dx = granularity / targetWidth;
-                float dy = granularity / targetHeight;
-                tc = vec2(dx*(floor(uv.x/dx) + 0.5),
-                          dy*(floor(uv.y/dy) + 0.5));
-            }
-            gl_FragColor = qt_Opacity * texture2D(source, tc);
-        }"
+    fragmentShaderFilename: "shaders/pixelate.fsh"
 }

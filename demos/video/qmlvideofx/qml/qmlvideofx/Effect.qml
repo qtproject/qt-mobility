@@ -48,14 +48,28 @@ ShaderEffectItem {
     property bool supportsDivider: false
     property real targetWidth: 0
     property real targetHeight: 0
+    property string fragmentShaderFilename
+    property string vertexShaderFilename
 
-    property string fragmentShaderCommon: "
-    #ifdef GL_ES
-        precision mediump float;
-    #else
-    #   define lowp
-    #   define mediump
-    #   define highp
-    #endif // GL_ES
-    "
+    QtObject {
+        id: d
+        property string fragmentShaderCommon: "
+            #ifdef GL_ES
+                precision mediump float;
+            #else
+            #   define lowp
+            #   define mediump
+            #   define highp
+            #endif // GL_ES
+        "
+    }
+
+    // The following is a workaround for the fact that ShaderEffectItem
+    // doesn't provide a way for shader programs to be read from a file,
+    // rather than being inline in the QML file
+
+    onFragmentShaderFilenameChanged:
+        fragmentShader = d.fragmentShaderCommon + fileReader.readFile(fragmentShaderFilename)
+    onVertexShaderFilenameChanged:
+        vertexShader = fileReader.readFile(vertexShaderFilename)
 }

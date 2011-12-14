@@ -39,14 +39,21 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+// Based on http://kodemongki.blogspot.com/2011/06/kameraku-custom-shader-effects-example.html
 
-Effect {
-    // Constant properties which must be supported by every effect
-    property int numParameters: 0
-    property bool supportsDivider: true
+uniform float dividerValue;
+uniform sampler2D source;
+uniform lowp float qt_Opacity;
+varying vec2 qt_TexCoord0;
 
-    property real dividerValue: 0.5
-
-    fragmentShaderFilename: "shaders/tiltshift.fsh"
+void main()
+{
+    vec2 uv = qt_TexCoord0.xy;
+    vec4 orig = texture2D(source, uv);
+    vec3 col = orig.rgb;
+    float y = 0.3 * col.r + 0.59 * col.g + 0.11 * col.b;
+    if (uv.x < dividerValue)
+        gl_FragColor = qt_Opacity * vec4(y + 0.15, y + 0.07, y - 0.12, 1.0);
+    else
+        gl_FragColor = qt_Opacity * orig;
 }

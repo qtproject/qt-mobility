@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-// Based on http://www.reddit.com/r/programming/comments/losip/shader_toy/c2upn1e
-
 import QtQuick 1.0
 
 Effect {
@@ -62,31 +60,10 @@ Effect {
     onTargetWidthChanged: if (posX == -1) posX = targetWidth / 2
     onTargetHeightChanged: if (posY == -1) posY = targetHeight / 2
 
-    fragmentShader: fragmentShaderCommon + "
-        uniform sampler2D source;
-        uniform lowp float qt_Opacity;
-        varying vec2 qt_TexCoord0;
-        uniform float radius;
-        uniform float diffractionIndex;
-        uniform float targetWidth;
-        uniform float targetHeight;
-        uniform float posX;
-        uniform float posY;
-
-        void main()
-        {
-            float h = diffractionIndex * 0.5 * radius;
-            vec2 targetSize = vec2(targetWidth, targetHeight);
-            vec2 center = vec2(posX, posY);
-            vec2 xy = gl_FragCoord.xy - center.xy;
-            float r = sqrt(xy.x * xy.x + xy.y * xy.y);
-            vec2 new_xy = r < radius ? xy * (radius - h) / sqrt(radius * radius - r * r) : xy;
-            gl_FragColor = qt_Opacity * texture2D(source, (new_xy + center) / targetSize);
-        }"
+    fragmentShaderFilename: "shaders/magnify.fsh"
 
     MouseArea {
         anchors.fill: parent
         onPositionChanged: { root.posX = mouse.x; root.posY = root.targetHeight - mouse.y }
     }
 }
-

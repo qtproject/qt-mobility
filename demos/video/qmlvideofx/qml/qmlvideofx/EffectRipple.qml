@@ -39,8 +39,6 @@
 **
 ****************************************************************************/
 
-// Based on http://labs.qt.nokia.com/2011/03/22/the-convenient-power-of-qml-scene-graph/
-
 import QtQuick 1.0
 
 Effect {
@@ -59,40 +57,5 @@ Effect {
     property real amplitude: param1Value * 0.03
     property real n: param2Value * 7
 
-    fragmentShader: fragmentShaderCommon + "
-        uniform float dividerValue;
-        uniform float targetWidth;
-        uniform float targetHeight;
-        uniform float time;
-
-        uniform sampler2D source;
-        uniform lowp float qt_Opacity;
-        varying vec2 qt_TexCoord0;
-
-        const float PI = 3.1415926535;
-        const int ITER = 7;
-        const float RATE = 0.1;
-        uniform float amplitude;
-        uniform float n;
-
-        void main()
-        {
-            vec2 uv = qt_TexCoord0.xy;
-            vec2 tc = uv;
-            vec2 p = vec2(-1.0 + 2.0 * gl_FragCoord.x / targetWidth, -1.0 + 2.0 * gl_FragCoord.y / targetHeight);
-            float diffx = 0.0;
-            float diffy = 0.0;
-            vec4 col;
-            if (uv.x < dividerValue) {
-                for (int i=0; i<ITER; ++i) {
-                    float theta = float(i) * PI / float(ITER);
-                    vec2 r = vec2(cos(theta) * p.x + sin(theta) * p.y, -1.0 * sin(theta) * p.x + cos(theta) * p.y);
-                    float diff = (sin(2.0 * PI * n * (r.y + time * RATE)) + 1.0) / 2.0;
-                    diffx += diff * sin(theta);
-                    diffy += diff * cos(theta);
-                }
-                tc = 0.5*(vec2(1.0,1.0) + p) + amplitude * vec2(diffx, diffy);
-            }
-            gl_FragColor = qt_Opacity * texture2D(source, tc);
-        }"
+    fragmentShaderFilename: "shaders/ripple.fsh"
 }
