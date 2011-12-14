@@ -39,14 +39,25 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+// Based on http://www.reddit.com/r/programming/comments/losip/shader_toy/c2upn1e
 
-Effect {
-    // Constant properties which must be supported by every effect
-    property int numParameters: 0
-    property bool supportsDivider: true
+uniform sampler2D source;
+uniform lowp float qt_Opacity;
+varying vec2 qt_TexCoord0;
+uniform float radius;
+uniform float diffractionIndex;
+uniform float targetWidth;
+uniform float targetHeight;
+uniform float posX;
+uniform float posY;
 
-    property real dividerValue: 0.5
-
-    fragmentShaderFilename: "shaders/tiltshift.fsh"
+void main()
+{
+    float h = diffractionIndex * 0.5 * radius;
+    vec2 targetSize = vec2(targetWidth, targetHeight);
+    vec2 center = vec2(posX, posY);
+    vec2 xy = gl_FragCoord.xy - center.xy;
+    float r = sqrt(xy.x * xy.x + xy.y * xy.y);
+    vec2 new_xy = r < radius ? xy * (radius - h) / sqrt(radius * radius - r * r) : xy;
+    gl_FragColor = qt_Opacity * texture2D(source, (new_xy + center) / targetSize);
 }

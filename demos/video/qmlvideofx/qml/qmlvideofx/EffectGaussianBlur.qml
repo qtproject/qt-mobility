@@ -61,33 +61,7 @@ Item {
         property real dividerValue: parent.dividerValue
         property real blurSize: 4.0 * parent.param1Value / targetWidth
 
-        fragmentShader: fragmentShaderCommon + "
-            uniform float dividerValue;
-            uniform float blurSize;
-
-            uniform sampler2D source;
-            uniform lowp float qt_Opacity;
-            varying vec2 qt_TexCoord0;
-
-            void main()
-            {
-                vec2 uv = qt_TexCoord0.xy;
-                vec4 c = vec4(0.0);
-                if (uv.x < dividerValue) {
-                    c += texture2D(source, uv - vec2(0.0, 4.0*blurSize)) * 0.05;
-                    c += texture2D(source, uv - vec2(0.0, 3.0*blurSize)) * 0.09;
-                    c += texture2D(source, uv - vec2(0.0, 2.0*blurSize)) * 0.12;
-                    c += texture2D(source, uv - vec2(0.0, 1.0*blurSize)) * 0.15;
-                    c += texture2D(source, uv) * 0.16;
-                    c += texture2D(source, uv + vec2(0.0, 1.0*blurSize)) * 0.15;
-                    c += texture2D(source, uv + vec2(0.0, 2.0*blurSize)) * 0.12;
-                    c += texture2D(source, uv + vec2(0.0, 3.0*blurSize)) * 0.09;
-                    c += texture2D(source, uv + vec2(0.0, 4.0*blurSize)) * 0.05;
-                } else {
-                    c = texture2D(source, qt_TexCoord0);
-                }
-                gl_FragColor = qt_Opacity * c;
-            }"
+        fragmentShaderFilename: "shaders/gaussianblur_v.fsh"
 
         Effect {
             id: horizontalShader
@@ -95,33 +69,7 @@ Item {
             property real dividerValue: parent.dividerValue
             property real blurSize: parent.blurSize
 
-            fragmentShader: fragmentShaderCommon + "
-                uniform float dividerValue;
-                uniform float blurSize;
-
-                uniform sampler2D source;
-                uniform lowp float qt_Opacity;
-                varying vec2 qt_TexCoord0;
-
-                void main()
-                {
-                    vec2 uv = qt_TexCoord0.xy;
-                    vec4 c = vec4(0.0);
-                    if (uv.x < dividerValue) {
-                        c += texture2D(source, uv - vec2(4.0*blurSize, 0.0)) * 0.05;
-                        c += texture2D(source, uv - vec2(3.0*blurSize, 0.0)) * 0.09;
-                        c += texture2D(source, uv - vec2(2.0*blurSize, 0.0)) * 0.12;
-                        c += texture2D(source, uv - vec2(1.0*blurSize, 0.0)) * 0.15;
-                        c += texture2D(source, uv) * 0.16;
-                        c += texture2D(source, uv + vec2(1.0*blurSize, 0.0)) * 0.15;
-                        c += texture2D(source, uv + vec2(2.0*blurSize, 0.0)) * 0.12;
-                        c += texture2D(source, uv + vec2(3.0*blurSize, 0.0)) * 0.09;
-                        c += texture2D(source, uv + vec2(4.0*blurSize, 0.0)) * 0.05;
-                    } else {
-                        c = texture2D(source, qt_TexCoord0);
-                    }
-                    gl_FragColor = qt_Opacity * c;
-                }"
+            fragmentShaderFilename: "shaders/gaussianblur_h.fsh"
         }
     }
 }

@@ -39,8 +39,10 @@
 **
 ****************************************************************************/
 
+#include <QtDeclarative/QDeclarativeContext>
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsObject>
+#include "filereader.h"
 #include "qmlapplicationviewer.h"
 #include "trace.h"
 
@@ -131,6 +133,9 @@ int main(int argc, char *argv[])
     QObject::connect(&paintEventMonitor, SIGNAL(targetPainted()),
                      rootObject, SLOT(qmlFramePainted()));
 #endif
+
+    FileReader fileReader;
+    viewer.rootContext()->setContextProperty("fileReader", &fileReader);
 
 #ifdef SMALL_SCREEN_PHYSICAL
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationLockLandscape);

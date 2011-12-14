@@ -39,14 +39,30 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+// Based on http://www.geeks3d.com/20091027/shader-library-posterization-post-processing-effect-glsl/
 
-Effect {
-    // Constant properties which must be supported by every effect
-    property int numParameters: 0
-    property bool supportsDivider: true
+uniform float dividerValue;
+uniform float gamma;
+uniform float numColors;
 
-    property real dividerValue: 0.5
+uniform sampler2D source;
+uniform lowp float qt_Opacity;
+varying vec2 qt_TexCoord0;
 
-    fragmentShaderFilename: "shaders/tiltshift.fsh"
+void main()
+{
+    vec2 uv = qt_TexCoord0.xy;
+    vec4 c = vec4(0.0);
+    if (uv.x < dividerValue) {
+        vec3 x = texture2D(source, uv).rgb;
+        x = pow(x, vec3(gamma, gamma, gamma));
+        x = x * numColors;
+        x = floor(x);
+        x = x / numColors;
+        x = pow(x, vec3(1.0/gamma));
+        c = vec4(x, 1.0);
+    } else {
+        c = texture2D(source, uv);
+    }
+    gl_FragColor = qt_Opacity * c;
 }

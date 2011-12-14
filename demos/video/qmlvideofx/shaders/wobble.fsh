@@ -39,14 +39,24 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+// Based on http://labs.qt.nokia.com/2011/03/22/the-convenient-power-of-qml-scene-graph/
 
-Effect {
-    // Constant properties which must be supported by every effect
-    property int numParameters: 0
-    property bool supportsDivider: true
+uniform float amplitude;
+uniform float dividerValue;
+uniform float frequency;
+uniform float time;
 
-    property real dividerValue: 0.5
+uniform sampler2D source;
+uniform lowp float qt_Opacity;
+varying vec2 qt_TexCoord0;
 
-    fragmentShaderFilename: "shaders/tiltshift.fsh"
+void main()
+{
+    vec2 uv = qt_TexCoord0.xy;
+    vec2 tc = qt_TexCoord0;
+    if (uv.x < dividerValue) {
+        vec2 p = sin(time + frequency * qt_TexCoord0);
+        tc += amplitude * vec2(p.y, -p.x);
+    }
+    gl_FragColor = qt_Opacity * texture2D(source, tc);
 }

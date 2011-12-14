@@ -39,14 +39,12 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+#include <QtCore/QObject>
 
-Effect {
-    // Constant properties which must be supported by every effect
-    property int numParameters: 0
-    property bool supportsDivider: true
+class FileReader : public QObject
+{
+    Q_OBJECT
+public:
+    Q_INVOKABLE QString readFile(const QString &fileName);
+};
 
-    property real dividerValue: 0.5
-
-    fragmentShaderFilename: "shaders/tiltshift.fsh"
-}

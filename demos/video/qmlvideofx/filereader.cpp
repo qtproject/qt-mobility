@@ -39,14 +39,20 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+#include "filereader.h"
+#include "trace.h"
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
-Effect {
-    // Constant properties which must be supported by every effect
-    property int numParameters: 0
-    property bool supportsDivider: true
-
-    property real dividerValue: 0.5
-
-    fragmentShaderFilename: "shaders/tiltshift.fsh"
+QString FileReader::readFile(const QString &fileName)
+{
+    qtTrace() << "FileReader::readFile" << "fileName" << fileName;
+    QString content;
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&file);
+        content = stream.readAll();
+    }
+    return content;
 }
+
