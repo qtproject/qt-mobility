@@ -43,7 +43,7 @@
 
 /*!
   \class QOrganizerCollectionEngineId
-  \relates QOrganizerCollectionId
+  \sa QOrganizerCollectionId
   \brief The QOrganizerCollectionEngineId class uniquely identifies an item within a
   particular engine plugin.
   \since 1.1
