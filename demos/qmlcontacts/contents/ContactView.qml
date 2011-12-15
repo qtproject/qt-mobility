@@ -48,6 +48,12 @@ Item {
     signal deleted(int id)
     property bool showDetailed: false
 
+    // list<string> type properties do not update automatically as model, assigning them again triggers an update
+    function update() {
+        phoneNumberRepeater.model = contact.phoneNumbers
+        emailRepeater.model = contact.emails
+    }
+
     ListView {
         id: normalView
         focus: true
@@ -102,6 +108,7 @@ Item {
             }
             Column {
                 Repeater {
+                    id: phoneNumberRepeater
                     model: contact ? contact.phoneNumbers : []
                     delegate:
                         FieldRow {
@@ -121,6 +128,7 @@ Item {
                             "import QtMobility.contacts 1.1;" +
                             "PhoneNumber {number: ''}", contact);
                         contact.addDetail(detail);
+                        update();
                     }
             }
 
@@ -135,6 +143,7 @@ Item {
             }
             Column {
                 Repeater {
+                    id: emailRepeater
                     model: contact ? contact.emails : []
                     delegate:
                         FieldRow {
@@ -154,6 +163,7 @@ Item {
                             "import QtMobility.contacts 1.1;" +
                             "EmailAddress {emailAddress: ''}", contact);
                         contact.addDetail(detail);
+                        update();
                     }
             }
         }

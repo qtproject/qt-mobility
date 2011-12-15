@@ -43,7 +43,7 @@ import Qt 4.7
 
 Item {
     property string label
-    property variant value
+    property string value
     property alias newValue: textEdit.text
 
     signal blur
@@ -71,7 +71,7 @@ Item {
             id: textEdit
             anchors.fill: parent
             anchors.margins: 3
-            text: value.toString();
+            text: value
             color: activeFocus? "black" : "#ffffaa";
             onActiveFocusChanged: { if (!activeFocus) { blur(); } }
         }

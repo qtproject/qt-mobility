@@ -70,6 +70,16 @@ Item {
             statusString: contactModel.error
         }
 
+        // This component serves as a base from which new contacts are instantiated
+        Component {
+            id: contactComponent
+            Contact {
+                PhoneNumber {
+                    number: ""
+                }
+            }
+        }
+
         ContactListView {
             id: contactListView
             width: parent.width
@@ -80,13 +90,15 @@ Item {
             onOpenContact: {
                     screen.showContact = true;
                     contactView.contact = contact;
+                    contactView.update();
                     }
             onNewContact: {
-                    var contact = Qt.createQmlObject(
-                        "import QtMobility.contacts 1.1;" +
-                        "Contact {}", contactModel);
+                    // create new instance of contactComponent
+                    // using createQmlObject does not work here; phoneNumbers and emails list properties do not get initialized for some reason
+                    var contact = contactComponent.createObject(contactModel);
                     screen.showContact = true;
                     contactView.contact = contact;
+                    contactView.update();
                 }
         }
 
