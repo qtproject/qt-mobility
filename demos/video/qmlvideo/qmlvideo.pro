@@ -10,7 +10,7 @@ qml_folder.target = qml
 DEPLOYMENTFOLDERS = qml_folder
 
 images_folder.source = images
-images_folder.target = .
+images_folder.target =
 DEPLOYMENTFOLDERS += images_folder
 
 SNIPPETS_PATH = ../snippets
