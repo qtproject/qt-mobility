@@ -62,6 +62,8 @@ Item {
         anchors.top: parent.top
         anchors.bottom: toolBar.top
         opacity: 1
+        clip: true
+        spacing: 2
         transform: Scale {
             id: normalViewScale;
             xScale: 1
@@ -107,6 +109,7 @@ Item {
                 font.weight: Font.Bold
             }
             Column {
+                spacing: 2
                 Repeater {
                     id: phoneNumberRepeater
                     model: contact ? contact.phoneNumbers : []
@@ -142,6 +145,7 @@ Item {
                 font.weight: Font.Bold
             }
             Column {
+                spacing: 2
                 Repeater {
                     id: emailRepeater
                     model: contact ? contact.emails : []
@@ -177,6 +181,7 @@ Item {
         anchors.top: parent.top
         anchors.bottom: toolBar.top
         opacity: 1
+        clip: true
         transform: Scale {
             id: detailViewScale;
             xScale: 0
@@ -208,12 +213,13 @@ Item {
                             height: childrenRect.height
                             Text {
                                 id: fieldName
-                                width: parent.width * 0.5;
+                                width: parent.width * 0.4;
                                 height: 20;
                                 anchors.margins: 3
                                 anchors.left: parent.left
                                 text: modelData
                                 color: "white"
+                                elide: Text.ElideRight
                             }
                             Text {
                                 id: textRect
@@ -245,9 +251,14 @@ Item {
                 switch (index) {
                     case 0:
                         contact.save();
+                        showDetailed = false;
+                        break;
+                    case 1:
+                        showDetailed = false;
                         break;
                     case 2:
                         deleted(contact.contactId)
+                        showDetailed = false;
                         break;
                     case 3:
                         showDetailed = !showDetailed;

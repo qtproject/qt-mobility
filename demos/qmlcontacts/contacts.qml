@@ -176,7 +176,7 @@ Item {
             Text {
                 text:messageBox.messageString
                 color:"red"
-                font.pointSize:20
+                font.pointSize:14
                 horizontalAlignment:Text.AlignHCenter
             }
 
