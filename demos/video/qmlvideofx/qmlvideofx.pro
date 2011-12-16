@@ -13,11 +13,11 @@ qml_folder.target = qml
 DEPLOYMENTFOLDERS += qml_folder
 
 images_folder.source = images
-images_folder.target = .
+images_folder.target =
 DEPLOYMENTFOLDERS += images_folder
 
 shaders_folder.source = shaders
-shaders_folder.target = .
+shaders_folder.target =
 DEPLOYMENTFOLDERS += shaders_folder
 
 SNIPPETS_PATH = ../snippets

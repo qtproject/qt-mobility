@@ -48,7 +48,9 @@ symbian {
         source = $$MAINPROFILEPWD/$$eval($${deploymentfolder}.source)
         source = $$replace(source, /, \\)
         sourcePathSegments = $$split(source, \\)
-        target = $$OUT_PWD/$$eval($${deploymentfolder}.target)/$$last(sourcePathSegments)
+        target = $$OUT_PWD/$$eval($${deploymentfolder}.target)
+        target = $$replace(target, /$, )
+        target = $$target/$$last(sourcePathSegments)
         target = $$replace(target, /, \\)
         !isEqual(source,$$target) {
             !isEmpty(copyCommand):copyCommand += &&
@@ -92,6 +94,7 @@ symbian {
                 target = $$OUT_PWD/$$eval($${deploymentfolder}.target)
             }
             target = $$replace(target, \\\\, /)
+            target = $$replace(target, /$, )
             sourcePathSegments = $$split(source, /)
             targetFullPath = $$target/$$last(sourcePathSegments)
             !isEqual(source,$$targetFullPath) {
