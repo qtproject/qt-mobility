@@ -2,8 +2,6 @@
 # Modified to install into the correct destination folder
 
 include(../../../../features/basic_examples_setup.pri)
-target.path = $${QT_MOBILITY_DEMOS}/$${TARGET}
-INSTALLS += target
 
 QT += declarative
 
@@ -113,6 +111,7 @@ symbian {
         }
     }
     installPrefix = $${QT_MOBILITY_DEMOS}/$${TARGET}
+    !isEmpty(MEEGO_VERSION_MAJOR): installPrefix = /opt/$${TARGET}
     for(deploymentfolder, DEPLOYMENTFOLDERS) {
         item = item$${deploymentfolder}
         itemfiles = $${item}.files
@@ -131,6 +130,10 @@ symbian {
         export(desktopfile.path)
         INSTALLS += icon desktopfile
     }
+
+    target.path = $${installPrefix}/bin
+    export(target.path)
+    INSTALLS += target
 }
 
 export (ICON)
