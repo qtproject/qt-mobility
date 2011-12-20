@@ -140,6 +140,8 @@ bool QMessageAccountId::operator!=(const QMessageAccountId &other) const
 
 /*! \typedef QMessageAccountIdList
 
+    \relates QMessageAccountId
+
     Qt-style synonym for QList<QMessageAccountId>
 */
 
