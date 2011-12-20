@@ -1,6 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtfeedback_mmk)
+TARGET = $$mobilityPluginTarget(qtfeedback_mmk)
 PLUGIN_TYPE=feedback
 
 include(../../../common.pri)
@@ -16,8 +18,7 @@ MOBILITY = feedback multimedia
 symbian: {
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
-    TARGET.UID3 = 0x200315FF
-    TARGET = $${TARGET}$${QT_LIBINFIX}
+    TARGET.UID3 = $$mobilityUID(0x200315FF)
     load(armcc_warnings)
 
     target.path = /sys/bin

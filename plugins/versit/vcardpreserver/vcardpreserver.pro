@@ -1,6 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtversit_vcardpreserver)
+TARGET = $$mobilityPluginTarget(qtversit_vcardpreserver)
 PLUGIN_TYPE=versit
 
 include(../../../common.pri)
@@ -20,7 +22,7 @@ MOBILITY = versit contacts
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -Tcb
-    TARGET.UID3 = 0x20031602
+    TARGET.UID3 = $$mobilityUID(0x20031602)
 
     target.path = /sys/bin
     INSTALLS += target

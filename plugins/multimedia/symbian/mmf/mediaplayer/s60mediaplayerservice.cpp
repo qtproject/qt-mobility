@@ -42,130 +42,83 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
-
+#include <qmediaplaylistnavigator.h>
+#include <qmediaplaylist.h>
 #include "s60mediaplayerservice.h"
 #include "s60mediaplayercontrol.h"
 #include "s60videoplayersession.h"
 #include "s60audioplayersession.h"
 #include "s60mediametadataprovider.h"
 #include "s60mediarecognizer.h"
-#include "s60videowidgetcontrol.h"
-#include "s60videowindowcontrol.h"
+#include "s60videooutputfactory.h"
 #include "s60mediaplayeraudioendpointselector.h"
 #include "s60medianetworkaccesscontrol.h"
 #include "s60mediastreamcontrol.h"
 #include "s60mmtrace.h"
 
-#include <qmediaplaylistnavigator.h>
-#include <qmediaplaylist.h>
-
-/*!
-    Construct a media service with the given \a parent.
-*/
-
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent)
-    , m_control(NULL)
-    , m_metaData(NULL)
-    , m_audioEndpointSelector(NULL)
-    , m_streamControl(NULL)
-    , m_networkAccessControl(NULL)
-    , m_videoOutput(NULL)
+    , m_control(0)
+    , m_metaData(0)
+    , m_audioEndpointSelector(0)
+    , m_streamControl(0)
+    , m_networkAccessControl(0)
+    , m_videoOutputFactory(0)
 {
     TRACE("S60MediaPlayerService::S60MediaPlayerService" << qtThisPtr());
-
     m_control = new S60MediaPlayerControl(this);
     m_metaData = new S60MediaMetaDataProvider(m_control, this);
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
     m_streamControl = new S60MediaStreamControl(m_control, this);
     m_networkAccessControl =  new S60MediaNetworkAccessControl(this);
+    m_videoOutputFactory = new S60VideoOutputFactory(this);
 }
-
-/*!
-    Destroys a media service.
-*/
 
 S60MediaPlayerService::~S60MediaPlayerService()
 {
     TRACE("S60MediaPlayerService::~S60MediaPlayerService" << qtThisPtr());
 }
 
-/*!
-    \return a pointer to the media control, which matches the controller \a name.
-
-    If the service does not implement the control, or if it is unavailable a
-    null pointer is returned instead.
-
-    Controls must be returned to the service when no longer needed using the
-    releaseControl() function.
-*/
-
 QMediaControl *S60MediaPlayerService::requestControl(const char *name)
 {
     QMediaControl *result = 0;
-
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         result = m_control;
-
     if (qstrcmp(name, QMediaNetworkAccessControl_iid) == 0)
         result = m_networkAccessControl;
-
     if (qstrcmp(name, QMetaDataReaderControl_iid) == 0)
         result = m_metaData;
-
     if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
         result = m_audioEndpointSelector;
-
     if (qstrcmp(name, QMediaStreamsControl_iid) == 0)
         result = m_streamControl;
 
-    if (!m_videoOutput) {
-        if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
-            m_videoOutput = new S60VideoWidgetControl(this);
-        }
-        else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
-            m_videoOutput = new S60VideoWindowControl(this);
-        }
-
-        if (m_videoOutput) {
-            m_control->setVideoOutput(m_videoOutput);
-            result = m_videoOutput;
-        }
-    }else {
-        if (qstrcmp(name, QVideoWidgetControl_iid) == 0 ||
-            qstrcmp(name, QVideoWindowControl_iid) == 0){
-            result = m_videoOutput;
-        }
+    if (!result) {
+        result = m_videoOutputFactory->requestControl(name);
+        if (result)
+            m_control->setVideoOutput(result);
     }
+
     TRACE("S60MediaPlayerService::requestControl" << qtThisPtr()
           << "name" << name << "result" << result);
     return result;
 }
-
-/*!
-    Releases a \a control back to the service.
-*/
 
 void S60MediaPlayerService::releaseControl(QMediaControl *control)
 {
     TRACE("S60MediaPlayerService::releaseControl" << qtThisPtr()
           << "control" << control);
 
-    if (control == m_videoOutput) {
-        m_videoOutput = 0;
-        m_control->setVideoOutput(m_videoOutput);
-    }
+    if (m_control->videoOutput() == control)
+        m_control->setVideoOutput(0);
+    m_videoOutputFactory->releaseControl(control);
 }
 
-/*!
- * \return media player session(audio playersesion/video playersession)
- *  by recognizing whether media is audio or video and sets it on media type.
-*/
 S60MediaPlayerSession* S60MediaPlayerService::createPlayerSession(const QMediaContent &content)
 {
     QUrl url = content.canonicalUrl();
     S60MediaPlayerSession *session = 0;
-    S60MediaSettings::TMediaType mediaType = S60MediaSettings::Unknown;
+    S60MediaSettings::MediaType mediaType = S60MediaSettings::Unknown;
     if (!url.isEmpty()) {
         S60MediaRecognizer *recognizer = new S60MediaRecognizer;
         const S60MediaRecognizer::MediaType recognizerMediaType = recognizer->mediaType(url);
@@ -186,16 +139,9 @@ S60MediaPlayerSession* S60MediaPlayerService::createPlayerSession(const QMediaCo
     return session;
 }
 
-/*!
- *  \return media playersession (videoplayersession).
- *  constructs the videoplayersession object and connects all the respective signals and slots.
- *  and initialises all the media settings.
-*/
-
 S60MediaPlayerSession* S60MediaPlayerService::createVideoPlayerSession()
 {
     S60VideoPlayerSession *session = new S60VideoPlayerSession(this, m_networkAccessControl);
-
     connect(session, SIGNAL(positionChanged(qint64)),
             m_control, SIGNAL(positionChanged(qint64)));
     connect(session, SIGNAL(playbackRateChanged(qreal)),
@@ -230,25 +176,16 @@ S60MediaPlayerSession* S60MediaPlayerService::createVideoPlayerSession()
             m_streamControl, SLOT(handleStreamsChanged()));
     connect(session, SIGNAL(accessPointChanged(int)),
             m_networkAccessControl, SLOT(accessPointChanged(int)));
-
     session->setVolume(m_control->mediaControlSettings().volume());
     session->setMuted(m_control->mediaControlSettings().isMuted());
     session->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
     session->setVideoRenderer(m_control->mediaControlSettings().videoOutput());
-
     return session;
 }
-
-/*!
- *  \return media playersession (audioplayersession).
- *  constructs the audioplayersession object and connects all the respective signals and slots.
- *  and initialises all the media settings.
-*/
 
 S60MediaPlayerSession* S60MediaPlayerService::createAudioPlayerSession()
 {
     S60AudioPlayerSession *session = new S60AudioPlayerSession(this);
-
     connect(session, SIGNAL(positionChanged(qint64)),
             m_control, SIGNAL(positionChanged(qint64)));
     connect(session, SIGNAL(playbackRateChanged(qreal)),
@@ -281,10 +218,9 @@ S60MediaPlayerSession* S60MediaPlayerService::createAudioPlayerSession()
             m_audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)));
     connect(session, SIGNAL(mediaChanged()),
             m_streamControl, SLOT(handleStreamsChanged()));
-
     session->setVolume(m_control->mediaControlSettings().volume());
     session->setMuted(m_control->mediaControlSettings().isMuted());
     session->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
-
     return session;
 }
+

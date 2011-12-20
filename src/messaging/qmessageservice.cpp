@@ -321,7 +321,9 @@ QTM_BEGIN_NAMESPACE
 
     The folder must be in the same account as the message. This will move the message on the external server, as well as locally.
 
-    On Windows mobile and desktop platforms this function is not supported. On Symbian prior to SR1.11 this function is not supported. On Symbian SR1.11 this function is only partially supported.
+    On Windows mobile and desktop platforms this function is not supported. On Symbian prior to Belle this function is not supported.
+    On Symbian Belle POP supports moving messages to drafts folder only and source folder must be either sent or outbox folder in
+    IMAP and POP if target is drafts folder.
 
     Returns true if the operation can be initiated; otherwise returns false.
     \since 1.2

@@ -60,6 +60,7 @@ Item {
         focus: true
         keyNavigationWraps: true
         opacity: 0.8
+        clip: true
 
         model: contacts
 
@@ -164,10 +165,14 @@ Item {
                                 MediaButton {
                                     id: dialButton;
                                     text: "Dial";
+
+                                    onClicked: Qt.openUrlExternally("tel:" + model.contact.phoneNumber.number)
                                 }
                                 MediaButton {
                                     id: textButton
                                     text: "Send Text";
+
+                                    onClicked: Qt.openUrlExternally("sms:" + model.contact.phoneNumber.number)
                                 }
                                 Item {
                                     height:childrenRect.height

@@ -1,17 +1,19 @@
+include(../../../features/utils.pri)
+
 INCLUDEPATH+=../../../src/sensors
 
 PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtsensors_generic)
+TARGET = $$mobilityPluginTarget(qtsensors_generic)
 
 include(generic.pri)
 include(../../../common.pri)
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x2002BFC3
+    TARGET.UID3 = $$mobilityUID(0x2002BFC3)
     TARGET.CAPABILITY = ALL -TCB
 
     pluginDep.sources = $${TARGET}.dll

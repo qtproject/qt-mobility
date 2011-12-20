@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,36 @@
 **
 ****************************************************************************/
 
-#include <qabstractvideosurface.h>
+// Based on http://kodemongki.blogspot.com/2011/06/kameraku-custom-shader-effects-example.html
 
-#include "s60videorenderercontrol.h"
+uniform float grid;
+uniform float dividerValue;
+uniform float step_x;
+uniform float step_y;
 
-S60VideoRendererControl::S60VideoRendererControl(QObject *parent) :
-    QVideoRendererControl(parent),
-    m_surface(0)
+uniform sampler2D source;
+uniform lowp float qt_Opacity;
+varying vec2 qt_TexCoord0;
+
+void main()
 {
+    vec2 uv = qt_TexCoord0.xy;
+    float offx = floor(uv.x  / (grid * step_x));
+    float offy = floor(uv.y  / (grid * step_y));
+    vec3 res = texture2D(source, vec2(offx * grid * step_x , offy * grid * step_y)).rgb;
+    vec2 prc = fract(uv / vec2(grid * step_x, grid * step_y));
+    vec2 pw = pow(abs(prc - 0.5), vec2(2.0));
+    float  rs = pow(0.45, 2.0);
+    float gr = smoothstep(rs - 0.1, rs + 0.1, pw.x + pw.y);
+    float y = (res.r + res.g + res.b) / 3.0;
+    vec3 ra = res / y;
+    float ls = 0.3;
+    float lb = ceil(y / ls);
+    float lf = ls * lb + 0.3;
+    res = lf * res;
+    vec3 col = mix(res, vec3(0.1, 0.1, 0.1), gr);
+    if (uv.x < dividerValue)
+        gl_FragColor = qt_Opacity * vec4(col, 1.0);
+    else
+        gl_FragColor = qt_Opacity * texture2D(source, uv);
 }
-
-S60VideoRendererControl::~S60VideoRendererControl()
-{
-    // Stop surface if still active
-    if (m_surface && m_surface->isActive())
-        m_surface->stop();
-}
-
-QAbstractVideoSurface *S60VideoRendererControl::surface() const
-{
-    return m_surface;
-}
-
-void S60VideoRendererControl::setSurface(QAbstractVideoSurface *surface)
-{
-    if (surface == 0) {
-        // Stop current surface if needed
-        if (m_surface && m_surface->isActive())
-            m_surface->stop();
-    }
-
-    m_surface = surface;
-    emit viewFinderSurfaceSet();
-}
-
-// End of file

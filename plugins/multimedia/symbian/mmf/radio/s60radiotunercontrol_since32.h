@@ -255,17 +255,22 @@ public:
 	 */
 	void MrftoSquelchChange(TBool aSquelch);
 
+Q_SIGNALS:
+     void error(QRadioTuner::Error) const;
+
+protected slots:
+    void changeSignalStrength();
+
 private:
     bool initRadio();
 
+private:
     mutable int m_error;
-
     CRadioUtility* m_radioUtility;   
     CRadioFmTunerUtility* m_fmTunerUtility;
     CRadioPlayerUtility* m_playerUtility;
     TInt m_maxVolume;
     TReal m_volMultiplier;
-
 	bool m_tunerControl;
     bool m_audioInitializationComplete;
     bool m_muted;
@@ -278,18 +283,11 @@ private:
     bool m_scanning;
     QRadioTuner::Band m_currentBand;
     qint64 m_currentFreq;
-    
     QRadioTuner::Error m_radioError;
     QRadioTuner::StereoMode m_stereoMode;
     QString m_errorString;
     QRadioTuner::State m_apiTunerState;
     QTimer *m_signalStrengthTimer;
-    
-Q_SIGNALS:
-     void error(QRadioTuner::Error) const;
-     
-protected slots:
-    void changeSignalStrength();
 };
 
 #endif

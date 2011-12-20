@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,9 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEORENDERERCONTROL_H
-#define S60VIDEORENDERERCONTROL_H
+import QtQuick 1.0
 
-#include <qvideorenderercontrol.h>
+SceneFullScreenInverted {
+    contentType: "camera"
+}
 
-/*
- * Control for QGraphicsVideoItem. Viewfinder frames are streamed to a surface
- * which is drawn to the display by the Qt Graphics Vide Framework.
- * VideoRendererControl uses only Bitmap Viewfinder.
- */
-class S60VideoRendererControl : public QVideoRendererControl
-{
-    Q_OBJECT
-
-public: // Constructor & Destructor
-
-    S60VideoRendererControl(QObject *parent = 0);
-    virtual ~S60VideoRendererControl();
-
-public: // S60VideoRendererControl
-
-    QAbstractVideoSurface *surface() const;
-    void setSurface(QAbstractVideoSurface *surface);
-
-signals: // Internal Signals
-
-    void viewFinderSurfaceSet();
-
-private: // Data
-
-    QAbstractVideoSurface   *m_surface;
-
-};
-
-#endif // S60VIDEORENDERERCONTROL_H

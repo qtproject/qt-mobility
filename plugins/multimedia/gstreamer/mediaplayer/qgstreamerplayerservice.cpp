@@ -94,6 +94,24 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
 
 QGstreamerPlayerService::~QGstreamerPlayerService()
 {
+    // make sure the renderer does not draw a final
+    // still image of the video, prevents a crash
+    m_session->setVideoRenderer( 0 );
+
+    delete m_videoWidget;
+    m_videoWidget = 0;
+    delete m_videoWindow;
+    m_videoWindow = 0;
+    delete m_videoRenderer;
+    m_videoRenderer = 0;
+    delete m_streamsControl;
+    m_streamsControl = 0;
+    delete m_metaData;
+    m_metaData = 0;
+    delete m_control;
+    m_control = 0;
+    delete m_session;
+    m_session = 0;
 }
 
 QMediaControl *QGstreamerPlayerService::requestControl(const char *name)

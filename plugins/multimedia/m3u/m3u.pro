@@ -1,6 +1,8 @@
+include (../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmultimediakit_m3u)
+TARGET = $$mobilityPluginTarget(qtmultimediakit_m3u)
 
 PLUGIN_TYPE=playlistformats
 
@@ -17,7 +19,7 @@ HEADERS += qm3uhandler.h
 SOURCES += main.cpp \
            qm3uhandler.cpp
 symbian {
-    TARGET.UID3 = 0x2002BFC7
+    TARGET.UID3 = $$mobilityUID(0x2002BFC7)
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
     

@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtServiceFramework
 QT = core \
@@ -46,9 +48,9 @@ symbian {
 
     TARGET.CAPABILITY = ALL \
         -TCB
-    TARGET.UID3 = 0x2002AC84
-    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll \
-        qsfwdatabasemanagerserver.exe
+    TARGET.UID3 = $$mobilityUID(0x2002AC84)
+    QtServiceFrameworkDeployment.sources = QtServiceFramework$${QT_LIBINFIX}.dll \
+        qsfwdatabasemanagerserver$${QT_LIBINFIX}.exe
     QtServiceFrameworkDeployment.path = /sys/bin
     DEPLOYMENT += QtServiceFrameworkDeployment
 }

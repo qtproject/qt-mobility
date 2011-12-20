@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 
 TARGET = QtGallery
@@ -67,10 +69,10 @@ HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
     load(data_caging_paths)
-    QtGalleryDeployment.sources = QtGallery.dll
+    QtGalleryDeployment.sources = QtGallery$${QT_LIBINFIX}.dll
     QtGalleryDeployment.path = /sys/bin
     DEPLOYMENT += QtGalleryDeployment
-    TARGET.UID3=0x2002BFCB
+    TARGET.UID3 = $$mobilityUID(0x2002BFCB)
     TARGET.CAPABILITY = ALL -TCB
 }
 

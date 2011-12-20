@@ -47,8 +47,8 @@
 #include <w32std.h>
 
 S60VideoWidgetDisplay::S60VideoWidgetDisplay(QObject *parent)
-:   S60VideoDisplay(parent)
-,   m_widget(new S60VideoWidget)
+    : S60VideoDisplay(parent)
+    , m_widget(new S60VideoWidget)
 {
     connect(this, SIGNAL(paintingEnabledChanged(bool)), m_widget, SLOT(setPaintingEnabled(bool)));
     connect(this, SIGNAL(fullScreenChanged(bool)), m_widget, SLOT(setFullScreen(bool)));

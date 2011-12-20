@@ -42,23 +42,22 @@
 #ifndef S60AUDIOPLAYERSESSION_H
 #define S60AUDIOPLAYERSESSION_H
 
-#include <QtCore/qobject.h>
 #include "s60mediaplayersession.h"
 
 #ifdef S60_DRM_SUPPORTED
-#include <drmaudiosampleplayer.h>
-typedef CDrmPlayerUtility CAudioPlayer;
-typedef MDrmAudioPlayerCallback MAudioPlayerObserver;
+#   include <drmaudiosampleplayer.h>
+    typedef CDrmPlayerUtility CAudioPlayer;
+    typedef MDrmAudioPlayerCallback MAudioPlayerObserver;
 #else
-#include <mdaaudiosampleplayer.h>
-typedef CMdaAudioPlayerUtility CAudioPlayer;
-typedef MMdaAudioPlayerCallback MAudioPlayerObserver;
+#   include <mdaaudiosampleplayer.h>
+    typedef CMdaAudioPlayerUtility CAudioPlayer;
+    typedef MMdaAudioPlayerCallback MAudioPlayerObserver;
 #endif
 
 #ifdef HAS_AUDIOROUTING
-#include <AudioOutput.h>
-#include <MAudioOutputObserver.h>
-#endif //HAS_AUDIOROUTING
+#   include <AudioOutput.h>
+#   include <MAudioOutputObserver.h>
+#endif
 
 class S60AudioPlayerSession : public S60MediaPlayerSession
                             , public MAudioPlayerObserver
@@ -72,32 +71,33 @@ public:
     S60AudioPlayerSession(QObject *parent);
     ~S60AudioPlayerSession();
     
-    //From S60MediaPlayerSession
+    // S60MediaPlayerSession
     bool isVideoAvailable();
     bool isAudioAvailable();
 
-    // From MAudioLoadingObserver
+    // MAudioLoadingObserver
     void MaloLoadingStarted();
     void MaloLoadingComplete();
     
 #ifdef HAS_AUDIOROUTING    
-    // From MAudioOutputObserver
-    void DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
-        CAudioOutput::TAudioOutputPreference aNewDefault );
-#endif //HAS_AUDIOROUTING    
+    // MAudioOutputObserver
+    void DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
+                                   CAudioOutput::TAudioOutputPreference aNewDefault);
+#endif
 
 public:
-    // From S60MediaPlayerAudioEndpointSelector
+    // S60MediaPlayerAudioEndpointSelector
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
     void setPlaybackRate(qreal rate);
+
 public Q_SLOTS:
-    void setActiveEndpoint(const QString& name);
+    void setActiveEndpoint(const QString &name);
 
 protected:
-    //From S60MediaPlayerSession
+    // S60MediaPlayerSession
     void doLoadL(const TDesC &path);
-    void doLoadUrlL(const TDesC &path){Q_UNUSED(path)/*empty implementation*/}
+    void doLoadUrlL(const TDesC &path);
     void doPlay();
     void doStop();
     void doClose();
@@ -108,29 +108,30 @@ protected:
     void updateMetaDataEntriesL();
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
-    void doSetAudioEndpoint(const QString& audioEndpoint);
+    void doSetAudioEndpoint(const QString &audioEndpoint);
     bool getIsSeekable() const;
+
 private:
 #ifdef S60_DRM_SUPPORTED    
-    // From MMdaAudioPlayerCallback
+    // MMdaAudioPlayerCallback
     void MdapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MdapcPlayComplete(TInt aError);
 #else
-    // From MDrmAudioPlayerCallback
+    // MDrmAudioPlayerCallback
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MapcPlayComplete(TInt aError);
 #endif
     
 #ifdef HAS_AUDIOROUTING    
     QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
-#endif //HAS_AUDIOROUTING
+#endif
     
 private:
     CAudioPlayer *m_player;
 #ifdef HAS_AUDIOROUTING
     CAudioOutput *m_audioOutput;
-#endif //HAS_AUDIOROUTING
+#endif
     QString m_audioEndpoint;
 };
 
-#endif
+#endif // S60AUDIOPLAYERSESSION_H

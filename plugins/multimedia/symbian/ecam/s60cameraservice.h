@@ -60,13 +60,12 @@ QT_FORWARD_DECLARE_CLASS(S60CameraExposureControl)
 QT_FORWARD_DECLARE_CLASS(S60CameraFlashControl)
 QT_FORWARD_DECLARE_CLASS(S60CameraImageProcessingControl)
 QT_FORWARD_DECLARE_CLASS(S60CameraImageCaptureControl)
-QT_FORWARD_DECLARE_CLASS(S60VideoWidgetControl)
 QT_FORWARD_DECLARE_CLASS(S60ImageEncoderControl)
 QT_FORWARD_DECLARE_CLASS(S60CameraLocksControl)
-QT_FORWARD_DECLARE_CLASS(S60VideoRendererControl)
-QT_FORWARD_DECLARE_CLASS(S60VideoWindowControl)
+QT_FORWARD_DECLARE_CLASS(S60BitmapViewFinderRendererControl)
 QT_FORWARD_DECLARE_CLASS(S60CameraCaptureDestinationControl)
 QT_FORWARD_DECLARE_CLASS(S60CameraCaptureBufferFormatControl)
+QT_FORWARD_DECLARE_CLASS(S60VideoOutputFactory)
 
 class S60CameraService : public QMediaService
 {
@@ -90,26 +89,25 @@ public: // Static Device Info
 
 private: // Data
 
-    S60ImageCaptureSession          *m_imagesession;
-    S60VideoCaptureSession          *m_videosession;
-    S60MediaContainerControl        *m_mediaFormat;
-    S60VideoEncoderControl          *m_videoEncoder;
-    S60AudioEncoderControl          *m_audioEncoder;
-    S60CameraControl                *m_control;
-    S60VideoDeviceControl           *m_videoDeviceControl;
-    S60CameraFocusControl           *m_focusControl;
-    S60CameraExposureControl        *m_exposureControl;
-    S60CameraFlashControl           *m_flashControl;
-    S60CameraImageProcessingControl *m_imageProcessingControl;
-    S60CameraImageCaptureControl    *m_imageCaptureControl;
-    S60MediaRecorderControl         *m_media;
-    S60VideoWidgetControl           *m_viewFinderWidget;
-    S60ImageEncoderControl          *m_imageEncoderControl;
-    S60CameraLocksControl           *m_locksControl;
-    S60VideoRendererControl         *m_rendererControl;
-    S60VideoWindowControl           *m_windowControl;
-    S60CameraCaptureDestinationControl *m_captureDestinationControl;
+    S60ImageCaptureSession              *m_imagesession;
+    S60VideoCaptureSession              *m_videosession;
+    S60MediaContainerControl            *m_mediaFormat;
+    S60VideoEncoderControl              *m_videoEncoder;
+    S60AudioEncoderControl              *m_audioEncoder;
+    S60CameraControl                    *m_control;
+    S60VideoDeviceControl               *m_videoDeviceControl;
+    S60CameraFocusControl               *m_focusControl;
+    S60CameraExposureControl            *m_exposureControl;
+    S60CameraFlashControl               *m_flashControl;
+    S60CameraImageProcessingControl     *m_imageProcessingControl;
+    S60CameraImageCaptureControl        *m_imageCaptureControl;
+    S60MediaRecorderControl             *m_media;
+    S60ImageEncoderControl              *m_imageEncoderControl;
+    S60CameraLocksControl               *m_locksControl;
+    S60BitmapViewFinderRendererControl  *m_bitmapRendererControl;
+    S60CameraCaptureDestinationControl  *m_captureDestinationControl;
     S60CameraCaptureBufferFormatControl *m_bufferFormatControl;
+    S60VideoOutputFactory               *m_videoOutputFactory;
 };
 
 #endif // S60CAMERASERVICE_H

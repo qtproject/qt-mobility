@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "batterystatus_s60.h"
+#include "trace.h"
 
 CBatteryCommonInfo::CBatteryCommonInfo() : iBatteryStatus(NULL), iBatteryChargingStatus(NULL), iCapacityBars(NULL), iUsbConnected(EFalse),iChargingON(EFalse)
     {
@@ -290,17 +291,29 @@ CBatteryHWRM::~CBatteryHWRM()
         iHwrmPower = NULL;
         }
     #endif
+        delete iEventLoop;
     }
+
 #ifdef SYMBIAN_3_PLATFORM
 void CBatteryHWRM::PowerMeasurement(TInt aErr, CHWRMPower::TBatteryPowerMeasurementData& aMeasurement)
     {
+    TRACES (qDebug() << "CBatteryHWRM::PowerMeasurement received error code:" << aErr);
     if ( KErrNone == aErr)
         {
         if ( iAverageCurrent != aMeasurement.iAverageCurrent )
             {
+            TRACES (qDebug() << "Average current changed");
             //currentFlowChanged SIGNAL
             iAverageCurrent = aMeasurement.iAverageCurrent;
-            iObserver->changedCurrentFlow(iAverageCurrent);
+            if ( iObserver ){
+                iObserver->changedCurrentFlow(iAverageCurrent);
+                }
+
+            if ( iEventLoop ) //for initializing average current
+                {
+                TRACES (qDebug() << "EventLoop::exiting");
+                if ( iEventLoop->isRunning()) iEventLoop->exit();
+                }
             }
         }
     else if (iPowerReportingON)
@@ -308,18 +321,31 @@ void CBatteryHWRM::PowerMeasurement(TInt aErr, CHWRMPower::TBatteryPowerMeasurem
     }
 #endif
 
-TInt CBatteryHWRM::GetAvergaeCurrent() const
+TInt CBatteryHWRM::GetAverageCurrent()
     {
+#ifdef SYMBIAN_3_PLATFORM
+    TInt result = StartCurrentFlowMeasurement();
+    if ( !iEventLoop ) //Wait until PowerMeasurement callback is received
+            {
+            iEventLoop = new QEventLoop();
+            TRACES ( qDebug() << "started event loop...");
+            }
+
+    iEventLoop->exec();
+    StopCurrentFlowMeasurement();
+#endif
     return iAverageCurrent;
     }
 
 TInt CBatteryHWRM::StartCurrentFlowMeasurement()
     {
+    TRACES (qDebug() << "CBatteryHWRM::StartCurrentFlowMeasurement");
     TRequestStatus status;
     iPowerReportingON = ETrue;
     #ifdef SYMBIAN_3_PLATFORM
     if ( iHwrmPower )
         {
+        TRACES (qDebug() << "Start Average power state reporting");
         iHwrmPower->StartAveragePowerReporting(status, 1);
         User::WaitForRequest(status);
         return (status.Int());
@@ -338,6 +364,7 @@ TInt CBatteryHWRM::StartMeasurementAndSetObserver(MBatteryHWRMObserver* aObserve
 
 void CBatteryHWRM::StopCurrentFlowMeasurement()
     {
+    TRACES (qDebug() << "CBatteryHWRM::StopCurrentFlowMeasurement");
     #ifdef SYMBIAN_3_PLATFORM
     if ( iHwrmPower )
         TRAP_IGNORE(iHwrmPower->StopAveragePowerReportingL() );
