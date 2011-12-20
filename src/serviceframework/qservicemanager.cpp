@@ -287,7 +287,7 @@ private slots:
 /*!
     \fn void QServiceManager::serviceAdded(const QString& serviceName, QService::Scope scope)
 
-    This signal is emited whenever a new service with the given
+    This signal is emitted whenever a new service with the given
     \a serviceName has been registered with the service manager.
     \a scope indicates where the service was added.
 
@@ -301,7 +301,7 @@ private slots:
 /*!
     \fn void QServiceManager::serviceRemoved(const QString& serviceName, QService::Scope scope)
 
-    This signal is emited whenever a service with the given
+    This signal is emitted whenever a service with the given
     \a serviceName has been deregistered with the service manager.
     \a scope indicates where the service was added.
 
@@ -580,7 +580,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     Registers the service defined by the XML file at \a xmlFilePath.
     Returns true if the registration succeeded, and false otherwise.
 
-    If a previously unkown interface is added the newly registered service automatically
+    If a previously unknown interface is added the newly registered service automatically
     becomes the new default service provider for the new interface.
 
     A service plugin cannot be added if another service is already registered
@@ -602,7 +602,7 @@ bool QServiceManager::addService(const QString& xmlFilePath)
 /*!
     Registers the service defined by the XML data from the given \a device.
     Returns true if the registration succeeded, and false otherwise. If a
-    previously unkown interface is added the newly registered service
+    previously unknown interface is added the newly registered service
     automatically becomes the new default service provider for the new
     interface.
 

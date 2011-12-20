@@ -49,13 +49,13 @@ QMAKE_EXTRA_TARGETS += check-ts
 
 isEqual(QMAKE_DIR_SEP, /) {
     commit-ts.commands = \
-        cd $$IDE_SOURCE_TREE; \
+        cd $$QT_MOBILITY_SOURCE_TREE; \
         for f in `git diff-files --name-only translations/*_??.ts`; do \
             $$LCONVERT -locations none -i \$\$f -o \$\$f; \
         done; \
         git add translations/*_??.ts && git commit
 } else {
-    wd = $$replace(IDE_SOURCE_TREE, /, \\)
+    wd = $$replace(QT_MOBILITY_SOURCE_TREE, /, \\)
     commit-ts.commands = \
         cd $$wd && \
         for /f usebackq %%f in (`git diff-files --name-only translations/*_??.ts`) do \

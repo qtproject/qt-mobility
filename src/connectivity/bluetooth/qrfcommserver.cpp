@@ -152,6 +152,9 @@ bool QRfcommServer::isListening() const
 {
     Q_D(const QRfcommServer);
 
+    if (!d->socket)
+        return false;
+    
     return d->socket->state() == QBluetoothSocket::ListeningState;
 }
 

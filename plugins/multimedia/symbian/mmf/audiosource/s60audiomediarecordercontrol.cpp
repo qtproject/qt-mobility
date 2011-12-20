@@ -44,14 +44,16 @@
 #include "s60mmtrace.h"
 
 S60AudioMediaRecorderControl::S60AudioMediaRecorderControl(QObject *session, QObject *parent)
-    :QMediaRecorderControl(parent), m_state(QMediaRecorder::StoppedState)
+    : QMediaRecorderControl(parent), m_state(QMediaRecorder::StoppedState)
 {
     TRACE("S60AudioMediaRecorderControl::S60AudioMediaRecorderControl" << qtThisPtr());
-
     m_session = qobject_cast<S60AudioCaptureSession*>(session);
-    connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
-    connect(m_session, SIGNAL(stateChanged(S60AudioCaptureSession::TAudioCaptureState)), this, SLOT(updateState(S60AudioCaptureSession::TAudioCaptureState)));
-    connect(m_session,SIGNAL(error(int,const QString &)),this,SIGNAL(error(int,const QString &)));
+    connect(m_session, SIGNAL(positionChanged(qint64)),
+            this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(stateChanged(S60AudioCaptureSession::TAudioCaptureState)),
+            this, SLOT(updateState(S60AudioCaptureSession::TAudioCaptureState)));
+    connect(m_session,SIGNAL(error(int, const QString &)),
+            this, SIGNAL(error(int, const QString &)));
 }
 
 S60AudioMediaRecorderControl::~S60AudioMediaRecorderControl()
@@ -64,11 +66,10 @@ QUrl S60AudioMediaRecorderControl::outputLocation() const
     return m_session->outputLocation();
 }
 
-bool S60AudioMediaRecorderControl::setOutputLocation(const QUrl& sink)
+bool S60AudioMediaRecorderControl::setOutputLocation(const QUrl &sink)
 {
     TRACE("S60AudioMediaRecorderControl::setOutputLocation" << qtThisPtr()
           << "sink" << sink);
-
     return m_session->setOutputLocation(sink);
 }
 
@@ -116,27 +117,29 @@ qint64 S60AudioMediaRecorderControl::duration() const
 void S60AudioMediaRecorderControl::record()
 {
     TRACE("S60AudioMediaRecorderControl::record" << qtThisPtr());
-
     m_session->record();
 }
 
 void S60AudioMediaRecorderControl::pause()
 {
     TRACE("S60AudioMediaRecorderControl::pause" << qtThisPtr());
-
     m_session->pause();
 }
 
 void S60AudioMediaRecorderControl::stop()
 {
     TRACE("S60AudioMediaRecorderControl::stop" << qtThisPtr());
-
     m_session->stop();
 }
 
 bool S60AudioMediaRecorderControl::isMuted() const
 {
     return m_session->muted();
+}
+
+void S60AudioMediaRecorderControl::applySettings()
+{
+
 }
 
 void S60AudioMediaRecorderControl::setMuted(bool muted)

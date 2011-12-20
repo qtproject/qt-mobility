@@ -43,8 +43,8 @@
 #include "s60videowidgetdisplay.h"
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
-:   QVideoWidgetControl(parent)
-,   m_display(new S60VideoWidgetDisplay(this))
+    : QVideoWidgetControl(parent)
+    , m_display(new S60VideoWidgetDisplay(this))
 {
     connect(m_display, SIGNAL(nativeSizeChanged(QSize)),
             this, SIGNAL(nativeSizeChanged()));

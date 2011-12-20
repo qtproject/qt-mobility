@@ -43,7 +43,6 @@
 #define S60MEDIAMETADATAPROVIDER_H
 
 #include <qmetadatareadercontrol.h>
-#include "s60mediaplayercontrol.h"
 
 QT_USE_NAMESPACE
 

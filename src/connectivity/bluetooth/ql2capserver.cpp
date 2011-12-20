@@ -152,6 +152,9 @@ bool QL2capServer::isListening() const
 {
     Q_D(const QL2capServer);
 
+    if (!d->socket)
+        return false;
+    
     return d->socket->state() == QBluetoothSocket::ListeningState;
 }
 

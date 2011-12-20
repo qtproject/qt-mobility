@@ -1603,18 +1603,7 @@ void QPainterVideoSurface::setGLContext(QGLContext *context)
             : NoShaders;
 
     if (type != m_shaderType || type != NoShaders) {
-        m_shaderType = type;
-
-        if (isActive()) {
-            m_painter->stop();
-            delete m_painter;
-            m_painter = 0;
-            m_ready = false;
-
-            setError(ResourceError);
-            QAbstractVideoSurface::stop();
-        }
-        emit supportedFormatsChanged();
+        setShaderType(type);
     }
 }
 

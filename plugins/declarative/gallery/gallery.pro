@@ -1,3 +1,5 @@
+include(../../../features/utils.pri)
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../../include \
@@ -5,7 +7,7 @@ INCLUDEPATH += . \
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(declarative_gallery)
+TARGET = $$mobilityPluginTarget(declarative_gallery)
 TARGETPATH = QtMobility/gallery
 
 PLUGIN_TYPE = declarative
@@ -46,7 +48,7 @@ symbian {
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
     # Target UID, makes every Symbian app unique
-    TARGET.UID3 = 0x2002BFCC
+    TARGET.UID3 = $$mobilityUID(0x2002BFCC)
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_gallery$${QT_LIBINFIX}.dll qmldir 
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH

@@ -185,12 +185,12 @@ void CDatabaseManagerServer::DiscoverServices()
              continue;
          }           
       }
-      QFile *f = new QFile(imports + QDir::separator() + file);
+      QFile f(imports + QDir::separator() + file);
       // read contents, register
-      ServiceMetaData parser(f);
+      ServiceMetaData parser(&f);
       if (!parser.extractMetadata()) {
-          f->remove();
-          f->close();
+          f.remove();
+          f.close();
           continue;
       }
       const ServiceMetaDataResults data = parser.parseResults();
@@ -200,7 +200,7 @@ void CDatabaseManagerServer::DiscoverServices()
       if(iDb->registerService(results, tok)){
           iDb->serviceInitialized(results.name, tok);
       }
-      f->close();
+      f.close();
       settings.setValue(file, fileinfo.lastModified());
       settings.setValue(file + "/service_name", servicename);
   }
@@ -211,7 +211,7 @@ void CDatabaseManagerServer::DiscoverServices()
       if(old.contains('/'))
         continue;
       QString servicename = settings.value(old + "/service_name").toString();
-      iDb->unregisterService(servicename, QString("Auto Registration"));
+      iDb->unregisterService(servicename, tok);
       settings.remove(old);
   }
 }

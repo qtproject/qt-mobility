@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtLocation
 QT = core gui network sql
@@ -183,7 +185,7 @@ SOURCES += \
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x2002AC83
+    TARGET.UID3 = $$mobilityUID(0x2002AC83)
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions \
                    $${EPOCROOT}epoc32/include/lbtheaders \
@@ -197,7 +199,7 @@ symbian {
         LIBS += -llbt
     }
 
-    QtLocationDeployment.sources = QtLocation.dll
+    QtLocationDeployment.sources = QtLocation$${QT_LIBINFIX}.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
 }

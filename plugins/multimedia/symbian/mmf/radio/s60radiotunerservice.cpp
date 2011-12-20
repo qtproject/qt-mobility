@@ -42,19 +42,16 @@
 #include "s60radiotunerservice.h"
 #include "s60mmtrace.h"
 
-
 S60RadioTunerService::S60RadioTunerService(QObject *parent)
     : QMediaService(parent)
 {
     TRACE("S60RadioTunerService::S60RadioTunerService" << qtThisPtr());
-
 	m_playerControl = new S60RadioTunerControl(this);
 }
 
 S60RadioTunerService::~S60RadioTunerService()
 {
     TRACE("S60RadioTunerService::~S60RadioTunerService" << qtThisPtr());
-
 	delete m_playerControl;
 }
 
@@ -72,6 +69,5 @@ void S60RadioTunerService::releaseControl(QMediaControl *control)
 {
     TRACE("S60RadioTunerService::releaseControl" << qtThisPtr()
           << "control" << control);
-
 	Q_UNUSED(control);
 }

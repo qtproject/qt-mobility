@@ -49,21 +49,22 @@
 
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
 #include <videoplayer2.h>
+#include <graphics/surface.h>
+#include <surfaceeventhandler.h>
 #else
 #include <videoplayer.h>
-#endif // VIDEOOUTPUT_GRAPHICS_SURFACES
+#endif
 
 #include <QtCore/QCoreApplication>
-#include <QtGui/qwidget.h>
-#include <qvideowidget.h>
 
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
 #include <AudioOutput.h>
 #include <MAudioOutputObserver.h>
-#endif // HAS_AUDIOROUTING_IN_VIDEOPLAYER
+#endif
 
 class QTimer;
 class S60MediaNetworkAccessControl;
+class S60NativeWindow;
 class S60VideoDisplay;
 
 // Helper classes to pass Symbian events from WServ to the S60VideoPlayerSession
@@ -81,8 +82,8 @@ class S60VideoPlayerEventHandler : public QObject
 public:
     static S60VideoPlayerEventHandler *instance();
     static bool filterEvent(void *message, long *result);
-    void addApplicationFocusObserver(ApplicationFocusObserver* observer);
-    void removeApplicationFocusObserver(ApplicationFocusObserver* observer);
+    void addApplicationFocusObserver(ApplicationFocusObserver *observer);
+    void removeApplicationFocusObserver(ApplicationFocusObserver *observer);
 private:
     S60VideoPlayerEventHandler();
     ~S60VideoPlayerEventHandler();
@@ -95,6 +96,9 @@ private:
 class S60VideoPlayerSession : public S60MediaPlayerSession
                             , public MVideoPlayerUtilityObserver
                             , public MVideoLoadingObserver
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+                            , public MMMFSurfaceEventHandler
+#endif
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
                             , public MAudioOutputObserver
 #endif // HAS_AUDIOROUTING_IN_VIDEOPLAYER
@@ -105,22 +109,22 @@ public:
     S60VideoPlayerSession(QMediaService *service, S60MediaNetworkAccessControl *object);
     ~S60VideoPlayerSession();
 
-    // From S60MediaPlayerSession
+    // S60MediaPlayerSession
     bool isVideoAvailable();
     bool isAudioAvailable();
     void setVideoRenderer(QObject *renderer);
 
-    // From MVideoLoadingObserver
+    // MVideoLoadingObserver
     void MvloLoadingStarted();
     void MvloLoadingComplete();
     void setPlaybackRate(qreal rate);
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
-    // From MAudioOutputObserver
+    // MAudioOutputObserver
     void DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
                                    CAudioOutput::TAudioOutputPreference aNewDefault);
 #endif
 
-    // From S60MediaPlayerAudioEndpointSelector
+    // S60MediaPlayerAudioEndpointSelector
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
 
@@ -129,16 +133,19 @@ public:
     void applicationLostFocus();
 
 signals:
-    void nativeSizeChanged(QSize);
+    void nativeSizeChanged(QSize size);
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    void nativeSurfaceChanged(TSurfaceId surface);
+#endif
 
 public Q_SLOTS:
-    void setActiveEndpoint(const QString& name);
+    void setActiveEndpoint(const QString &name);
 
 signals:
     void accessPointChanged(int);
 
 protected:
-    // From S60MediaPlayerSession
+    // S60MediaPlayerSession
     void doLoadL(const TDesC &path);
     void doLoadUrlL(const TDesC &path);
     void doPlay();
@@ -151,7 +158,7 @@ protected:
     void updateMetaDataEntriesL();
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
-    void doSetAudioEndpoint(const QString& audioEndpoint);
+    void doSetAudioEndpoint(const QString &audioEndpoint);
     bool getIsSeekable() const;
 
 private slots:
@@ -163,8 +170,8 @@ private slots:
     void suspendDirectScreenAccess();
     void resumeDirectScreenAccess();
 #endif
-    
-private: 
+
+private:
     void applyPendingChanges(bool force = false);
 #ifndef VIDEOOUTPUT_GRAPHICS_SURFACES
     void startDirectScreenAccess();
@@ -174,21 +181,34 @@ private:
     QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
 #endif
 
-    // From MVideoPlayerUtilityObserver
+    // MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
     void MvpuoPrepareComplete(TInt aError);
     void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
     void MvpuoPlayComplete(TInt aError);
     void MvpuoEvent(const TMMFEvent &aEvent);
 
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    // MMMFSurfaceEventHandler
+    void MmsehSurfaceCreated(TInt aDisplayId, const TSurfaceId& aId,
+                             const TRect& aCropRect,
+                             TVideoAspectRatio aAspectRatio);
+    void MmsehSurfaceParametersChanged(const TSurfaceId& aId,
+                                       const TRect& aCropRect,
+                                       TVideoAspectRatio aAspectRatio);
+    void MmsehRemoveSurface(const TSurfaceId& aId);
+#endif
+
 private:
     int m_accessPointId;
-    S60MediaNetworkAccessControl* m_networkAccessControl;
+    S60MediaNetworkAccessControl *m_networkAccessControl;
     RWsSession *const m_wsSession;
     CWsScreenDevice *const m_screenDevice;
     QMediaService *const m_service;
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
     CVideoPlayerUtility2 *m_player;
+    TSurfaceId m_nativeSurface;
+    S60NativeWindow *m_dummyWindow;
 #else
     CVideoPlayerUtility *m_player;
     bool m_dsaActive;
@@ -216,3 +236,4 @@ private:
 };
 
 #endif
+

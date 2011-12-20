@@ -1,7 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = app
-TARGET = qsfwdatabasemanagerserver
+TARGET = qsfwdatabasemanagerserver$${QT_LIBINFIX}
 QT = core sql
-TARGET.UID3 = 0x2002AC7F
 
 CONFIG += no_icon
 
@@ -12,6 +13,7 @@ SOURCES += databasemanagerservermain.cpp
 
 include(../../../common.pri)
 
+TARGET.UID3 = $$mobilityUID(0x2002AC7F)
 
 DEPENDPATH += ../
 INCLUDEPATH += ../

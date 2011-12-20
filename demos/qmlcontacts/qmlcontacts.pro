@@ -42,9 +42,7 @@ OTHER_FILES += \
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData \
-                        WriteDeviceData \
-                        ReadUserData \
+    TARGET.CAPABILITY = ReadUserData \
                         WriteUserData
     TARGET.UID3 = 0xA000E407
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
@@ -54,3 +52,8 @@ symbian: {
 
 RESOURCES += \
     qmlcontacts.qrc
+
+contains(MEEGO_EDITION,harmattan) {
+    target.path = /opt/qmlcontacts/bin
+    INSTALLS += target
+}

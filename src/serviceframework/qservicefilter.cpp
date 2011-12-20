@@ -130,7 +130,7 @@ public:
                             this rule is equivalent to Cap\sub{(Filter)} \\ Cap\sub{(Service)} = {}. This is the default matching rule.
     \value MatchLoadable    The filter matches any service that could be loaded by the client.
                             Using this matching rule guarantees that the returned services do not
-                            require more capabilites than specified by this rule. It includes services
+                            require more capabilities than specified by this rule. It includes services
                             with no capability requirements. If this rule
                             is provided alongside an empty capability search list the returned
                             services do not require any capabilities and thus can be accessed

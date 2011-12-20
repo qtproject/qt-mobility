@@ -35,14 +35,9 @@ mobilityconfig.prf                      /epoc32/tools/qt/mkspecs/features/mobili
 
 qtmobility.iby CORE_MW_LAYER_IBY_EXPORT_PATH(qtmobility.iby)
 
-qtmobility.confml         CONFML_EXPORT_PATH(qtmobility.confml,uda_content)
-qtmobility_copy.implml    CRML_EXPORT_PATH(qtmobility_copy.implml,uda_content)
-qtmobility.sisx           CRML_EXPORT_PATH(../content/sis/,uda_content)
 qtmobility_stub.sis       /epoc32/data/z/system/install/qtmobility_stub.sis
 
 ../../../bin/servicedbgen.exe    /epoc32/tools/servicedbgen.exe
-../../../features/qtservice.xml  /epoc32/tools/makefile_templates/qt/qtservice.xml
-../../../features/qtservice.flm  /epoc32/tools/makefile_templates/qt/qtservice.flm
 ../../../features/qtservice.prf  /epoc32/tools/qt/mkspecs/features/symbian/qtservice.prf
 
 PRJ_MMPFILES

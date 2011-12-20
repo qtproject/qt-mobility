@@ -50,7 +50,7 @@ S60AudioContainerControl::S60AudioContainerControl(QObject *parent)
 }
 
 S60AudioContainerControl::S60AudioContainerControl(QObject *session, QObject *parent)
-   : QMediaContainerControl(parent)
+    : QMediaContainerControl(parent)
 {
     TRACE("S60AudioContainerControl::S60AudioContainerControl" << qtThisPtr());
     m_session = qobject_cast<S60AudioCaptureSession*>(session);
@@ -77,4 +77,3 @@ QString S60AudioContainerControl::containerDescription(const QString &containerM
 {
     return m_session->audioContainerDescription(containerMimeType);
 }
-

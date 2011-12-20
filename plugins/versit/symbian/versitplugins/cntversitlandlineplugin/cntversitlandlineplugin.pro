@@ -1,6 +1,8 @@
+include(../../../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(cntversitlandlineplugin)
+TARGET = $$mobilityPluginTarget(cntversitlandlineplugin)
 PLUGIN_TYPE = versit
 
 include(../../../../../common.pri)
@@ -27,7 +29,7 @@ MOBILITY = versit \
 
 symbian { 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x2003458F
+    TARGET.UID3 = $$mobilityUID(0x2003458F)
     TARGET.CAPABILITY = ALL -TCB
     
     pluginDep.sources = $${TARGET}.dll
