@@ -60,7 +60,7 @@ Scene {
     Button {
         id: rotatePositiveButton
         anchors {
-            left: parent.left
+            right: parent.right
             bottom: rotateNegativeButton.top
             margins: parent.margins
         }
@@ -73,8 +73,8 @@ Scene {
     Button {
         id: rotateNegativeButton
         anchors {
-            left: parent.left
-            bottom: parent.bottom
+            right: parent.right
+            verticalCenter: parent.verticalCenter
             margins: parent.margins
         }
         width: 90
@@ -86,8 +86,8 @@ Scene {
     Button {
         id: rotateValueButton
         anchors {
-            right: parent.right
-            bottom: parent.bottom
+            left: parent.left
+            verticalCenter: parent.verticalCenter
             margins: parent.margins
         }
         width: 30

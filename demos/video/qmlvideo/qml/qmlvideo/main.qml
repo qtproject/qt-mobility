@@ -144,23 +144,32 @@ Rectangle {
                 console.log("[qmlvideo] main.onSceneSourceChanged source " + sceneSource)
                 sceneLoader.source = sceneSource
                 var scene = null
+                var innerVisible = true
                 if (sceneSource == "") {
                     if (performanceLoader.item)
                         performanceLoader.item.videoActive = false
                 } else {
                     scene = sceneLoader.item
-                    scene.parent = root
-                    scene.color = root.bgColor
-                    scene.buttonHeight = d.buttonHeight
-                    scene.source1 = source1
-                    scene.source2 = source2
-                    scene.volume = volume
-                    scene.anchors.fill = root
-                    scene.close.connect(closeScene)
-                    scene.content.initialize()
+                    if (scene) {
+                        if (scene.contentType === "video" && source1 === "") {
+                            errorDialog.show("You must first select a video file")
+                            sceneSource = ""
+                        } else {
+                            scene.parent = root
+                            scene.color = root.bgColor
+                            scene.buttonHeight = d.buttonHeight
+                            scene.source1 = source1
+                            scene.source2 = source2
+                            scene.volume = volume
+                            scene.anchors.fill = root
+                            scene.close.connect(closeScene)
+                            scene.content.initialize()
+                            innerVisible = false
+                        }
+                    }
                 }
                 videoFramePaintedConnection.target = scene
-                inner.visible = (sceneSource == "")
+                inner.visible = innerVisible
             }
         }
     }
@@ -180,6 +189,12 @@ Rectangle {
 
     Loader {
         id: fileBrowserLoader
+    }
+
+    ErrorDialog {
+        id: errorDialog
+        anchors.fill: parent
+        enabled: false
     }
 
     // Called from main() once root properties have been set
