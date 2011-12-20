@@ -35,3 +35,22 @@ symbian {
 xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
 xml.files = voipdialerservice.xml
 INSTALLS += xml
+
+contains(MEEGO_EDITION,harmattan) {
+    target.path = /usr/lib/qt4/plugins/serviceframework/
+    INSTALLS += target
+
+    xml.path = /opt/declarative-sfw-dialer/bin/xmldata
+    xml.files = voipdialerservice.xml
+    INSTALLS += xml
+}
+
+OTHER_FILES += \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/manifest.aegis \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog
+
