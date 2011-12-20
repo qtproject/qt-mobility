@@ -51,16 +51,6 @@
 #include "performancemonitordeclarative.h"
 #endif
 
-static const QString DefaultFileName = "test.mp4";
-#ifdef Q_OS_SYMBIAN
-static const QString DefaultFileName1 = "e:/" + DefaultFileName;
-#elif MEEGO_EDITION_HARMATTAN
-static const QString DefaultFileName1 = "/home/developer/MyDocs/" + DefaultFileName;
-#else
-static const QString DefaultFileName1 = "";
-#endif
-static const QString DefaultFileName2 = "";
-
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -104,20 +94,13 @@ int main(int argc, char *argv[])
     }
 
     QUrl url1, url2;
-    if (source1.isEmpty()) {
-        url1 = QUrl::fromLocalFile(DefaultFileName1);
+    if (sourceIsUrl) {
+        url1 = source1;
+        url2 = source2;
     } else {
-        if (sourceIsUrl)
-            url1 = source1;
-        else
+        if (!source1.isEmpty())
             url1 = QUrl::fromLocalFile(source1);
-    }
-    if (source2.isEmpty()) {
-        url2 = QUrl::fromLocalFile(DefaultFileName2);
-    } else {
-        if (sourceIsUrl)
-            url2 = source2;
-        else
+        if (!source2.isEmpty())
             url2 = QUrl::fromLocalFile(source2);
     }
 

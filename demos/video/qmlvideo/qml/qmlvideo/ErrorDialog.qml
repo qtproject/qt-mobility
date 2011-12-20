@@ -41,32 +41,67 @@
 
 import QtQuick 1.0
 
-Scene {
+Rectangle {
     id: root
-    property string contentType: "video"
+    color: "transparent"
+    opacity: 0.0
+    property alias enabled: mouseArea.enabled
+    state: enabled ? "on" : "baseState"
 
-    Content {
-        id: content
-        anchors.centerIn: parent
-        width: parent.contentWidth
-        contentType: "video"
-        source: parent.source1
-        volume: parent.volume
-        onVideoFramePainted: root.videoFramePainted()
-    }
-
-    SeekControl {
-        anchors {
-            left: parent.left
-            right: parent.right
-            leftMargin: 100
-            rightMargin: 140
-            bottom: parent.bottom
+    states: [
+        State {
+            name: "on"
+            PropertyChanges {
+                target: root
+                opacity: 1.0
+            }
         }
-        duration: content.contentItem() ? content.contentItem().duration : 0
-        playPosition: content.contentItem() ? content.contentItem().position : 0
-        onSeekPositionChanged: { content.contentItem().position = seekPosition }
+    ]
+
+    transitions: [
+        Transition {
+            from: "*"
+            to: "*"
+            NumberAnimation {
+                properties: "opacity"
+                easing.type: Easing.OutQuart
+                duration: 500
+            }
+        }
+    ]
+
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+        opacity: 0.75
     }
 
-    Component.onCompleted: root.content = content
+    Rectangle {
+        anchors.centerIn: parent
+        width: 300
+        height: 200
+        radius: 10
+        color: "white"
+
+        Text {
+            id: text
+            anchors.fill: parent
+            anchors.margins: 10
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            color: "black"
+            wrapMode: Text.WordWrap
+        }
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        onClicked: root.enabled = false
+    }
+
+    function show(msg) {
+        text.text = "<b>Error</b><br><br>" + msg
+        root.enabled = true
+    }
 }

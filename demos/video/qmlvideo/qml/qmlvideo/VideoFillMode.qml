@@ -59,7 +59,7 @@ Scene {
         id: button
         anchors {
             right: parent.right
-            bottom: parent.bottom
+            verticalCenter: parent.verticalCenter
             margins: parent.margins
         }
         width: 150

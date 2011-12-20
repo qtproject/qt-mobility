@@ -45,7 +45,7 @@ Scene {
     id: root
     property int margin: 20
     property real delta: 0.1
-    property string contentType
+    property string contentType: "video"
 
     Content {
         id: content
@@ -60,7 +60,7 @@ Scene {
     Button {
         id: increaseButton
         anchors {
-            left: parent.left
+            right: parent.right
             bottom: decreaseButton.top
             margins: parent.margins
         }
@@ -76,8 +76,8 @@ Scene {
     Button {
         id: decreaseButton
         anchors {
-            left: parent.left
-            bottom: parent.bottom
+            right: parent.right
+            verticalCenter: parent.verticalCenter
             margins: parent.margins
         }
         width: 90
@@ -92,8 +92,8 @@ Scene {
     Button {
         id: valueButton
         anchors {
-            right: parent.right
-            bottom: parent.bottom
+            left: parent.left
+            verticalCenter: parent.verticalCenter
             margins: parent.margins
         }
         width: 50
