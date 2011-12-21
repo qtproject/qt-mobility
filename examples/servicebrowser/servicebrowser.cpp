@@ -44,6 +44,7 @@
 #include <qserviceinterfacedescriptor.h>
 
 #include "servicebrowser.h"
+#include "qplatformdefs.h"
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
@@ -53,8 +54,9 @@ ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
     serviceManager = new QServiceManager(this);
     systemManager = new QServiceManager(QService::SystemScope);
 
+#ifndef Q_OS_SYMBIAN
     registerExampleServices();
-
+#endif
     initWidgets();
     reloadServicesList();
 
@@ -63,7 +65,9 @@ ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
 
 ServiceBrowser::~ServiceBrowser()
 {
+#ifndef Q_OS_SYMBIAN
     unregisterExampleServices();
+#endif
 }
 
 void ServiceBrowser::currentInterfaceImplChanged(QListWidgetItem *current, QListWidgetItem *previous)
@@ -82,7 +86,6 @@ void ServiceBrowser::currentInterfaceImplChanged(QListWidgetItem *current, QList
 #else
         defaultInterfaceButton->setText(tr("Set as default implementation for %1").arg(descriptor.interfaceName()));
 #endif
-                //TODO: .arg(descriptor.interfaceName()));
         defaultInterfaceButton->setEnabled(true);
     }
 }
@@ -227,19 +230,18 @@ void ServiceBrowser::setDefaultInterfaceImplementation()
 
 void ServiceBrowser::registerExampleServices()
 {
-//    QStringList exampleXmlFiles;
-//    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml" << "notesmanagerservice.xml";
-//    foreach (const QString &fileName, exampleXmlFiles) {
-//        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
-//        serviceManager->addService(path);
-//    }
+    QStringList exampleXmlFiles;
+    exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml";
+    foreach (const QString &fileName, exampleXmlFiles) {
+        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        serviceManager->addService(path);
+    }
 }
 
 void ServiceBrowser::unregisterExampleServices()
 {
-//    serviceManager->removeService("FileManagerService");
-//    serviceManager->removeService("BluetoothTransferService");
-//    serviceManager->removeService("NotesManagerService");
+    serviceManager->removeService("FileManagerService");
+    serviceManager->removeService("BluetoothTransferService");
 }
 
 void ServiceBrowser::reloadAttributesRadioButtonText()
@@ -267,12 +269,6 @@ void ServiceBrowser::initWidgets()
     interfacesListWidget->addItem(tr("(Select a service)"));
     attributesListWidget = new QListWidget;
     attributesListWidget->addItem(tr("(Select an interface implementation)"));
-
-#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5)
-    interfacesListWidget->setMinimumWidth(450);
-#else
-    interfacesListWidget->setMaximumWidth(360);
-#endif
 
     connect(servicesListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
             this, SLOT(reloadInterfaceImplementationsList()));
@@ -324,7 +320,7 @@ void ServiceBrowser::initWidgets()
     attributesLayout->setContentsMargins(0, spacingHack, 0, 0);
     servicesLayout->setContentsMargins(0, spacingHack, 0, 0);
 #endif
-#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5)
+#if defined(MEEGO_EDITION_HARMATTAN)
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(servicesGroup, 0, 0);
     layout->addWidget(attributesGroup, 0, 1, 2, 1);
