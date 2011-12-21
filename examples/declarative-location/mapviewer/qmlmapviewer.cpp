@@ -41,12 +41,32 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
+#include <QDeclarativeNetworkAccessManagerFactory>
+#include <QNetworkAccessManager>
+#include <QNetworkProxy>
+
+// Optional factory class for creating network access managers
+class MyNetworkAccessManagerFactory : public QDeclarativeNetworkAccessManagerFactory
+{
+public:
+    QNetworkAccessManager *create(QObject *parent)
+    {
+        QNetworkAccessManager *manager = new QNetworkAccessManager(parent);
+        // Setup manager proxy etc. here
+        // QUrl url("http://host:port");
+        // QNetworkProxy proxy(QNetworkProxy::HttpProxy, url.host(), url.port());
+        // manager->setProxy(proxy);
+        return manager;
+    }
+};
 
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
     QDeclarativeView view;
+    // Use our own factory for network access managers
+    view.engine()->setNetworkAccessManagerFactory(new MyNetworkAccessManagerFactory());
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
     // Qt.quit() called in embedded .qml by default only emits
