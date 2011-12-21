@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network sql
+QT = core gui network sql declarative
 
 include(../../common.pri)
 
@@ -179,7 +179,8 @@ SOURCES += \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
             projwrapper_p.cpp \
-            qgeopositioninfosourcefactory.cpp
+            qgeopositioninfosourcefactory.cpp \
+            qlocationnetworkaccessmanagerfactory.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
