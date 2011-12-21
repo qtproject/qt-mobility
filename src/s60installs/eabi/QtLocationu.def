@@ -1796,6 +1796,6 @@ EXPORTS
 	_ZTIN10QtMobility29QGeoPositionInfoSourceFactoryE @ 1795 NONAME ; #<TI>#
 	_ZTVN10QtMobility19QGeoMapCustomObjectE @ 1796 NONAME ; #<VT>#
 	_ZTVN10QtMobility29QGeoPositionInfoSourceFactoryE @ 1797 NONAME ; #<VT>#
-    _ZN10QtMobility47QLocationNetworkAccessManagerFactory21setDeclarativeFactoryEP39QDeclarativeNetworkAccessManagerFactory @ 1798 NONAME
-    _ZN10QtMobility47QLocationNetworkAccessManagerFactory6createEP7QObject @ 1799 NONAME
-    _ZN10QtMobility47QLocationNetworkAccessManagerFactory8instanceEv @ 1800 NONAME
+    _ZN10QtMobility36QLocationNetworkAccessManagerFactory8instanceEv @ 1798 NONAME
+    _ZN10QtMobility36QLocationNetworkAccessManagerFactory21setDeclarativeFactoryEP39QDeclarativeNetworkAccessManagerFactory @ 1799 NONAME
+    _ZN10QtMobility36QLocationNetworkAccessManagerFactory6createEP7QObject @ 1800 NONAME
