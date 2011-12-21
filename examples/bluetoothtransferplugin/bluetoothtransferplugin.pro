@@ -31,3 +31,15 @@ symbian {
 xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
 xml.files = bluetoothtransferservice.xml
 INSTALLS += xml
+
+contains(MEEGO_EDITION,harmattan) {
+    xml.path = /opt/servicebrowser/bin/xmldata
+    xml.files = bluetoothtransferservice.xml
+    INSTALLS += xml
+
+    target.path = /usr/lib/qt4/plugins/serviceframework/
+    INSTALLS += target
+}
+
+
+
