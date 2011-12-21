@@ -234,6 +234,8 @@ void QMessageAddress::parseEmailAddress(const QString &emailAddress, QString *na
 
 /*! \typedef QMessageAddressList
 
+    \relates QMessageAddress
+
     Qt-style synonym for QList<QMessageAddress>
 */
 
