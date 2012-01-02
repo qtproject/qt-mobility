@@ -73,7 +73,7 @@ Rectangle {
 
 
 
-        MenuBar { id: menuBar; width: parent.width; height: 35; opacity: 0.9; info: organizer.error + "\nTotal:" + organizer.itemCount }
+        MenuBar { id: menuBar; width: parent.width; height: 35; opacity: 0.9;}
         StatusBar {
             id: statusBar; status:calendar.status; width: parent.width; height: 35; opacity: 0.9; anchors.bottom: calendar.bottom
             onLeftClicked: {
