@@ -44,6 +44,7 @@ OTHER_FILES += \
     contents/test.ics \
     contents/2010-FIFA-WorldCup.ics
 
+
 symbian: {
     load(data_caging_paths)
     TARGET.CAPABILITY = ReadUserData WriteUserData
@@ -55,3 +56,10 @@ symbian: {
 
 RESOURCES += \
     qmlorganizer.qrc
+
+contains(MEEGO_EDITION,harmattan) {
+    target.path = /opt/qmlorganizer/bin
+    INSTALLS += target
+}
+
+
