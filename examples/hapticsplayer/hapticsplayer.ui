@@ -25,7 +25,7 @@
       <enum>QTabWidget::North</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="usesScrollButtons">
       <bool>true</bool>
@@ -49,7 +49,7 @@
             <x>0</x>
             <y>0</y>
             <width>379</width>
-            <height>695</height>
+            <height>712</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -485,31 +485,87 @@
             <x>0</x>
             <y>0</y>
             <width>379</width>
-            <height>695</height>
+            <height>712</height>
            </rect>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_8">
-             <item>
-              <widget class="QComboBox" name="instantEffect"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="instantPlay">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-               <string>Play</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          <widget class="QWidget" name="">
+           <property name="geometry">
+            <rect>
+             <x>11</x>
+             <y>11</y>
+             <width>247</width>
+             <height>92</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <widget class="QComboBox" name="instantEffect">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>28</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>78</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="instantPlay">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Play</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>78</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </widget>
        </item>
@@ -531,7 +587,7 @@
             <x>0</x>
             <y>0</y>
             <width>379</width>
-            <height>695</height>
+            <height>712</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -579,7 +635,7 @@
                   <bool>false</bool>
                  </property>
                  <property name="text">
-                 <string>Play/pause</string>
+                  <string>Play/pause</string>
                  </property>
                 </widget>
                </item>
@@ -589,7 +645,7 @@
                   <bool>false</bool>
                  </property>
                  <property name="text">
-                 <string>Stop</string>
+                  <string>Stop</string>
                  </property>
                 </widget>
                </item>
