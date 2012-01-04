@@ -74,13 +74,16 @@ int main(int argc, char *argv[])
     QDeclarativeView view;
 #if !defined(QT_NO_OPENGL) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_S60)
     view.setViewport(new QGLWidget);
-#endif
+    #endif
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_WS_SIMULATOR)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
+    view.setAttribute(Qt::WA_LockLandscapeOrientation, true);
+#endif //defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
     view.setGeometry(application.desktop()->screenGeometry());
     view.showFullScreen();
 #ifdef Q_OS_SYMBIAN
