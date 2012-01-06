@@ -56,7 +56,8 @@ symbian {
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
                        notificationcallback_s60_p.h \
-                       notificationsatellitecallback_s60_p.h
+                       notificationsatellitecallback_s60_p.h \
+                       qmlTimer.h
 
     contains(lbt_enabled, yes) {
         PRIVATE_HEADERS += \
@@ -78,7 +79,8 @@ symbian {
 
     SOURCES += qgeopositioninfosource_s60.cpp \
                qgeosatelliteinfosource_s60.cpp \
-               qmlbackendao_s60.cpp
+               qmlbackendao_s60.cpp \
+               qmlTimer.cpp
 
     contains(lbt_enabled, yes) {
         SOURCES += \
