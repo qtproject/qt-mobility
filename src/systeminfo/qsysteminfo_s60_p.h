@@ -567,9 +567,10 @@ public:
 
     CNetworkInfo* networkInfo ()
     {
-        if (!m_networkInfo) {
-           m_networkInfo = new  CNetworkInfo();
-        }
+        if (!m_networkInfo)
+            m_networkInfo = new CNetworkInfo();
+        if (!m_networkInfo->IsInitialised())
+            m_networkInfo->Initialise();
         return m_networkInfo;
     }
 
