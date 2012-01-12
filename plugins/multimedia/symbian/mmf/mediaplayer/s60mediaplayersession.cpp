@@ -453,6 +453,7 @@ void S60MediaPlayerSession::loaded()
 void S60MediaPlayerSession::endOfMedia()
 {
     TRACE("S60MediaPlayerSession::endOfMedia" << qtThisPtr());
+    stopProgressTimer();
     m_state = QMediaPlayer::StoppedState;
     setMediaStatus(QMediaPlayer::EndOfMedia);
     // There is a chance that user might have called play from EOF callback.
