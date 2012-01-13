@@ -328,10 +328,13 @@ unix:!simulator {
         }
 
         contains(thermalstatus_symbian_enabled, yes) {
+            # header not present in public SDK builds
+            exists($${EPOCROOT}epoc32\\include\\internal\\ThermalManagerUserIF.h) {
             DEFINES += THERMALSTATUS_SUPPORTED
             SOURCES += thermalstatus_s60.cpp
             HEADERS += thermalstatus_s60.h
             message("Thermalstatus enabled")
+           }
         }
 
         contains(networkhandlingengine_symbian_enabled, yes) {
