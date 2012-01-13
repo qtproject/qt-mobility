@@ -843,11 +843,13 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
 	            emit updateTimeout();
 	        }
 	        
+#if defined(LOCATION_FIX_QTM_1550)
 	        //switch on the network psy
 	        if (preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods &&
         	mTimer->getTrackState() == CQMLTimer::HYBRID_STOPPED){
         		mTimer->setTrackState(CQMLTimer::HYBRID_RESTART);
 	        }
+#endif
 #if !defined QT_NO_DEBUG
 	        qDebug() << "CQGeoPositionInfoSourceS60::updatePosition position timeout\n" ;
 #endif
@@ -855,12 +857,15 @@ void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, 
     } else {    	
         //posiitoning module is unable to return any position information
         	emit updateTimeout();
-        	
+
+#if defined(LOCATION_FIX_QTM_1550)      	
         	//switch on the network psy
         	if (preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods &&
         	mTimer->getTrackState() == CQMLTimer::HYBRID_STOPPED){
         		mTimer->setTrackState(CQMLTimer::HYBRID_RESTART);
 	        }
+#endif
+
 #if !defined QT_NO_DEBUG
         	qDebug() << "CQGeoPositionInfoSourceS60::updatePosition position timeout\n" ;
 #endif
@@ -1035,7 +1040,9 @@ void CQGeoPositionInfoSourceS60::startUpdates()
 
     if (receivers(SIGNAL(positionUpdated(QGeoPositionInfo))) > 0 && !mStartUpdates)
         mRegUpdateAO->startUpdates();
-        
+ 
+#if defined(LOCATION_FIX_QTM_1550)  
+     
     if (mRegBkUpdateAO && preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods){
 #if !defined QT_NO_DEBUG
 qDebug() << "Backup updates started --------------\n" ;
@@ -1045,6 +1052,8 @@ qDebug() << "Backup updates started --------------\n" ;
     	if(mTimer->isTimerStopped())
     		mTimer->StartTimer();
     }
+#endif    
+
     mRegularUpdateTimedOut = false;
     mStartUpdates = true;
        
@@ -1058,13 +1067,16 @@ void CQGeoPositionInfoSourceS60::stopUpdates()
     qDebug() << "CQGeoPositionInfoSourceS60::stopUpdates\n" ;
 #endif
 
+#if defined(LOCATION_FIX_QTM_1550) 
 		if (mRegBkUpdateAO && 
     mTimer->getTrackState() == CQMLTimer::HYBRID_RUNNING){
     	mTimer->setTrackState(CQMLTimer::INITIAL);
     }
-        
+ 
+      
     if (mPositionUpdate)
-    	sleep(1000);
+    	sleep(1);
+#endif
 
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
         emit updateTimeout();
@@ -1077,8 +1089,9 @@ void CQGeoPositionInfoSourceS60::stopUpdates()
     qDebug() << "CQGeoPositionInfoSourceS60::stopUpdates regularupdate cancelled\n" ;
 #endif
 
+#if defined(LOCATION_FIX_QTM_1550)
 		if (mPositionUpdate)
-    	sleep(1000);
+    	sleep(1);
     
      QMutexLocker lLocker(&m_mutex_BkRegUpAO);
     if (mRegBkUpdateAO && 
@@ -1086,6 +1099,7 @@ void CQGeoPositionInfoSourceS60::stopUpdates()
     	mRegBkUpdateAO->cancelUpdate();
     	mTimer->StopTimer();
     }
+#endif
   
 #if !defined QT_NO_DEBUG  
     qDebug() << "CQGeoPositionInfoSourceS60::stopUpdates backup update cancelled\n" ;
@@ -1333,6 +1347,7 @@ void CQGeoPositionInfoSourceS60::setBackupUpdateAO(TInt nIndex)
 	
 	 QMutexLocker lLocker(&m_mutex_BkRegUpAO);
 
+#if defined(LOCATION_FIX_QTM_1550)
 	if (lBkRqindex != -1){
 		if (mReqBkUpdateAO)
 			delete mReqBkUpdateAO;
@@ -1341,9 +1356,10 @@ void CQGeoPositionInfoSourceS60::setBackupUpdateAO(TInt nIndex)
 			mRegBkUpdateAO = CQMLBackendAO::NewL(this, RegularUpdate, mList[lBkRqindex].mUid);
     	mRegBkUpdateAO->setUpdateInterval(updateInterval());
     	if (mStartUpdates && mTimer->getTrackState() == CQMLTimer::HYBRID_RUNNING)
-    		mRegBkUpdateAO->startUpdates();   		
+    		mRegBkUpdateAO->startUpdates()  		
     }
 	}
+#endif
 }
 
 QTM_END_NAMESPACE
