@@ -44,8 +44,12 @@
 
 #include <e32base.h>
 #include <e32debug.h>
+#ifdef ETELMM_SUPPORTED
 #include <etelmm.h>
+#endif
+#ifdef ETELPACKETSERVICE_SUPPORTED
 #include <etelpckt.h>
+#endif
 #include <etel.h>
 #include <QList>
 
