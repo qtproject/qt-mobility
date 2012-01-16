@@ -1356,7 +1356,7 @@ void CQGeoPositionInfoSourceS60::setBackupUpdateAO(TInt nIndex)
 			mRegBkUpdateAO = CQMLBackendAO::NewL(this, RegularUpdate, mList[lBkRqindex].mUid);
     	mRegBkUpdateAO->setUpdateInterval(updateInterval());
     	if (mStartUpdates && mTimer->getTrackState() == CQMLTimer::HYBRID_RUNNING)
-    		mRegBkUpdateAO->startUpdates()  		
+    		mRegBkUpdateAO->startUpdates();  		
     }
 	}
 #endif
