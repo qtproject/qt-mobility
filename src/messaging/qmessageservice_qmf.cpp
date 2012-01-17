@@ -612,7 +612,7 @@ bool QMessageService::moveMessages(const QMessageIdList &messageIds, const QMess
     d_ptr->_active = 0;
     d_ptr->_error = QMessageManager::NoError;
     d_ptr->_active = &d_ptr->_storage;
-    d_ptr->_storage.moveMessages(convert(messageIds), convert(toFolderId));
+    d_ptr->_storage.onlineMoveMessages(convert(messageIds), convert(toFolderId));
     return true;
 }
 
