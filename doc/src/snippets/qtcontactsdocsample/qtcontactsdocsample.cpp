@@ -210,6 +210,9 @@ void contactManipulation()
     QList<QContact> saveList;
     saveList << exampleGroup << exampleGroupMember;
     m_manager.saveContacts(&saveList, &errorMap);
+    exampleGroup = saveList.at(0);
+    exampleGroupMember = saveList.at(1);
+    
 
     // third, create the relationship between those contacts
     QContactRelationship groupRelationship;
