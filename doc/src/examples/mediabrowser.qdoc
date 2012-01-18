@@ -58,4 +58,12 @@
     duration, artist, and album artist properties of the listed songs, all
     of which with the exception of duration can be edited.  The Photos view is
     a grid of image thumbnails.
+
+    \section1 Known Issues
+    \list
+        \o Album covers are not shown in Symbian.
+        \o Run this application as "user" in MeeGo 1.2 Harmattan in order to get
+           thumbnails of album covers shown properly.
+    \endlist
 */
+
