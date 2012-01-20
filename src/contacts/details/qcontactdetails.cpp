@@ -1828,7 +1828,13 @@ QContactFilter QContactTag::match(const QString &subString)
    is set by the user who has created the contact, but the content of
    a resource identified by a URL specified in a QContactAvatar detail
    is set by whoever owns the resource which the URL identifies.
-
+   
+   Symbian doesn't expose QContactThumbnail through the QML contacts plugin.
+   A wrapper class for Image could be written or alternatively implement it 
+   indirectly via QDeclarativeImageProvider if the thumbnails are needed. 
+   For more information, see 
+   http://doc.qt.nokia.com/4.7-snapshot/qdeclarativeimageprovider.html 
+   
    This leaf-class has been part of the default schema since version
    1.0 of the Qt Mobility project.
 
