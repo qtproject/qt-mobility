@@ -32,6 +32,7 @@ symbian|contains(MEEGO_EDITION,harmattan): {
 symbian {
     DEFINES += USE_OPENGL_GRAPHICS_SYSTEM
     TARGET.CAPABILITY += UserEnvironment
+    TARGET.EPOCHEAPSIZE = 0x020000 0x4000000
 }
 
 include(qmlapplicationviewer/qmlapplicationviewer.pri)

@@ -39,34 +39,33 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+#ifndef QLOCATIONNETWORKACCESSMANAGERFACTORY_H
+#define QLOCATIONNETWORKACCESSMANAGERFACTORY_H
 
-Scene {
-    id: root
-    property string contentType: "video"
+#include "qmobilityglobal.h"
 
-    Content {
-        id: content
-        anchors.centerIn: parent
-        width: parent.contentWidth
-        contentType: "video"
-        source: parent.source1
-        volume: parent.volume
-        onVideoFramePainted: root.videoFramePainted()
-    }
+class QObject;
+class QNetworkAccessManager;
+class QDeclarativeNetworkAccessManagerFactory;
 
-    SeekControl {
-        anchors {
-            left: parent.left
-            right: parent.right
-            leftMargin: 100
-            rightMargin: 140
-            bottom: parent.bottom
-        }
-        duration: content.contentItem() ? content.contentItem().duration : 0
-        playPosition: content.contentItem() ? content.contentItem().position : 0
-        onSeekPositionChanged: { content.contentItem().position = seekPosition }
-    }
+QTM_BEGIN_NAMESPACE
 
-    Component.onCompleted: root.content = content
-}
+class Q_LOCATION_EXPORT QLocationNetworkAccessManagerFactory
+{
+public:
+    static QLocationNetworkAccessManagerFactory *instance();
+
+    QNetworkAccessManager *create(QObject *parent);
+
+    void setDeclarativeFactory(QDeclarativeNetworkAccessManagerFactory *factory);
+
+private:
+    QLocationNetworkAccessManagerFactory();
+
+    static QLocationNetworkAccessManagerFactory* m_instance;
+    QDeclarativeNetworkAccessManagerFactory *m_factory;
+};
+
+QTM_END_NAMESPACE
+
+#endif

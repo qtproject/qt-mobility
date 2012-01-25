@@ -72,7 +72,7 @@ AddCalendarPage::AddCalendarPage(QWidget *parent)
             this, SLOT(readonlyChanged(int)));
 #endif
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     // Add push buttons for non-Symbian platforms as they do not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton *okButton = new QPushButton("Save", this);
@@ -101,7 +101,7 @@ AddCalendarPage::AddCalendarPage(QWidget *parent)
 
     scrollAreaLayout->addStretch();
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 

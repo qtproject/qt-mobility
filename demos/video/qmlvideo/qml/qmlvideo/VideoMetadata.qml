@@ -43,6 +43,7 @@ import QtQuick 1.0
 
 Scene {
     id: root
+    contentType: "video"
 
     Content {
         id: content

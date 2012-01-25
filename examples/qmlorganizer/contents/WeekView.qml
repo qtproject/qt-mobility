@@ -44,6 +44,19 @@ import QtMobility.organizer 1.1
 Rectangle
 {
     id:weekView
+
+    color: "#9eaf30"
+        gradient: Gradient {
+            GradientStop {
+                position: 0.00;
+                color: "#9eaf30";
+            }
+            GradientStop {
+                position: 0.89;
+                color: "#ffffff";
+            }
+        }
+
     anchors.fill: parent
     ListView {
         id : dayList
@@ -71,48 +84,44 @@ Rectangle
                 ListElement {day : "Saturday"}
          }
 
-        delegate : Rectangle {
-                id:weekDayDelegate
+        delegate:  dayDelegate
+
+        Component {
+            id: dayDelegate
+            Item {
                 width : dayList.width
-                height :  childrenRect.height > dayList.height / 7  ? childrenRect.height  : dayList.height / 7
-                focus: true
-
-               FocusScope {
-                   focus: true
-                    Column {
+                //height : childrenRect.height
+                height : weekDayColumn.height > dayList.height / 7  ? weekDayColumn.height  : dayList.height / 7
+                FocusScope {
+                Column {
+                    id: weekDayColumn
+                    Rectangle {
+                        height : 1
+                        width : dayList.width
+                        color : "black"
+                    }
+                    Text {
+                        text: day
+                    }
+                    Repeater {
                         focus: true
-                        Rectangle {
-                            height : 2
-                            width : dayList.width
-                            color : "lightsteelblue"
-                        }
+                        model: calendar.organizer.items? calendar.organizer.itemIds(new Date(calendar.year,calendar.month, index - calendar.weekDay + calendar.day),
+                                                         new Date(calendar.year,calendar.month, index - calendar.weekDay + calendar.day + 1))
+                                                       : 0
                         Text {
-                            text: day
-                        }
-
-                        Repeater {
+                            clip: true
                             focus: true
-                            model:calendar.organizer.itemIds(new Date(calendar.year,
-                                                                      calendar.month,
-                                                                      index - calendar.weekDay + calendar.day),
-                                                             new Date(calendar.year,
-                                                                      calendar.month,
-                                                                      index - calendar.weekDay + calendar.day + 1))
-
-                            Text {
-                                clip: true
-                                focus: true
-                                property OrganizerItem oi: calendar.organizer.item(modelData)
-                                text: "<a href=\"#\">" + oi.displayLabel + "</a>"
-                                onLinkActivated: {
-                                        console.log(oi.type + "," + oi.displayLabel + oi.description);
-                                        //TODO: goto details view
-                                }
+                            property OrganizerItem oi: calendar.organizer.item(modelData)
+                            text: "<a href=\"#\">" + oi.displayLabel + "</a>"
+                            onLinkActivated: {
+                                detailsView.item = oi;
+                                calendar.state = "DetailsView";
                             }
                         }
-                    }
-               }
-               MouseArea {
+                    }//Repeater
+                }//Column
+                }//FocusScope
+                MouseArea {
                     anchors.fill: parent
                     onClicked: {
                         dayList.currentIndex = index
@@ -120,10 +129,11 @@ Rectangle
                         calendar.state = "DayView"
                     }
                 }
-        }
+            }//Item
+        }//Component
+
 
         highlight:  Component {
-
             Rectangle {
                 width: dayList.width
                 height: dayList.height /7
@@ -132,6 +142,6 @@ Rectangle
             }
         }
 
-    }
+    }//ListView
 }
 

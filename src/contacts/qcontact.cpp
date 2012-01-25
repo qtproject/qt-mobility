@@ -176,7 +176,7 @@ bool QContact::isEmpty() const
 
 /*!
  * Removes all details of the contact.
- * This function does not modify the id or type of the contact.
+ * This function does not modify the id of the contact.
  * Calling isEmpty() after calling this function will return true.
  * \since 1.0
  */

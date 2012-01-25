@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-
-#ifndef QMLBACKENDAO_H
-#define QMLBACKENDAO_H
+#ifndef QMLTIMER_H
+#define QMLTIMER_H
 
 //
 //  W A R N I N G
@@ -53,99 +52,50 @@
 //
 // We mean it.
 //
-
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>
-#include <lbssatellite.h>
-#include "qgeopositioninfosource.h"
-//#include "qgeopositioninfosources60.h"
 
 QTM_BEGIN_NAMESPACE
 
-class CQGeoPositionInfoSourceS60 ;
-class CQGeoSatelliteInfoSourceS60;
+#define UPDATE_TIMER 5000000
 
-// Types of request
-enum RequestType {
-    RegularUpdate = 1,  // Regular updates
-    OnceUpdate,     // request update
-    DeviceStatus       // device updates
-};
+class CQGeoPositionInfoSourceS60;
 
-//
-class CQMLBackendAO : public CActive
+class CQMLTimer : public CTimer
 {
 public:
+	
+		enum OPERATING_STATE{
+			INITIAL,
+			HYBRID_RUNNING,
+			HYBRID_STOPPED,
+			HYBRID_RESTART
+		};
+	
     // Cancel and destroy
-    ~CQMLBackendAO();
+    ~CQMLTimer();
 
     // Two-phased constructor.
-    static CQMLBackendAO* NewL(QObject *aRequester,
-                               RequestType  aRequestType, TPositionModuleId  aModId = TUid::Uid(0)
-                              );
+    static CQMLTimer* NewL(QObject *aRequester);
 
     // Two-phased constructor.
-    static CQMLBackendAO* NewLC(QObject *aRequester,
-                                RequestType  aRequestType, TPositionModuleId  aModID);
-
-    // checks any pending request in activeobject
-    bool isRequestPending();
-
-    // Async call to get notifications about device status.
-    void notifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEvent) ;
-
-    // requesting for position update once
-    void requestUpdate(int aTimeout);
-
-    // cancels an outstanding update request
-    void cancelUpdate();
-
-    // Sets an interval in millisecs for regular notifications
-    int setUpdateInterval(int aMilliSec);
-
-    void startUpdates();
+    static CQMLTimer* NewLC(QObject *aRequester);
     
-    bool getPosUpdState() {
-    	return mPosUpdate;
+    bool StartTimer(); 
+    
+    void StopTimer();
+    
+    bool isTimerStopped(){
+    	return mTimerStopped;
+    };
+    
+    void setTrackState(int nTrackState);
+    
+    int getTrackState(){
+    	return mOperatingState;
     }
     
-     void resetPosUpdState() {
-    	mPosUpdate = false;
-    }
-    
-    void setUpdateOnHold(){
-    	mUpdateHold = true;
-    }
-    
-    bool isOnHold(){
-    	return mUpdateHold;
-    }
-/*public:
-	Q_SIGNALS:
-    void startPsys();
-    void stopPsys();*/
-
-private:
-    // C++ constructor
-    CQMLBackendAO();
-
-    // Second-phase constructor
-    TInt ConstructL(QObject *aRequester, RequestType  aRequestType,
-                    TPositionModuleId  aModId);
-
-    // Device Notifications are handled
-    void handleDeviceNotification(int aError);
-
-    // regular position notifications are handled
-    void handlePosUpdateNotification(int aError);
-
-    void CancelAll();
-
-    bool initializePosInfo();
-    
-    
-
 private:
     // From CActive
     // Handle completion
@@ -157,32 +107,24 @@ private:
     // Override to handle leaves from RunL(). Default implementation causes
     // the active scheduler to panic.
     int RunError(int aError);
-
+    
+ 
 private:
-
-    HPositionGenericInfo *mPosInfo;
-
-    // Request is a device or a regular
+		CQMLTimer();
+		void ConstructL(QObject *aRequester);
+          
+private:
+	 // Request is a device or a regular
     CQGeoPositionInfoSourceS60 *mRequester;
-
-    //Request is a device for Satellite update only
-    CQGeoSatelliteInfoSourceS60 *mRequesterSatellite;
-
-    // Request type once, regular, device
-    RequestType  mRequestType;
-
-    // Positioning Information
-    RPositioner mPositioner;
-
-
-    TPositionSatelliteInfo mPosSatInfo;
     
-    bool mPosUpdate;
+    int	mOperatingState;
     
-    bool mUpdateHold;
-  
+  	bool mIsTimerOn;
+  	
+  	bool mTimerStopped;
+     
 };
 
 QTM_END_NAMESPACE
 
-#endif // QMLBACKENDAO_H
+#endif // QMLTimer_H

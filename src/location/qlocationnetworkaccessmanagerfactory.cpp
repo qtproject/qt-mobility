@@ -39,34 +39,40 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+#include "qlocationnetworkaccessmanagerfactory.h"
 
-Scene {
-    id: root
-    property string contentType: "video"
+#include <QNetworkAccessManager>
+#include <QDeclarativeNetworkAccessManagerFactory>
 
-    Content {
-        id: content
-        anchors.centerIn: parent
-        width: parent.contentWidth
-        contentType: "video"
-        source: parent.source1
-        volume: parent.volume
-        onVideoFramePainted: root.videoFramePainted()
-    }
+QTM_BEGIN_NAMESPACE
 
-    SeekControl {
-        anchors {
-            left: parent.left
-            right: parent.right
-            leftMargin: 100
-            rightMargin: 140
-            bottom: parent.bottom
-        }
-        duration: content.contentItem() ? content.contentItem().duration : 0
-        playPosition: content.contentItem() ? content.contentItem().position : 0
-        onSeekPositionChanged: { content.contentItem().position = seekPosition }
-    }
+QLocationNetworkAccessManagerFactory* QLocationNetworkAccessManagerFactory::m_instance = NULL;
 
-    Component.onCompleted: root.content = content
+QLocationNetworkAccessManagerFactory::QLocationNetworkAccessManagerFactory() :
+        m_factory(NULL)
+{
 }
+
+QLocationNetworkAccessManagerFactory
+*QLocationNetworkAccessManagerFactory::instance()
+{
+    if (!m_instance)
+        m_instance = new QLocationNetworkAccessManagerFactory();
+    return m_instance;
+}
+
+void QLocationNetworkAccessManagerFactory::setDeclarativeFactory(
+        QDeclarativeNetworkAccessManagerFactory *factory)
+{
+    m_factory = factory;
+}
+
+QNetworkAccessManager *QLocationNetworkAccessManagerFactory::create(QObject *parent)
+{
+    if (m_factory)
+        return m_factory->create(parent);
+    else
+        return new QNetworkAccessManager(parent);
+}
+
+QTM_END_NAMESPACE

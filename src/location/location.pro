@@ -2,7 +2,7 @@ include(../../features/utils.pri)
 
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network sql
+QT = core gui network sql declarative
 
 include(../../common.pri)
 
@@ -56,7 +56,8 @@ symbian {
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
                        notificationcallback_s60_p.h \
-                       notificationsatellitecallback_s60_p.h
+                       notificationsatellitecallback_s60_p.h \
+                       qmlTimer.h
 
     contains(lbt_enabled, yes) {
         PRIVATE_HEADERS += \
@@ -78,7 +79,8 @@ symbian {
 
     SOURCES += qgeopositioninfosource_s60.cpp \
                qgeosatelliteinfosource_s60.cpp \
-               qmlbackendao_s60.cpp
+               qmlbackendao_s60.cpp \
+               qmlTimer.cpp
 
     contains(lbt_enabled, yes) {
         SOURCES += \
@@ -181,7 +183,8 @@ SOURCES += \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
             projwrapper_p.cpp \
-            qgeopositioninfosourcefactory.cpp
+            qgeopositioninfosourcefactory.cpp \
+            qlocationnetworkaccessmanagerfactory.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

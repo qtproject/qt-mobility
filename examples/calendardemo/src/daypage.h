@@ -67,7 +67,7 @@ public:
     DayPage(QWidget *parent = 0);
     ~DayPage();
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
     void setMenu(QMenu *menu);
 #endif
 

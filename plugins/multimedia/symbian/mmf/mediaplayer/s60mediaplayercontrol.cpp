@@ -206,13 +206,15 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     TRACE("S60MediaPlayerControl::setMedia" << qtThisPtr()
           << "source" << source.canonicalUrl().toString());
     Q_UNUSED(stream)
-    if (m_session && (m_media == source)) {
+    if (m_session && (m_media == source)&& !source.canonicalUrl().isEmpty()) {
         if (m_session->isStreaming())
             m_session->load(source);
     } else {
+        if (!source.canonicalUrl().isEmpty()) {
         delete m_session;
         m_session = 0;
         m_session = m_service->createPlayerSession(source);
+        }
         QMediaPlayer::MediaStatus mediaStatus = QMediaPlayer::NoMedia;
         if (m_session && !source.canonicalUrl().isEmpty()) {
             m_session->load(source);

@@ -46,7 +46,8 @@
 #include "qgeopositioninfosource_s60_p.h"
 #include "qgeopositioninfosource.h"
 #include "qmlbackendao_s60_p.h"
-
+#include "unistd.h"
+#include <QAction>
 
 
 QTM_BEGIN_NAMESPACE
@@ -57,37 +58,60 @@ CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoP
         mReqModuleId(TUid::Null()),
         mDevStatusUpdateAO(NULL),
         mReqUpdateAO(NULL),
+        mReqBkUpdateAO(NULL),
         mRegUpdateAO(NULL),
+        mRegBkUpdateAO(NULL),
         mSupportedMethods(PositioningMethod(0)),
         mCurrentMethod(PositioningMethod(0)),
         mListSize(0),
         mMinUpdateInterval(100),
+        mStatusEvent(TPositionModuleStatusEventBase::EEventDeviceStatus),
         mStartUpdates(FALSE),
         mRegularUpdateTimedOut(FALSE),
         mUpdateIntervalSet(FALSE),
-        mModuleFlags(0)
+        mModuleFlags(0),
+        mTimer(NULL)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CPosMethodInfo));
+#if !defined QT_NO_DEBUG
+    qDebug() << "CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60\n" ;
+#endif
 }
 
 // destructor
 CQGeoPositionInfoSourceS60::~CQGeoPositionInfoSourceS60()
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::~CQGeoPositionInfoSourceS60\n" ;
+#endif
+	
+		if (mTimer){
+			//mTimer->DoCancel();
+			delete mTimer;
+		}
+
     if (mReqUpdateAO)
         delete mReqUpdateAO;
-
+        
+    if (mReqBkUpdateAO)
+    	delete mReqBkUpdateAO;
+    	
     if (mRegUpdateAO)
         delete mRegUpdateAO;
+        
+    if (mRegBkUpdateAO)
+    	delete mRegBkUpdateAO;
 
     if (mDevStatusUpdateAO)
         delete mDevStatusUpdateAO;
-
-
 }
 
 // static function NewLC
 CQGeoPositionInfoSourceS60* CQGeoPositionInfoSourceS60::NewLC(QObject* aParent)
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::NewLC\n" ;
+#endif
     CQGeoPositionInfoSourceS60* self =
         new(ELeave) CQGeoPositionInfoSourceS60(aParent);
     CleanupStack::PushL(self);
@@ -98,6 +122,9 @@ CQGeoPositionInfoSourceS60* CQGeoPositionInfoSourceS60::NewLC(QObject* aParent)
 // static function NewL
 CQGeoPositionInfoSourceS60* CQGeoPositionInfoSourceS60::NewL(QObject * aParent)
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::NewL\n" ;
+#endif
     RProcess thisProcess;
     if (!thisProcess.HasCapability(ECapabilityLocation)) {
         qWarning() << "QGeoPositionInfoSource::createDefaultSource() requires the Symbian Location capability to succeed on the Symbian platform.";
@@ -121,6 +148,10 @@ CQGeoPositionInfoSourceS60* CQGeoPositionInfoSourceS60::NewL(QObject * aParent)
 // 2nd phase constructor
 void CQGeoPositionInfoSourceS60::ConstructL()
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfobuffSourceS60::ConstructL\n" ;
+#endif
+	
     TInt error = mPositionServer.Connect();
 
     if (error == KErrNone) {
@@ -145,16 +176,37 @@ void CQGeoPositionInfoSourceS60::ConstructL()
         CleanupStack::PushL(mDevStatusUpdateAO);
 
         if (mCurrentModuleId != TUid::Null()) {
+#if !defined QT_NO_DEBUG
+        	  qDebug() << "CQGeoPositionInfoSourceS60::ConstructL" ;
+#endif
+
             mRegUpdateAO = CQMLBackendAO::NewL(this, RegularUpdate, mCurrentModuleId);
             mRegUpdateAO->setUpdateInterval(updateInterval());
         }
+        
+        if (preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods){
+              	
+        	int Bkindex = getAccurateNwMethod();
+    	    
+    	    if (Bkindex != -1){
+    	    	if (mList[Bkindex].mUid != mCurrentModuleId){
+    	    		mRegBkUpdateAO = CQMLBackendAO::NewL(this, RegularUpdate, mList[Bkindex].mUid);
+        			mRegBkUpdateAO->setUpdateInterval(updateInterval());        	
+        		}
+        	}
+        }
+        
+        mTimer = CQMLTimer::NewL(this);
+                
         CleanupStack::Pop(2);
     }
-
 }
 
 QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatellitePositioningMethodsOnly) const
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::lastKnownPosition\n" ;
+#endif
 
     QGeoPositionInfo posUpdate;
     TPosition pos;
@@ -222,6 +274,10 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
 //
 int CQGeoPositionInfoSourceS60::minimumUpdateInterval() const
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::minimumUpdateInterval\n" ;
+#endif
+	
     if (mCurrentModuleId == TUid::Null())
         return 0;
 
@@ -233,7 +289,11 @@ int CQGeoPositionInfoSourceS60::minimumUpdateInterval() const
 //private function : to derive the supported positioning methods
 void CQGeoPositionInfoSourceS60::updateAvailableTypes()
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::updateAvailableTypes\n" ;
+#endif
     PositioningMethods types;
+
 
     for (TInt i = 0; i < mListSize ; i++) {
         //check only for the available module without any device errors
@@ -256,6 +316,9 @@ void CQGeoPositionInfoSourceS60::updateAvailableTypes()
 //private function : to retrieve the index of the supplied module id from the mList array
 TInt CQGeoPositionInfoSourceS60::checkModule(TPositionModuleId aId)//const
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::checkModule\n" ;
+#endif
 
     TInt i;
     for (i = 0; i < mListSize; i++)
@@ -270,6 +333,10 @@ TInt CQGeoPositionInfoSourceS60::checkModule(TPositionModuleId aId)//const
 //available,else returns the index of the default module
 TInt CQGeoPositionInfoSourceS60::getIndexPositionModule(TUint8 aBits, PositioningMethods aPosMethods) const
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::getIndexPositionModule\n" ;
+#endif
+	
     TInt index, error;
 
     TPositionModuleId modID;
@@ -308,6 +375,10 @@ TInt CQGeoPositionInfoSourceS60::getIndexPositionModule(TUint8 aBits, Positionin
 //lesser than timeout
 TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBits)
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::getMoreAccurateMethod\n" ;
+#endif
+	
     TInt index = -1;
     double temp = -1.0;
     PositioningMethods posMethods;
@@ -331,6 +402,9 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
             }
         }
     }
+#if !defined QT_NO_DEBUG
+    qDebug() << index ;
+#endif
 
     if (index != -1) {
         return index;
@@ -352,13 +426,19 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
             }
         }
     }
-
+#if !defined QT_NO_DEBUG
+		qDebug() << "getMoreAccurateMethod time to first fix\n" ;
+		qDebug() << index ;
+#endif
     return index;
 }
 
 //private function : to update the mList array
 void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TInt aStatus)
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::updateStatus\n" ;
+#endif
 
     TInt i, index;
     TPositionModuleId id;
@@ -465,6 +545,10 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                 (aStatus != TPositionModuleStatus::EDeviceUnknown) &&
                 (aStatus != TPositionModuleStatus::EDeviceError)) {
             TInt interval;
+            
+#if !defined QT_NO_DEBUG
+            qDebug() << "CQGeoPositionInfoSourceS60::updateStatus" ;
+#endif
 
             interval = QGeoPositionInfoSource::updateInterval();
 
@@ -536,7 +620,9 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                         bits = bits & (0XFF ^(1 << index));
                     }
                 } while (index >= 0);
-
+#if !defined QT_NO_DEBUG
+                qDebug() << "CQGeoPositionInfoSourceS60::updateStatus regular/rqst changed"  ;
+#endif
 
                 if (temp != NULL) {
                     //successful in creating the subsession for the required
@@ -553,6 +639,9 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
                     lRegLocker_interval2.unlock();
 
                     mRegUpdateAO->setUpdateInterval(interval);
+                    
+                    if (preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods)
+                    	setBackupUpdateAO(index);
 
                     //to be uncommented when startUpdates are done
 
@@ -598,9 +687,17 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo &aModInfo, TIn
 // Notification methods from active object. Notifies device status changes
 void CQGeoPositionInfoSourceS60::updateDeviceStatus(void)
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::updateDeviceStatus\n" ;
+#endif
+
     TPositionModuleStatus moduleStatus;
     TPositionModuleInfo moduleInfo;
     TInt error;
+ 
+#if !defined QT_NO_DEBUG   
+    qDebug() << "CQGeoPositionInfoSourceS60::updateDeviceStatus";
+#endif
 
     //mListSize = 0 : called updateDeviceStatus() first time to initialise the array
     if (mListSize == 0) {
@@ -613,7 +710,7 @@ void CQGeoPositionInfoSourceS60::updateDeviceStatus(void)
         error = mPositionServer.GetDefaultModuleId(mCurrentModuleId);
 
         if (error != KErrNone)
-            mCurrentModuleId = TUid::Null();
+            mCurrentModuleId = TUid::Null();            	 
 
         for (TUint i = 0; i < modCount; i++) {
             //get module information
@@ -628,8 +725,9 @@ void CQGeoPositionInfoSourceS60::updateDeviceStatus(void)
             mModuleFlags |= (1 << i);
         }
     } else {
+    	   		
         //UpdateDeviceStatus() called after registering for NotifyModuleStatusEvent
-
+				
         //get the module id from the status event
         TPositionModuleId id = mStatusEvent.ModuleId();
 
@@ -641,8 +739,7 @@ void CQGeoPositionInfoSourceS60::updateDeviceStatus(void)
 
         //update the properties of the module in the mList array
         updateStatus(moduleInfo, moduleStatus.DeviceStatus());
-
-
+        
     }
 
     //register for next NotifyModuleStatusEvent
@@ -657,6 +754,10 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
     TPosition pos;
     QGeoCoordinate  coord;
     float val;
+ 
+#if !defined QT_NO_DEBUG   
+    qDebug() << "CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo\n" ;
+#endif
 
     aPosInfo1->GetPosition(pos);
 
@@ -711,34 +812,69 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
 void CQGeoPositionInfoSourceS60::updatePosition(HPositionGenericInfo *aPosInfo, int aError)
 {
     QGeoPositionInfo  posInfo;
-
+  
+#if !defined QT_NO_DEBUG  
+    qDebug() << "CQGeoPositionInfoSourceS60::updatePosition\n" ;
+#endif
+    
+    mPositionUpdate = true;
+    
     if (aError == KErrNone && aPosInfo) {
         //fill posUpdate
         TPositionInfo2QGeoPositionInfo(aPosInfo, posInfo);
 
-        mRegularUpdateTimedOut = false;
+        mRegularUpdateTimedOut = false;    
 
         //emit posUpdate
         emit positionUpdated(posInfo);
+#if !defined QT_NO_DEBUG
+        qDebug() << "CQGeoPositionInfoSourceS60::updatePosition position updated\n" ;
+#endif
+                
     } else if (aError == KErrTimedOut) {
-        //request has timed out
-        if (mStartUpdates) {
-            if (!mRegularUpdateTimedOut) {
-                mRegularUpdateTimedOut = true;
-                emit updateTimeout();
-            }
-        } else {
-            emit updateTimeout();
-        }
-    } else {
+    	
+	        //request has timed out
+	        if (mStartUpdates) {
+	            if (!mRegularUpdateTimedOut) {
+	                mRegularUpdateTimedOut = true;
+	                emit updateTimeout();
+	            }
+	        } else {
+	            emit updateTimeout();
+	        }
+	        
+	        //switch on the network psy
+	        if (preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods &&
+        	mTimer->getTrackState() == CQMLTimer::HYBRID_STOPPED){
+        		mTimer->setTrackState(CQMLTimer::HYBRID_RESTART);
+	        }
+#if !defined QT_NO_DEBUG
+	        qDebug() << "CQGeoPositionInfoSourceS60::updatePosition position timeout\n" ;
+#endif
+	        
+    } else {    	
         //posiitoning module is unable to return any position information
-        emit updateTimeout();
+        	emit updateTimeout();
+        	
+        	//switch on the network psy
+        	if (preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods &&
+        	mTimer->getTrackState() == CQMLTimer::HYBRID_STOPPED){
+        		mTimer->setTrackState(CQMLTimer::HYBRID_RESTART);
+	        }
+#if !defined QT_NO_DEBUG
+        	qDebug() << "CQGeoPositionInfoSourceS60::updatePosition position timeout\n" ;
+#endif
     }
+    mPositionUpdate = false;
 }
 
 // Returns the PositionServer handle
 RPositionServer& CQGeoPositionInfoSourceS60:: getPositionServer()
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::getPositionServer\n" ;
+#endif
+	
     return mPositionServer;
 }
 
@@ -748,6 +884,12 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 {
     TInt index = -1;
     TUint8 bits;
+    
+#if !defined QT_NO_DEBUG
+    qDebug() << "CQGeoPositionInfoSourceS60::requestUpdate\n" ;
+#endif
+    
+    mReqUpdates = true;
 
     CQMLBackendAO *temp = NULL;
 
@@ -755,20 +897,63 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
         emit updateTimeout();
         return;
     }
+    
+    if (mReqBkUpdateAO && mReqBkUpdateAO->isRequestPending())
+        return;
 
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())
         return;
 
-    if (aTimeout < 0 || (aTimeout != 0 && aTimeout < minimumUpdateInterval())) {
+   /* if (aTimeout < 0 || (aTimeout != 0 && aTimeout < minimumUpdateInterval())) {
         emit updateTimeout();
         return;
-    }
+    }*/
 
     if (aTimeout == 0)
         aTimeout = 20000;
+        
+    //minimum time for updates is 15000
+    if (aTimeout < 15000)
+    	aTimeout = 15000;
 
     bits = mModuleFlags;
+    
+    
+  	int indx = getMoreAccurateMethod(aTimeout, bits);
+#if !defined QT_NO_DEBUG
+  	qDebug() << "index\n" ;
+  	qDebug() << indx ;
+#endif
+  	int lBkRqindex = -1;
+  	if (mReqBkUpdateAO){
+  		delete mReqBkUpdateAO;
+  		mReqBkUpdateAO = NULL;
+  	}
+  		
+#if !defined QT_NO_DEBUG
+  		qDebug() << "mReqBkUpdateAO-------\n" ;
+#endif
+
+	  	if (indx != -1 && mList[indx].mPosMethod == QGeoPositionInfoSource::NonSatellitePositioningMethods){
+	  		lBkRqindex =getAccurateSatMethod();
+#if !defined QT_NO_DEBUG
+	  		qDebug() << "Bkindex\n" ;
+	  		qDebug() << lBkRqindex ;
+#endif
+	  	}
+	  	else{
+	  	 	lBkRqindex = getAccurateNwMethod();
+#if !defined QT_NO_DEBUG
+	  	 	qDebug() << "Bkindex\n" ;
+	  		qDebug() << lBkRqindex ;
+#endif
+	  	}
+	  	if (lBkRqindex != -1)    	
+	    	mReqBkUpdateAO = CQMLBackendAO::NewL(this, OnceUpdate, mList[lBkRqindex].mUid);
+    
+    if (mReqBkUpdateAO)
+    	mReqBkUpdateAO->requestUpdate(aTimeout);
 
     do  {
 
@@ -784,6 +969,10 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
         if (mList[index].mUid == mReqModuleId) {
             if (mReqUpdateAO) {
                 mReqUpdateAO->requestUpdate(aTimeout);
+#if !defined QT_NO_DEBUG
+                qDebug() << "CQGeoPositionInfoSourceS60::requestUpdate mReqUpdateAO\n" ;
+                qDebug() << index ;
+#endif
                 return;
             }
         }
@@ -804,6 +993,10 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 
             //start the update
             mReqUpdateAO->requestUpdate(aTimeout);
+#if !defined QT_NO_DEBUG
+            qDebug() << "CQGeoPositionInfoSourceS60::requestUpdate mReqUpdateAO\n" ;
+            qDebug() << index ;
+#endif
 
             return;
         }
@@ -826,6 +1019,11 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 // starts the regular updates
 void CQGeoPositionInfoSourceS60::startUpdates()
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::startUpdates\n" ;
+#endif
+
+	mReqUpdates = false;
     //SetUpdateInterval if it is not already set from application
     if (!mUpdateIntervalSet)
         setUpdateInterval(1000);
@@ -837,26 +1035,69 @@ void CQGeoPositionInfoSourceS60::startUpdates()
 
     if (receivers(SIGNAL(positionUpdated(QGeoPositionInfo))) > 0 && !mStartUpdates)
         mRegUpdateAO->startUpdates();
+        
+    if (mRegBkUpdateAO && preferredPositioningMethods() == QGeoPositionInfoSource::AllPositioningMethods){
+#if !defined QT_NO_DEBUG
+qDebug() << "Backup updates started --------------\n" ;
+#endif
+    	mRegBkUpdateAO->startUpdates();
+    	mTimer->setTrackState(CQMLTimer::HYBRID_RUNNING);
+    	if(mTimer->isTimerStopped())
+    		mTimer->StartTimer();
+    }
     mRegularUpdateTimedOut = false;
     mStartUpdates = true;
+       
 }
 
 // stops the regular updates
 void CQGeoPositionInfoSourceS60::stopUpdates()
 {
     mStartUpdates = false;
+#if !defined QT_NO_DEBUG   
+    qDebug() << "CQGeoPositionInfoSourceS60::stopUpdates\n" ;
+#endif
+
+		if (mRegBkUpdateAO && 
+    mTimer->getTrackState() == CQMLTimer::HYBRID_RUNNING){
+    	mTimer->setTrackState(CQMLTimer::INITIAL);
+    }
+        
+    if (mPositionUpdate)
+    	sleep(1000);
 
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
         emit updateTimeout();
         return;
     }
+    
+		if (mRegUpdateAO)
+    	mRegUpdateAO->cancelUpdate();
+#if !defined QT_NO_DEBUG
+    qDebug() << "CQGeoPositionInfoSourceS60::stopUpdates regularupdate cancelled\n" ;
+#endif
 
-    mRegUpdateAO->cancelUpdate();
+		if (mPositionUpdate)
+    	sleep(1000);
+    
+     QMutexLocker lLocker(&m_mutex_BkRegUpAO);
+    if (mRegBkUpdateAO && 
+    mTimer->getTrackState() == CQMLTimer::HYBRID_RUNNING){
+    	mRegBkUpdateAO->cancelUpdate();
+    	mTimer->StopTimer();
+    }
+  
+#if !defined QT_NO_DEBUG  
+    qDebug() << "CQGeoPositionInfoSourceS60::stopUpdates backup update cancelled\n" ;
+#endif    
+    
 }
 
 void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMethods aMethods)
 {
-
+#if !defined QT_NO_DEBUG
+		qDebug() << "CQGeoPositionInfoSourceS60::setPreferredPositioningMethods\n" ;
+#endif
 
     QGeoPositionInfoSource::setPreferredPositioningMethods(aMethods);
 
@@ -918,6 +1159,10 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
             mMinUpdateInterval = mList[index].mTimeToNextFix.Int64() / 1000;
             lRegLocker_interval.unlock();
         }
+        
+        if (aMethods == QGeoPositionInfoSource::AllPositioningMethods){
+        	setBackupUpdateAO(index);
+        }
 
         int value = mRegUpdateAO->setUpdateInterval(updateInterval);
         //as the positioning module has changed,
@@ -931,7 +1176,9 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
 
 void CQGeoPositionInfoSourceS60::setUpdateInterval(int aMilliSec)
 {
-
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::setUpdateInterval\n" ;
+#endif
 
     if (mRegUpdateAO) {
         int interval = mRegUpdateAO->setUpdateInterval(aMilliSec);
@@ -945,6 +1192,9 @@ void CQGeoPositionInfoSourceS60::setUpdateInterval(int aMilliSec)
 
 void CQGeoPositionInfoSourceS60::connectNotify(const char *aSignal)
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::connectNotify\n" ;
+#endif
     // start update if it already connected
     if (mStartUpdates && mRegUpdateAO && QLatin1String(aSignal) == SIGNAL(positionUpdated(QGeoPositionInfo)))
         mRegUpdateAO->startUpdates();
@@ -953,11 +1203,147 @@ void CQGeoPositionInfoSourceS60::connectNotify(const char *aSignal)
 
 void CQGeoPositionInfoSourceS60::disconnectNotify(const char *aSignal)
 {
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::disconnectNotify\n" ;
+#endif
     // Cancel updates if slot is disconnected for the positionUpdate() signal.
 
     if ((mRegUpdateAO) && (QLatin1String(aSignal) == SIGNAL(positionUpdated(QGeoPositionInfo))) && receivers(SIGNAL(positionUpdated(QGeoPositionInfo))) == 0)
         mRegUpdateAO->cancelUpdate();
 
+}
+
+TInt CQGeoPositionInfoSourceS60::getAccurateSatMethod()
+{
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::getAccurateSatMethod\n" ;
+#endif
+	
+    TInt index = -1;
+    PositioningMethods posMethods;
+
+    posMethods = QGeoPositionInfoSource::SatellitePositioningMethods;
+
+    for (TInt i = 0 ; i < mListSize; i++) {
+        if (mList[i].mIsAvailable
+                && posMethods.testFlag(mList[i].mPosMethod)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
+                && (((mModuleFlags >> i) & 1))){
+                	index = i;
+                }
+    }
+    
+    return index;
+	
+}
+
+TInt CQGeoPositionInfoSourceS60::getAccurateNwMethod()
+{
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::getAccurateNwMethod\n" ;
+#endif
+	
+    TInt index = -1;
+    PositioningMethods posMethods;
+
+    posMethods = QGeoPositionInfoSource::NonSatellitePositioningMethods;
+
+    for (TInt i = 0 ; i < mListSize; i++) {
+        if (mList[i].mIsAvailable
+                && posMethods.testFlag(mList[i].mPosMethod)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
+                && (((mModuleFlags >> i) & 1))){
+                	index = i;
+                }
+    }
+    
+    return index;	
+}
+    
+void CQGeoPositionInfoSourceS60::StartTimer()
+{
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::StartTimer\n" ;
+#endif
+	
+	if (mTimer)
+		mTimer->StartTimer();
+
+}
+
+TBool CQGeoPositionInfoSourceS60::isUpdates()
+{
+	// timer check for updates to stop the backup updates
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::isUpdates------- \n" ;
+	qDebug() << mRegUpdateAO->getPosUpdState() ;
+	qDebug() << mRegBkUpdateAO->getPosUpdState() ;
+#endif
+
+		if (mRegUpdateAO->getPosUpdState()){
+		
+#if !defined QT_NO_DEBUG
+			qDebug() << "CQGeoPositionInfoSourceS60::isUpdates stopped\n" ;
+#endif
+			
+			if (mRegBkUpdateAO->isOnHold() && mStartUpdates){
+				QMutexLocker lLocker(&m_mutex_BkRegUpAO);
+				mRegBkUpdateAO->cancelUpdate();
+				mTimer->setTrackState(CQMLTimer::HYBRID_STOPPED);
+			}
+			mRegBkUpdateAO->setUpdateOnHold();
+			
+			return true;
+		}
+		return false;	
+}
+
+void CQGeoPositionInfoSourceS60::startBackupUpdate()
+{	
+	// start the backup update
+#if !defined QT_NO_DEBUG
+	qDebug() << "CQGeoPositionInfoSourceS60::StartBkUpdate \n" ;
+#endif
+		QMutexLocker lLocker(&m_mutex_BkRegUpAO);
+
+		if (mRegBkUpdateAO){
+			mRegBkUpdateAO->startUpdates();
+			mTimer->setTrackState(CQMLTimer::HYBRID_RUNNING);	
+#if !defined QT_NO_DEBUG
+	qDebug() << "Backup Update started \n" ;
+#endif
+		}
+}
+
+void CQGeoPositionInfoSourceS60::setBackupUpdateAO(TInt nIndex)
+{
+	// Backup update active object is reset when the device status changes
+#if !defined QT_NO_DEBUG
+	qDebug() << "setBackupUpdateAO\n" ;
+#endif
+	TInt lBkRqindex = -1;
+	if (nIndex != -1 && mList[nIndex].mPosMethod == QGeoPositionInfoSource::NonSatellitePositioningMethods){
+		lBkRqindex =getAccurateSatMethod();
+	}
+	else{
+	 	lBkRqindex = getAccurateNwMethod();
+	}
+	
+	 QMutexLocker lLocker(&m_mutex_BkRegUpAO);
+
+	if (lBkRqindex != -1){
+		if (mReqBkUpdateAO)
+			delete mReqBkUpdateAO;
+			
+		if (nIndex != lBkRqindex){
+			mRegBkUpdateAO = CQMLBackendAO::NewL(this, RegularUpdate, mList[lBkRqindex].mUid);
+    	mRegBkUpdateAO->setUpdateInterval(updateInterval());
+    	if (mStartUpdates && mTimer->getTrackState() == CQMLTimer::HYBRID_RUNNING)
+    		mRegBkUpdateAO->startUpdates();   		
+    }
+	}
 }
 
 QTM_END_NAMESPACE

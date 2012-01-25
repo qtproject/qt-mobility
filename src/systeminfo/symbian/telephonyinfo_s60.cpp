@@ -50,12 +50,11 @@ CTelephonyInfo::CTelephonyInfo(CTelephony &telephony) : CActive(EPriorityStandar
     m_telephony(telephony)
 {
     CActiveScheduler::Add(this);
-    m_wait = new CActiveSchedulerWait();
 }
 
 CTelephonyInfo::~CTelephonyInfo()
 {
-    delete m_wait;
+  delete iEventLoop;
 }
 
 void CTelephonyInfo::addObserver(MTelephonyInfoObserver *observer)
@@ -70,7 +69,12 @@ void CTelephonyInfo::removeObserver(MTelephonyInfoObserver *observer)
 
 void CTelephonyInfo::RunL()
 {
-    m_wait->AsyncStop();
+   TRACES (qDebug() << "CTelephonyInfo::RunL<---");
+
+    if ( iEventLoop ){
+        TRACES (qDebug() << "eventloop::exiting");
+        if (iEventLoop->isRunning()) iEventLoop->exit();
+        }
 }
 
 void CTelephonyInfo::makeRequest()
@@ -78,9 +82,11 @@ void CTelephonyInfo::makeRequest()
     if (!IsActive())
         SetActive();
 
-    if (!m_wait->IsStarted()) {
-        m_wait->Start();
-    }
+    if ( !iEventLoop ){
+        iEventLoop = new QEventLoop();
+        TRACES ( qDebug() << "started event loop...");
+        }
+    iEventLoop->exec(); //start the loop
 }
 
 CPhoneInfo::CPhoneInfo(CTelephony &telephony) : CTelephonyInfo(telephony),

@@ -50,6 +50,7 @@
 #include "qgeomapreply_nokia.h"
 #include "qgeotiledmapdata_nokia.h"
 #include "marclanguagecodes.h"
+#include "qlocationnetworkaccessmanagerfactory.h"
 
 #include <qgeotiledmaprequest.h>
 
@@ -212,7 +213,8 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     modes << QGraphicsGeoMap::OnlineMode;
     setSupportedConnectivityModes(modes);
 
-    m_networkManager = new QNetworkAccessManager(this);
+    // Get manager from declarative factory or create a new one
+    m_networkManager = QLocationNetworkAccessManagerFactory::instance()->create(this);
 
     if (parameters.contains("mapping.proxy")) {
         QString proxy = parameters.value("mapping.proxy").toString();

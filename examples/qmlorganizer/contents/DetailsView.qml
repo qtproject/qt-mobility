@@ -39,15 +39,15 @@
 ****************************************************************************/
 
 import Qt 4.7
-
 import QtMobility.organizer 1.1
 
 Rectangle
 {
     id:detailsView
+
     anchors.fill: parent
-    property string  itemId
-    property string itemType : item.type
+    property string itemId
+    property string itemType : item == undefined? "" : item.type
     property variant item
 
     onItemIdChanged : {
@@ -55,29 +55,29 @@ Rectangle
             item = calendar.organizer.item(itemId);
     }
 
-   // TODOs:
-    //  1) add reminder details
-    //  2) add recurrences
-    //  3) write back
-
     ListView {
         anchors.fill: parent
+        clip: true
+        spacing: 9.0
+
         model: {
+            if (item == undefined)
+                return null;
             switch (itemType) {
-                    case "Event" :
-                         return eventItemModel;
-                    case "EventOccurrence":
-                         return eventOccurrenceItemModel;
-                    case "Journal":
-                         return journalItemModel;
-                    case "Note":
-                         return noteItemModel;
-                    case "Todo":
-                         return todoItemModel;
-                    case "TodoOccurrence":
-                         return todoOccurrenceItemModel;
-                    default:
-                         break;
+            case "Event" :
+                return eventItemModel;
+            case "EventOccurrence":
+                return eventOccurrenceItemModel;
+            case "Journal":
+                return journalItemModel;
+            case "Note":
+                return noteItemModel;
+            case "Todo":
+                return todoItemModel;
+            case "TodoOccurrence":
+                return todoOccurrenceItemModel;
+            default:
+                break;
             }
             return null;
         }
@@ -89,129 +89,129 @@ Rectangle
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "displayLabel:" }
-                TextInput { text:detailsView.item.displayLabel}
-            }
+            Text {
+                text:"displayLabel: " + detailsView.item.displayLabel
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
+           }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "description:" }
-                TextInput { text:detailsView.item.description}
-            }
-        }
-
-        Rectangle {
-            width: detailsView.width
-            height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "start:" }
-                TextInput { text:detailsView.item.startDateTime}
+            Text {
+                text:"description: " + detailsView.item.description
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "end:" }
-                TextInput { text:detailsView.item.endDateTime}
+            Text {
+                text:"start: " + detailsView.item.startDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "All day event:" }
-                TextInput { text:detailsView.item.allDay}
+            Text {
+                text:"end: " + detailsView.item.endDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "location:" }
-                TextInput { text:detailsView.item.location}
+            Text {
+                text:"All day event: " + detailsView.item.allDay
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "priority:" }
-                TextInput { text:detailsView.item.priority}
+            Text {
+                text:"location: " + detailsView.item.location
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
+           }
+        }
+
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Text {
+                text:"priority: " + detailsView.item.priority
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "recurrence:" }
-                Text { text: "*not implemented*"}
+            Text {
+                text:"recurrence: " + "*not implemented*"
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "manager:" }
-                Text { text:detailsView.item.manager}
+            Text {
+                text:"manager: " + detailsView.item.manager
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "id:" }
-                Text { text: itemId}
+            Text {
+                text:"id: " + itemId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "type:" }
-                TextInput { text: itemType}
+            Text {
+                text:"type: " + itemType
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "guid:" }
-                TextInput { text:detailsView.item.guid}
+            Text {
+                text:"guid: " + detailsView.item.guid
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "timestamp:" }
-                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            Text {
+                text:"created: " + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
     }
@@ -219,102 +219,94 @@ Rectangle
     //event occurrence
     VisualItemModel {
         id:eventOccurrenceItemModel
+
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "displayLabel:" }
-                TextInput { text:detailsView.item.displayLabel}
-            }
-        }
-        Rectangle {
-            width: detailsView.width
-            height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "displayLabel:" }
-                TextInput { text:detailsView.item.displayLabel}
+            Text {
+                text:"displayLabel: " + detailsView.item.displayLabel
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "description:" }
-                TextInput { text:detailsView.item.description}
+            Text {
+                text:"description: " + detailsView.item.description
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "start:" }
-                TextInput { text:detailsView.item.startDateTime}
+            Text {
+                text:"start: " + detailsView.item.startDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "end:" }
-                TextInput { text:detailsView.item.endDateTime}
+            Text {
+                text:"end: " + detailsView.item.endDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "parent id:" }
-                TextInput { text:detailsView.item.parentId}
+            Text {
+                text:"parent id: " + detailsView.item.parentId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "location:" }
-                TextInput { text:detailsView.item.location}
+            Text {
+                text:"location: " + detailsView.item.location
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "priority:" }
-                TextInput { text:detailsView.item.priority}
+            Text {
+                text:"priority: " + detailsView.item.priority
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "original date:" }
-                TextInput { text:detailsView.item.originalDate}
+            Text {
+                text:"original date: " + detailsView.item.originalDate
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "timestamp:" }
-                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            Text {
+                text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
@@ -322,43 +314,44 @@ Rectangle
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "manager:" }
-                Text { text:detailsView.item.manager}
+            Text {
+                text:"manager: " + detailsView.item.manager
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "id:" }
-                Text { text: itemId}
+            Text {
+                text:"id: " + itemId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "type:" }
-                TextInput { text: itemType}
+            Text {
+                text:"type: " + itemType
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "guid:" }
-                TextInput { text:detailsView.item.guid}
+            Text {
+                text:"guid: " + detailsView.item.guid
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
     }
+
 
     //journal
     VisualItemModel {
@@ -366,78 +359,78 @@ Rectangle
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "displayLabel:" }
-                TextInput { text:detailsView.item.displayLabel}
+            Text {
+                text:"displayLabel: " + detailsView.item.displayLabel
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "description:" }
-                TextInput { text:detailsView.item.description}
+            Text {
+                text:"description: " + detailsView.item.description
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "date time:" }
-                TextInput { text:detailsView.item.startDateTime}
+            Text {
+                text:"date time: " + detailsView.item.startDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "timestamp:" }
-                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
-            }
-        }
-
-        Rectangle {
-            width: detailsView.width
-            height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "manager:" }
-                Text { text:detailsView.item.manager}
+            Text {
+                text:"created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "id:" }
-                Text { text: itemId}
+            Text {
+                text:"manager: " + detailsView.item.manager
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "type:" }
-                TextInput { text: itemType}
+            Text {
+                text:"id: " + itemId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "guid:" }
-                TextInput { text:detailsView.item.guid}
+            Text {
+                text:"type: " + itemType
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
+            }
+        }
+
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Text {
+                text:"guid: " + detailsView.item.guid
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
     }
@@ -448,66 +441,66 @@ Rectangle
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "displayLabel:" }
-                TextInput { text:detailsView.item.displayLabel}
+            Text {
+                text:"displayLabel: " + detailsView.item.displayLabel
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "description:" }
-                TextInput { text:detailsView.item.description}
+            Text {
+                text:"description: " + detailsView.item.description
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "timestamp:" }
-                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
-            }
-        }
-
-        Rectangle {
-            width: detailsView.width
-            height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "manager:" }
-                Text { text:detailsView.item.manager}
-            }
-        }
-        Rectangle {
-            width: detailsView.width
-            height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "id:" }
-                Text { text: itemId}
-            }
-        }
-        Rectangle {
-            width: detailsView.width
-            height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "type:" }
-                TextInput { text: itemType}
+            Text {
+                text:"created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "guid:" }
-                TextInput { text:detailsView.item.guid}
+            Text {
+                text:"manager: " + detailsView.item.manager
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Text {
+                text:"id: " + itemId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
+            }
+        }
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Text {
+                text:"type: " + itemType
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
+            }
+        }
+
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Text {
+                text:"guid: " + detailsView.item.guid
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
     }
@@ -518,110 +511,110 @@ Rectangle
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "displayLabel:" }
-                TextInput { text:detailsView.item.displayLabel}
+            Text {
+                text:"displayLabel: " + detailsView.item.displayLabel
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "description:" }
-                TextInput { text:detailsView.item.description}
+            Text {
+                text:"description: " + detailsView.item.description
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "start:" }
-                TextInput { text:detailsView.item.startDateTime}
+            Text {
+                text:"start: " + detailsView.item.startDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "due:" }
-                TextInput { text:detailsView.item.dueDateTime}
+            Text {
+                text:"due: " + detailsView.item.dueDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "finished:" }
-                TextInput { text:detailsView.item.finishedDateTime}
+            Text {
+                text:"finished: " + detailsView.item.finishedDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "All day event:" }
-                TextInput { text:detailsView.item.allDay}
+            Text {
+                text:"All day event: " + detailsView.item.allDay
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "progress(%):" }
-                TextInput { text:detailsView.item.progressPercentage}
+            Text {
+                text:"progress(%): " + detailsView.item.progressPercentage
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "priority:" }
-                TextInput { text:detailsView.item.priority}
+            Text {
+                text:"priority: " + detailsView.item.priority
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "status:" }
-                TextInput { text:detailsView.item.status}
+            Text {
+                text:"status: " + detailsView.item.status
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "recurrence:" }
-                Text { text: "*not implemented*"}
+            Text {
+                text:"recurrence: " + "*not implemented*"
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "timestamp:" }
-                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            Text {
+                text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
@@ -629,40 +622,40 @@ Rectangle
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "manager:" }
-                Text { text:detailsView.item.manager}
+            Text {
+                text:"manager: " + detailsView.item.manager
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "id:" }
-                Text { text: itemId}
+            Text {
+                text:"id: " + itemId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "type:" }
-                TextInput { text: itemType}
+            Text {
+                text:"type: " + itemType
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "guid:" }
-                TextInput { text:detailsView.item.guid}
+            Text {
+                text:"guid: " + detailsView.item.guid
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
     }
@@ -673,159 +666,158 @@ Rectangle
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "displayLabel:" }
-                TextInput { text:detailsView.item.displayLabel}
+            Text {
+                text:"displayLabel: " + detailsView.item.displayLabel
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "description:" }
-                TextInput { text:detailsView.item.description}
+            Text {
+                text:"description: " + detailsView.item.description
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "start:" }
-                TextInput { text:detailsView.item.startDateTime}
+            Text {
+                text:"start: " + detailsView.item.startDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "due:" }
-                TextInput { text:detailsView.item.dueDateTime}
+            Text {
+                text:"due: " + detailsView.item.dueDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "finished:" }
-                TextInput { text:detailsView.item.finishedDateTime}
+            Text {
+                text:"finished: " + detailsView.item.finishedDateTime
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "All day event:" }
-                TextInput { text:detailsView.item.allDay}
-            }
-        }
-
-        Rectangle {
-            width: detailsView.width
-            height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "progress(%):" }
-                TextInput { text:detailsView.item.progressPercentage}
+            Text {
+                text:"All day event: " + detailsView.item.allDay
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "priority:" }
-                TextInput { text:detailsView.item.priority}
+            Text {
+                text:"progress(%): " + detailsView.item.progressPercentage
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "status:" }
-                TextInput { text:detailsView.item.status}
+            Text {
+                text:"priority: " + detailsView.item.priority
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "parent id:" }
-                TextInput { text:detailsView.item.parentId}
+            Text {
+                text:"status: " + detailsView.item.status
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "original date:" }
-                TextInput { text:detailsView.item.originalDate}
+            Text {
+                text:"parent id: " + detailsView.item.parentId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "timestamp:" }
-                Text { text: "created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified}
+            Text {
+                text:"original date: " + detailsView.item.originalDate
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "manager:" }
-                Text { text:detailsView.item.manager}
+            Text {
+                text:"created:" + detailsView.item.timestamp.created + "lastModified:" + detailsView.item.timestamp.lastModified
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "id:" }
-                Text { text: itemId}
+            Text {
+                text:"manager: " + detailsView.item.manager
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "type:" }
-                TextInput { text: itemType}
+            Text {
+                text:"id: " + itemId
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
 
         Rectangle {
             width: detailsView.width
             height: childrenRect.height
-            Row {
-                spacing: 2
-                Text { text: "guid:" }
-                TextInput { text:detailsView.item.guid}
+            Text {
+                text:"type: " + itemType
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
+            }
+        }
+
+        Rectangle {
+            width: detailsView.width
+            height: childrenRect.height
+            Text {
+                text:"guid: " + detailsView.item.guid
+                width: parent.width
+                wrapMode : Text.WrapAnywhere
             }
         }
     }
-
-
 }
+
