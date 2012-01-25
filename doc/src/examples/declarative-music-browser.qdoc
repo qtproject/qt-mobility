@@ -48,4 +48,12 @@
     information about a song provided by the \l DocumentGalleryItem element. Property
     values changed in this dialog are written back to the \l DocumentGalleryItem
     element and saved to the gallery.
+
+    \section1 Known Issues
+    \list
+        \o Album covers are not shown in Symbian.
+        \o Run this application as "user" in MeeGo 1.2 Harmattan in order to get
+           thumbnails of album covers shown properly.
+    \endlist
 */
+
