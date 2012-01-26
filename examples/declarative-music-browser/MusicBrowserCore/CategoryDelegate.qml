@@ -102,6 +102,7 @@ Package {
             wrapMode: Text.WordWrap
             color: "white"
             font.pointSize: 15
+            elide: Text.ElideRight
         }
 
         MouseArea {

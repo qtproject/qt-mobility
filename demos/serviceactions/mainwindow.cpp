@@ -221,6 +221,7 @@ void AccountsWidget::loadFinished()
         {
             QMessageAccount account(accountIds[i]);
             m_accountsCombo->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.name());
+            m_accountsCombo->setCurrentIndex(i);
         }
 
         m_stackedLayout->setCurrentWidget(m_accountsCombo);

@@ -35,8 +35,21 @@ OTHER_FILES += \
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
 }
 
 RESOURCES += \
     musicbrowser.qrc
+
+contains(MEEGO_EDITION,harmattan) {
+    DEFINES += Q_WS_MAEMO_6
+    target.path = /opt/declarative-music-browser/bin
+
+    icon.path = /usr/share/icons/hicolor/80x80/apps
+    icon.files += declarative-music-browser.png
+
+    desktop.path = /usr/share/applications
+    desktop.files += declarative-music-browser.desktop
+
+    INSTALLS += target icon desktop
+}
+
