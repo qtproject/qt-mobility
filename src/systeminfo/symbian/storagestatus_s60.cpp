@@ -183,6 +183,8 @@ void CMMCStorageStatus::RunL()
 
 void CMMCStorageStatus::startMonitoring()
 {
+  if (!IsActive()) {
     iFs.NotifyChange(ENotifyDisk, iStatus);
     SetActive();
+  }
 }
