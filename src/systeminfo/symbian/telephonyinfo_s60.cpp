@@ -414,8 +414,10 @@ CTelephony::TNetworkMode CCellNetworkInfo::networkMode() const
 void CCellNetworkInfo::startMonitoring()
 {
  TRACES (qDebug() << "CCellNetworkInfo::startMonitoring<---");
+ if (!IsActive()) {
     m_telephony.NotifyChange(iStatus, CTelephony::ECurrentNetworkInfoChange, m_networkInfoV1Pckg);
     SetActive();
+  }
  TRACES (qDebug() << "CCellNetworkInfo::startMonitoring--->");
 }
 
@@ -480,8 +482,10 @@ CTelephony::TRegistrationStatus CCellNetworkRegistrationInfo::cellNetworkStatus(
 void CCellNetworkRegistrationInfo::startMonitoring()
 {
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::startMonitoring<---");
+ if (!IsActive()) {
     m_telephony.NotifyChange(iStatus, CTelephony::ENetworkRegistrationStatusChange, m_networkRegistrationV1Pckg);
     SetActive();
+  }
 TRACES (qDebug() << "CCellNetworkRegistrationInfo::startMonitoring--->");
 }
 
@@ -550,7 +554,9 @@ int CCellSignalStrengthInfo::cellNetworkSignalStrength() const
 void CCellSignalStrengthInfo::startMonitoring()
 {
  TRACES (qDebug() << "CCellSignalStrengthInfo::startMonitoring<---");
+ if (!IsActive()) {
     m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_signalStrengthV1Pckg);
     SetActive();
+  }
  TRACES (qDebug() << "CCellSignalStrengthInfo::startMonitoring--->");
 }
