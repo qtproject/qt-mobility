@@ -200,7 +200,7 @@ private:
     bool m_rendererControlError;
     QMediaObject *m_mediaObject;
     Qt::AspectRatioMode m_aspectRatioMode;
-    QGraphicsView *m_viewport;
+    QPointer<QGraphicsView> m_viewport;
     QGraphicsView::ViewportUpdateMode m_savedViewportUpdateMode;
     bool m_viewportTransparencyEnabled;
     QTransform m_transform;
@@ -1205,7 +1205,7 @@ bool QGraphicsVideoItemPrivate::setWidgetPaintDevice(bool widget)
 void QGraphicsVideoItemPrivate::restoreViewportState()
 {
     TRACE("QGraphicsVideoItemPrivate::restoreViewportState" << qtThisPtr()
-          << "viewport" << qtVoidPtr(m_viewport)
+          << "viewport" << qtVoidPtr(m_viewport.data())
           << "savedViewportUpdateMode" << m_savedViewportUpdateMode
           << "viewportTransparencyEnabled" << m_viewportTransparencyEnabled);
     if (m_viewport) {
