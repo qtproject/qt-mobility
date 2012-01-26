@@ -94,7 +94,7 @@ void CChargingStatus::RunL()
 
 void CChargingStatus::startMonitoring()
 {
-	if (!IsActive()) {
+  if (!IsActive()) {
     m_chargingProperty.Subscribe(iStatus);
     SetActive();
   }
