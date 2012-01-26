@@ -39,15 +39,17 @@
 #
 ##########################################################################
 
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
 QT += core
-TARGET = $$qtLibraryTarget(qtlandmarks_symbian)
+TARGET = $$mobilityPluginTarget(qtlandmarks_symbian)
 PLUGIN_TYPE=landmarks
 CONFIG += mobility
 MOBILITY = location
-
 include(../../../common.pri)
+
 include(symbian_landmarks_defines.pri)
 
 symbian {
@@ -56,7 +58,7 @@ symbian {
         INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
         TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x20031E8F
+    TARGET.UID3 = $$mobilityUID(0x20031E8F)
 
     LIBS += \
         -lflogger \

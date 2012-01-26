@@ -42,8 +42,8 @@
 #ifndef S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H
 #define S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H
 
-#include <QStringList>
-
+#include <QtCore/QList>
+#include <QtCore/QString>
 #include <qaudioendpointselector.h>
 
 QT_USE_NAMESPACE
@@ -53,20 +53,18 @@ class S60MediaPlayerSession;
 
 class S60MediaPlayerAudioEndpointSelector : public QAudioEndpointSelector
 {
-
-Q_OBJECT
-
+    Q_OBJECT
 public:
     S60MediaPlayerAudioEndpointSelector(QObject *control, QObject *parent = 0);
     ~S60MediaPlayerAudioEndpointSelector();
 
     QList<QString> availableEndpoints() const ;
-    QString endpointDescription(const QString& name) const;
+    QString endpointDescription(const QString &name) const;
     QString defaultEndpoint() const;
     QString activeEndpoint() const;
 
 public Q_SLOTS:
-    void setActiveEndpoint(const QString& name);
+    void setActiveEndpoint(const QString &name);
 
 private:
     S60MediaPlayerControl* m_control;

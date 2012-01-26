@@ -100,7 +100,7 @@ Player::Player(QWidget *parent)
 
     connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
 
-    PlayerControls *controls = new PlayerControls(this);
+    PlayerControls *controls = new PlayerControls(this, player);
     controls->setState(player->state());
     controls->setVolume(player->volume());
     controls->setMuted(controls->isMuted());

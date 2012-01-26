@@ -1,7 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = app
-TARGET = qpspathmapperserver
+TARGET = qpspathmapperserver$${QT_LIBINFIX}
 QT = core
-TARGET.UID3 = 0x2002AC88
 
 CONFIG += no_icon
 
@@ -9,6 +10,7 @@ SOURCES += pspathmapperservermain.cpp
 
 include(../../../common.pri)
 
+TARGET.UID3 = $$mobilityUID(0x2002AC88)
 
 DEPENDPATH += ../xqsettingsmanager_symbian
 INCLUDEPATH += ../xqsettingsmanager_symbian\

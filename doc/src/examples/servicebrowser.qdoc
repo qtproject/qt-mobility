@@ -55,6 +55,16 @@
 
     The right-hand pane shows the attributes of an interface implementation that are invokable through the Qt meta-object system. Such attributes include signals, slots, properties and methods marked with the \c Q_INVOKABLE macro. If the "Selected implementation" radio button is checked, this view shows the attributes of the selected implementation in the bottom-left pane; otherwise, it shows the attributes of the \i default implementation for the interface of the selected implementation.
 
+The following steps have to be done manually if this application is to be executed in Qt Simulator:
+
+\list
+    \o Plugin based services (\c filemanagerplugin and \c bluetoothtransferplugin) must be manually copied 
+       to the same directory as the \c servicebrowser executable.
+
+    \o A new \c xmldata folder must be created in the same directory as \c servicebrowser
+       executable, and xml files of service plugins (bluetoothtransferservice.xml and 
+       filemanagerservice.xml) must be copied to that folder.
+\endlist
 
     \section1 ServiceBrowser Class Definition 
 

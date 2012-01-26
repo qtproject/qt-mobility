@@ -46,6 +46,7 @@
 #include <etel3rdparty.h>
 #include <QString>
 #include <QList>
+#include <QEventLoop>
 #include "trace.h"
 
 class CActiveSchedulerWait;
@@ -83,7 +84,7 @@ protected:
 protected:
     CTelephony &m_telephony;
     QList<MTelephonyInfoObserver *> m_observers;
-    CActiveSchedulerWait *m_wait;
+    QEventLoop* iEventLoop;
 };
 
 class CPhoneInfo : public CTelephonyInfo

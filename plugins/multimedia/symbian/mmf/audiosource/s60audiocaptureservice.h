@@ -43,7 +43,6 @@
 #define S60AUDIOCAPTURESERVICE_H
 
 #include <QtCore/qobject.h>
-
 #include <qmediaservice.h>
 
 QT_USE_NAMESPACE
@@ -54,7 +53,6 @@ class S60AudioMediaRecorderControl;
 class S60AudioEndpointSelector;
 class S60AudioContainerControl;
 
-
 class S60AudioCaptureService : public QMediaService
 {
     Q_OBJECT
@@ -64,6 +62,7 @@ public:
 
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *control);
+
 private:
     S60AudioCaptureSession       *m_session;
     S60AudioEncoderControl       *m_encoderControl;

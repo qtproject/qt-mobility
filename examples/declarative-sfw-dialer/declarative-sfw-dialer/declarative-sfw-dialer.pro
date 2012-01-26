@@ -15,3 +15,10 @@ MOBILITY += serviceframework
 symbian {
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
+
+contains(MEEGO_EDITION,harmattan) {
+    target.path = /opt/declarative-sfw-dialer/bin
+    INSTALLS += target
+}
+
+

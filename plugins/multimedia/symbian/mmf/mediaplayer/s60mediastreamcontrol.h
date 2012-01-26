@@ -42,12 +42,11 @@
 #ifndef S60MEDIASTREAMCONTROL_H
 #define S60MEDIASTREAMCONTROL_H
 
-#include <QVariant>
-
-#include "s60mediaplayercontrol.h"
-
+#include <QtCore/QVariant>
 #include <qmediastreamscontrol.h>
 #include <qtmedianamespace.h>
+#include "s60mediaplayercontrol.h"
+#include "s60mediasettings.h"
 
 QT_USE_NAMESPACE
 
@@ -61,7 +60,7 @@ public:
     S60MediaStreamControl(QObject *session, QObject *parent = 0);
     ~S60MediaStreamControl();
 
-    // from QMediaStreamsControl
+    // QMediaStreamsControl
     int streamCount();
     QMediaStreamsControl::StreamType streamType(int streamNumber);
     QVariant metaData(int streamNumber, QtMultimediaKit::MetaData key);
@@ -73,7 +72,7 @@ public Q_SLOTS:
 
 private:
     S60MediaPlayerControl *m_control;
-    S60MediaSettings::TMediaType m_mediaType;
+    S60MediaSettings::MediaType m_mediaType;
 };
 
-#endif //S60MEDIASTREAMCONTROL_H
+#endif // S60MEDIASTREAMCONTROL_H

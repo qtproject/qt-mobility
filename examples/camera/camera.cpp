@@ -84,6 +84,16 @@ Camera::Camera(QWidget *parent) :
         }
         ui->menuDevices->addAction(videoDeviceAction);
     }
+#if defined(Q_WS_SIMULATOR)
+    QMenu *optionsMenu = new QMenu(this);
+    QAction *optionsSoftKey = new QAction("Options", this);
+    optionsSoftKey->setSoftKeyRole(QAction::PositiveSoftKey);
+    optionsMenu->addAction(ui->actionStartCamera);
+    optionsMenu->addAction(ui->actionStopCamera);
+    optionsMenu->addAction(ui->actionSettings);
+    optionsSoftKey->setMenu(optionsMenu);
+    addAction(optionsSoftKey);
+#endif
 
     connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
     connect(ui->captureWidget, SIGNAL(currentChanged(int)), SLOT(updateCaptureMode()));

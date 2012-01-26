@@ -51,7 +51,7 @@
 #endif
 #ifdef AUDIOSOURCEUSED
 #include "s60audiocaptureservice.h"
-#endif /* AUDIOSOURCEUSED */
+#endif
 
 QStringList S60MediaServicePlugin::keys() const
 {
@@ -65,7 +65,7 @@ QStringList S60MediaServicePlugin::keys() const
 #endif
 #ifdef AUDIOSOURCEUSED
     list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
-#endif /* AUDIOSOURCEUSED */
+#endif
     return list;
 }
 
@@ -78,12 +78,11 @@ QMediaService* S60MediaServicePlugin::create(QString const& key)
 #ifdef AUDIOSOURCEUSED
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
-#endif /* AUDIOSOURCEUSED */
+#endif
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
     if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
         return new S60RadioTunerService;
 #endif
-    
     return 0;
 }
 

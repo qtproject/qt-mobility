@@ -46,12 +46,12 @@
 #include <qaudiodeviceinfo.h>
 
 S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
-    :QAudioEndpointSelector(parent)
+    : QAudioEndpointSelector(parent)
 {
     TRACE("S60AudioEndpointSelector::S60AudioEndpointSelector" << qtThisPtr());
     m_session = qobject_cast<S60AudioCaptureSession*>(session); 
-
-    connect(m_session, SIGNAL(activeEndpointChanged(const QString &)), this, SIGNAL(activeEndpointChanged(const QString &)));
+    connect(m_session, SIGNAL(activeEndpointChanged(const QString &)),
+            this, SIGNAL(activeEndpointChanged(const QString &)));
 }
 
 S60AudioEndpointSelector::~S60AudioEndpointSelector()
@@ -64,7 +64,7 @@ QList<QString> S60AudioEndpointSelector::availableEndpoints() const
     return m_session->availableEndpoints();
 }
 
-QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
+QString S60AudioEndpointSelector::endpointDescription(const QString &name) const
 {
     return m_session->endpointDescription(name);
 }
@@ -79,7 +79,7 @@ QString S60AudioEndpointSelector::activeEndpoint() const
     return m_session->activeEndpoint();
 }
 
-void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
+void S60AudioEndpointSelector::setActiveEndpoint(const QString &name)
 {
     TRACE("S60AudioEndpointSelector::setActiveEndpoint" << qtThisPtr()
           << "name" << name);

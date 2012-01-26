@@ -1,0 +1,11 @@
+PRJ_EXPORTS
+
+qtmobilitydb.flm        /epoc32/tools/makefile_templates/qt/
+qtmobilitydb.meta       /epoc32/tools/makefile_templates/qt/
+qtmobilitydb.xml        /epoc32/tools/makefile_templates/qt/
+
+
+PRJ_EXTENSIONS
+
+START EXTENSION qt/qtmobilitydb
+END

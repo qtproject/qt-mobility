@@ -1,6 +1,9 @@
 # #####################################################################
 # Versit-Organizer Import/Export
 # #####################################################################
+
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtVersitOrganizer
 include(../../common.pri)
@@ -51,13 +54,13 @@ HEADERS += \
     $$PRIVATE_HEADERS
 
 symbian { 
-    TARGET.UID3 = 0x200315FB
+    TARGET.UID3 = $$mobilityUID(0x200315FB)
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
     LIBS += -lefsrv
 
-    VERSIT_ORGANIZER_DEPLOYMENT.sources = QtVersitOrganizer.dll
+    VERSIT_ORGANIZER_DEPLOYMENT.sources = QtVersitOrganizer$${QT_LIBINFIX}.dll
     VERSIT_ORGANIZER_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += VERSIT_ORGANIZER_DEPLOYMENT
 }

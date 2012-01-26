@@ -1,9 +1,11 @@
+include(../../../features/utils.pri)
+
 INCLUDEPATH += ../../../src/feedback
 INCLUDEPATH += ../../../src/global
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET  = $$qtLibraryTarget(declarative_feedback)
+TARGET  = $$mobilityPluginTarget(declarative_feedback)
 TARGETPATH = QtMobility/feedback
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
@@ -38,7 +40,7 @@ symbian {
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
     # Target UID, makes every Symbian app unique
-    TARGET.UID3 = 0x200315FC
+    TARGET.UID3 = $$mobilityUID(0x200315FC)
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_feedback$${QT_LIBINFIX}.dll qmldir
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH

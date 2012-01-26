@@ -144,7 +144,7 @@ void CalendarDemo::buildMenu()
     QMenuBar *optionsMenu = menuBar();
 #else
     QMenu *optionsMenu = new QMenu("&Options", this);
-    #ifndef Q_OS_SYMBIAN
+    #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     // We add the options menu to the softkey manually later
     menuBar()->addMenu(optionsMenu);
     #endif
@@ -186,7 +186,7 @@ void CalendarDemo::buildMenu()
     QAction* editCalendar = optionsMenu->addAction("Edit calendars");
     connect(editCalendar, SIGNAL(triggered(bool)), this, SLOT(editCalendar()));
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
     // add the menu to the softkey for these pages
     m_monthPage->setMenu(optionsMenu);
     m_dayPage->setMenu(optionsMenu);
@@ -195,7 +195,7 @@ void CalendarDemo::buildMenu()
 
 void CalendarDemo::activateMonthPage()
 {
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(true);
 #endif
     m_monthPage->refresh();
@@ -205,7 +205,7 @@ void CalendarDemo::activateMonthPage()
 
 void CalendarDemo::activateDayPage()
 {
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(true);
 #endif
     m_dayPage->refresh();
@@ -216,7 +216,7 @@ void CalendarDemo::activateDayPage()
 void CalendarDemo::activateEditPage(const QOrganizerItem &item)
 {
     m_previousItem = item;
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(false);
 #endif
     if (item.type() == QOrganizerItemType::TypeEvent) {
@@ -546,15 +546,17 @@ void CalendarDemo::saveReqStateChanged(QOrganizerAbstractRequest::State reqState
     if(QOrganizerAbstractRequest::ActiveState == reqState) {
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
+        m_progressDlg->setAttribute(Qt::WA_DeleteOnClose);
         connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
         m_progressDlg->show();
     } else if (QOrganizerAbstractRequest::FinishedState == reqState ||
                QOrganizerAbstractRequest::CanceledState == reqState) {
         // Request finished or cancelled. Stop showing the progress dialog and refresh
-        m_progressDlg->hide();
+        m_progressDlg->done(0);
         m_monthPage->refresh();
         m_dayPage->refresh();
     }
+
 }
 
 void CalendarDemo::removeReqStateChanged(QOrganizerAbstractRequest::State reqState)
@@ -562,12 +564,13 @@ void CalendarDemo::removeReqStateChanged(QOrganizerAbstractRequest::State reqSta
     if(QOrganizerAbstractRequest::ActiveState == reqState) {
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
+        m_progressDlg->setAttribute(Qt::WA_DeleteOnClose);
         connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
         m_progressDlg->show();
     } else if (QOrganizerAbstractRequest::FinishedState == reqState ||
                QOrganizerAbstractRequest::CanceledState == reqState) {
         // Request finished or cancelled. Stop showing the progress dialog and refresh
-        m_progressDlg->hide();
+        m_progressDlg->done(0);
         m_monthPage->refresh();
         m_dayPage->refresh();
     }

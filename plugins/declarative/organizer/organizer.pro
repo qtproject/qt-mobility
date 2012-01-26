@@ -1,3 +1,5 @@
+include(../../../features/utils.pri)
+
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../../include \
@@ -11,7 +13,7 @@ INCLUDEPATH += . \
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(declarative_organizer)
+TARGET = $$mobilityPluginTarget(declarative_organizer)
 TARGETPATH = QtMobility/organizer
 DEFINES += QT_MAKEDLL
 PLUGIN_TYPE = declarative
@@ -67,7 +69,7 @@ symbian {
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
     # Target UID, makes every Symbian app unique
-    TARGET.UID3 = 0x20021326
+    TARGET.UID3 = $$mobilityUID(0x20021326)
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_organizer$${QT_LIBINFIX}.dll qmldir 
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH

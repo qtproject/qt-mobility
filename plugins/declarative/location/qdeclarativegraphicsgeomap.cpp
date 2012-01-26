@@ -46,6 +46,7 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativelandmark_p.h"
 #include "qdeclarativegeomapgroupobject_p.h"
+#include "qlocationnetworkaccessmanagerfactory.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
@@ -56,6 +57,7 @@
 #include <QDeclarativeContext>
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QModelIndex>
+#include <QDeclarativeEngine>
 
 #include <QDebug>
 
@@ -273,6 +275,11 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
         serviceProvider_ = 0;
         return;
     }
+
+    // Share declarative factory with location plugins
+    QLocationNetworkAccessManagerFactory *namf =
+        QLocationNetworkAccessManagerFactory::instance();
+    namf->setDeclarativeFactory(qmlEngine(this)->networkAccessManagerFactory());
 
     mappingManager_ = serviceProvider_->mappingManager();
     if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {

@@ -51,6 +51,7 @@
 #include "qgeomappingmanagerengine_nokia.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
+#include "qlocationnetworkaccessmanagerfactory.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
@@ -83,7 +84,8 @@ QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoMappingManagerEngineNokia *engi
     watermark(":/images/watermark.png"),
     m_logoPosition(engine->logoPosition())
 {
-    m_networkManager = new QNetworkAccessManager(this);
+    // Get manager from declarative factory or create a new one
+    m_networkManager = QLocationNetworkAccessManagerFactory::instance()->create(this);
     connect(m_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(copyrightReplyFinished(QNetworkReply*)));
 
     QString copyrightUrl = "http://";

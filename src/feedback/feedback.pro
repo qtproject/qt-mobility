@@ -1,6 +1,9 @@
 # #####################################################################
 # Feedback Mobility API
 # #####################################################################
+
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 
 QT = core
@@ -29,12 +32,12 @@ symbian {
         -TCB
 
     # UID
-    TARGET.UID3 = 0x2002BFCE
+    TARGET.UID3 = $$mobilityUID(0x2002BFCE)
 
     LIBS += -lefsrv
 
     # Main library
-    FEEDBACK_DEPLOYMENT.sources = QtFeedback.dll
+    FEEDBACK_DEPLOYMENT.sources = QtFeedback$${QT_LIBINFIX}.dll
     FEEDBACK_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += FEEDBACK_DEPLOYMENT
     deploy.path = $$EPOCROOT

@@ -46,13 +46,13 @@
 #include <w32std.h>
 
 S60VideoDisplay::S60VideoDisplay(QObject *parent)
-:   QObject(parent)
-,   m_fullScreen(false)
-,   m_visible(true)
-,   m_aspectRatioMode(Qt::KeepAspectRatio)
-,   m_paintingEnabled(false)
-,   m_rotation(0.0f)
-,   m_hasContent(false)
+    : QObject(parent)
+    , m_fullScreen(false)
+    , m_visible(true)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
+    , m_paintingEnabled(false)
+    , m_rotation(0.0f)
+    , m_hasContent(false)
 {
     connect(this, SIGNAL(displayRectChanged(QRect, QRect)),
             this, SLOT(updateContentRect()));

@@ -1,9 +1,11 @@
+include(../../../features/utils.pri)
+
 INCLUDEPATH += ../../../src/sensors
 INCLUDEPATH += ../../../src/global
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET  = $$qtLibraryTarget(declarative_sensors)
+TARGET  = $$mobilityPluginTarget(declarative_sensors)
 TARGETPATH = QtMobility/sensors
 PLUGIN_TYPE = declarative
 include(../../../common.pri)
@@ -28,7 +30,7 @@ symbian {
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
     # Target UID, makes every Symbian app unique
-    TARGET.UID3 = 0x20021324
+    TARGET.UID3 = $$mobilityUID(0x20021324)
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_sensors$${QT_LIBINFIX}.dll qmldir 
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH

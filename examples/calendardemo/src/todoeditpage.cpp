@@ -86,7 +86,7 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     m_calendarComboBox = new QComboBox(this);
     // the calendar names are not know here, fill the combo box later...
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     // Add push buttons for non-Symbian platforms as they do not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton *okButton = new QPushButton("Save", this);
@@ -119,7 +119,8 @@ TodoEditPage::TodoEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(calendarLabel);
     scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
-#ifndef Q_OS_SYMBIAN
+
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 
