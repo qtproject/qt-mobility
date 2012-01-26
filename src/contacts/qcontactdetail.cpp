@@ -810,7 +810,7 @@ QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
 /*!
   \fn QStringList QContactDetail::linkedDetailUris() const
 
-  This is a convenience function to return the \c LinkedDetailUris field of this detail.
+  This is a convenience function to return the \c Context field of this detail.
 
   It is equivalent to the following code:
   \code
