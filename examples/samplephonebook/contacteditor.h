@@ -81,7 +81,6 @@ private:
     void updateUi(const QContact& contact);
     QString nameField();
     void setThumbnailPixmap(const QPixmap& pixmap);
-    void setThumbnailPixmapWithoutScaling(const QPixmap& pixmap);
 
 #ifdef Q_OS_SYMBIAN
     QAction* m_saveBtn;

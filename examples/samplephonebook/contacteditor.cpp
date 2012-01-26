@@ -243,15 +243,8 @@ void ContactEditor::setThumbnailPixmap(const QPixmap &pixmap)
     QPixmap scaled = pixmap.scaled(QSize(MAX_THUMBNAIL_DISPLAY_SIZE, MAX_THUMBNAIL_DISPLAY_SIZE),
                                    Qt::KeepAspectRatio,
                                    Qt::SmoothTransformation);
-    setThumbnailPixmapWithoutScaling(scaled);
-}
-
-void ContactEditor::setThumbnailPixmapWithoutScaling(const QPixmap &pixmap)
-{
-    if (pixmap.isNull())
-        return;
-    m_thumbnailView->setPixmap(pixmap);
-    m_thumbnailView->setMaximumSize(pixmap.size());
+    m_thumbnailView->setPixmap(scaled);
+    m_thumbnailView->setMaximumSize(scaled.size());
     m_clearThumbnailBtn->setEnabled(true);
 }
 
@@ -276,23 +269,8 @@ void ContactEditor::thumbnailClicked()
 
     if (!fileName.isEmpty()) {
         m_newThumbnailPath = fileName;
-        QImageReader imageReader(m_newThumbnailPath);
-        imageReader.setScaledSize(QSize(MAX_THUMBNAIL_DISPLAY_SIZE,MAX_THUMBNAIL_DISPLAY_SIZE));
-        if(false == imageReader.canRead()){
-            qDebug() << "ERROR!!! Can not read an image: " << m_newThumbnailPath;
-            return;
-        }
-        QPixmap pixmapObj = QPixmap::fromImageReader(&imageReader);
-        if(true == pixmapObj.isNull()){
-            qDebug() << "ERROR!!! QPixmap::isNull() returned true";
-            return;
-        }
-        m_thumbnail = pixmapObj.toImage();
-        if(true == m_thumbnail.isNull()){
-            qDebug() << "ERROR!!! Conversion from QPixmap to QImage failed";
-            return;
-        }
-        setThumbnailPixmapWithoutScaling(pixmapObj);
+        m_thumbnail = QImage(m_newThumbnailPath);
+        setThumbnailPixmap(QPixmap::fromImage(m_thumbnail));
     }
 }
 
