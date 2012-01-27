@@ -638,7 +638,14 @@ if "%MODULE_BEARER_REQUESTED%" == "yes" (
     call :compileTest SNAP snap
 )
 
-if "%MODULE_CONTACTS_REQUESTED%" == "yes" IF "%MODULE_SYSTEMINFO_REQUESTED%" == "yes" (
+set doSymbianContactSIM=
+if "%MODULE_CONTACTS_REQUESTED%" == "yes" (
+    set doSymbianContactSIM=yes
+)
+if "%MODULE_SYSTEMINFO_REQUESTED%" == "yes" (
+    set doSymbianContactSIM=yes
+)
+if "%doSymbianContactSIM%" == "yes" (
     echo.
     echo Running compile tests for contacts / systeminfo module ...
     call :compileTest SymbianContactSIM symbiancntsim
