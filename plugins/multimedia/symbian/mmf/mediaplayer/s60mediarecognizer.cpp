@@ -82,7 +82,7 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QString &fileName)
 {
-    S60MediaRecognizer::MediaType result = Video;
+    S60MediaRecognizer::MediaType result = NotSupported;
     bool recognizerOpened = false;
     TInt err = m_recognizer.Connect();
     if (err == KErrNone)
