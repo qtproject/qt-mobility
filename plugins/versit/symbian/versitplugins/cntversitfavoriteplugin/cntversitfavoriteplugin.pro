@@ -1,6 +1,8 @@
+include(../../../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(cntversitfavoriteplugin)
+TARGET = $$mobilityPluginTarget(cntversitfavoriteplugin)
 PLUGIN_TYPE = versit
 
 include(../../../../../common.pri)
@@ -25,8 +27,8 @@ MOBILITY = versit contacts
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x20034590
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.UID3 = $$mobilityUID(0x20034590)
+    TARGET.CAPABILITY = ALL -TCB
 
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}

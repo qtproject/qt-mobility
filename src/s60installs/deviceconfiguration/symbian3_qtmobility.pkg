@@ -3,10 +3,10 @@
 &EN
 
 ; SIS header: name, uid, version
-#{"QtMobility"},(0x2002AC89),1,2,0,TYPE=SA,RU
+#{"QtMobility"},(0x2002AC89),1,2,2,TYPE=SA,RU
 
 ; Default dependency to Qt libraries
-(0x2001E61C), 4, 7, 2, {"Qt"}
+(0x2001E61C), 4, 7, 4, {"Qt"}
 ; Default HW/platform dependencies
 [0x102032BE],0,0,0,{"S60ProductID"}
 [0x102752AE],0,0,0,{"S60ProductID"}
@@ -22,7 +22,7 @@
 
 ; DEPLOYMENT
 "/epoc32/release/armv5/urel/qtbearer.dll"                  - "!:\sys\bin\qtbearer.dll"
-"qtbearer{000a0000}.dll"                                   - "!:\sys\bin\qtbearer{000a0000}.dll"
+"/epoc32/release/armv5/urel/qtbearer{000a0000}.dll"        - "!:\sys\bin\qtbearer{000a0000}.dll"
 "/epoc32/release/armv5/urel/qtlocation.dll"                - "!:\sys\bin\qtlocation.dll"
 "/epoc32/release/armv5/urel/qtpublishsubscribe.dll"        - "!:\sys\bin\qtpublishsubscribe.dll"
 "/epoc32/release/armv5/urel/qpspathmapperserver.exe"       - "!:\sys\bin\qpspathmapperserver.exe"
@@ -60,8 +60,6 @@
 "/epoc32/data/z/resource/qt/plugins/mediaservice/qtmultimediakit_mmfengine.qtplugin" - "!:\resource\qt\plugins\mediaservice\qtmultimediakit_mmfengine.qtplugin"
 "/epoc32/release/armv5/urel/qtmultimediakit_ecamengine.dll"                          - "!:\sys\bin\qtmultimediakit_ecamengine.dll"
 "/epoc32/data/z/resource/qt/plugins/mediaservice/qtmultimediakit_ecamengine.qtplugin" - "!:\resource\qt\plugins\mediaservice\qtmultimediakit_ecamengine.qtplugin"
-"/epoc32/release/armv5/urel/qtorganizer_skeleton.dll"                                - "!:\sys\bin\qtorganizer_skeleton.dll"
-"/epoc32/data/z/resource/qt/plugins/organizer/qtorganizer_skeleton.qtplugin"         - "!:\resource\qt\plugins\organizer\qtorganizer_skeleton.qtplugin"
 "/epoc32/release/armv5/urel/qtorganizer_symbian.dll"                                 - "!:\sys\bin\qtorganizer_symbian.dll"
 "/epoc32/data/z/resource/qt/plugins/organizer/qtorganizer_symbian.qtplugin"          - "!:\resource\qt\plugins\organizer\qtorganizer_symbian.qtplugin"
 "/epoc32/release/armv5/urel/qtsensors_generic.dll"                                   - "!:\sys\bin\qtsensors_generic.dll"

@@ -59,12 +59,7 @@ QTM_BEGIN_NAMESPACE
 QBluetoothLocalDevicePrivate::QBluetoothLocalDevicePrivate()
     : m_settings(NULL)
 {
-    TRAPD(err, m_settings = CBTEngSettings::NewL(this));
-    if (err != KErrNone) {
-        Q_Q(QBluetoothLocalDevice);
-        emit q->error(QBluetoothLocalDevice::UnknownError);
-        m_settings = NULL;
-    }
+    TRAP_IGNORE(m_settings = CBTEngSettings::NewL(this));
 }
 
 QBluetoothLocalDevicePrivate::~QBluetoothLocalDevicePrivate()
@@ -112,8 +107,15 @@ QBluetoothAddress QBluetoothLocalDevicePrivate::address()
 
 void QBluetoothLocalDevicePrivate::powerOn()
 {
-    if (!m_settings)
-        return;
+    if (!m_settings) {
+        TRAPD(err, m_settings = CBTEngSettings::NewL(this));
+        if (err) {
+            Q_Q(QBluetoothLocalDevice);
+            emit q->error(QBluetoothLocalDevice::UnknownError);
+            return;
+        }
+    }
+
     TBTPowerStateValue powerState;
     TInt error = m_settings->GetPowerState(powerState);
     if (error == KErrNone && powerState == EBTPowerOff)
@@ -125,8 +127,15 @@ void QBluetoothLocalDevicePrivate::powerOn()
 }
 void QBluetoothLocalDevicePrivate::powerOff()
 {
-    if (!m_settings)
-        return;
+    if (!m_settings) {
+        TRAPD(err, m_settings = CBTEngSettings::NewL(this));
+        if (err) {
+            Q_Q(QBluetoothLocalDevice);
+            emit q->error(QBluetoothLocalDevice::UnknownError);
+            return;
+        }
+    }
+
     TBTPowerStateValue powerState;
     TInt error = m_settings->GetPowerState(powerState);
     if (error == KErrNone && powerState == EBTPowerOn)
@@ -138,8 +147,14 @@ void QBluetoothLocalDevicePrivate::powerOff()
 }
 void QBluetoothLocalDevicePrivate::setHostMode(QBluetoothLocalDevice::HostMode mode)
 {
-    if (!m_settings)
-        return;
+    if (!m_settings) {
+        TRAPD(err, m_settings = CBTEngSettings::NewL(this));
+        if (err) {
+            Q_Q(QBluetoothLocalDevice);
+            emit q->error(QBluetoothLocalDevice::UnknownError);
+            return;
+        }
+    }
 
     TInt error = KErrNone;
     switch (mode) {

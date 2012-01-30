@@ -154,7 +154,7 @@ testcase = {
         testSource = "$MOBILITYDIR/example/samplephonebook";
         testGoal = "Verify that vCard contacts can be exported";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         if (!runAsManualTest()){

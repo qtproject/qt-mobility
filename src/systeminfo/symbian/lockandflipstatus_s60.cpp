@@ -189,8 +189,10 @@ void CFlipStatus::RunL()
 
 void CFlipStatus::startMonitoring()
 {
+  if (!IsActive()) {
     m_FlipProperty.Subscribe(iStatus);
     SetActive();
+    }
 }
 
 bool CFlipStatus::getFlipStatus()

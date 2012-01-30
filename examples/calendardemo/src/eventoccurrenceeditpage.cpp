@@ -65,7 +65,7 @@ EventOccurrenceEditPage::EventOccurrenceEditPage(QWidget *parent)
     m_endTimeEdit = new QDateTimeEdit(this);
     m_endTimeEdit->setDisplayFormat(QString("yyyy-MM-dd hh:mm:ss AP"));
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     // Add push buttons for Maemo as it does not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton *okButton = new QPushButton("Ok", this);
@@ -85,7 +85,7 @@ EventOccurrenceEditPage::EventOccurrenceEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_endTimeEdit);
     scrollAreaLayout->addStretch();
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 

@@ -88,6 +88,7 @@ QTM_USE_NAMESPACE
   \brief The QVersitDefaultResourceHandler class provides a default implementation of a Versit
   resource handler.
   \ingroup versit-extension
+  \inmodule QtVersit
 
   An example resource handler implementation:
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Resource handler

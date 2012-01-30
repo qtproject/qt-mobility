@@ -94,7 +94,7 @@ symbian:LIBS += \
         -lmediaclientvideo \
         -lecam \
         -lbafl \
-        -lPlatformEnv \
+        -lplatformenv \
         -lcharconv \
         -lconvnames \
         -lgb2312_shared \
@@ -131,7 +131,7 @@ HEADERS += \
     $$PWD/s60cameraengine.h \
     $$PWD/s60cameraviewfinderengine.h \
     $$PWD/s60cameraengineobserver.h \
-    $$PWD/s60videorenderercontrol.h \
+    $$PWD/s60bitmapviewfinderrenderercontrol.h \
     $$PWD/s60cameracapturedestinationcontrol.h \
     $$PWD/s60cameracapturebufferformatcontrol.h \
     $$PWD/s60filenamegenerator.h
@@ -158,7 +158,7 @@ SOURCES += \
     $$PWD/s60cameraadvsettings.cpp \
     $$PWD/s60cameraengine.cpp \
     $$PWD/s60cameraviewfinderengine.cpp \
-    $$PWD/s60videorenderercontrol.cpp \
+    $$PWD/s60bitmapviewfinderrenderercontrol.cpp \
     $$PWD/s60cameracapturedestinationcontrol.cpp \
     $$PWD/s60cameracapturebufferformatcontrol.cpp \
     $$PWD/s60filenamegenerator.cpp

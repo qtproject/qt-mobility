@@ -10,7 +10,7 @@ include(s60_sensor_api.pri)
 
 TARGET = $$qtLibraryTarget(qtsensors_sym)
 TARGET.EPOCALLOWDLLDATA = 1
-TARGET.UID3 = 0x2002BFC1
+TARGET.UID3 = $$mobilityUID(0x2002BFC1)
 TARGET.CAPABILITY = ALL -TCB
 
 QT=core

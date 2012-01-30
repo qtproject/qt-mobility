@@ -44,8 +44,6 @@
 
 #include <QtCore/qobject.h>
 #include <qmediaservice.h>
-
-#include "ms60mediaplayerresolver.h"
 #include "s60mediaplayeraudioendpointselector.h"
 
 QT_BEGIN_NAMESPACE
@@ -62,36 +60,35 @@ class S60MediaPlayerControl;
 class S60MediaMetaDataProvider;
 class S60MediaStreamControl;
 class S60MediaRecognizer;
-
-class QMediaPlaylistNavigator;
 class S60MediaNetworkAccessControl;
+class S60VideoOutputFactory;
+class QMediaContent;
+class QMediaPlaylistNavigator;
 
-class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
+class S60MediaPlayerService : public QMediaService
 {
     Q_OBJECT
-
 public:
-
     S60MediaPlayerService(QObject *parent = 0);
     ~S60MediaPlayerService();
 
+    // QMediaService
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *control);
 
-protected: // From MS60MediaPlayerResolver
-    S60MediaPlayerSession* PlayerSession();
-    S60MediaPlayerSession* VideoPlayerSession();
-    S60MediaPlayerSession* AudioPlayerSession();
+    S60MediaPlayerSession* createPlayerSession(const QMediaContent &content);
+
+private:
+    S60MediaPlayerSession *createAudioPlayerSession();
+    S60MediaPlayerSession *createVideoPlayerSession();
 
 private:
     S60MediaPlayerControl *m_control;
-    S60VideoPlayerSession *m_videoPlayerSession;
-    S60AudioPlayerSession *m_audioPlayerSession;
     S60MediaMetaDataProvider *m_metaData;
     S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
     S60MediaStreamControl *m_streamControl;
     S60MediaNetworkAccessControl *m_networkAccessControl;
-    QMediaControl *m_videoOutput;
+    S60VideoOutputFactory *m_videoOutputFactory;
 };
 
 #endif

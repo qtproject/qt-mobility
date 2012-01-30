@@ -1,6 +1,8 @@
+include(../../../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(cntversitmycardplugin)
+TARGET = $$mobilityPluginTarget(cntversitmycardplugin)
 PLUGIN_TYPE = versit
 
 include(../../../../../common.pri)
@@ -28,8 +30,8 @@ MOBILITY = versit \
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x20034591
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+    TARGET.UID3 = $$mobilityUID(0x20034591)
+    TARGET.CAPABILITY = ALL -TCB
 
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}

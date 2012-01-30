@@ -85,15 +85,17 @@ void CChargingStatus::RunL()
     int status = EChargingStatusError;
     m_chargingProperty.Get(status);
     m_currentStatus = (EPSHWRMChargingStatus)status;
-    
+
     foreach (MChargingStatusObserver *observer, m_observers)
         observer->chargingStatusChanged();
-    
+
     startMonitoring();
 }
 
 void CChargingStatus::startMonitoring()
 {
+  if (!IsActive()) {
     m_chargingProperty.Subscribe(iStatus);
     SetActive();
+  }
 }

@@ -307,6 +307,7 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 /*!
     \class QFeedbackHapticsInterface
     \ingroup feedback
+    \inmodule QtFeedback
 
     \brief The QFeedbackHapticsInterface class is the base class for plugins providing custom haptics effects.
 
@@ -433,6 +434,7 @@ QFeedbackActuator* QFeedbackHapticsInterface::createFeedbackActuator(QObject* pa
 /*!
     \class QFeedbackThemeInterface
     \ingroup feedback
+    \inmodule QtFeedback
 
     \brief The QFeedbackThemeInterface class is the base class for plugins providing themed effects.
 
@@ -472,6 +474,7 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 /*!
     \class QFeedbackFileInterface
     \ingroup feedback
+    \inmodule QtFeedback
 
     \brief The QFeedbackFileInterface class is the base class for plugins providing support for effects stored in files.
 

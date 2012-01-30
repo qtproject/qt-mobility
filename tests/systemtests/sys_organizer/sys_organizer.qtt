@@ -63,7 +63,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that backends can be selected";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
         // Test Steps
@@ -221,7 +221,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that recurment events can be added";
         testPreconditions = "There are no events list in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
 
         // Test Steps
@@ -272,7 +272,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that todo can be added";
         testPreconditions = "There are no todos list in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
 
@@ -335,7 +335,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that todo can be edited";
         testPreconditions = "There are no todos list in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
 
@@ -384,7 +384,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that todo can be deleted";
         testPreconditions = "There are no todos list in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
 
@@ -415,7 +415,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify that journal can be added";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
 
@@ -445,7 +445,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify that journal can be edited";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
 
@@ -478,7 +478,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify that journal can be deleted";
         testPreconditions = "There are no journal in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
 
@@ -510,7 +510,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify that all items can be searched by time";
         testPreconditions = "There is no item in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
 
@@ -549,7 +549,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify that all items can be searched by attribute";
         testPreconditions = "There is no any item in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
 
         // Test Steps
@@ -590,7 +590,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/organizer";
         testGoal = "Verify that custom details can be added";
         testPreconditions = "There is no any item in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
 
         // Test Steps
@@ -625,7 +625,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that calendar items can be multiple stored";
         testPreconditions = "There is no any item in calendar";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2 .MOBILITY-280: Organizer API (previously called Calendar)"
 
         // Test Steps
@@ -664,7 +664,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that vCal can be imported";
         testPreconditions = "There are empty and nonempty vCal files";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
         // Test Steps
@@ -694,7 +694,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that vCal can be exported";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "<br>1. MOBILITY-421: Qt Mobility Calendar API<br>2. MOBILITY-280: Organizer API (previously called Calendar)"
 
         // Test Steps
@@ -727,13 +727,13 @@ testcase = {
     */
 
 // Candidate for future fully described tests, disable for the moment.
-/*
+
     // \groups BAT,1.1,MOBILITY-421,MOBILITY-280
     edit_recurring_event: function()
     {
         prompt(twiki('---++ Edit recursive event
         | *Step* | *Verification* |
-        | Launch the ? application |  |
+        | Launch the application |  |
         | Create recursive event | |
         | Select any event from this seria | |
         | Press Edit button | Verify that user has choice to edit selected event or entire seria |
@@ -742,7 +742,7 @@ testcase = {
         | Press Edit button and edit the event occurrence | Verify that only selected event from the seria is updated |
         '));
     },
-    */
+
 
 
 // Candidate for future fully described tests, disable for the moment.

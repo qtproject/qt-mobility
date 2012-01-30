@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+ <provider bus="session" service="com.powerbattery.qt.BatteryPublisher">
+   <key name="/power/battery/charge" />
+   <key name="/power/battery/charging" />
+ </provider>
+

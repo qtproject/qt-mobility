@@ -569,11 +569,7 @@ qint64 QBluetoothSocket::readData(char *data, qint64 maxSize)
 void QBluetoothSocket::close()
 {
     Q_D(QBluetoothSocket);
-    setSocketState(ClosingState);
-
     d->close();
-
-    setSocketState(UnconnectedState);
 }
 
 /*!

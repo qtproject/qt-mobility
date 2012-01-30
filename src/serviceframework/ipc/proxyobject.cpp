@@ -179,7 +179,7 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
                 if (pType == QVariant::Invalid && QByteArray(property.typeName()) == "QVariant")
                     arg =  *reinterpret_cast<const QVariant(*)>(a[0]);
                 else if (pType == 0) {
-                    qWarning("%s: property %s has unkown type", property.name(), property.typeName());
+                    qWarning("%s: property %s has unknown type", property.name(), property.typeName());
                     return id;
                 } else {
                     arg = QVariant(pType, a[0]);

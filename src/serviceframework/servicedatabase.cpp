@@ -187,7 +187,7 @@ bool ServiceDatabase::open()
     }
     m_isDatabaseOpen = true;
 
-    //Check database structure (tables) and recreate tables if neccessary
+    //Check database structure (tables) and recreate tables if necessary
     //If one of tables is missing remove all tables and recreate them
     //This operation is required in order to avoid data coruption
     if (!checkTables()) {
@@ -1143,7 +1143,7 @@ QStringList ServiceDatabase::getServiceNames(const QString &interfaceName)
     The last error set to DBError::ExternalIfaceIDFound
 
     If this function is called within a transaction, \a inTransaction
-    must be set to true.  If \a inTransaction is false, this fuction
+    must be set to true.  If \a inTransaction is false, this function
     will begin and end its own transaction.
 
     The last error may be set to one of the following error codes:
@@ -1281,7 +1281,7 @@ QServiceInterfaceDescriptor ServiceDatabase::interfaceDefault(const QString &int
 
    For a user scope database an \a externalInterfaceID can be provided
    so that the Defaults table will contain a "link" to an interface
-   implmentation provided in the system scope database.
+   implementation provided in the system scope database.
 
    May set the last error to one of the following error codes:
    DBError::NoError
@@ -1422,7 +1422,7 @@ bool ServiceDatabase::setInterfaceDefault(const QServiceInterfaceDescriptor &int
    provides same the highest version number, an arbitrary choice is made
    between them.
 
-   May set the last error to the folowing error codes:
+   May set the last error to the following error codes:
    DBError::NoError
    DBError::NotFound
    DBError::SqlError

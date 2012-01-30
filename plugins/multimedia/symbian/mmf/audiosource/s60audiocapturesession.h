@@ -59,10 +59,11 @@
 #include <mmf/common/mmfutilities.h>
 
 #ifdef AUDIOINPUT_ROUTING
-#include <audioinput.h>
+#include <AudioInput.h>
 #endif //AUDIOINPUT_ROUTING
 
 QT_BEGIN_NAMESPACE
+
 struct ControllerData
 {
 	int controllerUid;
@@ -76,19 +77,19 @@ struct CodecData
     TFourCC fourCC;
     QString codecDescription;
 };
+
 QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObserver
+class S60AudioCaptureSession : public QObject
+                             , public MMdaObjectStateChangeObserver
 {
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_ENUMS(TAudioCaptureState)
 public:
-
-    enum TAudioCaptureState
-    {
+    enum TAudioCaptureState {
         ENotInitialized = 0,
         EInitialized,
         EOpenCompelete,
@@ -125,13 +126,14 @@ public:
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
     QList<QString> availableEndpoints() const;
-    QString endpointDescription(const QString& name) const;
+    QString endpointDescription(const QString &name) const;
 
 #ifdef AUDIOINPUT_ROUTING
     static const QString microPhone;
     static const QString voiceCall;
     static const QString fmRadio;
-#endif //AUDIOINPUT_ROUTING
+#endif
+
 private:
     void initializeSessionL();
     void setError(TInt aError);
@@ -143,6 +145,7 @@ private:
     void applyAudioSettingsL();
     TFourCC determinePCMFormat();
     void setDefaultSettings();
+
     // MMdaObjectStateChangeObserver
     void MoscoStateChangeEvent(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
@@ -152,18 +155,18 @@ private:
 #ifdef AUDIOINPUT_ROUTING
     QString qStringFromTAudioInputPreference(CAudioInput::TAudioInputPreference input) const;
     void initAudioInputs();
-    void doSetAudioInputL(const QString& name);
-#endif //AUDIOINPUT_ROUTING
+    void doSetAudioInputL(const QString &name);
+#endif
 
 public Q_SLOTS:
-    void setActiveEndpoint(const QString& audioEndpoint);
-
+    void setActiveEndpoint(const QString &audioEndpoint);
 
 Q_SIGNALS:
     void stateChanged(S60AudioCaptureSession::TAudioCaptureState);
     void positionChanged(qint64 position);
     void error(int error, const QString &errorString);
     void activeEndpointChanged(const QString &audioEndpoint);
+
 private:
     QString m_container;
     QUrl m_sink;
@@ -182,12 +185,10 @@ private:
 #ifdef AUDIOINPUT_ROUTING
     bool m_setActiveEndPoint;
     CAudioInput *m_audioInput;
+#endif
 
-#endif //AUDIOINPUT_ROUTING
     QMap<QString, QString> m_audioInputs;
     QString m_audioEndpoint;
-
-
 };
 
 #endif // S60AUDIOCAPTURESESSION_H

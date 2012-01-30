@@ -51,7 +51,8 @@
     \annotatedlist  qml-gallery
 
     \section1 Location Plugin
-    \annotatedlist qml-location
+    \annotatedlist qml-location-plugin
+    \annotatedlist qml-location-maps
     \annotatedlist qml-location-landmarks
 
     \section1 Messaging Plugin

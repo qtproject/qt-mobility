@@ -161,7 +161,7 @@ void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
 
 /*!
     \property QGeoMapRectangleObject::topLeft
-    \brief This property holds the top left coordinate of the rectangle to be
+    \brief the top left coordinate of the rectangle to be
     drawn by this rectangle object.
 
     The default value of this property is an invalid coordinate.  While
@@ -184,7 +184,7 @@ void QGeoMapRectangleObject::setTopLeft(const QGeoCoordinate &topLeft)
 
 /*!
     \property QGeoMapRectangleObject::bottomRight
-    \brief This property holds the bottom right coordinate of the rectangle to
+    \brief the bottom right coordinate of the rectangle to
     be drawn by this rectangle object.
 
     The default value of this property is an invalid coordinate.  While
@@ -207,7 +207,7 @@ void QGeoMapRectangleObject::setBottomRight(const QGeoCoordinate &bottomRight)
 
 /*!
     \property QGeoMapRectangleObject::pen
-    \brief This property holds the pen that will be used to draw this object.
+    \brief the pen that will be used to draw this object.
 
     The pen is used to draw an outline around the rectangle. The rectangle is
     filled using the QGeoMapRectangleObject::brush property.
@@ -235,7 +235,7 @@ void QGeoMapRectangleObject::setPen(const QPen &pen)
 
 /*!
     \property QGeoMapRectangleObject::brush
-    \brief This property holds the brush that will be used to draw this object.
+    \brief the brush that will be used to draw this object.
 
     The brush is used to fill in rectangle.
 

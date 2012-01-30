@@ -176,7 +176,7 @@ bool QContact::isEmpty() const
 
 /*!
  * Removes all details of the contact.
- * This function does not modify the id or type of the contact.
+ * This function does not modify the id of the contact.
  * Calling isEmpty() after calling this function will return true.
  * \since 1.0
  */
@@ -979,7 +979,12 @@ QMap<QString, QContactDetail> QContact::preferredDetails() const
     QMap<QString, QContactDetail> ret;
     QMap<QString, int>::const_iterator it = d->m_preferences.constBegin();
     while (it != d->m_preferences.constEnd()) {
-        ret.insert(it.key(), d->m_details.at(it.value()));
+        foreach(QContactDetail detail, d->m_details) {
+            if (detail.d->m_id == it.value()) {
+                ret.insert(it.key(), detail);
+                break;
+            }
+        }
         ++it;
     }
 

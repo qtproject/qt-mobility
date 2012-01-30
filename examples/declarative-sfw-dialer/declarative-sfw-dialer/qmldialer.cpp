@@ -56,7 +56,7 @@ void unregisterExampleService()
 void registerExampleService()
 {
     unregisterExampleService();
-
+//! [0]
     QServiceManager m;
     QStringList exampleXmlFiles;
     exampleXmlFiles << "landlinedialerservice.xml" << "voipdialerservice.xml" << "remotedialerservice.xml";
@@ -64,6 +64,7 @@ void registerExampleService()
         const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         m.addService(path);
     }
+//! [0]
 }
 #endif
 

@@ -158,7 +158,7 @@ or whether it is valid for the current user only. The system default is used if 
 scope has not been defined. This enables users to customize their personal preferences.
 By default the first service installing a so far unknown interface becomes the system wide default selection.
 
-\section3 \bold{QObject based services}
+\section3 QObject based services
 
 This is the most common way of interacting with services.
 
@@ -172,7 +172,7 @@ The above invocation of the file storage object's deleteFile() function is done 
 QMetaObject. The client does not require any knowledge of the objects actual type and therefore
 does not have to link against a service specific library.
 
-\section3 \bold{Typed services}
+\section3 Typed services
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be
 utilized by introspecting the object, using Qt's meta object system.
@@ -571,8 +571,9 @@ Symbian provides 3 different methods to register services.
 \section4 Automatic Registration
 Automatic registration is the prefered method for services that are not
 Symbian Signed and don't require high levels of security.  The XML
-file is copied into the import directory of the IPC backend.  In Qt
-project files this can be done by:
+file is copied into the import directory of the IPC backend. The service framework 
+scans system drive, in most of the cases system drive is by default c: drive.
+In Qt project files this can be done by:
 
 \code
 xmlautoimport.path = /private/2002AC7F/import/

@@ -81,7 +81,7 @@ the next photo.
         camera->start();
 
         //on half pressed shutter button
-        camera->searchA{QCameraFocus::FocusMode}{ndLock();
+        camera->searchAndLock();
 
         //on shutter button pressed
         imageCapture->capture();

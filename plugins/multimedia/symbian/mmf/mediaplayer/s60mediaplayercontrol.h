@@ -42,12 +42,8 @@
 #ifndef S60MEDIAPLAYERCONTROL_H
 #define S60MEDIAPLAYERCONTROL_H
 
-#include <QtCore/qobject.h>
-
 #include <qmediaplayercontrol.h>
-
-#include "ms60mediaplayerresolver.h"
-#include <QtCore/qdebug.h>
+#include "s60mediasettings.h"
 
 QT_BEGIN_NAMESPACE
 class QMediaPlayer;
@@ -60,89 +56,52 @@ QT_USE_NAMESPACE
 class S60MediaPlayerSession;
 class S60MediaPlayerService;
 
-class S60MediaSettings
-{
-
-public:
-    S60MediaSettings() 
-        : m_volume(30)
-        , m_muted(false)
-        , m_playbackRate(0)
-        , m_mediaStatus(QMediaPlayer::NoMedia)
-        , m_audioEndpoint(QString("Default"))
-    {
-    }
-    
-    enum TMediaType {Unknown, Video, Audio, Data};
-
-    void setVolume(int volume) { m_volume = volume; }
-    void setMuted(bool muted) { m_muted = muted; }
-    void setPlaybackRate(qreal rate) { m_playbackRate = rate; }
-    void setMediaStatus(QMediaPlayer::MediaStatus status) {m_mediaStatus=status;}
-    void setAudioEndpoint(const QString& audioEndpoint) { m_audioEndpoint = audioEndpoint; }
-    void setMediaType(S60MediaSettings::TMediaType type) { m_mediaType = type; }
-    
-    int volume() const { return m_volume; }
-    bool isMuted() const { return m_muted; }
-    qreal playbackRate() const { return m_playbackRate; }
-    QMediaPlayer::MediaStatus mediaStatus() const {return m_mediaStatus;}
-    QString audioEndpoint() const { return m_audioEndpoint; }
-    S60MediaSettings::TMediaType mediaType() const { return m_mediaType; }
-    
-private:
-    int m_volume;
-    bool m_muted;
-    qreal m_playbackRate;
-    QMediaPlayer::MediaStatus m_mediaStatus;
-    QString m_audioEndpoint;
-    S60MediaSettings::TMediaType m_mediaType;
-};
-
 class S60MediaPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
 
 public:
-    S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
+    S60MediaPlayerControl(S60MediaPlayerService *service);
     ~S60MediaPlayerControl();
 
-    // from QMediaPlayerControl
-    virtual QMediaPlayer::State state() const;
-    virtual QMediaPlayer::MediaStatus mediaStatus() const;
-    virtual qint64 duration() const;
-    virtual qint64 position() const;
-    virtual void setPosition(qint64 pos);
-    virtual int volume() const;
-    virtual void setVolume(int volume);
-    virtual bool isMuted() const;
-    virtual void setMuted(bool muted);
-    virtual int bufferStatus() const;
-    virtual bool isAudioAvailable() const;
-    virtual bool isVideoAvailable() const;
-    virtual bool isSeekable() const;
-    virtual QMediaTimeRange availablePlaybackRanges() const;
-    virtual qreal playbackRate() const;
-    virtual void setPlaybackRate(qreal rate);
-    virtual QMediaContent media() const;
-    virtual const QIODevice *mediaStream() const;
-    virtual void setMedia(const QMediaContent&, QIODevice *);
-    virtual void play();
-    virtual void pause();
-    virtual void stop();
+    // QMediaPlayerControl
+    QMediaPlayer::State state() const;
+    QMediaPlayer::MediaStatus mediaStatus() const;
+    qint64 duration() const;
+    qint64 position() const;
+    void setPosition(qint64 pos);
+    int volume() const;
+    void setVolume(int volume);
+    bool isMuted() const;
+    void setMuted(bool muted);
+    int bufferStatus() const;
+    bool isAudioAvailable() const;
+    bool isVideoAvailable() const;
+    bool isSeekable() const;
+    QMediaTimeRange availablePlaybackRanges() const;
+    qreal playbackRate() const;
+    void setPlaybackRate(qreal rate);
+    QMediaContent media() const;
+    const QIODevice *mediaStream() const;
+    void setMedia(const QMediaContent &source, QIODevice *device);
+    void play();
+    void pause();
+    void stop();
 
     // Own methods
     S60MediaPlayerSession* session();
     void setVideoOutput(QObject *output);
+    QObject *videoOutput() const;
     const S60MediaSettings& mediaControlSettings() const;
-    void setAudioEndpoint(const QString& name);
-    void setMediaType(S60MediaSettings::TMediaType type);
+    void setAudioEndpoint(const QString &name);
+    void setMediaType(S60MediaSettings::MediaType type);
 
 private:
-    MS60MediaPlayerResolver &m_mediaPlayerResolver;
+    S60MediaPlayerService *m_service;
     S60MediaPlayerSession *m_session;
-    QMediaContent m_currentResource; 
+    QMediaContent m_media;
     QIODevice *m_stream;
-    S60MediaSettings m_mediaSettings;
+    S60MediaSettings *m_mediaSettings;
 };
 
 #endif

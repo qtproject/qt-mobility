@@ -43,8 +43,8 @@
 
 #include <QtTest/QtTest>
 #include "../qbearertestcommon.h"
-#include "../../../src/bearer/qnetworkconfiguration.h"
-#include "../../../src/bearer/qnetworkconfigmanager.h"
+#include <QNetworkConfiguration>
+#include <QNetworkConfigurationManager>
 
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include <stdio.h>

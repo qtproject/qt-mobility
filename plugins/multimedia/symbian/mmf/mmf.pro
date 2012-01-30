@@ -1,7 +1,9 @@
+include (../../../../features/utils.pri)
+
 TEMPLATE = lib
 
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmultimediakit_mmfengine)
+TARGET = $$mobilityPluginTarget(qtmultimediakit_mmfengine)
 PLUGIN_TYPE = mediaservice
 include (../../../../common.pri)
 qtAddLibrary(QtMultimediaKit)
@@ -9,6 +11,7 @@ qtAddLibrary(QtMultimediaKit)
 #includes here so that all defines are added here also
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
+include(../trace/trace.pri)
 
 QT += network
 
@@ -24,7 +27,6 @@ INCLUDEPATH += . \
     $${SOURCE_DIR}/src/multimedia \
     $${SOURCE_DIR}/src/multimedia/audio \
     $${SOURCE_DIR}/src/multimedia/video \
-    $${SOURCE_DIR}/plugins/multimedia/symbian/mmf/inc \
     $${SOURCE_DIR}
 
 
@@ -42,7 +44,7 @@ contains(mmf_http_cookies_enabled, yes) {
 }
 load(data_caging_paths)
 TARGET.EPOCALLOWDLLDATA = 1
-TARGET.UID3=0x2002AC76
+TARGET.UID3 = $$mobilityUID(0x2002AC76)
 TARGET.CAPABILITY = ALL -TCB
 MMP_RULES += EXPORTUNFROZEN
 
@@ -51,8 +53,3 @@ pluginDep.sources = $${TARGET}.dll
 pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += pluginDep
 
-#Media API spesific deployment
-QtMediaDeployment.sources = QtMultimediaKit.dll
-QtMediaDeployment.path = /sys/bin
-
-DEPLOYMENT += QtMediaDeployment

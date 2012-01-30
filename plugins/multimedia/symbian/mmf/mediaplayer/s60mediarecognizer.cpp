@@ -39,15 +39,13 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
+#include <QtCore/QUrl>
+#include <QtCore/QDir>
+#include "s60mediaplayerutils.h"
 #include "s60mediarecognizer.h"
+#include "s60mmtrace.h"
 #include <e32def.h>
 #include <e32cmn.h>
-#include <QtCore/qurl.h>
-#include <QtCore/qdir.h>
-#include <QtCore/qdebug.h>
-
 #include <apgcli.h>
 
 static const TInt KMimeTypePrefixLength = 6; // "audio/" or "video/"
@@ -56,112 +54,62 @@ _LIT(KMimeTypePrefixAudio, "audio/");
 _LIT(KMimeTypePrefixVideo, "video/");
 _LIT(KMimeTypeRingingTone, "application/vnd.nokia.ringing-tone");
 
-/*!
-    Construct a media Recognizer with the given \a parent.
-*/
-
-S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
+S60MediaRecognizer::S60MediaRecognizer(QObject *parent)
+    : QObject(parent)
 {
-    DP0("S60MediaRecognizer::S60MediaRecognizer +++");
-    DP0("S60MediaRecognizer::S60MediaRecognizer ---");
+    TRACE("S60MediaRecognizer::S60MediaRecognizer" << qtThisPtr());
 }
-
-/*!
-    Destroys a media Recognizer.
-*/
 
 S60MediaRecognizer::~S60MediaRecognizer()
 {
-    DP0("S60MediaRecognizer::~S60MediaRecognizer +++");
-
+    TRACE("S60MediaRecognizer::~S60MediaRecognizer" << qtThisPtr());
     m_file.Close();
     m_fileServer.Close();
     m_recognizer.Close();
-
-    DP0("S60MediaRecognizer::~S60MediaRecognizer ---");
 }
-
-/*!
- * \return media type of \a url.
- * \a url may be a streaming link or a local file.
- * If \a url is local file then identifies the media type and returns it.
-*/
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::mediaType(const QUrl &url)
 {
-    DP0("S60MediaRecognizer::mediaType");
-
-    bool isStream = (url.scheme() == "file")?false:true;
-
-    if (isStream)
-        return Url;
+    S60MediaRecognizer::MediaType result;
+    if (url.scheme() == "file")
+        result = identifyMediaType(QDir::cleanPath(url.toLocalFile()));
     else
-        return identifyMediaType(QDir::cleanPath(url.toLocalFile()));
+        result = Url;
+    TRACE("S60MediaRecognizer::mediaType" << qtThisPtr()
+          << "url" << url.toString() << "result" << result);
+    return result;
 }
 
-/*!
- * \return Media type of \a file name by recognizing its mimetype whether its audio or video.
-*/
-
-S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QString& fileName)
+S60MediaRecognizer::MediaType S60MediaRecognizer::identifyMediaType(const QString &fileName)
 {
-    DP0("S60MediaRecognizer::identifyMediaType +++");
-
-    DP1("S60MediaRecognizer::identifyMediaType - ", fileName);
-
-    S60MediaRecognizer::MediaType result = Video; // default to videoplayer
+    S60MediaRecognizer::MediaType result = NotSupported;
     bool recognizerOpened = false;
-
     TInt err = m_recognizer.Connect();
-    if (err == KErrNone) {
+    if (err == KErrNone)
         recognizerOpened = true;
-    }
-
     err = m_fileServer.Connect();
-    if (err == KErrNone) {
+    if (err == KErrNone)
         recognizerOpened = true;
-    }
-
     // This is needed for sharing file handles for the recognizer
     err = m_fileServer.ShareProtected();
-    if (err == KErrNone) {
+    if (err == KErrNone)
         recognizerOpened = true;
-    }
-
     if (recognizerOpened) {
         m_file.Close();
-        err = m_file.Open(m_fileServer, QString2TPtrC(QDir::toNativeSeparators(fileName)), EFileRead |
-            EFileShareReadersOnly);
-
+        err = m_file.Open(m_fileServer, QString2TPtrC(QDir::toNativeSeparators(fileName)),
+                          EFileRead | EFileShareReadersOnly);
         if (err == KErrNone) {
             TDataRecognitionResult recognizerResult;
             err = m_recognizer.RecognizeData(m_file, recognizerResult);
             if (err == KErrNone) {
                 const TPtrC mimeType = recognizerResult.iDataType.Des();
-
-                if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixAudio) == 0 ||
-                        mimeType.Compare(KMimeTypeRingingTone) == 0) {
+                if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixAudio) == 0
+                    || mimeType.Compare(KMimeTypeRingingTone) == 0)
                     result = Audio;
-                } else if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixVideo) == 0) {
+                else if (mimeType.Left(KMimeTypePrefixLength).Compare(KMimeTypePrefixVideo) == 0)
                     result = Video;
-                }
             }
         }
     }
-
-    DP0("S60MediaRecognizer::identifyMediaType ---");
-
     return result;
-}
-
-/*!
- * \return Symbian modifiable pointer descriptor from a QString \a string.
- */
-
-TPtrC S60MediaRecognizer::QString2TPtrC( const QString& string )
-{
-    DP1("S60MediaRecognizer::QString2TPtrC - ", string);
-
-    // Returned TPtrC is valid as long as the given parameter is valid and unmodified
-    return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
 }

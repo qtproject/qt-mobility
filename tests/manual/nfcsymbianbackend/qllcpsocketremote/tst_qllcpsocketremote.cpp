@@ -241,6 +241,7 @@ void tst_qllcpsocketremote::mulitpleServer()
 */
 void tst_qllcpsocketremote::echoServer()
 {
+    qDebug()<<"********here is echoServer() begin";
     QLlcpSocket remoteSocket;
     // STEP 1:  bind the local port for current socket
     QSignalSpy readyReadSpy(&remoteSocket, SIGNAL(readyRead()));
@@ -253,11 +254,21 @@ void tst_qllcpsocketremote::echoServer()
     // STEP 2: Receive data from the peer which send messages to
     QByteArray inPayload;
     readMessage(remoteSocket,inPayload);
-
+    qDebug()<< "Test 2, get the message from client";
+    quint16 headerSize;
+    QDataStream myIn(inPayload);
+    myIn.setVersion(QDataStream::Qt_4_6);
+    myIn >> headerSize;
+    QString receivedLongStr;
+    myIn >> receivedLongStr;
+    qDebug() << "receive headerSize is :"<< headerSize;
+    qDebug() << "Client-- in received string len:" << receivedLongStr.length();
+    qDebug("Client-- in received string = %s", qPrintable(receivedLongStr));
+    
     // STEP 3: Send the received message back to the intiated device.
     QSignalSpy errorSpy(&remoteSocket, SIGNAL(error(QLlcpSocket::SocketError)));
     QSignalSpy bytesWrittenSpy(&remoteSocket, SIGNAL(bytesWritten(qint64)));
-
+    qDebug()<<"test 3, write back what received.";
     qDebug("Server-- write payload length = %d", inPayload.length());
     qint64 val = remoteSocket.writeDatagram(inPayload, m_target, m_port);
     QVERIFY(val != -1);
@@ -287,6 +298,7 @@ void tst_qllcpsocketremote::echoServer()
     QVERIFY(written == inPayload.size());
     // make sure the no error signal emitted
     QCOMPARE(errorSpy.count(), 0);
+    qDebug()<<"**********here is end echoServer()";
 }
 
 /*!

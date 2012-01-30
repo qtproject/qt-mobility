@@ -60,11 +60,12 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
 
     Note: To use notification signals, you need to set the monitor* properties to true.
 
-    The follow table lists the \b incompatible changes made to the start* functions from QtMobility 1.1 to QtMobility 1.2,
-    where they became Q_PROPERTY
-
-    In QtMobility 1.2, the  NetworkInfo Element was changed to work in one network mode at a time. You use the property \b mode
+    In QtMobility 1.2, the  NetworkInfo Element was changed to work in one network mode at a time. You use the property \bold{mode}
     to set which network mode it is in.
+
+    The following table lists the \bold{incompatible} changes made to the start* functions between QtMobility 1.1 and 1.2,
+    where they became Q_PROPERTY:
+
 
 
     \table
@@ -73,8 +74,8 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     \row
         \o slot void startStatusChanged();
         \o void startStatusChanged(bool on);
-        \o Became Q_PROPERTY monitoringStatusChanges in QtMobility 1.2
-    \rom
+        \o Became Q_PROPERTY monitorStatusChanges in QtMobility 1.2
+    \row
         \o void startSignalStrengthChanged();
         \o void startSignalStrengthChanged(bool)
         \o Became Q_PROPERTY monitorSignalStrengthChanges in QtMobility 1.2
@@ -93,7 +94,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     \row
         \o void startCurrentMobileNetworkCodeChanged()
         \o void startCurrentMobileNetworkCodeChanged(bool on)
-        \o Became Q_PROPERTY startCurrentMobileNetworkCodeChanged in QtMobility 1.2
+        \o Became Q_PROPERTY monitorCurrentMobileNetworkCodeChanges in QtMobility 1.2
     \row
         \o void useMode();
         \o void mode()
@@ -407,7 +408,6 @@ void QDeclarativeNetworkInfo::startModeChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorModeChanges
-    \brief Use the monitorModeChanges signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorModeChanges()
@@ -435,8 +435,8 @@ void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged(bool on)
 }
 
 /*!
-    \qmlproperty bool NetworkInfo::monitoringCurrentMobileCountryCodeChanges
-    \brief Use the monitoringCurrentMobileCountryCodeChanges signal.
+    \qmlproperty bool NetworkInfo::monitorCurrentMobileCountryCodeChanges
+    \brief Use the monitoringCurrentMobileCountryCodeChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorCurrentMobileCountryCodeChanges()
@@ -464,7 +464,7 @@ void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorCurrentMobileNetworkCodeChanges
-    \brief Use the monitorCurrentMobileNetworkCodeChanges signal.
+    \brief Use the monitorCurrentMobileNetworkCodeChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorCurrentMobileNetworkCodeChanges()
@@ -616,7 +616,7 @@ QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 
 
 /*!
-    \qmlproperty bool NetworkInfo::monitoringCellDataTechnologyChanges
+    \qmlproperty bool NetworkInfo::monitorCellDataTechnologyChanges
     \brief Use the cellDataTechnologyChanges signal.
     \since Mobility 1.2
 
@@ -645,7 +645,7 @@ void QDeclarativeNetworkInfo::startCellDataChanged(bool on)
 }
 
 /*!
-    \qmlproperty bool NetworkInfo::monitoringCellIdChanges
+    \qmlproperty bool NetworkInfo::monitorCellIdChanges
     \brief Use the cellIdChanges signal.
     \since Mobility 1.2
     */

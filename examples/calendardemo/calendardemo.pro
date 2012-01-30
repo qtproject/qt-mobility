@@ -50,6 +50,17 @@ INCLUDEPATH += . \
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData
+                        WriteUserData
+
 }
+
+OTHER_FILES += 
+
+contains(MEEGO_EDITION,harmattan) {
+    target.path = /opt/calendardemo/bin
+    INSTALLS += target
+}
+
+
+
+

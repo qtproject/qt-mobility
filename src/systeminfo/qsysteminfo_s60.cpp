@@ -90,7 +90,10 @@
 #include <etelmm.h>
 #endif
 
+#ifdef LOCKANDFLIP_SUPPORTED
 const TUint32 KAknKeyboardType = 0x0000000B;
+#endif
+
 const float KMMPerTwip  = 0.0177f; //Milimeter Per Twip
 
 QTM_BEGIN_NAMESPACE
@@ -218,6 +221,13 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
         case ELangInternationalEnglish:
         case ELangSouthAfricanEnglish:
         case ELangAustralian:
+        case 129: /*ELangEnglish_Apac*/
+        case 157: /*ELangEnglish_Taiwan*/
+        case 158: /*ELangEnglish_HongKong*/
+        case 159: /*ELangEnglish_Prc*/
+        case 160: /*ELangEnglish_Japan*/
+        case 161: /*ELangEnglish_Thailand*/
+        case 230: /*ELangEnglish_India*/
         case ELangEnglish: return "en";
         case ELangSwissFrench:
         case ELangInternationalFrench:
@@ -277,6 +287,7 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
         case ELangGujarati: return "gu";
         case ELangHebrew: return "he";
         case ELangHindi: return "hi";
+        case 327: /*ELangIndonesian_Apac*/
         case ELangIndonesian: return "id";
         case ELangIrish: return "ga";
         case ELangKannada: return "kn";
@@ -287,6 +298,7 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
         case ELangLatvian: return "lv";
         case ELangLithuanian: return "lt";
         case ELangMacedonian: return "mk";
+        case 326: /*ELangMalay_Apac*/
         case ELangMalay: return "ms";
         case ELangMalayalam: return "ml";
         case ELangMarathi: return "mr";
@@ -309,6 +321,8 @@ QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
         case ELangWelsh: return "cy";
         case ELangZulu: return "zu";
         case ELangSinhalese: return "si";
+        case 102: /*ELangBasque*/ return "eu";
+        case 103: /*ELangGalician*/ return "gl";
         case ELangTest:
         case ELangReserved1:
         case ELangReserved2:
@@ -474,9 +488,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         case QSystemNetworkInfo::LteMode:
         {
         #ifndef ETELMM_SUPPORTED
-            CTelephony::TRegistrationStatus networkStatus = deviceInfo
-                ->cellNetworkRegistrationInfo()->cellNetworkStatus();
-
+            CTelephony::TRegistrationStatus networkStatus = m_deviceInfo->cellNetworkRegistrationInfo()->cellNetworkStatus();
             CTelephony::TNetworkMode networkMode = m_deviceInfo->cellNetworkInfo()->networkMode();
             if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
                 return QSystemNetworkInfo::NoNetworkAvailable;
@@ -1935,7 +1947,7 @@ int QSystemBatteryInfoPrivate::remainingChargingTime() const
 int QSystemBatteryInfoPrivate::currentFlow() const
 {
     if ( m_batteryHWRM )
-        return m_batteryHWRM->GetAvergaeCurrent( );
+        return m_batteryHWRM->GetAverageCurrent( );
     else
         return -1;
 }

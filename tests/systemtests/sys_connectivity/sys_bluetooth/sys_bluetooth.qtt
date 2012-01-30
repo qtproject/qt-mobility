@@ -80,7 +80,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/connectivity/bluetooth";
         testGoal = "Verify bluetooth service discovery";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -108,7 +108,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/connectivity/bluetooth";
         testGoal = "Verify bluetooth service record";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -142,7 +142,7 @@ testcase = {
         testBinary = "";
         testGoal = "";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -157,7 +157,7 @@ testcase = {
         testBinary = "";
         testGoal = "";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test steps
@@ -172,7 +172,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/connectivity/bluetooth";
         testGoal = "Verify bluetooth device control";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -236,7 +236,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/connectivity/bluetooth";
         testGoal = "Verify that bluetooth local device can be selected";
         testPreconditions = "There is a platform with multiple Bluetooth devices";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         // Test Steps
@@ -268,7 +268,7 @@ testcase = {
         testSource = "$MOBILITYDIR/tests/applications/connectivity/bluetooth";
         testGoal = "Verify bluetooth qml accessability ";
         testPreconditions = "";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = ""
 
         // Test Steps

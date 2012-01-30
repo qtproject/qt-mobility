@@ -111,7 +111,7 @@ QGeoMapObject::Type QGeoMapTextObject::type() const
 
 /*!
     \property QGeoMapTextObject::coordinate
-    \brief This property holds the coordinate at which this text object
+    \brief the coordinate at which this text object
     will be rendered.
 
     The default value of this property is an invalid coordinate. While the
@@ -138,7 +138,7 @@ void QGeoMapTextObject::setCoordinate(const QGeoCoordinate &coordinate)
 
 /*!
     \property QGeoMapTextObject::text
-    \brief This property holds the text that will be displayed by this text
+    \brief the text that will be displayed by this text
     object.
 
     The default value of this property is an empty string.
@@ -159,7 +159,7 @@ void QGeoMapTextObject::setText(const QString &text)
 
 /*!
     \property QGeoMapTextObject::font
-    \brief This property holds the font that will be used to render the text
+    \brief the font that will be used to render the text
     for this text object.
 
     The default value of this property is the application's default font.
@@ -184,7 +184,7 @@ void QGeoMapTextObject::setFont(const QFont &font)
 
 /*!
     \property QGeoMapTextObject::pen
-    \brief This property holds the pen that will be used to draw this object.
+    \brief the pen that will be used to draw this object.
 
     The pen is used to draw an outline around the text. The text itself is
     filled using the QGeoMapTextObject::brush property.
@@ -212,7 +212,7 @@ void QGeoMapTextObject::setPen(const QPen &pen)
 
 /*!
     \property QGeoMapTextObject::brush
-    \brief This property holds the brush that will be used to draw this object.
+    \brief the brush that will be used to draw this object.
 
     The brush is used to fill in the glyphs of the text.
 
@@ -235,7 +235,7 @@ void QGeoMapTextObject::setBrush(const QBrush &brush)
 
 /*!
     \property QGeoMapTextObject::offset
-    \brief This property holds the offset in pixels from the screen position of
+    \brief the offset in pixels from the screen position of
     QGeoMapTextObject::coordinate at which the text will be rendered when
     drawing this text object.
 
@@ -258,7 +258,7 @@ void QGeoMapTextObject::setOffset(const QPoint &off)
 
 /*!
     \property QGeoMapTextObject::alignment
-    \brief This property holds the alignment options used to align the
+    \brief the alignment options used to align the
     text when drawing this text object.
 
     The default value of this property will align the text so that it is

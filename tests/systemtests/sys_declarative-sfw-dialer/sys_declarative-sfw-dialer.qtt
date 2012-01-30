@@ -43,7 +43,7 @@
 
 testcase = {
 
-    Dial_Landline_Number: function()
+    dial_landline_number: function()
     {
         // Test meta data
         testTitle = "Serviceframework - Dial Landline Number";
@@ -51,7 +51,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
         testGoal = "Verify that landline number can be dialed and hung up";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -70,7 +70,7 @@ testcase = {
         "));
     },
     
-    Dial_First_Voip_Number: function()
+    dial_first_voip_number: function()
     {
         // Test meta data
         testTitle = "Serviceframework - Dial First Voip Number";
@@ -78,7 +78,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
         testGoal = "Verify that Voip 1.1 Number can be dialed and hung up";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps
@@ -97,7 +97,7 @@ testcase = {
         "));
     },
 
-    Dial_Second_Voip_Number: function()
+    dial_second_voip_number: function()
     {
         // Test meta data
         testTitle = "Serviceframework - Dial Second Voip Number";
@@ -105,7 +105,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/declarative-sfw-dialer/declarative-sfw-dialer";
         testGoal = "Verify that Voip 1.0 Number can be dialed and hung up";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = "";
 
         // Test Steps

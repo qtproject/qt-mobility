@@ -98,7 +98,7 @@ DayPage::~DayPage()
 
 }
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
 void DayPage::setMenu(QMenu *menu)
 {
     // Add softkey for symbian

@@ -173,12 +173,13 @@ QAudioDeviceInfo QAudioDeviceFactory::defaultInputDevice()
     }
 #endif
 
+    QAudioDeviceInfo result;
 #ifndef QT_NO_AUDIO_BACKEND
 #if (defined(Q_OS_WIN) || defined(Q_OS_MAC) || defined(HAS_ALSA) || defined(Q_OS_SYMBIAN))
-    return QAudioDeviceInfo(QLatin1String("builtin"), QAudioDeviceInfoInternal::defaultInputDevice(), QAudio::AudioInput);
+    result = QAudioDeviceInfo(QLatin1String("builtin"), QAudioDeviceInfoInternal::defaultInputDevice(), QAudio::AudioInput);
 #endif
 #endif
-    return QAudioDeviceInfo();
+    return result;
 }
 
 QAudioDeviceInfo QAudioDeviceFactory::defaultOutputDevice()
@@ -193,12 +194,13 @@ QAudioDeviceInfo QAudioDeviceFactory::defaultOutputDevice()
     }
 #endif
 
+    QAudioDeviceInfo result;
 #ifndef QT_NO_AUDIO_BACKEND
 #if (defined(Q_OS_WIN) || defined(Q_OS_MAC) || defined(HAS_ALSA) || defined(Q_OS_SYMBIAN))
-    return QAudioDeviceInfo(QLatin1String("builtin"), QAudioDeviceInfoInternal::defaultOutputDevice(), QAudio::AudioOutput);
+    result = QAudioDeviceInfo(QLatin1String("builtin"), QAudioDeviceInfoInternal::defaultOutputDevice(), QAudio::AudioOutput);
 #endif
 #endif
-    return QAudioDeviceInfo();
+    return result;
 }
 
 QAbstractAudioDeviceInfo* QAudioDeviceFactory::audioDeviceInfo(const QString &realm, const QByteArray &handle, QAudio::Mode mode)

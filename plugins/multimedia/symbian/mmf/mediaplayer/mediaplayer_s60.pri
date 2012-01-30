@@ -20,8 +20,6 @@ LIBS *= -lmediaclientvideo \
 
 # We are building Symbian backend with media player support
 DEFINES += HAS_MEDIA_PLAYER
-# We are building media player with QVideoRendererControl support
-#DEFINES += HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER
 
 drm_supported {
     LIBS += -ldrmaudioplayutility
@@ -34,11 +32,11 @@ HEADERS += \
     $$PWD/s60mediaplayersession.h \
     $$PWD/s60mediametadataprovider.h \
     $$PWD/s60videoplayersession.h \
-    $$PWD/s60videosurface.h \
     $$PWD/s60mediarecognizer.h \
     $$PWD/s60audioplayersession.h \
-    $$PWD/ms60mediaplayerresolver.h \
     $$PWD/s60mediaplayeraudioendpointselector.h \
+    $$PWD/s60mediaplayerutils.h \
+    $$PWD/s60mediasettings.h \
     $$PWD/s60mediastreamcontrol.h \
     $$PWD/s60medianetworkaccesscontrol.h
 
@@ -48,17 +46,13 @@ SOURCES += \
     $$PWD/s60mediaplayersession.cpp \
     $$PWD/s60mediametadataprovider.cpp \
     $$PWD/s60videoplayersession.cpp \
-    $$PWD/s60videosurface.cpp \
     $$PWD/s60mediarecognizer.cpp \
     $$PWD/s60audioplayersession.cpp \
     $$PWD/s60mediaplayeraudioendpointselector.cpp \
+    $$PWD/s60mediaplayerutils.cpp \
+    $$PWD/s60mediasettings.cpp \
     $$PWD/s60mediastreamcontrol.cpp \
     $$PWD/s60medianetworkaccesscontrol.cpp
-
-contains(DEFINES, HAS_VIDEORENDERERCONTROL_IN_VIDEOPLAYER) {
-    HEADERS += $$PWD/s60videorenderer.h
-    SOURCES += $$PWD/s60videorenderer.cpp
-}
 
 contains(S60_VERSION, 3.1) {
     #3.1 doesn't provide audio routing in videoplayer

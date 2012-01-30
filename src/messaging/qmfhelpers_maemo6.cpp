@@ -90,7 +90,8 @@ struct AttachmentLocator
     {
         if (!_foundText && part.contentType().type().toLower() == "text") {
             _foundText = true;
-        } else if (part.multipartType() == QMailMessagePart::MultipartNone) {
+        } else if (part.multipartType() == QMailMessagePart::MultipartNone &&
+		   part.contentDisposition().filename().size() > 0) {
             _locations.append(part.location());
         }
 

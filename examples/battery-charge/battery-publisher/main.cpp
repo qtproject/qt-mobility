@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    app.setOrganizationDomain("qt.nokia.com");
+    app.setOrganizationDomain("qt.powerbattery.com");
     app.setApplicationName("Battery Publisher");
 
     QValueSpace::initValueSpaceServer();

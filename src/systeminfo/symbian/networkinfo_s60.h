@@ -44,8 +44,12 @@
 
 #include <e32base.h>
 #include <e32debug.h>
+#ifdef ETELMM_SUPPORTED
 #include <etelmm.h>
+#endif
+#ifdef ETELPACKETSERVICE_SUPPORTED
 #include <etelpckt.h>
+#endif
 #include <etel.h>
 #include <QList>
 
@@ -57,66 +61,39 @@ const TUint KHsdpaBearer = 23;
 const TUint KDefaultBearer = 24;
 
 class MNetworkObserver
-    {
+{
 public:
     virtual void ChangedNetworkMode() = 0;
     virtual void ChangedNetworkStatus() = 0;
     virtual void ChangedCellDataTechnology() = 0;
-    };
+};
 
 class MNetworkInfoObserver
-    {
+{
 public:
     virtual void changedNetworkStatus() = 0;
     virtual void changedNetworkMode() = 0;
     virtual void changedCellDataTechnology() = 0;
-    };
+};
 
-class CNetworkBase : public CActive
-    {
+#ifdef ETELMM_SUPPORTED
+class CNetworkMode : public CActive
+{
 public:
-    CNetworkBase();
-    ~CNetworkBase();
-
-    void AddObserver(MNetworkObserver *aObserver);
-    void RemoveObserver();
-
-protected:  //from CActive
-    virtual void DoCancel() =0; //To Make the class abstract
-    virtual void RunL() = 0;
-    virtual void StartMonitoring() = 0;
-
-protected:
-    RTelServer iTelServer;
-    RMobilePhone iMobilePhone;
-    RTelServer::TPhoneInfo iPhoneInfo;
-    TBool iConstructed;
-    MNetworkObserver *iObserver;
-    //For CellData Technology
-    RPacketService::TDynamicCapsFlags iDynCaps;
-#ifdef ETELPACKETSERVICE_SUPPORTED
-    RPacketService iPacketService;
-#endif
-    RPacketService::TStatus iPacketServiceStatus;
-    bool iPacketdataserviceCaps;
-    };
-
-class CNetworkMode : private CNetworkBase
-    {
-public :
-    CNetworkMode ();
-    ~CNetworkMode ();
+    CNetworkMode(MNetworkObserver *aObserver, RMobilePhone &aMobilePhone);
+    ~CNetworkMode();
     RMobilePhone::TMobilePhoneNetworkMode GetMode() const;
-    void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
-    void Remove() {RemoveObserver();};
 
-protected: //From CNetworkBase
+protected: //From CActive
     virtual void DoCancel();
     virtual void RunL() ;
     virtual void StartMonitoring();
 
-private :
+private: //data
     RMobilePhone::TMobilePhoneNetworkMode iNetworkMode;
+    MNetworkObserver *iObserver;
+    RMobilePhone &iMobilePhone;
+
     /*
     enum TMobilePhoneNetworkMode
         {
@@ -131,31 +108,26 @@ private :
         };
         */
 
-    };
+};
 
-class CNetworkStatus : private CNetworkBase
-    {
+class CNetworkStatus : public CActive
+{
 public:
-    CNetworkStatus();
+    CNetworkStatus(MNetworkObserver *aObserver, RMobilePhone &aMobilePhone);
     ~CNetworkStatus();
     TUint32 GetCapability () const;
-#ifdef ETELMM_SUPPORTED
     RMobilePhone::TMobilePhoneRegistrationStatus GetStatus() const;
-#endif
-    void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
-    void Remove() {RemoveObserver();};
 
-protected : //From CNetworkBase
+protected : //From CActive
     virtual void DoCancel();
     virtual void RunL() ;
     virtual void StartMonitoring();
 
-
 private:
-#ifdef ETELMM_SUPPORTED
     RMobilePhone::TMobilePhoneRegistrationStatus iNetStatus;
-#endif
     TUint32 iCapsPhone;
+    MNetworkObserver *iObserver;
+    RMobilePhone &iMobilePhone;
     /*
     BITWISE OR of
     enum TMobilePhoneModeCaps
@@ -170,50 +142,73 @@ private:
                     KCapsEapSupported=0x00000080 //Phone can access Smart Card functionality required for an EAP. @deprecated 9.3
                     };
     */
-    };
+};
 
-class CPacketDataStatus : private CNetworkBase
- {
- public:
-    CPacketDataStatus();
+#ifdef ETELPACKETSERVICE_SUPPORTED
+class CPacketDataStatus : public CActive
+{
+public:
+    CPacketDataStatus(MNetworkObserver *aObserver, RPacketService &aPacketService);
     ~CPacketDataStatus();
     TBool IsDynamicCapsSupported();
     TUint DynamicCaps();
-    void Add(MNetworkObserver *aObserver) { AddObserver(aObserver);} ;
-    void Remove() {RemoveObserver();};
-    bool NetworkCtrlCapsenabled();
- protected: //From CNetworkBase
+
+protected: //From CActive
     virtual void DoCancel();
     virtual void RunL() ;
     virtual void StartMonitoring();
- };
+
+private: //data
+    MNetworkObserver *iObserver;
+    RPacketService &iPacketService;
+    RPacketService::TStatus iPacketServiceStatus;
+    RPacketService::TDynamicCapsFlags iDynCaps;
+};
+#endif //ETELPACKETSERVICE_SUPPORTED
+#endif //ETELMM_SUPPORTED
 
 class CNetworkInfo : public CBase, public MNetworkObserver
 {
-protected :
+protected:
     virtual void ChangedNetworkMode() ;
     virtual void ChangedNetworkStatus();
     virtual void ChangedCellDataTechnology();
 
-public :
-        CNetworkInfo();
-        ~CNetworkInfo();
-        void addObserver(MNetworkInfoObserver *aObserver);
-        void removeObserver(MNetworkInfoObserver *aObserver);
-        RMobilePhone::TMobilePhoneNetworkMode GetMode() const;
+public:
+    CNetworkInfo();
+    ~CNetworkInfo();
+    void Initialise();
+    bool IsInitialised();
+    void addObserver(MNetworkInfoObserver *aObserver);
+    void removeObserver(MNetworkInfoObserver *aObserver);
 #ifdef ETELMM_SUPPORTED
-        RMobilePhone::TMobilePhoneRegistrationStatus GetStatus() const;
+    RMobilePhone::TMobilePhoneNetworkMode GetMode() const;
+    RMobilePhone::TMobilePhoneRegistrationStatus GetStatus() const;
 #endif
-       TUint32 GetCapability () const;
-       TUint CellDataTechnology();
+    TUint32 GetCapability () const;
+    TUint CellDataTechnology();
 
-private :
-        CNetworkMode iNetMode;
-        CNetworkStatus iNetStat;
-        CPacketDataStatus iPacketDataStatus;
-        QList<MNetworkInfoObserver *> iObservers;
-        TUint32 iCellDataTechnology;
+private:
+    void InitialiseL();
+
+private:
+    QList<MNetworkInfoObserver *> iObservers;
+    bool iConstructed;
+#ifdef ETELMM_SUPPORTED
+    CNetworkMode *iNetMode;
+    CNetworkStatus *iNetStat;
+    RTelServer iTelServer;
+    RMobilePhone iMobilePhone;
+    RTelServer::TPhoneInfo iPhoneInfo;
+    MNetworkObserver *iObserver;
+    //For CellData Technology
+#ifdef ETELPACKETSERVICE_SUPPORTED
+    CPacketDataStatus *iPacketDataStatus;
+    RPacketService iPacketService;
+#endif //ETELPACKETSERVICE_SUPPORTED
+#endif //ETELMM_SUPPORTED
+    TUint32 iCellDataTechnology;
+    bool iPacketdataserviceCaps;
 };
-
 
 #endif // NETWORKSTATUS_S60_H

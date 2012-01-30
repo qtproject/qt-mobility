@@ -40,308 +40,311 @@
 ****************************************************************************/
 #include "networkinfo_s60.h"
 #include "trace.h"
+
 //This const is added as alternative for EPacketNotifyDynamicCapsChange in pcktcs.h
 const TInt KPacketNofityDynamicCapsChange = 40021;
 
-
-CNetworkBase::CNetworkBase() : CActive(EPriorityNormal),
-iConstructed(EFalse), iObserver(NULL),iDynCaps(0),iPacketdataserviceCaps(true)
-    {
-    TInt err = 0;
-    TRACES(qDebug() << "CNetworkBase::CNetworkBase<---");
+#ifdef ETELMM_SUPPORTED
+CNetworkMode::CNetworkMode(MNetworkObserver *aObserver, RMobilePhone &aMobilePhone)
+    : CActive(EPriorityNormal),
+      iNetworkMode(RMobilePhone::ENetworkModeUnknown),
+      iObserver(aObserver),
+      iMobilePhone(aMobilePhone)
+{
     CActiveScheduler::Add(this);
 
-    TRAP_IGNORE(
-        err = iTelServer.Connect();
-        TRACES(qDebug() << "Err val for RTelServer::Connect" << err);
-        User::LeaveIfError(err);
-    )
+    TInt err = iMobilePhone.GetCurrentMode(iNetworkMode);
+    TRACES(qDebug() << "Current Network mode in ctr" <<  iNetworkMode);
 
-    CleanupClosePushL(iTelServer);
-
-    TRAP_IGNORE(
-        err = iTelServer.GetPhoneInfo( 0, iPhoneInfo );
-        TRACES(qDebug() << "Err val for RTelServer::GetPhoneInfo =" << err);
-        User::LeaveIfError(err);
-        err = iMobilePhone.Open(iTelServer,iPhoneInfo.iName);
-        TRACES(qDebug() << "Err val for RMobilePhone::Open =" << err);
-        User::LeaveIfError(err);
-        err = iMobilePhone.Initialise();
-        TRACES(qDebug() << "Err val for RMobilePhone::Initialise =" << err);
-        User::LeaveIfError(err);
-    )
-
-    CleanupClosePushL(iMobilePhone);
-
-#ifdef ETELPACKETSERVICE_SUPPORTED
-    TRAP_IGNORE(
-        TInt packetserviceerr = iPacketService.Open(iMobilePhone);
-        if ( packetserviceerr != KErrNone ) iPacketdataserviceCaps = false;
-        TRACES(qDebug() << "Err val for iPacketService.Open =" << packetserviceerr);
-        if ( iPacketdataserviceCaps ) {
-         err = iPacketService.GetStatus(iPacketServiceStatus);
-         TRACES(qDebug() << "Err val for iPacketService.GetStatus =" << err);
-        }
-    )
-#endif
     if (!err)
-        {
-        iConstructed = ETrue;
-        }
-    CleanupStack::Pop(&iMobilePhone);
-    CleanupStack::Pop(&iTelServer);
-    TRACES(qDebug() << "CNetworkBase::CNetworkBase--->");
-    }
+        StartMonitoring();
+}
 
-CNetworkBase::~CNetworkBase()
-    {
-#ifdef ETELPACKETSERVICE_SUPPORTED
-    iPacketService.Close();
-#endif
-    iMobilePhone.Close();
-    iTelServer.Close();
-    }
-
-void CNetworkBase::AddObserver(MNetworkObserver *aObserver)
-    {
-    iObserver = aObserver;
-    }
-
-void CNetworkBase::RemoveObserver()
-    {
-    iObserver = NULL;
-    }
-
-CNetworkMode::CNetworkMode()
-    {
-#ifdef ETELMM_SUPPORTED
-    TRACES(qDebug() << "CNetworkMode::CNetworkMode--Start");
-    if (iConstructed)
-        {
-        TInt err = iMobilePhone.GetCurrentMode( iNetworkMode );
-        TRACES(qDebug() << "Current Network mode in ctr" <<  iNetworkMode);
-
-        if (!err)
-            {
-            StartMonitoring();
-            }
-        else
-            iConstructed = EFalse;
-        }
-#endif
-    }
 CNetworkMode::~CNetworkMode()
-    {
-        Cancel();
-    }
+{
+    Cancel();
+}
 
 void CNetworkMode::DoCancel()
-    {
-#ifdef ETELMM_SUPPORTED
+{
     TRACES ( qDebug() << "CNetworkMode::DoCancel<--" );
     iMobilePhone.CancelAsyncRequest(EMobilePhoneNotifyModeChange);
     TRACES ( qDebug() << "CNetworkMode::DoCancel-->" );
-#endif
-    }
+}
 
 void CNetworkMode::RunL()
-    {
+{
     TRACES(qDebug() << "CNetworkMode::RunL-Networkmode is<--:" << iNetworkMode);
-    User::LeaveIfError(iStatus.Int());
-    iObserver->ChangedNetworkMode();
+    if (iStatus.Int() == KErrNone)
+        iObserver->ChangedNetworkMode();
     StartMonitoring();
     TRACES(qDebug() << "CNetworkMode::RunL()--->");
-    }
+}
 
 void CNetworkMode::StartMonitoring()
-    {
-#ifdef ETELMM_SUPPORTED
-    iMobilePhone.NotifyModeChange ( iStatus,iNetworkMode);
-    SetActive();
-    TRACES(qDebug() << "CNetworkMode::StartMonitoring--End");
-#endif
+{
+    if (!IsActive()) {
+        iMobilePhone.NotifyModeChange(iStatus, iNetworkMode);
+        SetActive();
     }
+    TRACES(qDebug() << "CNetworkMode::StartMonitoring--End");
+}
 
 RMobilePhone::TMobilePhoneNetworkMode CNetworkMode::GetMode() const
-    {
+{
     return iNetworkMode;
-    }
+}
 
-CNetworkStatus::CNetworkStatus()
-   {
+CNetworkStatus::CNetworkStatus(MNetworkObserver *aObserver, RMobilePhone &aMobilePhone)
+    : CActive(EPriorityNormal),
+      iNetStatus(RMobilePhone::ERegistrationUnknown),
+      iObserver(aObserver),
+      iMobilePhone(aMobilePhone)
+{
+    TRACES (qDebug() << "CNetworkStatus::CNetworkStatus<----");
+    CActiveScheduler::Add(this);
 
-#ifdef ETELMM_SUPPORTED
-   TRACES (qDebug() << "CNetworkStatus::CNetworkStatus<----");
-      if (iConstructed)
-        {
-        TInt err = iMobilePhone.GetMultimodeCaps( iCapsPhone );
-        if (!err)
-            {
-            TRequestStatus reqStatus;
-            iMobilePhone.GetNetworkRegistrationStatus (reqStatus,iNetStatus);
-            User::WaitForRequest(reqStatus);
-            //CActiveScheduler::Add(this);
-            StartMonitoring();
-            }
-        else
-            iConstructed = EFalse;
-        }
-   TRACES (qDebug() << "CNetworkStatus::CNetworkStatus---->");
-#endif
+    TInt err = iMobilePhone.GetMultimodeCaps(iCapsPhone);
+    if (!err) {
+        TRequestStatus reqStatus;
+        iMobilePhone.GetNetworkRegistrationStatus(reqStatus, iNetStatus);
+        User::WaitForRequest(reqStatus);
+        StartMonitoring();
     }
+    TRACES (qDebug() << "CNetworkStatus::CNetworkStatus---->");
+}
+
 CNetworkStatus::~CNetworkStatus()
-    {
-     TRACES (qDebug() << "CNetworkStatus::~CNetworkStatus");
-      Cancel();
-    }
+{
+    TRACES (qDebug() << "CNetworkStatus::~CNetworkStatus");
+    Cancel();
+}
 
 void CNetworkStatus::DoCancel()
-    {
-#ifdef ETELMM_SUPPORTED
+{
     TRACES (qDebug() << "CNetworkStatus::DoCancel");
     iMobilePhone.CancelAsyncRequest(EMobilePhoneNotifyNetworkRegistrationStatusChange);
-#endif
-    }
+}
 
 void CNetworkStatus::RunL()
-    {
+{
     TRACES (qDebug() << "CNetworkStatus::RunL()<---");
-    User::LeaveIfError(iStatus.Int());
-    iObserver->ChangedNetworkStatus();
+    if (iStatus.Int() == KErrNone)
+        iObserver->ChangedNetworkStatus();
     StartMonitoring();
     TRACES (qDebug() << "CNetworkStatus::RunL()--->");
-    }
+}
 
 void CNetworkStatus::StartMonitoring()
-    {
-#ifdef ETELMM_SUPPORTED
+{
     TRACES (qDebug() << "CNetworkStatus::StartMonitoring");
-    iMobilePhone.NotifyNetworkRegistrationStatusChange ( iStatus,iNetStatus);
-    SetActive();
-#endif
+    if (!IsActive()) {
+        iMobilePhone.NotifyNetworkRegistrationStatusChange(iStatus,iNetStatus);
+        SetActive();
     }
+}
 
-TUint32 CNetworkStatus::GetCapability () const
-    {
+TUint32 CNetworkStatus::GetCapability() const
+{
     return iCapsPhone;
-    }
+}
 
-#ifdef ETELMM_SUPPORTED
-RMobilePhone::TMobilePhoneRegistrationStatus CNetworkStatus::GetStatus () const
-    {
+RMobilePhone::TMobilePhoneRegistrationStatus CNetworkStatus::GetStatus() const
+{
     return iNetStatus;
-    }
-#endif
+}
 
-CPacketDataStatus::CPacketDataStatus()
-   {
 #ifdef ETELPACKETSERVICE_SUPPORTED
+CPacketDataStatus::CPacketDataStatus(MNetworkObserver *aObserver, RPacketService &aPacketService)
+    : CActive(EPriorityNormal),
+      iObserver(aObserver),
+      iPacketService(aPacketService),
+      iPacketServiceStatus(RPacketService::EStatusUnattached),
+      iDynCaps(0)
+{
+    CActiveScheduler::Add(this);
+
     TRACES (qDebug() << "CPacketDataStatus::CPacketDataStatus");
+
+    iPacketService.GetStatus(iPacketServiceStatus);
     if (iPacketServiceStatus == RPacketService::EStatusActive)
-      {
         iPacketService.GetDynamicCaps(iDynCaps); //Initialize dynamic caps
-      }
     StartMonitoring();
-#endif
-    }
+}
 
 CPacketDataStatus::~CPacketDataStatus()
-    {
-     TRACES (qDebug() << "CPacketDataStatus::~CPacketDataStatus");
-     Cancel();
-    }
+{
+    TRACES (qDebug() << "CPacketDataStatus::~CPacketDataStatus");
+    Cancel();
+}
 
 TBool CPacketDataStatus::IsDynamicCapsSupported()
-  {
-#ifdef ETELPACKETSERVICE_SUPPORTED
-   TInt err = iPacketService.GetStatus(iPacketServiceStatus);
-   if (iPacketServiceStatus == RPacketService::EStatusActive)
-    {
-     if (iPacketService.GetDynamicCaps(iDynCaps) == KErrNone) //other than KErrNotSupported
-      {
-       return ETrue;
-      }
+{
+    iPacketService.GetStatus(iPacketServiceStatus);
+    if (iPacketServiceStatus == RPacketService::EStatusActive) {
+        if (iPacketService.GetDynamicCaps(iDynCaps) == KErrNone) //other than KErrNotSupported
+            return ETrue;
     }
-#endif
-   return EFalse;
-  }
+    return EFalse;
+}
 
 TUint CPacketDataStatus::DynamicCaps()
- {
-  TRACES (qDebug() << "CPacketDataStatus::DynamicCaps value:" << iDynCaps);
-  return iDynCaps;
- }
+{
+    TRACES (qDebug() << "CPacketDataStatus::DynamicCaps value:" << iDynCaps);
+    return iDynCaps;
+}
 
 void CPacketDataStatus::DoCancel()
- {
-#ifdef ETELPACKETSERVICE_SUPPORTED
-  TRACES (qDebug() << "CPacketDataStatus::DoCancel<---");
-  iPacketService.CancelAsyncRequest(KPacketNofityDynamicCapsChange);
-  TRACES (qDebug() << "CPacketDataStatus::DoCancel--->");
-#endif
- }
+{
+    TRACES (qDebug() << "CPacketDataStatus::DoCancel<---");
+    iPacketService.CancelAsyncRequest(KPacketNofityDynamicCapsChange);
+    TRACES (qDebug() << "CPacketDataStatus::DoCancel--->");
+}
 
 void CPacketDataStatus::RunL()
- {
-#ifdef ETELPACKETSERVICE_SUPPORTED
- TRACES (qDebug() << "CPacketDataStatus::RunL()<---");
- TRACES (qDebug() << "iStatus code:" << iStatus.Int());
- User::LeaveIfError(iStatus.Int());
- iObserver->ChangedCellDataTechnology();
- StartMonitoring();
- TRACES(qDebug() << "CPacketDataStatus::RunL()--->");
-#endif
- }
+{
+    TRACES (qDebug() << "CPacketDataStatus::RunL()<---");
+    TRACES (qDebug() << "iStatus code:" << iStatus.Int());
+    if (iStatus.Int() == KErrNone)
+        iObserver->ChangedCellDataTechnology();
+    StartMonitoring();
+    TRACES(qDebug() << "CPacketDataStatus::RunL()--->");
+}
 
 void CPacketDataStatus::StartMonitoring()
- {
-#ifdef ETELPACKETSERVICE_SUPPORTED
- TRACES (qDebug() << "CPacketDataStatus::StartMonitoring<---");
- if ( NetworkCtrlCapsenabled() == false) return;
- if (!IsActive())
-  {
-    iPacketService.NotifyDynamicCapsChange(iStatus,iDynCaps);
-    SetActive();
-  }
- TRACES (qDebug() << "CPacketDataStatus::StartMonitoring--->");
-#endif
- }
-
- bool CPacketDataStatus::NetworkCtrlCapsenabled()
-  {
-   return (iPacketdataserviceCaps == true );
-  }
-
-CNetworkInfo::CNetworkInfo():iCellDataTechnology(KDefaultBearer)
-    {
-     //Add observers
-    iNetMode.Add(this);
-    iNetStat.Add(this);
-    if ( iPacketDataStatus.NetworkCtrlCapsenabled() == true ) iPacketDataStatus.Add(this);
+{
+    TRACES (qDebug() << "CPacketDataStatus::StartMonitoring<---");
+    if (!IsActive()) {
+        iPacketService.NotifyDynamicCapsChange(iStatus,iDynCaps);
+        SetActive();
     }
+    TRACES (qDebug() << "CPacketDataStatus::StartMonitoring--->");
+}
+#endif //ETELPACKETSERVICE_SUPPORTED
+#endif //ETELMM_SUPPORTED
+
+CNetworkInfo::CNetworkInfo()
+    : iConstructed(false),
+      iCellDataTechnology(KDefaultBearer),
+      iPacketdataserviceCaps(true)
+{
+    Initialise();
+}
 
 CNetworkInfo::~CNetworkInfo()
-    {
-    iNetMode.Remove();
-    iNetStat.Remove();
-    iPacketDataStatus.Remove();
-    }
+{
+#ifdef ETELMM_SUPPORTED
+    delete iNetMode;
+    delete iNetStat;
+#ifdef ETELPACKETSERVICE_SUPPORTED
+    delete iPacketDataStatus;
+    iPacketService.Close();
+#endif //ETELPACKETSERVICE_SUPPORTED
+    iMobilePhone.Close();
+    iTelServer.Close();
+#endif //ETELMM_SUPPORTED
+}
 
-RMobilePhone::TMobilePhoneNetworkMode CNetworkInfo::GetMode() const
-    {
-    return iNetMode.GetMode();
+void CNetworkInfo::Initialise()
+{
+#ifdef ETELMM_SUPPORTED
+    TRAPD(err, InitialiseL());
+    if (err) {
+        delete iNetMode;
+        iNetMode = 0;
+        delete iNetStat;
+        iNetStat = 0;
+#ifdef ETELPACKETSERVICE_SUPPORTED
+        delete iPacketDataStatus;
+        iPacketDataStatus = 0;
+        iPacketService.Close();
+#endif //ETELPACKETSERVICE_SUPPORTED
+        iMobilePhone.Close();
+        iTelServer.Close();
+    } else {
+        iConstructed = true;
     }
-TUint32 CNetworkInfo::GetCapability () const
-    {
-    return iNetStat.GetCapability();
-    }
+#else
+    iConstructed = true;
+#endif
+}
+
+void CNetworkInfo::InitialiseL()
+{
+    TInt err = 0;
+    TRACES(qDebug() << "CNetworkInfo::ConstructL<---");
+
+    if (iConstructed)
+        return;
 
 #ifdef ETELMM_SUPPORTED
-RMobilePhone::TMobilePhoneRegistrationStatus CNetworkInfo::GetStatus () const
-    {
-    return iNetStat.GetStatus();
-    }
+    err = iTelServer.Connect();
+    TRACES(qDebug() << "Err val for RTelServer::Connect" << err);
+    User::LeaveIfError(err);
+
+    err = iTelServer.GetPhoneInfo( 0, iPhoneInfo );
+    TRACES(qDebug() << "Err val for RTelServer::GetPhoneInfo =" << err);
+    User::LeaveIfError(err);
+
+    err = iMobilePhone.Open(iTelServer,iPhoneInfo.iName);
+    TRACES(qDebug() << "Err val for RMobilePhone::Open =" << err);
+    User::LeaveIfError(err);
+
+    err = iMobilePhone.Initialise();
+    TRACES(qDebug() << "Err val for RMobilePhone::Initialise =" << err);
+    User::LeaveIfError(err);
+
+    // Create active objects for monitoring statuses
+    iNetMode = new (ELeave) CNetworkMode(this, iMobilePhone);
+    iNetStat = new (ELeave) CNetworkStatus(this, iMobilePhone);
+
+#ifdef ETELPACKETSERVICE_SUPPORTED
+    TInt packetserviceerr = iPacketService.Open(iMobilePhone);
+    if (packetserviceerr != KErrNone)
+        iPacketdataserviceCaps = false;
+    TRACES(qDebug() << "Err val for iPacketService.Open =" << packetserviceerr);
+
+    if (iPacketdataserviceCaps)
+        iPacketDataStatus = new (ELeave) CPacketDataStatus(this, iPacketService);
+
+#endif //ETELPACKETSERVICE_SUPPORTED
+#endif //ETELMM_SUPPORTED
+    TRACES(qDebug() << "CNetworkInfo::ConstructL--->");
+}
+
+bool CNetworkInfo::IsInitialised()
+{
+    return iConstructed;
+}
+
+#ifdef ETELMM_SUPPORTED
+RMobilePhone::TMobilePhoneNetworkMode CNetworkInfo::GetMode() const
+{
+    if (iConstructed)
+        return iNetMode->GetMode();
+    else
+        return RMobilePhone::ENetworkModeUnknown;
+}
+
+RMobilePhone::TMobilePhoneRegistrationStatus CNetworkInfo::GetStatus() const
+{
+    if (iConstructed)
+        return iNetStat->GetStatus();
+    else
+        return RMobilePhone::ERegistrationUnknown;
+}
 #endif
+
+TUint32 CNetworkInfo::GetCapability() const
+{
+#ifdef ETELMM_SUPPORTED
+    if (iConstructed)
+        return iNetStat->GetCapability();
+#endif
+
+    return 0;
+}
+
 void CNetworkInfo::addObserver(MNetworkInfoObserver *aObserver)
 {
     iObservers.append(aObserver);
@@ -353,72 +356,60 @@ void CNetworkInfo::removeObserver(MNetworkInfoObserver *aObserver)
 }
 
 void CNetworkInfo::ChangedNetworkMode()
-    {
+{
     foreach (MNetworkInfoObserver *observer, iObservers)
         observer->changedNetworkMode();
-    }
+}
+
 void CNetworkInfo::ChangedNetworkStatus()
-    {
+{
     foreach (MNetworkInfoObserver *observer, iObservers)
         observer->changedNetworkStatus();
-    }
+}
 
 void CNetworkInfo::ChangedCellDataTechnology()
- {
-  TRACES (qDebug() << "CNetworkInfo::ChangedCellDataTechnology");
-  TUint celldatatech = CellDataTechnology();
-  if ( celldatatech != iCellDataTechnology )
-   {
-    TRACES (qDebug() << "Notify observers");
-     foreach (MNetworkInfoObserver *observer, iObservers)
-        observer->changedCellDataTechnology();
-   }
-   iCellDataTechnology = celldatatech;
- }
-
- TUint CNetworkInfo::CellDataTechnology()
-  {
-#ifdef ETELPACKETSERVICE_SUPPORTED
-   TRACES (qDebug() << "CNetworkInfo::CellDataTechnology<---");
-   if ( iPacketDataStatus.NetworkCtrlCapsenabled() == false ) return KDefaultBearer;
-   TUint dynamicCaps = 0;
-   if (iPacketDataStatus.IsDynamicCapsSupported())
-    {
-     dynamicCaps = iPacketDataStatus.DynamicCaps();
+{
+    TRACES (qDebug() << "CNetworkInfo::ChangedCellDataTechnology");
+    TUint celldatatech = CellDataTechnology();
+    if (celldatatech != iCellDataTechnology) {
+        TRACES (qDebug() << "Notify observers");
+        foreach (MNetworkInfoObserver *observer, iObservers)
+            observer->changedCellDataTechnology();
     }
+    iCellDataTechnology = celldatatech;
+}
 
-   RMobilePhone::TMobilePhoneNetworkMode networkMode = iNetMode.GetMode();
+TUint CNetworkInfo::CellDataTechnology()
+{
+#if defined(ETELMM_SUPPORTED) && defined(ETELPACKETSERVICE_SUPPORTED)
+    TRACES (qDebug() << "CNetworkInfo::CellDataTechnology<---");
+    if (!iConstructed || !iPacketdataserviceCaps)
+        return KDefaultBearer;
+    TUint dynamicCaps = 0;
+    if (iPacketDataStatus->IsDynamicCapsSupported())
+        dynamicCaps = iPacketDataStatus->DynamicCaps();
 
-   if ((dynamicCaps & RPacketService::KCapsHSUPA) || (dynamicCaps & RPacketService::KCapsHSDPA))
-    {
-     TRACES ( qDebug() << "KHsdpaBearer" );
-     return KHsdpaBearer;
-    }
-   else
-    if ( dynamicCaps & RPacketService::KCapsEGPRS )
-       {
+    RMobilePhone::TMobilePhoneNetworkMode networkMode = iNetMode->GetMode();
+
+    if ((dynamicCaps & RPacketService::KCapsHSUPA) || (dynamicCaps & RPacketService::KCapsHSDPA)) {
+        TRACES ( qDebug() << "KHsdpaBearer" );
+        return KHsdpaBearer;
+    } else if ( dynamicCaps & RPacketService::KCapsEGPRS ) {
         TRACES ( qDebug() << "KEGprsBearer" );
         return KEGprsBearer;
-       }
-   else
-       {
-        if (networkMode == RMobilePhone::ENetworkModeGsm)
-          {
-           TRACES ( qDebug() << "KGprsBearer" );
-           return KGprsBearer;
-          }
-        else if (networkMode == RMobilePhone::ENetworkModeWcdma)
-          {
-           TRACES ( qDebug() << "KUmtsBearer" );
-           return KUmtsBearer;
-          }
-        else
-          {
-           TRACES ( qDebug() << "KDefaultBearer" );
-           return KDefaultBearer;
-          }
-       }
+    } else {
+        if (networkMode == RMobilePhone::ENetworkModeGsm) {
+            TRACES ( qDebug() << "KGprsBearer" );
+            return KGprsBearer;
+        } else if (networkMode == RMobilePhone::ENetworkModeWcdma) {
+            TRACES ( qDebug() << "KUmtsBearer" );
+            return KUmtsBearer;
+        } else {
+            TRACES ( qDebug() << "KDefaultBearer" );
+            return KDefaultBearer;
+        }
+    }
 #else
-     return KDefaultBearer;
+    return KDefaultBearer;
 #endif
-  }
+}

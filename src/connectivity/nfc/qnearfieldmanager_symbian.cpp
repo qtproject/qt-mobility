@@ -43,6 +43,7 @@
 #include <qservicemanager.h>
 #include <QCoreApplication>
 #include <ndefmessage.h>
+#include <centralrepository.h> 
 
 #include "qnearfieldmanager_symbian_p.h"
 #include "qndefmessage.h"
@@ -109,7 +110,30 @@ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
 
 bool QNearFieldManagerPrivateImpl::isAvailable() const
 {
-    return m_symbianbackend;
+    bool aValue = true;
+    //Because no related head file is published, hard code here for some key value
+    const TUid KNfcCenRepUid = { 0x20021390 };
+    CRepository* repository = NULL;
+    TRAPD(err, repository = CRepository::NewL( KNfcCenRepUid ));   
+    if(err == KErrNone)
+        {
+        TInt amode = 0;
+        //1 means KNfcServiceNfcOff
+        const TInt aNfcServiceOff = 1;
+        err = repository->Get( 0x01, amode );
+        if(err != KErrNone || aNfcServiceOff  == amode || m_symbianbackend == NULL)
+            {
+            aValue = false;
+            }
+        delete repository;
+        }
+    else
+        {
+        aValue = false;
+        }
+    
+    return aValue;
+    
 }
 
 /*
@@ -190,7 +214,7 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &
                                                              QObject *object,
                                                              const QMetaMethod &method)
 {
-    if (!m_symbianbackend)
+    if (!isAvailable())
         return -1;
 
     BEGIN
@@ -230,7 +254,7 @@ int QNearFieldManagerPrivateImpl::registerNdefMessageHandler(const QNdefFilter &
 */
 bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 {
-    if (!m_symbianbackend)
+    if (!isAvailable())
         return false;
 
     BEGIN
@@ -262,7 +286,7 @@ bool QNearFieldManagerPrivateImpl::unregisterNdefMessageHandler(int id)
 
 bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTarget::Type> &targetTypes)
 {
-    if (!m_symbianbackend)
+    if (!isAvailable())
         return false;
 
     BEGIN
@@ -274,7 +298,7 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(const QList<QNearFieldTa
 void QNearFieldManagerPrivateImpl::stopTargetDetection()
 {
     BEGIN
-    if (m_symbianbackend)
+    if (isAvailable())
         m_symbianbackend->stopTargetDetection();
     END
 }

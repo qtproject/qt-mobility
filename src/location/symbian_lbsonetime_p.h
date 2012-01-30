@@ -51,7 +51,7 @@
 #include <QGeoPositionInfo>
 #include <QGeoPositionInfoSource>
 
-#include "QGeoPositionInfo.h"
+#include "qgeopositioninfo.h"
 #include "qgeopositioninfosource.h"
 
 

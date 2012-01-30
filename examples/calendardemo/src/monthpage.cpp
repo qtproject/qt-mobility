@@ -108,7 +108,7 @@ MonthPage::~MonthPage()
 
 }
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
 void MonthPage::setMenu(QMenu *menu)
 {
     // Add softkey for symbian

@@ -117,6 +117,7 @@ public:
         if (!m_str) {
             m_str = qstrdup(str.toLatin1().constData());
             s_allocated.insert(str, const_cast<char*>(m_str)); // it's my pointer
+            s_qstrings.insert(m_str, str);
         }
         return *this;
     }

@@ -56,11 +56,11 @@ using namespace S60VideoOutputUtils;
 const int NullOrdinalPosition = -1;
 
 S60VideoWidget::S60VideoWidget(QWidget *parent)
-:   QWidget(parent)
-,   m_pixmap(NULL)
-,   m_paintingEnabled(false)
-,   m_topWinId(0)
-,   m_ordinalPosition(NullOrdinalPosition)
+    : QWidget(parent)
+    , m_pixmap(0)
+    , m_paintingEnabled(false)
+    , m_topWinId(0)
+    , m_ordinalPosition(NullOrdinalPosition)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setPalette(QPalette(Qt::black));

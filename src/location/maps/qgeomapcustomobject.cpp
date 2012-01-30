@@ -184,7 +184,7 @@ void QGeoMapCustomObject::update()
 
 /*!
     \property QGeoMapCustomObject::graphicsItem
-    \brief This property holds the graphics item which will
+    \brief the graphics item which will
     be drawn by this custom object.
 
     If the graphics item is 0 then nothing will be drawn.
@@ -218,7 +218,7 @@ void QGeoMapCustomObject::setGraphicsItem(QGraphicsItem *graphicsItem)
 
 /*!
     \property QGeoMapCustomObject::offset
-    \brief This property holds the offset in pixels at which the graphics
+    \brief the offset in pixels at which the graphics
     item will be drawn by this custom object.
 
     The default value of this property is QPoint(0, 0). If this value is not

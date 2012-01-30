@@ -7,4 +7,4 @@ dbus-send --system --type=method_call --dest=com.nokia.nfc / \
         objpath:/com/nokia/nfc/ndefhandler \
         string:any \
         string:"%DATATYPE%" \
-        string:%APPNAME%
+        string:%APPNAME% || echo 'Failed to register autostart ndef handler'

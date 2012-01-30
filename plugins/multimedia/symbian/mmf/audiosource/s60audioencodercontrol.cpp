@@ -39,20 +39,15 @@
 **
 ****************************************************************************/
 
-#include "DebugMacros.h"
-
 #include "s60audioencodercontrol.h"
 #include "s60audiocapturesession.h"
-
+#include "s60mmtrace.h"
 #include "qaudioformat.h"
 
-#include <QtCore/qdebug.h>
-
 S60AudioEncoderControl::S60AudioEncoderControl(QObject *session, QObject *parent)
-    :QAudioEncoderControl(parent), m_quality(QtMultimediaKit::NormalQuality)
+    : QAudioEncoderControl(parent), m_quality(QtMultimediaKit::NormalQuality)
 {
-    DP0("S60AudioEncoderControl::S60AudioEncoderControl +++");
-
+    TRACE("S60AudioEncoderControl::S60AudioEncoderControl" << qtThisPtr());
     m_session = qobject_cast<S60AudioCaptureSession*>(session);
     QAudioFormat fmt = m_session->format();
     // medium, 22050Hz mono S16
@@ -66,41 +61,31 @@ S60AudioEncoderControl::S60AudioEncoderControl(QObject *session, QObject *parent
     m_settings.setChannelCount(fmt.channels());
     m_settings.setCodec(fmt.codec());
     m_settings.setSampleRate(fmt.sampleRate());
-
-    DP0("S60AudioEncoderControl::S60AudioEncoderControl ---");
 }
 
 S60AudioEncoderControl::~S60AudioEncoderControl()
 {
-    DP0("S60AudioEncoderControl::~S60AudioEncoderControl +++");
-
-    DP0("S60AudioEncoderControl::~S60AudioEncoderControl ---");
+    TRACE("S60AudioEncoderControl::~S60AudioEncoderControl" << qtThisPtr());
 }
 
 QStringList S60AudioEncoderControl::supportedAudioCodecs() const
 {
-    DP0("S60AudioEncoderControl::supportedAudioCodecs");
-
     return m_session->supportedAudioCodecs();
 }
 
 QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 {
-    DP0("S60AudioEncoderControl::codecDescription");
-
     return m_session->codecDescription(codecName);
 }
 
 QtMultimediaKit::EncodingQuality S60AudioEncoderControl::quality() const
 {
-    DP0("S60AudioEncoderControl::quality");
-
     return m_quality;
 }
 
 void S60AudioEncoderControl::setQuality(QtMultimediaKit::EncodingQuality value, QAudioFormat &fmt)
 {
-    DP0("S60AudioEncoderControl::setQuality +++");
+    TRACE("S60AudioEncoderControl::setQuality" << qtThisPtr() << "value" << value);
 
     switch (value) {
     case QtMultimediaKit::VeryLowQuality:
@@ -129,37 +114,27 @@ void S60AudioEncoderControl::setQuality(QtMultimediaKit::EncodingQuality value, 
     default:
         break;
     }
-
-    DP0("S60AudioEncoderControl::setQuality ---");
 }
 
 QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
 {
-    DP0("S60AudioEncoderControl::supportedEncodingOptions");
-
     Q_UNUSED(codec)
     QStringList list;
     if (codec == "PCM") 
         list << "quality" << "channels" << "samplerate";        
-     return list;
+    return list;
 }
 
 QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
-    DP0("S60AudioEncoderControl::encodingOption");
-
     if (codec == "PCM") {
         QAudioFormat fmt = m_session->format();
-        
-        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0)
             return QVariant(quality());
-        }        
-        else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0)
             return QVariant(fmt.channels());
-        }                
-        else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0)
             return QVariant(fmt.frequency());
-        }       
     }
     return QVariant();
 }
@@ -167,55 +142,50 @@ QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QStr
 void S60AudioEncoderControl::setEncodingOption(
         const QString &codec, const QString &name, const QVariant &value)
 {
-    DP0("S60AudioEncoderControl::setEncodingOption +++");
-
+    TRACE("S60AudioEncoderControl::setEncodingOption" << qtThisPtr()
+          << "codec" << codec << "name" << name << "value" << value);
     if (codec == "PCM") {
         QAudioFormat fmt = m_session->format();
-
-        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0)
             setQuality((QtMultimediaKit::EncodingQuality)value.toInt(), fmt);
-        } else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0)
             fmt.setChannels(value.toInt());
-        } else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0)
             fmt.setFrequency(value.toInt());
-        }
         m_session->setFormat(fmt);
     }
-
-    DP0("S60AudioEncoderControl::setEncodingOption ---");
 }
 
 QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous) const
 {
-    DP0("S60AudioEncoderControl::supportedSampleRates");
-
     if (continuous)
         *continuous = false;
-    
     return m_session->supportedAudioSampleRates(settings);       
 }
 
 QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 {
-    DP0("S60AudioEncoderControl::audioSettings");
-
     return m_settings;
 }
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
-    DP0("S60AudioEncoderControl::setAudioSettings +++");
-
+    TRACE("S60AudioEncoderControl::setAudioSettings" << qtThisPtr()
+          << "encodingMode" << settings.encodingMode()
+          << "codec" << settings.codec()
+          << "bitRate" << settings.bitRate()
+          << "channelCount" << settings.channelCount()
+          << "sampleRate" << settings.sampleRate()
+          << "quality" << settings.quality());
     QAudioFormat fmt = m_session->format();
     if (settings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
         fmt.setCodec(settings.codec());
         setQuality(settings.quality(), fmt);
-        if (settings.sampleRate() > 0) {
+        if (settings.sampleRate() > 0)
             fmt.setFrequency(settings.sampleRate());
-        }
         if (settings.channelCount() > 0)
             fmt.setChannels(settings.channelCount());
-    }else {
+    } else {
         if (settings.sampleRate() == 8000) {
             fmt.setSampleType(QAudioFormat::UnSignedInt);
             fmt.setSampleSize(8);
@@ -230,6 +200,4 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
     m_session->setFormat(fmt);
     m_session->setEncoderSettings(settings);
     m_settings = settings;
-
-    DP0("S60AudioEncoderControl::setAudioSettings ---");
 }

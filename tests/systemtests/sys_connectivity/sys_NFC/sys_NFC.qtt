@@ -43,102 +43,187 @@
 
 testcase = {
 
-    Target_Detection_Notification: function()
+    target_detection_notification: function()
     {
-        prompt(twiki('*Get notification of target detection and loss*
+        // Test meta data
+        testTitle = "Connectivity - Target detection notification";
+        testBinary = "ndefeditor";
+        testSource = "$MOBILITYDIR/examples/ndefeditor";
+        testGoal = "Verify target detection notification";
+        testPreconditions = "An NFC tag";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 Run the ndefeditor application
-    1 Select "Retrieve"
-    1 Verify a blue square appears in the upper left corner, this shows the application is waiting for an NFC card
-    1 Bring the card within 1 cm of the NFC sensor
-    1 Verify the blue square disappears indicating the card was detected
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Retrieve* | Verify a blue square appears in the upper left corner, this shows the application is waiting for an NFC card |
+            | Bring the card within 1 cm of the NFC sensor | Verify the blue square disappears indicating the card was detected |
+        "));
     },
 
-    Touched_Target_Information: function()
+    touched_target_information: function()
     {
-        prompt(twiki('*Display information about a touched target*
+        // Test meta data
+        testTitle = "Connectivity - Touch target information";
+        testBinary = "testQtNfc";
+        testSource = "$MOBILITYDIR/tests/applications/connectivity/NFC";
+        testGoal = "Verify touched target information can be displayed";
+        testPreconditions = "An NFC tag";
+        testGroups = " ";
+        testRequirements = "";
 
-    1 Run the Bluewheel application then select "NFC"
-    1 Select "NFC Target Detection"
-    1 Select "start"
-    1 Bring the card within 1 cm of the NFC sensor
-    1 Verify a popup message appears that reads "target detected"
-    1 Take the sensor away from the card
-    1 Verify the message changes to "target lost"
-    1 Press okay until the messages disappears
-    1 Verify the "Target UID", "Type" and "Access methods" are shown as expected
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *start* | |
+            | Bring the card within 1 cm of the NFC sensor | Verify a popup message appears that reads 'target detected' |
+            | Take the sensor away from the card | Verify the message changes to 'target lost' |
+            | Press okay until the messages disappears | Verify the 'Target UID', 'Type' and 'Access methods' are shown as expected |
+        "));
     },
 
     NDEF_Notification_Registration: function()
     {
-        prompt(twiki('*Register for NDEF notifications*
+        // Test meta data
+        testTitle = "Connectivity - NDEF notification registration";
+        testBinary = "annotatedURL";
+        testSource = "$MOBILITYDIR/examples/annotatedurl";
+        testGoal = "Verify NDEF notifications can be Registered";
+        testPreconditions = "An NFC tag with an NFC text and NFC URI field";
+        testGroups = " ";
+        testRequirements = "";
 
-    1 Requirements: An NFC tag with an NFC text and NFC URI field (see README.txt for instructions on writing a tag)
-    1 Run the annotatedURL application
-    1 Bring the card within 1 cm of the NFC sensor
-    1 Verify the Text and URL are displayed on the annotatedURL application and no other application is registered
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Bring the card within 1 cm of the NFC sensor | Verify the Text and URL are displayed on the annotatedURL application and no other application is registered |
+        "));
     },
 
-    NDEF_Notification_Deregistration: function()
-    {
-      skip("No test app", SkipAll);
-        prompt(twiki('*Unregister for NDEF notifications*
 
-    1 currently no test application
-        '));
+    NDEF_notification_deregistration: function()
+    {
+        testTitle = "Connectivity - NDEF notification deregistration";
+        testBinary = "";
+        testGoal = "Verify that unregister for NDEF notifications";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
+
+        // Test steps
+        skip('No test app', SkipAll);
     },
-
-    NDEF_Message_Display: function()
+    
+    NDEF_message_display: function()
     {
-        prompt(twiki('*Touch the device to a tag and display the NDEF message*
+        // Test meta data
+        testTitle = "Connectivity - NDEF message display";
+        testBinary = "ndefeditor";
+        testSource = "$MOBILITYDIR/examples/ndefeditor";
+        testGoal = "Verify NDEF message can be displayed";
+        testPreconditions = "An NFC tag";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 Run the ndefeditor application
-    1 Select "Retrieve"
-    1 Verify a blue square appears in the upper left corner, this shows the application is waiting for an NFC card
-    1 Bring the card within 1 cm of the NFC sensor
-    1 Verify the blue square disappears indicating the card was detected
-    1 Verify the target information is displayed by ndefeditor
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Retrieve* button | Verify a blue square appears in the upper left corner, this shows the application is waiting for an NFC card |
+            | Bring the card within 1 cm of the NFC sensor | Verify the blue square disappears indicating the card was detected |
+            | | Verify the target information is displayed by ndefeditor |
+        "));
     },
-
-    NDEF_Message_Write: function()
+    
+    NDEF_message_write: function()
     {
-        prompt(twiki('*Create an NDEF message and write it to a tag upon touch*
+        // Test meta data
+        testTitle = "Connectivity - NDEF message write";
+        testBinary = "ndefeditor";
+        testSource = "$MOBILITYDIR/examples/ndefeditor";
+        testGoal = "Verify NDEF message can be written";
+        testPreconditions = "An NFC tag";
+        testGroups = "BAT_MOBILITY";
+        testRequirements = "";
 
-    1 Run the ndefeditor application
-    1 Select clear to erase any existing records
-    1 Select "add" then "NFC Text Record" and fill in the fields with text
-    1 Select "add" a second time and select "NFC URI Record" and fill this field with a URL
-    1 Select "store"
-    1 Verify a yellow square appears in the upper left hand corner of the application indicating awaiting a tag to write to
-    1 Bring the card within 1 cm of the NFC sensor
-    1 Verify the yellow square disappears indicating the card was written to
-    1 Select "clear" to clear the fields and then press "Retrieve"
-    1 Bring the card within 1 cm of the NFC sensor
-    1 Verify the blue square disappears indicating the card was detected and read
-    1 Verify the fields are populated with the data that was entered previously
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select clear to erase any existing records | |
+            | Select *add* then press *NFC Text Record* and fill in the fields with text | |
+            | Select *add* a second time and then press *NFC URI Record* and fill this field with a URL | |
+            | Select *store* | Verify that a yellow square appears in the upper left hand corner of the application indicating awaiting a tag to write to |
+            | Bring the card within 1 cm of the NFC sensor | Verify the yellow square disappears indicating the card was written to |
+            | Select *clear* to clear the fields and then press *Retrieve* | |
+            | Bring the card within 1 cm of the NFC sensor | Verify the blue square disappears indicating the card was detected and read |
+            | | Verify the fields are populated with the data that was entered previously |
+        "));
     },
-
-    Tag_Specific_Command_Write: function()
+    
+    tag_specific_command_write: function()
     {
-      skip("No test app", SkipAll);
-        prompt(twiki('*Send tag specific commands to a tag *
+        testTitle = "Connectivity - tag specific command write";
+        testBinary = "";
+        testGoal = "";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
 
-    1 not enabled yet in bluewheel
-        '));
+        // Test steps
+        skip('No test app', SkipAll);
     },
-
-    LLCP_Connection: function()
+    
+    LLCP_connection: function()
     {
-        prompt(twiki('*Initiates an LLCP connection*
+        // Test meta data
+        testTitle = "Connectivity - LLCP connection";
+        testBinary = "bttennis";
+        testSource = "$MOBILITYDIR/demos/bttennis";
+        testGoal = "Verify LLCP connection";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = "";
 
-    1 Run the bttennis (bluetooth tennis) application on two NFC capable devices
-    1 Touch the two devices together to enable a handshake and bluetooth connection via NFC
-    1 Verify the devices link together and enable play
-        '));
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " on two NFC capable devices | Test application started successfully |
+            | Touch the two devices together to enable a handshake and bluetooth connection via NFC | Verify the devices link together and enable play |
+        "));
     }
 }

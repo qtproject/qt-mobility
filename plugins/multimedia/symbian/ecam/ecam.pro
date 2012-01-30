@@ -4,10 +4,12 @@
 #
 ######################################################################
 
+include (../../../../features/utils.pri)
+
 TEMPLATE =      lib
 CONFIG +=       plugin
 
-TARGET =        $$qtLibraryTarget(qtmultimediakit_ecamengine)
+TARGET =        $$mobilityPluginTarget(qtmultimediakit_ecamengine)
 PLUGIN_TYPE =   mediaservice
 include (../../../../common.pri)
 
@@ -31,7 +33,7 @@ SOURCES += s60cameraserviceplugin.cpp
 
 load(data_caging_paths)
 TARGET.EPOCALLOWDLLDATA =   1
-TARGET.UID3 =               0x2002BFC2
+TARGET.UID3 =               $$mobilityUID(0x2002BFC2)
 TARGET.CAPABILITY =         ALL -TCB
 
 # Make a sis package from plugin + api + stub (plugin)

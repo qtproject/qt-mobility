@@ -4,6 +4,7 @@
 #
 ######################################################################
 
+include($$PWD/features/utils.pri)
 
 CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=debug
@@ -50,18 +51,6 @@ win32:contains(CONFIG_WIN32,build_all) {
     }
 }
 
-# Helper function.  This should move to a .prf file
-defineReplace(mobilityDeployFilename) {
-   unset(MOBILITY_DEPLOY_NAME)
-   MOBILITY_DEPLOY_NAME = $$1
-   CONFIG(debug, debug|release): {
-      mac:RET = $$member(MOBILITY_DEPLOY_NAME, 0)_debug
-      else:win32:RET = $$member(MOBILITY_DEPLOY_NAME, 0)d
-   }
-   isEmpty(RET):RET = $$MOBILITY_DEPLOY_NAME
-   return($$RET)
-}
-
 # Make sure this goes everywhere we need it
 symbian: load(data_caging_paths)
 
@@ -94,7 +83,7 @@ contains(build_unit_tests, yes) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
             symbian:DEF_FILE=../s60installs
-            VERSION = 1.2.1
+            VERSION = 1.2.2
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
@@ -102,7 +91,7 @@ contains(build_unit_tests, yes) {
         testplugin {
             DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
         } else {
-            VERSION = 1.1.4
+            symbian:VERSION = 1.2.2
             #check that plugin_type is set or warn otherwise
             isEmpty(PLUGIN_TYPE) {
                 message(PLUGIN_TYPE not specified - install rule may not work)

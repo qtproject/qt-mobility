@@ -62,7 +62,7 @@ Item {
         font.bold: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pointSize: 19
+        font.pointSize: 10
         anchors.left: leftButton.right
         anchors.leftMargin: 5
         anchors.right: rightButton.left

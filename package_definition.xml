@@ -8,6 +8,9 @@
      <component id="qtmobility_build" name="Qt Mobility Build" introduced="^4" filter="s60">
       <unit bldFile="." qt:proFile="qtmobility.pro"/>
      </component>
+     <component id="qtmobility_mkservicedb" name="Qt Mobility create registry" introduced="^4" filter="s60">
+      <unit bldFile="features/mkservicedb" />
+     </component>
     </collection>
     <collection id="qtmobility_demos" name="Qt Mobility Demos" level="app">
      <component id="qtmobility_demos_build" name="Qt Mobility Demos Build" filter="s60,test,qtmobilitydemos,build_as_app" introduced="^4">

@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 # Qt connectivity library
 TEMPLATE = lib
 TARGET   = QtConnectivity
@@ -16,11 +18,11 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 symbian {
     load(data_caging_paths)
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3=0x2002BFD1
+    TARGET.UID3 = $$mobilityUID(0x2002BFD1)
     TARGET.CAPABILITY = All -TCB
 }
 symbian: {
-    QtConnectivityDeployment.sources = QtConnectivity.dll
+    QtConnectivityDeployment.sources = QtConnectivity$${QT_LIBINFIX}.dll
     QtConnectivityDeployment.path = /sys/bin
     DEPLOYMENT += QtConnectivityDeployment
 }

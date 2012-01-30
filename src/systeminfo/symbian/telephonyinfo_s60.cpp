@@ -50,12 +50,11 @@ CTelephonyInfo::CTelephonyInfo(CTelephony &telephony) : CActive(EPriorityStandar
     m_telephony(telephony)
 {
     CActiveScheduler::Add(this);
-    m_wait = new CActiveSchedulerWait();
 }
 
 CTelephonyInfo::~CTelephonyInfo()
 {
-    delete m_wait;
+  delete iEventLoop;
 }
 
 void CTelephonyInfo::addObserver(MTelephonyInfoObserver *observer)
@@ -70,7 +69,12 @@ void CTelephonyInfo::removeObserver(MTelephonyInfoObserver *observer)
 
 void CTelephonyInfo::RunL()
 {
-    m_wait->AsyncStop();
+   TRACES (qDebug() << "CTelephonyInfo::RunL<---");
+
+    if ( iEventLoop ){
+        TRACES (qDebug() << "eventloop::exiting");
+        if (iEventLoop->isRunning()) iEventLoop->exit();
+        }
 }
 
 void CTelephonyInfo::makeRequest()
@@ -78,9 +82,11 @@ void CTelephonyInfo::makeRequest()
     if (!IsActive())
         SetActive();
 
-    if (!m_wait->IsStarted()) {
-        m_wait->Start();
-    }
+    if ( !iEventLoop ){
+        iEventLoop = new QEventLoop();
+        TRACES ( qDebug() << "started event loop...");
+        }
+    iEventLoop->exec(); //start the loop
 }
 
 CPhoneInfo::CPhoneInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
@@ -408,8 +414,10 @@ CTelephony::TNetworkMode CCellNetworkInfo::networkMode() const
 void CCellNetworkInfo::startMonitoring()
 {
  TRACES (qDebug() << "CCellNetworkInfo::startMonitoring<---");
+ if (!IsActive()) {
     m_telephony.NotifyChange(iStatus, CTelephony::ECurrentNetworkInfoChange, m_networkInfoV1Pckg);
     SetActive();
+  }
  TRACES (qDebug() << "CCellNetworkInfo::startMonitoring--->");
 }
 
@@ -474,8 +482,10 @@ CTelephony::TRegistrationStatus CCellNetworkRegistrationInfo::cellNetworkStatus(
 void CCellNetworkRegistrationInfo::startMonitoring()
 {
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::startMonitoring<---");
+ if (!IsActive()) {
     m_telephony.NotifyChange(iStatus, CTelephony::ENetworkRegistrationStatusChange, m_networkRegistrationV1Pckg);
     SetActive();
+  }
 TRACES (qDebug() << "CCellNetworkRegistrationInfo::startMonitoring--->");
 }
 
@@ -544,7 +554,9 @@ int CCellSignalStrengthInfo::cellNetworkSignalStrength() const
 void CCellSignalStrengthInfo::startMonitoring()
 {
  TRACES (qDebug() << "CCellSignalStrengthInfo::startMonitoring<---");
+ if (!IsActive()) {
     m_telephony.NotifyChange(iStatus, CTelephony::ESignalStrengthChange, m_signalStrengthV1Pckg);
     SetActive();
+  }
  TRACES (qDebug() << "CCellSignalStrengthInfo::startMonitoring--->");
 }

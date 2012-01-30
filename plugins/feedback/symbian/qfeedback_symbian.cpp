@@ -78,12 +78,19 @@ QFeedbackSymbian::QFeedbackSymbian()
 #endif
 
     initActuators();
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(freeResources()));
 }
 
 QFeedbackSymbian::~QFeedbackSymbian()
 {
+    freeResources();
+}
+
+void QFeedbackSymbian::freeResources()
+{
 #ifdef USE_CHWRMHAPTICS_PLZ
     qDeleteAll(m_haptics);
+    m_haptics.clear();
 #endif
 }
 
@@ -94,7 +101,6 @@ void QFeedbackSymbian::initActuators()
     // Retrieve the supported actuators from the haptics backend
     // XXX TODO: is this correct?  What about user-installed actuators?
     TUint32 supportedActuators(0);
-    TInt err(KErrNone);
     CHWRMHaptics* haptics(0);
     QT_TRAP_THROWING(haptics = CHWRMHaptics::NewL(NULL, NULL));
     if (!haptics)

@@ -108,7 +108,7 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_calendarComboBox = new QComboBox(this);
     // the calendar names are not know here, fill the combo box later...
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     // Add push buttons for non-Symbian platforms as they do not support soft keys
     QHBoxLayout* hbLayout = new QHBoxLayout();
     QPushButton *okButton = new QPushButton("Save", this);
@@ -143,7 +143,7 @@ EventEditPage::EventEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_calendarComboBox);
     scrollAreaLayout->addStretch();
 
-#ifndef Q_OS_SYMBIAN
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR))
     scrollAreaLayout->addLayout(hbLayout);
 #endif
 
@@ -244,7 +244,7 @@ void EventEditPage::eventChanged(QOrganizerManager *manager, const QOrganizerEve
         QVariantMap metadata = firstCollection.metaData();
         QList<QString> metaDataKeys = metadata.keys();
         foreach(QString key, metaDataKeys) {
-            if (key.indexOf("name", 0, Qt::CaseInsensitive) != -1) {
+            if (key.compare("name", Qt::CaseInsensitive) == 0) {
                 calendarNameMetadataKey = key;
                 break;
             }

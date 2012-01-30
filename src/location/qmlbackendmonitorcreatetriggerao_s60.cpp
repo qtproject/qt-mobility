@@ -386,9 +386,9 @@ void QMLBackendMonitorCreateTriggerAO::SetTriggerState(QGeoAreaMonitorS60* aPare
     CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(aParent, aType);
 
     if (aStatus == true) {
-        TRAPD(err, iLbt.SetTriggerStateL(triggerInfo->iTriggerID, CLbtTriggerEntry::EStateEnabled, ELbtTrue));
+        TRAP_IGNORE(iLbt.SetTriggerStateL(triggerInfo->iTriggerID, CLbtTriggerEntry::EStateEnabled, ELbtTrue));
     } else {
-        TRAPD(err, iLbt.SetTriggerStateL(triggerInfo->iTriggerID, CLbtTriggerEntry::EStateDisabled, ELbtTrue));
+        TRAP_IGNORE(iLbt.SetTriggerStateL(triggerInfo->iTriggerID, CLbtTriggerEntry::EStateDisabled, ELbtTrue));
     }
 }
 

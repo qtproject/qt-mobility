@@ -24,7 +24,7 @@
 
 #include <bldvariant.hrh>
 
-#define UPGRADABLE_APP_REG_RSC(NAME) data=DATAZ_\PRIVATE\10003A3F\IMPORT\APPS\ ## NAME ## _reg.rsc        Private\10003a3f\import\apps\ ## NAME ## _reg.rsc
+#define UPGRADABLE_APP_REG_RSC(NAME) data=DATAZ_\private\10003a3f\import\apps\ ## NAME ## _reg.rsc        Private\10003a3f\import\apps\ ## NAME ## _reg.rsc
 
 S60_APP_EXE(audiorecorder)
 S60_APP_RESOURCE(audiorecorder)
@@ -46,20 +46,20 @@ S60_APP_EXE(bearermonitor)
 S60_APP_RESOURCE(bearermonitor)
 UPGRADABLE_APP_REG_RSC(bearermonitor)
 
-file=ABI_DIR\BUILD_DIR\serviceframework_bluetoothtransferplugin.dll                       SHARED_LIB_DIR\serviceframework_bluetoothtransferplugin.dll
-data=\epoc32\data\z\resource\qt\plugins\serviceframework_bluetoothtransferplugin.qtplugin resource\qt\plugins\serviceframework_bluetoothtransferplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\serviceframework_bluetoothtransferplugin.dll                                SHARED_LIB_DIR\serviceframework_bluetoothtransferplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\serviceframework_bluetoothtransferplugin.qtplugin resource\qt\plugins\serviceframework_bluetoothtransferplugin.qtplugin
 
 S60_APP_EXE(sfw-kinetic-example)
 S60_APP_RESOURCE(sfw-kinetic-example)
 UPGRADABLE_APP_REG_RSC(sfw-kinetic-example)
-file=ABI_DIR\BUILD_DIR\serviceframework_landlinedialerservice.dll                   SHARED_LIB_DIR\serviceframework_landlinedialerservice.dll
-file=ABI_DIR\BUILD_DIR\serviceframework_voipdialerservice.dll                       SHARED_LIB_DIR\serviceframework_voipdialerservice.dll
+file=ABI_DIR\BUILD_DIR\serviceframework_landlinedialerservice.dll                            SHARED_LIB_DIR\serviceframework_landlinedialerservice.dll
+file=ABI_DIR\BUILD_DIR\serviceframework_voipdialerservice.dll                                SHARED_LIB_DIR\serviceframework_voipdialerservice.dll
 
-file=ABI_DIR\BUILD_DIR\serviceframework_filemanagerplugin.dll                       SHARED_LIB_DIR\serviceframework_filemanagerplugin.dll
-data=\epoc32\data\z\resource\qt\plugins\serviceframework_filemanagerplugin.qtplugin resource\qt\plugins\serviceframework_filemanagerplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\serviceframework_filemanagerplugin.dll                                SHARED_LIB_DIR\serviceframework_filemanagerplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\serviceframework_filemanagerplugin.qtplugin resource\qt\plugins\serviceframework_filemanagerplugin.qtplugin
 
-file=ABI_DIR\BUILD_DIR\serviceframework_notesmanagerplugin.dll                       SHARED_LIB_DIR\serviceframework_notesmanagerplugin.dll
-data=\epoc32\data\z\resource\qt\plugins\serviceframework_notesmanagerplugin.qtplugin resource\qt\plugins\serviceframework_notesmanagerplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\serviceframework_notesmanagerplugin.dll                                SHARED_LIB_DIR\serviceframework_notesmanagerplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\serviceframework_notesmanagerplugin.qtplugin resource\qt\plugins\serviceframework_notesmanagerplugin.qtplugin
 
 S60_APP_EXE(player)
 S60_APP_RESOURCE(player)
@@ -68,7 +68,7 @@ UPGRADABLE_APP_REG_RSC(player)
 S60_APP_EXE(publish-subscribe)
 S60_APP_RESOURCE(publish-subscribe)
 UPGRADABLE_APP_REG_RSC(publish-subscribe)
-data=\epoc32\data\z\resource\qt\crml\example.qcrml                                  resource\qt\crml\example.qcrml
+data=EPOCROOT##epoc32\data\z\resource\qt\crml\example.qcrml                                  resource\qt\crml\example.qcrml
 
 S60_APP_EXE(querymessages)
 S60_APP_RESOURCE(querymessages)
@@ -94,8 +94,8 @@ S60_APP_EXE(grueapp)
 S60_APP_RESOURCE(grueapp)
 UPGRADABLE_APP_REG_RSC(grueapp)
 
-file=ABI_DIR\BUILD_DIR\grueplugin.dll                               SHARED_LIB_DIR\grueplugin.dll
-data=\epoc32\data\z\resource\qt\plugins\sensors\grueplugin.qtplugin resource\qt\plugins\sensors\grueplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\grueplugin.dll                                        SHARED_LIB_DIR\grueplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\sensors\grueplugin.qtplugin resource\qt\plugins\sensors\grueplugin.qtplugin
 
 S60_APP_EXE(orientation)
 S60_APP_RESOURCE(orientation)

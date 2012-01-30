@@ -53,6 +53,7 @@ QT_FORWARD_DECLARE_CLASS(S60CameraControl)
 QT_FORWARD_DECLARE_CLASS(QAbstractVideoSurface)
 QT_FORWARD_DECLARE_CLASS(QDesktopWidget)
 QT_FORWARD_DECLARE_CLASS(S60VideoDisplay)
+QT_FORWARD_DECLARE_CLASS(S60NativeWindow)
 
 // For DirectScreen ViewFinder
 QT_FORWARD_DECLARE_CLASS(RWsSession)
@@ -97,8 +98,8 @@ public: // Methods
     void releaseControl(ViewfinderOutputType type);
 
     // Controls
-    void startViewfinder(const bool internalStart = false);
-    void stopViewfinder(const bool internalStop = false);
+    void startViewfinder(bool internalStart = false, bool suppressHasContentChanged = false);
+    void stopViewfinder(bool internalStop = false, bool suppressHasContentChanged = false);
 
     // Start using new CameraEngine
     void setNewCameraEngine(CCameraEngine *engine);
@@ -122,7 +123,8 @@ private slots:
     void handleWindowChange(RWindow *handle);
     void handleDesktopResize(int screen);
     void handleContentAspectRatioChange(const QSize& newSize);
-    void rendererSurfaceSet();
+    void rendererSurfaceChanged();
+    void setRendererNativeSurface();
 
 private: // Enums
 
@@ -171,6 +173,7 @@ private: // Data
     QVideoSurfaceFormat     m_surfaceFormat; // Used only by QVideoRendererControl
     bool                    m_isViewFinderVisible;
     int                     m_vfErrorsSignalled;
+    S60NativeWindow         *m_dummyWindow;
 };
 
 #endif // S60CAMERAVIEWFINDERENGINE_H

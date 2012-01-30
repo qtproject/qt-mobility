@@ -491,7 +491,7 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
 
   Remove account \a id and all associated information (folders, messages etc.)
 
-  On Windows mobile and desktop platforms, Maemo 5, and Symbian prior to SR1.11 this function performs no operation.
+  On Windows mobile and desktop platforms, Maemo 5, and Symbian prior to Belle this function performs no operation.
   \since 1.2
 */
 bool QMessageManager::removeAccount(const QMessageAccountId &id)
@@ -639,8 +639,9 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     Since the filters apply to the state of the data after the message removal, the only
     data item that may be subject to filtration is the identifier of the removed message.
     
-    On Symbian^3 platform to get signals about removed emails the related mailbox must
-    be manually synchronized.
+    On Symbian^3 platform to get signals about permanent removed emails the related mailbox 
+    must be manually synchronized. Email marked to be deleted, i.e. moved to deleted folder
+    still exists in message store.
 
     \since 1.0
     \sa messageAdded(), messageUpdated(), registerNotificationFilter()

@@ -493,6 +493,8 @@ QBluetoothDeviceInfo::DataCompleteness QBluetoothDeviceInfo::serviceUuidsComplet
 
 /*!
     Sets the manufacturer specific data returned by Extended Inquiry Responses to \a data.
+
+    Unsupported on all platforms at this time.
 */
 void QBluetoothDeviceInfo::setManufacturerSpecificData(const QByteArray &data)
 {
@@ -502,6 +504,8 @@ void QBluetoothDeviceInfo::setManufacturerSpecificData(const QByteArray &data)
 /*!
     Returns the manufacturer specific data. If \a available is not 0 it is set to true if
     manufacturer specific data is available; otherwise it is set to false.
+
+    Unsupported on all platforms at this time.  Always return QByteArry();
 */
 QByteArray QBluetoothDeviceInfo::manufacturerSpecificData(bool *available) const
 {

@@ -65,7 +65,7 @@ Rectangle  {
                             verticalAlignment: Text.AlignVCenter
                             style: Text.Sunken
                             styleColor: "#1365f3"
-                            font.pointSize: 14
+                            font.pointSize: 8
                             anchors.centerIn: parent
                         }
                         MouseArea {

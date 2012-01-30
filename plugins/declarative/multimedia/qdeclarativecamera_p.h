@@ -262,7 +262,7 @@ protected:
 private Q_SLOTS:
     void _q_updateState(QCamera::State);
     void _q_nativeSizeChanged(const QSizeF &size);
-    void _q_error(int, const QString &);
+    void _q_error();
     void _q_imageCaptured(int, const QImage&);
     void _q_imageSaved(int, const QString&);
     void _q_captureFailed(int, QCameraImageCapture::Error, const QString&);
@@ -290,7 +290,6 @@ private:
 
     State m_pendingState;
     bool m_isStateSet;
-    bool m_isValid;
 };
 
 QT_END_NAMESPACE

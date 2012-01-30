@@ -71,7 +71,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify that ical file can be imported";
         testPreconditions = "There is an exampleEvents.ics onto a location on the target";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -103,7 +103,7 @@ testcase = {
         testSource = "$MOBILITYDIR/examples/calendardemo";
         testGoal = "Verify ical file can be exported";
         testPreconditions = "None";
-        testGroups = "BAT_MOBILITY";
+        testGroups = " ";
         testRequirements = " "
 
 
@@ -164,6 +164,60 @@ testcase = {
             | If platform(backend) supports Journal entries then Verify that calendar items | Verify that calendar items 'Journal 1' and 'Journal 2' are present and have expected details | 
             | Delete events 'Event 1', 'Event 2', 'Todo 1', 'Todo 2', 'Journal 1' and 'Journal 2'(using native calendar application if neccessary) | | 
             | Close " + testBinary + " | Test application closed successfully |
+        "));
+    },
+
+    import_ical_data_format: function()
+    {
+        // Test meta data
+        testTitle = "Versitorganizer - Export ical";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify ical data can be imported";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Import and export organizer data* button | |
+            | Click *Create template* button and press *Import item* | Verify that the type, name, start time and end time in the screen right are the same as the ical data template |
+        "));
+    },
+
+    import_vcal_data_format: function()
+    {
+        // Test meta data
+        testTitle = "Versitorganizer - Export ical";
+        testBinary = "testQtOrganizer";
+        testSource = "$MOBILITYDIR/tests/applications/organizer";
+        testGoal = "Verify vcal data can be imported";
+        testPreconditions = "None";
+        testGroups = " ";
+        testRequirements = " "
+
+
+        // Test Steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+            *Goal:* " + testGoal + "<br>
+            *Pre-Requisites:* " + testPreconditions + "<br>
+            *Tested Binary:* " + testBinary + "<br>
+            *Requirements:* " + testRequirements + "<br>
+
+            | *Step* | *Verification* |
+            | Launch " + testBinary + " | Test application started successfully |
+            | Select *Import and export organizer data* button | |
+            | Click *Create template* button | |
+            | Modify the calendar data as vcal format | |
+            | Press *Import item* | Verify that the type, name, start time and end time in the screen right are the same as the vcal data |
         "));
     },
 }

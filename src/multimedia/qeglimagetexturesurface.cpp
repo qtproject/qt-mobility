@@ -260,7 +260,8 @@ void QEglImageTextureSurface::stop()
             m_context->makeCurrent();
         m_frame = QVideoFrame();
 
-        m_program->removeAllShaders();
+        if (m_program)
+            m_program->removeAllShaders();
         delete m_program;
         m_program = 0;
         m_ready = false;
@@ -398,7 +399,7 @@ void QEglImageTextureSurface::paint(QPainter *painter, const QRectF &target, con
         return;
     }
 
-    if (!isActive() || !m_frame.isValid()) {
+    if (!isActive() || !m_frame.isValid() || !QGLContext::currentContext()) {
         painter->fillRect(target, QBrush(Qt::black));
     } else {
         const QRectF source(
@@ -532,13 +533,17 @@ void QEglImageTextureSurface::setGLContext(QGLContext *context)
     m_context = context;
 
     m_fallbackSurface->setGLContext(context);
-    if (m_fallbackSurface->supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
+
+    if (!context) {
+        m_fallbackSurface->setShaderType(QPainterVideoSurface::NoShaders);
+    } else if (m_fallbackSurface->supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
         m_fallbackSurface->setShaderType(QPainterVideoSurface::GlslShader);
     } else {
         m_fallbackSurface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
     }
 
-    emit supportedFormatsChanged();
+    if (m_fallbackSurfaceActive)
+        emit supportedFormatsChanged();
 }
 
 void QEglImageTextureSurface::viewportDestroyed()

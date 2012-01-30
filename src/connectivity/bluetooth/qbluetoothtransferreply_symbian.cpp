@@ -58,6 +58,7 @@ QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
     : QBluetoothTransferReply(parent)
     , CActive(EPriorityStandard)
     , m_source(input)
+    , m_discoveryAgent(NULL)
     , m_running(false)
     , m_finished(false)
     , m_client(NULL)
@@ -71,7 +72,6 @@ QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
     //add this active object to scheduler
     CActiveScheduler::Add(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
-
 }
 
 /*!
@@ -84,11 +84,12 @@ QBluetoothTransferReplySymbian::~QBluetoothTransferReplySymbian()
     if (m_timer->isActive())
         m_timer->stop();
 
+    if (m_discoveryAgent && m_discoveryAgent->isActive())
+        m_discoveryAgent->stop();
+    
+    delete m_discoveryAgent;
     delete m_object;
-    m_object = NULL;
-
     delete m_client;
-    m_client = NULL;
 }
 
 void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address)
@@ -112,6 +113,8 @@ void QBluetoothTransferReplySymbian::updateProgress()
 void QBluetoothTransferReplySymbian::serviceDiscoveryFinished()
 {
     QMetaObject::invokeMethod(this, "startTransfer", Qt::QueuedConnection);
+    m_discoveryAgent->deleteLater();
+    m_discoveryAgent = NULL;
 }
 
 bool QBluetoothTransferReplySymbian::start()
@@ -126,8 +129,6 @@ bool QBluetoothTransferReplySymbian::start()
     connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
             this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
     connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(serviceDiscoveryFinished()));
-    // Automatically delete agent when device discovery finishes.
-    connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(deleteLater()));
 
     m_discoveryAgent->setUuidFilter(QBluetoothUuid(QBluetoothUuid::ObexObjectPush));
     m_discoveryAgent->start();
@@ -180,14 +181,20 @@ bool QBluetoothTransferReplySymbian::isRunning() const
 
 void QBluetoothTransferReplySymbian::abort()
 {
+    if (m_discoveryAgent && m_discoveryAgent->isActive())
+        m_discoveryAgent->stop();
+    delete m_discoveryAgent;
+    m_discoveryAgent = NULL;
+    
     if (m_timer->isActive())
         m_timer->stop();
+
+    Cancel();
+    
     m_state = EIdle;
     m_running = false;
-    // Deleting obexclient is the only way to cancel active requests
     delete m_client;
     m_client = NULL;
-
     delete m_object;
     m_object = NULL;
 }
