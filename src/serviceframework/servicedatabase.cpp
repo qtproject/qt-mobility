@@ -214,6 +214,172 @@ bool ServiceDatabase::open()
     return true;
 }
 
+#ifdef Q_OS_SYMBIAN
+
+bool ServiceDatabase::mergeDatabase(const QString &srcDbFileName)
+{
+    if(!open()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+                qDebug() << "ServiceDatabase::mergeDatabase():-"
+                    << "Database tables Open Failed";
+#endif
+        return false;
+    }
+    ServiceDatabase *srcDatabase = new ServiceDatabase();
+    srcDatabase->setDatabasePath(srcDbFileName);
+    
+    if(!srcDatabase->open()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+                qDebug() << "ServiceDatabase::mergeDatabase():-"
+                    << "SRC Database tables Open Failed";
+#endif  
+        delete srcDatabase;
+        close();
+        return false;
+    }
+    //Get DB Services.
+    QStringList dstServiceList = getServiceNames(QString());
+    //Get SRC DB Services.
+    QStringList srcServiceList = srcDatabase->getServiceNames(QString());
+    //Get the Unique Services to Add.
+    QStringList servicesToAdd = getServicesToAdd(dstServiceList, srcServiceList);
+    //Get ServiceMetaData for the services to be added.
+    QList<ServiceMetaDataDBResults> srcServiceData = srcDatabase->getServiceData(servicesToAdd);
+    
+    registerServiceList(srcServiceData);
+    
+    srcServiceData.clear();
+    delete srcDatabase;
+    
+    return true;
+}
+
+QStringList ServiceDatabase::getServicesToAdd(const QStringList &dstServiceList, const QStringList &srcServiceList)
+{
+    QStringList serviceList;
+    
+    foreach(const QString srcServiceName, srcServiceList) {
+        if(!dstServiceList.contains(srcServiceName)) {
+            //If not Exists in dstServiceList append srcServiceName.
+            serviceList.append(srcServiceName);
+        }
+    }
+    
+    return serviceList;
+}
+
+
+QList<ServiceMetaDataDBResults> ServiceDatabase::getServiceData(const QStringList &serviceNameList)
+{
+    QList<ServiceMetaDataDBResults>serviceList;
+    
+    if(!open()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+                qDebug() << "ServiceDatabase::parseDatabase():-"
+                    << "Database tables Open failed";
+#endif
+        return serviceList;               
+    }
+    
+    foreach(const QString &serviceName, serviceNameList) {
+        ServiceMetaDataDBResults serviceData;
+        serviceData.dbServiceData.name = serviceName;
+        //Get Interfaces for each Service.
+        QServiceFilter filter;
+        filter.setServiceName(serviceName);
+        QList<QServiceInterfaceDescriptor> interfaceList = getInterfaces(filter);
+        serviceData.dbServiceData.interfaces = interfaceList;
+        //Get Defaullt interface List for each Service.
+        for(int i = 0; i < interfaceList.size(); i++) {
+            QServiceInterfaceDescriptor defaultInterface = interfaceDefault(interfaceList.at(i).interfaceName());
+            if(defaultInterface.isValid()) {
+                serviceData.dbServiceData.latestInterfaces.append(defaultInterface);
+            }
+        }
+        if(interfaceList.count()) {
+            serviceData.dbServiceData.location = interfaceList.at(0).d->attributes[QServiceInterfaceDescriptor::Location].toString();
+            serviceData.dbServiceData.description = interfaceList.at(0).d->attributes[QServiceInterfaceDescriptor::ServiceDescription].toString();
+            serviceData.dbServiceData.type = interfaceList.at(0).d->attributes[QServiceInterfaceDescriptor::ServiceType].toInt();
+        }
+        //Get the SecurityToken for each Service.
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+        
+        serviceData.dbServiceSecurityToken = getServiceSecurityToken(serviceName);
+        
+#endif  //QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+        
+        serviceList.append(serviceData);
+    }
+                   
+    return serviceList;
+}
+
+QString ServiceDatabase::getServiceSecurityToken(const QString &serviceName)
+{
+    QString serviceToken;
+    
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    
+    if(!checkConnection()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getServiceSecurityToken():-"
+                    << "Problem:" << qPrintable(m_lastError.text());
+#endif
+        return serviceToken;
+    }
+
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+    QSqlQuery query(database);
+
+    if (!beginTransaction(&query, Read)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getServiceSecurityToken():-"
+                    << "Unable to begin transaction,"
+                    << "reason:" << qPrintable(m_lastError.text());
+#endif
+        return serviceToken;
+    }
+
+    QString statement = "SELECT DISTINCT ServiceProperty.Value FROM Service, ServiceProperty "
+                "WHERE Service.ID = ServiceProperty.ServiceID "
+                "AND ServiceProperty.Key = ? "
+                "AND Service.Name = ?";
+    QList<QVariant> bindValues;
+    
+    bindValues.append(SECURITY_TOKEN_KEY);
+    bindValues.append(serviceName);
+    if (!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getServiceSecurityToken():-"
+                   << qPrintable(m_lastError.text());
+#endif
+        return serviceToken;
+    }
+    if (query.next()) {
+        serviceToken = query.value(EBindIndex).toString();
+    }  
+    rollbackTransaction(&query);//read only operation so just rollback
+    m_lastError.setError(DBError::NoError);
+
+#endif  //QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    
+    return serviceToken;
+}
+
+
+bool ServiceDatabase::registerServiceList(const QList<ServiceMetaDataDBResults> &serviceList)
+{
+    for(int i = 0; i < serviceList.count(); i++) {
+        //Database Write & Commit happens for every service, is Commit Operation Costlier ? 
+        registerService(serviceList[i].dbServiceData, serviceList[i].dbServiceSecurityToken);
+    }
+    return true;
+}
+        
+#endif //End Q_OS_SYMBIAN
+
+
 /*
    Adds a \a service into the database.
 
