@@ -22,8 +22,9 @@ contains(proj_enabled, yes) {
 }
 
 contains(location_fix_enabled, yes) {
-    DEFINES += LOCATION_FIX_QTM_1550
+	DEFINES += LOCATION_FIX_QTM_1550
 }
+
 
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
@@ -77,6 +78,7 @@ symbian {
                        qgeopositioninfosource_symbian_p.h
     }
 
+
     SOURCES += qgeopositioninfosource_s60.cpp \
                qgeosatelliteinfosource_s60.cpp \
                qmlbackendao_s60.cpp \
@@ -99,6 +101,7 @@ symbian {
                qgeopositioninfosource_symbian.cpp
     }
 }
+
 
 wince* {
     PRIVATE_HEADERS += qgeopositioninfosource_wince_p.h \
@@ -195,9 +198,11 @@ symbian {
                    $${EPOCROOT}epoc32/include/platform
     LIBS += -llbs
     LIBS += -lefsrv
-    contains(location_fix_enabled, yes) {
-        LIBS += -leposmodset
-    }
+    
+   contains(location_fix_enabled, yes) {
+    LIBS += -leposmodset
+   }
+
     contains(lbt_enabled, yes) {
         LIBS += -llbt
     }
