@@ -21,7 +21,9 @@ contains(proj_enabled, yes) {
   include($$PWD/../3rdparty/proj.pri)
 }
 
-DEFINES += LOCATION_FIX_QTM_1550
+contains(location_fix_enabled, yes) {
+	DEFINES += LOCATION_FIX_QTM_1550
+}
 
 
 PUBLIC_HEADERS += \
@@ -68,11 +70,13 @@ symbian {
                        notificationmonitorcallback_s60_p.h
     }
 
+    contains(location_fix_enabled, yes) {
         PRIVATE_HEADERS += \
                        symbian_lbsfacade_p.h \
                        symbian_lbstracker_p.h \
                        symbian_lbsonetime_p.h \
                        qgeopositioninfosource_symbian_p.h
+    }
 
 
     SOURCES += qgeopositioninfosource_s60.cpp \
@@ -89,12 +93,14 @@ symbian {
                qmlbackendtriggerchangeao_s60.cpp
     }
 
+    contains(location_fix_enabled, yes) {
         SOURCES += \
                symbian_lbsfacade.cpp \
                symbian_lbstracker.cpp \
                symbian_lbsonetime.cpp \
                qgeopositioninfosource_symbian.cpp
     }
+}
 
 
 wince* {
@@ -192,7 +198,10 @@ symbian {
                    $${EPOCROOT}epoc32/include/platform
     LIBS += -llbs
     LIBS += -lefsrv
+    
+   contains(location_fix_enabled, yes) {
     LIBS += -leposmodset
+   }
 
     contains(lbt_enabled, yes) {
         LIBS += -llbt
