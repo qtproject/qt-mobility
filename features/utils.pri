@@ -25,3 +25,4 @@ defineReplace(mobilityPluginTarget) {
     return($$qtLibraryTarget($$target))
 }
 
+!isEmpty(QT_LIBINFIX):QT_LIBINFIX_USED=$${QT_LIBINFIX}
