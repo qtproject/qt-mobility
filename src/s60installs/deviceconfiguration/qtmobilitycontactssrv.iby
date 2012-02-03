@@ -1,0 +1,46 @@
+/*
+* Copyright (c) 2012 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation, version 2.1 of the License.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program.  If not,
+* see "http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html/".
+*
+* Description: Qt Mobility Contact Service files in Symbian Belle release.
+*              In future releases these are under new sf/mw/contactssrv component.
+*
+*/
+
+#ifndef QTMOBILITYCONTACTSSRV_IBY
+#define QTMOBILITYCONTACTSSRV_IBY
+
+#include <bldvariant.hrh>
+#include <data_caging_paths_for_iby.hrh>
+
+#ifndef FF_QT_IN_UDA
+
+file=ABI_DIR\BUILD_DIR\qtcontacts_symbian.dll                                                      SHARED_LIB_DIR\qtcontacts_symbian.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\contacts\qtcontacts_symbian.qtplugin              resource\qt\plugins\contacts\qtcontacts_symbian.qtplugin
+file=ABI_DIR\BUILD_DIR\qtcontacts_symbiansim.dll                                                   SHARED_LIB_DIR\qtcontacts_symbiansim.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\contacts\qtcontacts_symbiansim.qtplugin           resource\qt\plugins\contacts\qtcontacts_symbiansim.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitfavoriteplugin.dll                                                 SHARED_LIB_DIR\cntversitfavoriteplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\versit\cntversitfavoriteplugin.qtplugin           resource\qt\plugins\versit\cntversitfavoriteplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitlandlineplugin.dll                                                 SHARED_LIB_DIR\cntversitlandlineplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\versit\cntversitlandlineplugin.qtplugin           resource\qt\plugins\versit\cntversitlandlineplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitmycardplugin.dll                                                   SHARED_LIB_DIR\cntversitmycardplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\versit\cntversitmycardplugin.qtplugin             resource\qt\plugins\versit\cntversitmycardplugin.qtplugin
+file=ABI_DIR\BUILD_DIR\cntversitprefplugin.dll                                                     SHARED_LIB_DIR\cntversitprefplugin.dll
+data=EPOCROOT##epoc32\data\z\resource\qt\plugins\versit\cntversitprefplugin.qtplugin               resource\qt\plugins\versit\cntversitprefplugin.qtplugin
+
+#endif // FF_QT_IN_UDA
+
+#endif // QTMOBILITYCONTACTSSRV_IBY
