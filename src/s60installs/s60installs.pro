@@ -516,12 +516,14 @@ symbian {
     DEPLOYMENT += qtmobilitydeployment\
                 mobilitybackup
 
-    !exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.4.sis) {
-        # Export qtmobilitycontactssrv.iby only in Belle not in future releases
-        # Iby file will be part of new contactsrv pkg after Belle
-        BLD_INF_RULES.prj_exports += \
-            "$${LITERAL_HASH}include <platform_paths.hrh>" \
-            "deviceconfiguration/qtmobilitycontactssrv.iby  CORE_MW_LAYER_IBY_EXPORT_PATH(qtmobilitycontactssrv.iby)"
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.3.sis) {
+        !exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.4.sis) {
+            # Export qtmobilitycontactssrv.iby only in Belle not in future releases
+            # Iby file will be part of new contactsrv pkg after Belle
+            BLD_INF_RULES.prj_exports += \
+                "$${LITERAL_HASH}include <platform_paths.hrh>" \
+                "deviceconfiguration/qtmobilitycontactssrv.iby  CORE_MW_LAYER_IBY_EXPORT_PATH(qtmobilitycontactssrv.iby)"
+        }
     }
 }
 
