@@ -1737,7 +1737,7 @@ bool qax_winEventFilter(void *message)
 
         qDebug() << Q_FUNC_INFO;
         POWERBROADCAST_SETTING* pps = (POWERBROADCAST_SETTING*) pMsg->lParam;
-        if ( sizeof(int) == pps->DataLength &&
+        if ( pps && sizeof(int) == pps->DataLength &&
                 pps->PowerSetting == GUID_BATTERY_PERCENTAGE_REMAINING ) {
             int nPercentLeft = *(int*)(DWORD_PTR) pps->Data;
 
