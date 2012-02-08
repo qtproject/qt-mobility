@@ -268,6 +268,17 @@ QStringList ServiceDatabase::getServicesToAdd(const QStringList &dstServiceList,
     return serviceList;
 }
 
+bool ServiceDatabase::isDefaultInterfaceExists(const QList<QServiceInterfaceDescriptor> &latestInterfaces, const QString &interfaceName)
+{
+    int listCount = latestInterfaces.count();
+    
+    for(int i = 0; i < listCount; i++) {
+        if(interfaceName == latestInterfaces[i].interfaceName())
+            return true;
+    }
+    return false;
+}
+
 
 QList<ServiceMetaDataDBResults> ServiceDatabase::getServiceData(const QStringList &serviceNameList)
 {
@@ -291,9 +302,12 @@ QList<ServiceMetaDataDBResults> ServiceDatabase::getServiceData(const QStringLis
         serviceData.dbServiceData.interfaces = interfaceList;
         //Get Defaullt interface List for each Service.
         for(int i = 0; i < interfaceList.size(); i++) {
-            QServiceInterfaceDescriptor defaultInterface = interfaceDefault(interfaceList.at(i).interfaceName());
-            if(defaultInterface.isValid()) {
-                serviceData.dbServiceData.latestInterfaces.append(defaultInterface);
+            QString interfaceName = interfaceList.at(i).interfaceName();
+            if(!isDefaultInterfaceExists(serviceData.dbServiceData.latestInterfaces, interfaceName)) {
+                QServiceInterfaceDescriptor defaultInterface = getDefaultInterface(serviceName, interfaceName);
+                if(defaultInterface.isValid()) {
+                    serviceData.dbServiceData.latestInterfaces.append(defaultInterface);
+                }
             }
         }
         if(interfaceList.count()) {
@@ -312,6 +326,53 @@ QList<ServiceMetaDataDBResults> ServiceDatabase::getServiceData(const QStringLis
     }
                    
     return serviceList;
+}
+
+bool ServiceDatabase::lessThan(const QServiceInterfaceDescriptor &d1,
+                                const QServiceInterfaceDescriptor &d2) const
+{
+    return (d1.majorVersion() < d2.majorVersion())
+            || ( d1.majorVersion() == d2.majorVersion()
+                    && d1.minorVersion() < d2.minorVersion());
+
+}
+
+QServiceInterfaceDescriptor ServiceDatabase::getDefaultInterface(const QString &serviceName, const QString &interfaceName)
+{
+    
+    QServiceInterfaceDescriptor defaultInterface;
+    
+    defaultInterface = interfaceDefault(interfaceName);
+    if(serviceName == defaultInterface.serviceName()) {
+        //Returns default interface if serviceName is matching
+        //with the serviceName of defaultInterface.
+        return defaultInterface;
+    }
+    
+    //If different Services are there with same interface names returns 
+    //defaultInterface with improper QServiceInterfaceDescriptor, 
+    //in this case just return the interface with latest version.
+    
+    QList<QServiceInterfaceDescriptor> descriptors;
+    QServiceFilter filter;
+    
+    filter.setServiceName(serviceName);
+    filter.setInterface(interfaceName);
+    
+    descriptors = getInterfaces(filter);
+
+    //find the descriptor with the latest version
+    int latestIndex = 0;
+        for (int i = 1; i < descriptors.count(); ++i) {
+            if (lessThan(descriptors[latestIndex], descriptors[i]))
+                latestIndex = i;
+    }
+
+    if (!descriptors.isEmpty()) {
+        return (descriptors[latestIndex]);     
+    }
+
+    return defaultInterface;
 }
 
 QString ServiceDatabase::getServiceSecurityToken(const QString &serviceName)
