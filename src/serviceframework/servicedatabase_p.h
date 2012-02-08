@@ -100,6 +100,10 @@ class QM_AUTOTEST_EXPORT ServiceDatabase : public QObject
         bool registerServiceList(const QList<ServiceMetaDataDBResults> &serviceList);
         QString getServiceSecurityToken(const QString &serviceName);
         QStringList getServicesToAdd(const QStringList &dstServiceList, const QStringList &srcServiceList);
+        bool lessThan(const QServiceInterfaceDescriptor &d1,
+                        const QServiceInterfaceDescriptor &d2) const;
+        QServiceInterfaceDescriptor getDefaultInterface(const QString &serviceName, const QString &interfaceName);
+        bool isDefaultInterfaceExists(const QList<QServiceInterfaceDescriptor> &latestInterfaces, const QString &interfaceName);
         
 #endif //End Q_OS_SYMBIAN
         
