@@ -44,8 +44,9 @@ import Qt.labs.shaders 1.0
 
 ShaderEffectItem {
     property variant source
-    property int numParameters: 0
-    property bool supportsDivider: false
+    property ListModel parameters: ListModel { }
+    property bool divider: true
+    property real dividerValue: 0.5
     property real targetWidth: 0
     property real targetHeight: 0
     property string fragmentShaderFilename

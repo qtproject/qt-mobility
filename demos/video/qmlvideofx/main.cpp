@@ -41,6 +41,7 @@
 
 #include <QtDeclarative/QDeclarativeContext>
 #include <QtGui/QApplication>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QGraphicsObject>
 #include "filereader.h"
 #include "qmlapplicationviewer.h"
@@ -136,6 +137,18 @@ int main(int argc, char *argv[])
 
     FileReader fileReader;
     viewer.rootContext()->setContextProperty("fileReader", &fileReader);
+
+    QString imagePath = "../../images";
+    const QString picturesLocation = QDesktopServices::storageLocation(QDesktopServices::PicturesLocation);
+    if (!picturesLocation.isEmpty())
+        imagePath = picturesLocation;
+    viewer.rootContext()->setContextProperty("imagePath", imagePath);
+
+    QString videoPath;
+    const QString moviesLocation = QDesktopServices::storageLocation(QDesktopServices::MoviesLocation);
+    if (!moviesLocation.isEmpty())
+        videoPath = moviesLocation;
+    viewer.rootContext()->setContextProperty("videoPath", videoPath);
 
 #ifdef SMALL_SCREEN_PHYSICAL
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationLockLandscape);

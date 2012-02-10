@@ -53,7 +53,7 @@ Rectangle {
 
     QtObject {
         id: d
-        property string openFileType
+        property real gripSize: 20
     }
 
     Rectangle {
@@ -65,9 +65,12 @@ Rectangle {
             id: content
             anchors {
                 top: parent.top
+                bottom: parent.bottom
                 left: parent.left
+                right: effectSelectionPanel.left
                 margins: 5
             }
+            gripSize: d.gripSize
             width: 600
             height: 600
         }
@@ -84,8 +87,6 @@ Rectangle {
                 item.anchors.top = content.top
                 item.anchors.left = content.left
                 item.anchors.right = content.right
-                item.height = content.height / 2
-                item.anchors.margins = 5
                 item.logging = root.perfMonitorsLogging
                 item.displayed = root.perfMonitorsVisible
                 item.init()
@@ -94,48 +95,55 @@ Rectangle {
 
         ParameterPanel {
             id: parameterPanel
-            enabled: numParameters >= 1
-            numParameters: content.effect ? content.effect.numParameters : 0
             anchors {
-                top: content.bottom
                 left: parent.left
                 bottom: parent.bottom
+                right: effectSelectionPanel.left
+                margins: 20
             }
-            width: content.width
-            onParam1ValueChanged: updateParameters()
+            gripSize: d.gripSize
         }
 
         EffectSelectionPanel {
             id: effectSelectionPanel
             anchors {
                 top: parent.top
-                left: content.right
+                bottom: fileOpen.top
                 right: parent.right
                 margins: 5
             }
-            height: 420
+            width: 300
             itemHeight: 40
              onEffectSourceChanged: {
                 content.effectSource = effectSource
-                updateParameters()
-            }
+                parameterPanel.model = content.effect.parameters
+             }
         }
 
         FileOpen {
             id: fileOpen
             anchors {
-                top: effectSelectionPanel.bottom
-                left: content.right
                 right: parent.right
                 bottom: parent.bottom
                 margins: 5
             }
+            width: effectSelectionPanel.width
+            height: 165
             buttonHeight: 32
+            topMargin: 10
         }
     }
 
-    Loader {
-        id: fileBrowserLoader
+    FileBrowser {
+        id: imageFileBrowser
+        anchors.fill: root
+        Component.onCompleted: fileSelected.connect(content.openImage)
+    }
+
+    FileBrowser {
+        id: videoFileBrowser
+        anchors.fill: root
+        Component.onCompleted: fileSelected.connect(content.openVideo)
     }
 
     Component.onCompleted: {
@@ -147,12 +155,12 @@ Rectangle {
 
     function init() {
         console.log("[qmlvideofx] main.init")
+        imageFileBrowser.folder = imagePath
+        videoFileBrowser.folder = videoPath
         content.init()
         performanceLoader.init()
-        if (fileName != "") {
-            d.openFileType = "video"
-            openFile(fileName)
-        }
+        if (fileName != "")
+            content.openVideo(fileName)
     }
 
     function qmlFramePainted() {
@@ -160,19 +168,12 @@ Rectangle {
             performanceLoader.item.qmlFramePainted()
     }
 
-    function updateParameters() {
-        if (content.effect.numParameters >= 1)
-            content.effect.param1Value = parameterPanel.param1Value
-    }
-
     function openImage() {
-        d.openFileType = "image"
-        showFileBrowser("../../images")
+        imageFileBrowser.show()
     }
 
     function openVideo() {
-        d.openFileType = "video"
-        showFileBrowser("../../videos")
+        videoFileBrowser.show()
     }
 
     function openCamera() {
@@ -181,25 +182,5 @@ Rectangle {
 
     function close() {
         content.openImage("qrc:/images/qt-logo.png")
-    }
-
-    function showFileBrowser(path) {
-        fileBrowserLoader.source = "FileBrowser.qml"
-        fileBrowserLoader.item.parent = root
-        fileBrowserLoader.item.anchors.fill = root
-        fileBrowserLoader.item.openFile.connect(root.openFile)
-        fileBrowserLoader.item.folder = path
-        inner.visible = false
-    }
-
-    function openFile(path) {
-        fileBrowserLoader.source = ""
-        if (path != "") {
-            if (d.openFileType == "image")
-                content.openImage(path)
-            else if (d.openFileType == "video")
-                content.openVideo(path)
-        }
-        inner.visible = true
     }
 }

@@ -1,8 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
-** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
+** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -35,6 +34,7 @@
 **
 **
 **
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -53,11 +53,15 @@ uniform float posY;
 
 void main()
 {
-    float h = diffractionIndex * 0.5 * radius;
-    vec2 targetSize = vec2(targetWidth, targetHeight);
+    vec2 tc = qt_TexCoord0;
     vec2 center = vec2(posX, posY);
     vec2 xy = gl_FragCoord.xy - center.xy;
     float r = sqrt(xy.x * xy.x + xy.y * xy.y);
-    vec2 new_xy = r < radius ? xy * (radius - h) / sqrt(radius * radius - r * r) : xy;
-    gl_FragColor = qt_Opacity * texture2D(source, (new_xy + center) / targetSize);
+    if (r < radius) {
+        float h = diffractionIndex * 0.5 * radius;
+        vec2 new_xy = r < radius ? xy * (radius - h) / sqrt(radius * radius - r * r) : xy;
+        vec2 targetSize = vec2(targetWidth, targetHeight);
+        tc = (new_xy + center) / targetSize;
+    }
+    gl_FragColor = qt_Opacity * texture2D(source, tc);
 }
