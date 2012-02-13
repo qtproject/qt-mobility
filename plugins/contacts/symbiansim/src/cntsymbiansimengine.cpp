@@ -54,15 +54,18 @@
 #include <QDebug>
 
 #include <centralrepository.h>
+#include <telconfigcrkeys.h>
 
-// Telephony Configuration API
-// Keys under this category are used in defining telephony configuration.
-const TUid KCRUidTelConfiguration = {0x102828B8};
-// Amount of digits to be used in contact matching.
-// This allows a customer to variate the amount of digits to be matched.
-const TUint32 KTelMatchDigits                               = 0x00000001;
 // Default match length
 const TInt KDefaultMatchLength(7);
+// Max number of extra digits that can be added in numbers matching when
+// Dynamic Matching is used.
+// Example:
+//   If 8 digits are configured to be used, then another 2 extra digits are
+//   used if available in both numbers.
+const TInt KExtraDigitForNumberCompare(2);
+//Default Dynamic Matching 
+const TInt KDefaultDynamicMatching(1);
 
 
 CntSymbianSimEngineData::CntSymbianSimEngineData()
@@ -96,10 +99,6 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
         return;
     }
     
-    // Get phone number match length from cenrep
-    d->m_phoneNumberMatchLen = KDefaultMatchLength;
-    TRAP_IGNORE(getMatchLengthL(d->m_phoneNumberMatchLen)); // ignore error and use default value
-
     if(d->m_simStore->storeInfo().m_storeName == KParameterValueSimStoreNameSdn) {
         // In case of SDN store we need to check if any SDN contacts exist to
         // determine if the store is supported or not
@@ -518,10 +517,8 @@ void CntSymbianSimEngine::setReadOnlyAccessConstraint(QContactDetail* detail) co
  */
 bool CntSymbianSimEngine::filter(const QContactFilter &filter, const QContact &contact)
 {
-    // Special handling for phonenumber matching:
-    // Matching is done from the right by using a configurable number of digits.
-    // Default number of digits is 7. So for example if we filter with number
-    // +358505555555 the filter should match to +358505555555 and 0505555555.
+    // Special handling for phone number matching:
+    // Matching is done from the right by using a configurable number of digits and algorithm. 
     if (filter.type() == QContactFilter::ContactDetailFilter) 
     {
         QContactDetailFilter f(filter);
@@ -529,28 +526,19 @@ bool CntSymbianSimEngine::filter(const QContactFilter &filter, const QContact &c
             f.detailFieldName() == QContactPhoneNumber::FieldNumber &&
             f.matchFlags() == QContactFilter::MatchPhoneNumber) 
         {
+            bool matchFound(false);
             QList<QContactPhoneNumber> pns = contact.details<QContactPhoneNumber>();
             foreach (QContactPhoneNumber pn, pns) {
-                // Best matching enabled
-                if(d->m_phoneNumberMatchLen == 0) {
-                    bool bestMatchFound(false);
-                    QString matchingNumber = f.value().toString();
-                    QString numberToMatch = pn.number();
-                    TRAP_IGNORE(
-                            bestMatchFound = CntSymbianSimPhoneNumberMatching::isBestMatchL(numberToMatch,matchingNumber);
-                    )
-                    if (bestMatchFound)
-                        return true;
-                }
-                else {
-                    // Default matching
-                    QString matchNumber = f.value().toString().right(d->m_phoneNumberMatchLen);
-                    QString number = pn.number().right(d->m_phoneNumberMatchLen);
-                    if (number == matchNumber)
-                        return true;
-                }
+                // Matching according to active configuration
+                QString matchingNumber = f.value().toString();
+                QString numberToMatch = pn.number();
+                TRAP_IGNORE(
+                    matchFound = CntSymbianSimPhoneNumberMatching::formatAndCompareL(numberToMatch,matchingNumber);
+                )
+                if (matchFound)
+                    break;
             }
-            return false;
+            return matchFound;
         }
     }
     return QContactManagerEngine::testFilter(filter, contact);
@@ -559,16 +547,27 @@ bool CntSymbianSimEngine::filter(const QContactFilter &filter, const QContact &c
 /*!
   Returns whether the supplied \a phonenumber is the best matching number.
  */
-TBool CntSymbianSimPhoneNumberMatching::isBestMatchL(const QString& numberToMatch, const QString& matchingNumber)
+TBool CntSymbianSimPhoneNumberMatching::formatAndCompareL(const QString& numberToMatch, const QString& matchingNumber)
 {
-    bool bestMatchFound(false);
+    // Format in Symbian style 
     TPtrC numberPtr(reinterpret_cast<const TUint16*>(numberToMatch.utf16()));
     TPtrC matchNumberPtr(reinterpret_cast<const TUint16*>(matchingNumber.utf16()));
     
-    if (CntSymbianSimPhoneNumberMatching::validateBestMatchingRulesL(numberPtr,matchNumberPtr)) {
-        bestMatchFound = true;
-    }
-    return bestMatchFound;
+    // Strip the special characters except leading '+'
+    RBuf numberA;
+    numberA.CleanupClosePushL();
+    numberA.CreateL(numberPtr);
+    CntSymbianSimPhoneNumberMatching::formatNumber(numberA);
+    RBuf numberB;
+    numberB.CleanupClosePushL();
+    numberB.CreateL(matchNumberPtr);
+    CntSymbianSimPhoneNumberMatching::formatNumber(numberB);
+  
+    bool matchFound = CntSymbianSimPhoneNumberMatching::compareNumbersL(numberA, numberB);
+    
+    // cleanup
+    CleanupStack::PopAndDestroy(2);
+    return matchFound;
 }
 
 /*!
@@ -608,210 +607,107 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
     return (*qtError == QContactManager::NoError);
 }
 
-/*
- * Get the match length setting used in MatchPhoneNumber type filtering.
- * \a matchLength Phone number digits to be used in matching (counted from
- * right).
- */
-void CntSymbianSimEngine::getMatchLengthL(int &matchLength)
-{
-    //Get number of digits used to match
-    CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);
-    CleanupStack::PushL(repository);
-    User::LeaveIfError(repository->Get(KTelMatchDigits, matchLength));
-    CleanupStack::PopAndDestroy(repository);
-}
-
-/*!
-  Validates the supplied \a phonenumber against best matching rules.
- */
-TBool CntSymbianSimPhoneNumberMatching::validateBestMatchingRulesL(const TDesC& phoneNumber, const TDesC& matchNumber)
-    {
-    RBuf numberA;
-    numberA.CleanupClosePushL();
-    numberA.CreateL(matchNumber);
-    TNumberType numberAType = (TNumberType) CntSymbianSimPhoneNumberMatching::formatAndCheckNumberType(numberA);
-    RBuf numberB;
-    numberB.CleanupClosePushL();
-    numberB.CreateL(phoneNumber);
-    TNumberType numberBType = (TNumberType) CntSymbianSimPhoneNumberMatching::formatAndCheckNumberType(numberB);
-
-    TBool match = (!numberB.Compare(numberA) ||
-                    CntSymbianSimPhoneNumberMatching::checkBestMatchingRules(numberA, numberAType, numberB, numberBType) ||
-                    CntSymbianSimPhoneNumberMatching::checkBestMatchingRules(numberB, numberBType, numberA, numberAType));
-    
-    // cleanup
-    CleanupStack::PopAndDestroy(2);
-    return match;
-    }
-
 /*!
   Removes non-digit chars except plus form the beginning.
   Checks if number matches to one of defined types.
  */
-TInt CntSymbianSimPhoneNumberMatching::formatAndCheckNumberType(TDes& number)
-    {
-    _LIT( KOneZeroPattern, "0*" );
-    _LIT( KTwoZerosPattern, "00*" );
-    _LIT( KPlusPattern, "+*" );
+void CntSymbianSimPhoneNumberMatching::formatNumber(TDes& number)
+{
     const TChar KPlus = TChar('+');
-    const TChar KZero = TChar('0');
     const TChar KAsterisk = TChar('*');
     const TChar KHash = TChar('#');
     
-    for( TInt pos = 0; pos < number.Length(); ++pos ) {
+    for( TInt pos = 0; pos < number.Length(); ++pos ){
         TChar chr = number[pos];
         if ( !chr.IsDigit() && !( pos == 0 && chr == KPlus  )
-                && !( chr == KAsterisk ) && !( chr == KHash ) ) {
+                && !( chr == KAsterisk ) && !( chr == KHash ) ){
             number.Delete( pos, 1 );
             --pos;
         }
     }
-    
-    TInt format;
-    
-    if (!number.Match(KTwoZerosPattern) && number.Length() > 2 && number[2] != KZero) {
-        format = ETwoZeros;
-    }
-    else if (!number.Match(KOneZeroPattern)&& number.Length() > 1 && number[1] != KZero) {
-        format = EOneZero;
-    }
-    else if (!number.Match(KPlusPattern) && number.Length() > 1 && number[1] != KZero) {
-        format = EPlus;
-    }
-    else if (number.Length() > 0 && number[0] != KZero && ( ( TChar ) number[0] ).IsDigit()) {
-        format = EDigit;
-    }
-    else {
-        format = EUnknown;
-    }
+}
 
-    return format;
-    }
-
-TBool CntSymbianSimPhoneNumberMatching::checkBestMatchingRules(
-        const TDesC& numberA, TNumberType numberAType,
-        const TDesC& numberB, TNumberType numberBType  )
-    {
+TBool CntSymbianSimPhoneNumberMatching::compareNumbersL(
+        const TDesC& numberA, const TDesC& numberB)
+{
     TBool result = EFalse;
     
-    // Rules for matching not identical numbers
-    // Rules details are presented in Best_Number_Matching_Algorithm_Description.doc
+    //Get number of digits used to match
+    TInt matchLength = KDefaultMatchLength;
+    TInt dynamicMatching = KDefaultDynamicMatching;
+   
+    CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);
+    CleanupStack::PushL(repository);
+    // Error handling is ignored as default values will be used if not found
+    repository->Get(KTelMatchDigits, matchLength);
+    repository->Get(KTelDynamicMatching, dynamicMatching);
     
-    // rule International-International 1
-    if (!result && numberAType == EPlus && numberBType == ETwoZeros) {
-        TPtrC numberAPtr = numberA.Right(numberA.Length() - 1);
-        TPtrC numberBPtr = numberB.Right(numberB.Length() - 2);
-        result = !(numberAPtr.Compare(numberBPtr));
-        if (result) {
-            return result;
-        }
-    }
-
-    // rule International-International 2
-    if (numberAType == EPlus && numberBType == EDigit) {
-        TPtrC numberAPtr = numberA.Right( numberA.Length() - 1 );
-        if (numberAPtr.Length() < numberB.Length()) {
-            TPtrC numberBPtr = numberB.Right( numberAPtr.Length() );
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-International 3
-    if (numberAType == ETwoZeros && numberBType == EDigit) {
-        TPtrC numberAPtr = numberA.Right(numberA.Length() - 2);
-        if (numberAPtr.Length() < numberB.Length()) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-Operator 1
-    if (numberAType == EOneZero && numberBType == EPlus
-            || numberAType == EDigit && numberBType == EPlus) {
-        TPtrC numberAPtr;
-        if (numberAType == EOneZero) {
-            numberAPtr.Set(numberA.Right(numberA.Length() - 1));
-        }
-        else {
-            numberAPtr.Set(numberA);
-        }
-        if (numberAPtr.Length() < numberB.Length() - 1) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-Operator 2
-    if (numberAType == EOneZero && numberBType == ETwoZeros
-            || numberAType == EDigit && numberBType == ETwoZeros) {
-        TPtrC numberAPtr;
-        if (numberAType == EOneZero) {
-            numberAPtr.Set(numberA.Right(numberA.Length() - 1));
-        }
-        else {
-            numberAPtr.Set(numberA);
-        }
-        if (numberAPtr.Length() < numberB.Length() - 2) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule International-Operator 3
-    if (numberAType == EOneZero && numberBType == EDigit
-            || numberAType == EDigit && numberBType == EDigit) {
-        TPtrC numberAPtr;
-        if (numberAType == EOneZero) {
-            numberAPtr.Set(numberA.Right( numberA.Length() - 1));
-        }
-        else {
-            numberAPtr.Set(numberA);
-        }
-        if (numberAPtr.Length() < numberB.Length()) {
-            TPtrC numberBPtr = numberB.Right(numberAPtr.Length());
-            result = !(numberAPtr.Compare(numberBPtr));
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    // rule Operator-Operator 1
-    if (numberAType == EOneZero && numberBType == EDigit) {
-        TPtrC numberAPtr = numberA.Right(numberA.Length() - 1);
-        result = !(numberAPtr.Compare(numberB));
-        if (result) {
-            return result;
-        }
-    }
+    bool dynamicMatch = dynamicMatching;
+    CleanupStack::PopAndDestroy(repository);
     
-    // rule North America Numbering Plan 1
-    if (numberAType == EDigit && numberBType == EPlus) {
-        TPtrC numberBPtr = numberB.Right(numberB.Length() - 1);
-        result = !(numberA.Compare(numberBPtr));
-        if (result) {
-            return result;
-        }
-    }
-
-    // More exceptional acceptance rules can be added here
-    // Keep rules updated in the document Best_Number_Matching_Algorithm_Description.doc
-
+    // digitsFromRightLimit is the limit of digits to be used for comparison
+    // when Dynamic Matching is used 
+    TInt digitsFromRightLimit = matchLength + KExtraDigitForNumberCompare;
+    
+    TInt lenDigitsA = CntSymbianSimPhoneNumberMatching::getLenExeludeLeadingPlusAndZeros(numberA);
+    TInt lenDigitsB = CntSymbianSimPhoneNumberMatching::getLenExeludeLeadingPlusAndZeros(numberB);
+    
+    // Compare the numbers:
+    // - If length of both numbers >= aDigitsFromRight, then:
+    //   > If Dynamic Matching is used then compare numbers with aDigitsFromRight
+    //     digits from right, but use more digits until a maximum of digitsFromRightLimit
+    //     if available in both numbers.
+    //   > If Dynamic Matching is not used then compare numbers with aDigitsFromRight
+    //     digits from right.
+    // - If the length of at least one number < aDigitsFromRight, the numbers must be
+    //   equal to match.
+    TInt minLength = Min( lenDigitsA, lenDigitsB );
+    if ( minLength >= matchLength ){
+        // Examples (i.e. aDigitsFromRight=8):
+        // dynamicMatch = False, (    "07 12345678" ==   "+32 7 12345678")? --> Yes ( 8 digits used)
+        // dynamicMatch = True,  (    "07 12345678" ==   "+32 7 12345678")? --> Yes ( 9 digits used)
+        // dynamicMatch = False, (  "0987 12345678" == "+32 987 12345678")? --> Yes ( 8 digits used)
+        // dynamicMatch = True,  (  "0987 12345678" == "+32 987 12345678")? --> Yes (10 digits used)
+        // dynamicMatch = False, ("041 11 12345678" ==  "+55 11 12345678")? --> Yes ( 8 digits used)
+        // dynamicMatch = True,  ("041 11 12345678" ==  "+55 11 12345678")? --> Yes (10 digits used)
+        TInt compareLength = (dynamicMatch) ? Min( minLength, digitsFromRightLimit )
+                                            : matchLength;
+        TPtrC numberAright = numberA.Right( compareLength );
+        TPtrC numberBright = numberB.Right( compareLength );
+        result = !( numberAright.Compare( numberBright ) );
+     }
+     else
+     {
+     // If numbers have different length excluding leading 0s they
+     // are different, otherwise we compare them excluding the 0s.
+         if ( lenDigitsA == lenDigitsB ){
+             TPtrC numberAright = numberA.Right( minLength );
+             TPtrC numberBright = numberB.Right( minLength );
+             result = !( numberAright.Compare( numberBright ) );
+         }
+     }
+    
     return result;
+}
+
+TInt CntSymbianSimPhoneNumberMatching::getLenExeludeLeadingPlusAndZeros(
+         const TDesC& aNumber)
+{
+    const TChar KPlus = TChar('+');
+    const TChar KZero = TChar('0');
+ 
+    // Get length of digits of aNumber excluding the leading '+' and '0's
+    TInt lenNumber = aNumber.Length();
+    TInt len = lenNumber;
+    if ( len > 0 && aNumber[0] == KPlus ){
+        len--;
     }
+
+    while ( len > 0 && aNumber[lenNumber - len] == KZero ){
+        len--;
+    }
+    return len;
+}
 
 QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {

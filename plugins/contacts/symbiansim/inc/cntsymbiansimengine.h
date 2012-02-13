@@ -94,12 +94,10 @@ class CntAbstractSimRequest;
 class CntSymbianSimPhoneNumberMatching
 {
 public:
-    enum TNumberType { ENotInitialized, EUnknown, EDigit, EPlus, EOneZero, ETwoZeros };
-    static TBool isBestMatchL(const QString& numberToMatch, const QString& matchingNumber);
-    static TBool validateBestMatchingRulesL(const TDesC& phoneNumber, const TDesC& matchNumber);
-    static TBool checkBestMatchingRules(const TDesC& numberA, TNumberType numberAType,
-                                             const TDesC& numberB, TNumberType numberBType);
-    static TInt formatAndCheckNumberType(TDes& number);
+    static TBool formatAndCompareL(const QString& numberToMatch, const QString& matchingNumber);
+    static TBool compareNumbersL(const TDesC& numberA, const TDesC& numberB);
+    static void formatNumber(TDes& number);
+    static TInt getLenExeludeLeadingPlusAndZeros(const TDesC& numberA);
 };
 
 class CntSymbianSimEngineData : public QSharedData
@@ -110,7 +108,6 @@ public:
     
     CntSimStore *m_simStore;
     QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;
-    int m_phoneNumberMatchLen;
 };
 
 class CntSymbianSimEngine : public QContactManagerEngine
@@ -165,7 +162,6 @@ public:
 
 private:
     bool executeRequest(QContactAbstractRequest *req, QContactManager::Error* qtError) const;
-    void getMatchLengthL(int &matchLength);
 
 private:
     QExplicitlySharedDataPointer<CntSymbianSimEngineData> d;
