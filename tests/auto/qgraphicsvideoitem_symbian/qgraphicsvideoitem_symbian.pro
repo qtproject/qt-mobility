@@ -5,5 +5,10 @@ MOBILITY = multimedia
 INCLUDEPATH += ../../../src/multimedia
 SOURCES += tst_qgraphicsvideoitem_symbian.cpp
 LIBS += -lcone -lavkon
+contains(QT_CONFIG, egl) {
+    LIBS *= -llibegl
+} else {
+    DEFINES += QT_NO_EGL
+}
 include (../../../common.pri)
 

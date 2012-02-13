@@ -42,5 +42,6 @@
 import QtQuick 1.0
 
 Image {
+    fillMode: Image.PreserveAspectFit
     smooth: true
 }

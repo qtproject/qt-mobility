@@ -41,7 +41,9 @@
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QtDeclarative/QDeclarativeContext>
 #include <QtGui/QApplication>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QGraphicsObject>
 #include "qmlapplicationviewer.h"
 #include "trace.h"
@@ -123,6 +125,12 @@ int main(int argc, char *argv[])
     QObject::connect(&paintEventMonitor, SIGNAL(targetPainted()),
                      rootObject, SLOT(qmlFramePainted()));
 #endif
+
+    QString videoPath;
+    const QString moviesLocation = QDesktopServices::storageLocation(QDesktopServices::MoviesLocation);
+    if (!moviesLocation.isEmpty())
+        videoPath = moviesLocation;
+    viewer.rootContext()->setContextProperty("videoPath", videoPath);
 
     QMetaObject::invokeMethod(rootObject, "init");
 
