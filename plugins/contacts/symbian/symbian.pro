@@ -5,6 +5,7 @@ include(../../../common.pri)
 
 ## quick platform check.
 IS_SYMBIAN_3_PS3 = no
+
 exists($${EPOCROOT}epoc32/data/z/system/install/productid_helen.sis) {
     IS_SYMBIAN_3_PS3 = yes
     message(S^3 1.11 hw79 platform)
@@ -14,6 +15,13 @@ contains(IS_SYMBIAN_3_PS3, no) {
     exists($${EPOCROOT}epoc32/rom/config/ncp110) {
         IS_SYMBIAN_3_PS3 = yes
         message(S^3 bridge platform)
+    }
+}
+
+contains(IS_SYMBIAN_3_PS3, no) {
+    exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.3.sis) {
+        IS_SYMBIAN_3_PS3 = yes
+        message(S^3 5.3)
     }
 }
 
