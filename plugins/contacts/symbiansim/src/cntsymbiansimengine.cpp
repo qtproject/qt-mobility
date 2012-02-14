@@ -54,7 +54,16 @@
 #include <QDebug>
 
 #include <centralrepository.h>
-#include <telconfigcrkeys.h>
+
+// Telephony Configuration API
+// Keys under this category are used in defining telephony configuration.
+const TUid KCRUidTelConfiguration = {0x102828B8};
+// Amount of digits to be used in contact matching.
+// This allows a customer to variate the amount of digits to be matched.
+const TUint32 KTelMatchDigits                               = 0x00000001;
+// Allows a customer to variate if dynamic match used in contact matching.
+// Legal values: true/false. Default value: true.
+const TUint32 KTelDynamicMatching                           = 0x00000002;
 
 // Default match length
 const TInt KDefaultMatchLength(7);
