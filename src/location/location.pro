@@ -21,6 +21,8 @@ contains(proj_enabled, yes) {
   include($$PWD/../3rdparty/proj.pri)
 }
 
+location_fix_enabled = no
+
 contains(location_fix_enabled, yes) {
 	DEFINES += LOCATION_FIX_QTM_1550
 }
@@ -57,8 +59,7 @@ symbian {
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
                        notificationcallback_s60_p.h \
-                       notificationsatellitecallback_s60_p.h \
-                       qmlTimer.h
+                       notificationsatellitecallback_s60_p.h
 
     contains(lbt_enabled, yes) {
         PRIVATE_HEADERS += \
@@ -81,8 +82,7 @@ symbian {
 
     SOURCES += qgeopositioninfosource_s60.cpp \
                qgeosatelliteinfosource_s60.cpp \
-               qmlbackendao_s60.cpp \
-               qmlTimer.cpp
+               qmlbackendao_s60.cpp
 
     contains(lbt_enabled, yes) {
         SOURCES += \

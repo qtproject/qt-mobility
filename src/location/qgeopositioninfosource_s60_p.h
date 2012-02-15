@@ -61,8 +61,6 @@
 #include "qgeopositioninfosource.h"
 #include "qmlbackendao_s60_p.h"
 #include "notificationcallback_s60_p.h"
-#include <QTimer>
-#include "qmlTimer.h"
 
 #define MAX_SIZE 25
 
@@ -188,22 +186,10 @@ public:
     inline TPositionModuleId getRequestUpdateModuleID() {
         return mReqModuleId;
     }
-    
-    TBool isUpdateOn(){
-    	return mStartUpdates;
-    }
-    
-    TBool isRqUpdateOn(){
-    	return mReqUpdates;
-    }
-    
-    TBool isUpdates();
-    
-    void startBackupUpdate();
-    
+
 public slots :
     // for request update
-    void requestUpdate(int timeout = 15000);
+    void requestUpdate(int timeout = 5000);
 
     // starts the regular updates
     virtual void startUpdates();
@@ -238,15 +224,7 @@ private:
 
     void TPositionInfo2QGeoPositionInfo(HPositionGenericInfo *mPosInfo,
                                         QGeoPositionInfo& posUpdate);
-                                        
-    TInt getAccurateSatMethod();
-    
-    TInt getAccurateNwMethod();
-    
-    void StartTimer();
-    
-    void setBackupUpdateAO(TInt nIndex);
-    
+
 protected:
     void connectNotify(const char *aSignal);
 
@@ -272,15 +250,11 @@ private:
     * Active object for requestUpdate
     */
     CQMLBackendAO * mReqUpdateAO;
-    
-    CQMLBackendAO * mReqBkUpdateAO;
 
     /**
     * Active object for regular updates.
     */
     CQMLBackendAO * mRegUpdateAO;
-    
-    CQMLBackendAO * mRegBkUpdateAO;
 
     /**
      * Positioner server
@@ -317,29 +291,21 @@ private:
 
     // mutex for RegUpdate Active Ojbect
     QMutex          m_mutex_RegUpAO;
-    
-    QMutex          m_mutex_BkRegUpAO;
 
     /*
      * maintain the startUpdates status
      */
     TBool mStartUpdates;
-    TBool mReqUpdates;
 
     TBool mRegularUpdateTimedOut;
 
     // To check if update interval is already set from application
     TBool mUpdateIntervalSet;
-    
-    TBool mPositionUpdate;
 
     /*
      * flags for the modules
      */
     TUint8 mModuleFlags;
-    
-    CQMLTimer* mTimer;
-
 };
 
 QTM_END_NAMESPACE

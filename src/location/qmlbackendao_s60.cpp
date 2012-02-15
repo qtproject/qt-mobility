@@ -55,9 +55,7 @@ CQMLBackendAO::CQMLBackendAO() :
         mPosInfo(NULL),
         mRequester(NULL),
         mRequesterSatellite(NULL),
-        mRequestType(RequestType(0)),
-        mPosUpdate(false),
-        mUpdateHold(false)        
+        mRequestType(RequestType(0))
 {
 #if !defined QT_NO_DEBUG
 	qDebug() << "CQMLBackendAO::CQMLBackendAO\n" ;
@@ -102,8 +100,6 @@ TInt CQMLBackendAO::ConstructL(QObject *aRequester, RequestType  aRequestType,
 #if !defined QT_NO_DEBUG
 	qDebug() << "CQMLBackendAO::ConstructL\n" ;
 #endif
-    TInt error = KErrNone;
-    RPositionServer PosServer;
 
     if (aRequester->inherits("QGeoSatelliteInfoSource"))
         mRequesterSatellite = static_cast<CQGeoSatelliteInfoSourceS60*>(aRequester);
@@ -113,33 +109,30 @@ TInt CQMLBackendAO::ConstructL(QObject *aRequester, RequestType  aRequestType,
     mRequestType = aRequestType;
 
     if ((mRequestType == RegularUpdate) || (mRequestType == OnceUpdate)) {
+
+        RPositionServer PosServer;
+
         if (aRequester->inherits("QGeoSatelliteInfoSource"))
             PosServer = mRequesterSatellite->getPositionServer();
         else
             PosServer = mRequester->getPositionServer();
 
-        error  =  mPositioner.Open(PosServer, aModId);
+#if !defined QT_NO_DEBUG
+        qDebug() << "CQMLBackendAO::ConstructL, mPositioner.Open";
+#endif
+        User::LeaveIfError(mPositioner.Open(PosServer, aModId));
 
-        if (error != KErrNone){
-        		mPositioner.Close();
-            return error;
-        }
-
-        CleanupClosePushL(mPositioner);
-
-        error = mPositioner.SetRequestor(CRequestor::ERequestorService ,
-                                         CRequestor::EFormatApplication, _L("QTmobility_Location"));
-
-        CleanupStack::Pop(1);
-
-        if (error != KErrNone)
-            return error;
+#if !defined QT_NO_DEBUG
+        qDebug() << "CQMLBackendAO::ConstructL, mPositioner.SetRequestor";
+#endif
+        User::LeaveIfError(mPositioner.SetRequestor(CRequestor::ERequestorService ,
+                CRequestor::EFormatApplication, _L("QTmobility_Location")));
 
     }
 
     CActiveScheduler::Add(this); // Add to scheduler
 
-    return error;
+    return ETrue;
 }
 
 //
@@ -165,12 +158,14 @@ CQMLBackendAO::~CQMLBackendAO()
         RPositionServer posServer;
 
         //done only by the position server Active Object
-        if (mRequester)
+        if (mRequester) {
             posServer = mRequester->getPositionServer();
-        else
+            posServer.Close();
+        }
+        else if(mRequesterSatellite) {
             posServer = mRequesterSatellite->getPositionServer();
-
-        posServer.Close();
+            posServer.Close();
+        }
     }
 }
 
@@ -347,8 +342,6 @@ void CQMLBackendAO::requestUpdate(int aTimeout)
 //
 void CQMLBackendAO::cancelUpdate()
 {
-	mUpdateHold = true;
-	resetPosUpdState();
 #if !defined QT_NO_DEBUG
 	qDebug() << "CQMLBackendAO::cancelUpdate\n" ;
 #endif
@@ -369,14 +362,13 @@ void CQMLBackendAO::handleDeviceNotification(int aError)
 
             //module not found
         case KErrNotFound :
-            if (mRequester){
-            	if (mRequester->isUpdateOn()){
-                mRequester->updateDeviceStatus();
-              }
-            }
-            else
-                mRequesterSatellite->updateDeviceStatus();
-            break;
+        if (mRequester) {
+            mRequester->updateDeviceStatus();
+        }
+        else {
+            mRequesterSatellite->updateDeviceStatus();
+        }
+        break;
 
             //request has been successfully cancelled
         case KErrCancel :
@@ -429,30 +421,26 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
                 SetActive();
             }
 
-            if (mRequester) {
-            	if ((mRequester->isUpdateOn())|| mRequester->isRqUpdateOn()){
-                mRequester->updatePosition(positionInfo, aError);
-                delete positionInfo;
-                mPosUpdate = true;
-              }
-            } else {
-                if (mRequesterSatellite && ((aError != KErrTimedOut) || (mRequestType != RegularUpdate))) {
-                    mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
-                }
+        if (mRequester) {
+            mRequester->updatePosition(positionInfo, aError);
+            delete positionInfo;
+        }
+        else {
+            if ((aError != KErrTimedOut) || (mRequestType != RegularUpdate)) {
+                mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
             }
+        }
 
             break;
 
         default :
-            if (mRequester) {
-            		if ((mRequester->isUpdateOn()) || mRequester->isRqUpdateOn()){
-                	mRequester->updatePosition(positionInfo, aError); // positionInfo will be NULL
-                	mPosUpdate = true;
-                }
-            } else {
-                mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
-            }
-            break;
+        if (mRequester) {
+            mRequester->updatePosition(positionInfo, aError); // positionInfo will be NULL
+        }
+        else {
+            mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
+        }
+        break;
 
     }
 }
@@ -529,9 +517,9 @@ void CQMLBackendAO::startUpdates()
         if (mRequester) {
             initializePosInfo();
             mPositioner.NotifyPositionUpdate(*mPosInfo , iStatus);
-            mUpdateHold = false;
-        } else {
-			mPosSatInfo.ClearSatellitesInView();
+        }
+        else {
+            mPosSatInfo.ClearSatellitesInView();
             mPositioner.NotifyPositionUpdate(mPosSatInfo , iStatus);
 		}
 		
