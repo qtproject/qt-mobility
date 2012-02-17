@@ -2367,7 +2367,7 @@ bool CFSEngine::message(QMessage* message, const QMessageId& id) const
     if (err == KErrNone) {
         MEmailMessage* fsMessage = NULL;
         TRAP(err, fsMessage = mailbox->MessageL(messageId));
-        if (err == KErrNone) {
+        if (err == KErrNone && fsMessage) {
             TRAP(err, CreateQMessageL(message, *fsMessage));
             if (err == KErrNone) {
                 retVal = true;
@@ -2412,6 +2412,9 @@ bool CFSEngine::sendEmail(QMessage &message)
 
 void CFSEngine::CreateQMessageL(QMessage* aQMessage, const MEmailMessage& aFSMessage) const
 {
+    if ( !aQMessage ) {
+        User::Leave(KErrArgument);
+    }
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(*aQMessage);
 
     aQMessage->setType(QMessage::Email);
