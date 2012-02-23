@@ -1657,7 +1657,11 @@ CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefL( const QString &
 CMdEPropertyDef *QDocumentGalleryMDSUtility::GetMDSPropertyDefForMDS25L( const QString &property,
     CMdENamespaceDef& defaultNameSpace )
 {
-    if (property == QDocumentGallery::fileSize.name()) {
+    if (property == QDocumentGallery::artist.name()) {
+        CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::MediaObject::KMediaObject );
+        CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::MediaObject::KArtistProperty );
+        return &propDef;
+    } else if (property == QDocumentGallery::fileSize.name()) {
         CMdEObjectDef& def = defaultNameSpace.GetObjectDefL( MdeConstants::Object::KBaseObject );
         CMdEPropertyDef& propDef = def.GetPropertyDefL( MdeConstants::Object::KSizeProperty );
         return &propDef;
