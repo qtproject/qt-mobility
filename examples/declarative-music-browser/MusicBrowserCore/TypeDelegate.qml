@@ -67,7 +67,7 @@ Item {
         id: countLabel
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: typeIcon.bottom
-        text: typeInfo.metaData.count
+        text: parseInt(typeInfo.metaData.count) || 0
         font.pointSize: 30
         color: "gray"
     }

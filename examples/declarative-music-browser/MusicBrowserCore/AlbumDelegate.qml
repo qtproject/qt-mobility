@@ -45,6 +45,7 @@ Package {
     property string state
     property int viewWidth: 0
     property int viewHeight: 0
+    property string artist
 
     signal clicked
 
@@ -192,7 +193,7 @@ Package {
                 model: DocumentGalleryModel {
                     rootType: DocumentGallery.Audio
                     rootItem: itemId
-                    properties: [ "trackNumber", "title", "duration" ]
+                    properties: [ "trackNumber", "title", "duration", "AlbumArtist" ]
                     sortProperties: [ "trackNumber" ]
                 }
                 delegate: SongDelegate { width: songColumn.width }
@@ -207,7 +208,7 @@ Package {
             model: DocumentGalleryModel {
                 rootType: DocumentGallery.Audio
                 rootItem: itemId
-                properties: [ "trackNumber", "title", "duration" ]
+                properties: [ "trackNumber", "title", "duration", "AlbumArtist" ]
                 sortProperties: [ "trackNumber" ]
             }
             delegate: SongDelegate { width: parent.width }
