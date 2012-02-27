@@ -158,7 +158,10 @@ void CCntBackupRestoreAgent::CreateBackupRegistrationFileL(const TDesC& aFileNam
 		
 	HBufC* nameAndExt = NULL;
 	nameAndExt = HBufC::NewLC(KSqLiteFilePrefix().Length() + parseFileName.NameAndExt().Length());
-	nameAndExt->Des().Append(KSqLiteFilePrefix);
+    if (parseFileName.NameAndExt().Compare(KContactsIniFileName) != 0) 
+        {
+        nameAndExt->Des().Append(KSqLiteFilePrefix);
+        }                                             
 	nameAndExt->Des().Append(parseFileName.NameAndExt());
 
 	// Convert filename and extension to UTF8 before writing to file.

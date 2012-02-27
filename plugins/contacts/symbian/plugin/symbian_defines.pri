@@ -1,5 +1,5 @@
 symbian: {
-    exists($${EPOCROOT}epoc32/data/z/system/install/productid_helen.sis) | exists($${EPOCROOT}epoc32/rom/config/ncp110) {
+    exists($${EPOCROOT}epoc32/data/z/system/install/productid_helen.sis) | exists($${EPOCROOT}epoc32/rom/config/ncp110) | exists($${EPOCROOT}epoc32/release/winscw/udeb/z/system/install/series60v5.3.sis) {
         DEFINES += SYMBIAN_BACKEND_USE_CNTMODEL_V2
             
         # This will enable signals to be emitted sychronously with every
