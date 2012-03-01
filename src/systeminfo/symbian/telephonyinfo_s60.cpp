@@ -256,8 +256,6 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
     m_networkMode = m_networkInfoV1.iMode;
     m_previousNetworkMode = m_networkMode;
 
-    m_initializing = false;
-
     startMonitoring();
  TRACES (qDebug() << "CCellNetworkInfo::CCellNetworkInfo--->");
 }
@@ -431,8 +429,6 @@ CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo(CTelephony &telephony
     m_networkStatus = m_networkRegistrationV1.iRegStatus;
     m_previousNetworkStatus = m_networkStatus;
 
-    m_initializing = false;
-
     startMonitoring();
  TRACES (qDebug() << "CCellNetworkRegistrationInfo::CCellNetworkRegistrationInfo<---");
 }
@@ -502,8 +498,6 @@ CCellSignalStrengthInfo::CCellSignalStrengthInfo(CTelephony &telephony) : CTelep
     m_signalBar = m_signalStrengthV1.iBar;
     m_previousSignalBar = m_signalBar;
 
-    m_initializing = false;
-
     startMonitoring();
  TRACES (qDebug() << "CCellSignalStrengthInfo::CCellSignalStrengthInfo--->");
 }
@@ -518,6 +512,7 @@ void CCellSignalStrengthInfo::RunL()
  TRACES (qDebug() << "CCellSignalStrengthInfo::RunL<---");
     if (m_initializing) {
         CTelephonyInfo::RunL();
+        m_initializing = false;
     } else {
         if (iStatus != KErrNone) return; //To avoid looping if app doesn't have ReadDeviceData caps
         m_cellNetworkSignalStrength = m_signalStrengthV1.iSignalStrength;
