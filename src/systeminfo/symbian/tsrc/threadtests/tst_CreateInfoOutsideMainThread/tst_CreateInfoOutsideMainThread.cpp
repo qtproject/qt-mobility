@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@ class ThreadBase : public QThread
 {
     Q_OBJECT
 public:
-    
+
     void run() {
 #ifdef SHOWDEBUGS
         qDebug()<<"Thread::run - create object in thread: "<<thread()->currentThreadId();
@@ -65,7 +65,7 @@ public:
 #endif//SHOWDEBUGS
         MainThreadRunningSemaphore.release();
     }
-    
+
     virtual void construct() = 0;
 };
 
@@ -114,7 +114,7 @@ class QSystemStorageInfoThread : public ThreadBase
 class tst_QSystemInfo_CreateInfoOutsideMainThread : public QObject
 {
     Q_OBJECT
-    
+
 private:
     void runThread(ThreadBase& testThread) {
         testThread.start();
