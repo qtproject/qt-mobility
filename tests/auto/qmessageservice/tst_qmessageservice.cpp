@@ -173,10 +173,8 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
 
-/* temporarily disabled to get continuous integration working again
     void testQueryMessages();
     void testQueryMessages_data();
-*/
 
     void testCountMessages();
     void testCountMessages_data();
@@ -506,7 +504,6 @@ void tst_QMessageService::cleanupTestCase()
 {
 }
 
-/* temporarily disabled to get continuous integration working again
 void tst_QMessageService::testQueryMessages()
 {
     QFETCH(QMessageFilter, filter);
@@ -576,7 +573,6 @@ void tst_QMessageService::testQueryMessages()
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
-*/
 
 void tst_QMessageService::testQueryCountData()
 {
@@ -2072,12 +2068,10 @@ void tst_QMessageService::testQueryCountData()
 #endif
 }
 
-/* temporarily disabled to get continuous integration working again
 void tst_QMessageService::testQueryMessages_data()
 {
     testQueryCountData();
 }
-*/
 
 void tst_QMessageService::testCountMessages()
 {
