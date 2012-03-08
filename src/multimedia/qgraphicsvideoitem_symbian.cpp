@@ -162,7 +162,6 @@ public:
     void _q_present();
     void _q_updateNativeSize();
     void _q_serviceDestroyed();
-    void _q_mediaObjectDestroyed();
 
     static QGraphicsVideoItemPrivate *getPtrHelper(QGraphicsVideoItem *item);
 
@@ -198,7 +197,7 @@ private:
     QMediaService *m_service;
     bool m_serviceSupportsRendererControl;
     bool m_rendererControlError;
-    QMediaObject *m_mediaObject;
+    QPointer<QMediaObject> m_mediaObject;
     Qt::AspectRatioMode m_aspectRatioMode;
     QPointer<QGraphicsView> m_viewport;
     QGraphicsView::ViewportUpdateMode m_savedViewportUpdateMode;
@@ -906,12 +905,11 @@ QGraphicsVideoItemPrivate::QGraphicsVideoItemPrivate(QGraphicsVideoItem *parent)
     ,   m_service(0)
     ,   m_serviceSupportsRendererControl(true)
     ,   m_rendererControlError(false)
-    ,   m_mediaObject(0)
     ,   m_aspectRatioMode(Qt::KeepAspectRatio)
     ,   m_viewport(0)
     ,   m_savedViewportUpdateMode(QGraphicsView::FullViewportUpdate)
     ,   m_viewportTransparencyEnabled(false)
-    ,   m_nativeSize(320, 240)
+    ,   m_rect(0, 0, 320, 240)
     ,   m_screenSize(QApplication::desktop()->size())
     ,   m_widgetPaintDevice(true)
 {
@@ -1086,13 +1084,6 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
         m_service->disconnect(q);
     m_service = 0;
     destroyImpl();
-}
-
-void QGraphicsVideoItemPrivate::_q_mediaObjectDestroyed()
-{
-    TRACE("QGraphicsVideoItemPrivate::_q_mediaObjectDestroyed" << qtThisPtr());
-    m_mediaObject = 0;
-    _q_serviceDestroyed();
 }
 
 QGraphicsVideoItemPrivate *QGraphicsVideoItemPrivate::getPtrHelper(QGraphicsVideoItem *item)
@@ -1413,7 +1404,7 @@ QSizeF QGraphicsVideoItem::size() const
 
 void QGraphicsVideoItem::setSize(const QSizeF &size)
 {
-    d_func()->setSize(size);
+    d_func()->setSize(size.isValid() ? size : QSizeF(0, 0));
 }
 
 QSizeF QGraphicsVideoItem::nativeSize() const

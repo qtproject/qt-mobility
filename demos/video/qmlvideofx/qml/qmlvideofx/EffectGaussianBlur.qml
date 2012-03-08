@@ -42,34 +42,44 @@
 // Based on http://www.geeks3d.com/20100909/shader-library-gaussian-blur-post-processing-filter-in-glsl/
 
 import QtQuick 1.0
+import Qt.labs.shaders 1.0
 
 Item {
+    id: root
+    property bool divider: true
+    property real dividerValue: 0.5
+    property ListModel parameters: ListModel {
+        ListElement {
+            name: "radius"
+            value: 0.5
+        }
+    }
+
     property alias targetWidth: verticalShader.targetWidth
     property alias targetHeight: verticalShader.targetHeight
     property alias source: verticalShader.source
 
-    // Constant properties which must be supported by every effect
-    property int numParameters: 1
-    property bool supportsDivider: true
-
-    property real param1Value: 0.5
-    property real dividerValue: 0.5
-
     Effect {
         id: verticalShader
         anchors.fill:  parent
-        property real dividerValue: parent.dividerValue
-        property real blurSize: 4.0 * parent.param1Value / targetWidth
-
+        dividerValue: parent.dividerValue
+        property real blurSize: 4.0 * parent.parameters.get(0).value / targetHeight
         fragmentShaderFilename: "shaders/gaussianblur_v.fsh"
+    }
 
-        Effect {
-            id: horizontalShader
-            anchors.fill:  parent
-            property real dividerValue: parent.dividerValue
-            property real blurSize: parent.blurSize
+    Effect {
+        id: horizontalShader
+        anchors.fill: parent
+        dividerValue: parent.dividerValue
+        property real blurSize: 4.0 * parent.parameters.get(0).value / parent.targetWidth
+        fragmentShaderFilename: "shaders/gaussianblur_h.fsh"
+        source: horizontalShaderSource
 
-            fragmentShaderFilename: "shaders/gaussianblur_h.fsh"
+        ShaderEffectSource {
+            id: horizontalShaderSource
+            sourceItem: verticalShader
+            smooth: true
+            hideSource: true
         }
     }
 }

@@ -766,8 +766,13 @@ TAccept CStateClosed::AcceptRequestL(CReqSetOwnCard* aRequest)
 */    
 TAccept CStateClosed::AcceptRequestL(CReqBackupRestoreBegin* aRequest)
     {
-    // Backup/restore can take place from this state without doing anything so
-    // simply complete request.
+    // Backup/restore can take place from this state so close the files.
+    // First reset collection, since it construct views based on table 
+    // Reset will fail if called after closing tables 
+    iPersistenceLayer.FactoryL().GetCollectorL().Reset(); 
+    // Close the file to allow the backup/restore to take place.    
+    iPersistenceLayer.ContactsFileL().Close();
+    iStateMachine.SetCurrentStateL(iStateMachine.StateBackupRestore());
     aRequest->Complete();
     return EProcessed;
     }

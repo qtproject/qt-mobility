@@ -153,9 +153,54 @@ void CDatabaseManagerServer::initDbPath()
       }
   }
   
+  //Merge the Db files,if there are multiple DB's.
+  mergeDbFiles(dir.path(), dbName);
+    
   iDb->open();
   }
 
+QStringList CDatabaseManagerServer::getExistingDbfiles(const QString &dirPath)
+{
+    QDir dir(dirPath);
+    QStringList filters;
+    dir.setSorting(QDir::Time);
+    
+    filters << "*.db";
+    dir.setNameFilters(filters);
+    
+    return (dir.entryList(QDir::Files));
+}
+
+void CDatabaseManagerServer::mergeDbFiles(const QString &dbDirPath, const QString &dbFileName)
+{
+    QStringList dbList = getExistingDbfiles(dbDirPath);
+    if(dbList.contains(dbFileName)) {
+        //Remove dstDb
+        dbList.removeAll(dbFileName);
+        int dbListCount = dbList.count();
+        if(dbListCount > 0) {
+            QString dstDbFileName = dbDirPath + QDir::separator() + dbFileName;          
+            ServiceDatabase *dstDatabase = new ServiceDatabase();
+            dstDatabase->setDatabasePath(dstDbFileName);
+            //Merge the DB's
+            QString srcDbFileName;
+            for(int i = 0; i < dbListCount; i++) {
+                srcDbFileName = dbDirPath + QDir::separator() + dbList[i];
+                //Merge the src DB with dst DB.
+                if(dstDatabase->mergeDatabase(srcDbFileName)) {
+  #ifdef QT_SFW_SERVICEDATABASE_DEBUG
+                  qDebug() << "CDatabaseManagerServer::initDbPath():-"
+                      << "dstDatabase->mergeDatabase Success";
+  #endif             
+                QFile::remove(srcDbFileName);
+                }
+            }
+            delete dstDatabase;            
+        }
+    }
+
+}
+        
 void CDatabaseManagerServer::DiscoverServices()
 {
   QString path = QDir::toNativeSeparators(QCoreApplication::applicationDirPath());

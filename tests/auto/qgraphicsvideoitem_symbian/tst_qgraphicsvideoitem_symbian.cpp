@@ -55,6 +55,10 @@
 #include <aknenv.h>
 #include <aknappui.h>
 
+#ifndef QT_NO_EGL
+#include <egl/egl.h>
+#endif
+
 QT_USE_NAMESPACE
 
 static const QString FileName = "e:/test.mp4";
@@ -69,7 +73,15 @@ enum PreferredRenderingPath
     PreferredRenderingPathDirect
 };
 
+enum ActualRenderingPath
+{
+    ActualRenderingPathNone,
+    ActualRenderingPathRenderer = PreferredRenderingPathRenderer,
+    ActualRenderingPathDirect = PreferredRenderingPathDirect
+};
+
 Q_DECLARE_METATYPE(PreferredRenderingPath)
+Q_DECLARE_METATYPE(ActualRenderingPath)
 
 #define WAIT_FOR_CONDITION(condition, ms) \
 { \
@@ -104,12 +116,6 @@ private:
     void setPreferredRenderingPath(PreferredRenderingPath path);
     void setFullScreen(bool enabled);
 
-    enum ActualRenderingPath
-    {
-        ActualRenderingPathNone,
-        ActualRenderingPathRenderer = PreferredRenderingPathRenderer,
-        ActualRenderingPathDirect = PreferredRenderingPathDirect
-    };
     ActualRenderingPath actualRenderingPath() const;
 
 private slots:
@@ -123,6 +129,7 @@ private:
     QtTestGraphicsView *m_view;
     QGraphicsScene *m_scene;
     QtTestGraphicsVideoItem *m_videoItem;
+    bool m_eglEndpointSupport;
 };
 
 class QtTestGraphicsView : public QGraphicsView
@@ -198,7 +205,16 @@ void tst_QGraphicsVideoItemSymbian::initTestCase()
     m_view = 0;
     m_scene = 0;
     m_videoItem = 0;
+    m_eglEndpointSupport = false;
+#ifndef QT_NO_EGL
+    const EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (display != EGL_NO_DISPLAY) {
+        if (eglInitialize(display, 0, 0) == EGL_TRUE)
+            m_eglEndpointSupport = (eglGetProcAddress("eglCreateEndpointNOK") != 0);
+    }
+#endif
     qRegisterMetaType<PreferredRenderingPath>();
+    qRegisterMetaType<ActualRenderingPath>();
 }
 
 void tst_QGraphicsVideoItemSymbian::init()
@@ -284,7 +300,7 @@ void tst_QGraphicsVideoItemSymbian::setFullScreen(bool enabled)
     m_videoItem->setAspectRatioMode(mode);
 }
 
-tst_QGraphicsVideoItemSymbian::ActualRenderingPath tst_QGraphicsVideoItemSymbian::actualRenderingPath() const
+ActualRenderingPath tst_QGraphicsVideoItemSymbian::actualRenderingPath() const
 {
     ActualRenderingPath path = ActualRenderingPathNone;
     static const QString property = "_q_currentVideoRenderingPath";
@@ -320,23 +336,34 @@ void tst_QGraphicsVideoItemSymbian::resetInactivityTime()
 void tst_QGraphicsVideoItemSymbian::specifyPreferredRenderingPath()
 {
     QFETCH(PreferredRenderingPath, preferredRenderingPath);
+    QFETCH(ActualRenderingPath, actualRenderingPath);
     setPreferredRenderingPath(preferredRenderingPath);
     play();
-    QVERIFY(actualRenderingPath() == preferredRenderingPath);
+    QVERIFY(this->actualRenderingPath() == actualRenderingPath);
 }
 
 void tst_QGraphicsVideoItemSymbian::specifyPreferredRenderingPath_data()
 {
     QTest::addColumn<PreferredRenderingPath>("preferredRenderingPath");
-    QTest::newRow("direct") << PreferredRenderingPathDirect;
-    QTest::newRow("renderer") << PreferredRenderingPathRenderer;
+    QTest::addColumn<ActualRenderingPath>("actualRenderingPath");
+        QTest::newRow("direct") << PreferredRenderingPathDirect
+                                << ActualRenderingPathDirect;
+    if (m_eglEndpointSupport)
+        QTest::newRow("renderer") << PreferredRenderingPathRenderer
+                                  << ActualRenderingPathRenderer;
+    else
+        QTest::newRow("renderer") << PreferredRenderingPathRenderer
+                                  << ActualRenderingPathDirect;
 }
 
 void tst_QGraphicsVideoItemSymbian::autoFullScreenIn()
 {
     setPreferredRenderingPath(PreferredRenderingPathAuto);
     play();
-    QVERIFY(actualRenderingPath() == ActualRenderingPathRenderer);
+    if (m_eglEndpointSupport)
+        QVERIFY(actualRenderingPath() == ActualRenderingPathRenderer);
+    else
+        QVERIFY(actualRenderingPath() == ActualRenderingPathDirect);
     m_videoItem->savePaintCount();
     setFullScreen(true);
     m_videoItem->waitForPaint();
@@ -353,7 +380,10 @@ void tst_QGraphicsVideoItemSymbian::autoFullScreenOut()
     m_videoItem->savePaintCount();
     setFullScreen(false);
     m_videoItem->waitForPaint();
-    QVERIFY(actualRenderingPath() == ActualRenderingPathRenderer);
+    if (m_eglEndpointSupport)
+        QVERIFY(actualRenderingPath() == ActualRenderingPathRenderer);
+    else
+        QVERIFY(actualRenderingPath() == ActualRenderingPathDirect);
 }
 
 QTEST_MAIN(tst_QGraphicsVideoItemSymbian)

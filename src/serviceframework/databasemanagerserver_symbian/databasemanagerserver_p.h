@@ -77,6 +77,9 @@ class CDatabaseManagerServer : public CServer2
     private:
         void initDbPath();        
         
+        QStringList getExistingDbfiles(const QString &dirPath);
+        void mergeDbFiles(const QString &dbDirPath, const QString &dbFileName);
+        
         static const TInt timeoutInterval;
         int iSessionCount;        
         CPeriodic *iPeriodic;

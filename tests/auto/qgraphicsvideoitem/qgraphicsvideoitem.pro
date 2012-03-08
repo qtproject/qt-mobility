@@ -6,8 +6,14 @@ SOURCES += tst_qgraphicsvideoitem.cpp
 
 include (../../../common.pri)
 
-symbian: TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
-
+symbian {
+    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
+    contains(QT_CONFIG, egl) {
+        LIBS *= -llibegl
+    } else {
+        DEFINES += QT_NO_EGL
+    }
+}
 
 CONFIG += mobility
 MOBILITY = multimedia

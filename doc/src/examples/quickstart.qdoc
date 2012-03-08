@@ -177,7 +177,7 @@ on which parts of an API is utilized by an application.
 \row
     \o \l {Messaging}
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData
-    \o Cellular TrackerReadAccess
+    \o Cellular TrackerReadAccess TrackerWriteAccess
 \row
     \o \l {Publish And Subscribe}
     \o Capability depends on P&S value being read/written. API itself doesn't require any capability.

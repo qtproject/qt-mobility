@@ -53,7 +53,11 @@ Rectangle {
 
     QtObject {
         id: d
-        property string openFileType
+        property bool dialogShown: (fileOpenContainer.state == "shown" ||
+                                    effectSelectionPanel.state == "shown" ||
+                                    videoFileBrowser.shown ||
+                                    imageFileBrowser.shown)
+        property real gripSize: 40
     }
 
     // Create ScreenSaver element via Loader, so this app will still run if the
@@ -64,14 +68,28 @@ Rectangle {
 
     Loader {
         id: performanceLoader
+
+        Connections {
+            target: d
+            onDialogShownChanged:
+                if (performanceLoader.item)
+                    performanceLoader.item.enabled = !d.dialogShown
+            ignoreUnknownSignals: true
+        }
+
         function init() {
             console.log("[qmlvideofx] performanceLoader.init logging " + root.perfMonitorsLogging + " visible " + root.perfMonitorsVisible)
             var enabled = root.perfMonitorsLogging || root.perfMonitorsVisible
             source = enabled ? "../performancemonitor/PerformanceItem.qml" : ""
         }
+
         onLoaded: {
             item.parent = root
-            item.anchors.fill = root
+            item.anchors.top = root.top
+            item.anchors.topMargin = 100
+            item.anchors.left = root.left
+            item.anchors.right = root.right
+            item.anchors.bottom = root.verticalCenter
             item.logging = root.perfMonitorsLogging
             item.displayed = root.perfMonitorsVisible
             item.init()
@@ -86,7 +104,7 @@ Rectangle {
         Content {
             id: content
             anchors.fill: parent
-            gripSize: 40
+            gripSize: d.gripSize
             onVideoFramePainted: performanceLoader.item.videoFramePainted()
         }
 
@@ -98,10 +116,8 @@ Rectangle {
                 right: parent.right;
                 margins: 10
             }
-            numParameters: content.effect.numParameters
             y: parent.height
-            opacity: 0.75
-            gripSize: 40
+            gripSize: d.gripSize
 
             states: [
                 State {
@@ -125,10 +141,8 @@ Rectangle {
                 }
             ]
 
-            enabled: content.effect.numParameters >= 1 && effectSelectionPanel.state != "shown"
-            state: enabled ? "shown" : "baseState"
-            onParam1ValueChanged: updateParameters()
-            onParam2ValueChanged: updateParameters()
+            enabled: false
+            state: (enabled && !d.dialogShown) ? "shown" : "baseState"
         }
 
         EffectSelectionPanel {
@@ -168,8 +182,12 @@ Rectangle {
 
             onEffectSourceChanged: {
                 content.effectSource = effectSource
-                parameterPanel.numParameters = content.effect.numParameters
-                updateParameters()
+                if (content.effect.parameters.count) {
+                    parameterPanel.model = content.effect.parameters
+                    parameterPanel.enabled = true
+                } else {
+                    parameterPanel.enabled = false
+                }
             }
 
             onClicked: state = "baseState"
@@ -297,7 +315,7 @@ Rectangle {
                 splashScreen.state = "hidden"
                 fileOpenContainer.state = "shown"
             }
-            enabled: (fileOpenContainer.state != "shown" && effectSelectionPanel.state != "shown")
+            enabled: !d.dialogShown
         }
 
         HintedMouseArea {
@@ -315,7 +333,7 @@ Rectangle {
                 splashScreen.state = "hidden"
                 effectSelectionPanel.state = "shown"
             }
-            enabled: (fileOpenContainer.state != "shown" && effectSelectionPanel.state != "shown")
+            enabled: !d.dialogShown
         }
 
         Image {
@@ -341,8 +359,16 @@ Rectangle {
         fileOpen.close.connect(close)
     }
 
-    Loader {
-        id: fileBrowserLoader
+    FileBrowser {
+        id: imageFileBrowser
+        anchors.fill: root
+        Component.onCompleted: fileSelected.connect(content.openImage)
+    }
+
+    FileBrowser {
+        id: videoFileBrowser
+        anchors.fill: root
+        Component.onCompleted: fileSelected.connect(content.openVideo)
     }
 
     // Called from main() once root properties have been set
@@ -350,12 +376,13 @@ Rectangle {
         console.log("[qmlvideofx] main.init")
         content.init()
         performanceLoader.init()
+        imageFileBrowser.folder = imagePath
+        videoFileBrowser.folder = videoPath
         if (fileName != "") {
             fileOpenMouseArea.hintEnabled = false
             effectSelectionPanelMouseArea.hintEnabled = false
             splashScreen.state = "hidden"
-            d.openFileType = "video"
-            openFile(fileName)
+            content.openVideo(fileName)
         }
     }
 
@@ -364,23 +391,14 @@ Rectangle {
             performanceLoader.item.qmlFramePainted()
     }
 
-    function updateParameters() {
-        if (content.effect.numParameters >= 1)
-            content.effect.param1Value = parameterPanel.param1Value
-        if (content.effect.numParameters >= 2)
-            content.effect.param2Value = parameterPanel.param2Value
-    }
-
     function openImage() {
         fileOpenContainer.state = "baseState"
-        d.openFileType = "image"
-        showFileBrowser("../../images")
+        imageFileBrowser.show()
     }
 
     function openVideo() {
         fileOpenContainer.state = "baseState"
-        d.openFileType = "video"
-        showFileBrowser("../../videos")
+        videoFileBrowser.show()
     }
 
     function openCamera() {
@@ -391,26 +409,5 @@ Rectangle {
     function close() {
         fileOpenContainer.state = "baseState"
         content.openImage("qrc:/images/qt-logo.png")
-    }
-
-    function showFileBrowser(path) {
-        content.stop()
-        fileBrowserLoader.source = "FileBrowser.qml"
-        fileBrowserLoader.item.parent = root
-        fileBrowserLoader.item.anchors.fill = root
-        fileBrowserLoader.item.openFile.connect(root.openFile)
-        fileBrowserLoader.item.folder = path
-        inner.visible = false
-    }
-
-    function openFile(path) {
-        fileBrowserLoader.source = ""
-        if (path != "") {
-            if (d.openFileType == "image")
-                content.openImage(path)
-            else if (d.openFileType == "video")
-                content.openVideo(path)
-        }
-        inner.visible = true
     }
 }

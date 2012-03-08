@@ -176,11 +176,10 @@ private slots:
 /* temporarily disabled to get continuous integration working again
     void testQueryMessages();
     void testQueryMessages_data();
-*/
 
     void testCountMessages();
     void testCountMessages_data();
-
+*/
     void testSend();
 
     void testCompose();
@@ -2077,7 +2076,7 @@ void tst_QMessageService::testQueryMessages_data()
 {
     testQueryCountData();
 }
-*/
+
 
 void tst_QMessageService::testCountMessages()
 {
@@ -2127,7 +2126,7 @@ void tst_QMessageService::testCountMessages_data()
 {
     testQueryCountData();
 }
-
+*/
 void tst_QMessageService::testSend()
 {
     QMessage testMessage;
