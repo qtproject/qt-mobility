@@ -150,21 +150,21 @@ QtMobility 1.2:
 \sa QSystemNetworkInfo
 */
 /*!
-    \qmlsignal NetworkInfo::statusChanged()
+    \qmlsignal NetworkInfo::statusChanged(string networkStatus)
     \since Mobility 1.1
 
     This handler is called when network status has changed.
     Note: To receive this notification, you must first call \a startStatusChanged.
 */
 /*!
-    \qmlsignal NetworkInfo::signalStrengthChanged()
+    \qmlsignal NetworkInfo::signalStrengthChanged(int signalStrength)
     \since Mobility 1.1
 
     This handler is called when network signal strength has changed.
     Note: To receive this notification, you must first call \a startSignalStrengthChanged.
 */
 /*!
-    \qmlsignal NetworkInfo::nameChanged()
+    \qmlsignal NetworkInfo::nameChanged(string networkName)
     \since Mobility 1.1
 
     This handler is called when network name has changed.
@@ -178,18 +178,32 @@ QtMobility 1.2:
     Note: To receive this notification, you must first call \a startModeChanged.
 */
 /*!
-    \qmlsignal NetworkInfo::currentMobileCountryCodeChanged()
+    \qmlsignal NetworkInfo::currentMobileCountryCodeChanged(string mcc)
     \since Mobility 1.1
 
     This handler is called when network MCC has changed.
     Note: To receive this notification, you must first call \a startCurrentMobileCountryCodeChanged.
 */
 /*!
-    \qmlsignal NetworkInfo::currentMobileNetworkCodeChanged()
+    \qmlsignal NetworkInfo::currentMobileNetworkCodeChanged(string mnc)
     \since Mobility 1.1
 
     This handler is called when network MNC has changed.
     Note: To receive this notification, you must first call \a startCurrentMobileNetworkCodeChanged.
+*/
+/*!
+    \qmlsignal NetworkInfo::cellIdChanges(int cellId)
+    \since Mobility 1.1
+
+    This handler is called when cell id has changed.
+    Note: To receive this notification, you must first call \a startCellIdChanged.
+*/
+/*!
+    \qmlsignal NetworkInfo::cellDataTechnologyChanges(QSystemNetworkInfo::CellDataTechnology cellTech)
+    \since Mobility 1.1
+
+    This handler is called when cell data technology has changed.
+    Note: To receive this notification, you must first call \a startCellDataChanged.
 */
 
 QDeclarativeNetworkInfo::QDeclarativeNetworkInfo(QObject *parent) :
@@ -324,7 +338,7 @@ void QDeclarativeNetworkInfo::startStatusChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorStatusChanges
-    \brief Use the statusChanged signal.
+    Use the statusChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorStatusChanges()
@@ -352,7 +366,7 @@ void QDeclarativeNetworkInfo::startSignalStrengthChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorSignalStrengthChanges
-    \brief Use the signalStrengthChanged signal.
+    Use the signalStrengthChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorSignalStrengthChanges()
@@ -380,7 +394,7 @@ void QDeclarativeNetworkInfo::startNameChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorNameChanges
-    \brief Use the nameChanged signal.
+    Use the nameChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorNameChanges()
@@ -408,6 +422,7 @@ void QDeclarativeNetworkInfo::startModeChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorModeChanges
+    Use the modeChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorModeChanges()
@@ -436,7 +451,7 @@ void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorCurrentMobileCountryCodeChanges
-    \brief Use the monitoringCurrentMobileCountryCodeChanged signal.
+    Use the currentMobileCountryCodeChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorCurrentMobileCountryCodeChanges()
@@ -464,7 +479,7 @@ void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorCurrentMobileNetworkCodeChanges
-    \brief Use the monitorCurrentMobileNetworkCodeChanged signal.
+    Use the currentMobileNetworkCodeChanged signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorCurrentMobileNetworkCodeChanges()
@@ -616,8 +631,8 @@ QSystemNetworkInfo::NetworkMode QDeclarativeNetworkInfo::mode()
 
 
 /*!
-    \qmlproperty bool NetworkInfo::monitorCellDataTechnologyChanges
-    \brief Use the cellDataTechnologyChanges signal.
+    \qmlproperty bool NetworkInfo::monitorCellDataChanges
+    Use the cellDataTechnologyChanges signal.
     \since Mobility 1.2
 
    \sa QSystemNetworkInfo::cellDataTechnologyChanged
@@ -646,7 +661,7 @@ void QDeclarativeNetworkInfo::startCellDataChanged(bool on)
 
 /*!
     \qmlproperty bool NetworkInfo::monitorCellIdChanges
-    \brief Use the cellIdChanges signal.
+    Use the cellIdChanges signal.
     \since Mobility 1.2
     */
 bool QDeclarativeNetworkInfo::monitorCellIdChanges()
