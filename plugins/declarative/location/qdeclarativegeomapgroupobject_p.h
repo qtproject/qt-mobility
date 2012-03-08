@@ -57,6 +57,7 @@ class QDeclarativeGeoMapGroupObject : public QDeclarativeGeoMapObject
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapObject> objects READ objects)
+    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
 
 public:
     QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent = 0);
@@ -75,6 +76,12 @@ public:
     virtual void exitEvent();
     virtual void moveEvent(QDeclarativeGeoMapMouseEvent *event);
 
+    void setVisible(bool visible);
+    bool isVisible() const;
+
+Q_SIGNALS:
+    void visibleChanged(bool visible);
+
 private:
     static void child_append(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, QDeclarativeGeoMapObject *mapObject);
     static int child_count(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop);
@@ -83,6 +90,7 @@ private:
 
     QGeoMapGroupObject* group_;
     QList<QDeclarativeGeoMapObject*> objects_;
+    bool visible_;
 };
 
 QTM_END_NAMESPACE
