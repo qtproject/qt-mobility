@@ -97,6 +97,7 @@ various \l {QFeedbackEffect}s.
 
 \section2 Platform Issues
 
+\note The actual haptic effect, and how end user perceives it, is always dependent on the hardware itself (i.e. the device where it is run).
 \note On Symbian, vibration feature needs to be enabled in the user profile for the API to work.
 \note On Maemo5, periodic vibration does not support attack or fade.
 
