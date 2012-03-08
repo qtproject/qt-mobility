@@ -2487,7 +2487,7 @@ bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
 /*!
   Blocks until the manager engine has completed the given request \a req
   which was previously started, or until \a msecs milliseconds have passed.
-  Returns true if the request was completed, and false if the request was not in the
+  Returns true if the request was cancelled or completed, and false if the request was not in the
   \c QContactAbstractRequest::Active state or no progress could be reported.
 
   \sa startRequest()
