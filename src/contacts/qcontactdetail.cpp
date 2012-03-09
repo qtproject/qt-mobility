@@ -101,15 +101,17 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash)
   One field which is common to all details is the context field.  This field is intended to store one or
   more contexts that this detail is associated with.  Commonly this will be something like
   "Home" and/or "Work", although no limitations are placed on which values may be stored in this field
-  in the default schema.
+  in the default schema. Note that context field might not be set by default to all details in
+  the default schema.
 
-  There are two other, related fields which are common to all details.  The first is
+  There are two other, related fields which are available for all details.  The first is
   \a QContactDetail::FieldDetailUri, which stores the unique URI of the detail if one exists.
   The field is not mandatory, and backends are not required to verify that the given URI is indeed
   unique within the contact.  The second field is \a QContactDetail::LinkedDetailUris, which stores
   a list of detail URIs to which this detail is linked.  The link is one-way, and can be used to show
   how or where a detail was derived.  This is useful for things like presence information and avatars,
   which are linked to a particular online account detail of the contact.
+  Note that these fields might not be set by default to details in default schema.
 
   When a QContactDetail has been retrieved in a QContact from a QContactManager, it may have certain
   access constraints provided with it, like \l ReadOnly or \l Irremovable.  This might mean that the

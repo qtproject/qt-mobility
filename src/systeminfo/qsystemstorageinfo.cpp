@@ -107,6 +107,82 @@ QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPri
 */
 
 /*!
+    \qmlclass StorageInfo
+    \brief The StorageInfo element provides access to disk storage information from the system.
+
+    \ingroup qml-systeminfo
+    \since Mobility 1.2
+
+    This element is part of the \bold{QtMobility.systeminfo 1.2} module.
+    It is a convience class to make QML usage easier.
+
+    \sa QSystemStorageInfo
+*/
+
+/*!
+  \qmlproperty list StorageInfo::logicalDrives
+  \since Mobility 1.2
+
+  Returns list of logical drives.
+  */
+
+/*!
+  \qmlmethod long StorageInfo::totalDiskSpace(string drive)
+  \since Mobility 1.2
+
+  Returns the amount of total space on the given drive, in bytes.
+  */
+
+/*!
+  \qmlmethod long StorageInfo::availableDiskSpace(string drive)
+  \since Mobility 1.2
+
+  Returns the available disk space on the given drive, in bytes.
+*/
+
+/*!
+    \qmlmethod string StorageInfo::uriForDrive(string drive)
+    \since Mobility 1.2
+
+    Returns the URI, or unique identifier for the given drive.
+*/
+
+/*!
+    \qmlmethod StorageState StorageInfo::getStorageState(string drive)
+    \since Mobility 1.2
+
+    Returns the storage state of the given drive.
+
+    \sa QSystemStorageInfo::StorageState
+*/
+
+/*!
+    \qmlmethod DriveType StorageInfo::typeForDrive(string drive)
+    \since Mobility 1.2
+
+    Returns the type of the given drive.
+
+    \sa QSystemStorageInfo::DriveType
+*/
+
+/*!
+    \qmlsignal StorageInfo::logicalDriveChanged(bool added, string drive)
+    \since Mobility 1.2
+
+    This signal gets emitted when a new drive storage has been added or removed. If \a bool is true,
+    it means a new drive is found, otherwise a drive is removed.
+ */
+
+/*!
+    \qmlsignal StorageInfo::storageStateChanged(string drive, QSystemStorageInfo::StorageState state)
+    \since Mobility 1.2
+
+    This signal gets emitted when the storage state of a drive has changed to state. Note that the
+    polling time may be different for different platforms.
+ */
+
+
+/*!
     Constructs a QSystemStorageInfo with the given \a parent.
 */
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)

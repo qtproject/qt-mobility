@@ -78,7 +78,7 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
 
 
 /*!
-    \qmlsignal SystemInfo::startCurrentLanguageChanged()
+    \qmlsignal GeneralInfo::currentLanguageChanged(string language)
     \since Mobility 1.1
 
     This handler is called when current system language has changed.
@@ -89,6 +89,12 @@ QDeclarativeGeneralInfo::QDeclarativeGeneralInfo(QObject *parent) :
 {
 }
 
+/*!
+    \qmlmethod void GeneralInfo::startCurrentLanguageChanged()
+    \since Mobility 1.1
+
+    Start the connection for the currentLanguageChanged signal.
+*/
 void QDeclarativeGeneralInfo::startCurrentLanguageChanged()
 {
     connect(generalInfo(),SIGNAL(currentLanguageChanged(QString)),
@@ -102,7 +108,7 @@ void QDeclarativeGeneralInfo::declarativeCurrentLanguageChanged(const QString &l
 }
 
 /*!
-  \qmlproperty string QDeclarativeGeneralInfo::osVersion
+  \qmlproperty string GeneralInfo::osVersion
   \since Mobility 1.1
 
    Returns the version of the Operating System.
@@ -113,7 +119,7 @@ QString QDeclarativeGeneralInfo::osVersion()
 }
 
 /*!
-  \qmlproperty string QDeclarativeGeneralInfo::qtCoreVersion
+  \qmlproperty string GeneralInfo::qtCoreVersion
   \since Mobility 1.1
 
    Returns the version of the installed Qt Core library.
@@ -124,7 +130,7 @@ QString QDeclarativeGeneralInfo::qtCoreVersion()
 }
 
 /*!
-  \qmlproperty string QDeclarativeGeneralInfo::firmwareVersion
+  \qmlproperty string GeneralInfo::firmwareVersion
   \since Mobility 1.1
 
    Returns the version of the firmware as a whole.
@@ -135,7 +141,7 @@ QString QDeclarativeGeneralInfo::firmwareVersion()
 }
 
 /*!
-  \qmlproperty string QDeclarativeGeneralInfo::qtMobilityVersion
+  \qmlproperty string GeneralInfo::qtMobilityVersion
   \since Mobility 1.1
 
    Returns the version of the installed Qt Mobility library.
@@ -144,4 +150,23 @@ QString QDeclarativeGeneralInfo::qtMobilityVersion()
 {
     return generalInfo()->version(QSystemInfo::QtMobility);
 }
+
+/*!
+    \qmlproperty string GeneralInfo::currentLanguage
+    \since Mobility 1.1
+    Returns the current language in two letter ISO 639-1 format.
+ */
+
+/*!
+    \qmlproperty list GeneralInfo::availableLanguages
+    \since Mobility 1.1
+    Returns a QStringList of available Qt language translations in two letter ISO 639-1 format.
+    If the Qt translations cannot be found, returns the current system language.
+*/
+
+/*!
+    \qmlproperty string GeneralInfo::currentCountryCode
+    \since Mobility 1.1
+    Returns the two letter ISO 3166-1 for the current country code.
+*/
 
