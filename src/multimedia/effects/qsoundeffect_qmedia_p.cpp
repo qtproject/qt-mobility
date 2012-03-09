@@ -199,6 +199,7 @@ void QSoundEffectPrivate::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 
 void QSoundEffectPrivate::error(QMediaPlayer::Error err)
 {
+    Q_UNUSED(err);
     bool playingDirty = false;
     if (m_playing) {
         m_playing = false;

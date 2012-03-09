@@ -512,6 +512,7 @@ bool executeQuery(QSqlQuery *query, const QString &statement, const QMap<QString
 QString queryStringForRadius(const QGeoCoordinate &coord, qreal radius)
 {
     Q_UNUSED(radius);
+    Q_UNUSED(coord);
     return "SELECT id, latitude, longitude FROM landmark;";
 }
 
@@ -1851,8 +1852,8 @@ bool DatabaseOperations::saveLandmarks(QList<QLandmark> * landmark,
             lastError = QLandmarkManager::CancelError;
             lastErrorString = "Landmark save was canceled";
             if (errorMap) {
-                for (i; i < landmark->size(); ++i)
-                    errorMap->insert(i, lastError);
+                for (int j = i; j < landmark->size(); ++j)
+                    errorMap->insert(j, lastError);
             }
             noErrors = false;
             break;
@@ -1950,8 +1951,8 @@ bool DatabaseOperations::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
             lastError = QLandmarkManager::CancelError;
             lastErrorString = "Landmark remove was canceled";
             if (errorMap) {
-                for (i; i < landmarkIds.size(); ++i)
-                    errorMap->insert(i, lastError);
+                for (int j = i; j < landmarkIds.size(); ++j)
+                    errorMap->insert(j, lastError);
             }
             noErrors = false;
             break;
@@ -2395,8 +2396,8 @@ bool DatabaseOperations::saveCategories(QList<QLandmarkCategory> * categories,
             lastError = QLandmarkManager::CancelError;
             lastErrorString = "Category save was canceled";
             if (errorMap) {
-                for (i; i < categories->size(); ++i)
-                    errorMap->insert(i, lastError);
+                for (int j = i; j < categories->size(); ++j)
+                    errorMap->insert(j, lastError);
             }
             noErrors = false;
             break;
@@ -2542,8 +2543,8 @@ bool DatabaseOperations::removeCategories(const QList<QLandmarkCategoryId> &cate
             lastError = QLandmarkManager::CancelError;
             lastErrorString = "Category remove was canceled";
             if (errorMap) {
-                for (i; i < categoryIds.size(); ++i)
-                    errorMap->insert(i, lastError);
+                for (int j = i; j < categoryIds.size(); ++j)
+                    errorMap->insert(j, lastError);
             }
             noErrors = false;
             break;

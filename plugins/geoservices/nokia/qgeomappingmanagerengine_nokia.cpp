@@ -198,11 +198,11 @@ namespace
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_cache(0),
+        m_firstSubdomain(QChar::Null),
+        m_maxSubdomains(0),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
-        m_logoPosition(ShiftedDown),
-        m_firstSubdomain(QChar::Null),
-        m_maxSubdomains(0)
+        m_logoPosition(ShiftedDown)
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)

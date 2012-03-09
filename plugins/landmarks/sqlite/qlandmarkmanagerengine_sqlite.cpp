@@ -103,10 +103,10 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
                                                            QString *errorString)
         : m_dbFilename(filename),
         m_dbConnectionName(QUuid::createUuid().toString()),
+        m_isCustomAttributesEnabled(false),
         m_dbWatcher(NULL),
         m_latestLandmarkTimestamp(0),
         m_latestCategoryTimestamp(0),
-        m_isCustomAttributesEnabled(false),
         m_databaseOperations()
 {
     Q_ASSERT(error);
@@ -399,6 +399,7 @@ bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
 
 QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::TransferOperation operation, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_UNUSED(operation);
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
@@ -470,6 +471,7 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QS
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_UNUSED(landmarkId);
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
@@ -480,6 +482,7 @@ bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId, QLa
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_UNUSED(categoryId);
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;

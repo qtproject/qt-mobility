@@ -71,8 +71,8 @@ bool isURIAbsolute(const QString &uri)
 
 QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const volatile bool  * cancel)
     : QObject(),
-    m_writer(0),
     m_reader(0),
+    m_writer(0),
     m_option(QLandmarkManager::IncludeCategoryData),
     m_cancel(cancel),
     m_categoryIdNameHash(QHash<QString,QString>())
@@ -689,7 +689,7 @@ bool QLandmarkFileHandlerLmx::readCategory(QString &name)
     if (m_reader->name() == "id") {
         bool ok = false;
         idString = m_reader->readElementText();
-        unsigned int id = idString.toUShort(&ok);
+        (void)idString.toUShort(&ok);
 
         if (!ok) {
             m_reader->raiseError(QString("The element \"id\" expected a value convertable to type unsigned short (value was \"%1\").").arg(idString));
@@ -776,6 +776,7 @@ bool QLandmarkFileHandlerLmx::writeLmx()
 
 bool QLandmarkFileHandlerLmx::writeLandmarkCollection(const QList<QLandmark> &landmarkCollection)
 {
+    Q_UNUSED(landmarkCollection);
     m_writer->writeStartElement(m_ns, "landmarkCollection");
 
     for (int i = 0; i < m_landmarks.size(); ++i) {
