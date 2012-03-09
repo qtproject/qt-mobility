@@ -521,7 +521,7 @@ QString landmarkIdsDefaultQueryString()
     return QString("SELECT id, latitude, longitude FROM landmark ");
 }
 
-QString landmarkIdsQueryString(const QList<QLandmarkId> ids)
+QString landmarkIdsQueryString(const QList<QLandmarkId> &ids)
 {
     QString queryString = "SELECT id, latitude, longitude FROM landmark WHERE id IN (";
     foreach(const QLandmarkId &id, ids) {
