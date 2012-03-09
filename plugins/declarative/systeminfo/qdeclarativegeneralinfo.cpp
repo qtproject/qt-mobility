@@ -78,7 +78,7 @@ Q_GLOBAL_STATIC(QSystemInfo, generalInfo)
 
 
 /*!
-    \qmlsignal GeneralInfo::startCurrentLanguageChanged(string language)
+    \qmlsignal GeneralInfo::currentLanguageChanged(string language)
     \since Mobility 1.1
 
     This handler is called when current system language has changed.
