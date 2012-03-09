@@ -106,9 +106,7 @@ private:
 
     QBluetoothLocalDevice *q_ptr;
 };
-#endif
-
-#ifdef QTM_SYMBIAN_BLUETOOTH
+#elif defined(QTM_SYMBIAN_BLUETOOTH)
 class QBluetoothLocalDevicePrivate
         : public MBTEngSettingsObserver
 {
@@ -146,6 +144,8 @@ protected:
     QBluetoothLocalDevice *q_ptr;
 
 };
+#else
+class QBluetoothLocalDevicePrivate {}; // dummy
 #endif
 
 QTM_END_NAMESPACE
