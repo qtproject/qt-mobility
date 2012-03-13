@@ -1324,7 +1324,12 @@ void CCellNetworkInfo::RunL()
         m_previousNetworkName = m_networkName;
         m_previousNetworkMode = m_networkMode;
       }
-    startMonitoring();
+
+    if (iStatus != KErrPermissionDenied) {
+        // NotifyCurrentNetworkChange requires ReadDeviceData so don't retry if app does not
+        // have required capabilities
+        startMonitoring();
+    }
     TRACES(qDebug() << "CCellNetworkInfov2::RunL()--->");
 }
 
