@@ -135,10 +135,11 @@ void CQGeoPositionInfoSourceS60::ConstructL()
 #if !defined QT_NO_DEBUG
 	qDebug() << "CQGeoPositionInfobuffSourceS60::ConstructL\n" ;
 #endif
-	
-    TInt error = mPositionServer.Connect();
+    User::LeaveIfError(mPositionServer.Connect());
+    CleanupClosePushL(mPositionServer);
 
     mDevStatusUpdateAO = CQMLBackendAO::NewL(this, DeviceStatus);
+    CleanupStack::Pop(&mPositionServer);  // mDevStatusUpdateAO will close handle
 
     //update the list array with the available method initially
     updateDeviceStatus();
