@@ -48,7 +48,9 @@
 #include "qservice.h"
 #include <QPointer>
 #include <QHash>
-
+#ifdef Q_OS_SYMBIAN
+#include <QAtomicInt>
+#endif 
 QTM_BEGIN_NAMESPACE
 
 class ObjectEndPointPrivate;
@@ -60,7 +62,15 @@ public:
         Service = 0,
         Client
     };
-
+#ifdef Q_OS_SYMBIAN
+    enum DeleteStat {
+        NotMarkedForDelete = 0,
+        MarkedForDelete    = 0x8000
+    };
+	
+	int getRefCount();
+    bool updateRefCount(int expectedVal, int newVal);
+#endif //End Q_OS_SYMBIAN
     ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent = 0);
     ~ObjectEndPoint();
     QObject* constructProxy(const QRemoteServiceRegister::Entry& entry);
@@ -85,8 +95,26 @@ private:
     QServiceIpcEndPoint* dispatch;
     QPointer<QObject> service;
     ObjectEndPointPrivate* d;
+	#ifdef Q_OS_SYMBIAN
+    QAtomicInt referenceCnt;
+	#endif //End Q_OS_SYMBIAN
 };
+#ifdef Q_OS_SYMBIAN
+class ObjectEndPointMonitor 
+{
+public:
+		ObjectEndPointMonitor(ObjectEndPoint *aOe);
+		~ObjectEndPointMonitor();
+		
+		static void MarkForDelete(ObjectEndPoint *aOe);
+		static bool IncRefCountIfNotMarkedDelete(ObjectEndPoint *aOe);
+		static void DecRefCount(ObjectEndPoint *aOe);
 
+private:
+	ObjectEndPoint*	iOe;
+	bool incrementDone;
+};
+#endif //End Q_OS_SYMBIAN
 QTM_END_NAMESPACE
 
 #endif //OBJECT_ENDPOINT_H
