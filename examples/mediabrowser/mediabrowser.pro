@@ -39,5 +39,18 @@ SOURCES = \
 
 symbian: {
     load(data_caging_paths)
-    TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
+}
+
+contains(MEEGO_EDITION,harmattan) {
+
+    DEFINES += Q_WS_MAEMO_6
+
+    icon.path = /usr/share/icons/hicolor/80x80/apps
+    icon.files += mediabrowser.png
+
+    desktop.path = /usr/share/applications
+    desktop.files += mediabrowser.desktop
+
+    target.path = /opt/mediabrowser/bin
+    INSTALLS += target icon desktop
 }

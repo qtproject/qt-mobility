@@ -238,6 +238,9 @@ private:
     void initActuators();
     QList<QFeedbackActuator*> m_actuators;
     CCoeControl *defaultWidget();
+
+private slots:
+    void freeResources();
 };
 #endif //HAS_CUSTOM_EFFECTS
 

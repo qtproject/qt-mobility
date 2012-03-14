@@ -67,7 +67,7 @@ public:
     ~MonthPage();
     void init();
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
     void setMenu(QMenu *menu);
 #endif
 

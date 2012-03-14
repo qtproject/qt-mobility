@@ -8,20 +8,23 @@
      <component id="qtmobility_build" name="Qt Mobility Build" introduced="^4" filter="s60">
       <unit bldFile="." qt:proFile="qtmobility.pro"/>
      </component>
+     <component id="qtmobility_mkservicedb" name="Qt Mobility create registry" introduced="^4" filter="s60">
+      <unit bldFile="features/mkservicedb" />
+     </component>
     </collection>
     <collection id="qtmobility_demos" name="Qt Mobility Demos" level="app">
-     <component id="qtmobility_demos_build" name="Qt Mobility Demos Build" filter="s60,test,qtmobilitydemos,build_as_app" introduced="^4">
+     <component id="qtmobility_demos_build" name="Qt Mobility Demos Build" filter="s60,test,qtdemos,build_as_app" introduced="^4">
       <unit bldFile="demos" qt:proFile="demos.pro"/>
      </component>
     </collection>
     <collection id="qtmobility_examples" name="Qt Mobility Examples" level="app">
-     <component id="qtmobility_examples_build" name="Qt Mobility Examples Build" filter="s60,test,qtmobilityexamples,build_as_app" introduced="^4">
+     <component id="qtmobility_examples_build" name="Qt Mobility Examples Build" filter="s60,test,qtdemos,build_as_app" introduced="^4">
       <unit bldFile="examples" qt:proFile="examples.pro"/>
      </component>
     </collection>
     <collection id="tests" name="Qt Mobility Tests">
      <component id="qtmobility_tests_build" name="Qt Mobility Tests Build" filter="test,qtmobilitytests,build_as_app,s60" introduced="^4">
-      <unit bldFile="tests" qt:proFile="tests.pro"/>
+      <unit bldFile="tests" qt:proFile="tests.pro" qt:qmakeArgs="CONFIG+=symbian_test"/>
      </component>
     </collection>
   </package>

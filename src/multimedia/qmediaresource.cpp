@@ -79,6 +79,8 @@ QT_BEGIN_NAMESPACE
 /*!
     \typedef QMediaResourceList
 
+    \relates QMediaResource
+
     Synonym for \c QList<QMediaResource>
 */
 

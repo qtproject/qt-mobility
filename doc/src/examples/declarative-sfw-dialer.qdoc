@@ -30,39 +30,24 @@
 
 \title Service Framework using QML Example
 
-\bold {Execution}
+\section1 Execution
 
-This example requires the example dialer services to be pre-registered in order
-for the application to discover and load the services. This can be done by using the
-service framework command line tool to add the corresponding service XML file:
+Qt Creator is recommended and easiest way to compile, deploy and execute this application.
+
+The following steps have to be done manually if this application is to be executed in Qt
+Simulator:
 
 \list
-    \o ./servicefw add voipdialerservice.xml
-    \o ./servicefw add landlinedialerservice.xml
-    \o ./servicefw add remotedialerservice.xml
-    \o ./servicefw dbusservice removedialerservice.xml dialer_service
+    \o Plugin based services (\c landlinedialer and \c voipdialer) must be manually copied 
+       to the same directory as the \c qmldialer executable.
+       IPC-based services (\c remotedialer in this example) are not supported by Qt Simulator.
+
+    \o A new \c xmldata folder must be created in the same directory as \c qmldialer
+       executable, and the xml files for service plugins (landlinedialerservice.xml and 
+       voipdialerservice.xml) must be copied to that folder.
 \endlist
 
-These deployment commands will register the two plugin-based services as well as the remote
-IPC-based service. The last line features the ability to create an autostarting file for
-D-Bus if the platform supports the QtDBus module, typically available on Linux systems.
-
-There are 2 ways to run the example:
-\list
-    \o ./qmldialer (only method for Symbian)
-    \o qmldialer declarative-sfw-dialer.qml
-\endlist
-
-The XML files for all example services can be found in the QtMobility build directory
-under install/bin/xmldata.
-
-For Maemo and Linux platforms using D-Bus as the underlying IPC mechanism, the
-autostart feature can be initialised by running the service framework tool:
-\code
-    servicefw dbusservice xmldata/remotedialerservice.xml dialer_service
-\endcode
-
-\bold {Explanation}
+\section1 Explanation
 
 This example should demonstrate how to use the Service Framework to
 access a list of services in a QML context. A library plugin provides QML with elements
@@ -82,14 +67,14 @@ The following steps outline how to make a QML based application using the Servic
 It is assumed that QtMobility has been successfully built and environment variables have been set
 as per \l {Installation Guide}.
 
-\bold {Service Framework in QML:}
+\section2 Service Framework in QML
 
 To included the Service Framework QML plugin to our QML file we need to import it as follows:
 
 \snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 4
 
 
-\bold {The Services:}
+\section2 The Services
 
 The services are implemented in a shared library and can be register in the service framework.
 After the service is registered it can be used in different applications.
@@ -106,8 +91,6 @@ Those projects will create a shared library in each case.
 
 If the library needs to be available over the Service Framework,
 we need to register the library.
-In our example this will be done manually by using the servicefw tool. Refer to the project
-README for further details.
 
 As you can see we register the services using a xml file.
 This xml file basically contains all information to register the shared library in the
@@ -139,7 +122,7 @@ want to access in out QML script later.
 \snippet declarative-sfw-dialer/voipdialer/voipdialer.h 0
 
 
-\bold {Service access on the QML site}
+\section2 Service access on the QML site
 
 The QML elements are implemented in 4 different qml scripting files
 \l {guidesign}{ see GUI design}.
@@ -170,9 +153,9 @@ Another component can be created for highliting a list item:
 
 \snippet declarative-sfw-dialer/declarative-sfw-dialer/content-sfw-dialer/DialerList.qml 3
 
-\bold {Service signals and function calls on the QML site}
+\section2 Service signals and function calls on the QML site
 
-In sfw-kinetic-example.qml we define a control named DialScreen and implement
+In declarative-sfw-dialer.qml we define a control named DialScreen and implement
 the function onDial and onHangup.
 As you can see in the onDial event we call the service function dialNumber and
 the onHangup calls hangup.
@@ -196,5 +179,110 @@ This is done in our main declarative file:
 
 The DialScreen.currentDialer is assigned during a ListView item click in the
 \l {DialerList_qml_2}{ ServiceList.qml file}.
+
+\section1 Deployment of services
+
+In this example application services are registered by QServiceManager::addService() method and
+this is a reason why XML service description files are copied to /xmldata folder under 
+/bin folder of declarative-sfw-dialer application.
+
+landlinedialer.pro:
+
+\code
+xml.path = /opt/declarative-sfw-dialer/bin/xmldata
+xml.files = landlinedialerservice.xml
+INSTALLS += xml
+\endcode
+
+qmldialer.cpp:
+
+\snippet declarative-sfw-dialer/declarative-sfw-dialer/qmldialer.cpp 0
+ 
+
+Note: Application does not need register services by itself in Symbian because automatic registration
+system is doing this on behalf of the application. More details in next chapter.
+
+\section2 Deployment in Symbian
+
+Automatic registration is used as registration method in this example application for application services. 
+See more details
+about \l {service-frameworks.html#automatic-registration}{Automatic Registration}.
+
+landlinedialer.pro:
+
+\code
+xmlautoimport.sources = landlinedialerservice.xml
+xmlautoimport.path = /private/2002AC7F/import/
+DEPLOYMENT += xmlautoimport
+\endcode
+
+Shared libraries (service plug-ins) are deployed same way as other Qt plug-ins in Symbian.
+\l {http://www.developer.nokia.com/Community/Wiki/CS001391_-_Implementing_the_Qt_plug-in_interface}{See more details.}
+
+landlinedialer.pro:
+
+\code
+load(data_caging_paths)
+pluginDep.sources = serviceframework_landlinedialerservice.dll
+pluginDep.path = $$QT_PLUGINS_BASE_DIR
+DEPLOYMENT += pluginDep
+\endcode
+
+\section2 Deployment in MeeGo 1.2 Harmattan
+ 
+In addition of general registration, explained in \l {Deployment of services}{"Deployment of services" chapter,}  service applications must be also registered to D-Bus for an autostarting if remote IPC-based service is used (remotedialer in this example). This can be done by defining .conf and .service files and adding
+following lines to the .pro file.
+
+remotedialer.pro:
+
+\code
+contains(MEEGO_EDITION,harmattan) {
+    remotedialer_conf.files = remotedialer.conf
+    remotedialer_conf.path = /etc/dbus-1/session.d/
+
+    remotedialer_service.files = com.nokia.qt.examples.dialer.service
+    remotedialer_service.path = /usr/share/dbus-1/services/
+
+    target.path = /opt/remotedialer/bin
+
+    INSTALLS += target remotedialer_conf remotedialer_service
+}
+\endcode
+
+remotedialer.conf:
+
+\code
+<busconfig>
+	<policy context="default">
+		<allow own="com.nokia.qt.examples.Dialer"/>
+	</policy>
+</busconfig>
+\endcode
+
+com.nokia.qt.examples.dialer.service:
+
+\code
+[D-BUS Service]
+Name=com.nokia.qtmobility.sfw.VoipDialer
+Exec= /opt/remotedialer/bin/dialer_service
+User=user
+\endcode
+
+Note: Service name defined in .service file must always start with \c com.nokia.qtmobility.sfw when
+registering is done for a service framework.
+
+In MeeGo 1.2 Harmattan target dialer services can be pre-registered also by service framework command line tool
+but this option is not needed if services has been deployed as descriped above.
+
+\list
+    \o ./servicefw add voipdialerservice.xml
+    \o ./servicefw add landlinedialerservice.xml
+    \o ./servicefw add remotedialerservice.xml
+    \o ./servicefw dbusservice removedialerservice.xml dialer_service
+\endlist
+
+These deployment commands will register the two plugin-based services as well as the remote
+IPC-based service. The last line features the ability to create an autostarting file for
+D-Bus if the platform supports the QtDBus module, typically available on Linux systems.
 
 */

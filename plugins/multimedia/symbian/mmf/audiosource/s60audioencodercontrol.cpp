@@ -42,14 +42,12 @@
 #include "s60audioencodercontrol.h"
 #include "s60audiocapturesession.h"
 #include "s60mmtrace.h"
-
 #include "qaudioformat.h"
 
 S60AudioEncoderControl::S60AudioEncoderControl(QObject *session, QObject *parent)
-    :QAudioEncoderControl(parent), m_quality(QtMultimediaKit::NormalQuality)
+    : QAudioEncoderControl(parent), m_quality(QtMultimediaKit::NormalQuality)
 {
     TRACE("S60AudioEncoderControl::S60AudioEncoderControl" << qtThisPtr());
-
     m_session = qobject_cast<S60AudioCaptureSession*>(session);
     QAudioFormat fmt = m_session->format();
     // medium, 22050Hz mono S16
@@ -124,23 +122,19 @@ QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &code
     QStringList list;
     if (codec == "PCM") 
         list << "quality" << "channels" << "samplerate";        
-     return list;
+    return list;
 }
 
 QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
     if (codec == "PCM") {
         QAudioFormat fmt = m_session->format();
-        
-        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0)
             return QVariant(quality());
-        }        
-        else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0)
             return QVariant(fmt.channels());
-        }                
-        else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0)
             return QVariant(fmt.frequency());
-        }       
     }
     return QVariant();
 }
@@ -150,17 +144,14 @@ void S60AudioEncoderControl::setEncodingOption(
 {
     TRACE("S60AudioEncoderControl::setEncodingOption" << qtThisPtr()
           << "codec" << codec << "name" << name << "value" << value);
-
     if (codec == "PCM") {
         QAudioFormat fmt = m_session->format();
-
-        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0)
             setQuality((QtMultimediaKit::EncodingQuality)value.toInt(), fmt);
-        } else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0)
             fmt.setChannels(value.toInt());
-        } else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0) {
+        else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0)
             fmt.setFrequency(value.toInt());
-        }
         m_session->setFormat(fmt);
     }
 }
@@ -169,7 +160,6 @@ QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSetti
 {
     if (continuous)
         *continuous = false;
-    
     return m_session->supportedAudioSampleRates(settings);       
 }
 
@@ -187,17 +177,15 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
           << "channelCount" << settings.channelCount()
           << "sampleRate" << settings.sampleRate()
           << "quality" << settings.quality());
-
     QAudioFormat fmt = m_session->format();
     if (settings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
         fmt.setCodec(settings.codec());
         setQuality(settings.quality(), fmt);
-        if (settings.sampleRate() > 0) {
+        if (settings.sampleRate() > 0)
             fmt.setFrequency(settings.sampleRate());
-        }
         if (settings.channelCount() > 0)
             fmt.setChannels(settings.channelCount());
-    }else {
+    } else {
         if (settings.sampleRate() == 8000) {
             fmt.setSampleType(QAudioFormat::UnSignedInt);
             fmt.setSampleSize(8);

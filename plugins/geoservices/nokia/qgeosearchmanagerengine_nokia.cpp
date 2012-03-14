@@ -49,6 +49,7 @@
 #include "qgeosearchmanagerengine_nokia.h"
 #include "qgeosearchreply_nokia.h"
 #include "marclanguagecodes.h"
+#include "qlocationnetworkaccessmanagerfactory.h"
 
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
@@ -62,7 +63,8 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
 {
-    m_networkManager = new QNetworkAccessManager(this);
+    // Get manager from declarative factory or create a new one
+    m_networkManager = QLocationNetworkAccessManagerFactory::instance()->create(this);
 
     if (parameters.contains("places.proxy")) {
         QString proxy = parameters.value("places.proxy").toString();

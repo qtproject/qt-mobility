@@ -194,6 +194,7 @@ void QContactFetchHint::setRelationshipTypesHint(const QStringList& relationship
 
   The caller should be prepared for images of any dimensions,
   in any case.
+  \since 1.1
  */
 QSize QContactFetchHint::preferredImageSize() const
 {
@@ -211,6 +212,7 @@ QSize QContactFetchHint::preferredImageSize() const
 
   The caller should be prepared for images of any dimensions,
   in any case.
+  \since 1.1
  */
 void QContactFetchHint::setPreferredImageSize(const QSize& size)
 {
@@ -259,6 +261,7 @@ void QContactFetchHint::setOptimizationHints(OptimizationHints hints)
 
   A negative value for count denotes that the client wishes to
   retrieve all results.  The default value is -1.
+  \since 1.2
  */
 int QContactFetchHint::maxCountHint() const
 {

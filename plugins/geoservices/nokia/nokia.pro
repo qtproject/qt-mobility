@@ -1,6 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtgeoservices_nokia)
+TARGET = $$mobilityPluginTarget(qtgeoservices_nokia)
 PLUGIN_TYPE=geoservices
 
 include(../../../common.pri)
@@ -45,7 +47,7 @@ INCLUDEPATH += $$SOURCE_DIR/src/location \
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x2002BFCA
+    TARGET.UID3 = $$mobilityUID(0x2002BFCA)
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep      

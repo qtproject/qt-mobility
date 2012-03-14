@@ -39,11 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIARECOGNIZER_H_
-#define S60MEDIARECOGNIZER_H_
+#ifndef S60MEDIARECOGNIZER_H
+#define S60MEDIARECOGNIZER_H
 
-#include <QtCore/qobject.h>
-
+#include <QtCore/QObject>
 #include <apgcli.h>
 #include <f32file.h>
 
@@ -52,7 +51,6 @@ class QUrl;
 class S60MediaRecognizer : public QObject
 {
     Q_OBJECT
-    
 public:
     enum MediaType {
         Audio,
@@ -65,10 +63,7 @@ public:
     ~S60MediaRecognizer();
     
     S60MediaRecognizer::MediaType mediaType(const QUrl &url);
-    S60MediaRecognizer::MediaType identifyMediaType(const QString& fileName);
-
-protected:
-    TPtrC QString2TPtrC( const QString& string );
+    S60MediaRecognizer::MediaType identifyMediaType(const QString &fileName);
 
 private:
     RApaLsSession m_recognizer;
@@ -76,4 +71,4 @@ private:
     RFs m_fileServer;
 };
 
-#endif /* S60MEDIARECOGNIZER_H_ */
+#endif // S60MEDIARECOGNIZER_H

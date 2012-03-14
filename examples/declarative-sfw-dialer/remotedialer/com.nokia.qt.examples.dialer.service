@@ -1,0 +1,6 @@
+[D-BUS Service]
+Name=com.nokia.qtmobility.sfw.VoipDialer
+Exec= /opt/remotedialer/bin/dialer_service
+User=user
+
+

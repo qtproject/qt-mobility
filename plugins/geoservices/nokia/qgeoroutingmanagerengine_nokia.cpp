@@ -48,6 +48,7 @@
 
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeoroutereply_nokia.h"
+#include "qlocationnetworkaccessmanagerfactory.h"
 
 #include <QStringList>
 #include <QNetworkProxy>
@@ -61,7 +62,8 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
         m_serviceDisabled(false)
 {
-    m_networkManager = new QNetworkAccessManager(this);
+    // Get manager from declarative factory or create a new one
+    m_networkManager = QLocationNetworkAccessManagerFactory::instance()->create(this);
 
     if (parameters.contains("routing.proxy")) {
         QString proxy = parameters.value("routing.proxy").toString();

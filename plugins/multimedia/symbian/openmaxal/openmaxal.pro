@@ -1,7 +1,9 @@
+include (../../../../features/utils.pri)
+
 TEMPLATE = lib
 
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmultimediakit_openmaxalengine)
+TARGET = $$mobilityPluginTarget(qtmultimediakit_openmaxalengine)
 PLUGIN_TYPE = mediaservice
 include (../../../../common.pri)
 qtAddLibrary(QtMultimediaKit)
@@ -26,7 +28,7 @@ SYMBIAN_PLATFORMS = DEFAULT
 # Input parameters for the generated mmp file
 # -------------------------------------------
 load(data_caging_paths)
-TARGET.UID3 = 0x10207CA1
+TARGET.UID3 = $$mobilityUID(0x10207CA1)
 TARGET.CAPABILITY = ALL -TCB
 TARGET.EPOCALLOWDLLDATA = 1
 MMP_RULES += EXPORTUNFROZEN

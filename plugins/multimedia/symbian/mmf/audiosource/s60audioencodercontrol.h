@@ -63,7 +63,7 @@ public:
     QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
     
     QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings&);
+    void setAudioSettings(const QAudioEncoderSettings &settings);
     
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;

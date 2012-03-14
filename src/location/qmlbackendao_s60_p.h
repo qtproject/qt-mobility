@@ -106,8 +106,6 @@ public:
 
     void startUpdates();
 
-
-
 private:
     // C++ constructor
     CQMLBackendAO();
@@ -125,6 +123,8 @@ private:
     void CancelAll();
 
     bool initializePosInfo();
+    
+    
 
 private:
     // From CActive

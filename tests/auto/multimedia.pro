@@ -50,6 +50,7 @@ SUBDIRS += \
 # doesn't believe it's an untested directory
 # qmultimedia_common
 
+symbian: SUBDIRS += qgraphicsvideoitem_symbian
 
 contains (QT_CONFIG, declarative) {
     SUBDIRS += \

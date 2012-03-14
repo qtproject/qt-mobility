@@ -1734,4 +1734,6 @@ EXPORTS
 	?minimumTilt@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1733 NONAME ; float QtMobility::QGraphicsGeoMap::minimumTilt(void) const
 	?replyFinished@QGeoTiledMapData@QtMobility@@AAEXPAVQGeoTiledMapReply@2@@Z @ 1734 NONAME ; void QtMobility::QGeoTiledMapData::replyFinished(class QtMobility::QGeoTiledMapReply *)
 	?bearing@QGraphicsGeoMap@QtMobility@@QBEMXZ @ 1735 NONAME ; float QtMobility::QGraphicsGeoMap::bearing(void) const
-
+    ?instance@QLocationNetworkAccessManagerFactory@QtMobility@@SAPAV12@XZ @ 1736 NONAME ; class QtMobility::QLocationNetworkAccessManagerFactory * QtMobility::QLocationNetworkAccessManagerFactory::instance(void)
+    ?setDeclarativeFactory@QLocationNetworkAccessManagerFactory@QtMobility@@QAEXPAVQDeclarativeNetworkAccessManagerFactory@@@Z @ 1737 NONAME ; void QtMobility::QLocationNetworkAccessManagerFactory::setDeclarativeFactory(class QDeclarativeNetworkAccessManagerFactory *)
+    ?create@QLocationNetworkAccessManagerFactory@QtMobility@@QAEPAVQNetworkAccessManager@@PAVQObject@@@Z @ 1738 NONAME ; class QNetworkAccessManager * QtMobility::QLocationNetworkAccessManagerFactory::create(class QObject *)

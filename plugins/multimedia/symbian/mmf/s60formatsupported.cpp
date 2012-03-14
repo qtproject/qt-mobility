@@ -39,66 +39,45 @@
 **
 ****************************************************************************/
 
-
 #include "s60formatsupported.h"
 
-
-
 S60FormatSupported::S60FormatSupported()
-{}
+{
+
+}
 
 S60FormatSupported::~S60FormatSupported()
 {
-    if (m_controllerparam) {
-        delete m_controllerparam;
-        m_controllerparam = NULL;
-    }
+    delete m_controllerparam;
 }
 
 QStringList S60FormatSupported::supportedPlayMimeTypesL()
 {
-
     RArray<TUid> mediaIds; //search for both audio and video
-
     RMMFControllerImplInfoArray iControllers;
-
     m_controllerparam = CMMFControllerPluginSelectionParameters::NewL();
-
     m_playformatparam = CMMFFormatSelectionParameters::NewL();
-
     mediaIds.Append(KUidMediaTypeAudio);
-
     mediaIds.Append(KUidMediaTypeVideo);
-
     m_controllerparam->SetMediaIdsL(mediaIds, CMMFPluginSelectionParameters::EAllowOtherMediaIds);
-
     m_controllerparam->SetRequiredPlayFormatSupportL(*m_playformatparam);
-
     m_controllerparam->ListImplementationsL(iControllers);
-
     CDesC8ArrayFlat* controllerArray = new (ELeave) CDesC8ArrayFlat(1);
-
     for (TInt i = 0; i < iControllers.Count(); i++) {
         for (TInt j = 0; j < (iControllers[i]->PlayFormats()).Count(); j++) {
             const CDesC8Array& iarr = (iControllers[i]->PlayFormats()[j]->SupportedMimeTypes());
-
             TInt count = iarr.Count();
-
             for (TInt k = 0; k < count; k++) {
                 TPtrC8 ptr = iarr.MdcaPoint(k);
-
                 HBufC8* n = HBufC8::NewL(ptr.Length());
-
                 TPtr8 ptr1 = n->Des();
-
                 ptr1.Copy((TUint8*) ptr.Ptr(), ptr.Length());
-
                 controllerArray->AppendL(ptr1);
             }
         }
     }
 
-// converting CDesC8Array to QStringList
+    // converting CDesC8Array to QStringList
     for (TInt x = 0; x < controllerArray->Count(); x++) {
         m_supportedplaymime.append(QString::fromUtf8(
                 (const char*) (controllerArray->MdcaPoint(x).Ptr()),
@@ -110,12 +89,9 @@ QStringList S60FormatSupported::supportedPlayMimeTypesL()
     QStringList tempvideo = m_supportedplaymime.filter(QString("video"));
 
     m_supportedplaymime.clear();
-
     m_supportedplaymime = tempaudio + tempvideo;
-
     mediaIds.Close();
     delete controllerArray;
     iControllers.ResetAndDestroy();
-
     return m_supportedplaymime;
 }

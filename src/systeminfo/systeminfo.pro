@@ -1,3 +1,5 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtSystemInfo
 QT += network gui
@@ -328,10 +330,13 @@ unix:!simulator {
         }
 
         contains(thermalstatus_symbian_enabled, yes) {
+            # header not present in public SDK builds
+            exists($${EPOCROOT}epoc32\\include\\internal\\ThermalManagerUserIF.h) {
             DEFINES += THERMALSTATUS_SUPPORTED
             SOURCES += thermalstatus_s60.cpp
             HEADERS += thermalstatus_s60.h
             message("Thermalstatus enabled")
+           }
         }
 
         contains(networkhandlingengine_symbian_enabled, yes) {
@@ -346,9 +351,9 @@ unix:!simulator {
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 
         TARGET.EPOCALLOWDLLDATA = 1
-        TARGET.UID3 = 0x2002ac7d
+        TARGET.UID3 = $$mobilityUID(0x2002ac7d)
 
-        QtSystemInfoDeployment.sources = QtSystemInfo.dll
+        QtSystemInfoDeployment.sources = QtSystemInfo$${QT_LIBINFIX}.dll
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }

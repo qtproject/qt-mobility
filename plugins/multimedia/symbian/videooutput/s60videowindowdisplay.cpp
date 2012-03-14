@@ -48,9 +48,9 @@
 using namespace S60VideoOutputUtils;
 
 S60VideoWindowDisplay::S60VideoWindowDisplay(QObject *parent)
-:   S60VideoDisplay(parent)
-,   m_winId(0)
-,   m_bitmap(0)
+    : S60VideoDisplay(parent)
+    , m_winId(0)
+    , m_bitmap(0)
 {
     parent->setProperty("colorKey", Qt::transparent);
 }

@@ -247,6 +247,7 @@ void MarkerManager::removeSearchMarkers()
 {
     foreach (Marker *m, d->searchMarkers) {
         d->map->removeMapObject(m);
+        d->searchMarkers.removeOne(m);
         delete m;
     }
 }

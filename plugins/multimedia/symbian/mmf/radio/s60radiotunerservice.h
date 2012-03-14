@@ -42,8 +42,6 @@
 #ifndef S60RADIOTUNERSERVICE_H
 #define S60RADIOTUNERSERVICE_H
 
-#include <QtCore/qobject.h>
-
 #include <qmediaservice.h>
 
 #ifdef TUNERLIBUSED

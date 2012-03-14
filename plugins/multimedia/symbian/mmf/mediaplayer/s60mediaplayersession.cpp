@@ -39,19 +39,13 @@
 **
 ****************************************************************************/
 
-#include "s60mediaplayersession.h"
-#include "s60mmtrace.h"
-
-#include <QtCore/qdebug.h>
-#include <QtCore/qdir.h>
-#include <QtCore/qvariant.h>
-#include <QtCore/qtimer.h>
+#include <QtCore/QDir>
+#include <QtCore/QTimer>
 #include <mmf/common/mmferrors.h>
 #include <qmediatimerange.h>
-
-/*!
-    Construct a media playersession with the given \a parent.
-*/
+#include "s60mediaplayersession.h"
+#include "s60mediaplayerutils.h"
+#include "s60mmtrace.h"
 
 S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     : QObject(parent)
@@ -70,44 +64,28 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
     , m_progressduration(0)
 {
     TRACE("S60MediaPlayerSession::S60MediaPlayerSession" << qtThisPtr());
-
     connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(tick()));
     connect(m_stalledTimer, SIGNAL(timeout()), this, SLOT(stalled()));
 }
-
-/*!
-    Destroys a media playersession.
-*/
 
 S60MediaPlayerSession::~S60MediaPlayerSession()
 {
     TRACE("S60MediaPlayerSession::~S60MediaPlayerSession" << qtThisPtr());
 }
 
-/*!
- * \return the audio volume of a player session.
-*/
 int S60MediaPlayerSession::volume() const
 {
     return m_volume;
 }
 
-/*!
-    Sets the audio \a volume of a player session.
-*/
-
 void S60MediaPlayerSession::setVolume(int volume)
 {
     if (m_volume == volume)
         return;
-    
     TRACE("S60MediaPlayerSession::setVolume" << qtThisPtr() << "volume" << volume);
-
     m_volume = volume;
     emit volumeChanged(m_volume);
-
-    // Dont set symbian players volume until media loaded.
-    // Leaves with KerrNotReady although documentation says otherwise.
+    // Don't set player volume until media loaded
     if (!m_muted && 
         (  mediaStatus() == QMediaPlayer::LoadedMedia 
         || (mediaStatus() == QMediaPlayer::StalledMedia && state() != QMediaPlayer::StoppedState)
@@ -119,94 +97,55 @@ void S60MediaPlayerSession::setVolume(int volume)
     }
 }
 
-/*!
-    \return the mute state of a player session.
-*/
-
 bool S60MediaPlayerSession::isMuted() const
 {
     return m_muted;
 }
-
-/*!
-    Identifies if the current media is seekable.
-
-    \return true if it possible to seek within the current media, and false otherwise.
-*/
 
 bool S60MediaPlayerSession::isSeekable() const
 {
     return m_seekable;
 }
 
-/*!
-    Sets the \a status of the current media.
-*/
-
 void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
 {
     if (m_mediaStatus == status)
         return;
-
     TRACE("S60MediaPlayerSession::setMediaStatus" << qtThisPtr() << "status" << status);
-    
     m_mediaStatus = status;
-    
     emit mediaStatusChanged(m_mediaStatus);
-    
     if (m_play_requested && m_mediaStatus == QMediaPlayer::LoadedMedia)
         play();
 }
-
-/*!
-    Sets the \a state on media player.
-*/
 
 void S60MediaPlayerSession::setState(QMediaPlayer::State state)
 {
     if (m_state == state)
         return;
-    
     TRACE("S60MediaPlayerSession::setMediaStatus" << qtThisPtr() << "state" << state);
-
     m_state = state;
     emit stateChanged(m_state);
 }
-
-/*!
-    \return the state of a player session.
-*/
 
 QMediaPlayer::State S60MediaPlayerSession::state() const
 {
     return m_state;
 }
 
-/*!
-    \return the status of the current media.
-*/
-
 QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
 {
     return m_mediaStatus;
 }
 
-/*!
- *  Loads the \a url for playback.
- *  If \a url is local file then it loads audio playersesion if its audio file.
- *  If it is a local video file then loads the video playersession.
-*/
-
 void S60MediaPlayerSession::load(const QMediaContent source)
 {
     TRACE("S60MediaPlayerSession::load" << qtThisPtr()
           << "source" << source.canonicalUrl().toString());
-
     m_source = source;
     setMediaStatus(QMediaPlayer::LoadingMedia);
     startStalledTimer();
-    m_stream = (source.canonicalUrl().scheme() == "file")?false:true;
-    m_UrlPath = source.canonicalUrl();
+    m_stream = (source.canonicalUrl().scheme() != "file");
+    m_url = source.canonicalUrl();
     TRAPD(err,
         if (m_stream)
             doLoadUrlL(QString2TPtrC(source.canonicalUrl().toString()));
@@ -216,35 +155,32 @@ void S60MediaPlayerSession::load(const QMediaContent source)
     m_isaudiostream = false;
 }
 
+bool S60MediaPlayerSession::getIsSeekable() const
+{
+    return ETrue;
+}
+
 TBool S60MediaPlayerSession::isStreaming()
 {
     return m_stream;
 }
 
-/*!
-    Start or resume playing the current source.
-*/
 void S60MediaPlayerSession::play()
 {
     TRACE("S60MediaPlayerSession::play" << qtThisPtr()
           << "state" << state() << "mediaStatus" << mediaStatus());
-
-    if ( (state() == QMediaPlayer::PlayingState && m_play_requested == false)
+    if (   (state() == QMediaPlayer::PlayingState && m_play_requested == false)
         || mediaStatus() == QMediaPlayer::UnknownMediaStatus
         || mediaStatus() == QMediaPlayer::NoMedia
         || mediaStatus() == QMediaPlayer::InvalidMedia)
         return;
-
     setState(QMediaPlayer::PlayingState);
-
     if (mediaStatus() == QMediaPlayer::LoadingMedia ||
        (mediaStatus() == QMediaPlayer::StalledMedia &&
-        state() == QMediaPlayer::StoppedState))
-   {
+        state() == QMediaPlayer::StoppedState)) {
         m_play_requested = true;
         return;
     }
-
     m_play_requested = false;
     m_duration = duration();
     setVolume(m_volume);
@@ -253,38 +189,25 @@ void S60MediaPlayerSession::play()
     doPlay();
 }
 
-/*!
-    Pause playing the current source.
-*/
-
 void S60MediaPlayerSession::pause()
 {
     TRACE("S60MediaPlayerSession::pause" << qtThisPtr());
-
     if (state() != QMediaPlayer::PlayingState)
         return;
-
     if (mediaStatus() == QMediaPlayer::NoMedia ||
         mediaStatus() == QMediaPlayer::InvalidMedia)
         return;
-
     setState(QMediaPlayer::PausedState);
     stopProgressTimer();
     TRAP_IGNORE(doPauseL());
     m_play_requested = false;
 }
 
-/*!
-    Stop playing, and reset the play position to the beginning.
-*/
-
 void S60MediaPlayerSession::stop()
 {
     TRACE("S60MediaPlayerSession::stop" << qtThisPtr());
-
     if (state() == QMediaPlayer::StoppedState)
         return;
-
     m_play_requested = false;
     m_state = QMediaPlayer::StoppedState;
     if (mediaStatus() == QMediaPlayer::BufferingMedia ||
@@ -300,129 +223,99 @@ void S60MediaPlayerSession::stop()
     emit stateChanged(m_state);
 }
 
-/*!
- * Sets \a renderer as video renderer.
-*/
-
 void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)
 {
     TRACE("S60MediaPlayerSession::setVideoRenderer" << qtThisPtr()
           << "videoRenderer" << renderer);
-
     Q_UNUSED(renderer);
 }
-
-/*!
- *   the percentage of the temporary buffer filled before playback begins.
-
-    When the player object is buffering; this property holds the percentage of
-    the temporary buffer that is filled. The buffer will need to reach 100%
-    filled before playback can resume, at which time the MediaStatus will be
-    BufferedMedia.
-
-    \sa mediaStatus()
-*/
 
 int S60MediaPlayerSession::bufferStatus()
 {
     if (state() ==QMediaPlayer::StoppedState)
         return 0;
-
     if(   mediaStatus() == QMediaPlayer::LoadingMedia
        || mediaStatus() == QMediaPlayer::UnknownMediaStatus
        || mediaStatus() == QMediaPlayer::NoMedia
        || mediaStatus() == QMediaPlayer::InvalidMedia)
         return 0;
-
     int progress = 0;
     TRAPD(err, progress = doGetBufferStatusL());
     // If buffer status query not supported by codec return 100
     // do not set error
-    if(err == KErrNotSupported)
+    if (err == KErrNotSupported)
         return 100;
-
     setError(err);
     return progress;
 }
-
-/*!
- * return TRUE if Meta data is available in current media source.
-*/
 
 bool S60MediaPlayerSession::isMetadataAvailable() const
 {
     return !m_metaDataMap.isEmpty();
 }
 
-/*!
- * \return the \a key meta data.
-*/
 QVariant S60MediaPlayerSession::metaData(const QString &key) const
 {
     return m_metaDataMap.value(key);
 }
-
-/*!
- * \return the \a key meta data as QString.
-*/
 
 QVariant S60MediaPlayerSession::metaData(QtMultimediaKit::MetaData key) const
 {
     return metaData(metaDataKeyAsString(key));
 }
 
-/*!
- * \return List of all available meta data from current media source.
-*/
-
 QList<QtMultimediaKit::MetaData> S60MediaPlayerSession::availableMetaData() const
 {
     QList<QtMultimediaKit::MetaData> metaDataTags;
     if (isMetadataAvailable()) {
-        for (int i = QtMultimediaKit::Title; i <= QtMultimediaKit::ThumbnailImage; i++) {
+        for (int i=QtMultimediaKit::Title; i<=QtMultimediaKit::ThumbnailImage; ++i) {
             QString metaDataItem = metaDataKeyAsString((QtMultimediaKit::MetaData)i);
             if (!metaDataItem.isEmpty()) {
-                if (!metaData(metaDataItem).isNull()) {
+                if (!metaData(metaDataItem).isNull())
                     metaDataTags.append((QtMultimediaKit::MetaData)i);
-                }
             }
         }
     }
-
     return metaDataTags;
 }
-
-/*!
- * \return all available extended meta data of current media source.
-*/
 
 QStringList S60MediaPlayerSession::availableExtendedMetaData() const
 {
     return m_metaDataMap.keys();
 }
 
-/*!
- * \return meta data \a key as QString.
-*/
-
 QString S60MediaPlayerSession::metaDataKeyAsString(QtMultimediaKit::MetaData key) const
 {
     switch(key) {
-    case QtMultimediaKit::Title: return "title";
-    case QtMultimediaKit::AlbumArtist: return "artist";
-    case QtMultimediaKit::Comment: return "comment";
-    case QtMultimediaKit::Genre: return "genre";
-    case QtMultimediaKit::Year: return "year";
-    case QtMultimediaKit::Copyright: return "copyright";
-    case QtMultimediaKit::AlbumTitle: return "album";
-    case QtMultimediaKit::Composer: return "composer";
-    case QtMultimediaKit::TrackNumber: return "albumtrack";
-    case QtMultimediaKit::AudioBitRate: return "audiobitrate";
-    case QtMultimediaKit::VideoBitRate: return "videobitrate";
-    case QtMultimediaKit::Duration: return "duration";
-    case QtMultimediaKit::MediaType: return "contenttype";
-    case QtMultimediaKit::CoverArtImage: return "attachedpicture";
-    case QtMultimediaKit::SubTitle: // TODO: Find the matching metadata keys
+    case QtMultimediaKit::Title:
+        return "title";
+    case QtMultimediaKit::AlbumArtist:
+        return "artist";
+    case QtMultimediaKit::Comment:
+        return "comment";
+    case QtMultimediaKit::Genre:
+        return "genre";
+    case QtMultimediaKit::Year:
+        return "year";
+    case QtMultimediaKit::Copyright:
+        return "copyright";
+    case QtMultimediaKit::AlbumTitle:
+        return "album";
+    case QtMultimediaKit::Composer:
+        return "composer";
+    case QtMultimediaKit::TrackNumber:
+        return "albumtrack";
+    case QtMultimediaKit::AudioBitRate:
+       return "audiobitrate";
+    case QtMultimediaKit::VideoBitRate:
+        return "videobitrate";
+    case QtMultimediaKit::Duration:
+        return "duration";
+    case QtMultimediaKit::MediaType:
+        return "contenttype";
+    case QtMultimediaKit::CoverArtImage:
+       return "attachedpicture";
+    case QtMultimediaKit::SubTitle:
     case QtMultimediaKit::Description:
     case QtMultimediaKit::Category:
     case QtMultimediaKit::Date:
@@ -462,13 +355,8 @@ QString S60MediaPlayerSession::metaDataKeyAsString(QtMultimediaKit::MetaData key
     default:
         break;
     }
-
     return QString();
 }
-
-/*!
-    Sets the \a muted state of a player session.
-*/
 
 void S60MediaPlayerSession::setMuted(bool muted)
 {
@@ -476,7 +364,6 @@ void S60MediaPlayerSession::setMuted(bool muted)
         TRACE("S60MediaPlayerSession::setMuted" << qtThisPtr() << "muted" << muted);
         m_muted = muted;
         emit mutedChanged(m_muted);
-
         if(   m_mediaStatus == QMediaPlayer::LoadedMedia
            || (m_mediaStatus == QMediaPlayer::StalledMedia && state() != QMediaPlayer::StoppedState)
            || m_mediaStatus == QMediaPlayer::BufferingMedia
@@ -488,10 +375,6 @@ void S60MediaPlayerSession::setMuted(bool muted)
     }
 }
 
-/*!
-   \return the duration of the current media in milliseconds.
-*/
-
 qint64 S60MediaPlayerSession::duration() const
 {
     if(   mediaStatus() == QMediaPlayer::LoadingMedia
@@ -500,15 +383,10 @@ qint64 S60MediaPlayerSession::duration() const
        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
        || mediaStatus() == QMediaPlayer::InvalidMedia)
         return -1;
-
     qint64 pos = 0;
     TRAP_IGNORE(pos = doGetDurationL());
     return pos;
 }
-
-/*!
-    \return the current playback position in milliseconds.
-*/
 
 qint64 S60MediaPlayerSession::position() const
 {
@@ -518,7 +396,6 @@ qint64 S60MediaPlayerSession::position() const
        || (mediaStatus() == QMediaPlayer::StalledMedia && state() == QMediaPlayer::StoppedState)
        || mediaStatus() == QMediaPlayer::InvalidMedia)
         return 0;
-
     qint64 pos = 0;
     TRAP_IGNORE(pos = doGetPositionL());
     if (pos < m_progressduration)
@@ -526,64 +403,39 @@ qint64 S60MediaPlayerSession::position() const
     return pos;
 }
 
-/*!
-    Sets the playback \a pos of the current media.  This will initiate a seek and it may take
-    some time for playback to reach the position set.
-*/
-
 void S60MediaPlayerSession::setPosition(qint64 pos)
 {
     if (position() == pos)
         return;
-
     TRACE("S60MediaPlayerSession::setPosition" << qtThisPtr() << "pos" << pos);
-
     QMediaPlayer::State originalState = state();
-
     if (originalState == QMediaPlayer::PlayingState)
         pause();
-
     TRAPD(err, doSetPositionL(pos * 1000));
     setError(err);
-
     if (err == KErrNone) {
         if (mediaStatus() == QMediaPlayer::EndOfMedia)
             setMediaStatus(QMediaPlayer::LoadedMedia);
-    }
-    else if (err == KErrNotSupported) {
+    } else if (err == KErrNotSupported) {
         m_seekable = false;
         emit seekableChanged(m_seekable);
     }
-
     if (originalState == QMediaPlayer::PlayingState)
         play();
-
     TRAP_IGNORE(m_progressduration = doGetPositionL());
     emit positionChanged(m_progressduration);
 }
-
-/*!
- * Set the audio endpoint to \a audioEndpoint.
-*/
 
 void S60MediaPlayerSession::setAudioEndpoint(const QString& audioEndpoint)
 {
     TRACE("S60MediaPlayerSession::setAudioEndpoint" << qtThisPtr()
           << "audioEndpoint" << audioEndpoint);
-
     doSetAudioEndpoint(audioEndpoint);
 }
-
-/*!
- * Loading of media source is completed.
- * And ready for playback. Updates all the media status, state, settings etc.
- * And emits the signals.
-*/
 
 void S60MediaPlayerSession::loaded()
 {
     TRACE("S60MediaPlayerSession::loaded" << qtThisPtr());
-
     stopStalledTimer();
     if (m_error == KErrNone || m_error == KErrMMPartialPlayback) {
         setMediaStatus(QMediaPlayer::LoadedMedia);
@@ -594,85 +446,50 @@ void S60MediaPlayerSession::loaded()
         emit videoAvailableChanged(isVideoAvailable());
         emit audioAvailableChanged(isAudioAvailable());
         emit mediaChanged();
-
         m_seekable = getIsSeekable();
     }
 }
 
-/*!
- * Playback is completed as medai source reached end of media.
-*/
 void S60MediaPlayerSession::endOfMedia()
 {
     TRACE("S60MediaPlayerSession::endOfMedia" << qtThisPtr());
-
+    stopProgressTimer();
     m_state = QMediaPlayer::StoppedState;
     setMediaStatus(QMediaPlayer::EndOfMedia);
-    //there is a chance that user might have called play from EOF callback
-    //if we are already in playing state, do not send state change callback
+    // There is a chance that user might have called play from EOF callback.
+    // If we are already in playing state, do not send state change callback.
     emit positionChanged(m_duration);
-    if(m_state == QMediaPlayer::StoppedState)
+    if (m_state == QMediaPlayer::StoppedState)
         emit stateChanged(QMediaPlayer::StoppedState);
 }
-
-/*!
- *  The percentage of the temporary buffer filling before playback begins.
-
-    When the player object is buffering; this property holds the percentage of
-    the temporary buffer that is filled. The buffer will need to reach 100%
-    filled before playback can resume, at which time the MediaStatus will be
-    BufferedMedia.
-
-    \sa mediaStatus()
-*/
 
 void S60MediaPlayerSession::buffering()
 {
     TRACE("S60MediaPlayerSession::buffering" << qtThisPtr());
-
     startStalledTimer();
     setMediaStatus(QMediaPlayer::BufferingMedia);
-
-//Buffering cannot happen in stopped state. Hence update the state
+    // Buffering cannot happen in stopped state. Hence update the state
     if (state() == QMediaPlayer::StoppedState)
         setState(QMediaPlayer::PausedState);
 }
 
-/*!
- * Buffer is filled with data and to for continuing/start playback.
-*/
-
 void S60MediaPlayerSession::buffered()
 {
     TRACE("S60MediaPlayerSession::buffered" << qtThisPtr());
-
     stopStalledTimer();
     setMediaStatus(QMediaPlayer::BufferedMedia);
 }
 
-/*!
- * Sets media status as stalled as waiting for the buffer to be filled to start playback.
-*/
-
 void S60MediaPlayerSession::stalled()
 {
     TRACE("S60MediaPlayerSession::stalled" << qtThisPtr());
-
     setMediaStatus(QMediaPlayer::StalledMedia);
 }
 
-/*!
- * \return all the meta data entries in the current media source.
-*/
-
-QMap<QString, QVariant>& S60MediaPlayerSession::metaDataEntries()
+QMap<QString, QVariant> &S60MediaPlayerSession::metaDataEntries()
 {
     return m_metaDataMap;
 }
-
-/*!
- * \return Error by converting Symbian specific error to Multimedia error.
-*/
 
 QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int error)
 {
@@ -736,24 +553,14 @@ QMediaPlayer::Error S60MediaPlayerSession::fromSymbianErrorToMultimediaError(int
     }
 }
 
-/*!
- * \return error.
- */
-
 int S60MediaPlayerSession::error() const
 {
     return m_error;
 }
 
-/*!
- * Sets the error.
- * * If playback complete/prepare complete ..., etc with successful then sets error as ZERO
- *  else Multimedia error.
-*/
-
 void S60MediaPlayerSession::setError(int error, const QString &errorString, bool forceReset)
 {
-    if( forceReset ) {
+    if (forceReset) {
         TRACE("S60MediaPlayerSession::setError" << qtThisPtr() << "forceReset");
         m_error = KErrNone;
         emit this->error(QMediaPlayer::NoError, QString());
@@ -800,142 +607,35 @@ void S60MediaPlayerSession::setAndEmitError(int error)
     emit this->error(rateError, symbianError);
 }
 
-/*!
- * emits the signal if there is a changes in position and buffering status.
- */
-
 void S60MediaPlayerSession::tick()
 {
     m_progressduration = position();
     emit positionChanged(m_progressduration);
-
     if (bufferStatus() < 100)
         emit bufferStatusChanged(bufferStatus());
 }
 
-/*!
- * Starts the timer once the media source starts buffering.
-*/
-
 void S60MediaPlayerSession::startProgressTimer()
 {
     TRACE("S60MediaPlayerSession::startProgressTimer" << qtThisPtr());
-
     m_progressTimer->start(500);
 }
-
-/*!
- * Stops the timer once the media source finished buffering.
-*/
 
 void S60MediaPlayerSession::stopProgressTimer()
 {
     TRACE("S60MediaPlayerSession::stopProgressTimer" << qtThisPtr());
-
     m_progressduration = 0;
     m_progressTimer->stop();
 }
 
-/*!
- * Starts the timer while waiting for some events to happen like source buffering or call backs etc.
- * So that if the events doesn't occur before stalled timer stops, it'll set the error/media status etc.
-*/
-
 void S60MediaPlayerSession::startStalledTimer()
 {
     TRACE("S60MediaPlayerSession::startStalledTimer" << qtThisPtr());
-
     m_stalledTimer->start(30000);
 }
-
-/*!
- *  Stops the timer when some events occurred while waiting for them.
- *  media source started buffering or call back is received etc.
-*/
 
 void S60MediaPlayerSession::stopStalledTimer()
 {
     TRACE("S60MediaPlayerSession::stopStalledTimer" << qtThisPtr());
-
     m_stalledTimer->stop();
 }
-
-/*!
- * \return Converted Symbian specific Descriptor to QString.
-*/
-
-QString S60MediaPlayerSession::TDesC2QString(const TDesC& aDescriptor)
-{
-    return QString::fromUtf16(aDescriptor.Ptr(), aDescriptor.Length());
-}
-
-/*!
- * \return Converted QString to non-modifiable pointer Descriptor.
-*/
-
-TPtrC S60MediaPlayerSession::QString2TPtrC( const QString& string )
-{
-	// Returned TPtrC is valid as long as the given parameter is valid and unmodified
-    return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
-}
-
-/*!
- * \return Converted Symbian TRect object to QRect object.
-*/
-
-QRect S60MediaPlayerSession::TRect2QRect(const TRect& tr)
-{
-    return QRect(tr.iTl.iX, tr.iTl.iY, tr.Width(), tr.Height());
-}
-
-/*!
- * \return converted QRect object to Symbian specific TRec object.
- */
-
-TRect S60MediaPlayerSession::QRect2TRect(const QRect& qr)
-{
-    return TRect(TPoint(qr.left(), qr.top()), TSize(qr.width(), qr.height()));
-}
-
-/*!
-    \fn bool S60MediaPlayerSession::isVideoAvailable();
-
-
-    Returns TRUE if Video is available.
-*/
-
-/*!
-    \fn bool S60MediaPlayerSession::isAudioAvailable();
-
-
-    Returns TRUE if Audio is available.
-*/
-
-/*!
-    \fn void S60MediaPlayerSession::setPlaybackRate (qreal rate);
-
-
-    Sets \a rate play back rate on media source. getIsSeekable
-*/
-
-/*!
-    \fn bool S60MediaPlayerSession::getIsSeekable () const;
-
-
-    \return TRUE if Seekable possible on current media source else FALSE.
-*/
-
-/*!
-    \fn QString S60MediaPlayerSession::activeEndpoint () const;
-
-
-    \return active end point name..
-*/
-
-/*!
-    \fn QString S60MediaPlayerSession::defaultEndpoint () const;
-
-
-    \return default end point name.
-*/
-

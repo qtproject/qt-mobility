@@ -413,7 +413,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
                 count += replacement.size();
 
             } else {
-                // Supported type so skip this paramater
+                // Supported type so skip this parameter
                 count += t.size();
             }
 

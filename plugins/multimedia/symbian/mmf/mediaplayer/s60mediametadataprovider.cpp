@@ -43,32 +43,19 @@
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
 #include "s60mmtrace.h"
-#include <QtCore/qdebug.h>
 
-/*!
- * Typecasts the \a control object to S60MediaPlayerControl object.
-*/
 S60MediaMetaDataProvider::S60MediaMetaDataProvider(QObject *control, QObject *parent)
     : QMetaDataReaderControl(parent)
-    , m_control(NULL)
+    , m_control(0)
 {
     TRACE("S60MediaMetaDataProvider::S60MediaMetaDataProvider" << qtThisPtr());
-
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
 }
-
-/*!
- * Destructor
-*/
 
 S60MediaMetaDataProvider::~S60MediaMetaDataProvider()
 {
     TRACE("S60MediaMetaDataProvider::~S60MediaMetaDataProvider" << qtThisPtr());
 }
-
-/*!
- * Returns TRUE if MetaData is Available or else FALSE.
-*/
 
 bool S60MediaMetaDataProvider::isMetaDataAvailable() const
 {
@@ -77,17 +64,10 @@ bool S60MediaMetaDataProvider::isMetaDataAvailable() const
     return false;
 }
 
-/*!
- * Always returns FLASE.
-*/
 bool S60MediaMetaDataProvider::isWritable() const
 {
     return false;
 }
-
-/*!
- * Returns when \a key meta data is found in metaData.
-*/
 
 QVariant S60MediaMetaDataProvider::metaData(QtMultimediaKit::MetaData key) const
 {
@@ -96,10 +76,6 @@ QVariant S60MediaMetaDataProvider::metaData(QtMultimediaKit::MetaData key) const
     return QVariant();
 }
 
-/*!
- * Returns available metaData.
-*/
-
 QList<QtMultimediaKit::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
     if (m_control->session())
@@ -107,20 +83,12 @@ QList<QtMultimediaKit::MetaData> S60MediaMetaDataProvider::availableMetaData() c
     return QList<QtMultimediaKit::MetaData>();
 }
 
-/*!
- * Returns when \a key string is found in extended metaData.
-*/
-
 QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
 {
     if (m_control->session())
         return m_control->session()->metaData(key);
     return QVariant();
 }
-
-/*!
- * Returns available Extended MetaData.
-*/
 
 QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
 {

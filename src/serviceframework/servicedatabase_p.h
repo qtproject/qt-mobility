@@ -66,6 +66,17 @@ QTM_BEGIN_NAMESPACE
 
 class QServiceInterfaceDescriptor;
 
+#ifdef Q_OS_SYMBIAN
+
+class ServiceMetaDataDBResults
+{
+public:
+    ServiceMetaDataResults dbServiceData;
+    QString dbServiceSecurityToken;
+};
+
+#endif //End Q_OS_SYMBIAN
+
 class QM_AUTOTEST_EXPORT ServiceDatabase : public QObject
 {
     Q_OBJECT
@@ -82,6 +93,20 @@ class QM_AUTOTEST_EXPORT ServiceDatabase : public QObject
         void setDatabasePath(const QString &databasePath);
         QString databasePath() const;
 
+#ifdef Q_OS_SYMBIAN
+        
+        bool mergeDatabase(const QString &srcDbFileName);
+        QList<ServiceMetaDataDBResults> getServiceData(const QStringList &serviceNameList);
+        bool registerServiceList(const QList<ServiceMetaDataDBResults> &serviceList);
+        QString getServiceSecurityToken(const QString &serviceName);
+        QStringList getServicesToAdd(const QStringList &dstServiceList, const QStringList &srcServiceList);
+        bool lessThan(const QServiceInterfaceDescriptor &d1,
+                        const QServiceInterfaceDescriptor &d2) const;
+        QServiceInterfaceDescriptor getDefaultInterface(const QString &serviceName, const QString &interfaceName);
+        bool isDefaultInterfaceExists(const QList<QServiceInterfaceDescriptor> &latestInterfaces, const QString &interfaceName);
+        
+#endif //End Q_OS_SYMBIAN
+        
         bool registerService(const ServiceMetaDataResults &service, const QString &securityToken = QString());
         bool unregisterService(const QString &serviceName, const QString &securityToken = QString());
         bool serviceInitialized(const QString &serviceName, const QString &securityToken = QString());

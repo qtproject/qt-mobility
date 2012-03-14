@@ -96,7 +96,7 @@
 
     \section2 Known Issues
     The example is not intended to be feature complete.  Only a very limited subset of detail types are
-    supported by the application.  It exercises only a very small portion of the Qt Contacts API.
+    supported by the application.  It exercises only a very small portion of the Qt Contacts API. 
 
     In particular:
     \list
@@ -113,4 +113,11 @@
            the QContactTag detail by giving related contacts the same tag.  A real application may support
            grouping via one or both of these methods.
     \endlist
+
+    This application has the following known issues on Harmattan:
+    \list
+        \o You cannot edit contacts because tapping QLineEdit widget does not open the virtual keyboard.
+           See \l{https://bugreports.qt.nokia.com/browse/QTBUG-23144}{QTBUG-23144}
+        \o You cannot set a thumbnail image for contacts. See \l{https://bugreports.qt.nokia.com/browse/QTMOBILITY-1992}{QTMOBILITY-1992}
+
 */

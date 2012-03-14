@@ -84,6 +84,8 @@ TInt CPubSubKeyHandler::GetValue() const
 
 void CPubSubKeyHandler::StartMonitoring()
     {
-    iProperty.Subscribe(iStatus);
-    SetActive();
+      if (!IsActive()) {
+      iProperty.Subscribe(iStatus);
+      SetActive();
+      }
     }

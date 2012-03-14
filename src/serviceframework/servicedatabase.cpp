@@ -187,7 +187,7 @@ bool ServiceDatabase::open()
     }
     m_isDatabaseOpen = true;
 
-    //Check database structure (tables) and recreate tables if neccessary
+    //Check database structure (tables) and recreate tables if necessary
     //If one of tables is missing remove all tables and recreate them
     //This operation is required in order to avoid data coruption
     if (!checkTables()) {
@@ -213,6 +213,233 @@ bool ServiceDatabase::open()
     }
     return true;
 }
+
+#ifdef Q_OS_SYMBIAN
+
+bool ServiceDatabase::mergeDatabase(const QString &srcDbFileName)
+{
+    if(!open()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+                qDebug() << "ServiceDatabase::mergeDatabase():-"
+                    << "Database tables Open Failed";
+#endif
+        return false;
+    }
+    ServiceDatabase *srcDatabase = new ServiceDatabase();
+    srcDatabase->setDatabasePath(srcDbFileName);
+    
+    if(!srcDatabase->open()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+                qDebug() << "ServiceDatabase::mergeDatabase():-"
+                    << "SRC Database tables Open Failed";
+#endif  
+        delete srcDatabase;
+        close();
+        return false;
+    }
+    //Get DB Services.
+    QStringList dstServiceList = getServiceNames(QString());
+    //Get SRC DB Services.
+    QStringList srcServiceList = srcDatabase->getServiceNames(QString());
+    //Get the Unique Services to Add.
+    QStringList servicesToAdd = getServicesToAdd(dstServiceList, srcServiceList);
+    //Get ServiceMetaData for the services to be added.
+    QList<ServiceMetaDataDBResults> srcServiceData = srcDatabase->getServiceData(servicesToAdd);
+    
+    registerServiceList(srcServiceData);
+    
+    srcServiceData.clear();
+    delete srcDatabase;
+    
+    return true;
+}
+
+QStringList ServiceDatabase::getServicesToAdd(const QStringList &dstServiceList, const QStringList &srcServiceList)
+{
+    QStringList serviceList;
+    
+    foreach(const QString srcServiceName, srcServiceList) {
+        if(!dstServiceList.contains(srcServiceName)) {
+            //If not Exists in dstServiceList append srcServiceName.
+            serviceList.append(srcServiceName);
+        }
+    }
+    
+    return serviceList;
+}
+
+bool ServiceDatabase::isDefaultInterfaceExists(const QList<QServiceInterfaceDescriptor> &latestInterfaces, const QString &interfaceName)
+{
+    int listCount = latestInterfaces.count();
+    
+    for(int i = 0; i < listCount; i++) {
+        if(interfaceName == latestInterfaces[i].interfaceName())
+            return true;
+    }
+    return false;
+}
+
+
+QList<ServiceMetaDataDBResults> ServiceDatabase::getServiceData(const QStringList &serviceNameList)
+{
+    QList<ServiceMetaDataDBResults>serviceList;
+    
+    if(!open()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+                qDebug() << "ServiceDatabase::parseDatabase():-"
+                    << "Database tables Open failed";
+#endif
+        return serviceList;               
+    }
+    
+    foreach(const QString &serviceName, serviceNameList) {
+        ServiceMetaDataDBResults serviceData;
+        serviceData.dbServiceData.name = serviceName;
+        //Get Interfaces for each Service.
+        QServiceFilter filter;
+        filter.setServiceName(serviceName);
+        QList<QServiceInterfaceDescriptor> interfaceList = getInterfaces(filter);
+        serviceData.dbServiceData.interfaces = interfaceList;
+        //Get Defaullt interface List for each Service.
+        for(int i = 0; i < interfaceList.size(); i++) {
+            QString interfaceName = interfaceList.at(i).interfaceName();
+            if(!isDefaultInterfaceExists(serviceData.dbServiceData.latestInterfaces, interfaceName)) {
+                QServiceInterfaceDescriptor defaultInterface = getDefaultInterface(serviceName, interfaceName);
+                if(defaultInterface.isValid()) {
+                    serviceData.dbServiceData.latestInterfaces.append(defaultInterface);
+                }
+            }
+        }
+        if(interfaceList.count()) {
+            serviceData.dbServiceData.location = interfaceList.at(0).d->attributes[QServiceInterfaceDescriptor::Location].toString();
+            serviceData.dbServiceData.description = interfaceList.at(0).d->attributes[QServiceInterfaceDescriptor::ServiceDescription].toString();
+            serviceData.dbServiceData.type = interfaceList.at(0).d->attributes[QServiceInterfaceDescriptor::ServiceType].toInt();
+        }
+        //Get the SecurityToken for each Service.
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+        
+        serviceData.dbServiceSecurityToken = getServiceSecurityToken(serviceName);
+        
+#endif  //QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+        
+        serviceList.append(serviceData);
+    }
+                   
+    return serviceList;
+}
+
+bool ServiceDatabase::lessThan(const QServiceInterfaceDescriptor &d1,
+                                const QServiceInterfaceDescriptor &d2) const
+{
+    return (d1.majorVersion() < d2.majorVersion())
+            || ( d1.majorVersion() == d2.majorVersion()
+                    && d1.minorVersion() < d2.minorVersion());
+
+}
+
+QServiceInterfaceDescriptor ServiceDatabase::getDefaultInterface(const QString &serviceName, const QString &interfaceName)
+{
+    
+    QServiceInterfaceDescriptor defaultInterface;
+    
+    defaultInterface = interfaceDefault(interfaceName);
+    if(serviceName == defaultInterface.serviceName()) {
+        //Returns default interface if serviceName is matching
+        //with the serviceName of defaultInterface.
+        return defaultInterface;
+    }
+    
+    //If different Services are there with same interface names returns 
+    //defaultInterface with improper QServiceInterfaceDescriptor, 
+    //in this case just return the interface with latest version.
+    
+    QList<QServiceInterfaceDescriptor> descriptors;
+    QServiceFilter filter;
+    
+    filter.setServiceName(serviceName);
+    filter.setInterface(interfaceName);
+    
+    descriptors = getInterfaces(filter);
+
+    //find the descriptor with the latest version
+    int latestIndex = 0;
+        for (int i = 1; i < descriptors.count(); ++i) {
+            if (lessThan(descriptors[latestIndex], descriptors[i]))
+                latestIndex = i;
+    }
+
+    if (!descriptors.isEmpty()) {
+        return (descriptors[latestIndex]);     
+    }
+
+    return defaultInterface;
+}
+
+QString ServiceDatabase::getServiceSecurityToken(const QString &serviceName)
+{
+    QString serviceToken;
+    
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    
+    if(!checkConnection()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getServiceSecurityToken():-"
+                    << "Problem:" << qPrintable(m_lastError.text());
+#endif
+        return serviceToken;
+    }
+
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+    QSqlQuery query(database);
+
+    if (!beginTransaction(&query, Read)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getServiceSecurityToken():-"
+                    << "Unable to begin transaction,"
+                    << "reason:" << qPrintable(m_lastError.text());
+#endif
+        return serviceToken;
+    }
+
+    QString statement = "SELECT DISTINCT ServiceProperty.Value FROM Service, ServiceProperty "
+                "WHERE Service.ID = ServiceProperty.ServiceID "
+                "AND ServiceProperty.Key = ? "
+                "AND Service.Name = ?";
+    QList<QVariant> bindValues;
+    
+    bindValues.append(SECURITY_TOKEN_KEY);
+    bindValues.append(serviceName);
+    if (!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::getServiceSecurityToken():-"
+                   << qPrintable(m_lastError.text());
+#endif
+        return serviceToken;
+    }
+    if (query.next()) {
+        serviceToken = query.value(EBindIndex).toString();
+    }  
+    rollbackTransaction(&query);//read only operation so just rollback
+    m_lastError.setError(DBError::NoError);
+
+#endif  //QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    
+    return serviceToken;
+}
+
+
+bool ServiceDatabase::registerServiceList(const QList<ServiceMetaDataDBResults> &serviceList)
+{
+    for(int i = 0; i < serviceList.count(); i++) {
+        //Database Write & Commit happens for every service, is Commit Operation Costlier ? 
+        registerService(serviceList[i].dbServiceData, serviceList[i].dbServiceSecurityToken);
+    }
+    return true;
+}
+        
+#endif //End Q_OS_SYMBIAN
+
 
 /*
    Adds a \a service into the database.
@@ -1143,7 +1370,7 @@ QStringList ServiceDatabase::getServiceNames(const QString &interfaceName)
     The last error set to DBError::ExternalIfaceIDFound
 
     If this function is called within a transaction, \a inTransaction
-    must be set to true.  If \a inTransaction is false, this fuction
+    must be set to true.  If \a inTransaction is false, this function
     will begin and end its own transaction.
 
     The last error may be set to one of the following error codes:
@@ -1281,7 +1508,7 @@ QServiceInterfaceDescriptor ServiceDatabase::interfaceDefault(const QString &int
 
    For a user scope database an \a externalInterfaceID can be provided
    so that the Defaults table will contain a "link" to an interface
-   implmentation provided in the system scope database.
+   implementation provided in the system scope database.
 
    May set the last error to one of the following error codes:
    DBError::NoError
@@ -1422,7 +1649,7 @@ bool ServiceDatabase::setInterfaceDefault(const QServiceInterfaceDescriptor &int
    provides same the highest version number, an arbitrary choice is made
    between them.
 
-   May set the last error to the folowing error codes:
+   May set the last error to the following error codes:
    DBError::NoError
    DBError::NotFound
    DBError::SqlError

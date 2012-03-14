@@ -1,6 +1,8 @@
+include(../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += qt plugin mobility
-TARGET  = $$qtLibraryTarget(declarative_location)
+TARGET  = $$mobilityPluginTarget(declarative_location)
 MOBILITY += location
 PLUGIN_TYPE = declarative
 QT += declarative network
@@ -104,7 +106,7 @@ symbian {
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
     # Target UID, makes every Symbian app unique
-    TARGET.UID3 = 0x20033007
+    TARGET.UID3 = $$mobilityUID(0x20033007)
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.
     importFiles.sources = $$DESTDIR/declarative_location$${QT_LIBINFIX}.dll qmldir 
     importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH

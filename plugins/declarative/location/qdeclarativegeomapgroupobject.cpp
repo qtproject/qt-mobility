@@ -65,7 +65,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent)
-    : QDeclarativeGeoMapObject(parent)
+    : QDeclarativeGeoMapObject(parent),
+      visible_(true)
 {
     group_ = new QGeoMapGroupObject();
     setMapObject(group_);
@@ -242,6 +243,25 @@ void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *even
     This property holds a boolean corresponding to whether or not the
     group is visible.
 */
+
+void QDeclarativeGeoMapGroupObject::setVisible(bool visible)
+{
+    if (visible_ == visible)
+        return;
+
+    visible_ = visible;
+
+    for (int i = 0; i < objects_.size(); ++i) {
+        objects_[i]->setVisible(visible_);
+    }
+
+    emit visibleChanged(visible_);
+}
+
+bool QDeclarativeGeoMapGroupObject::isVisible() const
+{
+    return visible_;
+}
 
 #include "moc_qdeclarativegeomapgroupobject_p.cpp"
 

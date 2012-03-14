@@ -102,6 +102,7 @@ class CQGeoPositionInfoSourceS60 : public INotificationCallback,
         public QGeoPositionInfoSource
 
 {
+	
 public:
     // Constructors and destructor
     /**
@@ -195,7 +196,6 @@ public slots :
 
     // stops the regular updates
     virtual void stopUpdates();
-
 
 private:
 

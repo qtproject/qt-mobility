@@ -145,6 +145,8 @@ bool QMessageContentContainerId::operator!=(const QMessageContentContainerId &ot
 
 /*! \typedef QMessageContentContainerIdList
 
+    \relates QMessageContentContainerId
+
     Qt-style synonym for QList<QMessageContentContainerId>
 */
 

@@ -55,8 +55,8 @@ QTM_BEGIN_NAMESPACE
     engines must implement in order to provide capability related functionality.
 
     A QAbstractSecuritySession encapsulates the service client's capabilities. QServiceManager
-    can match those capabilites with the capabilites required by a particular service.
-    Service capabilites are declared via the services XML description.
+    can match those capabilities with the capabilities required by a particular service.
+    Service capabilities are declared via the services XML description.
 
     The use of a security session is not mandated by the service manager. If the client
     is passing a security session object QServiceManager ensures that the permissions

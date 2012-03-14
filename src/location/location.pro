@@ -1,6 +1,8 @@
+include(../../features/utils.pri)
+
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network sql
+QT = core gui network sql declarative
 
 include(../../common.pri)
 
@@ -19,9 +21,12 @@ contains(proj_enabled, yes) {
   include($$PWD/../3rdparty/proj.pri)
 }
 
+location_fix_enabled = no
+
 contains(location_fix_enabled, yes) {
-    DEFINES += LOCATION_FIX_QTM_1550
+	DEFINES += LOCATION_FIX_QTM_1550
 }
+
 
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
@@ -74,6 +79,7 @@ symbian {
                        qgeopositioninfosource_symbian_p.h
     }
 
+
     SOURCES += qgeopositioninfosource_s60.cpp \
                qgeosatelliteinfosource_s60.cpp \
                qmlbackendao_s60.cpp
@@ -95,6 +101,7 @@ symbian {
                qgeopositioninfosource_symbian.cpp
     }
 }
+
 
 wince* {
     PRIVATE_HEADERS += qgeopositioninfosource_wince_p.h \
@@ -179,25 +186,28 @@ SOURCES += \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
             projwrapper_p.cpp \
-            qgeopositioninfosourcefactory.cpp
+            qgeopositioninfosourcefactory.cpp \
+            qlocationnetworkaccessmanagerfactory.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x2002AC83
+    TARGET.UID3 = $$mobilityUID(0x2002AC83)
 
     INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions \
                    $${EPOCROOT}epoc32/include/lbtheaders \
                    $${EPOCROOT}epoc32/include/platform
     LIBS += -llbs
     LIBS += -lefsrv
-    contains(location_fix_enabled, yes) {
-        LIBS += -leposmodset
-    }
+    
+   contains(location_fix_enabled, yes) {
+    LIBS += -leposmodset
+   }
+
     contains(lbt_enabled, yes) {
         LIBS += -llbt
     }
 
-    QtLocationDeployment.sources = QtLocation.dll
+    QtLocationDeployment.sources = QtLocation$${QT_LIBINFIX}.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
 }

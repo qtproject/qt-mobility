@@ -229,6 +229,7 @@ void tst_QSystemStorageInfo::tst_PhoneMemoryThresholdNotifications()
     {
     qDebug() << "  - Begin ";
     QSystemStorageInfo *sti = new QSystemStorageInfo(this);
+    //make sure we have a file available by name file.mp3
     _LIT(KSOURCEPATH,"C:\\Data\\file.mp3");
     _LIT(KDESTINATIONPATH,":\\Data\\");
     _LIT(KMP3,".mp3");
@@ -417,8 +418,8 @@ void tst_QSystemDeviceInfo::tst_uniqueDeviceID()
 {
     qDebug() << "tst_QSystemDeviceInfo::tst_uniqueDeviceID---START" ;
     QSystemDeviceInfo di;
-    QUuid uniqueDeviceId = di.uniqueDeviceID();
-    QVERIFY(uniqueDeviceId != 0);
+    QByteArray byteArray = di.uniqueDeviceID();
+    QVERIFY(byteArray.isEmpty() != true);
 }
 
 //Lockstatus is set to KeypadLocked and then changed to DeviceLocked
@@ -426,8 +427,8 @@ void tst_QSystemDeviceInfo::tst_lockStatusKeypadLocked()
 {
     qDebug() << "tst_QSystemDeviceInfo::tst_lockStatusKeypadLocked ---START Line No" <<__LINE__;
     QSystemDeviceInfo *di = new QSystemDeviceInfo;
-    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),this,SLOT(updateLockStatus(QSystemDeviceInfo::LockType)));
-    QSignalSpy spy(di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)));
+    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),this,SLOT(updateLockStatus(QSystemDeviceInfo::LockTypeFlags)));
+    QSignalSpy spy(di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
     TInt err = RProperty::Set(KPSUidAvkonDomain, KAknKeyguardStatus, EKeyguardLocked);
     WaitActive(1000000);
 
@@ -452,8 +453,8 @@ void tst_QSystemDeviceInfo::tst_lockStatusDeviceLocked()
 {
     qDebug() << "tst_QSystemDeviceInfo::tst_lockStatusDeviceLocked---START" ;
     QSystemDeviceInfo *di = new QSystemDeviceInfo;
-    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),this,SLOT(updateLockStatus(QSystemDeviceInfo::LockType)));
-    QSignalSpy spy(di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)));
+    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),this,SLOT(updateLockStatus(QSystemDeviceInfo::LockTypeFlags)));
+    QSignalSpy spy(di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
     TInt err = RProperty::Set(KPSUidAvkonDomain, KAknKeyguardStatus, EKeyguardAutolockEmulation);
     WaitActive(1000000);
 
@@ -478,8 +479,8 @@ void tst_QSystemDeviceInfo::tst_lockStatusDeviceUnknownLock()
     TInt value = 5;
     qDebug() << "tst_QSystemDeviceInfo::tst_lockStatusDeviceUnknownLock---START" ;
     QSystemDeviceInfo *di = new QSystemDeviceInfo;
-    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)),this,SLOT(updateLockStatus(QSystemDeviceInfo::LockType)));
-    QSignalSpy spy(di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockType)));
+    connect(di,SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)),this,SLOT(updateLockStatus(QSystemDeviceInfo::LockTypeFlags)));
+    QSignalSpy spy(di, SIGNAL(lockStatusChanged(QSystemDeviceInfo::LockTypeFlags)));
     TInt err = RProperty::Set(KPSUidAvkonDomain, KAknKeyguardStatus ,value);
     WaitActive(1000000);
 
@@ -881,7 +882,7 @@ void tst_QSystemDeviceInfo::tst_vibrationVolumeSettings()
             CleanupStack::PopAndDestroy(repository);
             repository = NULL;
         )
-        vibration = testObj.getActiveProfileDetails().vibrationActive();
+        vibration = testObj.activeProfileDetails().vibrationActive();
         qDebug()<<"Vibra Status returned is  "<<boolToStr(vibration);
         QVERIFY2(( vibration == vibraStates[loopiter] ) ," Failed to Set/Get vibra Status.. Aborting..");
     }
@@ -896,8 +897,8 @@ void tst_QSystemDeviceInfo::tst_vibrationVolumeSettings()
             CleanupStack::PopAndDestroy(repository);
             repository = NULL;
         )
-        msgVolume = testObj.getActiveProfileDetails().messageRingtoneVolume();
-        voiceVolume = testObj.getActiveProfileDetails().voiceRingtoneVolume();
+        msgVolume = testObj.activeProfileDetails().messageRingtoneVolume();
+        voiceVolume = testObj.activeProfileDetails().voiceRingtoneVolume();
         qDebug()<<"Msg Vol  : "<<msgVolume<<"   Voice vol : "<<voiceVolume;
         TInt calibVol = 100*(loopiter - 1)/9;
         QVERIFY2( ( msgVolume == calibVol), "Message Volume Get/Set Error... Aborting");
@@ -928,7 +929,7 @@ void tst_QSystemDeviceInfo::tst_vibrationVolumeSettings()
  QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
  int screen = 0;
  QSystemDisplayInfo di;
- orientation = di.getOrientation(screen);
+ orientation = di.orientation(screen);
  qDebug() << "The Orientation is  " << orientation ;
  qDebug() << "tst_QSystemDisplayInfo::tst_getOrientation---END" ;
  }

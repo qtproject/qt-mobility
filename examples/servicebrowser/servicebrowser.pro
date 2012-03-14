@@ -25,3 +25,12 @@ symbian {
 
     TARGET.CAPABILITY = ReadUserData WriteUserData
 }
+
+contains(MEEGO_EDITION,harmattan) {
+    target.path = /opt/servicebrowser/bin
+    INSTALLS += target
+}
+
+
+OTHER_FILES += 
+

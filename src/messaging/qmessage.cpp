@@ -374,6 +374,8 @@ QList<QByteArray> charsets;
 
     Set the list of cc (carbon copy) recipients for the message to \a ccList.
 
+    On Symbian cc recipient list must not contain more than one element.
+
     \since 1.0
     \sa cc(), setTo(), setBcc()
 */
@@ -391,6 +393,8 @@ QList<QByteArray> charsets;
     \fn QMessage::setBcc(const QMessageAddressList& bccList)
 
     Set the list of bcc (blind carbon copy) recipients for the message to \a bccList.
+
+    On Symbian bcc recipient list must not contain more than one element.
 
     \since 1.0
     \sa bcc(), setTo(), setCc()
@@ -471,6 +475,9 @@ QList<QByteArray> charsets;
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
 
+    On Symbian platform email messages with HTML body cannot be sent. If HTML content needs
+    to be sent it can be added as attachment.
+
     \since 1.0
     \sa bodyId(), preferredCharsets()
 */
@@ -483,6 +490,9 @@ QList<QByteArray> charsets;
     The internet media (MIME) content type of the body is set to \a mimeType, if provided.
     If the \a mimeType is not specified, the content type will default to "text/plain", and
     the encoding charset will be as determined by preferredCharsets().
+
+    On Symbian platform email messages with HTML body cannot be sent. If HTML content needs
+    to be sent it can be added as attachment.
 
     \since 1.0
     \sa bodyId(), preferredCharsets()

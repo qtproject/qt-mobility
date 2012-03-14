@@ -39,19 +39,15 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIANETWORKACCESSCONTROL_H_
-#define S60MEDIANETWORKACCESSCONTROL_H_
+#ifndef S60MEDIANETWORKACCESSCONTROL_H
+#define S60MEDIANETWORKACCESSCONTROL_H
 
-
-#include <QtCore/qobject.h>
-#include <QtCore/qlist.h>
-#include <QtCore/qstring.h>
-#include <qmetaobject.h>
-#include <QtNetwork/qnetworkconfiguration.h>
+#include <QtCore/QList>
+#include <QtNetwork/QNetworkConfiguration>
+#include <qmedianetworkaccesscontrol.h>
 #include <commdbconnpref.h>
 #include <commdb.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
-#include <qmedianetworkaccesscontrol.h>
 #include "s60mediaplayercontrol.h"
 
 QT_BEGIN_NAMESPACE
@@ -63,27 +59,26 @@ QT_END_NAMESPACE
 class S60MediaNetworkAccessControl : public QMediaNetworkAccessControl
 {
     Q_OBJECT
-
 public:
-
     S60MediaNetworkAccessControl(QObject *parent = 0);
     ~S60MediaNetworkAccessControl();
 
     virtual void setConfigurations(const QList<QNetworkConfiguration> &configurations);
     virtual QNetworkConfiguration currentConfiguration() const;
     int accessPointId();
-    TBool isLastAccessPoint();
+    bool isLastAccessPoint();
     void resetIndex();
 
 public Q_SLOTS:
     void accessPointChanged(int);
 
 private:
-    void retriveAccesspointIDL(const QList<QNetworkConfiguration> &);
-    QList<int> m_IapIdList;
-    QList<QNetworkConfiguration> m_NetworkObjectList;
-    QNetworkConfiguration m_NetworkObject;
+    void retriveAccesspointIDL(const QList<QNetworkConfiguration> &accessPoint);
+    QList<int> m_iapIdList;
+    QList<QNetworkConfiguration> m_networkObjectList;
+    QNetworkConfiguration m_networkObject;
     int m_iapId;
     int m_currentIndex;
 };
-#endif /* S60MEDIANETWORKACCESSCONTROL_H_ */
+
+#endif // S60MEDIANETWORKACCESSCONTROL_H

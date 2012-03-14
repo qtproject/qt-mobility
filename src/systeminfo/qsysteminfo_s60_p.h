@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -89,30 +89,15 @@
 #include "networkoperatornamelistener_s60.h"
 #endif
 
+#include <QThread>
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 const int KMaxBatteryBars = 7; //Max number of battery bars (7 is fixed for all symbian devices now)
 
-class DeviceInfo;
-
-//////// QSystemInfoPrivateBase
-class QSystemInfoPrivateBase : public QObject
-{
-    Q_OBJECT
-
-public:
-
-    QSystemInfoPrivateBase(QObject *parent = 0);
-    virtual ~QSystemInfoPrivateBase();
-
-protected:
-    DeviceInfo* m_deviceInfo;
-};
-
 //////// QSystemInfo
-class QSystemInfoPrivate : public QSystemInfoPrivateBase
+class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
 
@@ -137,7 +122,7 @@ private:
 };
 
 //////// QSystemNetworkInfo
-class QSystemNetworkInfoPrivate : public QSystemInfoPrivateBase, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
+class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver, public MNetworkInfoObserver, public MWlanInfoObserver
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
 , public MNetworkOperatorNameObserver
 #endif
@@ -245,7 +230,7 @@ private:
 };
 
 //////// QSystemStorageInfo
-class QSystemStorageInfoPrivate : public QSystemInfoPrivateBase,
+class QSystemStorageInfoPrivate : public QObject,
     public MStorageStatusObserver
 #ifdef DISKNOTIFY_SUPPORTED
     ,public MStorageSpaceNotifyObserver
@@ -295,7 +280,7 @@ class MProEngNotifyHandler;
 
 QTM_BEGIN_NAMESPACE
 
-class QSystemDeviceInfoPrivate : public QSystemInfoPrivateBase,
+class QSystemDeviceInfoPrivate : public QObject,
     public MTelephonyInfoObserver,
     public MProEngProfileActivationObserver,
     public MCenRepNotifyHandlerCallback,
@@ -435,18 +420,112 @@ private:    //data
 class DeviceInfo
 {
 public:
+    static DeviceInfo *instance()
+      {
+      TRACES( qDebug() << "DeviceInfo::instance()"
+              << ": QThread id = " << QThread::currentThread()
+              << "Symbian thread id = " << RThread().Id().Id());
+      if (!Dll::Tls())
+        {
+           Dll::SetTls(new DeviceInfo);
+        TRACES( qDebug() << "DeviceInfo::instance() CREATED!"
+               << ": QThread id = " << QThread::currentThread()
+               << "Symbian thread id = " << RThread().Id().Id());
+        }
+      return static_cast<DeviceInfo *>(Dll::Tls());
+    }
+
+  void initMobilePhonehandleL()
+    {
+  #ifdef ETELMM_SUPPORTED
+        if (m_rmobilePhoneInitialised)
+          return;
+
+        TInt err = KErrNone;
+        err = m_etelServer.Connect();
+        if ( err != KErrNone ) {
+          TRACES (qDebug() << "DeviceInfo:: InitMobilePhonehandle err code RTelServer::Connect" << err);
+          User::Leave(err);
+        }
+
+        //Eumerate legal phone
+        // Get number of phones
+        TInt phones(0);
+        User::LeaveIfError(m_etelServer.EnumeratePhones(phones));
+
+        // Get phone info of first legal phone.
+        TInt legalPhoneIndex = KErrNotFound;
+        for (TInt i=0; i<phones && legalPhoneIndex == KErrNotFound; i++)
+        {
+          if (m_etelServer.GetPhoneInfo(i, m_etelphoneInfo) == KErrNone)
+            {
+            if (m_etelphoneInfo.iNetworkType == RTelServer::ENetworkTypeMobileDigital)
+              {
+                legalPhoneIndex = i;
+              }
+            }
+        }
+        User::LeaveIfError(legalPhoneIndex);
+
+        err = m_rmobilePhone.Open(m_etelServer,m_etelphoneInfo.iName);
+        if (err != KErrNone) {
+          TRACES (qDebug() << "DeviceInfo:: InitMobilePhonehandle err code RMobilePhone::Open =" << err);
+          User::Leave(err);
+        }
+
+        err = m_rmobilePhone.Initialise();
+        if (err != KErrNone) {
+            TRACES (qDebug() << "DeviceInfo:: InitMobilePhonehandle err val for RMobilePhone::Initialise =" << err);
+            User::Leave(err);
+        }
+
+        TRACES (qDebug() << "InitMobilePhonehandleL- successful");
+        m_rmobilePhoneInitialised = true;
+  #endif
+    }
+
+  void initRmobilePhone()
+    {
+  #ifdef ETELMM_SUPPORTED
+        TRAPD ( err,initMobilePhonehandleL());
+        if (err ) {
+           m_rmobilePhone.Close();
+               m_etelServer.Close();
+              }
+  #endif
+    }
+
+    bool etelmmSupported()
+      {
+      #ifdef ETELMM_SUPPORTED
+            return true;
+      #else
+            return false;
+      #endif
+      }
+
     CPhoneInfo *phoneInfo()
     {
+      if (etelmmSupported() && !m_rmobilePhoneInitialised) initRmobilePhone();
         if (!m_phoneInfo) {
-            m_phoneInfo = new CPhoneInfo(*m_telephony);
+#ifdef ETELMM_SUPPORTED
+        m_phoneInfo = new CPhoneInfo(m_rmobilePhone);
+#else
+        m_phoneInfo = new CPhoneInfo(*m_telephony);
+#endif
         }
         return m_phoneInfo;
     }
 
     CSubscriberInfo *subscriberInfo()
     {
+      if (etelmmSupported() && !m_rmobilePhoneInitialised) initRmobilePhone();
         if (!m_subscriberInfo) {
-            m_subscriberInfo = new CSubscriberInfo(*m_telephony);
+#ifdef ETELMM_SUPPORTED
+         m_subscriberInfo = new CSubscriberInfo(m_rmobilePhone);
+#else
+         m_subscriberInfo = new CSubscriberInfo(*m_telephony);
+#endif
         }
         return m_subscriberInfo;
     }
@@ -461,32 +540,52 @@ public:
 
     CBatteryInfo *batteryInfo()
     {
+      if (etelmmSupported() && !m_rmobilePhoneInitialised) initRmobilePhone();
         if (!m_batteryInfo) {
-            m_batteryInfo = new CBatteryInfo(*m_telephony);
+#ifdef ETELMM_SUPPORTED
+         m_batteryInfo = new CBatteryInfo(m_rmobilePhone);
+#else
+         m_batteryInfo = new CBatteryInfo(*m_telephony);
+#endif
         }
         return m_batteryInfo;
     }
 
     CCellNetworkInfo *cellNetworkInfo()
     {
+      if (etelmmSupported() && !m_rmobilePhoneInitialised) initRmobilePhone();
         if (!m_cellNetworkInfo) {
-            m_cellNetworkInfo = new CCellNetworkInfo(*m_telephony);
+#ifdef ETELMM_SUPPORTED
+         m_cellNetworkInfo = new CCellNetworkInfo(m_rmobilePhone);
+#else
+         m_cellNetworkInfo = new CCellNetworkInfo(*m_telephony);
+#endif
         }
         return m_cellNetworkInfo;
     }
 
     CCellNetworkRegistrationInfo *cellNetworkRegistrationInfo()
     {
+      if (etelmmSupported() && !m_rmobilePhoneInitialised) initRmobilePhone();
         if (!m_cellNetworkRegistrationInfo) {
-            m_cellNetworkRegistrationInfo = new CCellNetworkRegistrationInfo(*m_telephony);
+#ifdef ETELMM_SUPPORTED
+        m_cellNetworkRegistrationInfo = new CCellNetworkRegistrationInfo(m_rmobilePhone);
+#else
+        m_cellNetworkRegistrationInfo = new CCellNetworkRegistrationInfo(*m_telephony);
+#endif
         }
         return m_cellNetworkRegistrationInfo;
     }
 
     CCellSignalStrengthInfo *cellSignalStrenghtInfo()
     {
+      if (etelmmSupported() && !m_rmobilePhoneInitialised) initRmobilePhone();
         if (!m_cellSignalStrengthInfo) {
-            m_cellSignalStrengthInfo = new CCellSignalStrengthInfo(*m_telephony);
+#ifdef ETELMM_SUPPORTED
+        m_cellSignalStrengthInfo = new CCellSignalStrengthInfo(m_rmobilePhone);
+#else
+        m_cellSignalStrengthInfo = new CCellSignalStrengthInfo(*m_telephony);
+#endif
         }
         return m_cellSignalStrengthInfo;
     }
@@ -567,9 +666,10 @@ public:
 
     CNetworkInfo* networkInfo ()
     {
-        if (!m_networkInfo) {
-           m_networkInfo = new  CNetworkInfo();
-        }
+        if (!m_networkInfo)
+            m_networkInfo = new CNetworkInfo();
+        if (!m_networkInfo->IsInitialised())
+            m_networkInfo->Initialise();
         return m_networkInfo;
     }
 
@@ -588,6 +688,7 @@ public:
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
         ,m_networkinfolistener(NULL)
 #endif
+    ,m_rmobilePhoneInitialised(false)
     {
         TRACES(qDebug() << "DeviceInfo():Constructor");
         m_telephony = CTelephony::NewL();
@@ -623,6 +724,11 @@ public:
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
         delete m_networkinfolistener;
 #endif
+
+#ifdef ETELMM_SUPPORTED
+    m_etelServer.Close();
+    m_rmobilePhone.Close();
+#endif
     }
 
 private:
@@ -656,9 +762,15 @@ private:
    CNetworkOperatorNameListener* m_networkinfolistener;
 #endif
 
+#ifdef ETELMM_SUPPORTED
+    RTelServer m_etelServer;
+    RMobilePhone m_rmobilePhone;
+    RTelServer::TPhoneInfo m_etelphoneInfo;
+#endif
+  bool m_rmobilePhoneInitialised;
 };
 
-class QSystemBatteryInfoPrivate : public QSystemInfoPrivateBase, public MBatteryInfoObserver, public MBatteryHWRMObserver
+class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver
 {
     Q_OBJECT
 public:

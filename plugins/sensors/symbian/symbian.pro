@@ -1,10 +1,12 @@
+include(../../../features/utils.pri)
+
 INCLUDEPATH+=$$(EPOCROOT)epoc32/include/osextensions
 
 PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtsensors_sym)
+TARGET = $$mobilityPluginTarget(qtsensors_sym)
 
 include(../../../common.pri)
 
@@ -44,7 +46,7 @@ MOBILITY+=sensors
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x2002BFC8
+    TARGET.UID3 = $$mobilityUID(0x2002BFC8)
     TARGET.CAPABILITY = ALL -TCB
     LIBS += -lsensrvclient
     LIBS += -lsensrvutil

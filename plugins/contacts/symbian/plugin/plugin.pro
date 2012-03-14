@@ -1,16 +1,20 @@
+include(../../../../features/utils.pri)
+
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtcontacts_symbian)
+TARGET = qtcontacts_symbian
 PLUGIN_TYPE=contacts
 
 include(symbian_defines.pri)
-include(deploy.pri)
+PUBLIC_HEADERS += inc/cntbackendsdefs.h
+CONFIG += middleware
+include(../../../../features/deploy.pri)
 symbian: { 
     load(data_caging_paths)
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.UID3 = 0x2002AC7B
+    TARGET.UID3 = $$mobilityUID(0x2002AC7B)
   
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	

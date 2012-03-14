@@ -104,6 +104,8 @@
     \o \l{radio}{Radio}
     \o \l{slideshow}{Slideshow}
     \o \l{declarative-camera}{Declarative Camera}
+    \o \l{video/qmlvideo}{QML Video}
+    \o \l{video/qmlvideofx}{QML Video Shader Effects}
     \endlist
 
     \section2 Organizer

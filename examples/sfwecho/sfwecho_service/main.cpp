@@ -74,12 +74,15 @@ void unregisterExampleService()
 
 void registerExampleService()
 {
+    // Automatic registration feature is used on Symbian, for details see .pro file
+#ifndef Q_OS_SYMBIAN
     unregisterExampleService();
     QServiceManager m;
     const QString path = QCoreApplication::applicationDirPath() + "/xmldata/sfwechoservice.xml";
     if (!m.addService(path)) {
         qWarning() << "Cannot register EchoService" << path;
     }
+#endif
 }
 
 Q_DECLARE_METATYPE(QMetaType::Type);

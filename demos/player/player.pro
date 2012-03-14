@@ -25,6 +25,10 @@ maemo* {
 }
 
 symbian {
-    LIBS += -lavkon -lcone -leikcore
+    LIBS += -lavkon \
+        -lcone \
+        -leikcore \
+        -lremconinterfacebase \
+        -lremconcoreapi
     TARGET.CAPABILITY = ReadUserData
 }
