@@ -38,27 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef UTIL_H
+#define UTIL_H
 
-#ifndef DUMMYCOMMON_H
-#define DUMMYCOMMON_H
+#include <QtCore/QtGlobal>
 
-#include <qsensorbackend.h>
-
-QTM_USE_NAMESPACE
-
-class dummycommon : public QSensorBackend
-{
-public:
-    dummycommon(QSensor *sensor);
-
-    void start();
-    void stop();
-    virtual void poll() = 0;
-    void timerEvent(QTimerEvent * /*event*/);
-
-private:
-    int m_timerid;
-};
-
+#if (defined Q_OS_UNIX) || (defined Q_OS_WINCE)
+quint64 getTimestamp();
 #endif
 
+#endif

@@ -58,9 +58,6 @@ public:
     virtual void poll() = 0;
     void timerEvent(QTimerEvent * /*event*/);
 
-protected:
-    quint64 getTimestamp();
-
 private Q_SLOTS:
     void pollnow();
 

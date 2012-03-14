@@ -38,27 +38,41 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "util.h"
 
-#ifndef DUMMYCOMMON_H
-#define DUMMYCOMMON_H
-
-#include <qsensorbackend.h>
-
-QTM_USE_NAMESPACE
-
-class dummycommon : public QSensorBackend
-{
-public:
-    dummycommon(QSensor *sensor);
-
-    void start();
-    void stop();
-    virtual void poll() = 0;
-    void timerEvent(QTimerEvent * /*event*/);
-
-private:
-    int m_timerid;
-};
-
+#ifdef Q_OS_WINCE
+#include <windows.h>
+// WINCE has <time.h> but using clock() gives a link error because
+// the function isn't actually implemented.
+#endif
+#ifdef Q_OS_UNIX
+#include <time.h>
 #endif
 
+#if (defined Q_OS_UNIX) || (defined Q_OS_WINCE)
+quint64 getTimestamp()
+{
+#ifdef Q_OS_WINCE
+    // This implementation is based on code found here:
+    // http://social.msdn.microsoft.com/Forums/en/vssmartdevicesnative/thread/74870c6c-76c5-454c-8533-812cfca585f8
+    HANDLE currentThread = GetCurrentThread();
+    FILETIME creationTime, exitTime, kernalTime, userTime;
+    GetThreadTimes(currentThread, &creationTime, &exitTime, &kernalTime, &userTime);
+
+    ULARGE_INTEGER uli;
+    uli.LowPart = userTime.dwLowDateTime;
+    uli.HighPart = userTime.dwHighDateTime;
+    ULONGLONG systemTimeInMS = uli.QuadPart/10000;
+    return static_cast<quint64>(systemTimeInMS);
+#else
+    struct timespec tv;
+    int ok;
+
+    ok = clock_gettime(CLOCK_MONOTONIC, &tv);
+    Q_ASSERT(ok == 0);
+
+    quint64 result = (tv.tv_sec * 1000000ULL) + (tv.tv_nsec * 0.001); // scale to microseconds
+    return result;
+#endif
+}
+#endif

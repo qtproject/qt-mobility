@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "n900lightsensor.h"
+#include "../util/util.h"
 #include <QFile>
 #include <QDebug>
 

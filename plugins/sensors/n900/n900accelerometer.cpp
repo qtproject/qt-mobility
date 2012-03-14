@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "n900accelerometer.h"
+#include "../util/util.h"
 #include <QFile>
 #include <QDebug>
 #include <stdio.h>

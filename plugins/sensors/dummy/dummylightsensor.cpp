@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "dummylightsensor.h"
+#include "../util/util.h"
 #include <QDebug>
 #include <QtGlobal>
 

@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "n900filebasedsensor.h"
-#include <time.h>
 #include <QTimer>
 
 n900filebasedsensor::n900filebasedsensor(QSensor *sensor)
@@ -88,18 +87,6 @@ void n900filebasedsensor::stop()
 void n900filebasedsensor::timerEvent(QTimerEvent * /*event*/)
 {
     poll();
-}
-
-quint64 n900filebasedsensor::getTimestamp()
-{
-    struct timespec tv;
-    int ok;
-
-    ok = clock_gettime(CLOCK_MONOTONIC, &tv);
-    Q_ASSERT(ok == 0);
-
-    quint64 result = (tv.tv_sec * 1000000ULL) + (tv.tv_nsec * 0.001); // scale to microseconds
-    return result;
 }
 
 void n900filebasedsensor::pollnow()

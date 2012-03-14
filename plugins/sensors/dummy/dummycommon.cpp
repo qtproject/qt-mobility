@@ -41,14 +41,6 @@
 
 #include "dummycommon.h"
 
-#ifdef Q_OS_WINCE
-#include <windows.h>
-// WINCE has <time.h> but using clock() gives a link error because
-// the function isn't actually implemented.
-#else
-#include <time.h>
-#endif
-
 dummycommon::dummycommon(QSensor *sensor)
     : QSensorBackend(sensor)
     , m_timerid(0)
@@ -87,30 +79,3 @@ void dummycommon::timerEvent(QTimerEvent * /*event*/)
 {
     poll();
 }
-
-quint64 dummycommon::getTimestamp()
-{
-#ifdef Q_OS_WINCE
-    // This implementation is based on code found here:
-    // http://social.msdn.microsoft.com/Forums/en/vssmartdevicesnative/thread/74870c6c-76c5-454c-8533-812cfca585f8
-    HANDLE currentThread = GetCurrentThread();
-    FILETIME creationTime, exitTime, kernalTime, userTime;
-    GetThreadTimes(currentThread, &creationTime, &exitTime, &kernalTime, &userTime);
-
-    ULARGE_INTEGER uli;
-    uli.LowPart = userTime.dwLowDateTime;
-    uli.HighPart = userTime.dwHighDateTime;
-    ULONGLONG systemTimeInMS = uli.QuadPart/10000;
-    return static_cast<quint64>(systemTimeInMS);
-#else
-    struct timespec tv;
-    int ok;
-
-    ok = clock_gettime(CLOCK_MONOTONIC, &tv);
-    Q_ASSERT(ok == 0);
-
-    quint64 result = (tv.tv_sec * 1000000ULL) + (tv.tv_nsec * 0.001); // scale to microseconds
-    return result;
-#endif
-}
-

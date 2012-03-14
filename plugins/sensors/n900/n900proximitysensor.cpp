@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "n900proximitysensor.h"
+#include "../util/util.h"
 #include <QFile>
 #include <QDebug>
 #include <string.h>
