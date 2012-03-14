@@ -213,6 +213,9 @@ class CServiceProviderServerSession : public CSession2
         void ServiceL(const RMessage2& aMessage);
         void SetParent(SymbianServerEndPoint* aOwner);
         void SendServicePackageL(const QServicePackage& aPackage);
+		#ifdef  Q_OS_SYMBIAN
+		void setObjEndpoint(ObjectEndPoint* aObjEndpoint);
+		#endif
 
         void HandleServicePackageL(const RMessage2& aMessage);
         void HandlePackageRequestL(const RMessage2& aMessage);
@@ -231,6 +234,9 @@ class CServiceProviderServerSession : public CSession2
         TBool iPendingPackageRequest;
         QByteArray iBlockData;
         int iTotalSize;
+		#ifdef  Q_OS_SYMBIAN
+		ObjectEndPoint*	iObjEndPoint;
+		#endif
     };
 
 
