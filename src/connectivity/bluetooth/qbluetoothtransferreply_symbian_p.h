@@ -117,7 +117,7 @@ private slots:
 
 private:
     QIODevice *m_source;
-    QTemporaryFile *m_tempfile;
+    QString m_tempfilename;
 
     QBluetoothAddress m_address;
     QBluetoothServiceDiscoveryAgent* m_discoveryAgent;
