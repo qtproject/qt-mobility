@@ -131,6 +131,25 @@ CFSEngine::CFSEngine()
    ,m_messageStorePrivateSingleton(0)
 #endif
 {
+    m_factory = 0;
+    TRAPD(err, {
+        m_factory = CEmailInterfaceFactory::NewL();
+        m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
+    } );
+
+    // Check that getting email api interface was successful.
+    // Otherwise throwing exception.
+    if( err != KErrNone ) {
+        if( m_factory ) {
+            delete m_factory;
+            m_factory = 0;
+        }
+        // This is always throwing
+        qt_symbian_throwIfError(err);
+    }
+
+    m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
+
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         // Make sure that application/main thread specific FsEngine will be cleaned up
         // when application event loop quits
@@ -141,14 +160,6 @@ CFSEngine::CFSEngine()
         //    cleaned up when QApplication is destroyed
         qAddPostRoutine(CFSEngine::cleanup);
     }
-
-    TRAPD(err, {
-        m_factory = CEmailInterfaceFactory::NewL(); 
-        m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
-    });
-    
-    Q_UNUSED(err);
-    m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
 
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         TRAP_IGNORE(setPluginObserversL());
