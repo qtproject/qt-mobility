@@ -43,7 +43,7 @@
 #define S60VIDEOEGLRENDERERCONTROL_H
 
 #include <QtCore/QSize>
-#include <QtMultimediaKit/QVideoRendererControl>
+#include <qvideorenderercontrol.h>
 #include <egl/eglext.h>
 #include <graphics/surface.h>
 

@@ -44,9 +44,9 @@
 #include "s60videobuffer.h"
 #include "s60videoeglrenderercontrol.h"
 #include <EGL/egl.h>
-#include <QtMultimediaKit/QAbstractVideoSurface>
-#include <QtMultimediaKit/QVideoFrame>
-#include <QtMultimediaKit/QVideoSurfaceFormat>
+#include <qabstractvideosurface.h>
+#include <qvideoframe.h>
+#include <qvideosurfaceformat.h>
 
 #ifdef VIDEOOUTPUT_MEASURE_FRAMERATE
 #include "s60videoframerate.h"
