@@ -2609,7 +2609,7 @@ void CFSEngine::addMessagePartsToQMessage(QMessage& message, MEmailMessage& mEma
             TPtrC fName(KNullDesC);
             TRAPD(err, fName.Set(attachments[i]->FileNameL()));
             if (err == KErrNone) {
-                fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+                fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toUtf8();
             }
             QByteArray mimeHeader = QString::fromUtf16(attachments[i]->ContentType().Ptr(),
                                                        attachments[i]->ContentType().Length()).toAscii();
@@ -2759,7 +2759,7 @@ void CFSEngine::addContentToQMessage(QMessage& message, const MEmailMessageConte
         TPtrC fName(KNullDesC);
         TRAPD(err, fName.Set(pAttachment->FileNameL()));
         if (err == KErrNone) {
-            fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+            fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toUtf8();
         }
         QByteArray mimeHeader = QString::fromUtf16(pAttachment->ContentType().Ptr(),
                                                    pAttachment->ContentType().Length()).toAscii();

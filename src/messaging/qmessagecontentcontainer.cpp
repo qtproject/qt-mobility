@@ -161,6 +161,8 @@ QTM_BEGIN_NAMESPACE
 
     Returns the suggested filename for the attachment, when defined;
     otherwise an empty array is returned.
+    
+    On Symbian platform returned file name is UTF-8 encoded.
 
     The default is an empty array.
     \since 1.0

@@ -4352,7 +4352,7 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId,
            }
            CleanupStack::PopAndDestroy(pImMimeHeader);
 
-           QByteArray name = QString::fromUtf16(pAttachment->AttachmentName().Ptr(), pAttachment->AttachmentName().Length()).toLocal8Bit();
+           QByteArray name = QString::fromUtf16(pAttachment->AttachmentName().Ptr(), pAttachment->AttachmentName().Length()).toUtf8();
            int attachmentSize = pAttachment->Size();
            size += attachmentSize;
            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(messageId, pAttachment->Id(), name, mimeType, mimeSubType, attachmentSize);
