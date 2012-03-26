@@ -126,7 +126,7 @@ QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
 
 /*!
     Set the list of definitions to restrict saving to \a definitionMask.  This allows you to perform
-    partial save (and remove) operations on existing contacts.
+    partial save (and remove) operations on new and existing contacts.
 
     If \a definitionMask is empty (the default), no restrictions will apply, and the passed
     in contacts will be saved as is.  Otherwise, only details whose definitions are in

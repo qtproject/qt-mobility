@@ -34,6 +34,7 @@ SOURCES += servicemetadata.cpp \
     dberror.cpp \
     qremoteserviceregister.cpp
 symbian {
+ #  DEFINES +=QT_SFW_ENDPOINT_DEBUG
     contains(S60_VERSION, 5.2)|contains(MOBILITY_SD_MCL_BUILD, yes){
         DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
     }

@@ -647,7 +647,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
   Returns true if the contacts were saved successfully, otherwise false.
 
   This function accepts a \a definitionMask, which specifies which details of
-  the contacts should be updated.  Details with definition names not included in
+  the contacts should be added or updated.  Details with definition names not included in
   the definitionMask will not be updated or added.
 
   The deprecated \a errorMap parameter can be supplied to store per-input errors in.

@@ -919,6 +919,10 @@ void CBatteryInfo::RunL()
           }
         m_batteryLevel = m_batteryinfo.iChargeLevel;
       }
+
+    if (iStatus == KErrPermissionDenied) {
+        return; //No monitoring required
+      }
     startMonitoring();
     TRACES(qDebug() << "CBatteryInfov2::RunL()--->");
 }
@@ -1012,6 +1016,10 @@ void CCellSignalStrengthInfo::RunL()
         }
         m_prevsignalBar = m_signalBar;
       }
+
+    if (iStatus == KErrPermissionDenied) {
+        return; //No monitoring required
+      }
     startMonitoring();
     TRACES(qDebug() << "CCellSignalStrengthInfov2::RunL()--->");
 }
@@ -1086,6 +1094,10 @@ void CCellNetworkRegistrationInfo::RunL()
                 }
          }
         m_previousNetworkStatus = m_networkStatus;
+      }
+
+    if (iStatus == KErrPermissionDenied) {
+        return; //No monitoring required
       }
     startMonitoring();
     TRACES (qDebug() << "CCellNetworkRegistrationInfov2::RunL()--->");

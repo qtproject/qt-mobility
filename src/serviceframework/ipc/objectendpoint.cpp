@@ -164,7 +164,13 @@ public:
 
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
     : QObject(parent), dispatch(comm), service(0)
+#ifdef Q_OS_SYMBIAN
+	, referenceCnt(0)
+#endif //End Q_OS_SYMBIAN
 {
+#ifdef  QT_SFW_ENDPOINT_DEBUG
+	  qDebug() << "inside ObjectEndPoint::ObjectEndPoint  ";
+#endif 	  
     Q_ASSERT(dispatch);
     d = new ObjectEndPointPrivate;
     d->parent = this;
@@ -188,6 +194,9 @@ ObjectEndPoint::~ObjectEndPoint()
 
 void ObjectEndPoint::disconnected()
 {
+#ifdef QT_SFW_ENDPOINT_DEBUG
+    qDebug() << "Start ObjectEndPoint::disconnected";
+#endif 
     if (d->endPointType == Service) {
         InstanceManager::instance()->removeObjectInstance(d->entry, d->serviceInstanceId);
     }
@@ -203,6 +212,9 @@ void ObjectEndPoint::disconnected()
 */
 QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry & entry)
 {
+#ifdef QT_SFW_ENDPOINT_DEBUG
+    qDebug() << "Start ObjectEndPoint::constructProxy";
+#endif 
     //client side 
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
 
@@ -239,7 +251,14 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceRegister::Entry & en
 void ObjectEndPoint::newPackageReady()
 {
     //client and service side
-
+#ifdef QT_SFW_ENDPOINT_DEBUG
+    qDebug() << "ObjectEndPoint::newPackageReady: Start ..." ;
+#endif 
+    
+    // The monitor keeps track of this ObjectEndPoint so that it doesn't get deleted while in progress.    
+#ifdef Q_OS_SYMBIAN
+    ObjectEndPointMonitor aOem(this);
+#endif //End Q_OS_SYMBIAN
     while(dispatch->packageAvailable())
     {
         QServicePackage p = dispatch->nextPackage();
@@ -260,6 +279,9 @@ void ObjectEndPoint::newPackageReady()
                 qWarning() << "Unknown package type received.";
         }
     }
+#ifdef QT_SFW_ENDPOINT_DEBUG
+	qDebug() << "ObjectEndPoint::newPackageReady: End" ;
+#endif 
 }
 
 void ObjectEndPoint::propertyCall(const QServicePackage& p)
@@ -389,6 +411,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
+#ifdef  QT_SFW_ENDPOINT_DEBUG
+    qDebug() << "ObjectEndPoint::methodCall" ;
+#endif
     if (p.d->responseType == QServicePackage::NotAResponse ) {
         //service side if slot invocation
         //client side if signal emission (isSignal==true)
@@ -616,21 +641,116 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
 
 void ObjectEndPoint::waitForResponse(const QUuid& requestId)
 {
-    qDebug() << "start ObjectEndPoint::waitForResponse";
+#ifdef  QT_SFW_ENDPOINT_DEBUG
+    qDebug() << "start ObjectEndPoint::waitForResponse " ;
+#endif   
     Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
         QEventLoop* loop = new QEventLoop( this );
-        QTimer::singleShot(60000, loop, SLOT(quit()));
+      
+        QTimer::singleShot(30000, loop, SLOT(quit()));
         connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit()));
         loop->exec();
         delete loop;
-        qDebug() << "- response->isFinished: " << response->isFinished;
 
 	}
-    qDebug() << "finished ObjectEndPoint::waitForResponse";
+#ifdef  QT_SFW_ENDPOINT_DEBUG	
+    qDebug() << "finished ObjectEndPoint::waitForResponse" ;
+#endif 
 }
 
+#ifdef  Q_OS_SYMBIAN
+int ObjectEndPoint::getRefCount()
+{
+    return referenceCnt;
+}
+bool ObjectEndPoint::updateRefCount(int expectedVal, int newVal)
+{
+
+   return referenceCnt.testAndSetOrdered(expectedVal, newVal);
+}
+
+
+
+ObjectEndPointMonitor::ObjectEndPointMonitor(ObjectEndPoint *aOe): iOe(aOe), incrementDone(false)
+{
+   if(IncRefCountIfNotMarkedDelete(iOe))
+      incrementDone = true;
+}
+
+ObjectEndPointMonitor::~ObjectEndPointMonitor()
+{
+   if(incrementDone)
+	   DecRefCount(iOe);
+}
+
+void ObjectEndPointMonitor::MarkForDelete(ObjectEndPoint *aOe)
+{
+  if(!aOe)
+		return;
+
+
+  while (1) {
+		int oldVal = aOe->getRefCount();
+		//great! Someone already marked it for us..just return 
+		if(oldVal >= ObjectEndPoint::MarkedForDelete)
+			return;
+		int newVal = oldVal | ObjectEndPoint::MarkedForDelete;
+		//keep trying if someone beat us to it...
+		if(aOe->updateRefCount(oldVal, newVal)){
+			//there was no other update between the fetching of oldVal and this increment
+			return;
+		}
+	}
+}
+
+bool ObjectEndPointMonitor::IncRefCountIfNotMarkedDelete(ObjectEndPoint *aOe)
+{
+	if(!aOe)
+		return false;
+
+	while (1) {
+		int oldVal = aOe->getRefCount();
+		//fail if someone already marked it for delete
+		if(oldVal >= ObjectEndPoint::MarkedForDelete)
+			return false;
+		//keep trying if someone beat us to it...
+		if(aOe->updateRefCount(oldVal, oldVal+1)){
+			//there was no other update between the fetching of oldVal and this increment
+			return true;
+		}
+	}
+}
+
+void ObjectEndPointMonitor::DecRefCount(ObjectEndPoint *aOe)
+{
+		if(!aOe)
+			return ;
+
+		//while decrementing, we don't care if there it was marked for delete...
+		//we already take care not to increment if it is already marked for delete
+		//the one who destroys has to take care to wait till the reference count is down to zero
+			
+		while (1) {
+			int oldVal = aOe->getRefCount();
+			//fail if someone already marked it for delete
+			if(oldVal == ObjectEndPoint::MarkedForDelete)
+				break;
+			//keep trying if someone beat us to it...
+			if(aOe->updateRefCount(oldVal, oldVal-1)){
+				//there was no other update between the fetching of oldVal and this increment
+				break;
+			}
+		}
+			
+		if(aOe->getRefCount() == ObjectEndPoint::MarkedForDelete){
+			//This means that it was marked for delete and the ref count is 0
+			QTimer::singleShot(0, aOe, SLOT(deleteLater()));
+		}
+}
+#endif //End Q_OS_SYMBIAN
+    
 #include "moc_objectendpoint_p.cpp"
 
 QTM_END_NAMESPACE
