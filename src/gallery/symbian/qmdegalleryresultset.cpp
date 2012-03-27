@@ -177,23 +177,18 @@ QVariant QMDEGalleryResultSet::metaData(int key) const
 
 bool QMDEGalleryResultSet::setMetaData(int key, const QVariant &value)
 {
-    bool ret = false;
+    TRAPD( err,
+        CMdEObject* object = m_session->OpenObjectL(m_itemArray[m_cursorPosition]->Id(),
+                                                    m_itemArray[m_cursorPosition]->Def());
+        if (!object)
+            User::Leave(KErrNotFound);
+        CleanupStack::PushL(object);
+        QDocumentGalleryMDSUtility::SetMetaDataFieldL(object, value, key);
+        m_session->CommitObjectL(*object);
+        CleanupStack::PopAndDestroy(object);
+        );
 
-    TRAPD( err, QDocumentGalleryMDSUtility::SetMetaDataFieldL(
-            m_itemArray[m_cursorPosition], value, key) );
-    if (err) {
-        return false;
-    } else {
-        if (ret) {
-            TRAP( err, m_session->CommitObjectL( *m_itemArray[m_cursorPosition] ) );
-            if (err) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
-    return false;
+    return err == KErrNone ? true: false;
 }
 
 int QMDEGalleryResultSet::currentIndex() const
