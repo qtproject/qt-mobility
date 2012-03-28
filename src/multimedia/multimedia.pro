@@ -205,8 +205,12 @@ symbian {
     }
 }
 
-!maemo*:!symbian {
+!maemo*:!symbian:!qnx {
     SOURCES += qgraphicsvideoitem.cpp
+}
+
+qnx {
+    SOURCES += qgraphicsvideoitem_overlay.cpp
 }
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
