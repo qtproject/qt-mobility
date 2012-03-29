@@ -122,7 +122,7 @@ bool QGraphicsVideoItemPrivate::eventFilter(QObject *object, QEvent *event)
     } else {
         bool updateEventFiltersRequired = false;
         bool refreshDisplayRequired = false;
-        foreach (QPointer<QObject> target, eventFilterTargets) {
+        foreach (const QPointer<QObject> &target, eventFilterTargets) {
             if (object == target.data()) {
                 switch (event->type()) {
                 case QEvent::ParentChange:
