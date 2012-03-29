@@ -133,6 +133,7 @@ bool QGraphicsVideoItemPrivate::eventFilter(QObject *object, QEvent *event)
                 case QEvent::Resize:
                     refreshDisplayRequired = true;
                     break;
+                default: ;
                 }
             }
         }
