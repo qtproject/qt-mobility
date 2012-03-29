@@ -2843,7 +2843,6 @@ QByteArray CFSEngine::attachmentContent(long int messageId, TMessageContentId at
 {
     QByteArray content;
 
-    TMailboxId mailBoxId(attachmentContentId.iMessageId.iFolderId.iMailboxId);
     MEmailAttachment* attachment = attachmentById(attachmentContentId);
     if (attachment) {
         TRAP_IGNORE(
@@ -3229,7 +3228,8 @@ void CFSContentStructureFetchOperation::DataFetchedL(const TInt aResult)
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
       m_operationId(aOperationId),
-      m_resultCorrectlyOrdered(false)
+      m_resultCorrectlyOrdered(false),
+      m_clientApi(0)
 {
     TRAPD(err,
             m_factory = CEmailInterfaceFactory::NewL(); 
@@ -3246,8 +3246,9 @@ CFSMessagesFindOperation::~CFSMessagesFindOperation()
             operation.m_mailbox->Release();
         }
     }
-    
-    m_clientApi->Release();
+    if (m_clientApi) {
+        m_clientApi->Release();
+    }
     delete m_factory;
 
 }
