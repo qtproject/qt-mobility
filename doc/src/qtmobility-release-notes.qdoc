@@ -38,14 +38,31 @@
 
     \section1 Release Notes - Overview
 
-    These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.2.1 final release. An up-to-date list of known issues with the release can be found via the \l {http://bugreports.qt.nokia.com}{Qt Bug Tracker} which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {index.html#platform-compatibility}{Platform Compatibility}.
+    These Release Notes cover what's new, download and installation instructions and known issues for QtMobility 1.2 release. It also includes notes about bug fixes in 1.2.1 and 1.2.2 releases. An up-to-date list of known issues with the release can be found via the \l {http://bugreports.qt.nokia.com}{Qt Bug Tracker} which provides additional information about known issues and tasks related to Qt and the QtMobility Projects. The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {index.html#platform-compatibility}{Platform Compatibility}.
 
-    \section1 What's New in QtMobility 1.2.1
+    \section1 What's New in QtMobility 1.2
+
+    Qt Mobility 1.2 release introduces new API features and updates to existing ones. Please refer to the relevant \l {http://qt-project.org/wiki/QtMobility_1_2_Whats_New}{wiki article} for details.
+
+    The new API features include:
+    \list
+        \o Bluetooth API (as part of Connectivity API)
+        \o NFC API (as part of Connectivity API)
+    \endlist
+
+    Updated API features include for example:
+    \list
+        \o SystemInfo API
+        \o Messaging API
+        \o Multimedia API
+    \endlist
+
+    Please refer also to the \l {http://doc.qt.nokia.com/qtmobility-1.2/index.html}{online documentation}.
+
+    \section2 What's New in QtMobility 1.2.1
 
     Qt Mobility 1.2.1 release provides bug fixes for some Symbian issues. It also
-    supplies some new documentation and documentation updates. For more details,
-    please refer to the \l {http://qt.nokia.com/doc/qtmobility-1.2.1}{online documentation}
-    included in this distribution and the change log file.
+    supplies some new documentation and documentation updates.
 
     Changes include:
     \list
@@ -53,12 +70,21 @@
         \o Bearer Management is now marked as \bold {Deprecated}.
     \endlist
 
+    \section2 What's New in QtMobility 1.2.2
+
+    Qt Mobility 1.2.2 release provides bug fixes for Symbian, and relevant documentation updates.
+
+    Changes include:
+    \list
+        \o Light sensor support enabled.
+        \o Tactile feedback: application exit problems fixed.
+    \endlist
 
     \section1 Downloading and Installing
 
     \section2 System Requirements
 
-    Qt 4.7.0 should be used.
+    Qt 4.7.4 or later should be used.
     \l {http://qt.nokia.com/downloads}
 
     Latest QtMobility packages can be found here:
