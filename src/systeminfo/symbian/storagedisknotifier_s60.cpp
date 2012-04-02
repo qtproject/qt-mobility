@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,6 +56,7 @@ CStorageDiskNotifier* CStorageDiskNotifier::NewL()
 void CStorageDiskNotifier::ConstructL()
     {
     User::LeaveIfError(iFs.Connect());
+    User::LeaveIfError(iFs.ShareProtected());
     iStorageDiskNotifyHandler = CDiskNotifyHandler::NewL( *this, iFs );
     SubscribeStorageDiskNotificationL();
     }

@@ -130,7 +130,7 @@ class QSystemNetworkInfoPrivate : public QObject, public MTelephonyInfoObserver,
     Q_OBJECT
 
 public:
-
+    static QSystemNetworkInfoPrivate* networkinfoPrivateInstance();
     QSystemNetworkInfoPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
@@ -241,6 +241,7 @@ class QSystemStorageInfoPrivate : public QObject,
 private:
     QSystemStorageInfo::StorageState CheckDiskSpaceThresholdLimit(const QString &);
 public:
+    static QSystemStorageInfoPrivate* storageinfoPrivateInstance();
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
     qlonglong totalDiskSpace(const QString &driveVolume);
@@ -295,7 +296,7 @@ class QSystemDeviceInfoPrivate : public QObject,
     Q_OBJECT
 
 public:
-
+    static QSystemDeviceInfoPrivate* deviceinfoPrivateInstance();
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoPrivate();
 
@@ -435,6 +436,24 @@ public:
       return static_cast<DeviceInfo *>(Dll::Tls());
     }
 
+    void incrementRefCount()
+        {
+            m_refcount = m_refcount+1;
+            TRACES( qDebug() << "DeviceInfo RefCount:" << m_refcount);
+        }
+
+    int getRefCount()
+        {
+            TRACES( qDebug() << "Get RefCount:" << m_refcount);
+            return m_refcount;
+        }
+
+    void decrementRefCount()
+        {
+            m_refcount = m_refcount-1;
+            TRACES( qDebug() << "Decrement RefCount:" << m_refcount);
+        }
+
   void initMobilePhonehandleL()
     {
   #ifdef ETELMM_SUPPORTED
@@ -445,13 +464,19 @@ public:
         err = m_etelServer.Connect();
         if ( err != KErrNone ) {
           TRACES (qDebug() << "DeviceInfo:: InitMobilePhonehandle err code RTelServer::Connect" << err);
+          m_etelServer.Close();
           User::Leave(err);
         }
 
         //Eumerate legal phone
         // Get number of phones
         TInt phones(0);
-        User::LeaveIfError(m_etelServer.EnumeratePhones(phones));
+        err = m_etelServer.EnumeratePhones(phones);
+        if ( err != KErrNone) {
+            m_etelServer.Close();
+            TRACES (qDebug() << "DeviceInfo:: EnumeratePhones err code" << err);
+            User::Leave(err);
+        }
 
         // Get phone info of first legal phone.
         TInt legalPhoneIndex = KErrNotFound;
@@ -465,19 +490,27 @@ public:
               }
             }
         }
-        User::LeaveIfError(legalPhoneIndex);
+        if ( legalPhoneIndex == KErrNotFound) {
+            m_etelServer.Close();
+            TRACES (qDebug() << "DeviceInfo:: legalPhoneIndex err code" << legalPhoneIndex);
+            User::Leave(legalPhoneIndex);
+        }
 
         err = m_rmobilePhone.Open(m_etelServer,m_etelphoneInfo.iName);
         if (err != KErrNone) {
           TRACES (qDebug() << "DeviceInfo:: InitMobilePhonehandle err code RMobilePhone::Open =" << err);
+            m_rmobilePhone.Close();
+            m_etelServer.Close();
           User::Leave(err);
         }
 
         err = m_rmobilePhone.Initialise();
         if (err != KErrNone) {
             TRACES (qDebug() << "DeviceInfo:: InitMobilePhonehandle err val for RMobilePhone::Initialise =" << err);
+            m_rmobilePhone.Close();
+            m_etelServer.Close();
             User::Leave(err);
-        }
+         }
 
         TRACES (qDebug() << "InitMobilePhonehandleL- successful");
         m_rmobilePhoneInitialised = true;
@@ -488,10 +521,7 @@ public:
     {
   #ifdef ETELMM_SUPPORTED
         TRAPD ( err,initMobilePhonehandleL());
-        if (err ) {
-           m_rmobilePhone.Close();
-               m_etelServer.Close();
-              }
+        if ( err != KErrNone) m_rmobilePhoneInitialised = false;
   #endif
     }
 
@@ -689,6 +719,7 @@ public:
         ,m_networkinfolistener(NULL)
 #endif
     ,m_rmobilePhoneInitialised(false)
+    ,m_refcount(0)
     {
         TRACES(qDebug() << "DeviceInfo():Constructor");
         m_telephony = CTelephony::NewL();
@@ -696,7 +727,7 @@ public:
 
     ~DeviceInfo()
     {
-        TRACES(qDebug() << "DeviceInfo():Destructor");
+        TRACES(qDebug() << "DeviceInfo():Destructor++");
         delete m_cellSignalStrengthInfo;
         delete m_cellNetworkRegistrationInfo;
         delete m_cellNetworkInfo;
@@ -726,9 +757,14 @@ public:
 #endif
 
 #ifdef ETELMM_SUPPORTED
-    m_etelServer.Close();
-    m_rmobilePhone.Close();
+        if ( m_rmobilePhoneInitialised) {
+            TRACES ( qDebug() << "Closing RMobilePhone handles++");
+            m_rmobilePhone.Close();
+            m_etelServer.Close();
+            TRACES ( qDebug() << "Closing RMobilePhone handles--");
+            }
 #endif
+    TRACES(qDebug() << "DeviceInfo():Destructor--");
     }
 
 private:
@@ -768,6 +804,7 @@ private:
     RTelServer::TPhoneInfo m_etelphoneInfo;
 #endif
   bool m_rmobilePhoneInitialised;
+  int m_refcount;
 };
 
 class QSystemBatteryInfoPrivate : public QObject, public MBatteryInfoObserver, public MBatteryHWRMObserver

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,7 +44,9 @@
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
+#ifndef Q_OS_SYMBIAN
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivateSingleton)
+#endif
 
 #ifdef QT_SIMULATOR
 QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivateSingleton(); }
@@ -205,11 +207,21 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetwo
 */
 int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+#ifdef Q_OS_SYMBIAN
+      QSystemNetworkInfoPrivate* networkInfo = QSystemNetworkInfoPrivate::networkinfoPrivateInstance();
+      QSystemNetworkInfo::NetworkStatus info = networkInfo->networkStatus(mode);
+    if (info == QSystemNetworkInfo::UndefinedStatus || info == QSystemNetworkInfo::NoNetworkAvailable)
+        return -1;
+    int signalStrength = networkInfo->networkSignalStrength(mode);
+    delete networkInfo;
+    return signalStrength;
+#else
     QSystemNetworkInfo::NetworkStatus info = netInfoPrivateSingleton()->networkStatus(mode);
     if (info == QSystemNetworkInfo::UndefinedStatus || info == QSystemNetworkInfo::NoNetworkAvailable)
         return -1;
 
     return netInfoPrivateSingleton()->networkSignalStrength(mode);
+#endif
 }
 
 /*!
@@ -296,7 +308,14 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+#ifdef Q_OS_SYMBIAN
+      QSystemNetworkInfoPrivate* networkInfo = QSystemNetworkInfoPrivate::networkinfoPrivateInstance();
+      QString networkName = networkInfo->networkName(mode);
+      delete networkInfo;
+      return networkName;
+#else
     return netInfoPrivateSingleton()->networkName(mode);
+#endif
 }
 
 /*!

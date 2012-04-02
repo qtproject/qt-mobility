@@ -428,6 +428,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return isFeatureSupported;
 }
 
+QSystemNetworkInfoPrivate* QSystemNetworkInfoPrivate::networkinfoPrivateInstance()
+{
+    return new QSystemNetworkInfoPrivate();
+}
+
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -449,6 +454,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
     DeviceInfo::instance()->networkInfoListener()->addObserver(this);
 #endif
+    DeviceInfo::instance()->incrementRefCount();
  TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate--->");
 }
 
@@ -466,6 +472,14 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
     DeviceInfo::instance()->networkInfoListener()->removeObserver(this);
 #endif
+    DeviceInfo::instance()->decrementRefCount();
+    int refcount = DeviceInfo::instance()->getRefCount();
+    if (refcount == 0)
+        {
+        DeviceInfo *deviceInfo = DeviceInfo::instance();
+        delete deviceInfo;
+        Dll::FreeTls();
+        }
   TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate-->");
 }
 
@@ -1074,10 +1088,18 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(i
     return backlightState;
 }
 
+QSystemStorageInfoPrivate* QSystemStorageInfoPrivate::storageinfoPrivateInstance()
+{
+    return new QSystemStorageInfoPrivate();
+}
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
+    TRACES (qDebug() << "QSystemStorageInfoPrivate::QSystemStorageInfoPrivate++");
     iFs.Connect();
+    TInt errorcode = iFs.ShareProtected();
+    TRACES ( qDebug() << "Shareproteted error code:" << errorcode );
     DeviceInfo::instance()->mmcStorageStatus()->addObserver(this);
 
 #ifdef DISKNOTIFY_SUPPORTED
@@ -1086,10 +1108,13 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         storageNotifier->AddObserver(this);
         }
 #endif
+    DeviceInfo::instance()->incrementRefCount();
+    TRACES (qDebug() << "QSystemStorageInfoPrivate::QSystemStorageInfoPrivate--");
 }
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
+    TRACES (qDebug() << "QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate++");
     iFs.Close();
     DeviceInfo::instance()->mmcStorageStatus()->removeObserver(this);
 #ifdef DISKNOTIFY_SUPPORTED
@@ -1098,6 +1123,15 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
         storageNotifier->RemoveObserver(this);
         }
 #endif
+    DeviceInfo::instance()->decrementRefCount();
+    int refcount = DeviceInfo::instance()->getRefCount();
+    if (refcount == 0)
+        {
+        DeviceInfo *deviceInfo = DeviceInfo::instance();
+        delete deviceInfo;
+        Dll::FreeTls();
+        }
+    TRACES (qDebug() << "QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate--");
 }
 
 qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
@@ -1270,6 +1304,11 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::CheckDiskSpaceThresh
     return state;
 }
 
+QSystemDeviceInfoPrivate* QSystemDeviceInfoPrivate::deviceinfoPrivateInstance()
+{
+    return new QSystemDeviceInfoPrivate();
+}
+
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL),
     m_bluetoothRepository(NULL), m_bluetoothNotifyHandler(NULL)
@@ -1287,6 +1326,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 #endif
     DeviceInfo::instance()->phoneInfo();
     DeviceInfo::instance()->subscriberInfo();
+    DeviceInfo::instance()->incrementRefCount();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
@@ -1311,6 +1351,15 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 
     delete m_bluetoothNotifyHandler;
     delete m_bluetoothRepository;
+
+    DeviceInfo::instance()->decrementRefCount();
+    int refcount = DeviceInfo::instance()->getRefCount();
+    if (refcount == 0)
+        {
+        DeviceInfo *deviceInfo = DeviceInfo::instance();
+        delete deviceInfo;
+        Dll::FreeTls();
+        }
 }
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
@@ -1868,6 +1917,7 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
         m_charger = QSystemBatteryInfo::NoCharger;
     m_previousChagrger = m_charger ;
     DeviceInfo::instance()->batteryCommonInfo()->AddObserver(this);
+    DeviceInfo::instance()->incrementRefCount();
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
@@ -1878,6 +1928,15 @@ QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
         delete(m_batteryHWRM);
         m_batteryHWRM = NULL;
     }
+
+    DeviceInfo::instance()->decrementRefCount();
+    int refcount = DeviceInfo::instance()->getRefCount();
+    if (refcount == 0)
+        {
+        DeviceInfo *deviceInfo = DeviceInfo::instance();
+        delete deviceInfo;
+        Dll::FreeTls();
+        }
 }
 
 
