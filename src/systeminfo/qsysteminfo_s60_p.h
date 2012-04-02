@@ -510,7 +510,7 @@ public:
             m_rmobilePhone.Close();
             m_etelServer.Close();
             User::Leave(err);
-         }
+        }
 
         TRACES (qDebug() << "InitMobilePhonehandleL- successful");
         m_rmobilePhoneInitialised = true;
