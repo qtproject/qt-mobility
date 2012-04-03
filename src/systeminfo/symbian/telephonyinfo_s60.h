@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,20 +39,15 @@
 **
 ****************************************************************************/
 
-#ifndef TELEPHONY_S60_H
-#define TELEPHONY_S60_H
+#ifndef DEVICEINFO_H
+#define DEVICEINFO_H
 
 #include <e32base.h>
 #include <etel3rdparty.h>
 #include <QString>
 #include <QList>
-#include <QStack>
 #include <QEventLoop>
-#include <qDebug>
 #include "trace.h"
-#ifdef ETELMM_SUPPORTED
-#include <etelmm.h>
-#endif
 
 class CActiveSchedulerWait;
 
@@ -71,7 +66,6 @@ public:
     virtual void changedCellId(int) = 0;
 };
 
-#ifndef ETELMM_SUPPORTED
 class CTelephonyInfo : public CActive
 {
 public:
@@ -81,14 +75,16 @@ public:
     void addObserver(MTelephonyInfoObserver *observer);
     void removeObserver(MTelephonyInfoObserver *observer);
 
+protected:  //from CActive
+    void RunL();
+
 protected:
-    void waitForRequest() const;
-    void exitWait() const;
+    void makeRequest();
 
 protected:
     CTelephony &m_telephony;
     QList<MTelephonyInfoObserver *> m_observers;
-    mutable QStack<QEventLoop*> m_loops;
+    QEventLoop* iEventLoop;
 };
 
 class CPhoneInfo : public CTelephonyInfo
@@ -98,19 +94,16 @@ public:
     ~CPhoneInfo();
 
 protected:
-    void RunL();
     void DoCancel();
 
 public:
-    QString imei();
-    QString manufacturer();
-    QString model();
+    QString imei() const;
+    QString manufacturer() const;
+    QString model() const;
 
 private:
-    void makeRequest();
-    bool m_initializing;
-    mutable CTelephony::TPhoneIdV1 m_phoneIdV1;
-    mutable CTelephony::TPhoneIdV1Pckg m_phoneIdV1Pckg;
+    CTelephony::TPhoneIdV1 m_phoneIdV1;
+    CTelephony::TPhoneIdV1Pckg m_phoneIdV1Pckg;
 
     QString m_imei;
     QString m_manufacturer;
@@ -124,17 +117,14 @@ public:
     ~CSubscriberInfo();
 
 protected:
-    void RunL();
     void DoCancel();
 
 public:
-    QString imsi();
+    QString imsi() const;
 
 private:
-    void makeRequest();
-    bool m_initializing;
-    mutable CTelephony::TSubscriberIdV1 m_subscriberIdV1;
-    mutable CTelephony::TSubscriberIdV1Pckg m_subscriberIdV1Pckg;
+    CTelephony::TSubscriberIdV1 m_subscriberIdV1;
+    CTelephony::TSubscriberIdV1Pckg m_subscriberIdV1Pckg;
 
     QString m_imsi;
 };
@@ -258,168 +248,5 @@ private:
     int m_signalBar;
     int m_previousSignalBar;
 };
-#else //ETELMM_SUPPORTED
-class CPhoneInfo : public CBase
-{
-public:
-    CPhoneInfo(RMobilePhone &aMobilePhone);
-    ~CPhoneInfo();
-    void initialise();
 
-public:
-    QString imei();
-    QString manufacturer();
-    QString model();
-
-private:
-    RMobilePhone &m_rmobilePhone;
-    bool m_phoneInfoinitialised;
-    QString m_imei;
-    QString m_manufacturer;
-    QString m_model;
-};
-
-class CSubscriberInfo : public CBase
-{
-public:
-    CSubscriberInfo(RMobilePhone &aMobilePhone);
-    ~CSubscriberInfo();
-    void initialise();
-
-public:
-    QString imsi();
-
-private:
-    RMobilePhone &m_rmobilePhone;
-    bool m_subscriberInfoinitialised;
-    QString m_imsi;
-};
-
-
-class CEtelInfo : public CActive
-{
-public:
-    CEtelInfo(RMobilePhone &aMobilePhone);
-    ~CEtelInfo();
-    void addObserver(MTelephonyInfoObserver *observer);
-    void removeObserver(MTelephonyInfoObserver *observer);
-
-protected:
-    RMobilePhone &m_rmobilePhone;
-    QList<MTelephonyInfoObserver *> m_observers;
-    bool m_initialised;
-};
-
-
-class CBatteryInfo : public CEtelInfo
-{
-public:
-    CBatteryInfo(RMobilePhone &aMobilePhone);
-    ~CBatteryInfo();
-    void initialise();
-    void startMonitoring();
-
-protected:
-    void RunL();
-    void DoCancel();
-
-public:
-    int batteryLevel() const;
-
-private:
-    int m_batteryLevel;
-    RMobilePhone::TMobilePhoneBatteryInfoV1 m_batteryinfo;
-};
-
-
-class CCellSignalStrengthInfo : public CEtelInfo
-{
-public:
-    CCellSignalStrengthInfo(RMobilePhone &aMobilePhone);
-    ~CCellSignalStrengthInfo();
-    void initialise();
-    void startMonitoring();
-
-protected:
-    void RunL();
-    void DoCancel();
-
-public:
-    int cellNetworkSignalStrength() const;
-
-private:
-    TInt32 m_cellNetworkSignalStrength;
-    TInt8 m_signalBar;
-    TInt32 m_prevcellNetworkSignalStrength;
-    TInt8 m_prevsignalBar;
-};
-
-class CCellNetworkRegistrationInfo : public CEtelInfo
-{
-public:
-    CCellNetworkRegistrationInfo(RMobilePhone &aMobilePhone);
-    ~CCellNetworkRegistrationInfo();
-    void initialise();
-    void startMonitoring();
-
-protected:
-    void RunL();
-    void DoCancel();
-
-public:
-    RMobilePhone::TMobilePhoneRegistrationStatus cellNetworkStatus() const;
-
-private:
-    RMobilePhone::TMobilePhoneRegistrationStatus m_networkStatus;
-    RMobilePhone::TMobilePhoneRegistrationStatus m_previousNetworkStatus;
-};
-
-class CCellNetworkInfo : public CEtelInfo
-{
-public:
-    CCellNetworkInfo(RMobilePhone &aMobilePhone);
-    ~CCellNetworkInfo();
-    void initialise();
-    void startMonitoring();
-
-protected:
-    void RunL();
-    void DoCancel();
-
-public:
-    int cellId() const;
-    int locationAreaCode() const;
-
-    QString countryCode() const;
-    QString networkCode() const;
-    QString networkName() const;
-    QString homeNetworkCode();
-    CTelephony::TNetworkMode networkMode() const;/*RMobilePhone::TMobilePhoneNetworkMode <=> CTelePhony::TNetworkMode*/
-
-private:
-    /** Network info of mobile phone. */
-    RMobilePhone::TMobilePhoneNetworkInfoV1 iNetworkInfo;
-    /** Location of mobile phone. */
-    RMobilePhone::TMobilePhoneLocationAreaV1 iLocation;
-    /** Packaged network info object. */
-    RMobilePhone::TMobilePhoneNetworkInfoV1Pckg iNetworkInfoPckg;
-
-    int m_cellId;
-    int m_previouscellId;
-    int m_locationAreaCode;
-
-    QString m_networkId;
-    QString m_previousNetworkId;
-
-    QString m_countryCode;
-    QString m_previousCountryCode;
-
-    QString m_networkName;
-    QString m_previousNetworkName;
-
-    RMobilePhone::TMobilePhoneNetworkMode m_networkMode;
-    RMobilePhone::TMobilePhoneNetworkMode m_previousNetworkMode;
-};
-#endif //End ETELMM_SUPPORTED
-
-#endif //TELEPHONY_S60_H
+#endif //DEVICEINFO_H
