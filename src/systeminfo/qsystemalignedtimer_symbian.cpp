@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011-2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -120,7 +120,6 @@ void QSystemAlignedTimerPrivate::singleShot(int minimumTime, int maximumTime, QO
         TRACES(qDebug() << "QSystemAlignedTimerPrivate::singleShot--Issuing request,Wait for SingleShot() callback");
         alignedTimer->m_singleShotReceiver = receiver;
         alignedTimer->m_singleShotMember = member;
-        alignedTimer->setSingleShot(true);
         alignedTimer->start(minimumTime, maximumTime);
        }
 }

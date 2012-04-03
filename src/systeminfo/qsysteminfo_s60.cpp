@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -98,9 +98,19 @@ const float KMMPerTwip  = 0.0177f; //Milimeter Per Twip
 
 QTM_BEGIN_NAMESPACE
 
+QSystemInfoPrivateBase::QSystemInfoPrivateBase(QObject *parent)
+    : QObject(parent)
+{
+    m_deviceInfo = new DeviceInfo();
+}
+
+QSystemInfoPrivateBase::~QSystemInfoPrivateBase()
+{
+    delete m_deviceInfo;
+}
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
-    : QObject(parent)
+    : QSystemInfoPrivateBase(parent)
 {
 }
 
@@ -428,33 +438,27 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return isFeatureSupported;
 }
 
-QSystemNetworkInfoPrivate* QSystemNetworkInfoPrivate::networkinfoPrivateInstance()
-{
-    return new QSystemNetworkInfoPrivate();
-}
-
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-    : QObject(parent)
+    : QSystemInfoPrivateBase(parent)
 {
  TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate<---");
-    DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
-    DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
-    DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
+    m_deviceInfo->cellSignalStrenghtInfo()->addObserver(this);
+    m_deviceInfo->cellNetworkInfo()->addObserver(this);
+    m_deviceInfo->cellNetworkRegistrationInfo()->addObserver(this);
 #ifdef ETELMM_SUPPORTED
-    DeviceInfo::instance()->networkInfo()->addObserver(this);
+    m_deviceInfo->networkInfo()->addObserver(this);
 #endif
-    DeviceInfo::instance()->wlanInfo()->addObserver(this);
-    /*connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
+    m_deviceInfo->wlanInfo()->addObserver(this);
+    /*connect(m_deviceInfo->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
         this, SLOT(wlanNetworkNameChanged()));
-    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
+    connect(m_deviceInfo->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
         this, SLOT(wlanNetworkSignalStrengthChanged()));
-    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
+    connect(m_deviceInfo->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
         this, SLOT(wlanNetworkStatusChanged()));*/
-    DeviceInfo::instance()->subscriberInfo();
+    m_deviceInfo->subscriberInfo();
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
-    DeviceInfo::instance()->networkInfoListener()->addObserver(this);
+    m_deviceInfo->networkInfoListener()->addObserver(this);
 #endif
-    DeviceInfo::instance()->incrementRefCount();
  TRACES(qDebug() << "QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate--->");
 }
 
@@ -462,24 +466,16 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
   TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate<--");
 
-    DeviceInfo::instance()->cellSignalStrenghtInfo()->removeObserver(this);
-    DeviceInfo::instance()->cellNetworkInfo()->removeObserver(this);
-    DeviceInfo::instance()->cellNetworkRegistrationInfo()->removeObserver(this);
+    m_deviceInfo->cellSignalStrenghtInfo()->removeObserver(this);
+    m_deviceInfo->cellNetworkInfo()->removeObserver(this);
+    m_deviceInfo->cellNetworkRegistrationInfo()->removeObserver(this);
 #ifdef ETELMM_SUPPORTED
-    DeviceInfo::instance()->networkInfo()->removeObserver(this);
+    m_deviceInfo->networkInfo()->removeObserver(this);
 #endif
-    DeviceInfo::instance()->wlanInfo()->removeObserver(this);
+    m_deviceInfo->wlanInfo()->removeObserver(this);
 #ifdef NETWORKHANDLER_SYMBIAN_SUPPORTED
-    DeviceInfo::instance()->networkInfoListener()->removeObserver(this);
+    m_deviceInfo->networkInfoListener()->removeObserver(this);
 #endif
-    DeviceInfo::instance()->decrementRefCount();
-    int refcount = DeviceInfo::instance()->getRefCount();
-    if (refcount == 0)
-        {
-        DeviceInfo *deviceInfo = DeviceInfo::instance();
-        delete deviceInfo;
-        Dll::FreeTls();
-        }
   TRACES(qDebug() << "QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate-->");
 }
 
@@ -492,8 +488,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         case QSystemNetworkInfo::LteMode:
         {
         #ifndef ETELMM_SUPPORTED
-            CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()->cellNetworkRegistrationInfo()->cellNetworkStatus();
-            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+            CTelephony::TRegistrationStatus networkStatus = m_deviceInfo->cellNetworkRegistrationInfo()->cellNetworkStatus();
+            CTelephony::TNetworkMode networkMode = m_deviceInfo->cellNetworkInfo()->networkMode();
             if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
                 return QSystemNetworkInfo::NoNetworkAvailable;
 
@@ -522,7 +518,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
            QSystemNetworkInfo::NetworkMode currMode =currentMode();
            if (currMode == mode)
             {
-                nStatus = DeviceInfo::instance()->networkInfo()->GetStatus();
+                nStatus = m_deviceInfo->networkInfo()->GetStatus();
             }
            switch (nStatus) {
            case RMobilePhone::ERegistrationUnknown : return QSystemNetworkInfo::UndefinedStatus;
@@ -540,7 +536,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         }
         case QSystemNetworkInfo::WlanMode:
         {
-            if (DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus())
+            if (m_deviceInfo->wlanInfo()->wlanNetworkConnectionStatus())
                 return QSystemNetworkInfo::Connected;
             else
                 return QSystemNetworkInfo::NoNetworkAvailable;
@@ -561,7 +557,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
         {
-            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+            CTelephony::TNetworkMode networkMode = m_deviceInfo->cellNetworkInfo()->networkMode();
             if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
                 return -1;
 
@@ -572,11 +568,11 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             if (networkMode == CTelephony::ENetworkModeWcdma && mode != QSystemNetworkInfo::WcdmaMode)
                 return -1;
 
-            return DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength();
+            return m_deviceInfo->cellSignalStrenghtInfo()->cellNetworkSignalStrength();
         }
 
         case QSystemNetworkInfo::WlanMode:
-            return DeviceInfo::instance()->wlanInfo()->wlanNetworkSignalStrength();
+            return m_deviceInfo->wlanInfo()->wlanNetworkSignalStrength();
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -588,27 +584,27 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
 int QSystemNetworkInfoPrivate::cellId()
 {
-    return DeviceInfo::instance()->cellNetworkInfo()->cellId();
+    return m_deviceInfo->cellNetworkInfo()->cellId();
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
-    return DeviceInfo::instance()->cellNetworkInfo()->locationAreaCode();
+    return m_deviceInfo->cellNetworkInfo()->locationAreaCode();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return DeviceInfo::instance()->cellNetworkInfo()->countryCode();
+    return m_deviceInfo->cellNetworkInfo()->countryCode();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-    return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
+    return m_deviceInfo->cellNetworkInfo()->networkCode();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    QString imsi = DeviceInfo::instance()->subscriberInfo()->imsi();
+    QString imsi = m_deviceInfo->subscriberInfo()->imsi();
     if (imsi.length() >= 3) {
         return imsi.left(3);
     }
@@ -618,7 +614,7 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
 
-        return DeviceInfo::instance()->cellNetworkInfo()->homeNetworkCode();
+        return m_deviceInfo->cellNetworkInfo()->homeNetworkCode();
 
 }
 
@@ -630,7 +626,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         case QSystemNetworkInfo::CdmaMode:
         case QSystemNetworkInfo::WcdmaMode:
         {
-            CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+            CTelephony::TNetworkMode networkMode = m_deviceInfo->cellNetworkInfo()->networkMode();
             if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
                 return QString();
 
@@ -642,13 +638,13 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
                 return QString();
 
 #ifndef NETWORKHANDLER_SYMBIAN_SUPPORTED
-            return DeviceInfo::instance()->cellNetworkInfo()->networkName();
+            return m_deviceInfo->cellNetworkInfo()->networkName();
 #else
-            return DeviceInfo::instance()->networkInfoListener()->networkName();
+            return m_deviceInfo->networkInfoListener()->networkName();
 #endif
         }
         case QSystemNetworkInfo::WlanMode:
-            return DeviceInfo::instance()->wlanInfo()->wlanNetworkName();
+            return m_deviceInfo->wlanInfo()->wlanNetworkName();
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -707,20 +703,20 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 void QSystemNetworkInfoPrivate::countryCodeChanged()
 {
-    emit currentMobileCountryCodeChanged(DeviceInfo::instance()->cellNetworkInfo()->countryCode());
+    emit currentMobileCountryCodeChanged(m_deviceInfo->cellNetworkInfo()->countryCode());
 }
 
 void QSystemNetworkInfoPrivate::networkCodeChanged()
 {
-    emit currentMobileNetworkCodeChanged(DeviceInfo::instance()->cellNetworkInfo()->networkCode());
+    emit currentMobileNetworkCodeChanged(m_deviceInfo->cellNetworkInfo()->networkCode());
 }
 
 void QSystemNetworkInfoPrivate::networkNameChanged()
 {
 #ifndef NETWORKHANDLER_SYMBIAN_SUPPORTED
-    emit networkNameChanged(currentMode(), DeviceInfo::instance()->cellNetworkInfo()->networkName());
+    emit networkNameChanged(currentMode(), m_deviceInfo->cellNetworkInfo()->networkName());
 #else
-    emit networkNameChanged(currentMode(), DeviceInfo::instance()->networkInfoListener()->networkName());
+    emit networkNameChanged(currentMode(), m_deviceInfo->networkInfoListener()->networkName());
 #endif
 }
 
@@ -753,7 +749,7 @@ void QSystemNetworkInfoPrivate::changedCellId(int cellIdTel)
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()
 {
     emit networkSignalStrengthChanged(currentMode(),
-        DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength());
+        m_deviceInfo->cellSignalStrenghtInfo()->cellNetworkSignalStrength());
 }
 
 void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
@@ -764,9 +760,9 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 
 void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
 {
-    bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
+    bool status = m_deviceInfo->wlanInfo()->wlanNetworkConnectionStatus();
         if (status)
-            emit networkNameChanged(QSystemNetworkInfo::WlanMode,DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+            emit networkNameChanged(QSystemNetworkInfo::WlanMode,m_deviceInfo->wlanInfo()->wlanNetworkName());
         else
             networkNameChanged();//Restore default network name, as WLAN will leave name as blank
 }
@@ -774,13 +770,13 @@ void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
 void QSystemNetworkInfoPrivate::wlanNetworkSignalStrengthChanged()
 {
     emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode,
-        DeviceInfo::instance()->wlanInfo()->wlanNetworkSignalStrength());
+        m_deviceInfo->wlanInfo()->wlanNetworkSignalStrength());
 }
 
 //TODO: There are no WLAN specific modes (Not connected, Infrastructure, Adhoc, Secure Infrastructure and Searching)
 void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
 {
-    bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
+    bool status = m_deviceInfo->wlanInfo()->wlanNetworkConnectionStatus();
     if (status)
         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Connected);
     else
@@ -801,7 +797,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
 #ifndef ETELMM_SUPPORTED
-    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
+    CTelephony::TNetworkMode networkMode = m_deviceInfo->cellNetworkInfo()->networkMode();
     switch (networkMode) {
         case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
         case CTelephony::ENetworkModeCdma95:
@@ -812,7 +808,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
     }
 #else
     RMobilePhone::TMobilePhoneNetworkMode nMode = RMobilePhone::ENetworkModeUnknown;
-    nMode = DeviceInfo::instance()->networkInfo()->GetMode();
+    nMode = m_deviceInfo->networkInfo()->GetMode();
     if (nMode != RMobilePhone::ENetworkModeUnknown) {
         switch (nMode) {
             case RMobilePhone::ENetworkModeGsm : mode = QSystemNetworkInfo::GsmMode;
@@ -836,7 +832,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 QSystemNetworkInfo::CellDataTechnology QSystemNetworkInfoPrivate::cellDataTechnology()
 {
 #ifdef ETELPACKETSERVICE_SUPPORTED
-  TUint celldatatechnology = DeviceInfo::instance()->networkInfo()->CellDataTechnology();
+  TUint celldatatechnology = m_deviceInfo->networkInfo()->CellDataTechnology();
   switch (celldatatechnology )
    {
     case KHsdpaBearer:
@@ -1088,50 +1084,30 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(i
     return backlightState;
 }
 
-QSystemStorageInfoPrivate* QSystemStorageInfoPrivate::storageinfoPrivateInstance()
-{
-    return new QSystemStorageInfoPrivate();
-}
-
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-    : QObject(parent)
+    : QSystemInfoPrivateBase(parent)
 {
-    TRACES (qDebug() << "QSystemStorageInfoPrivate::QSystemStorageInfoPrivate++");
     iFs.Connect();
-    TInt errorcode = iFs.ShareProtected();
-    TRACES ( qDebug() << "Shareproteted error code:" << errorcode );
-    DeviceInfo::instance()->mmcStorageStatus()->addObserver(this);
+    m_deviceInfo->mmcStorageStatus()->addObserver(this);
 
 #ifdef DISKNOTIFY_SUPPORTED
-    CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
+    CStorageDiskNotifier* storageNotifier = m_deviceInfo->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->AddObserver(this);
         }
 #endif
-    DeviceInfo::instance()->incrementRefCount();
-    TRACES (qDebug() << "QSystemStorageInfoPrivate::QSystemStorageInfoPrivate--");
 }
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
-    TRACES (qDebug() << "QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate++");
     iFs.Close();
-    DeviceInfo::instance()->mmcStorageStatus()->removeObserver(this);
+    m_deviceInfo->mmcStorageStatus()->removeObserver(this);
 #ifdef DISKNOTIFY_SUPPORTED
-    CStorageDiskNotifier* storageNotifier = DeviceInfo::instance()->storagedisknotifier();
+    CStorageDiskNotifier* storageNotifier = m_deviceInfo->storagedisknotifier();
     if (storageNotifier != NULL){
         storageNotifier->RemoveObserver(this);
         }
 #endif
-    DeviceInfo::instance()->decrementRefCount();
-    int refcount = DeviceInfo::instance()->getRefCount();
-    if (refcount == 0)
-        {
-        DeviceInfo *deviceInfo = DeviceInfo::instance();
-        delete deviceInfo;
-        Dll::FreeTls();
-        }
-    TRACES (qDebug() << "QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate--");
 }
 
 qlonglong QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
@@ -1304,41 +1280,35 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::CheckDiskSpaceThresh
     return state;
 }
 
-QSystemDeviceInfoPrivate* QSystemDeviceInfoPrivate::deviceinfoPrivateInstance()
-{
-    return new QSystemDeviceInfoPrivate();
-}
-
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-    : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL),
+    : QSystemInfoPrivateBase(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL),
     m_bluetoothRepository(NULL), m_bluetoothNotifyHandler(NULL)
 {
-    DeviceInfo::instance()->batteryInfo()->addObserver(this);
-    DeviceInfo::instance()->chargingStatus()->addObserver(this);
+    m_deviceInfo->batteryInfo()->addObserver(this);
+    m_deviceInfo->chargingStatus()->addObserver(this);
     m_previousBatteryStatus = QSystemDeviceInfo::NoBatteryLevel;
 #ifdef LOCKANDFLIP_SUPPORTED
-    DeviceInfo::instance()->keylockStatus()->addObserver(this);
-    DeviceInfo::instance()->flipStatus()->addObserver(this);
+    m_deviceInfo->keylockStatus()->addObserver(this);
+    m_deviceInfo->flipStatus()->addObserver(this);
 #endif
 
 #ifdef THERMALSTATUS_SUPPORTED
-    DeviceInfo::instance()->thermalStatus()->addObserver(this);
+    m_deviceInfo->thermalStatus()->addObserver(this);
 #endif
-    DeviceInfo::instance()->phoneInfo();
-    DeviceInfo::instance()->subscriberInfo();
-    DeviceInfo::instance()->incrementRefCount();
+    m_deviceInfo->phoneInfo();
+    m_deviceInfo->subscriberInfo();
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    DeviceInfo::instance()->chargingStatus()->removeObserver(this);
-    DeviceInfo::instance()->batteryInfo()->removeObserver(this);
+    m_deviceInfo->chargingStatus()->removeObserver(this);
+    m_deviceInfo->batteryInfo()->removeObserver(this);
 #ifdef LOCKANDFLIP_SUPPORTED
-    DeviceInfo::instance()->keylockStatus()->removeObserver(this);
-    DeviceInfo::instance()->flipStatus()->removeObserver(this);
+    m_deviceInfo->keylockStatus()->removeObserver(this);
+    m_deviceInfo->flipStatus()->removeObserver(this);
 #endif
 #ifdef THERMALSTATUS_SUPPORTED
-    DeviceInfo::instance()->thermalStatus()->removeObserver(this);
+    m_deviceInfo->thermalStatus()->removeObserver(this);
 #endif
     if (m_proEngNotifyHandler) {
         m_proEngNotifyHandler->CancelProfileActivationNotifications();
@@ -1351,15 +1321,6 @@ QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 
     delete m_bluetoothNotifyHandler;
     delete m_bluetoothRepository;
-
-    DeviceInfo::instance()->decrementRefCount();
-    int refcount = DeviceInfo::instance()->getRefCount();
-    if (refcount == 0)
-        {
-        DeviceInfo *deviceInfo = DeviceInfo::instance();
-        delete deviceInfo;
-        Dll::FreeTls();
-        }
 }
 
 void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
@@ -1477,7 +1438,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-    switch (DeviceInfo::instance()->chargingStatus()->chargingStatus()) {
+    switch (m_deviceInfo->chargingStatus()->chargingStatus()) {
     case EChargingStatusNotConnected:
     case EChargingStatusNotCharging:
     case EChargingStatusError:
@@ -1496,7 +1457,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 QSystemDeviceInfo::ThermalState QSystemDeviceInfoPrivate::currentThermalState()
 {
 #ifdef THERMALSTATUS_SUPPORTED
-    TUint8 thermalstate = DeviceInfo::instance()->thermalStatus()->getThermalStatus();
+    TUint8 thermalstate = m_deviceInfo->thermalStatus()->getThermalStatus();
     switch ( thermalstate ) {
       case ENormal:
        return QSystemDeviceInfo::NormalThermal;
@@ -1542,7 +1503,7 @@ void QSystemDeviceInfoPrivate::NotiftythermalStateChanged(TUint8 thermalstate)
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-    return DeviceInfo::instance()->phoneInfo()->imei();
+    return m_deviceInfo->phoneInfo()->imei();
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
@@ -1550,17 +1511,17 @@ QString QSystemDeviceInfoPrivate::imsi()
     if (simStatus() == QSystemDeviceInfo::SimNotAvailable)
         return QString();
     else
-        return DeviceInfo::instance()->subscriberInfo()->imsi();
+        return m_deviceInfo->subscriberInfo()->imsi();
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
 {
-    return DeviceInfo::instance()->phoneInfo()->manufacturer();
+    return m_deviceInfo->phoneInfo()->manufacturer();
 }
 
 QString QSystemDeviceInfoPrivate::model()
 {
-    return DeviceInfo::instance()->phoneInfo()->model();
+    return m_deviceInfo->phoneInfo()->model();
 }
 
 QString QSystemDeviceInfoPrivate::productName()
@@ -1575,12 +1536,12 @@ QString QSystemDeviceInfoPrivate::productName()
 
 int QSystemDeviceInfoPrivate::batteryLevel() const
 {
-    return DeviceInfo::instance()->batteryInfo()->batteryLevel();
+    return m_deviceInfo->batteryInfo()->batteryLevel();
 }
 
 QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 {
-    int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
+    int batteryLevel = m_deviceInfo->batteryInfo()->batteryLevel();
     QSystemDeviceInfo::PowerState currentpwrstate = currentPowerState();
     if (batteryLevel < 15 ) {
         if ( (currentpwrstate == QSystemDeviceInfo::WallPowerChargingBattery) || (currentpwrstate == QSystemDeviceInfo::WallPower) ) {
@@ -1606,7 +1567,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
 #ifdef SYMBIAN_3_1
-    if (!DeviceInfo::instance()->subscriberInfo()->imsi().isEmpty())
+    if (!m_deviceInfo->subscriberInfo()->imsi().isEmpty())
         return QSystemDeviceInfo::SingleSimAvailable;
 #else //SYMBIAN_3_1
     TInt lockStatus = 0;
@@ -1692,7 +1653,7 @@ QSystemDeviceInfo::KeyboardTypeFlags QSystemDeviceInfoPrivate::keyboardTypes()
         default:
                 break;
                 }
-        bool filpKbStatus = DeviceInfo::instance()->flipStatus()->IsFlipSupported();
+        bool filpKbStatus = m_deviceInfo->flipStatus()->IsFlipSupported();
         if ( filpKbStatus ) {
              if ( keyboardFlags == QSystemDeviceInfo::UnknownKeyboard)
                 keyboardFlags = QSystemDeviceInfo::FlipKeyboard;
@@ -1733,8 +1694,8 @@ bool QSystemDeviceInfoPrivate::isKeyboardFlippedOpen()
 {
 #ifdef LOCKANDFLIP_SUPPORTED
     // It is functional only for the Grip open devices
-    // TBD Remove : (DeviceInfo::instance()->flipStatus()->IsFlipSupported())
-    return ( DeviceInfo::instance()->flipStatus()->getFlipStatus() );
+    // TBD Remove : (m_deviceInfo->flipStatus()->IsFlipSupported())
+    return ( m_deviceInfo->flipStatus()->getFlipStatus() );
 #else
     return false;
 #endif
@@ -1789,7 +1750,7 @@ QSystemDeviceInfo::LockTypeFlags QSystemDeviceInfoPrivate::lockStatus()
     QSystemDeviceInfo::LockTypeFlags status = QSystemDeviceInfo::UnknownLock;
 
 #ifdef LOCKANDFLIP_SUPPORTED
-    int value = DeviceInfo::instance()->keylockStatus()->getLockStatus();
+    int value = m_deviceInfo->keylockStatus()->getLockStatus();
     switch ( value ){
              /*case EKeyguardNotActive:
                 status = QSystemDeviceInfo::DeviceUnlocked;
@@ -1903,11 +1864,11 @@ void QSystemScreenSaverPrivate::setScreenSaverInhibited(bool on)
 }
 
 QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
-: QObject(parent) , m_batteryHWRM(NULL)
+: QSystemInfoPrivateBase(parent) , m_batteryHWRM(NULL)
 {
     m_batteryHWRM = CBatteryHWRM::New();
     bool chargestate,usbstate;
-    DeviceInfo::instance()->batteryCommonInfo()->ChargerType(chargestate,usbstate);
+    m_deviceInfo->batteryCommonInfo()->ChargerType(chargestate,usbstate);
     if (chargestate) {
         if (usbstate)
             m_charger = QSystemBatteryInfo::USBCharger;
@@ -1916,34 +1877,24 @@ QSystemBatteryInfoPrivate::QSystemBatteryInfoPrivate(QObject *parent)
     } else
         m_charger = QSystemBatteryInfo::NoCharger;
     m_previousChagrger = m_charger ;
-    DeviceInfo::instance()->batteryCommonInfo()->AddObserver(this);
-    DeviceInfo::instance()->incrementRefCount();
+    m_deviceInfo->batteryCommonInfo()->AddObserver(this);
 }
 
 QSystemBatteryInfoPrivate::~QSystemBatteryInfoPrivate()
 {
-    DeviceInfo::instance()->batteryCommonInfo()->RemoveObserver(this);
+    m_deviceInfo->batteryCommonInfo()->RemoveObserver(this);
     if (m_batteryHWRM)
     {
         delete(m_batteryHWRM);
         m_batteryHWRM = NULL;
     }
-
-    DeviceInfo::instance()->decrementRefCount();
-    int refcount = DeviceInfo::instance()->getRefCount();
-    if (refcount == 0)
-        {
-        DeviceInfo *deviceInfo = DeviceInfo::instance();
-        delete deviceInfo;
-        Dll::FreeTls();
-        }
 }
 
 
 QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 {
     bool chargestate,usbstate;
-    DeviceInfo::instance()->batteryCommonInfo()->ChargerType(chargestate,usbstate);
+    m_deviceInfo->batteryCommonInfo()->ChargerType(chargestate,usbstate);
     QSystemBatteryInfo::ChargerType result = QSystemBatteryInfo::UnknownCharger;
     if (chargestate) {
         if (usbstate)
@@ -1957,7 +1908,7 @@ QSystemBatteryInfo::ChargerType QSystemBatteryInfoPrivate::chargerType() const
 
 QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() const
 {
-    bool batteryChargingState = DeviceInfo::instance()->batteryCommonInfo()->ChargingState();
+    bool batteryChargingState = m_deviceInfo->batteryCommonInfo()->ChargingState();
     QSystemBatteryInfo::ChargingState result = QSystemBatteryInfo::ChargingError;
     if (batteryChargingState)
         result = QSystemBatteryInfo::Charging;
@@ -1969,23 +1920,23 @@ QSystemBatteryInfo::ChargingState QSystemBatteryInfoPrivate::chargingState() con
 
 int QSystemBatteryInfoPrivate::nominalCapacity() const
 {
-    return DeviceInfo::instance()->batteryCommonInfo()->NominalCapacity();
+    return m_deviceInfo->batteryCommonInfo()->NominalCapacity();
 }
 
 int QSystemBatteryInfoPrivate::remainingCapacityPercent() const
 {
-    return DeviceInfo::instance()->batteryCommonInfo()->RemainingCapacityPercent();
+    return m_deviceInfo->batteryCommonInfo()->RemainingCapacityPercent();
 }
 
 int QSystemBatteryInfoPrivate::remainingCapacity() const
 {
-    return DeviceInfo::instance()->batteryCommonInfo()->RemainingCapacity();
+    return m_deviceInfo->batteryCommonInfo()->RemainingCapacity();
 }
 
 
 int QSystemBatteryInfoPrivate::voltage() const
 {
-    return DeviceInfo::instance()->batteryCommonInfo()->Voltage();
+    return m_deviceInfo->batteryCommonInfo()->Voltage();
 }
 
 int QSystemBatteryInfoPrivate::remainingChargingTime() const
@@ -2003,7 +1954,7 @@ int QSystemBatteryInfoPrivate::currentFlow() const
 
 int QSystemBatteryInfoPrivate::remainingCapacityBars() const
 {
-    return DeviceInfo::instance()->batteryCommonInfo()->RemainingCapacityBars();
+    return m_deviceInfo->batteryCommonInfo()->RemainingCapacityBars();
 }
 
 int QSystemBatteryInfoPrivate::maxBars() const
@@ -2014,7 +1965,7 @@ int QSystemBatteryInfoPrivate::maxBars() const
 QSystemBatteryInfo::BatteryStatus QSystemBatteryInfoPrivate::batteryStatus() const
 {
     QString logString;
-    int batteryStatusVal = DeviceInfo::instance()->batteryCommonInfo()->BatteryStatus();
+    int batteryStatusVal = m_deviceInfo->batteryCommonInfo()->BatteryStatus();
     QSystemBatteryInfo::BatteryStatus result = QSystemBatteryInfo::BatteryUnknown;
     switch (batteryStatusVal) {
                 case EBatteryStatusOk : result = QSystemBatteryInfo:: BatteryOk ;
@@ -2104,7 +2055,7 @@ void QSystemBatteryInfoPrivate::changedChargingState() {
 
 void QSystemBatteryInfoPrivate::changedChargerType() {
     bool chargestate,usbstate;
-    DeviceInfo::instance()->batteryCommonInfo()->ChargerType(chargestate,usbstate);
+    m_deviceInfo->batteryCommonInfo()->ChargerType(chargestate,usbstate);
     if (chargestate) {
         if (usbstate)
             m_charger = QSystemBatteryInfo::USBCharger;
