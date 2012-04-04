@@ -657,7 +657,7 @@ echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer"
 # Some modules are disabled from compilation on QNX right now:
 # - publishsubscribe: dlmalloc.c redefining some symbols
 # - systeminfo: Implementation files for _qnx missing
-echo "qnx: mobility_modules -= publishsubscribe systeminfo" >> "$CONFIG_IN"
+echo "qnx: mobility_modules -= bearer location contacts publishsubscribe versit messaging systeminfo serviceframework gallery organizer feedback connectivity" >> "$CONFIG_IN"
 
 # Mobility doesn't support Bearer on MeeGo -> Use Qt 4.7 Bearer instead
 echo "meego:contains(mobility_modules, bearer) { " >> "$CONFIG_IN"
