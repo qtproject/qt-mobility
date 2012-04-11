@@ -293,6 +293,7 @@ QString QSystemNetworkInfo::homeMobileNetworkCode()
     \since 1.0
 
     \warning On Symbian this function is not reentrant and must be used from main thread only.
+    \warning Needs ReadDeviceData capabilities
 */
 QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
