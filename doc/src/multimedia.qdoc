@@ -378,6 +378,43 @@ port the Qt Multimedia APIs to a new platform or technology, see \l{Multimedia B
 \o \l {Audio}{Audio: Music playback}
 \o \l {Video}{Video: Video playback}
 \endlist
+
+\section2 Video renderer selection on Symbian
+
+On Symbian, the QVideoRendererControl class may provide video frames in one of two forms:
+\list
+\o "software" - as a QPixmap which is backed by a CFbsBitmap. In this case, the pixel data is resident in CPU-addressable memory,
+so the client can access pixels directly via QVideoFrame::bits(). QVideoFrame::handleType() returns QAbstractVideoBuffer::NoHandle
+when the video frame is in this form.
+\o "EGL" - as an EGLImageKHR handle. In this case, the pixel data is resident in GPU memory. It therefore cannot be accessed by the client,
+but may be rendered to the screen more efficiently than video frames obtained via the "software" path.
+\endlist
+
+Which of these paths is available depends on the version of the Symbian platform, and on the source of the video data:
+\list
+\o On Nokia Belle Feature Pack 1 and earlier: For QCamera, only the "software" path is available.
+For QMediaPlayer, neither path is available, so QVideoRendererControl is not supported.
+\o After Nokia Belle Feature Pack 1: For QCamera, both paths are available; the "software" path is used by default.
+For QMediaPlayer, only the "EGL" path is available.
+\endlist
+
+Where multiple paths are available, the default can be overridden by setting the "_q_eglRenderingAllowed" property on the QMediaService object.
+If this property is true and the "EGL" path is available, it is used.  Otherwise the "software" path is used.
+
+    \code
+    // create a camera whose viewfinder may render via EGL
+    camera = new QCamera;
+    camera->service()->setProperty("_q_eglRenderingAllowed", true);
+    \endcode
+
+Note that, for rendering video frames to the screen, the QGraphicsVideoItem implementation uses the most efficient route available (which is never the "software" path).
+Selection of the correct rendering path is done automatically and is transparent to the client:
+\list
+\o For fullscreen, untransformed video items, QVideoWidgetControl is used, meaning that video frames go directly to the display, and the client thread is not notified at all.
+\o For non-fullscreen or transformed video items: If the "EGL" path is available and a hardware-accelerated paint engine is in use,
+the "EGL" path is used. Otherwise QVideoWidgetControl is used.
+\endlist
+
 */
 
 

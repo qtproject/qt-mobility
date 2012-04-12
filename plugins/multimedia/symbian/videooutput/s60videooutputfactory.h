@@ -58,6 +58,11 @@ public:
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *control);
 
+    static const char *eglRenderingAllowedPropertyName();
+
+private:
+    bool isEglRenderingAllowed() const;
+
 private:
     struct ControlData
     {

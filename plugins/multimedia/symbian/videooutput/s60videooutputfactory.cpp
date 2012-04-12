@@ -82,7 +82,7 @@ QMediaControl *S60VideoOutputFactory::requestControl(const char *name)
     if (!control) {
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
         if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
-            if (m_eglExtensions)
+            if (m_eglExtensions && isEglRenderingAllowed())
                 control = new S60VideoEglRendererControl(m_eglExtensions, this);
         } else
 #endif
@@ -113,4 +113,25 @@ void S60VideoOutputFactory::releaseControl(QMediaControl *control)
         delete control;
         m_data.remove(index);
     }
+}
+
+const char *S60VideoOutputFactory::eglRenderingAllowedPropertyName()
+{
+    return "_q_eglRenderingAllowed";
+}
+
+bool S60VideoOutputFactory::isEglRenderingAllowed() const
+{
+    bool allowed = true;
+    const QObject *obj = this;
+    const char *propertyName = eglRenderingAllowedPropertyName();
+    while (obj) {
+        QVariant v = obj->property(propertyName);
+        if (v.isValid()) {
+            allowed = v.toBool();
+            break;
+        }
+        obj = obj->parent();
+    }
+    return allowed;
 }
