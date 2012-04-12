@@ -227,6 +227,11 @@ unix:!simulator {
             DEFINES += SYMBIAN_3_PLATFORM
         }
 
+        contains(S60_VERSION, 5.4) | contains(S60_VERSION, 5.5) {
+            message("Symbian Belle FP 1 or later defined")
+            DEFINES += SYMBIAN_BELLE_FP_1_OR_LATER
+        }
+
         contains(LockandFlipPSkeys_enabled, yes) {
             message("LockandFlipPSKeys available")
             DEFINES += LOCKANDFLIP_SUPPORTED

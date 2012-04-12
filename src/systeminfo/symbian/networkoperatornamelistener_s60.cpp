@@ -127,7 +127,23 @@ void CNetworkOperatorNameListener::ConstructL()
         <MNWMessageObserver::TNWMessages>( KAiMessageCacheGranularity );
 
     //Create network handling engine session. Needs networkControl Caps
-    TRAP_IGNORE( iNWSession = CreateL( *this, iNWInfo ) );
+    bool createSession = true;
+
+#ifdef SYMBIAN_BELLE_FP_1_OR_LATER
+    // In Belle FP 1 creating network handling engine session (CreateL)
+    // will panic the client if app has WriteDeviceData but not ReadDeviceData
+    // capability.
+    RThread thread;
+    if (thread.HasCapability(ECapabilityWriteDeviceData) &&
+        !thread.HasCapability(ECapabilityReadDeviceData)) {
+        createSession = false;
+    }
+#endif
+
+    if (createSession) {
+        TRAP_IGNORE( iNWSession = CreateL( *this, iNWInfo ) );
+    }
+
     if (iNWSession == NULL ) {
      //Creation of session has failed due to lack of capabilities
      //All apps need NetworkControl caps to use this
