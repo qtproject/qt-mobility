@@ -127,6 +127,7 @@ static const QString RenderingPathDefault  = "default";
 static const QString RenderingPathRenderer = "renderer";
 static const QString RenderingPathDirect   = "direct";
 static const QString DefaultPreferredRenderingPath  = RenderingPathAuto;
+static const char *EglRenderingAllowedPropertyName = "_q_eglRenderingAllowed";
 
 
 //-----------------------------------------------------------------------------
@@ -983,6 +984,9 @@ bool QGraphicsVideoItemPrivate::setMediaObject(QMediaObject *mediaObject)
                 connect(m_service, SIGNAL(destroyed()),
                         q, SLOT(_q_serviceDestroyed()));
                 bound = true;
+                // allow EGL rendering when QGraphicsVideoItem is the media service client, as we don't use
+                // raw frame data
+                m_service->setProperty(EglRenderingAllowedPropertyName, true);
                 q->update();
             }
         }

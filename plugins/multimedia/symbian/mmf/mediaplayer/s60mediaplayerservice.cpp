@@ -66,6 +66,13 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     , m_videoOutputFactory(0)
 {
     TRACE("S60MediaPlayerService::S60MediaPlayerService" << qtThisPtr());
+
+    // By default, the media player service will allow EGL rendering for video.
+    // Clients will not be able to access raw frame data directly with EGL rendering, but they are
+    // assumed to be interested in playing video efficiently rather than accessing or manipulating
+    // the frame images.
+    setProperty(S60VideoOutputFactory::eglRenderingAllowedPropertyName(), true);
+
     m_control = new S60MediaPlayerControl(this);
     m_metaData = new S60MediaMetaDataProvider(m_control, this);
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);

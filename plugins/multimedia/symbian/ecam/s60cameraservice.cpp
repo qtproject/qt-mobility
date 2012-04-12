@@ -74,6 +74,10 @@
 S60CameraService::S60CameraService(QObject *parent) :
     QMediaService(parent)
 {
+    // by default, the camera service will not allow EGL rendering as clients may
+    // reasonably often want access to the raw frame data
+    setProperty(S60VideoOutputFactory::eglRenderingAllowedPropertyName(), false);
+
     // Session classes for video and image capturing
     m_imagesession = new S60ImageCaptureSession(this);
     m_videosession = new S60VideoCaptureSession(this);
