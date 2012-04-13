@@ -7,6 +7,8 @@ include(../../common.pri)
 symbian {
    #symbian contactsmodel,plugin,symbian is part of new contactsrv pkg
    !contains(S60_VERSION, 5.4) {
+     !contains(S60_VERSION, 5.5) {
+
         SUBDIRS += symbian
 
         ## build symbian-specific unit tests.
@@ -23,6 +25,7 @@ symbian {
         } else {
             message("Symbian SIM backend disabled")
         }
+      }
     }
 }
 wince*:SUBDIRS += wince
