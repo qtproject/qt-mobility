@@ -58,6 +58,7 @@ QBluetoothTransferReplySymbian::QBluetoothTransferReplySymbian(QIODevice *input,
     : QBluetoothTransferReply(parent)
     , CActive(EPriorityStandard)
     , m_source(input)
+    , m_tempfilename(QString())
     , m_discoveryAgent(NULL)
     , m_running(false)
     , m_finished(false)
@@ -90,6 +91,8 @@ QBluetoothTransferReplySymbian::~QBluetoothTransferReplySymbian()
     delete m_discoveryAgent;
     delete m_object;
     delete m_client;
+    if (!m_tempfilename.isEmpty())
+        QFile::remove(m_tempfilename);
 }
 
 void QBluetoothTransferReplySymbian::setAddress(const QBluetoothAddress &address)
@@ -197,6 +200,10 @@ void QBluetoothTransferReplySymbian::abort()
     m_client = NULL;
     delete m_object;
     m_object = NULL;
+    if (!m_tempfilename.isEmpty()) {
+        QFile::remove(m_tempfilename);
+        m_tempfilename = QString();
+    }
 }
 
 QBluetoothTransferReply::TransferError QBluetoothTransferReplySymbian::error() const
@@ -241,10 +248,14 @@ void QBluetoothTransferReplySymbian::RunL()
                 m_fileSize = info.size();
                 filename = QDir::toNativeSeparators(info.absoluteFilePath());
             } else {
-                if (copyToTempFile(m_tempfile, m_source)) {
-                   QFileInfo info(*m_tempfile);
-                   m_fileSize = info.size();
-                   filename = QDir::toNativeSeparators(info.absoluteFilePath());
+                QTemporaryFile tempfile(QLatin1String("BT"));
+                m_tempfilename = QString();
+                if (tempfile.open() && copyToTempFile(&tempfile, m_source)) {
+                    QFileInfo info(tempfile);
+                    m_fileSize = info.size();
+                    m_tempfilename = QDir::toNativeSeparators(info.absoluteFilePath());
+                    filename = m_tempfilename;
+                    tempfile.setAutoRemove(false); // the file will be deleted when sending is complete
                 } else {
                     m_state = EDisconnecting;
                     disconnect();
@@ -279,18 +290,19 @@ void QBluetoothTransferReplySymbian::sendObject(QString filename)
     TRAPD(err, m_object = CObexFileObject::NewL());
     if (!err) {
         TPtrC16 str(reinterpret_cast<const TUint16*>(filename.utf16()));
-        TRAPD(error, m_object->InitFromFileL( str ));
-        if (!error) {
-            m_client->Put( *m_object, iStatus );
-            m_timer->start(1000);
-            emit uploadProgress(0, m_fileSize);
-            SetActive();
-        } else {
-            qDebug() << "Error in" << __FUNCTION__ << error;
-            m_error = error == KErrNotFound ? FileNotFoundError: UnknownError;
-            disconnect();
-            emit finished(this);
-        }
+        TRAP(err, m_object->InitFromFileL(str));
+    }
+
+    if (!err) {
+        m_client->Put( *m_object, iStatus );
+        m_timer->start(1000);
+        emit uploadProgress(0, m_fileSize);
+        SetActive();
+    } else {
+        qDebug() << "Error in" << __FUNCTION__ << err;
+        m_error = err == KErrNotFound ? FileNotFoundError: UnknownError;
+        disconnect();
+        emit finished(this);
     }
 }
 
@@ -301,6 +313,10 @@ void QBluetoothTransferReplySymbian::disconnect()
             m_timer->stop();
         delete m_object;
         m_object = NULL;
+        if (!m_tempfilename.isEmpty()) {
+            QFile::remove(m_tempfilename);
+            m_tempfilename = QString();
+        }
         m_client->Disconnect( iStatus );
         SetActive();
     }
@@ -309,10 +325,12 @@ void QBluetoothTransferReplySymbian::disconnect()
 bool QBluetoothTransferReplySymbian::copyToTempFile(QIODevice *to, QIODevice *from)
 {
     char *block = new char[4096];
-
+    from->seek(0);
+    
     while (!from->atEnd()) {
         int size = from->read(block, 4096);
         if (size != to->write(block, size)) {
+            delete[] block;
             return false;
         }
     }

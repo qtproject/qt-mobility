@@ -108,6 +108,14 @@ CMdEObject* QMdeSession::GetFullObjectL(const unsigned int id)
         return NULL;
 }
 
+CMdEObject* QMdeSession::OpenObjectL( const unsigned int id, CMdEObjectDef& objectDef )
+{
+    if (m_cmdeSession)
+        return m_cmdeSession->OpenObjectL(id, objectDef);
+    else
+        return NULL;
+}
+
 void QMdeSession::CommitObjectL( CMdEObject& object )
 {
     if (m_cmdeSession)
