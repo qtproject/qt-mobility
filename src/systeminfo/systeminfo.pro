@@ -221,7 +221,7 @@ unix:!simulator {
             DEFINES += SYMBIAN_3_1
         }
 
-        contains(S60_VERSION, 5.2) | contains(S60_VERSION, 5.3) | contains(S60_VERSION, 5.4)  {
+        contains(S60_VERSION, 5.2) | contains(S60_VERSION, 5.3) | contains(S60_VERSION, 5.4) | contains(S60_VERSION, 5.5) {
             message("Symbian3 defined")
             CONFIG += symbian3platform
             DEFINES += SYMBIAN_3_PLATFORM
