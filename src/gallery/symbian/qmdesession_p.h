@@ -95,6 +95,7 @@ public: // From MMdESessionObserver
 
     CMdEObject* GetFullObjectL( const unsigned int id );
 
+    CMdEObject* OpenObjectL( const unsigned int id, CMdEObjectDef& objectDef );
     void CommitObjectL( CMdEObject& object );
 
     CMdEObjectQuery* NewObjectQueryL(MMdEQueryObserver *observer,
