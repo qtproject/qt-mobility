@@ -136,11 +136,9 @@ void CQGeoPositionInfoSourceS60::ConstructL()
 	qDebug() << "CQGeoPositionInfobuffSourceS60::ConstructL\n" ;
 #endif
 	
-    User::LeaveIfError( mPositionServer.Connect());
+    TInt error = mPositionServer.Connect();
 
     mDevStatusUpdateAO = CQMLBackendAO::NewL(this, DeviceStatus);
-    	
-     CleanupStack::PushL(mDevStatusUpdateAO);
 
     //update the list array with the available method initially
     updateDeviceStatus();
@@ -154,7 +152,6 @@ void CQGeoPositionInfoSourceS60::ConstructL()
         mRegUpdateAO = CQMLBackendAO::NewL(this, RegularUpdate, mCurrentModuleId);
         mRegUpdateAO->setUpdateInterval(updateInterval());
     }
-    CleanupStack::Pop();
 }
 
 QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatellitePositioningMethodsOnly) const
