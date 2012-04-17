@@ -224,11 +224,11 @@ void EventEditPage::eventChanged(QOrganizerManager *manager, const QOrganizerEve
         // limit 3 minutes is rounded up to 5 minutes
         if (reminder.secondsBeforeStart() == 0)
             m_alarmComboBox->setCurrentIndex(1);
-        else if (reminder.secondsBeforeStart() < 300)
+        else if (reminder.secondsBeforeStart() <= 300)
             m_alarmComboBox->setCurrentIndex(2);
-        else if (reminder.secondsBeforeStart() < 900)
+        else if (reminder.secondsBeforeStart() <= 900)
             m_alarmComboBox->setCurrentIndex(3);
-        else if (reminder.secondsBeforeStart() < 1800)
+        else if (reminder.secondsBeforeStart() <= 1800)
             m_alarmComboBox->setCurrentIndex(4);
         else
             m_alarmComboBox->setCurrentIndex(5);
