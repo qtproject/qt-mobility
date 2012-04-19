@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010-2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -436,6 +436,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     bool isFeatureSupported = false;
     TRAP_IGNORE(isFeatureSupported = CFeatureDiscovery::IsFeatureSupportedL(featureId);)
     return isFeatureSupported;
+}
+
+QSystemNetworkInfoPrivate* QSystemNetworkInfoPrivate::networkinfoPrivateInstance()
+{
+    return new QSystemNetworkInfoPrivate();
 }
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
@@ -1084,6 +1089,11 @@ QSystemDisplayInfo::BacklightState  QSystemDisplayInfoPrivate::backlightStatus(i
     return backlightState;
 }
 
+QSystemStorageInfoPrivate* QSystemStorageInfoPrivate::storageinfoPrivateInstance()
+{
+    return new QSystemStorageInfoPrivate();
+}
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QSystemInfoPrivateBase(parent)
 {
@@ -1278,6 +1288,11 @@ QSystemStorageInfo::StorageState QSystemStorageInfoPrivate::CheckDiskSpaceThresh
         state = QSystemStorageInfo::CriticalStorageState;
         }
     return state;
+}
+
+QSystemDeviceInfoPrivate* QSystemDeviceInfoPrivate::deviceinfoPrivateInstance()
+{
+    return new QSystemDeviceInfoPrivate();
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,24 +46,29 @@
 #include <driveinfo.h>
 #endif //SYMBIAN_3_1
 #include <f32file.h>
+#include "trace.h"
 
 
 CMMCStorageStatus::CMMCStorageStatus() : CActive(EPriorityStandard),
 m_previousDriveList(TDriveList())
 {
+TRACES ( qDebug() << "CMMCStorageStatus::CMMCStorageStatus++");
     CActiveScheduler::Add(this);
-    if (iFs.Connect() == KErrNone) {
+    if (iFs.Connect() == KErrNone && iFs.ShareProtected() == KErrNone) {
 #ifndef SYMBIAN_3_1
         m_previousDriveList.Copy(PopulateDriveList());
 #endif //SYMBIAN_3_1
         startMonitoring();
     }
+TRACES ( qDebug() << "CMMCStorageStatus::CMMCStorageStatus--");
 }
 
 CMMCStorageStatus::~CMMCStorageStatus()
 {
+TRACES ( qDebug() << "CMMCStorageStatus::~CMMCStorageStatus++");
     Cancel();
     iFs.Close();
+TRACES ( qDebug() << "CMMCStorageStatus::~CMMCStorageStatus--");
 }
 
 void CMMCStorageStatus::addObserver(MStorageStatusObserver *observer)
