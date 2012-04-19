@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -145,7 +145,7 @@ class QSystemNetworkInfoPrivate : public QSystemInfoPrivateBase, public MTelepho
     Q_OBJECT
 
 public:
-
+    static QSystemNetworkInfoPrivate* networkinfoPrivateInstance();
     QSystemNetworkInfoPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
@@ -256,6 +256,7 @@ class QSystemStorageInfoPrivate : public QSystemInfoPrivateBase,
 private:
     QSystemStorageInfo::StorageState CheckDiskSpaceThresholdLimit(const QString &);
 public:
+    static QSystemStorageInfoPrivate* storageinfoPrivateInstance();
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
     qlonglong totalDiskSpace(const QString &driveVolume);
@@ -310,7 +311,7 @@ class QSystemDeviceInfoPrivate : public QSystemInfoPrivateBase,
     Q_OBJECT
 
 public:
-
+    static QSystemDeviceInfoPrivate* deviceinfoPrivateInstance();
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoPrivate();
 

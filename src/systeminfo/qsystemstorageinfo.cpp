@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,8 +44,9 @@
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
-
+#ifndef Q_OS_SYMBIAN
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivateSingleton)
+#endif
 
 #ifdef QT_SIMULATOR
 QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPrivateSingleton(); }
@@ -233,7 +234,14 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &drive)
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
+#ifdef Q_OS_SYMBIAN
+        QSystemStorageInfoPrivate* storageInfo = QSystemStorageInfoPrivate::storageinfoPrivateInstance();
+        QStringList drivelist = storageInfo->logicalDrives();
+        delete storageInfo;
+        return drivelist;
+#else
     return storageInfoPrivateSingleton()->logicalDrives();
+#endif
 }
 
 /*!

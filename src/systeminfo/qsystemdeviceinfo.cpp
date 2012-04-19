@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009-2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,8 +44,9 @@
 #include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
-
+#ifndef Q_OS_SYMBIAN
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivateSingleton)
+#endif
 
 #ifdef QT_SIMULATOR
 QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivateSingleton(); }
@@ -670,7 +671,14 @@ QSystemDeviceInfo::ProfileDetails::~ProfileDetails()
 */
 int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
 {
+#ifdef Q_OS_SYMBIAN
+     QSystemDeviceInfoPrivate* deviceInfo = QSystemDeviceInfoPrivate::deviceinfoPrivateInstance();
+     int messageRingtoneVolume = deviceInfo->messageRingtoneVolume();
+     delete deviceInfo;
+     return messageRingtoneVolume;
+#else
     return deviceInfoPrivateSingleton()->messageRingtoneVolume();
+#endif
 }
 
 /*!
@@ -679,7 +687,14 @@ int QSystemDeviceInfo::ProfileDetails::messageRingtoneVolume() const
 */
 int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 {
+#ifdef Q_OS_SYMBIAN
+     QSystemDeviceInfoPrivate* deviceInfo = QSystemDeviceInfoPrivate::deviceinfoPrivateInstance();
+     int voiceRingtoneVolume = deviceInfo->voiceRingtoneVolume();
+     delete deviceInfo;
+     return voiceRingtoneVolume;
+#else
     return deviceInfoPrivateSingleton()->voiceRingtoneVolume();
+#endif
 }
 
 /*!
@@ -688,7 +703,14 @@ int QSystemDeviceInfo::ProfileDetails::voiceRingtoneVolume() const
 */
 bool QSystemDeviceInfo::ProfileDetails::vibrationActive() const
 {
+#ifdef Q_OS_SYMBIAN
+     QSystemDeviceInfoPrivate* deviceInfo = QSystemDeviceInfoPrivate::deviceinfoPrivateInstance();
+     int vibrationActive = deviceInfo->vibrationActive();
+     delete deviceInfo;
+     return vibrationActive;
+#else
     return deviceInfoPrivateSingleton()->vibrationActive();
+#endif
 }
 
 #include "moc_qsystemdeviceinfo.cpp"
