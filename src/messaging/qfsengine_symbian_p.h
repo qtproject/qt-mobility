@@ -307,6 +307,7 @@ private:
     void notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
                         const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType);
     
+    void addMessageL(QMessage *message);
     friend class QMessageService;
     friend class CMessagesFindOperation;
     friend class CFSContentFetchOperation;
