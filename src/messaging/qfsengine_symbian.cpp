@@ -132,6 +132,9 @@ CFSEngine::CFSEngine()
 #endif
 {
     m_factory = 0;
+    m_ifPtr = 0;
+    ipMessageStorePrivate = 0;
+    iListenForNotifications = false;
     TRAPD(err, {
         m_factory = CEmailInterfaceFactory::NewL();
         m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
@@ -148,7 +151,7 @@ CFSEngine::CFSEngine()
         qt_symbian_throwIfError(err);
     }
 
-    m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
+    m_clientApi = q_check_ptr( static_cast<MEmailClientApi*>(m_ifPtr) );
 
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         // Make sure that application/main thread specific FsEngine will be cleaned up
@@ -201,7 +204,9 @@ void CFSEngine::cleanupFSBackend()
 #endif
 
     foreach (MEmailMailbox* value, m_mailboxes) {
+        if (value) {
         value->Release();
+        }
     }
     m_mailboxes.clear();
 
@@ -638,6 +643,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
             pTemplateAddress->SetRole(MEmailAddress::ETo);
             toAddress.Append(pTemplateAddress);
             fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
+            toAddress.Close();
         }
     }
     
@@ -656,6 +662,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
             pTemplateAddress->SetAddressL(receiver);
             ccAddress.Append(pTemplateAddress);
             fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
+            ccAddress.Close();
         }
     }
         
@@ -674,6 +681,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
             pTemplateAddress->SetAddressL(receiver);
             bccAddress.Append(pTemplateAddress);
             fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
+            bccAddress.Close();
         }
     }
 
@@ -796,33 +804,35 @@ void CFSEngine::convertFreestyleAddressToQString(MEmailAddress* emailAddress, QS
 
 bool CFSEngine::addMessage(QMessage* message)
 {
+    bool ret(false);
+    if (message) {
+        TRAPD(err, addMessageL(message));
+        if (err == KErrNone) {
+            ret= true;
+        }
+    }
+    return ret;
+}
+void CFSEngine::addMessageL(QMessage* message)
+{
     TMailboxId mailboxId(fsMailboxIdFromQMessageAccountId(message->parentAccountId()));
-    MEmailMailbox* mailbox = NULL;
-    TRAPD(mailerr, mailbox = m_clientApi->MailboxL(mailboxId));
-    if (mailerr != KErrNone)
-        return false;
+    // function call leaves with error if mailbox is not found
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    CleanupReleasePushL(*mailbox);
+    // address pointer not owned
 
-    MEmailMessage* fsMessage = NULL;
     MEmailAddress* pMailboxAddress = mailbox->AddressL();
     HBufC* pOriginalAddress = pMailboxAddress->Address().AllocLC();
     HBufC* pOriginalDisplayName = pMailboxAddress->DisplayName().AllocLC();
     MEmailAddress::TRole originalRole = pMailboxAddress->Role();
-    TRAPD(err, fsMessage = createFSMessageL(*message, mailbox));
+    MEmailMessage* fsMessage = createFSMessageL(*message, mailbox);
+    CleanupReleasePushL(*fsMessage);
     pMailboxAddress->SetRole(originalRole);
     pMailboxAddress->SetDisplayNameL(*pOriginalDisplayName);
     pMailboxAddress->SetAddressL(*pOriginalAddress);
-    CleanupStack::PopAndDestroy(pOriginalDisplayName);
-    CleanupStack::PopAndDestroy(pOriginalAddress);
 
-    if (fsMessage)
-        fsMessage->Release();
-    if (mailbox)
-        mailbox->Release();
     
-    if (err != KErrNone)
-        return false;
-    else
-        return true;
+    CleanupStack::PopAndDestroy(4, mailbox);
 }
 
 bool CFSEngine::updateMessage(QMessage* message)
@@ -914,6 +924,7 @@ void CFSEngine::updateMessageL(QMessage* message)
             address->SetAddressL(receiver);
             toAddress.Append(address);
             fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
+            toAddress.Close();
         }
     }
 
@@ -931,6 +942,7 @@ void CFSEngine::updateMessageL(QMessage* message)
             pTemplateAddress->SetAddressL(receiver);
             ccAddress.Append(pTemplateAddress);
             fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
+            ccAddress.Close();
         }
     }
 
@@ -948,6 +960,7 @@ void CFSEngine::updateMessageL(QMessage* message)
             pTemplateAddress->SetAddressL(receiver);
             bccAddress.Append(pTemplateAddress);
             fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
+            bccAddress.Close();
         }
     }
     
@@ -1035,6 +1048,7 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
             messageIds.Append(fsMessageId);
             TRAP(err, folder->DeleteMessagesL(messageIds));
             folder->Release();
+            messageIds.Close();
         }
         mailbox->Release();
     }
@@ -1636,7 +1650,7 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
                 for (int i=0; i < ids.count(); i++) {
                     if (!m_messageQueries[index].ids.contains(ids[i])) {
                         m_messageQueries[index].ids.append(ids[i]);
-                        m_messageQueries[index].count++;; 
+                        m_messageQueries[index].count++;
                     }
                 }
             }
@@ -2203,9 +2217,8 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
                         CleanupReleasePushL(*parentFolder);
 
                         RFolderArray subfolders;
-                        
-                        parentFolder->GetSubfoldersL(subfolders);
                         CleanupClosePushL(subfolders);
+                        parentFolder->GetSubfoldersL(subfolders);
 
                         for(TInt i=0; i < subfolders.Count(); i++) {
                             MEmailFolder *subFolder = subfolders[i];
@@ -3228,15 +3241,31 @@ void CFSContentStructureFetchOperation::DataFetchedL(const TInt aResult)
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
       m_operationId(aOperationId),
+      m_asynchronousSearchStarted(false),
       m_resultCorrectlyOrdered(false),
-      m_clientApi(0)
+      m_clientApi(0),
+      m_interfacePtr(0)
 {
-    TRAPD(err,
-            m_factory = CEmailInterfaceFactory::NewL(); 
-            m_interfacePtr = m_factory->InterfaceL(KEmailClientApiInterface); 
-            m_clientApi = static_cast<MEmailClientApi*>(m_interfacePtr); 
-        );
-    Q_UNUSED(err);
+
+    m_factory = 0;
+    TRAPD(err, {
+        m_factory = CEmailInterfaceFactory::NewL();
+        m_interfacePtr = m_factory->InterfaceL(KEmailClientApiInterface);
+    } );
+
+    // Check that getting email api interface was successful.
+    // Otherwise throwing exception.
+    if( err != KErrNone ) {
+        if( m_factory ) {
+            delete m_factory;
+            m_factory = 0;
+        }
+        // This is always throwing
+        qt_symbian_throwIfError(err);
+    }
+
+    m_clientApi = q_check_ptr( static_cast<MEmailClientApi*>(m_interfacePtr) );
+
 }
 
 CFSMessagesFindOperation::~CFSMessagesFindOperation()
@@ -3671,8 +3700,8 @@ void CFSMessagesFindOperation::getAccountSpecificMessagesFromAccountFoldersL(FSS
     sortCriteriaArray.Append(searchOperation.m_emailSortCriteria);
 
     RFolderArray folders;
-    pEmailMailbox->GetFoldersL(folders);
     CleanupClosePushL(folders);
+    pEmailMailbox->GetFoldersL(folders);
     for (TInt i=0; i < folders.Count(); i++) {
         MEmailFolder* pEmailFolder = folders[i];
         CleanupReleasePushL(*pEmailFolder);
