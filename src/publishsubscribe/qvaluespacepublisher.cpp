@@ -304,9 +304,8 @@ void QValueSpacePublisher::sync()
 }
 
 /*!
-    Sets the value \a name on the publisher to \a data.  If name is empty, this call will set the
-    value of this publisher's path.
-
+    Sets the value \a name on the publisher to \a data.  If name is empty, nothing is done.
+    
     For example:
 
     \code
