@@ -62,7 +62,7 @@ QSystemBatteryInfoPrivate *getSystemBatteryInfoPrivate() { return batteryInfoPri
 
     \reentrant
 
-    \note All functions in this class are reentrant.
+    \note All functions in this class are reentrant. However, in Symbian platform this class is not reentrant since Symbian Belle (Qt Mobility version 1.2).
 
     \warning On Symbian this class does not support QObject::moveToThread().
 

@@ -62,6 +62,8 @@ QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate
     \reentrant
 
     \note Most functions in this class are reentrant on all platforms. The exceptions are listed below.
+    
+    \note In Symbian platform this class is not reentrant since Symbian Belle (Qt Mobility version 1.2).
 
     \warning On Symbian this class does not support QObject::moveToThread().
 

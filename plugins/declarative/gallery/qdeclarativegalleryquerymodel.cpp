@@ -658,6 +658,12 @@ void QDeclarativeDocumentGalleryModel::classBegin()
     \endlist
 
     The default value is DocumentGallery.File
+    
+    \note On Symbian following rootTypes are not supported: DocumentGallery.Folder, DocumentGallery.Document, DocumentGallery.Text, and DocumentGallery.Playlist.
+    
+    \note In some S60 5th Edition (early release) Symbian devices the platform backend requires ReadDeviceData capability to be defined. 
+    In addition, in these devices DocumentGallery.Audio rootType is not supported. 
+    
 */
 
 QDeclarativeDocumentGallery::ItemType QDeclarativeDocumentGalleryModel::rootType() const
