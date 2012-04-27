@@ -2564,6 +2564,17 @@ void CFSEngine::retrieveMessageContentHeaders(QMessage& message) const
 {
     MessageCache::instance()->lock();
     QMessage* msgPtr = MessageCache::instance()->messageObject(message.id().toString());
+    if (msgPtr == NULL) {
+        MessageCache::instance()->unlock();
+        msgPtr = new QMessage();
+        if (this->message(msgPtr, message.id())) {
+            MessageCache::instance()->insertObject(msgPtr);
+        } else {
+            delete msgPtr;
+            return; // Just giving up. Should we throw std::bad_alloc here?
+        }
+        MessageCache::instance()->lock();
+    }
 
     QMessageContentContainerPrivate* pContainer = QMessagePrivate::containerImplementation(*msgPtr);
     pContainer->_contentRetrieved = true;
