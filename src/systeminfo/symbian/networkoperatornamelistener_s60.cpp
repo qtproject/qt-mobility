@@ -299,7 +299,7 @@ void CNetworkOperatorNameListener::HandleNetworkMessage(
         ( DoesOperatorPreferPlmnName( mcc, mnc ) || isInSPDI ) && ( !isRoaming ) )
         {
         // CR : Everything Everywhere - PNN shown instead of SPN [#1238048]
-        ShowNetworkIdentityNameL( ETrue );
+        TRAP_IGNORE( ShowNetworkIdentityNameL( ETrue ) );
         }
     else if ( ( !isRoaming || isInSPDI ) && serviceProviderName.Length() )
         {
