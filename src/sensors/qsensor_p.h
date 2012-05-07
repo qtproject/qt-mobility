@@ -74,6 +74,7 @@ public:
         , filter_reading(0)
         , cache_reading(0)
         , error(0)
+        , alwaysOn(false)
     {
     }
 
@@ -99,6 +100,8 @@ public:
     QSensorReading *cache_reading;
 
     int error;
+
+    bool alwaysOn;
 };
 
 class QSensorReadingPrivate
