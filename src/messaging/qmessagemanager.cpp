@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 - 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -625,6 +625,9 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     \a matchingFilterIds contains a set of values identifiying registered notification filters
     that matched the message.
 
+    On Symbian platform the signal is emitted only for those email accounts that exist prior
+    to first instantiation of QMessageManager.
+
     \since 1.0
     \sa messageRemoved(), messageUpdated(), registerNotificationFilter()
 */
@@ -638,10 +641,11 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
 
     Since the filters apply to the state of the data after the message removal, the only
     data item that may be subject to filtration is the identifier of the removed message.
-    
-    On Symbian^3 platform to get signals about permanent removed emails the related mailbox 
+
+    On Symbian^3 platform to get signals about permanent removed emails the related mailbox
     must be manually synchronized. Email marked to be deleted, i.e. moved to deleted folder
-    still exists in message store.
+    still exists in message store. Secondly, the signal is emitted only for those email
+    accounts that exist prior to first instantiation of QMessageManager.
 
     \since 1.0
     \sa messageAdded(), messageUpdated(), registerNotificationFilter()
@@ -657,6 +661,9 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     Since the filters apply to the state of the data after the message modification, updates
     to messages which matched a given filter prior to modification but not afterwards will not
     result in the emission of the messageUpdated signal.
+
+    On Symbian platform the signal is emitted only for those email accounts that exist prior
+    to first instantiation of QMessageManager.
 
     \since 1.0
     \sa messageAdded(), messageRemoved(), registerNotificationFilter()
