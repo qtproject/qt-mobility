@@ -211,9 +211,10 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
             m_session->load(source);
     } else {
         if (!source.canonicalUrl().isEmpty()) {
-        delete m_session;
-        m_session = 0;
-        m_session = m_service->createPlayerSession(source);
+            m_session->disconnect();
+            m_session->deleteLater();
+            m_session = 0;
+            m_session = m_service->createPlayerSession(source);
         }
         QMediaPlayer::MediaStatus mediaStatus = QMediaPlayer::NoMedia;
         if (m_session && !source.canonicalUrl().isEmpty()) {
