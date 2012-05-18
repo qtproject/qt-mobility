@@ -1401,7 +1401,7 @@ void tst_QContactAsync::contactPartialSaveAsync()
     saveRequest->setContacts(contacts);
     saveRequest->setDefinitionMask(QStringList(QContactTag::DefinitionName));
     saveRequest->start();
-    QTest::qWait(1000);
+    QTest::qWait(4000);
     QVERIFY(saveRequest->isFinished());
 }
 
