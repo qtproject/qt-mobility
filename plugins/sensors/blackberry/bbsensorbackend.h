@@ -56,6 +56,17 @@
 #include "sensor.h"
 #endif
 
+// Earlier NDK versions did not ship sensor.h, that is why we have our own copy in
+// here.
+// We prefer the NDK version if that exists, as that is more up-to-date.
+#ifdef HAVE_NDK_SENSOR_H
+#include <sensor/sensor.h>
+#include <devctl.h>
+#include <errno.h>
+#else
+#include "sensor.h"
+#endif
+
 QTM_USE_NAMESPACE
 
 class BbGuiHelper;

@@ -742,6 +742,7 @@ if "%MODULE_SENSORS_REQUESTED%" == "yes" (
     call :compileTest S60_Sensor_API sensors_s60_31
     call :compileTest Symbian_Sensor_Framework sensors_symbian
     call :compileTest Sensor_Framework_Light sensors_symbian_light
+    call :compileTest BlackBerry_NDK_sensor_header bbsensor_header
 )
 
 if "%MODULE_SERVICEFRAMEWORK_REQUESTED%" == "yes" (
