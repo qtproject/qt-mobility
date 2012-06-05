@@ -651,7 +651,7 @@ void ObjectEndPoint::waitForResponse(const QUuid& requestId)
       
         QTimer::singleShot(30000, loop, SLOT(quit()));
         connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit()));
-        loop->exec();
+        loop->exec(QEventLoop::ExcludeUserInputEvents);
         delete loop;
 
 	}

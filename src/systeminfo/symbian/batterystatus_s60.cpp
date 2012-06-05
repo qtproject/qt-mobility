@@ -331,7 +331,7 @@ TInt CBatteryHWRM::GetAverageCurrent()
             TRACES ( qDebug() << "started event loop...");
             }
 
-    iEventLoop->exec();
+    iEventLoop->exec(QEventLoop::ExcludeUserInputEvents);
     StopCurrentFlowMeasurement();
 #endif
     return iAverageCurrent;
