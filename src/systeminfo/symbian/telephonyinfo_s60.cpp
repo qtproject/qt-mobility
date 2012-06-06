@@ -86,7 +86,7 @@ void CTelephonyInfo::makeRequest()
         iEventLoop = new QEventLoop();
         TRACES ( qDebug() << "started event loop...");
         }
-    iEventLoop->exec(); //start the loop
+    iEventLoop->exec(QEventLoop::ExcludeUserInputEvents); //start the loop
 }
 
 CPhoneInfo::CPhoneInfo(CTelephony &telephony) : CTelephonyInfo(telephony),
