@@ -570,14 +570,6 @@ QList<QContact> QContactManager::contacts(const QList<QContactLocalId>& localIds
   not yet been saved with the manager, the operation will fail and calling
   error() will return \c QContactManager::UnsupportedError.
 
-  If the \a contact has had its relationships reordered, the manager
-  will check to make sure that every relationship that the contact is currently
-  involved in is included in the reordered list, and that no relationships which
-  either do not involve the contact, or have not been saved in the manager are
-  included in the list.  If these conditions are not met, the function will
-  return \c false and calling error() will return
-  \c QContactManager::InvalidRelationshipError.
-
   Returns false on failure, or true on
   success.  On successful save of a contact with a local id of zero, its
   id will be set to a new, valid id with the manager URI set to the URI of
