@@ -135,21 +135,65 @@ void CDatabaseManagerServer::initDbPath()
   QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
   iDb->setDatabasePath(dir.path() + QDir::separator() + dbName);
 
-  // check if database is copied from Z drive; also valid for emulator
+  // Logic for handling service db file:
+  //   - If db file doesn't exist on C drive, copy the file from Z drive
+  //      -> When database is copied from Z, save the database modification
+  //         date to a setting file
+  //   - If db file already exists on C drive, check the modification date
+  //     of the database on Z drive. If the database on Z is newer than the
+  //     stored value (or the setting doesn't exist), merge services from
+  //     that database to the database on C drive and update the modification
+  //     date to the setting file.
+  //   - Check if there are any extra database files in the server's private
+  //     folder on C drive. This can happen if the Qt version number changes
+  //     with rom update. In this case merge the services from the old database
+  //     and then delete the old database file.
+
   QFile dbFile(iDb->databasePath());
   QFileInfo dbFileInfo(dbFile);
+  QFile romDb(QLatin1String("z:\\private\\2002ac7f\\") + dbFileInfo.fileName());
+  QFileInfo romDbInfo(romDb);
+  QSettings romDbSettings(dir.path() + QDir::separator() + "romdb.ini", QSettings::NativeFormat);
+  
   if (!dbFileInfo.exists()) {
       // create folder first
       if (!dbFileInfo.dir().exists()) 
           QDir::root().mkpath(dbFileInfo.path());
       // copy file from ROM
-      QFile romDb(QLatin1String("z:\\private\\2002ac7f\\") + dbFileInfo.fileName());
       // why not use QFile::copy?
       if (romDb.open(QIODevice::ReadOnly) && dbFile.open(QFile::WriteOnly)) {
           QByteArray data = romDb.readAll();
           dbFile.write(data);
           dbFile.close();
           romDb.close();
+          
+          // save the rom db modification date
+          romDbSettings.setValue(QLatin1String("modificationDate"), QVariant(romDbInfo.lastModified()));
+      }
+  } else {
+      // rom db has already been copied to c. check if it has been modified
+      // i.e. whether there has been rom update.
+      QDateTime storedDate = romDbSettings.value(QLatin1String("modificationDate")).toDateTime();
+      if (!storedDate.isValid() || romDbInfo.lastModified() > storedDate) {
+          // Need to merge new services in rom db to the database on c-drive.
+          // (If there is no stored date but C drive contains db file, that means
+          // that the firmware has been updated and the old version didn't store
+          // the rom db date.)
+          
+          // copy the rom db temporarily to C drive for merging
+          QTemporaryFile tempDb;
+          if (romDb.open(QIODevice::ReadOnly) && tempDb.open()) {
+              QByteArray data = romDb.readAll();
+              tempDb.write(data);
+              tempDb.close();
+              romDb.close();
+              
+              ServiceDatabase *dstDatabase = new ServiceDatabase();
+              dstDatabase->setDatabasePath(iDb->databasePath());
+              dstDatabase->mergeDatabase(tempDb.fileName());
+              delete dstDatabase;
+              romDbSettings.setValue(QLatin1String("modificationDate"), QVariant(romDbInfo.lastModified()));
+          }
       }
   }
   
