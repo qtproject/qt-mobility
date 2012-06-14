@@ -98,12 +98,18 @@ The symbian engine allows clients to use both the asynchronous and synchronous i
 and supports various different relationships, supports setting the self-contact, and
 persists all saved data to the system addressbook.
 
+Initializing Symbian engine requires ReadUserData capability from the application. Adding,
+modifying or removing contacts requires WriteUserData capability.
+
 \section3 Symbian Sim Engine
 
 The Symbian Sim engine identifies itself as the "symbiansim" engine, and is only available
 on Symbian platforms.  It is an extremely limited engine which supports a very small
 subset of the default schema, and can be constructed with a "store" parameter to set which contact
 store to interact with.  The value of the "store" parameter may be either "ADN", "FDN" or "SDN".
+
+Initializing Symbian Sim engine requires ReadUserData capability from the application. Adding,
+modifying or removing contacts requires WriteUserData capability.
 
 \section3 Maemo 5 (Fremantle) Engine
 
