@@ -88,6 +88,8 @@ QTM_BEGIN_NAMESPACE
     Other functions in the mobility messaging API will not initiate network
     activity, with the exception of Windows mobile and desktop platforms which
     may initiate network activity during the evaluation of any function call.
+
+    \warning On Symbian this class does not support QObject::moveToThread().
 */
 
 /*!

@@ -95,6 +95,8 @@ QTM_BEGIN_NAMESPACE
     Messaging store manipulations involving messages are reported via the messagesAdded(),
     messagesUpdated() and messagesRemoved() signals.
 
+    \warning On Symbian this class does not support QObject::moveToThread().
+
     \sa QMessage, QMessageId, QMessageContentContainerId, QMessageService
 */
 
