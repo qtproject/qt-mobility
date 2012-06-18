@@ -129,6 +129,7 @@ protected:
     void stopProgressTimer();
     void startStalledTimer();
     void stopStalledTimer();
+    void updateVolume();
 
 protected slots:
     void tick();

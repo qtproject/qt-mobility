@@ -85,16 +85,8 @@ void S60MediaPlayerSession::setVolume(int volume)
     TRACE("S60MediaPlayerSession::setVolume" << qtThisPtr() << "volume" << volume);
     m_volume = volume;
     emit volumeChanged(m_volume);
-    // Don't set player volume until media loaded
-    if (!m_muted && 
-        (  mediaStatus() == QMediaPlayer::LoadedMedia 
-        || (mediaStatus() == QMediaPlayer::StalledMedia && state() != QMediaPlayer::StoppedState)
-        || mediaStatus() == QMediaPlayer::BufferingMedia
-        || mediaStatus() == QMediaPlayer::BufferedMedia
-        || mediaStatus() == QMediaPlayer::EndOfMedia)) {
-        TRAPD(err, doSetVolumeL(m_volume));
-        setError(err);
-    }
+    if (!m_muted)
+        updateVolume();
 }
 
 bool S60MediaPlayerSession::isMuted() const
@@ -183,8 +175,7 @@ void S60MediaPlayerSession::play()
     }
     m_play_requested = false;
     m_duration = duration();
-    setVolume(m_volume);
-    setMuted(m_muted);
+    updateVolume();
     startProgressTimer();
     doPlay();
 }
@@ -364,14 +355,7 @@ void S60MediaPlayerSession::setMuted(bool muted)
         TRACE("S60MediaPlayerSession::setMuted" << qtThisPtr() << "muted" << muted);
         m_muted = muted;
         emit mutedChanged(m_muted);
-        if(   m_mediaStatus == QMediaPlayer::LoadedMedia
-           || (m_mediaStatus == QMediaPlayer::StalledMedia && state() != QMediaPlayer::StoppedState)
-           || m_mediaStatus == QMediaPlayer::BufferingMedia
-           || m_mediaStatus == QMediaPlayer::BufferedMedia
-           || m_mediaStatus == QMediaPlayer::EndOfMedia) {
-            TRAPD(err, doSetVolumeL((m_muted)?0:m_volume));
-            setError(err);
-        }
+        updateVolume();
     }
 }
 
@@ -638,4 +622,18 @@ void S60MediaPlayerSession::stopStalledTimer()
 {
     TRACE("S60MediaPlayerSession::stopStalledTimer" << qtThisPtr());
     m_stalledTimer->stop();
+}
+
+void S60MediaPlayerSession::updateVolume()
+{
+    TRACE("S60MediaPlayerSession::updateVolume" << qtThisPtr());
+    // Don't set player volume until media loaded
+    if( m_mediaStatus == QMediaPlayer::LoadedMedia
+       || (m_mediaStatus == QMediaPlayer::StalledMedia && state() != QMediaPlayer::StoppedState)
+       || m_mediaStatus == QMediaPlayer::BufferingMedia
+       || m_mediaStatus == QMediaPlayer::BufferedMedia
+       || m_mediaStatus == QMediaPlayer::EndOfMedia) {
+        TRAPD(err, doSetVolumeL(m_muted ? 0 : m_volume));
+        setError(err);
+    }
 }
