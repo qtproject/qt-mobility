@@ -552,7 +552,7 @@ public:
         {
          if (!m_networkinfolistener)
           {
-           m_networkinfolistener = CNetworkOperatorNameListener::NewL();
+            TRAP_IGNORE(m_networkinfolistener = CNetworkOperatorNameListener::NewL());
           }
           return m_networkinfolistener;
         }
@@ -592,7 +592,7 @@ public:
 #endif
     {
         TRACES(qDebug() << "DeviceInfo():Constructor");
-        m_telephony = CTelephony::NewL();
+        TRAP_IGNORE(m_telephony = CTelephony::NewL());
     };
 
     ~DeviceInfo()

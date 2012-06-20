@@ -63,7 +63,7 @@ CWlanInfo::CWlanInfo() : CActive(EPriorityStandard),
 #ifndef __WINSCW__
     TRAP_IGNORE( m_wlanMgmtClient = CWlanMgmtClient::NewL();)
         if (m_wlanMgmtClient) {
-            m_wlanMgmtClient->ActivateNotificationsL(*this);
+            TRAP_IGNORE(m_wlanMgmtClient->ActivateNotificationsL(*this));
             initWlanInfo();
             StartMonitoring();
        }
