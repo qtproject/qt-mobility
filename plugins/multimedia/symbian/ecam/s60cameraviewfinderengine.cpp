@@ -566,8 +566,10 @@ void S60CameraViewfinderEngine::setRendererNativeSurface()
 #ifdef VIDEOOUTPUT_EGL_RENDERER
     S60VideoEglRendererControl *rendererControl =
         qobject_cast<S60VideoEglRendererControl *>(m_viewfinderOutput);
-    const QSize windowSize(m_window->Size().iWidth, m_window->Size().iHeight);
-    rendererControl->setNativeSize(windowSize);
+    if (m_window) {
+        const QSize windowSize(m_window->Size().iWidth, m_window->Size().iHeight);
+        rendererControl->setNativeSize(windowSize);
+    }
     rendererControl->setNativeSurface(m_dummyWindow->nativeSurface());
 #endif
 }
