@@ -825,4 +825,47 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     Please see QGyroscopeReading::z for information about this property.
 */
 
+/*!
+    \qmlclass IRProximitySensor QIRProximitySensor
+    \ingroup qml-sensors_type
+    \since Mobility 1.3
+    \inherits Sensor
+    \brief The IRProximitySensor type reports on infra-red reflectance values.
 
+    This type wraps the QIRProximitySensor class. Please see the documentation for
+    QIRProximitySensor for details.
+
+    \sa {Sensors QML Limitations}
+*/
+
+/*!
+    \qmlproperty IRProximityReading IRProximitySensor::reading
+    Holds the most recent IR proximity reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal IRProximitySensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
+*/
+
+/*!
+    \qmlclass IRProximityReading QIRProximityReading
+    \ingroup qml-sensors_reading
+    \since Mobility 1.3
+    \inherits SensorReading
+    \brief The IRProximityReading type holds the most recent IR proximity reading.
+
+    The IRProximityReading type holds the most recent IR proximity reading.
+
+    This type wraps the QIRProximityReading class. Please see the documentation for
+    QIRProximityReading for details.
+
+    This type cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal IRProximityReading::reflectance
+    Please see QIRProximityReading::reflectance for information about this property.
+*/
