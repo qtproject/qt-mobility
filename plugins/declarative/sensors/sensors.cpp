@@ -55,6 +55,9 @@
 #include <qgyroscope.h>
 #include "qmlsensorgesture.h"
 
+#include <qpressuresensor.h>
+#include <qholstersensor.h>
+
 QT_BEGIN_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -143,7 +146,10 @@ public:
         qmlRegisterUncreatableType<QGyroscopeReading    >(package, major, minor, "GyroscopeReading",     QLatin1String("Cannot create GyroscopeReading"));
 
         qmlRegisterType           <QmlSensorGesture     >(package, major, minor, "SensorGesture");
-
+        qmlRegisterType           <QHolsterSensor       >(package, major, minor, "HolsterSensor");
+        qmlRegisterUncreatableType<QHolsterReading      >(package, major, minor, "HolsterReading",       QLatin1String("Cannot create HolsterReading"));
+        qmlRegisterType           <QPressureSensor      >(package, major, minor, "PressureSensor");
+        qmlRegisterUncreatableType<QPressureReading     >(package, major, minor, "PressureReading",      QLatin1String("Cannot create PressureReading"));
     }
 };
 
@@ -868,4 +874,97 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 /*!
     \qmlproperty qreal IRProximityReading::reflectance
     Please see QIRProximityReading::reflectance for information about this property.
+*/
+
+/*!
+    \qmlclass PressureSensor QPressureSensor
+    \ingroup qml-sensors_type
+    \since Mobility 1.3
+    \inherits Sensor
+    \brief The PressureSensor type reports on atmospheric pressure values.
+
+    This type wraps the QPressureSensor class. Please see the documentation of
+    QPressureSensor for details.
+
+    \sa {QML Limitations}
+*/
+
+/*!
+    \qmlproperty PressureReading PressureSensor::reading
+    Holds the most recent pressure reading.
+    Please see QSensor::reading for information about this property.
+*/
+
+/*!
+    \qmlsignal PressureSensor::onReadingChanged()
+    Called when the reading object changes.
+    Please see QSensor::readingChanged() for information about this signal.
+*/
+
+/*!
+    \qmlclass PressureReading QPressureReading
+    \ingroup qml-sensors_reading
+    \since Mobility 1.3
+    \inherits SensorReading
+    \brief The PressureReading type holds the most recent pressure reading.
+
+    The PressureReading type holds the most recent pressure reading.
+
+    This type wraps the QPressureReading class. Please see the documentation of
+    QPressureReading for details.
+
+    This type cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal PressureReading::pressure
+    Please see QPressureReading::pressure for information about this property.
+*/
+
+/*!
+    \qmlclass HolsterSensor QHolsterSensor
+    \ingroup qml-sensors_type
+    \since Mobility 1.3
+    \inherits Sensor
+    \brief The HolsterSensor type detects if a device is holstered or not.
+
+    The HolsterSensor type detects if a device is holstered or not.
+
+    This type wraps the QHolsterSensor class.
+
+    \sa {QML Limitations}
+    \sa QHolsterSensor
+*/
+
+/*!
+    \qmlproperty HolsterReading HolsterSensor::reading
+    Holds the most recent holster reading.
+    \sa QSensor::reading
+*/
+
+/*!
+    \qmlsignal HolsterSensor::onReadingChanged()
+    Called when the reading object changes.
+    \sa QSensor::readingChanged()
+*/
+
+/*!
+    \qmlclass HolsterReading QHolsterReading
+    \ingroup qml-sensors_reading
+    \since Mobility 1.3
+    \inherits SensorReading
+    \brief The HolsterReading type holds the most recent HolsterSensor reading.
+
+    The HolsterReading type holds the most recent HolsterSensor reading.
+
+    This type wraps the QHolsterReading class.
+
+    This type cannot be directly created.
+
+    \sa QHolsterReading
+*/
+
+/*!
+    \qmlproperty bool HolsterReading::holstered
+    \sa QHolsterReading::holstered
 */

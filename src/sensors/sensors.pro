@@ -52,9 +52,11 @@ SENSORS=\
     qaccelerometer\
     qambientlightsensor\
     qcompass\
+    qholstersensor\
     qlightsensor\
     qmagnetometer\
     qorientationsensor\
+    qpressuresensor\
     qproximitysensor\
     qrotationsensor\
     qtapsensor\
