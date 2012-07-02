@@ -74,14 +74,42 @@ private:
     bool filter(QSensorReading *reading) { return filter(static_cast<QAccelerometerReading*>(reading)); }
 };
 
+class QAccelerometerPrivate;
+
 class Q_SENSORS_EXPORT QAccelerometer : public QSensor
 {
     Q_OBJECT
+    Q_ENUMS(AccelerationMode)
+    Q_PROPERTY(AccelerationMode accelerationMode READ accelerationMode WRITE setAccelerationMode
+               NOTIFY accelerationModeChanged)
 public:
-    explicit QAccelerometer(QObject *parent = 0) : QSensor(QAccelerometer::type, parent) {}
-    virtual ~QAccelerometer() {}
+    explicit QAccelerometer(QObject *parent = 0);
+    virtual ~QAccelerometer();
+
+    enum AccelerationMode {
+        Gravity,
+        User,
+        Combined
+    };
+
+    AccelerationMode accelerationMode() const;
+    void setAccelerationMode(AccelerationMode accelerationMode);
+
     QAccelerometerReading *reading() const { return static_cast<QAccelerometerReading*>(QSensor::reading()); }
     static char const * const type;
+
+public slots:
+    void setUserAcceleration();
+    void setGravityAcceleration();
+    void setCombinedAcceleration();
+
+signals:
+    void accelerationModeChanged(AccelerationMode accelerationMode);
+
+private:
+    friend class QAccelerometerPrivate;
+    QAccelerometerPrivate *d_func() const;
+    Q_DISABLE_COPY(QAccelerometer)
 };
 
 QTM_END_NAMESPACE
