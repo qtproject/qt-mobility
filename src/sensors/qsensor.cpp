@@ -399,6 +399,48 @@ bool QSensor::isAlwaysOn() const
 }
 
 /*!
+    \property QSensor::skipDuplicates
+    \brief Indicates whether duplicate reading values should be omitted.
+
+    When duplicate skipping is enabled, successive readings with the same or very
+    similar values are omitted and skipped. This helps reducing the amount of processing
+    done, as less sensor readings are made available. As a consequence, readings arrive at
+    an irregular interval.
+
+    Duplicate skipping is not just enabled for readings that are exactly the same, but also for
+    readings that are quite similar, as each sensor has a bit of jitter even if the device is
+    not moved.
+
+    Support for this property depends on the backend. It is disabled by default.
+
+    Duplicate skipping can only be changed while the sensor is not active.
+*/
+bool QSensor::skipDuplicates() const
+{
+    Q_D(const QSensor);
+    return d->skipDuplicates;
+}
+
+/*!
+    Sets the duplicate skipping to \a skipDuplicates.
+*/
+void QSensor::setSkipDuplicates(bool skipDuplicates)
+{
+    Q_D(QSensor);
+    if (d->skipDuplicates != skipDuplicates) {
+        d->skipDuplicates = skipDuplicates;
+        emit skipDuplicatesChanged(skipDuplicates);
+    }
+}
+
+/*!
+    \fn skipDuplicatesChanged(bool skipDuplicates)
+
+    This signal is emitted when the skipDuplicates property changes.
+
+*/
+
+/*!
     \property QSensor::availableDataRates
     \brief the data rates that the sensor supports.
 

@@ -98,7 +98,8 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(int error READ error NOTIFY sensorError)
-    Q_PROPERTY(bool alwaysOn READ isAlwaysOn WRITE setAlwaysOn NOTIFY alwaysOnChanged REVISION 1)
+    Q_PROPERTY(bool alwaysOn READ isAlwaysOn WRITE setAlwaysOn NOTIFY alwaysOnChanged)
+    Q_PROPERTY(bool skipDuplicates READ skipDuplicates WRITE setSkipDuplicates NOTIFY skipDuplicatesChanged)
 #ifdef Q_QDOC
     Q_PROPERTY(int maxBufferSize)
     Q_PROPERTY(int efficientBufferSize)
@@ -123,6 +124,9 @@ public:
 
     bool isAlwaysOn() const;
     void setAlwaysOn(bool alwaysOn);
+
+    bool skipDuplicates() const;
+    void setSkipDuplicates(bool skipDuplicates);
 
     qrangelist availableDataRates() const;
     int dataRate() const;
@@ -163,6 +167,7 @@ Q_SIGNALS:
     void sensorError(int error);
     void availableSensorsChanged();
     void alwaysOnChanged();
+    void skipDuplicatesChanged(bool skipDuplicates);
 
 protected:
     // called by the back end

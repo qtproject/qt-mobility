@@ -192,6 +192,13 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 */
 
 /*!
+    \qmlproperty bool Sensor::skipDuplicates
+    Omitts readings with the same or very similar values.
+    \sa QSensor::skipDuplicates
+    \since Mobility 1.3
+*/
+
+/*!
     \qmlproperty SensorReading Sensor::reading
     \since Mobility 1.2
     Holds the most recent sensor reading.
