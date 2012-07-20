@@ -131,6 +131,25 @@ CFSEngine::CFSEngine()
    ,m_messageStorePrivateSingleton(0)
 #endif
 {
+    m_factory = 0;
+    TRAPD(err, {
+        m_factory = CEmailInterfaceFactory::NewL();
+        m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
+    } );
+
+    // Check that getting email api interface was successful.
+    // Otherwise throwing exception.
+    if( err != KErrNone ) {
+        if( m_factory ) {
+            delete m_factory;
+            m_factory = 0;
+        }
+        // This is always throwing
+        qt_symbian_throwIfError(err);
+    }
+
+    m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
+
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         // Make sure that application/main thread specific FsEngine will be cleaned up
         // when application event loop quits
@@ -141,14 +160,6 @@ CFSEngine::CFSEngine()
         //    cleaned up when QApplication is destroyed
         qAddPostRoutine(CFSEngine::cleanup);
     }
-
-    TRAPD(err, {
-        m_factory = CEmailInterfaceFactory::NewL(); 
-        m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
-    });
-    
-    Q_UNUSED(err);
-    m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
 
     if (QCoreApplication::instance() && QCoreApplication::instance()->thread() == QThread::currentThread()) {
         TRAP_IGNORE(setPluginObserversL());
@@ -2598,7 +2609,7 @@ void CFSEngine::addMessagePartsToQMessage(QMessage& message, MEmailMessage& mEma
             TPtrC fName(KNullDesC);
             TRAPD(err, fName.Set(attachments[i]->FileNameL()));
             if (err == KErrNone) {
-                fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+                fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toUtf8();
             }
             QByteArray mimeHeader = QString::fromUtf16(attachments[i]->ContentType().Ptr(),
                                                        attachments[i]->ContentType().Length()).toAscii();
@@ -2748,7 +2759,7 @@ void CFSEngine::addContentToQMessage(QMessage& message, const MEmailMessageConte
         TPtrC fName(KNullDesC);
         TRAPD(err, fName.Set(pAttachment->FileNameL()));
         if (err == KErrNone) {
-            fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toLocal8Bit();
+            fileName = QString::fromUtf16(fName.Ptr(), fName.Length()).toUtf8();
         }
         QByteArray mimeHeader = QString::fromUtf16(pAttachment->ContentType().Ptr(),
                                                    pAttachment->ContentType().Length()).toAscii();

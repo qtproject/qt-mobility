@@ -2840,7 +2840,7 @@ void CMTMEngine::storeMMSL(QMessage &message)
             attachment.Size(fileSize);
             TInt maxFileSize = 600000;
             if (fileSize > maxFileSize){
-                return;
+                User::Leave(KErrTooBig);
             }
             
             HBufC8* pFileContent = HBufC8::NewL(fileSize);
@@ -2853,15 +2853,9 @@ void CMTMEngine::storeMMSL(QMessage &message)
             RFs fileServer;
             User::LeaveIfError(fileServer.Connect());
             CleanupClosePushL(fileServer);
-            TInt err = file2.Temp(fileServer,iPath,tempFileName,EFileWrite);
-            if (err != KErrNone){
-                return;
-            }
+            User::LeaveIfError(file2.Temp(fileServer,iPath,tempFileName,EFileWrite));
             CleanupClosePushL(file2);
-            err = file2.Write(*pFileContent);
-            if (err != KErrNone){
-                return;
-            }
+            User::LeaveIfError(file2.Write(*pFileContent));
             file2.Close();
             User::LeaveIfError(file2.Open(FsSession(),tempFileName, EFileShareAny|EFileRead));
             // Mime header    
@@ -3131,7 +3125,7 @@ void CMTMEngine::updateMMSL(QMessage &message)
             attachment.Size(fileSize);
             TInt maxFileSize = 600000;
             if (fileSize > maxFileSize){
-                return;
+                User::Leave(KErrTooBig);
             }
             
             HBufC8* pFileContent = HBufC8::NewL(fileSize);
@@ -3144,15 +3138,9 @@ void CMTMEngine::updateMMSL(QMessage &message)
             RFs fileServer;
             User::LeaveIfError(fileServer.Connect());
             CleanupClosePushL(fileServer);
-            TInt err = file2.Temp(fileServer,iPath,tempFileName,EFileWrite);
-            if (err != KErrNone){
-                return;
-            }
+            User::LeaveIfError(file2.Temp(fileServer,iPath,tempFileName,EFileWrite));
             CleanupClosePushL(file2);
-            err = file2.Write(*pFileContent);
-            if (err != KErrNone){
-                return;
-            }
+            User::LeaveIfError(file2.Write(*pFileContent));
             file2.Close();
             User::LeaveIfError(file2.Open(FsSession(),tempFileName, EFileShareAny|EFileRead));
             // Mime header    
@@ -4352,7 +4340,7 @@ QMessage CMTMEngine::emailMessageL(CMsvEntry& receivedEntry, long int messageId,
            }
            CleanupStack::PopAndDestroy(pImMimeHeader);
 
-           QByteArray name = QString::fromUtf16(pAttachment->AttachmentName().Ptr(), pAttachment->AttachmentName().Length()).toLocal8Bit();
+           QByteArray name = QString::fromUtf16(pAttachment->AttachmentName().Ptr(), pAttachment->AttachmentName().Length()).toUtf8();
            int attachmentSize = pAttachment->Size();
            size += attachmentSize;
            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(messageId, pAttachment->Id(), name, mimeType, mimeSubType, attachmentSize);

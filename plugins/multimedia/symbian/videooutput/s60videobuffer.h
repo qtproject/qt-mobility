@@ -42,7 +42,7 @@
 #ifndef S60VIDEOBUFFER_H
 #define S60VIDEOBUFFER_H
 
-#include <QtMultimediaKit/QAbstractVideoBuffer>
+#include <qabstractvideobuffer.h>
 #include <egl/eglext.h>
 
 #ifndef QT_NO_OPENGL

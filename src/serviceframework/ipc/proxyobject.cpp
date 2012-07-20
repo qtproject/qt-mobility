@@ -96,11 +96,19 @@ const QMetaObject* QServiceProxy::metaObject() const
 }
 
 int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
-{
+{   
+#ifdef  QT_SFW_ENDPOINT_DEBUG
+	qDebug() << "QServiceProxy::qt_metacall: Start";
+#endif
     id = QObject::qt_metacall(c, id, a);
     if (id < 0 || !d->meta) 
         return id;
     
+		//Let the object endpoint monitor keep track of the usage...
+#ifdef Q_OS_SYMBIAN
+		ObjectEndPointMonitor aOem(d->endPoint);
+#endif //End Q_OS_SYMBIAN
+
     if(localSignals.at(id)){
       QMetaObject::activate(this, d->meta, id, a);
       return id;      
@@ -215,6 +223,9 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
         //TODO
         qWarning() << "MetaCall type" << c << "not yet handled";
     }
+#ifdef  QT_SFW_ENDPOINT_DEBUG
+    qDebug() << "QServiceProxy::qt_metacall: End";
+#endif
     return id;
 }
 
