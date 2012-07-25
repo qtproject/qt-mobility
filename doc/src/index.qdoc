@@ -340,7 +340,7 @@
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
     <td colspan="7" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
-    <td colspan="3" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
+    <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
     <td><b>S60 3rd Edition, Feature Pack 1</b></td>
@@ -353,6 +353,7 @@
     <td><b>Windows XP/Vista</b></td>
     <td><b>Linux</b></td>
     <td nowrap="nowrap"><b>Mac OS X</b></td>
+    <td nowrap="nowrap"><b>Blackberry</b></td>
     </tr>
     <tr>
     <td nowrap="nowrap">Service Framework</td>
@@ -367,6 +368,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Messaging</td>
@@ -380,6 +382,7 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
@@ -395,6 +398,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Publish and Subscribe</td>
@@ -409,6 +413,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Contacts</td>
@@ -420,6 +425,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -437,6 +443,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Multimedia</td>
@@ -451,6 +458,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     </tr>
     <tr>
     <td>System Information</td>
@@ -465,6 +473,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Sensors</td>
@@ -479,6 +488,7 @@
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Versit(vCard)</td>
@@ -493,6 +503,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Versit(Organizer)</td>
@@ -507,6 +518,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Camera</td>
@@ -521,6 +533,7 @@
     <td bgcolor="gray"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Organizer</td>
@@ -532,6 +545,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -549,6 +563,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Document Gallery</td>
@@ -560,6 +575,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -577,6 +593,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Feedback</td>
@@ -588,6 +605,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -605,6 +623,7 @@
     <td bgcolor="gray"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Connectivity (NFC)</td>
@@ -615,6 +634,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
