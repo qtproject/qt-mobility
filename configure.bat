@@ -487,6 +487,10 @@ echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts >> %PROJECT_CONFIG%
 echo contains(mobility_modules,connectivity): mobility_modules *= serviceframework >> %PROJECT_CONFIG%
 
+:: Some modules are disabled from compilation on QNX right now:
+echo qnx: mobility_modules -= bearer location contacts publishsubscribe versit messaging systeminfo serviceframework gallery organizer feedback connectivity >> %PROJECT_CONFIG%
+
+
 echo.
 echo Checking available Qt ...
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -546,6 +550,12 @@ setlocal
             set MAKE=nmake
         )
     ) else if "%BUILDSYSTEM%" == "win32-mingw" (
+        call mingw32-make -v >> %PROJECT_LOG% 2>&1
+        if not errorlevel 1 (
+            echo mingw32-make
+            set MAKE=mingw32-make
+        )
+    ) else if "%BUILDSYSTEM%" == "UNIX" (
         call mingw32-make -v >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo mingw32-make
