@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2012 Research In Motion <blackberry-qt@qnx.com>
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the Qt Mobility Components.
@@ -39,74 +39,64 @@
 **
 ****************************************************************************/
 
-#ifndef QCOMPASS_H
-#define QCOMPASS_H
+#ifndef QORIENTABLESENSORBASE_H
+#define QORIENTABLESENSORBASE_H
 
-#include "qsensor.h"
-#include "qorientablesensorbase.h"
+#include <qmobilityglobal.h>
+
+#if defined(Q_OS_BLACKBERRY)
 
 QTM_BEGIN_NAMESPACE
 
-class QCompassReadingPrivate;
+class QOrientableSensorBasePrivate;
 
-class Q_SENSORS_EXPORT QCompassReading : public QSensorReading
-{
-    Q_OBJECT
-    Q_PROPERTY(qreal azimuth READ azimuth)
-    Q_PROPERTY(qreal calibrationLevel READ calibrationLevel)
-    DECLARE_READING(QCompassReading)
-public:
-    qreal azimuth() const;
-    void setAzimuth(qreal azimuth);
-
-    qreal calibrationLevel() const;
-    void setCalibrationLevel(qreal calibrationLevel);
-};
-
-class Q_SENSORS_EXPORT QCompassFilter : public QSensorFilter
+class Q_SENSORS_EXPORT QOrientableSensorBase
 {
 public:
-    virtual bool filter(QCompassReading *reading) = 0;
-private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<QCompassReading*>(reading)); }
-};
-
-class Q_SENSORS_EXPORT QCompass : public QSensor
-#if defined(Q_OS_BLACKBERRY)
-, public QOrientableSensorBase
-#endif
-{
-    Q_OBJECT
-#if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
-    Q_PROPERTY(AxesOrientationMode axesOrientationMode READ axesOrientationMode WRITE setAxesOrientationMode NOTIFY axesOrientationModeChanged)
-    Q_PROPERTY(int currentOrientation READ currentOrientation NOTIFY currentOrientationChanged)
-    Q_PROPERTY(int userOrientation READ userOrientation WRITE setUserOrientation NOTIFY userOrientationChanged)
-#endif
-
-public:
-#if defined(Q_MOC_RUN) && defined(Q_OS_BLACKBERRY)
-    // Enums must be replicated in child classes to work in QML
     enum AxesOrientationMode {
         FixedOrientation,
         AutomaticOrientation,
         UserOrientation
     };
-    Q_ENUMS(AxesOrientationMode)
-#endif
-    explicit QCompass(QObject *parent = 0) : QSensor(QCompass::type, parent) {}
-    virtual ~QCompass() {}
-    QCompassReading *reading() const { return static_cast<QCompassReading*>(QSensor::reading()); }
-    static char const * const type;
 
-#if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+#ifdef Q_QDOC
+    Q_PROPERTY(AxesOrientationMode axesOrientationMode READ axesOrientationMode WRITE setAxesOrientationMode NOTIFY axesOrientationModeChanged)
+    Q_PROPERTY(int currentOrientation READ currentOrientation NOTIFY currentOrientationChanged)
+    Q_PROPERTY(int userOrientation READ userOrientation WRITE setUserOrientation NOTIFY userOrientationChanged)
+#endif
+
+    QOrientableSensorBase();
+    virtual ~QOrientableSensorBase();
+
+    AxesOrientationMode axesOrientationMode() const;
+    void setAxesOrientationMode(AxesOrientationMode axesOrientationMode);
+
+    int currentOrientation() const;
+    void setCurrentOrientation(int currentOrientation);
+
+    int userOrientation() const;
+    void setUserOrientation(int userOrientation);
+
+protected:
+    // Signals which will be implemented by moc in the subclass
+#ifdef Q_QDOC
 Q_SIGNALS:
     void axesOrientationModeChanged(AxesOrientationMode axesOrientationMode);
     void currentOrientationChanged(int currentOrientation);
     void userOrientationChanged(int userOrientation);
+#else
+    virtual void axesOrientationModeChanged(AxesOrientationMode axesOrientationMode) = 0;
+    virtual void currentOrientationChanged(int currentOrientation) = 0;
+    virtual void userOrientationChanged(int userOrientation) = 0;
 #endif
+
+private:
+    QOrientableSensorBasePrivate *d;
+    friend class QOrientableSensorBasePrivate;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // Q_OS_BLACKBERRY
 
+#endif // QORIENTABLESENSORBASE_H

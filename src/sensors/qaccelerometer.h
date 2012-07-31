@@ -43,6 +43,7 @@
 #define QACCELEROMETER_H
 
 #include "qsensor.h"
+#include "qorientablesensorbase.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,8 +78,17 @@ private:
 class QAccelerometerPrivate;
 
 class Q_SENSORS_EXPORT QAccelerometer : public QSensor
+#if defined(Q_OS_BLACKBERRY)
+, public QOrientableSensorBase
+#endif
 {
     Q_OBJECT
+#if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+    Q_PROPERTY(AxesOrientationMode axesOrientationMode READ axesOrientationMode WRITE setAxesOrientationMode NOTIFY axesOrientationModeChanged)
+    Q_PROPERTY(int currentOrientation READ currentOrientation NOTIFY currentOrientationChanged)
+    Q_PROPERTY(int userOrientation READ userOrientation WRITE setUserOrientation NOTIFY userOrientationChanged)
+#endif
+
     Q_ENUMS(AccelerationMode)
     Q_PROPERTY(AccelerationMode accelerationMode READ accelerationMode WRITE setAccelerationMode
                NOTIFY accelerationModeChanged)
@@ -86,6 +96,15 @@ public:
     explicit QAccelerometer(QObject *parent = 0);
     virtual ~QAccelerometer();
 
+#if defined(Q_MOC_RUN) && defined(Q_OS_BLACKBERRY)
+    // Enums must be replicated in child classes to work in QML
+    enum AxesOrientationMode {
+        FixedOrientation,
+        AutomaticOrientation,
+        UserOrientation
+    };
+    Q_ENUMS(AxesOrientationMode)
+#endif
     enum AccelerationMode {
         Gravity,
         User,
@@ -105,7 +124,11 @@ public slots:
 
 signals:
     void accelerationModeChanged(AccelerationMode accelerationMode);
-
+#if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+    void axesOrientationModeChanged(AxesOrientationMode axesOrientationMode);
+    void currentOrientationChanged(int currentOrientation);
+    void userOrientationChanged(int userOrientation);
+#endif
 private:
     friend class QAccelerometerPrivate;
     QAccelerometerPrivate *d_func() const;

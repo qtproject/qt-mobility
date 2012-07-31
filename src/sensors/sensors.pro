@@ -35,6 +35,9 @@ PUBLIC_HEADERS += \
            qsensorbackend.h\
            qsensormanager.h\
            qsensorplugin.h
+blackberry {
+  PUBLIC_HEADERS += qorientablesensorbase.h
+}
 
 PRIVATE_HEADERS += \
            qsensorpluginloader_p.h\
@@ -45,6 +48,9 @@ SOURCES += qsensorbackend.cpp\
            qsensorplugin.cpp\
            qsensorpluginloader.cpp
 
+blackberry {
+  SOURCES += qorientablesensorbase.cpp
+}
 
 # 3 files per sensor (including QSensor)
 SENSORS=\

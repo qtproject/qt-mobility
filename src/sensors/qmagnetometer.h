@@ -43,6 +43,7 @@
 #define QMAGNETOMETER_H
 
 #include "qsensor.h"
+#include "qorientablesensorbase.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -79,16 +80,41 @@ private:
 };
 
 class Q_SENSORS_EXPORT QMagnetometer : public QSensor
+#if defined(Q_OS_BLACKBERRY)
+, public QOrientableSensorBase
+#endif
 {
     Q_OBJECT
+#if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+    Q_PROPERTY(AxesOrientationMode axesOrientationMode READ axesOrientationMode WRITE setAxesOrientationMode NOTIFY axesOrientationModeChanged)
+    Q_PROPERTY(int currentOrientation READ currentOrientation NOTIFY currentOrientationChanged)
+    Q_PROPERTY(int userOrientation READ userOrientation WRITE setUserOrientation NOTIFY userOrientationChanged)
+#endif
+
 #ifdef Q_QDOC
     Q_PROPERTY(bool returnGeoValues)
 #endif
+
 public:
+#if defined(Q_MOC_RUN) && defined(Q_OS_BLACKBERRY)
+    // Enums must be replicated in child classes to work in QML
+    enum AxesOrientationMode {
+        FixedOrientation,
+        AutomaticOrientation,
+        UserOrientation
+    };
+    Q_ENUMS(AxesOrientationMode)
+#endif
     explicit QMagnetometer(QObject *parent = 0) : QSensor(QMagnetometer::type, parent) {}
     virtual ~QMagnetometer() {}
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
     static char const * const type;
+#if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+Q_SIGNALS:
+    void axesOrientationModeChanged(AxesOrientationMode axesOrientationMode);
+    void currentOrientationChanged(int currentOrientation);
+    void userOrientationChanged(int userOrientation);
+#endif
 };
 
 QTM_END_NAMESPACE
