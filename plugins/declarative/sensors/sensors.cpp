@@ -250,6 +250,29 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \sa {Sensors QML Limitations}
 */
 
+#if defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+/*!
+    \qmlproperty AxesOrientationMode Accelerometer::axesOrientationMode
+    Holds the mode that affects how the screen orientation changes reading values.
+    \sa QOrientableSensorBase::axesOrientationMode
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Accelerometer::currentOrientation
+    Holds the current orientation that is used for rotating the reading values.
+    \sa QOrientableSensorBase::currentOrientation
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Accelerometer::userOrientation
+    Holds the angle used for rotating the reading values in the UserOrientation mode.
+    \sa QOrientableSensorBase::userOrientation
+    \since Mobility 1.3
+*/
+#endif
+
 /*!
     \qmlproperty AccelerometerReading Accelerometer::reading
     Holds the most recent accelerometer reading.
@@ -373,6 +396,29 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \sa {Sensors QML Limitations}
 */
 
+#if defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+/*!
+    \qmlproperty AxesOrientationMode Compass::axesOrientationMode
+    Holds the mode that affects how the screen orientation changes reading values.
+    \sa QOrientableSensorBase::axesOrientationMode
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Compass::currentOrientation
+    Holds the current orientation that is used for rotating the reading values.
+    \sa QOrientableSensorBase::currentOrientation
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Compass::userOrientation
+    Holds the angle used for rotating the reading values in the UserOrientation mode.
+    \sa QOrientableSensorBase::userOrientation
+    \since Mobility 1.3
+*/
+#endif
+
 /*!
     \qmlproperty CompassReading Compass::reading
     Holds the most recent compass reading.
@@ -430,6 +476,29 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     \sa {Sensors QML Limitations}
 */
+
+#if defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+/*!
+    \qmlproperty AxesOrientationMode Magnetometer::axesOrientationMode
+    Holds the mode that affects how the screen orientation changes reading values.
+    \sa QOrientableSensorBase::axesOrientationMode
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Magnetometer::currentOrientation
+    Holds the current orientation that is used for rotating the reading values.
+    \sa QOrientableSensorBase::currentOrientation
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Magnetometer::userOrientation
+    Holds the angle used for rotating the reading values in the UserOrientation mode.
+    \sa QOrientableSensorBase::userOrientation
+    \since Mobility 1.3
+*/
+#endif
 
 /*!
     \qmlproperty MagnetometerReading Magnetometer::reading
@@ -611,6 +680,29 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \sa {Sensors QML Limitations}
 */
 
+#if defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+/*!
+    \qmlproperty AxesOrientationMode RotationSensor::axesOrientationMode
+    Holds the mode that affects how the screen orientation changes reading values.
+    \sa QOrientableSensorBase::axesOrientationMode
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int RotationSensor::currentOrientation
+    Holds the current orientation that is used for rotating the reading values.
+    \sa QOrientableSensorBase::currentOrientation
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int RotationSensor::userOrientation
+    Holds the angle used for rotating the reading values in the UserOrientation mode.
+    \sa QOrientableSensorBase::userOrientation
+    \since Mobility 1.3
+*/
+#endif
+
 /*!
     \qmlproperty RotationReading RotationSensor::reading
     Holds the most recent rotation reading.
@@ -790,6 +882,29 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 
     \sa {Sensors QML Limitations}
 */
+
+#if defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
+/*!
+    \qmlproperty AxesOrientationMode Gyroscope::axesOrientationMode
+    Holds the mode that affects how the screen orientation changes reading values.
+    \sa QOrientableSensorBase::axesOrientationMode
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Gyroscope::currentOrientation
+    Holds the current orientation that is used for rotating the reading values.
+    \sa QOrientableSensorBase::currentOrientation
+    \since Mobility 1.3
+*/
+
+/*!
+    \qmlproperty int Gyroscope::userOrientation
+    Holds the angle used for rotating the reading values in the UserOrientation mode.
+    \sa QOrientableSensorBase::userOrientation
+    \since Mobility 1.3
+*/
+#endif
 
 /*!
     \qmlproperty GyroscopeReading Gyroscope::reading
