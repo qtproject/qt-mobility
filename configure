@@ -620,6 +620,7 @@ if [ -z "$PLATFORM_CONFIG" ]; then
     compileTest "Maemo Heartbeat" iphb
     compileTest "BlackBerry NDK sensor header" bbsensor_header
     compileTest "BlackBerry NDK holster sensor" bbsensor_holster
+    compileTest "BlackBerry NDK compass sensor" bbsensor_compass
 
     if [ "$NFC_SYMBIAN" = auto ]; then
         compileTest "Symbian NFC" nfc_symbian
