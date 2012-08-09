@@ -172,7 +172,7 @@ const QSize KResH264_PLID_428016        = QSize(640,480);
 const QSize KResH264_PLID_42801E        = QSize(640,480);
 const QSize KResH264_PLID_42801F        = QSize(1280,720);
 const QSize KResH264_PLID_428020        = QSize(1280,720);
-const QSize KResH264_PLID_428028        = QSize(1920,1080);
+const QSize KResH264_PLID_428028        = QSize(1920,1088);
 
 // Maximum framerates for encoder MIME Types
 // H.263
