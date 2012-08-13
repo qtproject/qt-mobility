@@ -62,8 +62,8 @@
 #endif
 
 template <typename T>
-inline void *qtVoidPtr(T *ptr)
-{ return reinterpret_cast<void *>(ptr); }
+inline const void *qtVoidPtr(T *ptr)
+{ return reinterpret_cast<const void *>(ptr); }
 
 #define qtThisPtr() qtVoidPtr(this)
 
