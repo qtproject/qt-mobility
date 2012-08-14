@@ -150,6 +150,10 @@ void S60VideoEglRendererControl::imageAvailable()
     VERBOSE_TRACE("S60VideoEglRendererControl::imageAvailable" << qtThisPtr()
                   << "api" << api);
     Q_ASSERT(!m_buffer);
+
+    if (!api)
+        return;
+
     if (m_doesProduceEglImages) {
         m_buffer = new S60EglImageVideoBuffer(this, m_eglEndpoint);
     } else {
