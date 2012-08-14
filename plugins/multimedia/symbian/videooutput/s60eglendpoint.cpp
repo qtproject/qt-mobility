@@ -115,6 +115,14 @@ void S60EglEndpointEventHandler::DoCancel()
     TRACE("S60EglEndpointEventHandler::DoCancel" << qtThisPtr());
     m_parent->m_extensions->endpointCancelNotification(m_parent->m_display,
                                                        m_parent->m_endpoint);
+
+    if (iStatus == KRequestPending) {
+        // If EGL display gets destroyed before cancel then endpointCancelNotification
+        // will not cancel our request
+        TRACE("S60EglEndpointEventHandler::DoCancel - completing request locally" << qtThisPtr());
+        TRequestStatus *requestStatus = &iStatus;
+        User::RequestComplete(requestStatus, KErrCancel);
+    }
 }
 
 //-----------------------------------------------------------------------------
