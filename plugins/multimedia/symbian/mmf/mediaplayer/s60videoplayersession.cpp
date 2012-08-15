@@ -688,8 +688,13 @@ void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
           << "type" << (void*)aEvent.iEventType.iUid
           << "error" << aEvent.iErrorCode);
     if (aEvent.iEventType == KMMFEventCategoryVideoPlayerGeneralError) {
-        setError(aEvent.iErrorCode);
-        doClose();
+        if (aEvent.iErrorCode == KErrMMVideoDevice) {
+            // MMF sends this event when video playback is paused due to foreground lost event
+            applicationLostFocus();
+        } else {
+            setError(aEvent.iErrorCode);
+            doClose();
+        }
     }
 }
 
