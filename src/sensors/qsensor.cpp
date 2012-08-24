@@ -196,16 +196,29 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     \since 1.0
 */
 
+void QSensorPrivate::init(const QByteArray &sensorType)
+{
+    type = sensorType;
+    q->registerInstance(); // so the availableSensorsChanged() signal works
+}
 /*!
     Construct the \a type sensor as a child of \a parent.
     \since 1.0
 */
 QSensor::QSensor(const QByteArray &type, QObject *parent)
     : QObject(parent)
-    , d(new QSensorPrivate)
+    , d(new QSensorPrivate(this))
 {
-    d->type = type;
-    registerInstance(); // so the availableSensorsChanged() signal works
+    d->init(type);
+}
+
+/*!
+   \internal
+ */
+QSensor::QSensor(const QByteArray &type, QSensorPrivate *dd, QObject *parent)
+    : QObject(parent), d(dd)
+{
+    d->init(type);
 }
 
 /*!

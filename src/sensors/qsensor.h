@@ -171,12 +171,14 @@ Q_SIGNALS:
     void dataRateChanged();
 
 protected:
+    QSensor(const QByteArray &type, QSensorPrivate *dd, QObject* parent = 0);
     // called by the back end
     QSensorPrivate *d_func() const { return d.data(); }
 
 private:
     void registerInstance();
 
+    friend class QSensorPrivate;
     QScopedPointer<QSensorPrivate> d;
     Q_DISABLE_COPY(QSensor)
 };

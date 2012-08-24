@@ -62,7 +62,7 @@ typedef QList<QSensorFilter*> QFilterList;
 class QSensorPrivate
 {
 public:
-    QSensorPrivate()
+    QSensorPrivate(QSensor *sensor)
         : identifier()
         , type()
         , outputRange(-1)
@@ -76,8 +76,11 @@ public:
         , error(0)
         , alwaysOn(false)
         , skipDuplicates(false)
+        , q(sensor)
     {
     }
+
+    void init(const QByteArray &sensorType);
 
     // meta-data
     QByteArray identifier;
@@ -104,6 +107,7 @@ public:
 
     bool alwaysOn;
     bool skipDuplicates;
+    QSensor *q;
 };
 
 class QSensorReadingPrivate
