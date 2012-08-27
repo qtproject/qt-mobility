@@ -793,7 +793,7 @@ private slots:
 
 int main(int argc, char **argv)
 {
-#if defined(Q_WS_X11)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_X11)
     QApplication::setGraphicsSystem("raster");
 #endif
 
