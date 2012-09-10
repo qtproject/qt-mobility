@@ -13,4 +13,6 @@ HEADERS       = audioinput.h
 
 SOURCES       = audioinput.cpp \
                 main.cpp
-
+symbian: {
+TARGET.CAPABILITY = UserEnvironment
+}

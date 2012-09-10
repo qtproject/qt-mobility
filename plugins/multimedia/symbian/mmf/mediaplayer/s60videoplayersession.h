@@ -209,6 +209,7 @@ private:
     CVideoPlayerUtility2 *m_player;
     TSurfaceId m_nativeSurface;
     S60NativeWindow *m_dummyWindow;
+    bool m_bufferingWaitingSurface;
 #else
     CVideoPlayerUtility *m_player;
     bool m_dsaActive;

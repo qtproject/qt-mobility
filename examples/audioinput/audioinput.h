@@ -133,6 +133,7 @@ private:
     static const QString PullModeLabel;
     static const QString SuspendLabel;
     static const QString ResumeLabel;
+    static const QString StoppedLabel;
 };
 
 #endif

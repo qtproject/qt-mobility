@@ -167,6 +167,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service, S60MediaNet
     , m_player(0)
 #ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
     , m_nativeSurface(TSurfaceId::CreateNullId())
+    , m_bufferingWaitingSurface(false)
 #else
     , m_dsaActive(false)
     , m_dsaStopped(false)
@@ -692,6 +693,11 @@ void S60VideoPlayerSession::MvpuoEvent(const TMMFEvent &aEvent)
             // MMF sends this event when video playback is paused due to foreground lost event
             applicationLostFocus();
         } else {
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+            // Ignore KErrNotFound when loading for null surface
+            if (aEvent.iErrorCode == KErrNotFound && m_bufferingWaitingSurface)
+                return;
+#endif
             setError(aEvent.iErrorCode);
             doClose();
         }
@@ -708,6 +714,13 @@ void S60VideoPlayerSession::MmsehSurfaceCreated(TInt aDisplayId, const TSurfaceI
     Q_UNUSED(aAspectRatio)
     Q_ASSERT(m_nativeSurface.IsNull());
     m_nativeSurface = aId;
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    if (m_bufferingWaitingSurface) {
+        // Loading had started before surface, start buffering now
+        m_bufferingWaitingSurface = false;
+        buffering();
+    }
+#endif
     emit nativeSurfaceChanged(m_nativeSurface);
 }
 
@@ -817,6 +830,13 @@ bool S60VideoPlayerSession::stopDirectScreenAccess()
 void S60VideoPlayerSession::MvloLoadingStarted()
 {
     TRACE("S60VideoPlayerSession::MvloLoadingStarted" << qtThisPtr());
+#ifdef VIDEOOUTPUT_GRAPHICS_SURFACES
+    if (m_nativeSurface.IsNull()) {
+        // Wait for surface before starting buffering
+        m_bufferingWaitingSurface = true;
+    }
+    else
+#endif
     buffering();
 }
 

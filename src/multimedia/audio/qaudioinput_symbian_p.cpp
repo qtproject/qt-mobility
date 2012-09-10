@@ -125,7 +125,7 @@ QAudioInputPrivate::QAudioInputPrivate(const QByteArray &device)
     qRegisterMetaType<CMMFBuffer *>("CMMFBuffer *");
 
     connect(m_notifyTimer.data(), SIGNAL(timeout()),
-            this, SIGNAL(notifyTimerExpired()));
+            this, SLOT(notifyTimerExpired()));
 
     m_pullTimer->setInterval(PushInterval);
     connect(m_pullTimer.data(), SIGNAL(timeout()), this, SLOT(pullData()));

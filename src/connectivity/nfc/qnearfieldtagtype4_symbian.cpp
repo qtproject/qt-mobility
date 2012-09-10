@@ -134,6 +134,11 @@ QVariant QNearFieldTagType4Symbian::decodeResponse(const QByteArray &command, co
             result = response;
         }
     }
+    else
+    {
+        LOG("tag specific command");
+        result = response;
+    }
     END
     return result;
 }
