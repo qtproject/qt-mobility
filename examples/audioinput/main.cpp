@@ -48,7 +48,11 @@ int main(int argv, char **args)
     app.setApplicationName("Audio Input Test");
 
     InputTest input;
+#ifndef Q_WS_S60
     input.show();
+#else
+    input.showMaximized();
+#endif
 
     return app.exec();
 }

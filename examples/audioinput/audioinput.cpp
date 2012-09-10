@@ -56,6 +56,7 @@ const QString InputTest::PushModeLabel(tr("Enable push mode"));
 const QString InputTest::PullModeLabel(tr("Enable pull mode"));
 const QString InputTest::SuspendLabel(tr("Suspend recording"));
 const QString InputTest::ResumeLabel(tr("Resume recording"));
+const QString InputTest::StoppedLabel(tr("Recording stopped"));
 
 const int BufferSize = 4096;
 
@@ -338,7 +339,10 @@ void InputTest::toggleSuspend()
     } else if (m_audioInput->state() == QAudio::StoppedState) {
         qWarning() << "status: Stopped, resume()";
         m_audioInput->resume();
-        m_suspendResumeButton->setText(SuspendLabel);
+        if (m_audioInput->state() == QAudio::ActiveState)
+           m_suspendResumeButton->setText(SuspendLabel);
+        else
+            m_suspendResumeButton->setText(StoppedLabel);
     } else if (m_audioInput->state() == QAudio::IdleState) {
         qWarning() << "status: IdleState";
     }
@@ -347,6 +351,9 @@ void InputTest::toggleSuspend()
 void InputTest::stateChanged(QAudio::State state)
 {
     qWarning() << "state = " << state;
+
+    if(state == QAudio::StoppedState)
+       m_suspendResumeButton->setText(StoppedLabel);
 }
 
 void InputTest::refreshDisplay()
