@@ -143,7 +143,8 @@ The Shared Memory layer has an order of 0x10000000.
     \row
         \o \l{Symbian Settings Layer}
         \o The Symbian Settings layer provides a permanent Value Space backing store using the
-           Symbian OS' Properties (RProperty) and Central Repository files (CRepository).
+           Symbian OS' Properties (RProperty), Central Repository files (CRepository) and Feature
+           Manager flags.
            The Symbian Settings layer has an order of 0.
     \row
         \o \l{GConf Layer}
@@ -185,14 +186,48 @@ exactly what has changed without the need for a bulkier change notification prot
 
 \section2 Symbian Settings Layer
 
-Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well 
-as Central Repository files (CRepository).
+Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty), Central
+Repository files (CRepository) and Feature Manager flags.
 
-\section3 Declaring Value Space Paths
+Note: Feature Manager flags and the enhanced numeric UIDs mechanism are available since Qt Mobility
+version 1.2.2 in Symbian. 
+See Device Configurations at \l {http://qt-project.org/wiki/Support-for-Symbian}{Support for Symbian}
+for information which platform releases include Qt Mobility 1.2.2.
 
-Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need to somehow specify how particular paths are turned into RPropery or CRepository key definitions. Here the QCRML files come for help.
+Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need
+to somehow specify how particular paths are turned into RProperty, CRepository and Feature Manager
+key definitions. There are two ways to accomplish this. The keys can be accessed using numeric
+uids, or the paths can be mapped to textual paths using QCRML files.
 
-QCRML files are XML files that can be used to declare available Value Space paths that are visible to the clients. Each path defines whether the actual value is stored in CRepository or RPropery as well as needed Category/Repository/Key UIDs.
+\section3 Accessing Properties, Central Repository and Feature Manager Using UIDs
+
+Accessing Symbian OS Properties, Central Repository keys and Feature Manager flags using numeric
+UIDs is done with reserved paths where the first part of the path is either \c /ps/, \c /cr/ or
+\c /fm/. These denote access to Symbian OS Properties, Central Repository files and Feature Manager
+flags, respectively. The format of the path is as follows:
+
+\code
+/ps/<uid>/<key>
+/cr/<uid>/<key>
+/fm/<key>
+\endcode
+
+\c <uid> and \c <key> values are either decimal numbers, or hexadecimal numbers prefixed with \c 0x.
+For example following two paths point to the same Property:
+
+\code
+/ps/268440235/12
+/ps/0x100012ab/0xc
+\endcode
+
+When using numeric paths, it is possible to get change notifications only using full path to a specific
+key. I.e. key \c /ps/<uid> is not considered changed when any of the keys under that UID change.
+
+\section3 Declaring Value Space Paths Using QCRML
+
+QCRML files are XML files that can be used to declare available Value Space paths that are visible
+to the clients.  Each path defines whether the actual value is stored in CRepository, RPropery or
+Feature Manager as well as needed Category/Repository/Key UIDs.
 
 The following QCRML file defines Value Space paths for power state properties stored in Symbian OS
 Properties:
@@ -211,6 +246,16 @@ Repository:
 <?xml version="1.0" encoding="UTF-8"?>
 <repository target="CRepository" uidValue="0x101f8798">
     <key ref="/profile/id" int="0x7e000001"/>
+</repository>
+\endcode
+
+The following QCRML file defines a Value Space paths for camera and camera lens cover feature
+flags:
+\code
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="FeatureManager">
+    <key ref="/KFeatureIdCamera" int="0x2"/>
+    <key ref="/KFeatureIdCameraLensCover" int="0xd1"/>
 </repository>
 \endcode
 
@@ -252,14 +297,37 @@ The serialization/deserialization is transparent operation to the API user but m
 interoperatibility issues with native Symbian codes that access the same data directly. The maximum
 size of the bytearray is 65535 for RProperty backing store.
 
-There is no way to define new Central Repository files at runtime. Generally the creation new
+There is no way to define new Central Repository files at runtime. Generally the creation of new
 Central Repository files is limited to device manufacturer. An application can bring its own
 Central Repository file at installation time, if the file is installed as an embedded upgrade SIS
 package. As the embedded upgrade SIS needs to install the file to Central Repository's private data
 cage, it needs to be separately Symbian Signed with permission from Symbian or device manufacturer.
 
-For more information about Symbian OS Properties and Central Repository refer to
+The Symbian OS Feature Manager entries are read-only, and the type returned is QVariant boolean.
+The value of a Feature Manager entry is true when the feature is supported. When the feature is not
+supported or it does not exist, the value is false.
+
+For more information about Symbian OS Properties, Central Repository and Feature Manager refer to
 Symbian Developer's Library at \l {http://forum.nokia.com/}{Forum Nokia}.
+
+\section3 Interoperability with native Symbian code
+
+If interoperability between native Symbian code is needed for non-integer types, the values have
+to be converted to bytearray before writing them to RProperty or CRepository. When data stored by
+native Symbian code is read, it should be read as raw bytearray. This can be done by adding
+parameter "?raw" to the end of the path. For example:
+
+\code
+/ps/0x100012ab/0xc?raw
+\endcode
+
+For convenience, parameter "?string" can be used to read and write UTF-16 strings to/from
+Properties and Central Repository in a format that is interoperable with native Symbian code.
+For example:
+
+\code
+/ps/0x100012ab/0xd?string
+\endcode
 
 \section3 Discovering Symbian key ids
 
@@ -271,6 +339,9 @@ Symbian SDK documentation, or from Symbian C++ headers in the SDK
 Following general conventions used in Symbian OS can help in discovering
 the keys, in addition to above:
    \list
+   \o Publicly available feature flags are listed in Symbian SDK file
+      \c {epoc32/include/publicruntimeids.hrh}. The feature flag key constants typically
+      begin with "\c {KFeature}".
    \o Central Repository keys are described on the headers of the specific  API.
       Central Repository key constants typically begin with "\c {KCR}".
    \o RProperty keys are described on the headers of the specific API. 
