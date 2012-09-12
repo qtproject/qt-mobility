@@ -718,6 +718,7 @@ for module in $MOBILITY_MODULES; do
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
+            $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors/gestures
             ;;
         feedback)
             $relpath/bin/syncheaders $shadowpath/include/QtFeedback $relpath/src/feedback

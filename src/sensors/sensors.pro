@@ -67,6 +67,23 @@ for(s,SENSORS) {
     PRIVATE_HEADERS += $${s}_p.h
 }
 
+SOURCES += \
+    gestures/qsensorgesture.cpp \
+    gestures/qsensorgesturerecognizer.cpp \
+    gestures/qsensorgesturemanager.cpp \
+    gestures/qsensorgesturemanagerprivate.cpp \
+    gestures/qsensorgestureplugininterface.cpp
+
+PUBLIC_HEADERS += \
+    gestures/qsensorgesture.h\
+    gestures/qsensorgesturerecognizer.h \
+    gestures/qsensorgesturemanager.h \
+    gestures/qsensorgestureplugininterface.h
+
+PRIVATE_HEADERS += \
+    gestures/qsensorgesturemanagerprivate_p.h \
+    gestures/qsensorgesture_p.h
+
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 include(../../features/deploy.pri)
