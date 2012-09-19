@@ -38,79 +38,70 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QSHAKERECOGNIZER_H
-#define QSHAKERECOGNIZER_H
-
+#include <QObject>
+#include <QtPlugin>
+#include <QStringList>
 #include <QTimer>
+#include <QTest>
 
+#include "qtestrecognizer.h"
+#include "qtest2recognizer.h"
+
+#include "qtestsensorgestureplugin_p.h"
+
+#include <qsensorgestureplugininterface.h>
 #include <qsensorgesturerecognizer.h>
+#include <qsensorgesturemanager.h>
 
-#include "qtsensorgesturesensorhandler.h"
 
-QTM_BEGIN_NAMESPACE
-
-struct ShakeData {
-   qreal x;
-   qreal y;
-   qreal z;
-};
-
-class QShake2SensorGestureRecognizer : public QSensorGestureRecognizer
+QTestSensorGesturePlugin::QTestSensorGesturePlugin()
 {
-    Q_OBJECT
+}
 
-public:
-
-    enum ShakeDirection {
-        ShakeUndefined = 0,
-        ShakeLeft,
-        ShakeRight,
-        ShakeUp,
-        ShakeDown
-    };
-
-    QShake2SensorGestureRecognizer(QObject *parent = 0);
-    ~QShake2SensorGestureRecognizer();
-
-    void create();
-
-    QString id() const;
-    bool start();
-    bool stop();
-    bool isActive();
-
-    QTimer *timer;
-    int timerTimeout;
+QTestSensorGesturePlugin::~QTestSensorGesturePlugin()
+{
+}
 
 
-Q_SIGNALS:
-    void shakeLeft();
-    void shakeRight();
-    void shakeUp();
-    void shakeDown();
+///*!
+//  Describes this gesture's possible gesture signals.
+//handled through the detected(const QString &) signal.
+//  */
+//QStringList QTestSensorGesturePlugin::gestureSignals() const
+//{
+//    QStringList list;
+//    Q_FOREACH (const QSensorGestureRecognizer* rec, recognizersList) {
+//        list.append(rec->gestureSignals());
+//    }
+//    return list;
+//}
 
-private slots:
-    void accelChanged(QAccelerometerReading *reading);
-    void timeout();
+QList <QSensorGestureRecognizer *> QTestSensorGesturePlugin::createRecognizers()
+{
+    QSensorGestureRecognizer *sRec = new QTestRecognizer(this);
+    recognizersList.append(sRec);
 
+    QSensorGestureRecognizer *sRec2 = new QTest2Recognizer(this);
+    recognizersList.append(sRec2);
 
-private:
-    QAccelerometerReading *accelReading;
+    return recognizersList;
+}
 
-    bool active;
+QStringList QTestSensorGesturePlugin::supportedIds() const
+{
+    QStringList list;
+    list << "QtSensors.test";
+    list <<"QtSensors.test2";
 
-    ShakeDirection shakeDirection;
+    return list;
+}
 
-    ShakeData prevData;
-    ShakeData currentData;
+QList<QSensorGestureRecognizer*> QTestSensorGesturePlugin::recognizers() const
+{
+    return recognizersList;
+}
 
-    bool checkForShake(ShakeData prevSensorData, ShakeData currentSensorData, qreal threshold);
-    bool shaking;
-    int shakeCount;
-    int threshold;
-
-    bool isNegative(qreal num);
-};
-QTM_END_NAMESPACE
-#endif // QSHAKERECOGNIZER_H
+QString QTestSensorGesturePlugin::name() const
+{
+    return "TestGestures";
+}

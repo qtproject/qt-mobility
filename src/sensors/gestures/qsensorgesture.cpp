@@ -76,10 +76,13 @@ QTM_BEGIN_NAMESPACE
 QSensorGesture::QSensorGesture(const QStringList &ids, QObject *parent) :
     QObject(parent)
 {
+    qDebug() << Q_FUNC_INFO;
+
     d_ptr = new QSensorGesturePrivate();
     Q_FOREACH (const QString &id, ids) {
         QSensorGestureRecognizer * rec = QSensorGestureManager::sensorGestureRecognizer(id);
         if (rec != 0) {
+            qDebug() << "append" << rec->id();
             d_ptr->m_sensorRecognizers.append(rec);
             d_ptr->availableIds.append(id);
         } else {
@@ -94,14 +97,14 @@ QSensorGesture::QSensorGesture(const QStringList &ids, QObject *parent) :
 //    builder.setSuperClass(&QObject::staticMetaObject);
 //    builder.setClassName("QSensorGesture");
 
-//    Q_FOREACH (QSensorGestureRecognizer *recognizer,  d_ptr->m_sensorRecognizers) {
+    Q_FOREACH (QSensorGestureRecognizer *recognizer,  d_ptr->m_sensorRecognizers) {
 //        Q_FOREACH (const QString &gesture, recognizer->gestureSignals()) {
 //            QMetaMethodBuilder b =  builder.addSignal(gesture.toLatin1());
 //            if (!d_ptr->localGestureSignals.contains(QLatin1String(b.signature())))
 //                d_ptr->localGestureSignals.append(QLatin1String(b.signature()));
 //        }
-//        recognizer->createBackend();
-//    }
+        recognizer->createBackend();
+    }
 //    d_ptr->meta = builder.toMetaObject();
 
     if (d_ptr->m_sensorRecognizers.count() > 0) {
@@ -141,8 +144,11 @@ QStringList QSensorGesture::invalidIds() const
   */
 void QSensorGesture::startDetection()
 {
-    if (d_ptr->m_sensorRecognizers.count() < 1)
+    qDebug() << Q_FUNC_INFO;
+    if (d_ptr->m_sensorRecognizers.count() < 1) {
+        qDebug() << Q_FUNC_INFO << "count is" << d_ptr->m_sensorRecognizers.count();
         return;
+    }
     if (d_ptr->isActive)
         return;
 

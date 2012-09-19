@@ -25,3 +25,4 @@ SUBDIRS +=\
     show_gyroscope\
     show_reflectance
 
+SUBDIRS += shakeit

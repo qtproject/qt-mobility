@@ -38,79 +38,34 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QTESTSENSORGESTUREPLUGIN_P_H
+#define QTESTSENSORGESTUREPLUGIN_P_H
 
-#ifndef QSHAKERECOGNIZER_H
-#define QSHAKERECOGNIZER_H
+#include <QObject>
+#include <qsensorgestureplugininterface.h>
 
-#include <QTimer>
-
-#include <qsensorgesturerecognizer.h>
-
-#include "qtsensorgesturesensorhandler.h"
-
-QTM_BEGIN_NAMESPACE
-
-struct ShakeData {
-   qreal x;
-   qreal y;
-   qreal z;
-};
-
-class QShake2SensorGestureRecognizer : public QSensorGestureRecognizer
+class QTestSensorGesturePlugin : public QObject, public QSensorGesturePluginInterface
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.Nokia.QSensorGesturePluginInterface")
+    Q_INTERFACES(QSensorGesturePluginInterface)
 
 public:
+    explicit QTestSensorGesturePlugin();
+    ~QTestSensorGesturePlugin();
 
-    enum ShakeDirection {
-        ShakeUndefined = 0,
-        ShakeLeft,
-        ShakeRight,
-        ShakeUp,
-        ShakeDown
-    };
+    QList <QSensorGestureRecognizer *> createRecognizers();
 
-    QShake2SensorGestureRecognizer(QObject *parent = 0);
-    ~QShake2SensorGestureRecognizer();
+//    QStringList gestureSignals() const;
+    QStringList supportedIds() const;
+    QString name() const;
 
-    void create();
+    QList<QSensorGestureRecognizer*> recognizers() const;
 
-    QString id() const;
-    bool start();
-    bool stop();
-    bool isActive();
+    QList<QSensorGestureRecognizer*> recognizersList;
 
-    QTimer *timer;
-    int timerTimeout;
-
-
-Q_SIGNALS:
-    void shakeLeft();
-    void shakeRight();
-    void shakeUp();
-    void shakeDown();
-
-private slots:
-    void accelChanged(QAccelerometerReading *reading);
-    void timeout();
-
-
-private:
-    QAccelerometerReading *accelReading;
-
-    bool active;
-
-    ShakeDirection shakeDirection;
-
-    ShakeData prevData;
-    ShakeData currentData;
-
-    bool checkForShake(ShakeData prevSensorData, ShakeData currentSensorData, qreal threshold);
-    bool shaking;
-    int shakeCount;
-    int threshold;
-
-    bool isNegative(qreal num);
 };
-QTM_END_NAMESPACE
-#endif // QSHAKERECOGNIZER_H
+
+
+
+#endif // QTESTSENSORGESTUREPLUGIN_H

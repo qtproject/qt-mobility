@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
 #include <QTimer>
 
 #include "qshake2recognizer.h"

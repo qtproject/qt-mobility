@@ -41,6 +41,7 @@
 
 #include <QDir>
 #include <QLibraryInfo>
+#include <QDebug>
 
 #include "qsensorgesturemanagerprivate_p.h"
 #include "qsensorgesturerecognizer.h"
@@ -134,6 +135,7 @@ void QSensorGestureManagerPrivate::loadPlugins()
 bool QSensorGestureManagerPrivate::loadRecognizer(const QString &recognizerId)
 {
     //if no plugin is used return true if this is a registered recognizer
+//    qDebug() << Q_FUNC_INFO << recognizerId;
 
     if (registeredSensorGestures.contains(recognizerId))
         return true;

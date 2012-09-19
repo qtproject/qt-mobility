@@ -15,3 +15,6 @@ symbian {
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
 RESOURCES += battery2.qrc
+
+OTHER_FILES += battery2.qml
+

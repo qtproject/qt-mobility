@@ -38,79 +38,68 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QSHAKERECOGNIZER_H
-#define QSHAKERECOGNIZER_H
-
+#include <QStringList>
 #include <QTimer>
 
-#include <qsensorgesturerecognizer.h>
+#include "qtestrecognizer.h"
+#include "qtestsensorgestureplugin_p.h"
 
-#include "qtsensorgesturesensorhandler.h"
 
-QTM_BEGIN_NAMESPACE
-
-struct ShakeData {
-   qreal x;
-   qreal y;
-   qreal z;
-};
-
-class QShake2SensorGestureRecognizer : public QSensorGestureRecognizer
+QTestRecognizer::QTestRecognizer(QObject *parent)
+    : QSensorGestureRecognizer(parent),
+      active(0)
 {
-    Q_OBJECT
+    timeout();
+}
 
-public:
+QTestRecognizer::~QTestRecognizer()
+{
+}
 
-    enum ShakeDirection {
-        ShakeUndefined = 0,
-        ShakeLeft,
-        ShakeRight,
-        ShakeUp,
-        ShakeDown
-    };
-
-    QShake2SensorGestureRecognizer(QObject *parent = 0);
-    ~QShake2SensorGestureRecognizer();
-
-    void create();
-
-    QString id() const;
-    bool start();
-    bool stop();
-    bool isActive();
-
-    QTimer *timer;
-    int timerTimeout;
+void QTestRecognizer::timeout()
+{
+    Q_EMIT detected("tested");
+    Q_EMIT tested();
+    QTimer::singleShot(10,this, SLOT(timeout()));
+}
 
 
-Q_SIGNALS:
-    void shakeLeft();
-    void shakeRight();
-    void shakeUp();
-    void shakeDown();
+bool QTestRecognizer::start()
+{
+    Q_EMIT detected("tested");
+    Q_EMIT tested();
+    active = true;
+    return true;
+}
 
-private slots:
-    void accelChanged(QAccelerometerReading *reading);
-    void timeout();
+bool QTestRecognizer::stop()
+{
+    active = false;
+    return true;
+}
+
+bool QTestRecognizer::isActive()
+{
+    return active;
+}
+
+void  QTestRecognizer::create()
+{
+    active = false;
+}
+
+QString QTestRecognizer::id() const
+{
+    return QString("QtSensors.test");
+}
 
 
-private:
-    QAccelerometerReading *accelReading;
+int QTestRecognizer::thresholdTime() const
+{
+    return timerTimeout;
+}
 
-    bool active;
-
-    ShakeDirection shakeDirection;
-
-    ShakeData prevData;
-    ShakeData currentData;
-
-    bool checkForShake(ShakeData prevSensorData, ShakeData currentSensorData, qreal threshold);
-    bool shaking;
-    int shakeCount;
-    int threshold;
-
-    bool isNegative(qreal num);
-};
-QTM_END_NAMESPACE
-#endif // QSHAKERECOGNIZER_H
+void QTestRecognizer::setThresholdTime(int msec)
+{
+    timer->setInterval(msec);
+}

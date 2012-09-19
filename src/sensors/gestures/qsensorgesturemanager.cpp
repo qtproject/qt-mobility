@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QDebug>
 
 #include "qsensorgesturemanager.h"
 #include "qsensorgesturemanagerprivate_p.h"
@@ -68,6 +69,7 @@ QTM_BEGIN_NAMESPACE
 QSensorGestureManager::QSensorGestureManager(QObject *parent)
     : QObject(parent)
 {
+    qDebug() << Q_FUNC_INFO;
     QSensorGestureManagerPrivate *d = QSensorGestureManagerPrivate::instance();
     if (!d) return; // hardly likely but just in case...
     connect(d,SIGNAL(newSensorGestureAvailable()),
@@ -91,6 +93,8 @@ QSensorGestureManager::~QSensorGestureManager()
 
  bool QSensorGestureManager::registerSensorGestureRecognizer(QSensorGestureRecognizer *recognizer)
  {
+     qDebug() << Q_FUNC_INFO << recognizer->id();
+
      QSensorGestureManagerPrivate *d = QSensorGestureManagerPrivate::instance();
      if (!d) { // hardly likely but just in case...
          delete recognizer;

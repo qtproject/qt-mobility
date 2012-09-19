@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.sensors 1.1
+import QtMobility.sensors 1.3
 import QtMultimediaKit 1.1
 
 Rectangle {
@@ -251,10 +251,10 @@ Rectangle {
 //! [1]
         id: sensorGesture
 //! [3]
-        enabled: true
+        Component.onCompleted: enabled = true
 //! [3]
 //! [2]
-        gestures : ["QtSensors.shake", "QtSensors.whip", "QtSensors.twist", "QtSensors.cover",
+        gestures : ["QtSensors.shake2", "QtSensors.whip", "QtSensors.twist", "QtSensors.cover",
             "QtSensors.hover", "QtSensors.turnover", "QtSensors.pickup", "QtSensors.slam" , "QtSensors.doubletap"]
 //! [2]
 //! [4]

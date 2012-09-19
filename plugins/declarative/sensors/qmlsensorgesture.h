@@ -39,78 +39,68 @@
 **
 ****************************************************************************/
 
-#ifndef QSHAKERECOGNIZER_H
-#define QSHAKERECOGNIZER_H
+#ifndef QMLSENSORGESTURE_H
+#define QMLSENSORGESTURE_H
 
-#include <QTimer>
+#include <QStringList>
+#include <QObject>
+#include <QMap>
+#include <QDeclarativeParserStatus>
 
-#include <qsensorgesturerecognizer.h>
-
-#include "qtsensorgesturesensorhandler.h"
+#include <qmobilityglobal.h>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 
-struct ShakeData {
-   qreal x;
-   qreal y;
-   qreal z;
-};
+class QSensorGesture;
+class QSensorGestureManager;
 
-class QShake2SensorGestureRecognizer : public QSensorGestureRecognizer
+class QmlSensorGesture : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList availableGestures READ availableGestures NOTIFY availableGesturesChanged)
+    Q_PROPERTY(QStringList gestures READ gestures WRITE setGestures NOTIFY gesturesChanged)
+    Q_PROPERTY(QStringList validGestures READ validGestures NOTIFY validGesturesChanged)
+    Q_PROPERTY(QStringList invalidGestures READ invalidGestures NOTIFY invalidGesturesChanged)
+    Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
 
 public:
-
-    enum ShakeDirection {
-        ShakeUndefined = 0,
-        ShakeLeft,
-        ShakeRight,
-        ShakeUp,
-        ShakeDown
-    };
-
-    QShake2SensorGestureRecognizer(QObject *parent = 0);
-    ~QShake2SensorGestureRecognizer();
-
-    void create();
-
-    QString id() const;
-    bool start();
-    bool stop();
-    bool isActive();
-
-    QTimer *timer;
-    int timerTimeout;
-
+    QmlSensorGesture(QObject* parent = 0);
+    virtual ~QmlSensorGesture();
+    void classBegin();
+    void componentComplete();
 
 Q_SIGNALS:
-    void shakeLeft();
-    void shakeRight();
-    void shakeUp();
-    void shakeDown();
+    void detected(const QString &gesture);
+    void availableGesturesChanged();
+    void gesturesChanged();
+    void validGesturesChanged();
+    void invalidGesturesChanged();
+    void enabledChanged();
 
-private slots:
-    void accelChanged(QAccelerometerReading *reading);
-    void timeout();
-
+public:
+    QStringList availableGestures();
+    QStringList gestures() const;
+    void setGestures(const QStringList& value);
+    bool enabled() const;
+    void setEnabled(bool value);
+    QStringList validGestures() const;
+    QStringList invalidGestures() const;
 
 private:
-    QAccelerometerReading *accelReading;
+    void deleteGesture();
+    void createGesture();
 
-    bool active;
+private:
+    QStringList gestureIds;
+    bool isEnabled;
+    bool oldGestureEnabled;
+    bool initDone;
+    QStringList gestureList;
 
-    ShakeDirection shakeDirection;
-
-    ShakeData prevData;
-    ShakeData currentData;
-
-    bool checkForShake(ShakeData prevSensorData, ShakeData currentSensorData, qreal threshold);
-    bool shaking;
-    int shakeCount;
-    int threshold;
-
-    bool isNegative(qreal num);
+    QSensorGesture* sensorGesture;
+    QSensorGestureManager* sensorGestureManager;
 };
 QTM_END_NAMESPACE
-#endif // QSHAKERECOGNIZER_H
+
+#endif

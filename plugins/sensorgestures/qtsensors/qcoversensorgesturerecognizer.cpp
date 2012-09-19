@@ -81,6 +81,7 @@ bool QCoverSensorGestureRecognizer::start()
             QtSensorGestureSensorHandler::instance()->stopSensor(QtSensorGestureSensorHandler::Proximity);
             active = false;
         }
+
     } else {
         active = false;
     }
@@ -113,6 +114,7 @@ void QCoverSensorGestureRecognizer::proximityChanged(QProximityReading *reading)
         return;
 
     proximityReading = reading->close();
+
 
     // look at case of face up->face down->face up.
     if (orientationReading->orientation() ==  QOrientationReading::FaceUp

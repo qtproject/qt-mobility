@@ -38,40 +38,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QSHAKERECOGNIZER_H
-#define QSHAKERECOGNIZER_H
-
-#include <QTimer>
+#ifndef QTESTRECOGNIZERDUP_H
+#define QTESTRECOGNIZERDUP_H
 
 #include <qsensorgesturerecognizer.h>
 
-#include "qtsensorgesturesensorhandler.h"
-
-QTM_BEGIN_NAMESPACE
-
-struct ShakeData {
-   qreal x;
-   qreal y;
-   qreal z;
-};
-
-class QShake2SensorGestureRecognizer : public QSensorGestureRecognizer
+class QTestRecognizerDup : public QSensorGestureRecognizer
 {
     Q_OBJECT
+    Q_PROPERTY(int thresholdTime READ thresholdTime WRITE setThresholdTime)
 
 public:
 
-    enum ShakeDirection {
-        ShakeUndefined = 0,
-        ShakeLeft,
-        ShakeRight,
-        ShakeUp,
-        ShakeDown
-    };
-
-    QShake2SensorGestureRecognizer(QObject *parent = 0);
-    ~QShake2SensorGestureRecognizer();
+    QTestRecognizerDup(QObject *parent = 0);
+    ~QTestRecognizerDup();
 
     void create();
 
@@ -80,37 +60,17 @@ public:
     bool stop();
     bool isActive();
 
-    QTimer *timer;
-    int timerTimeout;
-
+    int thresholdTime() const;
+    void setThresholdTime(int msec);
 
 Q_SIGNALS:
-    void shakeLeft();
-    void shakeRight();
-    void shakeUp();
-    void shakeDown();
-
-private slots:
-    void accelChanged(QAccelerometerReading *reading);
-    void timeout();
-
+    void test2_dup();
 
 private:
-    QAccelerometerReading *accelReading;
-
+    int timerTimeout;
+    QTimer *timer;
     bool active;
 
-    ShakeDirection shakeDirection;
-
-    ShakeData prevData;
-    ShakeData currentData;
-
-    bool checkForShake(ShakeData prevSensorData, ShakeData currentSensorData, qreal threshold);
-    bool shaking;
-    int shakeCount;
-    int threshold;
-
-    bool isNegative(qreal num);
 };
-QTM_END_NAMESPACE
-#endif // QSHAKERECOGNIZER_H
+
+#endif // QTESTRECOGNIZERDUP_H

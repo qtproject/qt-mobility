@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
+#include <QStringList>
+#include <QTimer>
 
 #include "qtsensorgesturesensorhandler.h"
 
@@ -94,7 +95,16 @@ bool QtSensorGestureSensorHandler::startSensor(SensorGestureSensors sensor)
         if (accel == 0x0) {
             accel = new QAccelerometer(this);
             ok = accel->connectToBackend();
-            accel->setDataRate(50);
+//            qrangelist rangeList = accel->availableDataRates();
+
+//            QStringList ranges;
+//            foreach (const qrange &range, rangeList) {
+//                if (range.first == range.second)
+//                    ranges << QString("%1 Hz").arg(range.first);
+//                else
+//                    ranges << QString("%1-%2 Hz").arg(range.first).arg(range.second);
+//            }
+            accel->setDataRate(100);
             qoutputrangelist outputranges = accel->outputRanges();
 
             if (outputranges.count() > 0)
@@ -111,11 +121,13 @@ bool QtSensorGestureSensorHandler::startSensor(SensorGestureSensors sensor)
         if (orientation == 0x0) {
             orientation = new QOrientationSensor(this);
             ok = orientation->connectToBackend();
-            orientation->setDataRate(50);
+            orientation->setDataRate(100);
             connect(orientation,SIGNAL(readingChanged()),this,SLOT(orientationChanged()));
         }
-        if (ok && !orientation->isActive())
+        if (ok && !orientation->isActive()) {
             orientation->start();
+            QTimer::singleShot(100,this,SLOT(orientationChanged()));
+        }
         break;
     case Proximity:
         //proximity
@@ -124,8 +136,9 @@ bool QtSensorGestureSensorHandler::startSensor(SensorGestureSensors sensor)
             ok = proximity->connectToBackend();
             connect(proximity,SIGNAL(readingChanged()),this,SLOT(proximityChanged()));
         }
-        if (ok && !proximity->isActive())
+        if (ok && !proximity->isActive()) {
             proximity->start();
+        }
         break;
     case IrProximity:
 //        //irproximity
@@ -156,7 +169,6 @@ bool QtSensorGestureSensorHandler::startSensor(SensorGestureSensors sensor)
 
 void QtSensorGestureSensorHandler::stopSensor(SensorGestureSensors sensor)
 {
-    //  qDebug() << __FUNCTION__ << sensor;
     if (usedSensorsMap.value(sensor) == 0)
         return;
     int val = usedSensorsMap.value(sensor);

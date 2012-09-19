@@ -1,6 +1,8 @@
 include(../../../features/utils.pri)
 
-INCLUDEPATH += ../../../src/sensors
+INCLUDEPATH += $${QT_MOBILITY_SOURCE_TREE}/src/sensors
+INCLUDEPATH += $${QT_MOBILITY_SOURCE_TREE}/src/sensors/gestures
+
 INCLUDEPATH += ../../../src/global
 
 TEMPLATE = lib
@@ -12,7 +14,9 @@ include(../../../common.pri)
 
 QT += declarative
 
-SOURCES += sensors.cpp 
+SOURCES += sensors.cpp \
+qmlsensorgesture.cpp
+HEADERS += qmlsensorgesture.h
 
 CONFIG += mobility
 MOBILITY += sensors
