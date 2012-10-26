@@ -34,16 +34,17 @@ DEPENDPATH += .
 PUBLIC_HEADERS += \
            qsensorbackend.h\
            qsensormanager.h\
-           qsensorplugin.h\
+           qsensorplugin.h
 
 PRIVATE_HEADERS += \
            qsensorpluginloader_p.h\
-           sensorlog_p.h\
+           sensorlog_p.h
 
 SOURCES += qsensorbackend.cpp\
            qsensormanager.cpp\
            qsensorplugin.cpp\
-           qsensorpluginloader.cpp\
+           qsensorpluginloader.cpp
+
 
 # 3 files per sensor (including QSensor)
 SENSORS=\
@@ -58,6 +59,7 @@ SENSORS=\
     qrotationsensor\
     qtapsensor\
     qgyroscope\
+    qirproximitysensor
 
 for(s,SENSORS) {
     # Client API
