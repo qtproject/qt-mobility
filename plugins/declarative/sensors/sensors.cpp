@@ -41,7 +41,6 @@
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
-#include <QDebug>
 
 #include <qaccelerometer.h>
 #include <qambientlightsensor.h>
@@ -144,7 +143,6 @@ public:
         qmlRegisterUncreatableType<QGyroscopeReading    >(package, major, minor, "GyroscopeReading",     QLatin1String("Cannot create GyroscopeReading"));
 
         qmlRegisterType           <QmlSensorGesture     >(package, major, minor, "SensorGesture");
-
 
     }
 };

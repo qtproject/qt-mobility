@@ -13,12 +13,13 @@ MOBILITY += sensors
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/sensors/gestures
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/sensors
 # Input
+#    qdoubletapsensorgesturerecognizer.h \
+ #   qdoubletapsensorgesturerecognizer.cpp \
 
 HEADERS +=\
     qcoversensorgesturerecognizer.h \
-#    qdoubletapsensorgesturerecognizer.h \
     qhoversensorgesturerecognizer.h \
-#    qfreefallsensorgesturerecognizer.h \
+    qfreefallsensorgesturerecognizer.h \
     qpickupsensorgesturerecognizer.h \
     qshake2recognizer.h \
     qslamgesturerecognizer.h \
@@ -30,9 +31,8 @@ HEADERS +=\
 
 SOURCES += \
     qcoversensorgesturerecognizer.cpp \
- #   qdoubletapsensorgesturerecognizer.cpp \
     qhoversensorgesturerecognizer.cpp \
- #   qfreefallsensorgesturerecognizer.cpp \
+    qfreefallsensorgesturerecognizer.cpp \
     qpickupsensorgesturerecognizer.cpp \
     qshake2recognizer.cpp \
     qslamgesturerecognizer.cpp \
