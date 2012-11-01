@@ -232,11 +232,7 @@ QList<QOrganizerItem> MKCalEngine::internalItemOccurrences(const QOrganizerItem&
             maxCount);
     KCalCore::Recurrence *recurrence = generatorIncidence->recurrence();
     foreach (const mKCal::ExtendedCalendar::ExpandedIncidence& expandedIncidence, incidenceList) {
-#ifdef Q_WS_MEEGO
-        QDateTime incidenceDateTime = expandedIncidence.first;
-#else
         QDateTime incidenceDateTime = expandedIncidence.first.dtStart;
-#endif
         KCalCore::Incidence::Ptr incidence = expandedIncidence.second;
         QOrganizerItem instance;
         //unfortunately sometimes expandRecurrences will include also those occurrences which are in exDates
