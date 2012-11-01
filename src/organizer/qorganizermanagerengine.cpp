@@ -1978,7 +1978,7 @@ QList<QOrganizerCollection> QOrganizerManagerEngine::collections(QOrganizerManag
 }
 
 /*!
-    Returns true if the saving of the \a collection was successfull otherwise false.
+    Returns true if the saving of the \a collection was successful otherwise false.
     Any errors encountered during this operation should be stored to
     \a error.
     \since 1.1
@@ -1992,7 +1992,7 @@ bool QOrganizerManagerEngine::saveCollection(QOrganizerCollection* collection, Q
 }
 
 /*!
-    Returns true if the removing of the \a collectionId was successfull otherwise false.
+    Returns true if the removing of the \a collectionId was successful otherwise false.
     Any errors encountered during this operation should be stored to
     \a error.
     \since 1.1
