@@ -44,7 +44,7 @@ contains(MOBILITY, versit) {
 }
 
 
-simulator: qtMobilityAddLibrary(QtMobilitySimulator)
+simulator: !qnx: qtMobilityAddLibrary(QtMobilitySimulator)
 
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER
