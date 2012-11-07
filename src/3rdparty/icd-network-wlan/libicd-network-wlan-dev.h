@@ -2,7 +2,8 @@
 #define WLAN_DEV_H
 
 /**
- * Copyright (C) 2007,2008 Nokia Corporation. All rights reserved.
+ * Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+ * Contact: http://www.qt-project.org/legal
  *
  * @author jukka.rissanen@nokia.com
  *

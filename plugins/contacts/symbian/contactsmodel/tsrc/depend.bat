@@ -1,7 +1,7 @@
 @echo off
 rem
 rem Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
-rem All rights reserved.
+rem Contact: http://www.qt-project.org/legal
 rem This component and the accompanying materials are made available
 rem under the terms of "Eclipse Public License v1.0"
 rem which accompanies this distribution, and is available
