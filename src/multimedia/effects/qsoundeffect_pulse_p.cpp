@@ -699,7 +699,9 @@ void QSoundEffectPrivate::playSample()
     qDebug() << this << "playSample";
 #endif
     Q_ASSERT(m_pulseStream);
-    pa_operation_unref(pa_stream_cork(m_pulseStream, 0, 0, 0));
+    pa_operation *o = pa_stream_cork(m_pulseStream, 0, 0, 0);
+    if (o)
+        pa_operation_unref(o);
 }
 
 void QSoundEffectPrivate::stop()
