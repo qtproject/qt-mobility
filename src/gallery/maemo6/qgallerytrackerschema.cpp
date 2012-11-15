@@ -1242,12 +1242,16 @@ QDocumentGallery::Error QGalleryTrackerSchema::buildFilterQuery(
                 } else {
                     result = QDocumentGallery::ItemIdError;
                 }
-            } else if (itemTypes[index].itemType == QDocumentGallery::PhotoAlbum) {
-                if (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Image) {
-                    filterStatement
-                            = QLatin1String("nie:isLogicalPartOf(?x)=<")
+            } else if (itemTypes[index].itemType == QDocumentGallery::PhotoAlbum
+                       || itemTypes[index].itemType == QDocumentGallery::Playlist) {
+                if ((qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Image
+                        && itemTypes[index].itemType == QDocumentGallery::PhotoAlbum)
+                        || (qt_galleryItemTypeList[m_itemIndex].itemType == QDocumentGallery::Audio
+                        && itemTypes[index].itemType == QDocumentGallery::Playlist)) {
+                    rootItemStatement = QLatin1String("{<")
                             + itemTypes[index].prefix.strip(rootItemId).toString()
-                            + QLatin1String(">");
+                            + QLatin1String("> nfo:hasMediaFileListEntry ?entry}");
+                    filterStatement = QLatin1String("nie:url(?x) = nfo:entryUrl(?entry)");
                 } else {
                     result = QDocumentGallery::ItemIdError;
                 }

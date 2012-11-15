@@ -74,7 +74,9 @@ void QGalleryTrackerChangeNotifier::graphUpdated(
     QString identifier(m_service);
     identifier.replace(':','#');
     if (className.endsWith(identifier)
-            || (m_service == QLatin1String("nmm:Artist") && className.endsWith("nfo#Audio"))) {
+            || (m_service == QLatin1String("nmm:Artist") && className.endsWith("nfo#Audio"))
+            || (m_service == QLatin1String("nmm:Photo") && className.endsWith("nmm#ImageList"))
+            || (m_service == QLatin1String("nfo:Audio") && className.endsWith("nmm#Playlist"))) {
         emit itemsChanged(QGalleryTrackerSchema::serviceUpdateId(m_service));
     }
 }

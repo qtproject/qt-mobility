@@ -1563,7 +1563,8 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT ?x nie:url(?x) rdf:type(?x) "
                 "WHERE {"
                     "{?x rdf:type nmm:Photo}"
-                    "FILTER(nie:isLogicalPartOf(?x)=<photoAlbum:Camping>)"
+                    "{<photoAlbum:Camping> nfo:hasMediaFileListEntry ?entry}"
+                    "FILTER(nie:url(?x) = nfo:entryUrl(?entry))"
                 "} "
                 "GROUP BY ?x";
 
@@ -1574,7 +1575,32 @@ void tst_QGalleryTrackerSchema::queryResponseRootItem_data()
             <<  "SELECT ?x nie:url(?x) rdf:type(?x) "
                 "WHERE {"
                     "{?x rdf:type nmm:Photo}"
-                    "FILTER(nie:isLogicalPartOf(?x)=<photoAlbum:Camping>)"
+                    "{<photoAlbum:Camping> nfo:hasMediaFileListEntry ?entry}"
+                    "FILTER(nie:url(?x) = nfo:entryUrl(?entry))"
+                "} "
+                "GROUP BY ?x";
+
+    QTest::newRow("Playlist, All Image Descendants")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("playlist::playlist:mix")
+            << QGalleryQueryRequest::AllDescendants
+            <<  "SELECT ?x nie:url(?x) rdf:type(?x) "
+                "WHERE {"
+                    "{?x rdf:type nfo:Audio}"
+                    "{<playlist:mix> nfo:hasMediaFileListEntry ?entry}"
+                    "FILTER(nie:url(?x) = nfo:entryUrl(?entry))"
+                "} "
+                "GROUP BY ?x";
+
+    QTest::newRow("Playlist, Direct Audio Descendants")
+            << QString::fromLatin1("Audio")
+            << QString::fromLatin1("playlist::playlist:mix")
+            << QGalleryQueryRequest::DirectDescendants
+            <<  "SELECT ?x nie:url(?x) rdf:type(?x) "
+                "WHERE {"
+                    "{?x rdf:type nfo:Audio}"
+                    "{<playlist:mix> nfo:hasMediaFileListEntry ?entry}"
+                    "FILTER(nie:url(?x) = nfo:entryUrl(?entry))"
                 "} "
                 "GROUP BY ?x";
 
