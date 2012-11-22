@@ -47,6 +47,8 @@
 #include "qpulseaudioengine.h"
 #include "qpulsehelpers.h"
 
+#include <unistd.h>
+
 QT_BEGIN_NAMESPACE
 
 const int PeriodTimeMs = 50;

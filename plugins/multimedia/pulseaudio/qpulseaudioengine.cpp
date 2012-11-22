@@ -47,6 +47,8 @@
 #include "qaudiooutput_pulse.h"
 #include "qpulsehelpers.h"
 
+#include <unistd.h>
+
 QT_BEGIN_NAMESPACE
 
 static void serverInfoCallback(pa_context *context, const pa_server_info *info, void *userdata)

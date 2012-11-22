@@ -51,6 +51,10 @@
 #endif // Q_WS_X11
 #endif // Q_WS_MAEMO_6
 
+#if !defined(QT_NO_DBUS)
+#include <unistd.h>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
