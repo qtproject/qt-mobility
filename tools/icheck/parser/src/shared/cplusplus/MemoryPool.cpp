@@ -61,6 +61,7 @@
 #include "MemoryPool.h"
 #include <cstring>
 #include <cassert>
+#include <cstdlib>
 
 using namespace CPlusPlus;
 
@@ -101,7 +102,7 @@ void *MemoryPool::allocate_helper(size_t size)
         else
             _allocatedBlocks *= 2;
 
-        _blocks = (char **) realloc(_blocks, sizeof(char *) * _allocatedBlocks);
+        _blocks = (char **) std::realloc(_blocks, sizeof(char *) * _allocatedBlocks);
     }
 
     char *&block = _blocks[_blockCount];

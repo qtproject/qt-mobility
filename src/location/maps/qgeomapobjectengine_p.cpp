@@ -54,7 +54,11 @@
 #include <QGraphicsPathItem>
 #include <QGraphicsEllipseItem>
 
-#include <cmath>
+#ifdef Q_OS_QNX
+#  include <math.h>
+#else
+#  include <cmath>
+#endif
 
 #include <QDebug>
 

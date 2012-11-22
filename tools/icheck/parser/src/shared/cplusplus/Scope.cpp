@@ -64,6 +64,7 @@
 #include "Literals.h"
 #include <cassert>
 #include <cstring>
+#include <cstdlib>
 
 using namespace CPlusPlus;
 
@@ -79,9 +80,9 @@ Scope::Scope(ScopedSymbol *owner)
 Scope::~Scope()
 {
     if (_symbols)
-        free(_symbols);
+        std::free(_symbols);
     if (_hash)
-        free(_hash);
+        std::free(_hash);
 }
 
 ScopedSymbol *Scope::owner() const
@@ -214,7 +215,7 @@ void Scope::enterSymbol(Symbol *symbol)
         if (! _allocatedSymbols)
             _allocatedSymbols = DefaultInitialSize;
 
-        _symbols = reinterpret_cast<Symbol **>(realloc(_symbols, sizeof(Symbol *) * _allocatedSymbols));
+        _symbols = reinterpret_cast<Symbol **>(std::realloc(_symbols, sizeof(Symbol *) * _allocatedSymbols));
     }
 
     assert(! symbol->_scope || symbol->scope() == this);
@@ -300,7 +301,7 @@ void Scope::rehash()
     if (! _hashSize)
         _hashSize = DefaultInitialSize;
 
-    _hash = reinterpret_cast<Symbol **>(realloc(_hash, sizeof(Symbol *) * _hashSize));
+    _hash = reinterpret_cast<Symbol **>(std::realloc(_hash, sizeof(Symbol *) * _hashSize));
     std::memset(_hash, 0, sizeof(Symbol *) * _hashSize);
 
     for (int index = 0; index < _symbolCount + 1; ++index) {

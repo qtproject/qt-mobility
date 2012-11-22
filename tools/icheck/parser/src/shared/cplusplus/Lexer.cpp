@@ -613,7 +613,7 @@ void Lexer::scan_helper(Token *tok)
 
                 do {
                     yyinp();
-                    if (! (isalnum(_yychar) || _yychar == '_' || _yychar == '$'))
+                    if (! (std::isalnum(_yychar) || _yychar == '_' || _yychar == '$'))
                         break;
                 } while (_yychar);
 

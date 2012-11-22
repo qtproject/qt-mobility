@@ -21,7 +21,7 @@ win32:!wince* {
 
 simulator: SUBDIRS += simulator
 
-unix:!mac:!symbian {
+unix:!mac:!symbian:!qnx {
     TMP_GST_LIBS = \
         gstreamer-0.10 >= 0.10.19 \
         gstreamer-base-0.10 >= 0.10.19 \

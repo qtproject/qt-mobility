@@ -68,6 +68,7 @@
 #include "DiagnosticClient.h"
 #include <stack>
 #include <cstdarg>
+#include <cstdlib>
 #include <algorithm>
 
 using namespace CPlusPlus;
@@ -220,7 +221,7 @@ void TranslationUnit::tokenize()
                 if (! tk.f.newline && tk.is(T_IDENTIFIER) && tk.identifier == lineId)
                     lex(&tk);
                 if (! tk.f.newline && tk.is(T_NUMERIC_LITERAL)) {
-                    unsigned line = (unsigned) strtoul(tk.spell(), 0, 0);
+                    unsigned line = (unsigned) std::strtoul(tk.spell(), 0, 0);
                     lex(&tk);
                     if (! tk.f.newline && tk.is(T_STRING_LITERAL)) {
                         const StringLiteral *fileName = control()->findOrInsertStringLiteral(tk.string->chars(),
@@ -485,7 +486,7 @@ void TranslationUnit::fatal(unsigned index, const char *format, ...)
         showErrorLine(index, column, stderr);
     }
 
-    exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
 }
 
 unsigned TranslationUnit::findPreviousLineOffset(unsigned tokenIndex) const

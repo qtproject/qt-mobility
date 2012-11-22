@@ -31,6 +31,11 @@
  *****************************************************************************/
 
 #define PJ_LIB__
+
+#ifdef __QNXNTO__
+#  include <math.h> // Needs to be included outside of "extern "C""
+#endif
+
 extern "C" {
 #include <projects.h>
 #include <stdio.h>

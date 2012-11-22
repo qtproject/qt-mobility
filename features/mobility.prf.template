@@ -63,10 +63,12 @@ contains(MOBILITY, publishsubscribe) {
 }
 
 contains(MOBILITY, location) {
+    qnx: QT += network sql declarative
     qtMobilityAddLibrary(QtLocation)
 }
 
 contains(MOBILITY, serviceframework) {
+    qnx: QT += network sql
     qtMobilityAddLibrary(QtServiceFramework)
 }
 
