@@ -36,6 +36,7 @@ bin/icheck*
 bin/servicedbgen*
 bin/BearerEx
 bin/contacts-tester
+bin/ndefhandlergen
 install/*
 lib/*
 doc/src/snippets/connectivity/connectivity
@@ -134,6 +135,10 @@ config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf
 config.tests/maemo5-contacts/maemo5-contacts
 config.tests/bluez/bluez
+config.tests/bbsensor_header/bbsensor_header
+config.tests/bbsensor_holster/bbsensor_holster
+config.tests/bbsensor_compass/bbsensor_compass
+
 
 .qmake.cache
 translations/qtmobility_untranslated.ts
@@ -174,4 +179,3 @@ plugin_commonU.def
 # Failed patch
 *.orig
 *.rej
-
