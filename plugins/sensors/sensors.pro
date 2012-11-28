@@ -24,7 +24,11 @@ symbian {
     }
 }
 
-SUBDIRS += generic
+blackberry {
+    SUBDIRS += blackberry
+}
+
+!blackberry: SUBDIRS += generic
 simulator: SUBDIRS += simulator
 
 # Allow forcing extra plugins to build even if they won't run
