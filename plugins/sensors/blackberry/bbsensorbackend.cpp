@@ -113,15 +113,17 @@ sensor_type_e BbSensorBackendBase::sensorType() const
 
 void BbSensorBackendBase::setDevice(const QString &deviceFile, sensor_type_e sensorType)
 {
-    const bool isActive = m_deviceFile.isOpen();
-    if (isActive)
-        stop();
+    if (deviceFile != m_deviceFile.fileName()) {
+        setPaused(true);
+        delete m_socketNotifier.take();
+        m_deviceFile.close();
 
-    m_sensorType = sensorType;
-    m_deviceFile.setFileName(deviceFile);
-
-    if (isActive)
-        start();
+        m_sensorType = sensorType;
+        m_deviceFile.setFileName(deviceFile);
+        initSensorInfo();
+        if (m_started)
+            start();    // restart with new device file
+    }
 }
 
 void BbSensorBackendBase::initSensorInfo()
