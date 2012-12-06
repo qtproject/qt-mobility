@@ -329,7 +329,7 @@ QWindowVideoWidgetBackend::QWindowVideoWidgetBackend(
     connect(control, SIGNAL(fullScreenChanged(bool)), m_widget, SLOT(_q_fullScreenChanged(bool)));
     connect(control, SIGNAL(nativeSizeChanged()), m_widget, SLOT(_q_dimensionsChanged()));
 
-    control->setWinId(widget->winId());
+    updateWindowId();
 }
 
 QWindowVideoWidgetBackend::~QWindowVideoWidgetBackend()
@@ -383,7 +383,7 @@ QSize QWindowVideoWidgetBackend::sizeHint() const
 
 void QWindowVideoWidgetBackend::showEvent()
 {
-    m_windowControl->setWinId(m_widget->winId());
+    updateWindowId();
 
     m_windowControl->setDisplayRect(m_widget->rect());
 
@@ -420,6 +420,30 @@ void QWindowVideoWidgetBackend::paintEvent(QPaintEvent *event)
     m_windowControl->repaint();
 
     event->accept();
+}
+
+void QWindowVideoWidgetBackend::updateWindowId()
+{
+    const WId winId = m_widget->winId();
+
+    // If the window ID is 0, it was not possible to promote the video widget from an alien widget
+    // to a native widget. As a last resort use the native ancestor instead.
+    if (winId == 0) {
+        // Do not use m_widget->effectiveWinId(), it will assert inside qtwidget
+        // This stuff is broken in QPA.
+        QWidget *parent = m_widget;
+        while (parent && !parent->winId()) {
+            parent = parent->parentWidget();
+        }
+
+        if (parent) {
+            m_windowControl->setWinId(parent->winId());
+            QPoint topLeft = m_widget->mapTo(parent, QPoint(0, 0));
+            m_windowControl->setDisplayRect(QRect(topLeft, m_widget->size()));
+        }
+    } else {
+        m_windowControl->setWinId(winId);
+    }
 }
 
 #if defined(Q_WS_WIN)

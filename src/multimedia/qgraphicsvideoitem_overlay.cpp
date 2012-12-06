@@ -103,6 +103,7 @@ public:
     void clearService();
     void updateRects();
     void updateLastFrame();
+    void updateWindowId();
 
     void _q_present();
     void _q_updateNativeSize();
@@ -113,6 +114,30 @@ public:
 void QGraphicsVideoItemPrivate::_q_present()
 {
 
+}
+
+void QGraphicsVideoItemPrivate::updateWindowId()
+{
+    const WId winId = videoWidget->winId();
+
+    // If the window ID is 0, it was not possible to promote the video widget from an alien widget
+    // to a native widget. As a last resort use the native ancestor instead.
+    if (winId == 0) {
+        // Do not use videoWidget->effectiveWinId(), it will assert inside qtwidget
+        // This stuff is broken in QPA.
+        QWidget *parent = videoWidget;
+        while (parent && !parent->winId()) {
+            parent = parent->parentWidget();
+        }
+
+        if (parent) {
+            windowControl->setWinId(parent->winId());
+            QPoint topLeft = videoWidget->mapTo(parent, QPoint(0, 0));
+            windowControl->setDisplayRect(QRect(topLeft, videoWidget->size()));
+        }
+    } else {
+        windowControl->setWinId(winId);
+    }
 }
 
 bool QGraphicsVideoItemPrivate::eventFilter(QObject *object, QEvent *event)
@@ -152,7 +177,7 @@ void QGraphicsVideoItemPrivate::setWidget(QWidget *widget)
     if (videoWidget != widget) {
         videoWidget = widget;
         if (widget) {
-            windowControl->setWinId(widget->winId());
+            updateWindowId();
             widget->installEventFilter(this);
         }
     }
