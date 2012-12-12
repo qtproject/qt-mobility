@@ -301,6 +301,10 @@ the operation can be cancelled by calling
 \l {QCameraExposure::ExposureMode}{auto-exposure} or \l {QCameraImageProcessing::WhiteBalanceMode}{white balance}
 cancellation can be done by calling \l {QCamera::unlock()}{unlock}(QCamera::LockFocus).
 
+\section1 Platform Notes
+\list
+  \o \l{BlackBerry}
+\endlist
 
 \target qtmultimediakit examples
 \section1 Examples
