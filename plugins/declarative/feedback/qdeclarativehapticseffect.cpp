@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativehapticseffect_p.h"
+
 /*!
     \qmlclass HapticsEffect
     \brief The HapticsEffect element represents a custom haptic feedback effect.
@@ -94,7 +95,9 @@ int QDeclarativeHapticsEffect::duration() const
     */
 void QDeclarativeHapticsEffect::setIntensity(qreal intensity)
 {
-    if (qFuzzyCompare(intensity, d->intensity())) {
+    qreal newIntensity = intensity + 1.0;
+    qreal oldIntensity = d->intensity() + 1.0;
+    if (!qFuzzyCompare(newIntensity, oldIntensity)) {
         d->setIntensity(intensity);
         emit intensityChanged();
     }
