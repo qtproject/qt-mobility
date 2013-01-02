@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+# Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 # Contact: http://www.qt-project.org/legal
 # This component and the accompanying materials are made available
 # under the terms of "Eclipse Public License v1.0"
