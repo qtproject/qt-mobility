@@ -248,8 +248,8 @@ void QmlSensorGesture::deleteGesture()
 void QmlSensorGesture::createGesture()
 {
     deleteGesture();
+    sensorGesture = new QSensorGesture(gestureList, this);
     if (!validGestures().isEmpty()) {
-        sensorGesture = new QSensorGesture(gestureList, this);
         QObject::connect(sensorGesture, SIGNAL(detected(QString)),
                          this , SIGNAL(detected(QString)));
         Q_EMIT validGesturesChanged();
