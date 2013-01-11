@@ -98,6 +98,7 @@ public:
 
     bool eventFilter(QObject *object, QEvent *event);
     void updateEventFilters();
+    QWidget* nativeParent() const;
 
     void setWidget(QWidget *widget);
     void clearService();
@@ -116,6 +117,15 @@ void QGraphicsVideoItemPrivate::_q_present()
 
 }
 
+QWidget* QGraphicsVideoItemPrivate::nativeParent() const
+{
+    QWidget *parent = videoWidget;
+    while (parent && !parent->winId()) {
+        parent = parent->parentWidget();
+    }
+    return parent;
+}
+
 void QGraphicsVideoItemPrivate::updateWindowId()
 {
     const WId winId = videoWidget->winId();
@@ -125,10 +135,7 @@ void QGraphicsVideoItemPrivate::updateWindowId()
     if (winId == 0) {
         // Do not use videoWidget->effectiveWinId(), it will assert inside qtwidget
         // This stuff is broken in QPA.
-        QWidget *parent = videoWidget;
-        while (parent && !parent->winId()) {
-            parent = parent->parentWidget();
-        }
+        QWidget *parent = nativeParent();
 
         if (parent) {
             windowControl->setWinId(parent->winId());
@@ -412,6 +419,16 @@ void QGraphicsVideoItem::paint(
 
         QTransform transform = painter->combinedTransform();
         QRect overlayRect = transform.mapRect(d->displayRect).toRect();
+
+        if (d->videoWidget && d->videoWidget->winId() == 0) {
+            // Workaround Qt4 QPA bug regarding alien to native promotion
+            QWidget *parent = d->nativeParent();
+            if (parent) {
+                QPoint topLeft = d->videoWidget->mapTo(parent, QPoint(0, 0));
+                overlayRect.translate(topLeft);
+            }
+        }
+
         QRect currentSurfaceRect = d->windowControl->displayRect();
 
         if (currentSurfaceRect != overlayRect) {            

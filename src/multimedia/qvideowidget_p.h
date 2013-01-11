@@ -213,6 +213,8 @@ public:
 
 private:
     void updateWindowId();
+    void updateDisplayRect();
+    QWidget* nativeParent() const;
 
     QMediaService *m_service;
     QVideoWindowControl *m_windowControl;

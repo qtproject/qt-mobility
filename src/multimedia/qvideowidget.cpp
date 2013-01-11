@@ -384,8 +384,7 @@ QSize QWindowVideoWidgetBackend::sizeHint() const
 void QWindowVideoWidgetBackend::showEvent()
 {
     updateWindowId();
-
-    m_windowControl->setDisplayRect(m_widget->rect());
+    updateDisplayRect();
 
 #if defined(Q_WS_WIN)
     m_widget->setUpdatesEnabled(false);
@@ -401,12 +400,12 @@ void QWindowVideoWidgetBackend::hideEvent(QHideEvent *)
 
 void QWindowVideoWidgetBackend::moveEvent(QMoveEvent *)
 {
-    m_windowControl->setDisplayRect(m_widget->rect());
+    updateDisplayRect();
 }
 
 void QWindowVideoWidgetBackend::resizeEvent(QResizeEvent *)
 {
-    m_windowControl->setDisplayRect(m_widget->rect());
+    updateDisplayRect();
 }
 
 void QWindowVideoWidgetBackend::paintEvent(QPaintEvent *event)
@@ -422,6 +421,35 @@ void QWindowVideoWidgetBackend::paintEvent(QPaintEvent *event)
     event->accept();
 }
 
+QWidget* QWindowVideoWidgetBackend::nativeParent() const
+{
+    // Do not use m_widget->effectiveWinId(), it will assert inside qtwidget
+    // This stuff is broken in QPA.
+    QWidget *parent = m_widget;
+    while (parent && !parent->winId()) {
+        parent = parent->parentWidget();
+    }
+
+    return parent;
+}
+
+void QWindowVideoWidgetBackend::updateDisplayRect()
+{
+    const WId winId = m_widget->winId();
+
+    // If the window ID is 0, it was not possible to promote the video widget from an alien widget
+    // to a native widget. As a last resort use the native ancestor instead.
+    if (winId == 0) {
+        QWidget *parent = nativeParent();
+        if (parent) {
+            QPoint topLeft = m_widget->mapTo(parent, QPoint(0, 0));
+            m_windowControl->setDisplayRect(QRect(topLeft, m_widget->size()));
+        }
+    } else {
+        m_windowControl->setDisplayRect(m_widget->rect());
+    }
+}
+
 void QWindowVideoWidgetBackend::updateWindowId()
 {
     const WId winId = m_widget->winId();
@@ -429,17 +457,10 @@ void QWindowVideoWidgetBackend::updateWindowId()
     // If the window ID is 0, it was not possible to promote the video widget from an alien widget
     // to a native widget. As a last resort use the native ancestor instead.
     if (winId == 0) {
-        // Do not use m_widget->effectiveWinId(), it will assert inside qtwidget
-        // This stuff is broken in QPA.
-        QWidget *parent = m_widget;
-        while (parent && !parent->winId()) {
-            parent = parent->parentWidget();
-        }
-
+        QWidget *parent = nativeParent();
         if (parent) {
             m_windowControl->setWinId(parent->winId());
-            QPoint topLeft = m_widget->mapTo(parent, QPoint(0, 0));
-            m_windowControl->setDisplayRect(QRect(topLeft, m_widget->size()));
+            updateDisplayRect();
         }
     } else {
         m_windowControl->setWinId(winId);
