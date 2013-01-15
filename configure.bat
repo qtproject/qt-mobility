@@ -67,6 +67,7 @@ set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 set PLATFORM_CONFIG=
 set NFC_SYMBIAN=auto
+set USE_WMF_IF_AVAILABLE=yes
 
 REM By default, all modules are requested.  Reset this later if -modules is supplied
 set MODULE_BEARER_REQUESTED=yes
@@ -121,6 +122,7 @@ if "%1" == "-symbian-unfrozen"  goto unfrozenTag
 if "%1" == "-staticconfig"      goto staticConfigTag
 if "%1" == "-languages"         goto languagesTag
 if "%1" == "-no-nfc-symbian"    goto noNfcSymbianTag
+if "%1" == "-no-wmf"            goto noWmfTag
 
 echo Unknown option: "%1"
 goto usage
@@ -166,7 +168,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -languages ........ Languages/translations to be installed (e.g.: ar de ko)
     echo                     (default is empty)
     echo -no-nfc-symbian ... Disables the NFC Symbian backend.
-
+    echo -no-wmf ........... Disables the Windows Media Foundation backend.
 
 if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
 goto exitTag
@@ -180,6 +182,11 @@ goto cmdline_parsing
 :noNfcSymbianTag
 shift
 set NFC_SYMBIAN=no
+goto cmdline_parsing
+
+:noWmfTag
+shift
+set USE_WMF_IF_AVAILABLE=no
 goto cmdline_parsing
 
 :languagesTag
@@ -776,7 +783,12 @@ call :compileTest DirectShow directshow
 call :compileTest WindowsMediaSDK wmsdk
 call :compileTest WindowMediaPlayer wmp
 call :compileTest EnhancedVideoRenderer evr
-call :compileTest WindowsMediaFoundation wmf
+if "%USE_WMF_IF_AVAILABLE%" == "yes" (
+    call :compileTest WindowsMediaFoundation wmf
+) else (
+    echo Not using Windows Media Foundation
+    echo wmf_enabled = no >> %PROJECT_CONFIG%
+)
 
 :noTests
 
