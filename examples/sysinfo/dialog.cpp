@@ -189,23 +189,23 @@ void Dialog::setupDevice()
 //! [inputMethod flags]
     QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
     QStringList inputs;
-    if ((methods & QSystemDeviceInfo::Keys)=QSystemDeviceInfo::Keypad){
+    if ((methods & QSystemDeviceInfo::Keys)==QSystemDeviceInfo::Keys){
         inputs << "Keys";
     }
-    if ((methods & QSystemDeviceInfo::Keypad)=QSystemDeviceInfo::Keypad) {
+    if ((methods & QSystemDeviceInfo::Keypad)==QSystemDeviceInfo::Keypad) {
         inputs << "Keypad";
     }
 //! [inputMethod flags]
-    if ((methods & QSystemDeviceInfo::Keyboard)=QSystemDeviceInfo::Keyboard) {
+    if ((methods & QSystemDeviceInfo::Keyboard)==QSystemDeviceInfo::Keyboard) {
         inputs << "Keyboard";
     }
-    if ((methods & QSystemDeviceInfo::SingleTouch)=QSystemDeviceInfo::SingleTouch) {
+    if ((methods & QSystemDeviceInfo::SingleTouch)==QSystemDeviceInfo::SingleTouch) {
         inputs << "Touch Screen";
     }
-    if ((methods & QSystemDeviceInfo::MultiTouch)=QSystemDeviceInfo::MultiTouch) {
+    if ((methods & QSystemDeviceInfo::MultiTouch)==QSystemDeviceInfo::MultiTouch) {
         inputs << "Multi touch";
     }
-    if ((methods & QSystemDeviceInfo::Mouse)=QSystemDeviceInfo::Mouse){
+    if ((methods & QSystemDeviceInfo::Mouse)==QSystemDeviceInfo::Mouse){
         inputs << "Mouse";
     }
 
