@@ -2399,7 +2399,7 @@ QString QSystemDeviceInfoLinuxCommonPrivate::manufacturer()
 
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMethodType()
 {
-    QSystemDeviceInfo::InputMethodFlags methods ;
+    QSystemDeviceInfo::InputMethodFlags methods = 0x0;
 #if !defined(QT_NO_HAL) && !defined(Q_WS_MEEGO)
     if (halIsAvailable) {
         QHalInterface iface2;
@@ -2447,7 +2447,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
     filters << "event*";
     const QStringList inputList = inputDir.entryList(filters, QDir::Dirs, QDir::Name);
     foreach (const QString &inputFileName, inputList) {
-        QFile file(inputsPath + inputFileName+ " /device/name");
+        QFile file(inputsPath + inputFileName + "/device/name");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             qDebug()<<"File not opened";
         } else {
