@@ -335,8 +335,10 @@ void BbMediaPlayerControl::setPositionInternal(qint64 position)
     if (!m_context)
         return;
 
-    if (mmr_seek(m_context, QString::number(position).toAscii()) != 0)
-        emitMmError("Seeking failed");
+    if (m_metaData.isSeekable()) {
+        if (mmr_seek(m_context, QString::number(position).toAscii()) != 0)
+            emitMmError("Seeking failed");
+    }
 }
 
 void BbMediaPlayerControl::setMediaStatus(QMediaPlayer::MediaStatus status)
@@ -415,9 +417,7 @@ bool BbMediaPlayerControl::isVideoAvailable() const
 
 bool BbMediaPlayerControl::isSeekable() const
 {
-    // We can currently not get that information from the mmrenderer API. Just pretend we can seek,
-    // it will fail at runtime if we can not.
-    return true;
+    return m_metaData.isSeekable();
 }
 
 QMediaTimeRange BbMediaPlayerControl::availablePlaybackRanges() const
@@ -615,6 +615,7 @@ void BbMediaPlayerControl::updateMetaData()
     emit audioAvailableChanged(m_metaData.hasAudio());
     emit videoAvailableChanged(m_metaData.hasVideo());
     emit availablePlaybackRangesChanged(availablePlaybackRanges());
+    emit seekableChanged(m_metaData.isSeekable());
 }
 
 void BbMediaPlayerControl::emitMmError(const QString &msg)
