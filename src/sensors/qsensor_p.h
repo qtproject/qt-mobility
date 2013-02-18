@@ -76,6 +76,9 @@ public:
         , error(0)
         , alwaysOn(false)
         , skipDuplicates(false)
+        , bufferSize(1)
+        , maxBufferSize(1)
+        , efficientBufferSize(1)
         , q(sensor)
     {
     }
@@ -107,6 +110,11 @@ public:
 
     bool alwaysOn;
     bool skipDuplicates;
+
+    int bufferSize;
+    int maxBufferSize;
+    int efficientBufferSize;
+
     QSensor *q;
 };
 

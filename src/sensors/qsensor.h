@@ -100,11 +100,9 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(int error READ error NOTIFY sensorError)
     Q_PROPERTY(bool alwaysOn READ isAlwaysOn WRITE setAlwaysOn NOTIFY alwaysOnChanged)
     Q_PROPERTY(bool skipDuplicates READ skipDuplicates WRITE setSkipDuplicates NOTIFY skipDuplicatesChanged)
-#ifdef Q_QDOC
-    Q_PROPERTY(int maxBufferSize)
-    Q_PROPERTY(int efficientBufferSize)
-    Q_PROPERTY(int bufferSize)
-#endif
+    Q_PROPERTY(int maxBufferSize READ maxBufferSize NOTIFY maxBufferSizeChanged)
+    Q_PROPERTY(int efficientBufferSize READ efficientBufferSize NOTIFY efficientBufferSizeChanged)
+    Q_PROPERTY(int bufferSize READ bufferSize WRITE setBufferSize NOTIFY bufferSizeChanged)
 public:
     explicit QSensor(const QByteArray &type, QObject *parent = 0);
     virtual ~QSensor();
@@ -153,6 +151,15 @@ public:
     static QList<QByteArray> sensorsForType(const QByteArray &type);
     static QByteArray defaultSensorForType(const QByteArray &type);
 
+    int maxBufferSize() const;
+    void setMaxBufferSize(int maxBufferSize);
+
+    int efficientBufferSize() const;
+    void setEfficientBufferSize(int efficientBufferSize);
+
+    int bufferSize() const;
+    void setBufferSize(int bufferSize);
+
 public Q_SLOTS:
     // Start receiving values from the sensor
     bool start();
@@ -169,6 +176,9 @@ Q_SIGNALS:
     void alwaysOnChanged();
     void skipDuplicatesChanged(bool skipDuplicates);
     void dataRateChanged();
+    void maxBufferSizeChanged(int maxBufferSize);
+    void efficientBufferSizeChanged(int efficientBufferSize);
+    void bufferSizeChanged(int bufferSize);
 
 protected:
     QSensor(const QByteArray &type, QSensorPrivate *dd, QObject* parent = 0);
