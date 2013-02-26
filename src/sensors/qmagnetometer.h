@@ -82,6 +82,8 @@ private:
     bool filter(QSensorReading *reading) { return filter(static_cast<QMagnetometerReading*>(reading)); }
 };
 
+class QMagnetometerPrivate;
+
 class Q_SENSORS_EXPORT QMagnetometer : public QSensor
 #if defined(Q_OS_BLACKBERRY)
 , public QOrientableSensorBase
@@ -94,9 +96,7 @@ class Q_SENSORS_EXPORT QMagnetometer : public QSensor
     Q_PROPERTY(int userOrientation READ userOrientation WRITE setUserOrientation NOTIFY userOrientationChanged)
 #endif
 
-#ifdef Q_QDOC
-    Q_PROPERTY(bool returnGeoValues)
-#endif
+    Q_PROPERTY(bool returnGeoValues READ returnGeoValues WRITE setReturnGeoValues NOTIFY returnGeoValuesChanged)
 
 public:
 #if defined(Q_MOC_RUN) && defined(Q_OS_BLACKBERRY)
@@ -108,16 +108,27 @@ public:
     };
     Q_ENUMS(AxesOrientationMode)
 #endif
-    explicit QMagnetometer(QObject *parent = 0) : QSensor(QMagnetometer::type, parent) {}
-    virtual ~QMagnetometer() {}
+    explicit QMagnetometer(QObject *parent = 0);
+    virtual ~QMagnetometer();
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
     static char const * const type;
+
+    bool returnGeoValues() const;
+    void setReturnGeoValues(bool returnGeoValues);
+
 #if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
 Q_SIGNALS:
     void axesOrientationModeChanged(AxesOrientationMode axesOrientationMode);
     void currentOrientationChanged(int currentOrientation);
     void userOrientationChanged(int userOrientation);
 #endif
+
+Q_SIGNALS:
+    void returnGeoValuesChanged(bool returnGeoValues);
+
+private:
+    friend class QMagnetometerPrivate;
+    QMagnetometerPrivate *d_func() const;
 };
 
 QTM_END_NAMESPACE

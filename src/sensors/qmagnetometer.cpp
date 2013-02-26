@@ -219,11 +219,23 @@ char const * const QMagnetometer::type("QMagnetometer");
 */
 
 /*!
+   \internal
+ */
+QMagnetometerPrivate *QMagnetometer::d_func() const
+{
+    return static_cast<QMagnetometerPrivate*>(QSensor::d_func());
+}
+
+/*!
     \fn QMagnetometer::QMagnetometer(QObject *parent)
 
     Construct the sensor as a child of \a parent.
     \since 1.0
 */
+QMagnetometer::QMagnetometer(QObject *parent)
+    : QSensor(QMagnetometer::type, new QMagnetometerPrivate(this), parent)
+{
+}
 
 /*!
     \fn QMagnetometer::~QMagnetometer()
@@ -231,6 +243,9 @@ char const * const QMagnetometer::type("QMagnetometer");
     Destroy the sensor. Stops the sensor if it has not already been stopped.
     \since 1.0
 */
+QMagnetometer::~QMagnetometer()
+{
+}
 
 /*!
     \fn QMagnetometer::reading() const
@@ -248,10 +263,24 @@ char const * const QMagnetometer::type("QMagnetometer");
     Set to true to return geomagnetic flux density.
     Set to false (the default) to return raw magnetic flux density.
 
-    Note that you must access this property via QObject::property() and QObject::setProperty().
     The property must be set before calling start().
     \since 1.0
 */
+
+bool QMagnetometer::returnGeoValues() const
+{
+    Q_D(const QMagnetometer);
+    return d->returnGeoValues;
+}
+
+void QMagnetometer::setReturnGeoValues(bool returnGeoValues)
+{
+    Q_D(QMagnetometer);
+    if (d->returnGeoValues != returnGeoValues) {
+        d->returnGeoValues = returnGeoValues;
+        emit returnGeoValuesChanged(returnGeoValues);
+    }
+}
 
 #include "moc_qmagnetometer.cpp"
 QTM_END_NAMESPACE
