@@ -65,6 +65,12 @@ IMPLEMENT_READING(QIRProximityReading)
     The sensor reports reflectance as a percentage. That is, 0 indicates nothing was detected
     within the range of the sensor and 100 indicates the infra-red signal returned at the full
     power level that it was sent at.
+
+    With some IR sensors, it is quite uncommon to reach the top and the bottom of the
+    value range, and some parts of the range ends might not be obtainable at all. This is due to the
+    behavior of the sensor hardware. With these sensors, the absolute value of reflectance should never
+    be used directly. Instead, applications should react to the relative change of the reading values. Use
+    QProximitySensor if it is only necessary to check if something is close to the device or not.
 */
 
 /*!
