@@ -42,22 +42,11 @@
 #define BBTEMPERATURESENSOR_H
 
 #include "bbsensorbackend.h"
+#include "qambienttemperaturesensor.h"
 
 QTM_USE_NAMESPACE
 
-class BbTemperatureReadingPrivate;
-
-class BbTemperatureReading : public QSensorReading
-{
-    Q_OBJECT
-    Q_PROPERTY(qreal temperature READ temperature)
-    DECLARE_READING(BbTemperatureReading)
-public:
-    qreal temperature() const;
-    void setTemperature(qreal temperature);
-};
-
-class BbTemperatureSensor : public BbSensorBackend<BbTemperatureReading>
+class BbTemperatureSensor : public BbSensorBackend<QAmbientTemperatureReading>
 {
     Q_OBJECT
 
@@ -67,7 +56,7 @@ public:
     static QString devicePath();
 
 protected:
-    bool updateReadingFromEvent(const sensor_event_t &event, BbTemperatureReading *reading);
+    bool updateReadingFromEvent(const sensor_event_t &event, QAmbientTemperatureReading *reading);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Research In Motion <blackberry-qt@qnx.com>
+** Copyright (C) 2013 Research In Motion
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the Qt Mobility Components.
@@ -38,24 +38,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "bbtemperaturesensor.h"
+#ifndef QAMBIENTTEMPERATURESENSOR_P_H
+#define QAMBIENTTEMPERATURESENSOR_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-BbTemperatureSensor::BbTemperatureSensor(QSensor *sensor)
-    : BbSensorBackend<QAmbientTemperatureReading>(devicePath(), SENSOR_TYPE_TEMPERATURE, sensor)
+QTM_BEGIN_NAMESPACE
+
+class QAmbientTemperatureReadingPrivate
 {
-    setDescription(QLatin1String("Temperature in degrees Celsius"));
-}
+public:
+    QAmbientTemperatureReadingPrivate()
+        : temperature(0)
+    {
+    }
 
-QString BbTemperatureSensor::devicePath()
-{
-    return QLatin1String("/dev/sensor/temp");
-}
+    qreal temperature;
+};
 
-bool BbTemperatureSensor::updateReadingFromEvent(const sensor_event_t &event, QAmbientTemperatureReading *reading)
-{
-    // TODO: I was unable to test this since the device I was testing this with did not have
-    //       a temperature sensor. Verify that this works and check that the units are correct.
-    reading->setTemperature(event.temperature_s.temperature);
-    return true;
-}
+QTM_END_NAMESPACE
+
+#endif

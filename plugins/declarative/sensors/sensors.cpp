@@ -45,6 +45,7 @@
 #include <qaccelerometer.h>
 #include <qaltimeter.h>
 #include <qambientlightsensor.h>
+#include <qambienttemperaturesensor.h>
 #include <qcompass.h>
 #include <qmagnetometer.h>
 #include <qorientationsensor.h>
@@ -129,6 +130,8 @@ public:
         qmlRegisterUncreatableType<QAltimeterReading    >(package, major, minor, "AltimeterReading",     QLatin1String("Cannot create AltimeterReading"));
         qmlRegisterType           <QAmbientLightSensor  >(package, major, minor, "AmbientLightSensor");
         qmlRegisterUncreatableType<QAmbientLightReading >(package, major, minor, "AmbientLightReading",  QLatin1String("Cannot create AmbientLightReading"));
+        qmlRegisterType           <QAmbientTemperatureSensor  >(package, major, minor, "AmbientTemperatureSensor");
+        qmlRegisterUncreatableType<QAmbientTemperatureReading >(package, major, minor, "AmbientTemperatureReading", QLatin1String("Cannot create AmbientTemperatureReading"));
         qmlRegisterType           <QCompass             >(package, major, minor, "Compass");
         qmlRegisterUncreatableType<QCompassReading      >(package, major, minor, "CompassReading",       QLatin1String("Cannot create CompassReading"));
         qmlRegisterType           <QIRProximitySensor   >(package, major, minor, "IRProximitySensor");
@@ -421,6 +424,44 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \endcode
 
 \since Mobility 1.2
+*/
+
+/*!
+    \qmlclass AmbientTemperatureSensor QAmbientTemperatureSensor
+    \ingroup qml-sensors_type
+    \since Mobility 1.3
+    \inherits Sensor
+    \brief The AmbientTemperatureSensor element reports on the ambient temperature.
+
+    The AmbientTemperatureSensor element reports on the ambient temperature.
+
+    This element wraps the QAmbientTemperatureSensor class. Please see the documentation for
+    QAmbientTemperatureSensor for details.
+
+    \sa AmbientTemperatureReading
+*/
+
+/*!
+    \qmltype AmbientTemperatureReading QAmbientTemperatureReading
+    \ingroup qml-sensors_reading
+    \since Mobility 1.3
+    \inherits SensorReading
+    \brief The AmbientTemperatureReading element holds the most recent temperature reading.
+
+    The AmbientTemperatureReading element holds the most recent temperature reading.
+
+    This element wraps the QAmbientTemperatureReading class. Please see the documentation for
+    QAmbientTemperatureReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal AmbientTemperatureReading::temperature
+    This property holds the ambient temperature in degree Celsius.
+
+    Please see QAmbientTemperatureReading::temperature for information about this property.
+    \since Mobility 1.3
 */
 
 /*!

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Research In Motion <blackberry-qt@qnx.com>
+** Copyright (C) 2013 Research In Motion
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the Qt Mobility Components.
@@ -38,24 +38,47 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "bbtemperaturesensor.h"
+#ifndef QAMBIENTTEMPERATURESENSOR_H
+#define QAMBIENTTEMPERATURESENSOR_H
 
+#include <QtSensors/qsensor.h>
 
-BbTemperatureSensor::BbTemperatureSensor(QSensor *sensor)
-    : BbSensorBackend<QAmbientTemperatureReading>(devicePath(), SENSOR_TYPE_TEMPERATURE, sensor)
+QTM_BEGIN_NAMESPACE
+
+class QAmbientTemperatureReadingPrivate;
+
+class Q_SENSORS_EXPORT QAmbientTemperatureReading : public QSensorReading
 {
-    setDescription(QLatin1String("Temperature in degrees Celsius"));
-}
+    Q_OBJECT
+    Q_PROPERTY(qreal temperature READ temperature)
+    DECLARE_READING(QAmbientTemperatureReading)
+public:
+    qreal temperature() const;
+    void setTemperature(qreal temperature);
+};
 
-QString BbTemperatureSensor::devicePath()
+class Q_SENSORS_EXPORT QAmbientTemperatureFilter : public QSensorFilter
 {
-    return QLatin1String("/dev/sensor/temp");
-}
+public:
+    virtual bool filter(QAmbientTemperatureReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading)
+        { return filter(static_cast<QAmbientTemperatureReading*>(reading)); }
+};
 
-bool BbTemperatureSensor::updateReadingFromEvent(const sensor_event_t &event, QAmbientTemperatureReading *reading)
+class Q_SENSORS_EXPORT QAmbientTemperatureSensor : public QSensor
 {
-    // TODO: I was unable to test this since the device I was testing this with did not have
-    //       a temperature sensor. Verify that this works and check that the units are correct.
-    reading->setTemperature(event.temperature_s.temperature);
-    return true;
-}
+    Q_OBJECT
+public:
+    explicit QAmbientTemperatureSensor(QObject *parent = 0);
+    ~QAmbientTemperatureSensor();
+    QAmbientTemperatureReading *reading() const { return static_cast<QAmbientTemperatureReading*>(QSensor::reading()); }
+    static char const * const type;
+
+private:
+    Q_DISABLE_COPY(QAmbientTemperatureSensor)
+};
+
+QTM_END_NAMESPACE
+
+#endif

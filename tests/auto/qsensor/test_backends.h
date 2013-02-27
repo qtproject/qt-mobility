@@ -52,6 +52,7 @@ void unregister_test_backends();
 #include <qaccelerometer.h>
 #include <qaltimeter.h>
 #include <qambientlightsensor.h>
+#include <qambienttemperaturesensor.h>
 #include <qcompass.h>
 #include <qgyroscope.h>
 #include <qlightsensor.h>
@@ -104,6 +105,9 @@ PREPARE_SENSORINTERFACE(QAccelerometer, QAccelerometerReading, QAccelerometerFil
 })
 PREPARE_SENSORINTERFACE(QAmbientLightSensor, QAmbientLightReading, QAmbientLightFilter, {
     reading->setLightLevel(QAmbientLightReading::Twilight);
+})
+PREPARE_SENSORINTERFACE(QAmbientTemperatureSensor, QAmbientTemperatureReading, QAmbientTemperatureFilter, {
+    reading->setTemperature(30);
 })
 PREPARE_SENSORINTERFACE(QCompass, QCompassReading, QCompassFilter, {
     reading->setAzimuth(1.0);
