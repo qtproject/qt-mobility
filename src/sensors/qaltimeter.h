@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Research In Motion <blackberry-qt@qnx.com>
+** Copyright (C) 2013 Research In Motion
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the Qt Mobility Components.
@@ -38,26 +38,47 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef BBALTIMETER_H
-#define BBALTIMETER_H
+#ifndef QALTIMETER_H
+#define QALTIMETER_H
 
-#include "bbsensorbackend.h"
-#include "qaltimeter.h"
+#include "qsensor.h"
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
+class QAltimeterReadingPrivate;
 
-class BbAltimeter : public BbSensorBackend<QAltimeterReading>
+class Q_SENSORS_EXPORT QAltimeterReading : public QSensorReading
 {
     Q_OBJECT
-
+    Q_PROPERTY(qreal altitude READ altitude)
+    DECLARE_READING(QAltimeterReading)
 public:
-    explicit BbAltimeter(QSensor *sensor);
-
-    static QString devicePath();
-
-protected:
-    bool updateReadingFromEvent(const sensor_event_t &event, QAltimeterReading *reading);
+    qreal altitude() const;
+    void setAltitude(qreal altitude);
 };
+
+class Q_SENSORS_EXPORT QAltimeterFilter : public QSensorFilter
+{
+public:
+    virtual bool filter(QAltimeterReading *reading) = 0;
+private:
+    bool filter(QSensorReading *reading)
+        { return filter(static_cast<QAltimeterReading*>(reading)); }
+};
+
+class Q_SENSORS_EXPORT QAltimeter : public QSensor
+{
+    Q_OBJECT
+public:
+    explicit QAltimeter(QObject *parent = 0);
+    ~QAltimeter();
+    QAltimeterReading *reading() const { return static_cast<QAltimeterReading*>(QSensor::reading()); }
+    static char const * const type;
+
+private:
+    Q_DISABLE_COPY(QAltimeter)
+};
+
+QTM_END_NAMESPACE
 
 #endif

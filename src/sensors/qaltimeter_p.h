@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Research In Motion <blackberry-qt@qnx.com>
+** Copyright (C) 2013 Research In Motion
 ** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the Qt Mobility Components.
@@ -38,26 +38,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef BBALTIMETER_H
-#define BBALTIMETER_H
+#ifndef QALTIMETER_P_H
+#define QALTIMETER_P_H
 
-#include "bbsensorbackend.h"
-#include "qaltimeter.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-
-class BbAltimeter : public BbSensorBackend<QAltimeterReading>
+class QAltimeterReadingPrivate
 {
-    Q_OBJECT
-
 public:
-    explicit BbAltimeter(QSensor *sensor);
+    QAltimeterReadingPrivate()
+        : altitude(0)
+    {
+    }
 
-    static QString devicePath();
-
-protected:
-    bool updateReadingFromEvent(const sensor_event_t &event, QAltimeterReading *reading);
+    qreal altitude;
 };
+
+QTM_END_NAMESPACE
 
 #endif

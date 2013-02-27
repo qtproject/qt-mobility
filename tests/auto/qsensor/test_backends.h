@@ -50,6 +50,7 @@ void register_test_backends();
 void unregister_test_backends();
 
 #include <qaccelerometer.h>
+#include <qaltimeter.h>
 #include <qambientlightsensor.h>
 #include <qcompass.h>
 #include <qgyroscope.h>
@@ -93,6 +94,9 @@ QTM_USE_NAMESPACE
         PREPARE_SENSORINTERFACE_DECLS(SensorClass, ReadingClass, FilterClass, readingcode)
 #endif
 
+PREPARE_SENSORINTERFACE(QAltimeter, QAltimeterReading, QAltimeterFilter, {
+    reading->setAltitude(8848);
+})
 PREPARE_SENSORINTERFACE(QAccelerometer, QAccelerometerReading, QAccelerometerFilter, {
     reading->setX(1.0);
     reading->setY(1.0);

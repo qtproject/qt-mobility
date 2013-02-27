@@ -43,6 +43,7 @@
 #include <QtDeclarative/qdeclarative.h>
 
 #include <qaccelerometer.h>
+#include <qaltimeter.h>
 #include <qambientlightsensor.h>
 #include <qcompass.h>
 #include <qmagnetometer.h>
@@ -124,6 +125,8 @@ public:
         qmlRegisterUncreatableType<QSensorReading       >(package, major, minor, "SensorReading",        QLatin1String("Cannot create SensorReading"));
         qmlRegisterType           <QAccelerometer       >(package, major, minor, "Accelerometer");
         qmlRegisterUncreatableType<QAccelerometerReading>(package, major, minor, "AccelerometerReading", QLatin1String("Cannot create AccelerometerReading"));
+        qmlRegisterType           <QAltimeter           >(package, major, minor, "Altimeter");
+        qmlRegisterUncreatableType<QAltimeterReading    >(package, major, minor, "AltimeterReading",     QLatin1String("Cannot create AltimeterReading"));
         qmlRegisterType           <QAmbientLightSensor  >(package, major, minor, "AmbientLightSensor");
         qmlRegisterUncreatableType<QAmbientLightReading >(package, major, minor, "AmbientLightReading",  QLatin1String("Cannot create AmbientLightReading"));
         qmlRegisterType           <QCompass             >(package, major, minor, "Compass");
@@ -318,6 +321,45 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
     \qmlproperty qreal AccelerometerReading::z
     Please see QAccelerometerReading::z for information about this property.
     \since Mobility 1.2
+*/
+
+/*!
+    \qmlclass Altimeter QAltimeter
+    \ingroup qml-sensors_type
+    \since Mobility 1.3
+    \inherits Sensor
+    \brief The Altimeter element reports on altitude.
+
+    The Altimeter element reports on altitude.
+
+    This element wraps the QAltimeter class. Please see the documentation for
+    QAltimeter for details.
+
+    \sa AltimeterReading
+*/
+
+/*!
+    \qmlclass AltimeterReading QAltimeterReading
+    \ingroup qml-sensors_reading
+    \since Mobility 1.3
+    \inherits SensorReading
+    \brief The AltimeterReading element holds the most recent Altimeter reading.
+
+    The AltimeterReading element holds the most recent Altimeter reading.
+
+    This element wraps the QAltimeterReading class. Please see the documentation for
+    QAltimeterReading for details.
+
+    This element cannot be directly created.
+*/
+
+/*!
+    \qmlproperty qreal AltimeterReading::altitude
+    This property holds the altitude of the device.
+
+    Please see QAltimeterReading::altitude for information about this property.
+
+    \since Mobility 1.3
 */
 
 /*!

@@ -56,6 +56,7 @@ blackberry {
 SENSORS=\
     qsensor\
     qaccelerometer\
+    qaltimeter\
     qambientlightsensor\
     qcompass\
     qholstersensor\
