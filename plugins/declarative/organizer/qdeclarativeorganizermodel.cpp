@@ -802,10 +802,10 @@ void QDeclarativeOrganizerModel::requestUpdated()
                 addSorted(di);
             }
         }
-
-        emit modelChanged();
-        emit errorChanged();
     }
+
+    emit modelChanged();
+    emit errorChanged();
 }
 
 /*!
