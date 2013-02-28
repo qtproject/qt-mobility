@@ -575,7 +575,7 @@ void QDeclarativeOrganizerModel::addSorted(QDeclarativeOrganizerItem* item)
 {
     removeItemsFromModel(QList<QString>() << item->itemId());
     int idx = itemIndex(item);
-    beginInsertRows(QModelIndex(), idx, idx + 1);
+    beginInsertRows(QModelIndex(), idx, idx);
     d->m_items.insert(idx, item);
     endInsertRows();
     d->m_itemMap.insert(item->itemId(), item);
