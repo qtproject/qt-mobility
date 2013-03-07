@@ -366,27 +366,22 @@ simulator {
 
 simulator|contains(qmf_enabled, yes):!maemo6 { 
     DEFINES += USE_QMF_IMPLEMENTATION
-    
-    QMF_INCLUDEDIR = $$(QMF_INCLUDEDIR)
-    QMF_LIBDIR = $$(QMF_LIBDIR)
 
-    # QMF headers must be located at $QMF_INCLUDEDIR
-    !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
-
-    # QMF libraries must be located at $QMF_LIBDIR
-    macx {
-        !isEmpty(QMF_LIBDIR): QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
-        LIBS += -framework qmfclient
+    !windows {
+        CONFIG += link_pkgconfig
+        PKGCONFIG += qmfclient
     } else {
+        QMF_INCLUDEDIR = $$(QMF_INCLUDEDIR)
+        QMF_LIBDIR = $$(QMF_LIBDIR)
+
+        # QMF headers must be located at $QMF_INCLUDEDIR
+        !isEmpty(QMF_INCLUDEDIR): INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
+
+        # QMF libraries must be located at $QMF_LIBDIR
         !isEmpty(QMF_LIBDIR): LIBS += -L$$(QMF_LIBDIR)
-	LIBS += -l$$qtLibraryTarget(qmfclient)
-    }
-		
-    # QMF libraries must be located at $QMF_LIBDIR
-    mac {
-        QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
-            LIBS += -framework qmfclient
-    } else {
+        LIBS += -l$$qtLibraryTarget(qmfclient)
+
+        # QMF libraries must be located at $QMF_LIBDIR
         LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qmfclient)
     }
 
