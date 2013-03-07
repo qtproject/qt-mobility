@@ -598,10 +598,4 @@ quint64 lowPriorityMask()
 
 }
 
-bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs)
-{
-    return (lhs.toString(true) == rhs.toString(true));
-}
-
-
 QTM_END_NAMESPACE

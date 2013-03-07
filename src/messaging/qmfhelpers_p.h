@@ -170,8 +170,5 @@ namespace QmfHelpers {
 
 };
 
-bool operator==(const QMailMessagePart::Location &lhs, const QMailMessagePart::Location &rhs);
-
-
 QTM_END_NAMESPACE
 #endif
