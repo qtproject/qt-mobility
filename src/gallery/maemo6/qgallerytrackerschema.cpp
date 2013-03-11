@@ -401,20 +401,28 @@ static bool qt_write_comparison(
         const QLatin1String &field,
         const QVariant &value,
         const char *op,
-        QString *query)
+        QString *query,
+        QVariant::Type type = QVariant::String)
 {
-    if (value.canConvert(QVariant::String)) {
-        *query += QLatin1String("(")
-                + field
-                + QLatin1String(op)
-                + QLatin1String("'")
-                + value.toString()
-                + QLatin1String("')");
-        return true;
+    QString stringValue;
+    if (type == QVariant::Url && value.canConvert(QVariant::Url)) {
+        QByteArray encodedUrl = value.toUrl().toEncoded();
+        stringValue = QString::fromUtf8(encodedUrl.data(), encodedUrl.length());
+    } else if (value.canConvert(QVariant::String)) {
+        stringValue = value.toString();
     } else {
         *error = QDocumentGallery::FilterError;
         return false;
     }
+
+    *query += QLatin1String("(")
+            + field
+            + QLatin1String(op)
+            + QLatin1String("'")
+            + stringValue
+            + QLatin1String("')");
+
+    return true;
 }
 
 static bool qt_write_function(
@@ -438,20 +446,28 @@ static bool qt_write_function(
         const char *function,
         const QString &field,
         const QVariant &value,
-        QString *query)
+        QString *query,
+        QVariant::Type type = QVariant::String)
 {
-    if (value.canConvert(QVariant::String)) {
-        *query += QLatin1String(function)
-                + QLatin1String("(")
-                + field
-                + QLatin1String(",'")
-                + value.toString()
-                + QLatin1String("')");
-        return true;
+    QString stringValue;
+    if (type == QVariant::Url && value.canConvert(QVariant::Url)) {
+        QByteArray encodedUrl = value.toUrl().toEncoded();
+        stringValue = QString::fromUtf8(encodedUrl.data(), encodedUrl.length());
+    } else if (value.canConvert(QVariant::String)) {
+        stringValue = value.toString();
     } else {
         *error = QDocumentGallery::FilterError;
         return false;
     }
+
+    *query += QLatin1String(function)
+            + QLatin1String("(")
+            + field
+            + QLatin1String(",'")
+            + stringValue
+            + QLatin1String("')");
+
+        return true;
 }
 
 static bool qt_writeCondition(
@@ -470,32 +486,33 @@ static bool qt_writeCondition(
 
     if ((index = properties.indexOfProperty(propertyName)) != -1) {
         const QVariant value = filter.value();
+        const QGalleryItemProperty &property = properties[index];
 
         switch (filter.comparator()) {
         case QGalleryFilter::Equals:
             return value.type() != QVariant::RegExp
-                    ? qt_write_comparison(error, properties[index].field, value, "=", query)
+                    ? qt_write_comparison(error, property.field, value, "=", query, property.type)
                     : qt_write_function(error, "REGEX", properties[index].field, value.toRegExp(), query);
         case QGalleryFilter::LessThan:
-            return qt_write_comparison(error, properties[index].field, value, "<", query);
+            return qt_write_comparison(error, property.field, value, "<", query, property.type);
         case QGalleryFilter::GreaterThan:
-            return qt_write_comparison(error, properties[index].field, value, ">", query);
+            return qt_write_comparison(error, property.field, value, ">", query, property.type);
         case QGalleryFilter::LessThanEquals:
-            return qt_write_comparison(error, properties[index].field, value, "<=", query);
+            return qt_write_comparison(error, property.field, value, "<=", query, property.type);
         case QGalleryFilter::GreaterThanEquals:
-            return qt_write_comparison(error, properties[index].field, value, ">=", query);
+            return qt_write_comparison(error, property.field, value, ">=", query, property.type);
         case QGalleryFilter::Contains:
-            return  qt_write_function(error, "fn:contains", properties[index].field, value, query);
+            return  qt_write_function(error, "fn:contains", property.field, value, query, property.type);
         case QGalleryFilter::StartsWith:
-            return qt_write_function(error, "fn:starts-with", properties[index].field, value, query);
+            return qt_write_function(error, "fn:starts-with", property.field, value, query, property.type);
         case QGalleryFilter::EndsWith:
-            return qt_write_function(error, "fn:ends-with", properties[index].field, value, query);
+            return qt_write_function(error, "fn:ends-with", property.field, value, query, property.type);
         case QGalleryFilter::Wildcard:
-            return qt_write_function(error, "fn:contains", properties[index].field, value, query);
+            return qt_write_function(error, "fn:contains", property.field, value, query, property.type);
         case QGalleryFilter::RegExp:
             return value.type() != QVariant::RegExp
-                    ? qt_write_function(error, "REGEX", properties[index].field, value, query)
-                    : qt_write_function(error, "REGEX", properties[index].field, value.toRegExp(), query);
+                    ? qt_write_function(error, "REGEX", property.field, value, query, property.type)
+                    : qt_write_function(error, "REGEX", property.field, value.toRegExp(), query);
         default:
             *error = QDocumentGallery::FilterError;
 
@@ -637,7 +654,7 @@ static bool qt_writeFileExtensionCondition(
 //  nie:url nie:isPartOf, nie:created, nie:lastRefreshed, nie:interpretedAs, nie:dataSource,
 //  nie:byteSize
 #define QT_GALLERY_NIE_DATAOBJECT_PROPERTIES \
-    QT_GALLERY_ITEM_PROPERTY("url", "nie:url(?x)", String, CanRead | CanSort | CanFilter | IsResource)
+    QT_GALLERY_ITEM_PROPERTY("url", "nie:url(?x)", Url, CanRead | CanSort | CanFilter | IsResource)
 
 //nie:InformationElement
 //  nie:usageCounter, nie:rootElementOf, nie:contentSize, nie:isLogicalPartOf, nie:characterSet,
@@ -1342,6 +1359,9 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
         case QVariant::DateTime:
             columns.append(new QGalleryTrackerDateTimeColumn);
             break;
+        case QVariant::Url:
+            columns.append(new QGalleryTrackerUrlColumn);
+            break;
         default:
             Q_ASSERT(false);
             break;
@@ -1488,7 +1508,7 @@ void QGalleryTrackerSchema::populateItemArguments(
         arguments->typeColumn.reset(new QGalleryTrackerServiceTypeColumn);
         arguments->valueColumns = QVector<QGalleryTrackerValueColumn *>()
                 << new QGalleryTrackerStringColumn
-                << new QGalleryTrackerStringColumn
+                << new QGalleryTrackerUrlColumn
                 << new QGalleryTrackerServiceIndexColumn
                 << qt_createValueColumns(valueTypes + extendedValueTypes);
     } else {

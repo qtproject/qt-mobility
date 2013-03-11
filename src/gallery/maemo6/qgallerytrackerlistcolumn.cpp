@@ -60,6 +60,11 @@ QVariant QGalleryTrackerStringListColumn::toVariant(const QString &string) const
     return string.split(m_separatorChar, QString::SkipEmptyParts);
 }
 
+QVariant QGalleryTrackerUrlColumn::toVariant(const QString &string) const
+{
+    return QUrl::fromEncoded(string.toUtf8(), QUrl::StrictMode);
+}
+
 QString QGalleryTrackerStringListColumn::toString(const QVariant &variant) const
 {
     return variant.type() == QVariant::StringList
@@ -117,7 +122,7 @@ QVariant QGalleryTrackerCompositeIdColumn::value(QVector<QVariant>::const_iterat
 
 QVariant QGalleryTrackerFileUrlColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    return QUrl( (row + m_column )->toString());
+    return *(row + m_column);
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerFileUrlColumn::create(const QVector<int> &)
@@ -127,7 +132,7 @@ QGalleryTrackerCompositeColumn *QGalleryTrackerFileUrlColumn::create(const QVect
 
 QVariant QGalleryTrackerFilePathColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    return QUrl( (row + QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL)->toString() ).path();
+    return (row + QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL)->toUrl().path();
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVector<int> &)
@@ -137,7 +142,7 @@ QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVec
 
 QVariant QGalleryTrackerPathColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    QString filePath = QUrl((row + QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL)->toString()).path();
+    QString filePath = (row + QGALLERYTRACKERFILEURLCOLUMN_DEFAULT_COL)->toUrl().path();
     return filePath.section(QLatin1Char('/'), 0, -2);
 }
 
@@ -148,7 +153,7 @@ QGalleryTrackerCompositeColumn *QGalleryTrackerPathColumn::create(const QVector<
 
 QVariant QGalleryTrackerFileExtensionColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    QString fileName = (row + m_column)->toString();
+    QString fileName = (row + m_column)->toUrl().path();
     const int index = fileName.lastIndexOf(QLatin1Char('.'));
     return index > fileName.lastIndexOf(QLatin1Char('/'))
             ? QVariant(fileName.mid(index + 1))

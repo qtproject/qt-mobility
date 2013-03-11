@@ -85,6 +85,12 @@ public:
     QVariant toVariant(const QString &string) const;
 };
 
+class QGalleryTrackerUrlColumn : public QGalleryTrackerValueColumn
+{
+public:
+    QVariant toVariant(const QString &string) const;
+};
+
 class QGalleryTrackerStringListColumn : public QGalleryTrackerValueColumn
 {
 public:

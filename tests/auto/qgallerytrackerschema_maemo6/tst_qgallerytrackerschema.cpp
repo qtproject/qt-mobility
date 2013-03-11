@@ -103,6 +103,8 @@ private Q_SLOTS:
     void queryResponseRootItem();
     void queryResponseFilter_data();
     void queryResponseFilter();
+    void queryResponseItemUrl_data();
+    void queryResponseItemUrl();
     void queryResponseValueColumnToVariant_data();
     void queryResponseValueColumnToVariant();
     void queryResponseValueColumnToString_data();
@@ -497,7 +499,7 @@ void tst_QGalleryTrackerSchema::prepareValidItemResponse_data()
             << QStringList()
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/file.ext")
+                    << QUrl(QLatin1String("file:///path/to/file.ext"))
                     << 0)
             << QVariant(QUrl(QLatin1String("file:///path/to/file.ext")))
             << QVariant(QLatin1String("File"))
@@ -622,7 +624,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootType_data()
             << 1
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/file.ext")
+                    << QUrl(QLatin1String("file:///path/to/file.ext"))
                     << 0)
             << "file::uuid:ff172362-d959-99e0-a792-0ddafdd2c559"
             << QVariant(QUrl(QLatin1String("file:///path/to/file.ext")))
@@ -637,7 +639,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootType_data()
             << 1
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/image.png")
+                    << QUrl(QLatin1String("file:///path/to/image.png"))
                     << 4)
             << "image::uuid:ff172362-d959-99e0-a792-0ddafdd2c559"
             << QVariant(QUrl(QLatin1String("file:///path/to/image.png")))
@@ -652,7 +654,7 @@ void tst_QGalleryTrackerSchema::queryResponseRootType_data()
             << 1
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/text.txt")
+                    << QUrl(QLatin1String("file:///path/to/text.txt"))
                     << 7)
             << "text::uuid:ff172362-d959-99e0-a792-0ddafdd2c559"
             << QVariant(QUrl(QLatin1String("file:///path/to/text.txt")))
@@ -1731,6 +1733,21 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                     "} "
                     "GROUP BY ?x";
     } {
+        QGalleryFilter filter
+                = QDocumentGallery::url == QUrl::fromLocalFile(QString::fromUtf8("/path/to/K\xc3\xa4rp\xc3\xa4ssieni.jpg"));
+
+        QTest::newRow("File.url == file:///path/to/K\xc3\xa4rp\xc3\xa4ssieni.jpg")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x) "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER((nie:url(?x)='file:///path/to/K%C3%A4rp%C3%A4ssieni.jpg'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
         QGalleryFilter filter = QDocumentGallery::filePath == QLatin1String("/path/to/file.ext");
 
         QTest::newRow("File.filePath == /path/to/file.ext")
@@ -1742,6 +1759,21 @@ void tst_QGalleryTrackerSchema::queryResponseFilter_data()
                     "WHERE {"
                         "{?x rdf:type nfo:FileDataObject}"
                         "FILTER((nie:url(?x)='file:///path/to/file.ext'))"
+                    "} "
+                    "GROUP BY ?x";
+    } {
+        QGalleryFilter filter
+                = QDocumentGallery::filePath == QString::fromUtf8("/path/to/K\xc3\xa4rp\xc3\xa4ssieni.jpg");
+
+        QTest::newRow("File.filePath == /path/to/K\xc3\xa4rp\xc3\xa4ssieni.jpg")
+                << "File"
+                << QString()
+                << QGalleryQueryRequest::AllDescendants
+                << filter
+                <<  "SELECT ?x nie:url(?x) rdf:type(?x) "
+                    "WHERE {"
+                        "{?x rdf:type nfo:FileDataObject}"
+                        "FILTER((nie:url(?x)='file:///path/to/K%C3%A4rp%C3%A4ssieni.jpg'))"
                     "} "
                     "GROUP BY ?x";
     } {
@@ -2292,6 +2324,51 @@ void tst_QGalleryTrackerSchema::queryResponseFilter()
     QCOMPARE(arguments.sparql, sparql);
 }
 
+
+void tst_QGalleryTrackerSchema::queryResponseItemUrl_data()
+{
+    QTest::addColumn<QString>("rootType");
+    QTest::addColumn<QByteArray>("encodedUrl");
+    QTest::addColumn<QUrl>("url");
+
+    QTest::newRow("File ascii")
+            << "File"
+            << QByteArray("file://path/to/file.ext")
+            << QUrl(QLatin1String("file://path/to/file.ext"));
+
+    QTest::newRow("Image encoded")
+            << "Image"
+            << QByteArray("file://path/to/K%C3%A4rp%C3%A4ssieni.jpg")
+            << QUrl(QString::fromUtf8("file://path/to/K\xc3\xa4rp\xc3\xa4ssieni.jpg"));
+}
+
+void tst_QGalleryTrackerSchema::queryResponseItemUrl()
+{
+    QFETCH(QString, rootType);
+    QFETCH(QByteArray, encodedUrl);
+    QFETCH(QUrl, url);
+
+    QGalleryTrackerResultSetArguments arguments;
+
+    QGalleryTrackerSchema schema(rootType);
+
+    QCOMPARE(
+            schema.prepareQueryResponse(
+                    &arguments,
+                    this,
+                    QGalleryQueryRequest::AllDescendants,
+                    QString(),
+                    QGalleryFilter(),
+                    QStringList(),
+                    QStringList(),
+                    0,
+                    0),
+            QDocumentGallery::NoError);
+
+    QCOMPARE(arguments.valueColumns.count(), 3);
+    QCOMPARE(arguments.valueColumns.at(1)->toVariant(encodedUrl).toUrl(), url);
+}
+
 void tst_QGalleryTrackerSchema::queryResponseValueColumnToVariant_data()
 {
     QTest::addColumn<QString>("rootType");
@@ -2568,7 +2645,7 @@ void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
             << QString::fromLatin1("filePath")
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/file.ext")
+                    << QUrl(QLatin1String("file:///path/to/file.ext"))
                     << QLatin1String("Files"))
             << QVariant(QLatin1String("/path/to/file.ext"));
 
@@ -2577,7 +2654,7 @@ void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
             << QString::fromLatin1("path")
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/file.ext")
+                    << QUrl(QLatin1String("file:///path/to/file.ext"))
                     << QLatin1String("Files"))
             << QVariant(QLatin1String("/path/to"));
 
@@ -2586,7 +2663,7 @@ void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
             << QString::fromLatin1("path")
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/")
+                    << QUrl(QLatin1String("file:///path/to/"))
                     << QLatin1String("Files"))
             << QVariant(QLatin1String("/path/to"));
 
@@ -2595,7 +2672,7 @@ void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
             << QString::fromLatin1("fileExtension")
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to/file.ext")
+                    << QUrl(QLatin1String("file:///path/to/file.ext"))
                     << QLatin1String("Files"))
             << QVariant(QLatin1String("ext"));
 
@@ -2605,7 +2682,7 @@ void tst_QGalleryTrackerSchema::queryResponseCompositeColumn_data()
             << QString::fromLatin1("fileExtension")
             << (QVector<QVariant>()
                     << QLatin1String("uuid:ff172362-d959-99e0-a792-0ddafdd2c559")
-                    << QLatin1String("file:///path/to")
+                    << QUrl(QLatin1String("file:///path/to"))
                     << QLatin1String("Files"))
             << QVariant();
 }
