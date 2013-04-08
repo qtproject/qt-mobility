@@ -41,7 +41,7 @@
 #ifndef QALTIMETER_H
 #define QALTIMETER_H
 
-#include "qsensor.h"
+#include <qsensor.h>
 
 QTM_BEGIN_NAMESPACE
 

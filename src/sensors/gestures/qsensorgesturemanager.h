@@ -45,8 +45,8 @@
 #include <QObject>
 #include <QStringList>
 
-#include "qsensorgesturerecognizer.h"
-#include "qsensorgesture.h"
+#include <qsensorgesturerecognizer.h>
+#include <qsensorgesture.h>
 
 QTM_BEGIN_NAMESPACE
 

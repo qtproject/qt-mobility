@@ -42,10 +42,10 @@
 #ifndef QACCELEROMETER_H
 #define QACCELEROMETER_H
 
-#include "qsensor.h"
+#include <qsensor.h>
 
 #if defined(Q_OS_BLACKBERRY)
-# include "qorientablesensorbase.h"
+# include <qorientablesensorbase.h>
 #endif
 
 QTM_BEGIN_NAMESPACE

@@ -28,8 +28,8 @@ QT=core
 CONFIG += strict_flags
 CONFIG(debug,debug|release):DEFINES += ENABLE_RUNTIME_SENSORLOG
 
-INCLUDEPATH += .
-DEPENDPATH += .
+INCLUDEPATH += . gestures
+DEPENDPATH  += . gestures
 
 PUBLIC_HEADERS += \
            qsensorbackend.h\

@@ -41,7 +41,7 @@
 #ifndef QAMBIENTTEMPERATURESENSOR_H
 #define QAMBIENTTEMPERATURESENSOR_H
 
-#include <QtSensors/qsensor.h>
+#include <qsensor.h>
 
 QTM_BEGIN_NAMESPACE
 
