@@ -78,6 +78,28 @@ void QPressureReading::setPressure(qreal pressure)
     d->pressure = pressure;
 }
 
+/*!
+    \property QPressureReading::temperature
+    \brief The pressure sensor's temperature.
+
+    The temperature is returned in degree Celsius.
+    This property provides the pressure sensor die temperature.
+    Note that this temperature may be (and usually is) different than the temperature
+    reported from QAmbientTemperatureSensor.
+*/
+qreal QPressureReading::temperature() const
+{
+    return d->temperature;
+}
+
+/*!
+    Sets the pressure sensor's temperature to \a temperature.
+*/
+void QPressureReading::setTemperature(qreal temperature)
+{
+    d->temperature = temperature;
+}
+
 // =====================================================================
 
 /*!

@@ -1127,6 +1127,11 @@ Q_EXPORT_PLUGIN2(qsensorsdeclarativemodule, QT_PREPEND_NAMESPACE(QSensorsDeclara
 */
 
 /*!
+    \qmlproperty qreal PressureReading::temperature
+    Please see QPressureReading::temperature for information about this property.
+*/
+
+/*!
     \qmlclass HolsterSensor QHolsterSensor
     \ingroup qml-sensors_type
     \since Mobility 1.3
