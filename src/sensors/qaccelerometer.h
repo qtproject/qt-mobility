@@ -120,12 +120,12 @@ public:
     QAccelerometerReading *reading() const { return static_cast<QAccelerometerReading*>(QSensor::reading()); }
     static char const * const type;
 
-public slots:
+public Q_SLOTS:
     void setUserAcceleration();
     void setGravityAcceleration();
     void setCombinedAcceleration();
 
-signals:
+Q_SIGNALS:
     void accelerationModeChanged(AccelerationMode accelerationMode);
 #if !defined(Q_QDOC) && defined(Q_OS_BLACKBERRY)
     void axesOrientationModeChanged(AxesOrientationMode axesOrientationMode);
