@@ -132,6 +132,10 @@ QTM_BEGIN_NAMESPACE
     Returns a list of available manager ids that can be used when constructing
     a QContactManager.  If an empty id is specified to the constructor, the
     first value in this list will be used instead.
+
+    The QTCONTACTS_MANAGER_OVERRIDE environment variable may be set to
+    override the default engine.
+
     \since 1.0
   */
 QStringList QContactManager::availableManagers()
@@ -150,6 +154,13 @@ QStringList QContactManager::availableManagers()
         ret.prepend(QLatin1String(makename(Q_CONTACTS_DEFAULT_ENGINE)));
     }
 #endif
+
+    // and prefer the override engine if specified in the environment
+    QString overrideManagerName = qgetenv("QTCONTACTS_MANAGER_OVERRIDE");
+    if (!overrideManagerName.isEmpty() && ret.contains(overrideManagerName)) {
+        ret.removeAll(overrideManagerName);
+        ret.prepend(overrideManagerName);
+    }
 
     return ret;
 }

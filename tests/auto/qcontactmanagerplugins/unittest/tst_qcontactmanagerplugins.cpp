@@ -64,6 +64,7 @@ public slots:
     void cleanup();
 private slots:
     void testDummy();
+    void testOverride();
 };
 
 /* Test a static factory as well */
@@ -188,6 +189,35 @@ void tst_QContactManagerPlugins::testDummy()
     QContactManager m2("testdummy");
     QVERIFY(m2.managerName() == "testdummy");
 }
+
+#define makestr(x) (#x)
+#define makename(x) makestr(x)
+void tst_QContactManagerPlugins::testOverride()
+{
+    // build time default
+#if defined(Q_CONTACTS_DEFAULT_ENGINE)
+    QString platformDefaultManager = QLatin1String(makename(Q_CONTACTS_DEFAULT_ENGINE));
+#else
+    QString platformDefaultManager = QLatin1String("memory");
+#endif
+
+    // environment override
+    QString overrideManager = qgetenv("QTCONTACTS_MANAGER_OVERRIDE");
+
+    // override with specific managers
+    qputenv("QTCONTACTS_MANAGER_OVERRIDE", "memory");
+    QContactManager m1;
+    QVERIFY(m1.managerName() == "memory");
+    qputenv("QTCONTACTS_MANAGER_OVERRIDE", "testdummy");
+    QContactManager m2;
+    QVERIFY(m2.managerName() == "testdummy");
+    qputenv("QTCONTACTS_MANAGER_OVERRIDE", "");
+    QContactManager m3;
+    QVERIFY(m3.managerName() == platformDefaultManager);
+    qputenv("QTCONTACTS_MANAGER_OVERRIDE", overrideManager.toLatin1());
+}
+#undef makename
+#undef makestr
 
 QTEST_MAIN(tst_QContactManagerPlugins)
 #include "tst_qcontactmanagerplugins.moc"
