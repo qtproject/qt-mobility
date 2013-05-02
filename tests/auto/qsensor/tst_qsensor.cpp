@@ -842,7 +842,7 @@ private slots:
         })
 
         TEST_SENSORINTERFACE(QAmbientTemperatureSensor, QAmbientTemperatureReading, {
-            QCOMPARE(reading->temperature(), 30);
+            QCOMPARE(reading->temperature(), 30.0);
         })
 
         TEST_SENSORINTERFACE(QCompass, QCompassReading, {
