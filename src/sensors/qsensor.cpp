@@ -201,8 +201,28 @@ void QSensorPrivate::init(const QByteArray &sensorType)
     type = sensorType;
     q->registerInstance(); // so the availableSensorsChanged() signal works
 }
+
 /*!
     Construct the \a type sensor as a child of \a parent.
+
+    Do not use this constructor if a derived class exists for the specific sensor type.
+
+    The wrong way is to use the base class constructor:
+    \snippet snippets/sensors/creating.cpp 3
+    The right way is to create an instance of the derived class:
+    \snippet snippets/sensors/creating.cpp 2
+
+    The derived classes have
+    additional properties and data members which are needed for certain features such as
+    geo value support in QMagnetometer or acceleration mode support in QAccelerometer.
+    These features will only work properly when creating a sensor instance from a QSensor
+    subclass.
+
+    Only use this constructor if there is no derived sensor class available. Note that all
+    built-in sensors have a derived class, so using this constructor should only be necessary
+    when implementing custom sensors, like in the \l {Grue Application}{Grue sensor
+    example}.
+
     \since 1.0
 */
 QSensor::QSensor(const QByteArray &type, QObject *parent)
