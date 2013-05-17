@@ -67,7 +67,7 @@ unix:!mac:!symbian {
         DEFINES += QT_NO_AUDIO_BACKEND
     }
     else:contains(QT_CONFIG, alsa) {
-        linux-*|freebsd-*|openbsd-* {
+        linux-*|freebsd-*|openbsd-*|qnx {
             DEFINES += HAS_ALSA
             PRIVATE_HEADERS += audio/qaudiooutput_alsa_p.h audio/qaudioinput_alsa_p.h audio/qaudiodeviceinfo_alsa_p.h
             SOURCES += audio/qaudiodeviceinfo_alsa_p.cpp \
