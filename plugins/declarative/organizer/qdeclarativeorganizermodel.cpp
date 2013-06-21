@@ -615,10 +615,12 @@ int QDeclarativeOrganizerModel::itemIndex(const QDeclarativeOrganizerItem* item)
 
 void QDeclarativeOrganizerModel::clearItems()
 {
+    beginResetModel();
     foreach (QDeclarativeOrganizerItem* di, d->m_items)
         di->deleteLater();
     d->m_items.clear();
     d->m_itemMap.clear();
+    endResetModel();
 }
 
 QDeclarativeOrganizerItem* QDeclarativeOrganizerModel::createItem(const QOrganizerItem& item)
