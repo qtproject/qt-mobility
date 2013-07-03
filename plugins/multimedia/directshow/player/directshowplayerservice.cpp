@@ -576,6 +576,9 @@ void DirectShowPlayerService::doReleaseGraph(QMutexLocker *locker)
         control->Release();
     }
 
+    //release m_headerInfo -> decrease ref counter of m_source
+    m_metaDataControl->updateGraph(0, 0);
+
     if (m_source) {
         m_source->Release();
         m_source = 0;
@@ -625,6 +628,7 @@ int DirectShowPlayerService::findStreamTypes(IBaseFilter *source) const
                     }
                 }
             }
+            pins->Release();
         }
         filter->Release();
     }
