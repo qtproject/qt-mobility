@@ -75,6 +75,9 @@ IMPLEMENT_READING(QMagnetometerReading)
 
     \image sensors-geo-vs-raw-magnetism.jpg
 
+    On BlackBerry interference elimination is not supported and hence the
+    QMagnetometer::returnGeoValues property has no effect.
+
     The accuracy of each reading is measured as a number from 0 to 1.
     A value of 1 is the highest level that the device can support and 0 is
     the worst.
