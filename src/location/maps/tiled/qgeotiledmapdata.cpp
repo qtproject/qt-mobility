@@ -591,7 +591,7 @@ void QGeoTiledMapData::fitInViewport(const QGeoBoundingBox &bounds, bool preserv
     int minZoomLevel = engine()->minimumZoomLevel();
     int maxZoomLevel = engine()->maximumZoomLevel();
 
-    int zoomFactor = 1 << maxZoomLevel;
+    int zoomFactor = 1 << (maxZoomLevel - minZoomLevel);
 
     for (int i = minZoomLevel; i <= maxZoomLevel; ++i) {
         QRect rect = d->screenRectForZoomFactor(zoomFactor);
