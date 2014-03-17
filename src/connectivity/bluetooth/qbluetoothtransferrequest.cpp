@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new Bluetooth transfer request to the device wit address \a address.
+    Constructs a new Bluetooth transfer request to the device with address \a address.
 */
 QBluetoothTransferRequest::QBluetoothTransferRequest(const QBluetoothAddress &address)
 :d_ptr(new QBluetoothTransferRequestPrivate)
